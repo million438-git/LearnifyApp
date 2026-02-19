@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇪🇹 GRADE 12 ENTRANCE · MASTER TENSES + 100 Q</title>
+    <style>
+        /* Mobile-first responsive styles for tenses page */
+        *{box-sizing:border-box;margin:0;padding:0}
+        :root{--bg:#eef2f7;--card:#ffffff;--muted:#45637a;--text:#102a41;--accent:#f5b042}
+        body{background:var(--bg);font-family:'Segoe UI', Roboto, system-ui, -apple-system, Arial, sans-serif;color:var(--text);padding:12px}
+
+        .main-wrapper{width:100%;margin:8px auto;background:var(--card);border-radius:12px;box-shadow:0 8px 24px rgba(0,20,40,0.08);overflow:hidden}
+        .header-gold{background:linear-gradient(135deg,#083358,#0d4b75);padding:14px;border-bottom:4px solid var(--accent);color:#fff}
+        .header-gold h1{font-size:1.05rem;font-weight:800;line-height:1.2;margin-bottom:6px}
+        .header-gold p{font-size:0.9rem;opacity:0.95;margin-bottom:8px}
+        .header-gold span{background:var(--accent);color:#0a2f4a;padding:6px 10px;border-radius:999px;font-weight:700;font-size:0.82rem}
+
+        .notes-section{padding:12px;background:#fbfdff;border-bottom:1px solid #dde7f0}
+        .section-tag{display:inline-block;font-size:0.95rem;font-weight:800;color:#0b3b5a;border-left:8px solid var(--accent);padding-left:10px;margin-bottom:10px;text-transform:uppercase}
+
+        .tense-grid{display:block;gap:12px}
+        .tense-card{background:var(--card);border-radius:12px;padding:12px;margin-bottom:12px;border:1px solid #e6f0f7;box-shadow:0 6px 14px rgba(2,24,40,0.04)}
+        .tense-card:hover{transform:translateY(-2px)}
+        .tense-name{font-size:1rem;font-weight:800;color:#113855;margin-bottom:8px;border-bottom:3px solid #ffe6b3;display:inline-block}
+        .usage,.form,.signal{font-size:0.95rem;margin-top:8px;color:#0e3a58}
+        .usage strong,.form strong,.signal strong{color:#1b5a8c;display:inline-block;min-width:68px;font-weight:700}
+        .signal span{background:#ecf3fa;padding:4px 8px;border-radius:20px;margin:6px 6px 0 0;display:inline-block;font-size:0.85rem;border:1px solid #bfd9f0}
+        .exam-tip{background:#fff9ec;border-left:6px solid var(--accent);padding:10px;border-radius:10px;margin-top:12px;font-weight:600;font-size:0.95rem}
+
+        .quiz-container{padding:12px;background:#f3f8ff}
+        .stats-bar{display:flex;flex-direction:column;gap:8px}
+        .q-counter{font-size:0.95rem;font-weight:800;color:#1d3f60;margin-bottom:4px}
+        .reset-btn{align-self:flex-end;background:white;border:1px solid #0f4b77;padding:8px 12px;border-radius:20px;font-weight:700;color:#0f4b77;cursor:pointer}
+        .reset-btn:hover{background:#0f4b77;color:white}
+
+        .question-box{background:var(--card);border-radius:12px;padding:12px;margin-bottom:10px;border:1px solid #dbeef6}
+        .q-text{font-size:0.98rem;font-weight:700;margin-bottom:8px}
+        .q-text span{font-weight:800;color:#c6550f;background:#fff6e6;padding:4px 8px;border-radius:999px;margin-right:8px;font-size:0.82rem}
+
+        .options{display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px}
+        .option{background:#f4f9ff;border-radius:12px;padding:10px 12px;font-size:0.95rem;cursor:pointer;border:1px solid #d7eaf8;transition:transform .06s ease;font-weight:700}
+        .option:hover{transform:translateY(-2px);background:#eaf6ff}
+        .option.selected{background:#0b4b75;border-color:var(--accent);color:white;box-shadow:0 6px 12px rgba(0,60,130,0.14)}
+
+        .explain-box{background:#f0f7fe;border-radius:10px;padding:10px;margin-top:10px;border-left:6px solid #ffae00;font-size:0.95rem;line-height:1.45;color:#014682}
+        .explain-box .reason{font-weight:700;color:#003057}
+
+        .foot-note{padding:12px;background:#deecf9;color:#162f44;font-size:0.95rem;text-align:center}
+
+        /* Wider screens: restore grid and spacing */
+        @media (min-width:900px){
+            .main-wrapper{max-width:1400px;margin:18px auto;border-radius:42px}
+            .header-gold{padding:2rem 3rem;border-bottom:6px solid var(--accent)}
+            .header-gold h1{font-size:3.2rem}
+            .header-gold p{font-size:1.3rem}
+            .header-gold span{font-size:1.1rem;padding:0.3rem 1rem}
+            .notes-section{padding:2.5rem 3rem 1.5rem 3rem}
+            .tense-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.8rem}
+            .tense-card{padding:1.5rem 1.8rem;border-radius:28px}
+            .tense-name{font-size:1.8rem}
+            .exam-tip{padding:0.8rem 1.4rem;border-radius:16px}
+            .quiz-container{padding:2.5rem 3rem 3.5rem 3rem}
+            .question-box{padding:1.5rem 2.2rem;border-radius:28px}
+            .q-text{font-size:1.25rem}
+            .options{grid-template-columns:repeat(2,1fr);gap:0.8rem 1.5rem}
+            .option{padding:0.7rem 1.5rem;border-radius:60px;font-size:1.08rem}
+            .explain-box{padding:1rem 1.8rem;border-radius:20px}
+        }
+    </style>
+</head>
+<body>
+<div class="main-wrapper">
+    <div class="header-gold">
+        <h1>📘 ENTRANCE EXAM · ADVANCED TENSES</h1>
+        <p>Grade 11 & 12 · complete core + 100 exam‑style questions · Ethiopian past pattern</p>
+        <span>🔖 8 core tenses · future forms · 100 interactive Q</span>
+    </div>
+
+    <!-- ========== DETAILED NOTES (PROFESSIONAL) ========== -->
+    <div class="notes-section">
+        <div class="section-tag">📚 TENSE MASTER NOTES · usage, form, signal words & error correction</div>
+        <div class="tense-grid">
+            <!-- 1. Present Simple -->
+            <div class="tense-card">
+                <div class="tense-name">Present Simple</div>
+                <div class="usage"><strong>Usage:</strong> habits, facts, timetables, permanent situations.</div>
+                <div class="form"><strong>Form:</strong> base verb (+s/es for he/she/it) • negative: do/does + not</div>
+                <div class="signal"><strong>Signal:</strong> <span>always</span> <span>every day</span> <span>often</span> <span>usually</span> <span>never</span> <span>on Mondays</span></div>
+                <div class="exam-tip">⚡ error: using -s after modals or in questions: "She doesn't works" ✘ → She doesn't work ✔</div>
+            </div>
+            <!-- 2. Present Continuous -->
+            <div class="tense-card">
+                <div class="tense-name">Present Continuous</div>
+                <div class="usage"><strong>Usage:</strong> now, around now, temporary actions, future arrangements.</div>
+                <div class="form"><strong>Form:</strong> am/is/are + verb-ing</div>
+                <div class="signal"><strong>Signal:</strong> <span>now</span> <span>at the moment</span> <span>today</span> <span>this week</span> <span>Look!</span> <span>currently</span></div>
+                <div class="exam-tip">⚡ stative verbs (know, like) rarely used in continuous.</div>
+            </div>
+            <!-- 3. Present Perfect -->
+            <div class="tense-card">
+                <div class="tense-name">Present Perfect</div>
+                <div class="usage"><strong>Usage:</strong> past with present relevance, life experience, recent changes.</div>
+                <div class="form"><strong>Form:</strong> have/has + past participle</div>
+                <div class="signal"><strong>Signal:</strong> <span>ever</span> <span>never</span> <span>already</span> <span>yet</span> <span>just</span> <span>since</span> <span>for</span></div>
+                <div class="exam-tip">⚡ "I have visited last year" ✘ (specific past needs past simple).</div>
+            </div>
+            <!-- 4. Present Perfect Continuous -->
+            <div class="tense-card">
+                <div class="tense-name">Present Perfect Continuous</div>
+                <div class="usage"><strong>Usage:</strong> actions started in past still continuing or recently stopped with result.</div>
+                <div class="form"><strong>Form:</strong> have/has + been + verb-ing</div>
+                <div class="signal"><strong>Signal:</strong> <span>for hours</span> <span>since morning</span> <span>lately</span> <span>recently</span> <span>all day</span></div>
+                <div class="exam-tip">⚡ focus on duration / visible effect: "I'm tired, I have been working."</div>
+            </div>
+            <!-- 5. Past Simple -->
+            <div class="tense-card">
+                <div class="tense-name">Past Simple</div>
+                <div class="usage"><strong>Usage:</strong> completed past actions, past habits, sequences.</div>
+                <div class="form"><strong>Form:</strong> verb+ed (or irregular) • did + not + infinitive</div>
+                <div class="signal"><strong>Signal:</strong> <span>yesterday</span> <span>last week</span> <span>in 2010</span> <span>ago</span> <span>then</span></div>
+                <div class="exam-tip">⚡ irregular forms: go → went, see → saw. Common error: "I have seen it yesterday" ✘</div>
+            </div>
+            <!-- 6. Past Continuous -->
+            <div class="tense-card">
+                <div class="tense-name">Past Continuous</div>
+                <div class="usage"><strong>Usage:</strong> interrupted past action, simultaneous actions, background.</div>
+                <div class="form"><strong>Form:</strong> was/were + verb-ing</div>
+                <div class="signal"><strong>Signal:</strong> <span>while</span> <span>when (with past simple)</span> <span>at 8pm last night</span> <span>as</span></div>
+                <div class="exam-tip">⚡ "When I arrived, she cooked" ✘ → she was cooking (interrupted).</div>
+            </div>
+            <!-- 7. Past Perfect -->
+            <div class="tense-card">
+                <div class="tense-name">Past Perfect</div>
+                <div class="usage"><strong>Usage:</strong> action before another past action / past of past.</div>
+                <div class="form"><strong>Form:</strong> had + past participle</div>
+                <div class="signal"><strong>Signal:</strong> <span>already</span> <span>by the time</span> <span>before</span> <span>after</span> <span>never... until</span></div>
+                <div class="exam-tip">⚡ "After I ate, I went out." both past simple OK (sequence clear). But "I had eaten before he arrived."</div>
+            </div>
+            <!-- 8. Past Perfect Continuous -->
+            <div class="tense-card">
+                <div class="tense-name">Past Perfect Continuous</div>
+                <div class="usage"><strong>Usage:</strong> duration before something in the past.</div>
+                <div class="form"><strong>Form:</strong> had + been + verb-ing</div>
+                <div class="signal"><strong>Signal:</strong> <span>for</span> <span>since</span> <span>before (with duration)</span> <span>all day/week</span></div>
+                <div class="exam-tip">⚡ "They had been walking for hours when they found the village."</div>
+            </div>
+            <!-- 9. Future: will -->
+            <div class="tense-card">
+                <div class="tense-name">Future (will)</div>
+                <div class="usage"><strong>Usage:</strong> predictions, spontaneous decisions, promises.</div>
+                <div class="form"><strong>Form:</strong> will + infinitive</div>
+                <div class="signal"><strong>Signal:</strong> <span>tomorrow</span> <span>probably</span> <span>I think</span> <span>I promise</span></div>
+                <div class="exam-tip">⚡ "I will help you!" (instant decision).</div>
+            </div>
+            <!-- 10. Future: going to -->
+            <div class="tense-card">
+                <div class="tense-name">Future (going to)</div>
+                <div class="usage"><strong>Usage:</strong> plans, intentions, evidence-based predictions.</div>
+                <div class="form"><strong>Form:</strong> am/is/are + going to + infinitive</div>
+                <div class="signal"><strong>Signal:</strong> <span>next year</span> <span>tomorrow (planned)</span> <span>look at those clouds</span></div>
+                <div class="exam-tip">⚡ "I'm going to study medicine." (intention).</div>
+            </div>
+            <!-- 11. Present continuous for future -->
+            <div class="tense-card">
+                <div class="tense-name">Present cont. for future</div>
+                <div class="usage"><strong>Usage:</strong> fixed arrangements, often with time.</div>
+                <div class="form"><strong>Form:</strong> am/is/are + verb-ing (+future time)</div>
+                <div class="signal"><strong>Signal:</strong> <span>tonight</span> <span>tomorrow</span> <span>this weekend</span> <span>at 5pm</span></div>
+                <div class="exam-tip">⚡ "I'm meeting the director at 3." (arrangement).</div>
+            </div>
+        </div>
+        <!-- error correction extra -->
+        <div style="margin-top: 2rem; background: #edf4fc; border-radius: 40px; padding: 1.5rem 2rem;">
+            <p style="font-weight: 700; font-size: 1.3rem;">⚠️ COMMON ERROR CORRECTIONS (Ethiopian entrance top mistakes)</p>
+            <ul style="columns: 2; list-style: none; margin-top: 0.8rem;">
+                <li>• ✘ She don't like → ✔ She doesn't like</li>
+                <li>• ✘ I am agree → ✔ I agree</li>
+                <li>• ✘ They have gone yesterday → ✔ They went yesterday</li>
+                <li>• ✘ When she arrived we have dinner → ✔ we were having</li>
+                <li>• ✘ By next week I finish → ✔ I will have finished</li>
+                <li>• ✘ He has been knowing → ✔ He has known</li>
+                <li>• ✘ I will going to → ✔ I am going to / I will go</li>
+                <li>• ✘ While he studied, she called → ✔ While he was studying</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ========== 100 INTERACTIVE QUESTIONS ========== -->
+    <div class="quiz-container" id="quizContainer">
+        <div class="section-tag" style="border-left-color: #e68c2a;">📝 100 ENTRANCE‑STYLE QUESTIONS</div>
+        <div class="stats-bar">
+            <span class="q-counter" id="counterDisplay">question 1 / 100</span>
+            <button class="reset-btn" id="resetQuiz">↻ reset all answers</button>
+        </div>
+        <div id="questionsArea"></div>
+    </div>
+
+    <div class="foot-note footer-flag">
+        ⚡ designed for Ethiopian Grade 12 · each answer includes full explanation · past exam pattern ⚡
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---------- 100 questions on tenses (advanced, entrance style) ----------
+        const questionBank = [];
+
+        // helper to push q: id, text, options array, correctIndex (0-3), explanation string
+        function addQ(text, opts, correctInd, exp) {
+            questionBank.push({ text, options: opts, correct: correctInd, explanation: exp });
+        }
+
+        // ---- generate exactly 100 (covering all tenses, signal words, error recognition) ----
+        // 1-10 present simple
+        addQ('Water ______ at 100°C.', ['boil', 'boils', 'is boiling', 'has boiled'], 1, 'Correct: "boils" – present simple for general truth. Options A (boil) plural error; C suggests temporary; D present perfect not suitable.');
+        addQ('Selam ______ to school every day.', ['walk', 'walks', 'is walking', 'has walked'], 1, 'Correct: "walks" – habitual action. A is plural verb, C implies now, D is perfect.');
+        addQ('They ______ (not/play) football on Mondays.', ['don’t play', 'doesn’t play', 'aren’t playing', 'haven’t played'], 0, 'Correct: "don’t play" – present simple negative. B uses does with plural; C continuous; D perfect.');
+        addQ('______ she ______ French?', ['Do / speak', 'Does / speaks', 'Does / speak', 'Is / speaking'], 2, 'Correct: "Does she speak" – question form. A wrong auxiliary; B double -s; D continuous not for general.');
+        addQ('The train ______ at 6 pm every evening.', ['leave', 'leaves', 'is leaving', 'has left'], 1, 'Correct: "leaves" – timetable (present simple). A wrong; C implies arrangement; D irrelevant.');
+        addQ('He always ______ (forget) his keys.', ['forget', 'forgets', 'is forgetting', 'has forgotten'], 1, 'Correct: "forgets" – adverb of frequency, simple. A plural; C strange for habit; D not typical.');
+        addQ('Cats ______ (like) milk.', ['like', 'likes', 'are liking', 'have liked'], 0, 'Correct: "like" – general fact plural. B would be for singular; C continuous not used; D perfect unusual.');
+        addQ('My brother never ______ (wear) a hat.', ['wear', 'wears', 'is wearing', 'has worn'], 1, 'Correct: "wears" – 3rd person. A incorrect; C would mean now only; D present perfect not habitual.');
+        addQ('______ they ______ (work) in Addis?', ['Do / work', 'Does / work', 'Are / work', 'Have / worked'], 0, 'Correct: "Do they work" – present simple question. B does with they? wrong; C ungrammatical; D perfect not appropriate.');
+        addQ('The sun ______ (rise) in the east.', ['rise', 'rises', 'is rising', 'has risen'], 1, 'Correct: "rises" – universal truth. A no -s; C suggests now; D recent change not needed.');
+        // 11-20 present continuous
+        addQ('Listen! Someone ______ (sing).', ['sings', 'is singing', 'has sung', 'sing'], 1, 'Correct: "is singing" – action happening now. A habit; C present perfect; D base form.');
+        addQ('They ______ (build) a new bridge this year.', ['build', 'are building', 'have built', 'will build'], 1, 'Correct: "are building" – ongoing around now. A simple; C completed; D future intention.');
+        addQ('She ______ (study) medicine at university at the moment.', ['studies', 'is studying', 'has studied', 'study'], 1, 'Correct: "is studying" – temporary/current. A general truth; C perfect; D base.');
+        addQ('Why ______ you ______ (laugh)?', ['do / laugh', 'are / laughing', 'have / laughed', 'is / laughing'], 1, 'Correct: "are you laughing" – right now. A would be habitual; C perfect reason; D wrong aux.');
+        addQ('The children ______ (sleep) now.', ['sleep', 'are sleeping', 'have slept', 'slept'], 1, 'Correct: "are sleeping" – now. A habit; C perfect; D past.');
+        addQ('I ______ (prepare) for my exam this week.', ['prepare', 'am preparing', 'have prepared', 'prepared'], 1, 'Correct: "am preparing" – around now. A general; C result; D completed.');
+        addQ('He usually ______ (wear) glasses, but today he ______ (wear) contacts.', ['wears / wears', 'is wearing / is wearing', 'wears / is wearing', 'wear / is wearing'], 2, 'Correct: "wears / is wearing" – habit vs now. A both simple unnatural; B both cont. wrong; D base.');
+        addQ('The population of Ethiopia ______ (increase) rapidly.', ['increases', 'is increasing', 'has increased', 'increase'], 1, 'Correct: "is increasing" – trend/change now. A permanent fact; C perfect (recent); D plural.');
+        addQ('Please be quiet. I ______ (try) to concentrate.', ['try', 'am trying', 'have tried', 'tried'], 1, 'Correct: "am trying" – right now. A general; C irrelevant; D past.');
+        addQ('Today the government ______ (discuss) the new policy.', ['discusses', 'is discussing', 'has discussed', 'discuss'], 1, 'Correct: "is discussing" – ongoing today. A habitual; C completed; D base.');
+        // 21-30 present perfect
+        addQ('I ______ (never/see) such a beautiful sunset.', ['never see', 'have never seen', 'never saw', 'am never seeing'], 1, 'Correct: "have never seen" – life experience. A present; C past simple (maybe but not typical); D wrong.');
+        addQ('She ______ (already/finish) her homework.', ['already finished', 'has already finished', 'already finishes', 'is already finishing'], 1, 'Correct: "has already finished" – recent completed. A past simple but "already" often perfect; C habit; D cont.');
+        addQ('______ you ever ______ (eat) injera?', ['Did / eat', 'Have / eaten', 'Do / eat', 'Are / eating'], 1, 'Correct: "Have you ever eaten" – experience. A specific past no "ever"; C habit; D now.');
+        addQ('They ______ (just/arrive) from Bahir Dar.', ['just arrived', 'have just arrived', 'just arrive', 'are just arriving'], 1, 'Correct: "have just arrived" – recent event. A possible US but exam prefers perfect; C present; D cont.');
+        addQ('He ______ (not/call) me since last week.', ['didn’t call', 'hasn’t called', 'doesn’t call', 'isn’t calling'], 1, 'Correct: "hasn’t called" – since + point. A past simple (but since requires perfect); C habit; D cont.');
+        addQ('I ______ (know) him for ten years.', ['know', 'have known', 'am knowing', 'knew'], 1, 'Correct: "have known" – state from past till now. A present; C stative error; D past (finished).');
+        addQ('She ______ (break) her leg, so she can’t walk.', ['broke', 'has broken', 'breaks', 'is breaking'], 1, 'Correct: "has broken" – result now. A past no connection; C habit; D cont. wrong.');
+        addQ('______ you ______ (see) the new movie yet?', ['Did / see', 'Have / seen', 'Do / see', 'Are / seeing'], 1, 'Correct: "Have you seen" – present perfect with yet. A past no connection; C habit; D arrangement.');
+        addQ('It’s the first time I ______ (fly) in a plane.', ['fly', 'have flown', 'flew', 'am flying'], 1, 'Correct: "have flown" – first time + present perfect. A present; C past; D cont.');
+        addQ('He ______ (write) three books so far.', ['wrote', 'has written', 'writes', 'is writing'], 1, 'Correct: "has written" – so far, unfinished period. A past (finished); C habit; D cont.');
+        // 31-40 present perfect continuous
+        addQ('I’m tired because I ______ (work) all morning.', ['worked', 'have been working', 'had worked', 'was working'], 1, 'Correct: "have been working" – duration with result now. A past simple; C past perfect; D past cont.');
+        addQ('She ______ (wait) for two hours, but he hasn’t come.', ['waited', 'has been waiting', 'had waited', 'waits'], 1, 'Correct: "has been waiting" – emphasizes duration. A simple; C past perfect; D habit.');
+        addQ('How long ______ you ______ (learn) English?', ['do / learn', 'have / been learning', 'did / learn', 'are / learning'], 1, 'Correct: "have you been learning" – duration up to now. A present; C past; D cont. temporary not duration.');
+        addQ('The ground is wet. It ______ (rain).', ['rained', 'has been raining', 'had rained', 'rains'], 1, 'Correct: "has been raining" – recent activity with result. A past; C past perfect; D general.');
+        addQ('They ______ (travel) since January.', ['travel', 'have been travelling', 'travelled', 'had travelled'], 1, 'Correct: "have been travelling" – ongoing. A present; C past; D past perfect.');
+        addQ('I ______ (try) to call you all day!', ['tried', 'have been trying', 'had tried', 'try'], 1, 'Correct: "have been trying" – repeated attempts today. A simple; C past perfect; D habit.');
+        addQ('He’s out of breath because he ______ (run).', ['ran', 'has been running', 'had run', 'runs'], 1, 'Correct: "has been running" – result now. A past simple; C past perfect; D habit.');
+        addQ('She ______ (teach) at this school for five years.', ['teaches', 'has been teaching', 'taught', 'had taught'], 1, 'Correct: "has been teaching" – duration still continuing. A present habit; C past finished; D past perfect.');
+        addQ('Your eyes are red. ______ you ______ (cry)?', ['Did / cry', 'Have / been crying', 'Do / cry', 'Had / cried'], 1, 'Correct: "Have you been crying" – visible evidence. A past; C habit; D past perfect.');
+        addQ('I ______ (write) emails since 8 am.', ['wrote', 'have been writing', 'had written', 'write'], 1, 'Correct: "have been writing" – duration. A past; C past perfect; D habit.');
+        // 41-50 past simple
+        addQ('I ______ (see) a great film yesterday.', ['saw', 'have seen', 'see', 'was seeing'], 0, 'Correct: "saw" – past simple, yesterday. B present perfect; C present; D past continuous unusual.');
+        addQ('They ______ (go) to Lalibela last year.', ['went', 'have gone', 'go', 'were going'], 0, 'Correct: "went" – specific past. B present perfect; C present; D past cont. not typical.');
+        addQ('When ______ you ______ (arrive)?', ['did / arrive', 'have / arrived', 'do / arrive', 'were / arriving'], 0, 'Correct: "did you arrive" – simple past question. B present perfect; C present; D past cont.');
+        addQ('She ______ (not/attend) the meeting last Monday.', ['didn’t attend', 'hasn’t attended', 'doesn’t attend', 'wasn’t attend'], 0, 'Correct: "didn’t attend" – past simple negative. B perfect; C present; D ungrammatical.');
+        addQ('I ______ (be) very tired yesterday.', ['was', 'have been', 'am', 'were'], 0, 'Correct: "was" – past state. B present perfect; C present; D plural past.');
+        addQ('He ______ (buy) a new car two weeks ago.', ['bought', 'has bought', 'buys', 'had bought'], 0, 'Correct: "bought" – ago, past simple. B perfect; C present; D past perfect not needed.');
+        addQ('Where ______ you ______ (grow up)?', ['did / grow up', 'have / grown up', 'do / grow up', 'were / grown up'], 0, 'Correct: "did you grow up" – finished childhood. B present perfect (possible but specific? usually past); C present; D passive wrong.');
+        addQ('She ______ (read) that book last month.', ['read (past)', 'has read', 'reads', 'was reading'], 0, 'Correct: "read" (past form) – last month. B perfect; C present; D past cont. (not typical).');
+        addQ('I ______ (not/have) breakfast this morning.', ['didn’t have', 'haven’t had', 'don’t have', 'wasn’t having'], 0, 'Correct: "didn’t have" – finished morning. B if still morning ok but context general. likely past simple. Explanation: specific time (this morning) considered finished.');
+        addQ('They ______ (win) the match yesterday.', ['won', 'have won', 'win', 'were winning'], 0, 'Correct: "won" – finished. B present perfect; C present; D past cont.');
+        // 51-60 past continuous
+        addQ('I ______ (cook) when the phone rang.', ['cooked', 'was cooking', 'had cooked', 'have cooked'], 1, 'Correct: "was cooking" – interrupted. A simple; C past perfect; D present perfect.');
+        addQ('While they ______ (play) outside, it started to rain.', ['played', 'were playing', 'had played', 'have played'], 1, 'Correct: "were playing" – background. A simple simultaneous? awkward; C past perfect; D present perfect.');
+        addQ('She ______ (wait) for the bus when I saw her.', ['waited', 'was waiting', 'had waited', 'has waited'], 1, 'Correct: "was waiting" – in progress. A simple (would be consecutive); C past perfect; D present perfect.');
+        addQ('At 8 pm last night, we ______ (watch) a film.', ['watched', 'were watching', 'had watched', 'have watched'], 1, 'Correct: "were watching" – specific time. A simple; C past perfect; D present perfect.');
+        addQ('He ______ (fall) while he ______ (run).', ['fell / ran', 'was falling / was running', 'fell / was running', 'had fallen / ran'], 2, 'Correct: "fell / was running" – short action + background. A both simple; B awkward; D past perfect.');
+        addQ('I ______ (read) a book when you called.', ['read', 'was reading', 'have read', 'had read'], 1, 'Correct: "was reading" – interrupted. A simple; C present perfect; D past perfect.');
+        addQ('They ______ (drive) to Harar when the accident happened.', ['drove', 'were driving', 'had driven', 'have driven'], 1, 'Correct: "were driving" – in progress. A simple; C past perfect; D present perfect.');
+        addQ('The sun ______ (shine) when we left.', ['shone', 'was shining', 'had shone', 'has shone'], 1, 'Correct: "was shining" – background. A simple (possible but less common); C past perfect; D present perfect.');
+        addQ('While I ______ (clean) the house, I found some old photos.', ['cleaned', 'was cleaning', 'had cleaned', 'have cleaned'], 1, 'Correct: "was cleaning" – during that activity. A simple; C past perfect; D present perfect.');
+        addQ('It ______ (rain) heavily when the match started.', ['rained', 'was raining', 'had rained', 'has rained'], 1, 'Correct: "was raining" – at that time. A simple; C past perfect; D present perfect.');
+        // 61-70 past perfect
+        addQ('After I ______ (eat) dinner, I went to bed.', ['ate', 'had eaten', 'was eating', 'have eaten'], 1, 'Correct: "had eaten" – emphasizes completed before. A simple also possible but exam favours past perfect for clarity.');
+        addQ('She ______ (already/leave) when we arrived.', ['already left', 'had already left', 'was already leaving', 'has already left'], 1, 'Correct: "had already left" – before past moment. A simple; C cont; D present perfect.');
+        addQ('He thanked me for what I ______ (do).', ['did', 'had done', 'have done', 'was doing'], 1, 'Correct: "had done" – action before thanking. A simple; C present; D past cont.');
+        addQ('By the time we got there, the film ______ (start).', ['started', 'had started', 'has started', 'was starting'], 1, 'Correct: "had started" – before we arrived. A simple; C present; D cont.');
+        addQ('They ______ (never/see) such a big building before.', ['never saw', 'had never seen', 'have never seen', 'were never seeing'], 1, 'Correct: "had never seen" – up to that past moment. A simple; C present perfect; D ungrammatical.');
+        addQ('I ______ (not/finish) my assignment when the teacher asked.', ['didn’t finish', 'hadn’t finished', 'haven’t finished', 'wasn’t finishing'], 1, 'Correct: "hadn’t finished" – before past. A simple; C present; D past cont.');
+        addQ('After they ______ (build) the house, they sold it.', ['built', 'had built', 'have built', 'were building'], 1, 'Correct: "had built" – completed before selling. A simple; C present; D cont.');
+        addQ('She said she ______ (meet) him before.', ['met', 'had met', 'has met', 'was meeting'], 1, 'Correct: "had met" – past in past. A simple; C present perfect; D cont.');
+        addQ('The thieves escaped because someone ______ (warn) them.', ['warned', 'had warned', 'has warned', 'was warning'], 1, 'Correct: "had warned" – earlier. A simple ambiguous; C present; D cont.');
+        addQ('I ______ (hope) to see her, but she wasn’t there.', ['hoped', 'had hoped', 'have hoped', 'was hoping'], 1, 'Correct: "had hoped" – expectation before. A simple possible; B emphasises past hope; D was hoping also valid but B is fine. We choose B for past perfect.');
+        // 71-80 past perfect continuous
+        addQ('They were tired because they ______ (travel) all day.', ['travelled', 'had been travelling', 'have been travelling', 'were travelling'], 1, 'Correct: "had been travelling" – duration before past. A simple; C present perfect cont; D past cont (no duration emphasys).');
+        addQ('He ______ (wait) for 30 minutes before the bus arrived.', ['waited', 'had been waiting', 'has been waiting', 'was waiting'], 1, 'Correct: "had been waiting" – duration up to past. A simple; C present; D past cont not emphasising duration.');
+        addQ('I ______ (work) all morning, so I was exhausted.', ['worked', 'had been working', 'have been working', 'was working'], 1, 'Correct: "had been working" – cause before past. A simple; C present; D past cont.');
+        addQ('She ______ (study) for hours, so she knew the answer.', ['studied', 'had been studying', 'has studied', 'was studying'], 1, 'Correct: "had been studying" – duration. A simple; C present perfect; D past cont.');
+        addQ('They finally arrived, but we ______ (wait) since 2 pm.', ['waited', 'had been waiting', 'have been waiting', 'were waiting'], 1, 'Correct: "had been waiting" – past waiting until they arrived.');
+        addQ('The ground was wet. It ______ (rain) earlier.', ['rained', 'had been raining', 'has been raining', 'was raining'], 1, 'Correct: "had been raining" – earlier rain before past. A simple; C present; D past cont not earlier.');
+        addQ('He failed the exam even though he ______ (prepare) well.', ['prepared', 'had been preparing', 'has prepared', 'was preparing'], 1, 'Correct: "had been preparing" – continuous effort. A simple; C present; D past cont.');
+        addQ('I could smell cigarettes. Somebody ______ (smoke) in the room.', ['smoked', 'had been smoking', 'has been smoking', 'was smoking'], 1, 'Correct: "had been smoking" – evidence of past action. A simple; C present; D past cont.');
+        addQ('They ______ (argue) for an hour when I arrived.', ['argued', 'had been arguing', 'have argued', 'were arguing'], 1, 'Correct: "had been arguing" – duration before. A simple; C present; D past cont no duration.');
+        addQ('She ______ (teach) for 20 years by the time she retired.', ['taught', 'had been teaching', 'has taught', 'was teaching'], 1, 'Correct: "had been teaching" – duration up to retirement.');
+        // 81-90 future will / going to / present cont for future
+        addQ('I think it ______ (rain) tomorrow.', ['will rain', 'is raining', 'rains', 'is going to rain'], 0, 'Correct: "will rain" – prediction. B present cont for arrangement; C present simple timetable; D also possible but will more common with think. We accept A.');
+        addQ('Look at those clouds! It ______ (rain).', ['will rain', 'is going to rain', 'rains', 'is raining'], 1, 'Correct: "is going to rain" – evidence. A will less strong; C present; D now.');
+        addQ('I ______ (meet) my friend at 6 pm (arrangement).', ['will meet', 'am meeting', 'meet', 'going to meet'], 1, 'Correct: "am meeting" – present cont fixed arrangement. A will; C simple; D going to also possible but B typical.');
+        addQ('“I’m thirsty.” “I ______ (get) you some water.”', ['will get', 'am getting', 'get', 'going to get'], 0, 'Correct: "will get" – spontaneous decision. B arrangement; C habit; D intention not as natural.');
+        addQ('The bus ______ (leave) at 7 am tomorrow.', ['will leave', 'is leaving', 'leaves', 'is going to leave'], 2, 'Correct: "leaves" – timetable. A will; B arrangement; D also possible but present simple for schedule.');
+        addQ('I promise I ______ (not/tell) anyone.', ['won’t tell', 'am not telling', 'don’t tell', 'not going to tell'], 0, 'Correct: "won’t tell" – promise. B cont; C habit; D informal.');
+        addQ('Next year they ______ (build) a new school.', ['will build', 'are building', 'build', 'going to build'], 0, 'Correct: "will build" – future fact / plan. B arrangement; C present; D going to also ok but will is fine.');
+        addQ('She ______ (have) a baby in June.', ['will have', 'is having', 'has', 'going to have'], 1, 'Correct: "is having" – arrangement (birth). A will; C present; D also possible but B typical.');
+        addQ('Wait, I ______ (help) you with that.', ['will help', 'am helping', 'help', 'going to help'], 0, 'Correct: "will help" – instant decision.');
+        addQ('We ______ (visit) the museum next week (planned).', ['will visit', 'are visiting', 'visit', 'going to visit'], 1, 'Correct: "are visiting" – arrangement. A will; C simple; D also good, but B present continuous common.');
+        // 91-100 mixed error correction / advanced
+        addQ('By next month, she ______ (work) here for 10 years.', ['will work', 'will have worked', 'works', 'is going to work'], 1, 'Correct: "will have worked" – future perfect. A will (not duration); C present; D future intention.');
+        addQ('She ______ (be) to London twice.', ['was', 'has been', 'is', 'had been'], 1, 'Correct: "has been" – experience. A past specific; C present; D past perfect.');
+        addQ('When I was a child, I ______ (swim) every day.', ['swam', 'have swum', 'used to swim', 'was swimming'], 2, 'Correct: "used to swim" – past habit. A swam also possible; but used to is typical. Explanation: past habitual state.');
+        addQ('He ______ (work) for that company since 2010, and still does.', ['works', 'has been working', 'worked', 'had worked'], 1, 'Correct: "has been working" – duration till now. A present simple; C past; D past perfect.');
+        addQ('I ______ (call) you yesterday, but you didn’t answer.', ['called', 'have called', 'had called', 'was calling'], 0, 'Correct: "called" – past simple. B present perfect; C past perfect; D past cont.');
+        addQ('She ______ (already/write) the report before the meeting.', ['already wrote', 'had already written', 'has already written', 'was already writing'], 1, 'Correct: "had already written" – past before past.');
+        addQ('While the teacher ______ (explain), the students ______ (listen).', ['explained / listened', 'was explaining / were listening', 'had explained / listened', 'has explained / listen'], 1, 'Correct: "was explaining / were listening" – simultaneous past continuous.');
+        addQ('They ______ (know) each other for ages when they got married.', ['knew', 'had known', 'have known', 'were knowing'], 1, 'Correct: "had known" – past before past.');
+        addQ('I ______ (not/see) him since he left this morning.', ['didn’t see', 'haven’t seen', 'don’t see', 'hadn’t seen'], 1, 'Correct: "haven’t seen" – since + point, still relevant. A past; C present; D past perfect.');
+        addQ('At this time next week, we ______ (lie) on a beach.', ['lie', 'will be lying', 'will lie', 'are lying'], 1, 'Correct: "will be lying" – future continuous. A present; C will (simple); D present cont for future (maybe, but at this time next week specific).');
+
+        // ensure exactly 100
+        console.log(questionBank.length); // 100
+
+        // render area
+        const questionsDiv = document.getElementById('questionsArea');
+        const counterSpan = document.getElementById('counterDisplay');
+
+        // state: selected answers (index -> selected option index)
+        let selected = new Array(100).fill(null);
+
+        function renderAll() {
+            let html = '';
+            for (let i = 0; i < questionBank.length; i++) {
+                const q = questionBank[i];
+                const sel = selected[i];
+                html += `<div class="question-box" id="q-${i}">`;
+                html += `<div class="q-text"><span>${i+1}</span> ${q.text}</div>`;
+                html += `<div class="options">`;
+                for (let optIdx = 0; optIdx < q.options.length; optIdx++) {
+                    let optClass = 'option';
+                    if (sel === optIdx) optClass += ' selected';
+                    html += `<div class="${optClass}" data-qidx="${i}" data-oidx="${optIdx}">${String.fromCharCode(65+optIdx)}. ${q.options[optIdx]}</div>`;
+                }
+                html += `</div>`;
+                // explanation if selected not null
+                if (sel !== null) {
+                    let isCorrect = (sel === q.correct);
+                    let mark = isCorrect ? '✅ CORRECT' : '❌ WRONG';
+                    let explanation = q.explanation;
+                    html += `<div class="explain-box"><span class="${isCorrect ? 'correct-mark' : 'wrong-mark'}">${mark}</span> ${explanation}</div>`;
+                }
+                html += `</div>`;
+            }
+            questionsDiv.innerHTML = html;
+            counterSpan.innerText = `progress: ${selected.filter(s => s!==null).length} / 100 answered`;
+
+            // attach event listeners
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.addEventListener('click', function(e) {
+                    const qIdx = parseInt(this.dataset.qidx);
+                    const oIdx = parseInt(this.dataset.oidx);
+                    if (isNaN(qIdx) || isNaN(oIdx)) return;
+                    // update selected
+                    selected[qIdx] = oIdx;
+                    renderAll(); // re-render to show explanation
+                });
+            });
+        }
+
+        document.getElementById('resetQuiz').addEventListener('click', function() {
+            selected = new Array(100).fill(null);
+            renderAll();
+        });
+
+        renderAll();
+    })();
+</script>
+</body>
+</html>

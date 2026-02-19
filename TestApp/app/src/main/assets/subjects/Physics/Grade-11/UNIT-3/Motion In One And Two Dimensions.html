@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Grade 11 Physics · Motion (1D & 2D) · Mobile Optimized</title>
+    <style>
+        :root{
+            --bg-main:#0c1a2a;
+            --bg-card:#132b41;
+            --accent:#ffaa33;
+            --accent-soft:#ffcc66;
+            --text-main:#eaf4ff;
+            --text-soft:#c9def2;
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background:var(--bg-main);
+            color:var(--text-main);
+            line-height:1.6;
+            padding:8px;
+            min-height:100vh;
+        }
+        .master-chapter{
+            max-width:1200px;
+            margin:0 auto;
+            background:#0f2538;
+            border-radius:24px;
+            padding:clamp(16px, 4vw, 32px);
+            box-shadow:0 20px 40px rgba(0,0,0,.5);
+        }
+        h1{
+            font-size:clamp(1.6rem,5vw,2.6rem);
+            font-weight:800;
+            color:#cfe9ff;
+            margin-bottom:8px;
+            line-height:1.2;
+        }
+        .chapter-badge{
+            font-size:clamp(1rem,3vw,1.2rem);
+            color:var(--accent-soft);
+            border-left:6px solid var(--accent);
+            padding-left:12px;
+            margin-bottom:20px;
+        }
+        /* tabs */
+        .section-tabs{
+            display:flex;
+            flex-wrap:wrap;
+            gap:8px;
+            justify-content:center;
+            margin:20px 0 25px;
+        }
+        .tab-btn{
+            flex:1 1 140px;
+            max-width:200px;
+            padding:12px 12px;
+            border-radius:999px;
+            border:2px solid #3b6f9a;
+            background:#183b5a;
+            color:#fff;
+            font-weight:700;
+            font-size:clamp(0.9rem,2.5vw,1.1rem);
+            cursor:pointer;
+            transition:0.2s;
+            text-align:center;
+        }
+        .tab-btn.active{
+            background:var(--accent);
+            color:#102030;
+            border-color:var(--accent);
+        }
+        /* panels */
+        .panel{display:none}
+        .panel.active-panel{display:block}
+
+        /* notes cards */
+        .section-card{
+            background:var(--bg-card);
+            border-radius:20px;
+            padding:clamp(16px,4vw,28px);
+            margin:22px 0;
+            border:1px solid #295b82;
+        }
+        .section-card h2{
+            font-size:clamp(1.3rem,4vw,2rem);
+            color:var(--accent-soft);
+            margin-bottom:12px;
+            border-bottom:2px solid var(--accent);
+            display:inline-block;
+            padding-bottom:5px;
+        }
+        .concept-block{
+            background:#1b405f;
+            border-left:6px solid var(--accent);
+            border-radius:16px;
+            padding:16px;
+            margin:16px 0;
+        }
+        .concept-block h3{
+            font-size:clamp(1.1rem,3vw,1.5rem);
+            color:var(--accent-soft);
+            margin-bottom:8px;
+        }
+        .note-list{
+            list-style:none;
+            margin-top:10px;
+        }
+        .note-list li{
+            margin:10px 0;
+            padding-left:22px;
+            position:relative;
+        }
+        .note-list li::before{
+            content:"•";
+            position:absolute;
+            left:0;
+            color:var(--accent);
+            font-size:1.4rem;
+            line-height:1;
+        }
+        .highlight-box, .example-box{
+            background:#143652;
+            border-left:6px solid var(--accent);
+            border-radius:16px;
+            padding:14px 16px;
+            margin:16px 0;
+            font-size:clamp(0.95rem,2.5vw,1.1rem);
+        }
+        .example-box strong{
+            color:var(--accent-soft);
+        }
+        .figure-place{
+            margin:14px 0;
+            padding:12px;
+            border:2px dashed var(--accent);
+            border-radius:14px;
+            text-align:center;
+            font-style:italic;
+            color:#a9c9e8;
+        }
+
+        /* exam panel */
+        .exam-paper{
+            background:#0e2233;
+            border-radius:22px;
+            padding:clamp(16px,4vw,28px);
+        }
+        .question-card{
+            background:#1a3e5d;
+            border-radius:20px;
+            padding:18px;
+            margin:18px 0;
+        }
+        .q-num{
+            display:inline-block;
+            background:var(--accent);
+            color:#102030;
+            padding:6px 16px;
+            border-radius:999px;
+            font-weight:800;
+        }
+        .q-text{
+            margin:14px 0;
+            font-size:clamp(0.95rem,2.5vw,1.15rem);
+        }
+        .btn-reveal{
+            background:#2b6c9e;
+            border:none;
+            color:#fff;
+            padding:10px 18px;
+            border-radius:999px;
+            font-weight:700;
+            cursor:pointer;
+            font-size:0.95rem;
+        }
+        .explain-hint{
+            display:none;
+            margin-top:14px;
+            background:#143652;
+            border-left:6px solid var(--accent);
+            padding:14px;
+            border-radius:16px;
+        }
+        .explain-hint.show{display:block}
+        footer{
+            margin-top:30px;
+            text-align:center;
+            font-size:0.9rem;
+            color:#9fbcd8;
+        }
+        hr{
+            border:2px dotted #295b82;
+            margin:20px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="master-chapter">
+    <h1>⚡ UNIT 3 · MOTION IN ONE & TWO DIMENSIONS</h1>
+    <div class="chapter-badge">Advanced Notes + 40 Exam-Style Questions · Mobile Ready</div>
+
+    <div class="section-tabs">
+        <button class="tab-btn active" data-tab="notes">📘 Notes</button>
+        <button class="tab-btn" data-tab="exam">🎯 Exam</button>
+    </div>
+
+    <!-- ================ NOTES PANEL ================ -->
+    <div id="notes" class="panel active-panel">
+        <div class="section-card">
+            <h2>🔭 Introduction</h2>
+            <div class="highlight-box">
+                Everything moves. Motion is relative – a body may be at rest relative to one reference and in motion relative to another. This unit covers uniformly accelerated motion, equations of motion, graphs, vertical motion under gravity, and uniform circular motion (2D).
+            </div>
+        </div>
+
+        <!-- 3.1 -->
+        <div class="section-card">
+            <h2>📐 3.1 Uniformly Accelerated Motion in 1D</h2>
+            <div class="concept-block">
+                <h3>Acceleration</h3>
+                <p>Vector: rate of change of velocity. \( \vec{a} = \frac{\Delta \vec{v}}{\Delta t} \) (m/s²).<br>Uniform acceleration: velocity changes by equal amounts in equal time intervals.</p>
+                <p><strong>Average acceleration:</strong> \(a_{av} = \frac{v_f - v_i}{\Delta t}\)<br><strong>Instantaneous acceleration:</strong> \(a = \lim_{\Delta t \to 0} \frac{\Delta v}{\Delta t}\)</p>
+            </div>
+            <div class="example-box">
+                <strong>Example 3.1:</strong> Car from rest to 20 m/s in 6 s → a = 3.33 m/s².<br>
+                <strong>Example 3.2:</strong> v(t)=t²-2t → a(t)=2t-2 → at t=2 s, a=2 m/s².
+            </div>
+            <div class="figure-place">[Cheetah acceleration – 96.6 km/h in 3 s → a≈8.94 m/s²]</div>
+        </div>
+
+        <!-- 3.2 Equations -->
+        <div class="section-card">
+            <h2>📈 3.2 Equations of Motion (1D constant a)</h2>
+            <div class="concept-block">
+                <ul class="note-list">
+                    <li>\(v_f = v_i + at\)</li>
+                    <li>\(s = v_i t + \frac12 a t^2\)</li>
+                    <li>\(s = v_f t - \frac12 a t^2\)</li>
+                    <li>\(s = \frac{v_i + v_f}{2} t\)</li>
+                    <li>\(v_f^2 = v_i^2 + 2 a s\)</li>
+                </ul>
+                <p>All are vector equations; direction matters.</p>
+            </div>
+            <div class="example-box">
+                <strong>Example 3.3:</strong> Car 0→20 m/s in 8 s → a=2.5 m/s², s=80 m.<br>
+                <strong>Example 3.4:</strong> Plane lands 40 m/s, a=-1.5 m/s² → stop distance 533 m, time 26.7 s.
+            </div>
+            <div class="concept-block">
+                <h3>Stopping distance</h3>
+                <p>\(s_{braking} = \frac{v^2}{2a} = \frac{v^2}{2\mu g}\) ; total stopping = reaction distance + braking = \(v t_r + \frac{v^2}{2\mu g}\)</p>
+                <div class="figure-place">[stopping distance diagram]</div>
+            </div>
+        </div>
+
+        <!-- 3.3 Graphs -->
+        <div class="section-card">
+            <h2>📊 3.3 Graphs of Motion</h2>
+            <div class="concept-block">
+                <h3>s–t graph</h3>
+                <p>Slope = velocity. Parabola → accelerated motion.</p>
+                <h3>v–t graph</h3>
+                <p>Slope = acceleration. Area under graph = displacement.</p>
+                <h3>a–t graph</h3>
+                <p>Horizontal line for constant a.</p>
+            </div>
+            <div class="example-box">
+                <strong>Example 3.5–3.7:</strong> Detailed analysis of a multi‑stage motion (accelerate, constant, decelerate, reverse) – area under v‑t gives total displacement.
+            </div>
+        </div>
+
+        <!-- 3.4 Vertical Motion -->
+        <div class="section-card">
+            <h2>⬇️ 3.4 Vertical Motion / Free Fall</h2>
+            <div class="concept-block">
+                <p>Acceleration \(g = 9.8\,\text{m/s}^2\) downward. Equations same with \(a = \pm g\).</p>
+                <ul class="note-list">
+                    <li>Upward: \(v = u - gt\), \(y = ut - \frac12 gt^2\), \(v^2 = u^2 - 2gy\)</li>
+                    <li>Downward: \(v = u + gt\), \(y = ut + \frac12 gt^2\)</li>
+                </ul>
+            </div>
+            <div class="example-box">
+                <strong>Example 3.8:</strong> Particle thrown up at 20 m/s from 15 m building. Times to reach various levels – quadratic solutions.<br>
+                <strong>Terminal velocity:</strong> When drag balances weight → constant velocity.
+            </div>
+        </div>
+
+        <!-- 3.5 Circular Motion -->
+        <div class="section-card">
+            <h2>🔄 3.5 Uniform Circular Motion</h2>
+            <div class="concept-block">
+                <h3>Angular quantities</h3>
+                <p>\(\theta = \frac{s}{r}\) (rad), \(\omega = \frac{\Delta \theta}{\Delta t}\) (rad/s), \(v_t = \omega r\)</p>
+                <h3>Centripetal acceleration</h3>
+                <p>\(a_c = \frac{v^2}{r} = \omega^2 r\) (always toward center)</p>
+                <h3>Centripetal force</h3>
+                <p>\(F_c = m a_c = m\frac{v^2}{r}\) – provided by tension, friction, banking, etc.</p>
+            </div>
+            <div class="example-box">
+                <strong>Example 3.9:</strong> ω=40 rad/s, r=0.3 m → v_t=12 m/s.<br>
+                <strong>Example 3.10:</strong> Car 14 m/s, r=20 m → ω=0.7 rad/s, T=8.97 s.<br>
+                <strong>Example 3.14:</strong> Curve μ=0.7, r=40 m → v_max=√(μ g r)=16.7 m/s.
+            </div>
+        </div>
+
+        <!-- summary -->
+        <div class="section-card">
+            <h2>📌 Key Equations Summary</h2>
+            <div class="highlight-box">
+                1D motion: \(v=u+at,\; s=ut+\frac12 at^2,\; v^2=u^2+2as\)<br>
+                Free fall: \(g=9.8\) m/s²<br>
+                Circular: \(a_c=v^2/r\), \(v=\omega r\), \(F_c=mv^2/r\)
+            </div>
+        </div>
+    </div> <!-- end notes panel -->
+
+    <!-- ================ EXAM PANEL ================ -->
+    <div id="exam" class="panel">
+        <div class="exam-paper">
+            <h2 style="color:#ffcc66; margin-bottom:20px;">🎯 40 Advanced Motion Problems</h2>
+
+            <!-- Q1 to Q40 with unique ids ans301..ans340 -->
+            <div class="question-card"><span class="q-num">Q1</span><div class="q-text">A car accelerates from rest at 2 m/s² for 5 s, then continues at constant speed for 8 s, then decelerates at 1.5 m/s² until stop. Find total distance travelled.</div><button class="btn-reveal" onclick="toggleAnswer(301)">show solution</button><div id="ans301" class="explain-hint"><strong>✅ solution:</strong> Stage1: s1 = 0·5 + ½·2·25 = 25 m, v1=10 m/s. Stage2: s2 = 10·8 = 80 m. Stage3: t3 = 10/1.5 = 6.667 s, s3 = 10·6.667 - ½·1.5·(6.667)² = 33.33 m. Total = 25+80+33.33 = 138.33 m.</div></div>
+            <div class="question-card"><span class="q-num">Q2</span><div class="q-text">A stone is thrown vertically upward with 15 m/s from a cliff 50 m high. How long does it take to hit the ground below? (g=9.8 m/s²)</div><button class="btn-reveal" onclick="toggleAnswer(302)">show solution</button><div id="ans302" class="explain-hint"><strong>✅ solution:</strong> Use s = ut - ½gt² with s = -50 m, u=+15. -50 = 15t -4.9t² → 4.9t² -15t -50 =0 → t = [15±√(225+980)]/9.8 = [15±√1205]/9.8; √1205≈34.7; positive t = (15+34.7)/9.8 = 5.07 s.</div></div>
+            <div class="question-card"><span class="q-num">Q3</span><div class="q-text">A body is projected vertically up with velocity 20 m/s. At what time will its kinetic energy be half of the initial kinetic energy? (g=10 m/s²)</div><button class="btn-reveal" onclick="toggleAnswer(303)">show solution</button><div id="ans303" class="explain-hint"><strong>✅ solution:</strong> Initial KE = ½m(20)². Half KE means v² = 200 → v = ±√200 ≈ ±14.14 m/s. v = 20 - gt → 14.14 = 20 -10t → t=0.586 s (up) ; or -14.14 = 20-10t → t=3.414 s (down). Both possible.</div></div>
+            <div class="question-card"><span class="q-num">Q4</span><div class="q-text">A car moving at 30 m/s applies brakes and stops after 5 s. Find (a) deceleration, (b) stopping distance.</div><button class="btn-reveal" onclick="toggleAnswer(304)">show solution</button><div id="ans304" class="explain-hint"><strong>✅ solution:</strong> (a) a = (0-30)/5 = -6 m/s². (b) s = 30·5 + ½(-6)·25 = 150 -75 = 75 m.</div></div>
+            <div class="question-card"><span class="q-num">Q5</span><div class="q-text">A ball is dropped from a height of 80 m. At the same instant, another ball is thrown upward from ground with 40 m/s. When and where do they meet? (g=10 m/s²)</div><button class="btn-reveal" onclick="toggleAnswer(305)">show solution</button><div id="ans305" class="explain-hint"><strong>✅ solution:</strong> Ball A: y = 80 - 5t². Ball B: y = 40t -5t². Set equal: 80 -5t² = 40t -5t² → 80 = 40t → t=2 s. Height: y = 80-20 = 60 m above ground.</div></div>
+            <div class="question-card"><span class="q-num">Q6</span><div class="q-text">A particle moves along x‑axis with acceleration a = 2t (m/s²). At t=0, x=0, v=4 m/s. Find velocity and position at t=3 s.</div><button class="btn-reveal" onclick="toggleAnswer(306)">show solution</button><div id="ans306" class="explain-hint"><strong>✅ solution:</strong> a = dv/dt = 2t → v = ∫2t dt = t² + C; v(0)=4 → C=4 → v = t²+4. At t=3, v=9+4=13 m/s. x = ∫v dt = ∫(t²+4)dt = t³/3 +4t + D; x(0)=0 → D=0 → x = t³/3+4t; at t=3, x=27/3+12=9+12=21 m.</div></div>
+            <div class="question-card"><span class="q-num">Q7</span><div class="q-text">A stone is thrown horizontally at 15 m/s from a 100 m high cliff. How far from the base does it land? (g=10 m/s²)</div><button class="btn-reveal" onclick="toggleAnswer(307)">show solution</button><div id="ans307" class="explain-hint"><strong>✅ solution:</strong> Time to fall: 100 = ½·10·t² → t = √20 ≈ 4.472 s. Horizontal distance = 15·4.472 = 67.08 m.</div></div>
+            <div class="question-card"><span class="q-num">Q8</span><div class="q-text">A ball is kicked at 20 m/s, 30° above horizontal. Find (a) max height, (b) time of flight, (c) range. (g=10)</div><button class="btn-reveal" onclick="toggleAnswer(308)">show solution</button><div id="ans308" class="explain-hint"><strong>✅ solution:</strong> ux=20cos30=17.32 m/s, uy=20sin30=10 m/s. (a) H = uy²/2g = 100/20 = 5 m. (b) T = 2uy/g = 20/10 = 2 s. (c) R = ux·T = 17.32·2 = 34.64 m.</div></div>
+            <div class="question-card"><span class="q-num">Q9</span><div class="q-text">A train starts from rest and accelerates uniformly at 0.5 m/s². What distance does it cover in the 10th second of motion?</div><button class="btn-reveal" onclick="toggleAnswer(309)">show solution</button><div id="ans309" class="explain-hint"><strong>✅ solution:</strong> Distance in nth second: s_n = u + a/2 (2n-1). Here u=0, a=0.5, n=10 → s_10 = 0 + 0.25(19) = 4.75 m.</div></div>
+            <div class="question-card"><span class="q-num">Q10</span><div class="q-text">A stone is thrown vertically upward and returns to the thrower in 6 s. Find (a) initial velocity, (b) max height. (g=10)</div><button class="btn-reveal" onclick="toggleAnswer(310)">show solution</button><div id="ans310" class="explain-hint"><strong>✅ solution:</strong> Total time T = 2u/g → 6 = 2u/10 → u = 30 m/s. H = u²/2g = 900/20 = 45 m.</div></div>
+            <div class="question-card"><span class="q-num">Q11</span><div class="q-text">A car moving at 20 m/s overtakes another car moving at 15 m/s. The faster car brakes at 2 m/s². How far must it travel to be 50 m ahead of the slower car? (slower maintains speed)</div><button class="btn-reveal" onclick="toggleAnswer(311)">show solution</button><div id="ans311" class="explain-hint"><strong>✅ solution:</strong> Relative initial speed = 5 m/s. Deceleration relative = -2 m/s². Required relative displacement = 50 m. Using s_rel = u_rel t + ½ a_rel t² → 50 = 5t - t² → t² -5t +50=0 → discriminant negative → impossible with constant braking. Max relative displacement occurs when relative velocity zero: 5 -2t=0 → t=2.5 s, s_rel =5·2.5 -1·(2.5)² =12.5 -6.25=6.25 m max. So never 50 m.</div></div>
+            <div class="question-card"><span class="q-num">Q12</span><div class="q-text">A stone is thrown horizontally from the top of a building 45 m high. If it strikes the ground at an angle of 45°, find the initial speed. (g=10)</div><button class="btn-reveal" onclick="toggleAnswer(312)">show solution</button><div id="ans312" class="explain-hint"><strong>✅ solution:</strong> Time to fall: t = √(2h/g)=√9=3 s. Final vertical velocity vy = gt = 30 m/s. Strike angle 45° means tan45 = vy/vx =1 → vx = vy = 30 m/s. So initial horizontal speed = 30 m/s.</div></div>
+            <div class="question-card"><span class="q-num">Q13</span><div class="q-text">A particle moves in a circle of radius 2 m with constant speed 4 m/s. Find centripetal acceleration and period.</div><button class="btn-reveal" onclick="toggleAnswer(313)">show solution</button><div id="ans313" class="explain-hint"><strong>✅ solution:</strong> a_c = v²/r = 16/2 = 8 m/s². Period T = 2πr/v = 4π/4 = π ≈ 3.14 s.</div></div>
+            <div class="question-card"><span class="q-num">Q14</span><div class="q-text">A 0.5 kg ball is whirled in a horizontal circle at the end of a 1 m string. If the string can withstand a maximum tension of 50 N, what is the maximum speed possible?</div><button class="btn-reveal" onclick="toggleAnswer(314)">show solution</button><div id="ans314" class="explain-hint"><strong>✅ solution:</strong> T_max = m v²/r → v² = T_max·r/m = 50·1/0.5 = 100 → v = 10 m/s.</div></div>
+            <div class="question-card"><span class="q-num">Q15</span><div class="q-text">A car travels on a banked curve of radius 80 m at 30 m/s. What should be the banking angle so that no friction is needed? (g=10)</div><button class="btn-reveal" onclick="toggleAnswer(315)">show solution</button><div id="ans315" class="explain-hint"><strong>✅ solution:</strong> tanθ = v²/(rg) = 900/(80·10)=900/800=1.125 → θ = 48.4°.</div></div>
+            <div class="question-card"><span class="q-num">Q16</span><div class="q-text">A stone is dropped from a height h. It covers the last 30 m in 1 s. Find h. (g=10)</div><button class="btn-reveal" onclick="toggleAnswer(316)">show solution</button><div id="ans316" class="explain-hint"><strong>✅ solution:</strong> Let t be total time. Then ½gt² - ½g(t-1)² = 30 → 5[t² - (t² -2t+1)] =30 → 5(2t-1)=30 → 10t -5 =30 → 10t=35 → t=3.5 s. h = ½·10·(3.5)² =5·12.25=61.25 m.</div></div>
+            <div class="question-card"><span class="q-num">Q17</span><div class="q-text">Two trains, each 100 m long, are running on parallel tracks. One overtakes the other in 10 s when they go in same direction, and crosses in 5 s when opposite. Find speeds.</div><button class="btn-reveal" onclick="toggleAnswer(317)">show solution</button><div id="ans317" class="explain-hint"><strong>✅ solution:</strong> Let v1>v2. Same direction: relative speed = v1-v2, distance = 200 m → v1-v2 = 200/10 =20. Opposite: relative speed = v1+v2, distance = 200 m → v1+v2 = 200/5 =40. Solve: v1=30 m/s, v2=10 m/s.</div></div>
+            <div class="question-card"><span class="q-num">Q18</span><div class="q-text">A car accelerates from rest at constant a for 5 s, then constant speed for 10 s, then decelerates at 2 m/s² to stop. Total distance = 500 m. Find a.</div><button class="btn-reveal" onclick="toggleAnswer(318)">show solution</button><div id="ans318" class="explain-hint"><strong>✅ solution:</strong> Stage1: s1=½a·25=12.5a, v1=5a. Stage2: s2=5a·10=50a. Stage3: t3 = (5a)/2 =2.5a, s3= v1·t3 -½·2·t3² =5a·2.5a - (2.5a)² =12.5a² -6.25a²=6.25a². Total: 12.5a+50a+6.25a² = 62.5a +6.25a² =500 → divide 6.25: 10a + a² =80 → a²+10a-80=0 → a = [-10 ± √(100+320)]/2 = (-10+20.49)/2 =5.245 m/s².</div></div>
+            <div class="question-card"><span class="q-num">Q19</span><div class="q-text">A ball is thrown horizontally at 10 m/s from a height of 20 m. What is the magnitude of velocity just before striking the ground? (g=10)</div><button class="btn-reveal" onclick="toggleAnswer(319)">show solution</button><div id="ans319" class="explain-hint"><strong>✅ solution:</strong> Time t = √(2h/g)=√4=2 s. vy = gt =20 m/s. vx constant =10. Final speed = √(10²+20²)=√500=22.36 m/s.</div></div>
+            <div class="question-card"><span class="q-num">Q20</span><div class="q-text">A particle moves in a circle of radius 5 m with angular velocity ω = 4t rad/s. Find centripetal acceleration at t=2 s.</div><button class="btn-reveal" onclick="toggleAnswer(320)">show solution</button><div id="ans320" class="explain-hint"><strong>✅ solution:</strong> ω=4·2=8 rad/s. v=ωr=40 m/s. a_c = v²/r =1600/5=320 m/s². (or a_c = ω²r =64·5=320).</div></div>
+            <div class="question-card"><span class="q-num">Q21</span><div class="q-text">A stone is thrown upward at 30 m/s. Find the distance travelled in the 4th second. (g=10)</div><button class="btn-reveal" onclick="toggleAnswer(321)">show solution</button><div id="ans321" class="explain-hint"><strong>✅ solution:</strong> For nth second upward: s_n = u - g/2 (2n-1). n=4 → s_4 = 30 -5·7 =30-35 = -5 m. Negative means it has come back down past the start? Actually formula works for upward motion until apex; at t=3.06 s apex, so 4th second includes downward. Better use displacement: position at t=3: 30·3 -5·9=90-45=45 m; at t=4: 120-80=40 m. Distance travelled in 4th second = |40-45| =5 m downward. So distance =5 m.</div></div>
+            <div class="question-card"><span class="q-num">Q22</span><div class="q-text">A body is projected at angle θ such that its horizontal range equals maximum height. Find tanθ.</div><button class="btn-reveal" onclick="toggleAnswer(322)">show solution</button><div id="ans322" class="explain-hint"><strong>✅ solution:</strong> Range R = u²sin2θ/g, max height H = u²sin²θ/(2g). Set R = H → (u²·2sinθcosθ)/g = u² sin²θ/(2g) → 4cosθ = sinθ → tanθ = 4.</div></div>
+            <div class="question-card"><span class="q-num">Q23</span><div class="q-text">A motorcyclist goes around a vertical circle of radius 5 m inside a well of death. What minimum speed at the top to avoid falling? (g=10)</div><button class="btn-reveal" onclick="toggleAnswer(323)">show solution</button><div id="ans323" class="explain-hint"><strong>✅ solution:</strong> At top, mg + N = mv²/r. Minimum speed when N=0 → v² = rg =5·10=50 → v≈7.07 m/s.</div></div>
+            <div class="question-card"><span class="q-num">Q24</span><div class="q-text">A stone is dropped into a well and the splash is heard after 3.91 s. If speed of sound is 340 m/s, find depth of well. (g=10)</div><button class="btn-reveal" onclick="toggleAnswer(324)">show solution</button><div id="ans324" class="explain-hint"><strong>✅ solution:</strong> t1 = fall time = √(2h/g), t2 = h/340. t1+t2 = 3.91. Let h = 5t1². Then t1 + 5t1²/340 = 3.91 → t1 + (5/340)t1² = 3.91 → multiply 340: 340t1 +5t1² = 1329.4 → 5t1²+340t1-1329.4=0 → t1≈3.0 s (positive root). Then h = 5·9=45 m.</div></div>
+            <div class="question-card"><span class="q-num">Q25</span><div class="q-text">A particle is projected with 25 m/s at 53° (sin53=0.8, cos53=0.6). Find radius of curvature at the highest point.</div><button class="btn-reveal" onclick="toggleAnswer(325)">show solution</button><div id="ans325" class="explain-hint"><strong>✅ solution:</strong> At top, v = ucosθ =15 m/s. Normal acceleration = g. Radius ρ = v²/g =225/10=22.5 m.</div></div>
+            <div class="question-card"><span class="q-num">Q26</span><div class="q-text">A car accelerates from rest at 3 m/s² for 6 s, then at 2 m/s² for 4 s. Find final velocity and total distance.</div><button class="btn-reveal" onclick="toggleAnswer(326)">show solution</button><div id="ans326" class="explain-hint"><strong>✅ solution:</strong> Stage1: v1=3·6=18 m/s, s1=½·3·36=54 m. Stage2: v2=18+2·4=26 m/s, s2=18·4+½·2·16=72+16=88 m. Total s=142 m, v=26 m/s.</div></div>
+            <div class="question-card"><span class="q-num">Q27</span><div class="q-text">A stone is thrown vertically up with 20 m/s. At what height will its speed be half of its initial?</div><button class="btn-reveal" onclick="toggleAnswer(327)">show solution</button><div id="ans327" class="explain-hint"><strong>✅ solution:</strong> v² = u² -2gh. v=10 → 100=400-20h → 20h=300 → h=15 m.</div></div>
+            <div class="question-card"><span class="q-num">Q28</span><div class="q-text">A wheel of radius 0.5 m accelerates from rest to 10 rad/s in 4 s. Find angular acceleration and tangential acceleration at rim.</div><button class="btn-reveal" onclick="toggleAnswer(328)">show solution</button><div id="ans328" class="explain-hint"><strong>✅ solution:</strong> α = Δω/Δt =10/4=2.5 rad/s². a_t = αr = 2.5·0.5 =1.25 m/s².</div></div>
+            <div class="question-card"><span class="q-num">Q29</span><div class="q-text">A ball is thrown at 40° to horizontal. It reaches maximum height in 2 s. Find initial speed and range. (g=10)</div><button class="btn-reveal" onclick="toggleAnswer(329)">show solution</button><div id="ans329" class="explain-hint"><strong>✅ solution:</strong> uy = u sin40. Time to top = u sin40/g = 2 → u sin40 = 20 → u =20/0.643=31.1 m/s. Range R = u² sin80 /g = (967·0.985)/10 ≈95.3 m.</div></div>
+            <div class="question-card"><span class="q-num">Q30</span><div class="q-text">A particle is projected so that its horizontal range is 4 times the maximum height. Find projection angle.</div><button class="btn-reveal" onclick="toggleAnswer(330)">show solution</button><div id="ans330" class="explain-hint"><strong>✅ solution:</strong> R = 4H → (2u²sinθcosθ)/g = 4(u²sin²θ)/(2g) → cancel u²/g: 2sinθcosθ = 2 sin²θ → cosθ = sinθ → tanθ=1 → θ=45°.</div></div>
+            <div class="question-card"><span class="q-num">Q31</span><div class="q-text">A 0.2 kg ball is whirled in a vertical circle radius 0.5 m with constant speed 4 m/s. Find tension at the lowest point. (g=10)</div><button class="btn-reveal" onclick="toggleAnswer(331)">show solution</button><div id="ans331" class="explain-hint"><strong>✅ solution:</strong> At bottom, T - mg = mv²/r → T = m(g + v²/r) = 0.2(10 + 16/0.5)=0.2(10+32)=0.2·42=8.4 N.</div></div>
+            <div class="question-card"><span class="q-num">Q32</span><div class="q-text">A car moving at 20 m/s sees an obstacle 100 m ahead and decelerates at 2 m/s². Will it stop in time?</div><button class="btn-reveal" onclick="toggleAnswer(332)">show solution</button><div id="ans332" class="explain-hint"><strong>✅ solution:</strong> stopping distance = v²/(2a) = 400/4 =100 m. Exactly at the obstacle. It stops just at it.</div></div>
+            <div class="question-card"><span class="q-num">Q33</span><div class="q-text">A stone is thrown horizontally at 12 m/s from a height 20 m. Find the speed after 1 s. (g=10)</div><button class="btn-reveal" onclick="toggleAnswer(333)">show solution</button><div id="ans333" class="explain-hint"><strong>✅ solution:</strong> vy = gt =10 m/s. vx=12. speed = √(144+100)=√244=15.62 m/s.</div></div>
+            <div class="question-card"><span class="q-num">Q34</span><div class="q-text">A car travels around a circular track of radius 100 m at constant speed 30 m/s. Find centripetal acceleration and the minimum coefficient of friction needed to avoid skidding. (g=10)</div><button class="btn-reveal" onclick="toggleAnswer(334)">show solution</button><div id="ans334" class="explain-hint"><strong>✅ solution:</strong> a_c = v²/r = 900/100 =9 m/s². μ_min = a_c/g = 0.9.</div></div>
+            <div class="question-card"><span class="q-num">Q35</span><div class="q-text">A stone is thrown at angle 30° with speed 20 m/s. Find the time when velocity becomes perpendicular to initial velocity.</div><button class="btn-reveal" onclick="toggleAnswer(335)">show solution</button><div id="ans335" class="explain-hint"><strong>✅ solution:</strong> Initial velocity vector: (u cos30, u sin30). At time t, v = (u cos30, u sin30 - gt). Perpendicular condition: dot =0 → u²cos²30 + u sin30(u sin30 - gt)=0 → u²(cos²30+ sin²30) - u sin30 g t =0 → u² - u g t sin30 =0 → t = u/(g sin30) = 20/(10·0.5)=20/5=4 s.</div></div>
+            <div class="question-card"><span class="q-num">Q36</span><div class="q-text">A particle moves in x-y plane with x=3t, y=4t-5t² (SI). Find velocity and acceleration at t=2 s.</div><button class="btn-reveal" onclick="toggleAnswer(336)">show solution</button><div id="ans336" class="explain-hint"><strong>✅ solution:</strong> vx=3, vy=4-10t → at t=2, vy=4-20=-16, so v=(3,-16) m/s. ax=0, ay=-10, so a=(0,-10) m/s².</div></div>
+            <div class="question-card"><span class="q-num">Q37</span><div class="q-text">A stone is thrown upward with speed u. Another stone is thrown downward from same height with same speed u simultaneously. Find time when they meet.</div><button class="btn-reveal" onclick="toggleAnswer(337)">show solution</button><div id="ans337" class="explain-hint"><strong>✅ solution:</strong> They start at same point? If both from same point, they never meet (one goes up, one down). If one from ground up, other from height H down: up: y1=ut-½gt², down: y2=H-ut-½gt². Set equal: ut = H-ut → t=H/(2u). Requires H. Without H, cannot determine. Usually such problem provides meeting height or time.</div></div>
+            <div class="question-card"><span class="q-num">Q38</span><div class="q-text">A ball is dropped from a height of 5 m onto a concrete floor and rebounds to 3.2 m. Find coefficient of restitution.</div><button class="btn-reveal" onclick="toggleAnswer(338)">show solution</button><div id="ans338" class="explain-hint"><strong>✅ solution:</strong> Speed just before impact: v = √(2gh) = √(100)=10 m/s. Speed just after: u = √(2g·3.2)=√64=8 m/s. e = u/v = 0.8.</div></div>
+            <div class="question-card"><span class="q-num">Q39</span><div class="q-text">A projectile covers range R when fired at 30°. For same initial speed, find other angle that gives same range.</div><button class="btn-reveal" onclick="toggleAnswer(339)">show solution</button><div id="ans339" class="explain-hint"><strong>✅ solution:</strong> Range same for complementary angles → 60°.</div></div>
+            <div class="question-card"><span class="q-num">Q40</span><div class="q-text">A particle moves in a circle radius 2 m with angular acceleration α=3 rad/s². At t=0, ω=2 rad/s. Find tangential and centripetal acceleration at t=2 s.</div><button class="btn-reveal" onclick="toggleAnswer(340)">show solution</button><div id="ans340" class="explain-hint"><strong>✅ solution:</strong> ω = 2 + 3·2 = 8 rad/s. a_t = α r = 3·2 =6 m/s². a_c = ω²r =64·2=128 m/s².</div></div>
+           <dev class="question-card"><span class="q-num">Q41</span><div class="q-text">A 5 kg block compresses a spring 0.3 m (k=1000 N/m) and is released on a frictionless surface. Find speed when spring is uncompressed.</div><button class="btn-reveal" onclick="toggleAnswer(441)">show solution</button><div id="ans441" class="explain-hint"><strong>✅ solution:</strong> ½kA² = ½mv² → v = A√(k/m)=0.3√(1000/5)=0.3√200=0.3·14.14=4.24 m/s.</div></div>
+        <div class="question-card"><span class="q-num">Q42</span><div class="q-text">A 50 kg person jumps from 1.5 m and lands with knees bent, stopping in 0.3 s. Find average force on legs. (g=10)</div><button class="btn-reveal" onclick="toggleAnswer(442)">show solution</button><div id="ans442" class="explain-hint"><strong>✅ solution:</strong> v before = √(2·10·1.5)=√30≈5.477 m/s. Δp = mΔv = 50·5.477 =273.85 kg·m/s. F_avg = Δp/Δt = 273.85/0.3 =912.8 N upward. Add weight during stop? Actually net force = F_avg - mg = Δp/Δt, so F_avg = mg + Δp/Δt = 500 + 912.8 =1412.8 N.</div></div>
+        <div class="question-card"><span class="q-num">Q43</span><div class="q-text">A 4 kg block on frictionless table is connected to a 2 kg hanging mass. Find acceleration.</div><button class="btn-reveal" onclick="toggleAnswer(443)">show solution</button><div id="ans443" class="explain-hint"><strong>✅ solution:</strong> For hanging: 20 - T =2a; for 4 kg: T=4a. Substitute: 20 -4a=2a → 20=6a → a=3.33 m/s².</div></div>
+        <div class="question-card"><span class="q-num">Q44</span><div class="q-text">A 2000 kg truck accelerates from 10 m/s to 20 m/s over 100 m. Find average net force.</div><button class="btn-reveal" onclick="toggleAnswer(444)">show solution</button><div id="ans444" class="explain-hint"><strong>✅ solution:</strong> v²=u²+2as → 400=100+2a·100 → 200a=300 → a=1.5 m/s². F=ma=2000·1.5=3000 N.</div></div>
+        <div class="question-card"><span class="q-num">Q45</span><div class="q-text">A 0.2 kg puck slides on frictionless ice at 4 m/s and hits a stationary 0.3 kg puck elastically. Find final velocities.</div><button class="btn-reveal" onclick="toggleAnswer(445)">show solution</button><div id="ans445" class="explain-hint"><strong>✅ solution:</strong> v1 = (m1-m2)/(m1+m2) u1 = (-0.1/0.5)·4 = -0.8 m/s; v2 = 2m1/(m1+m2) u1 = (0.4/0.5)·4 =3.2 m/s.</div></div>
+        <div class="question-card"><span class="q-num">Q46</span><div class="q-text">A 3 kg mass moves in a circle radius 2 m with constant speed 6 m/s. Find centripetal force.</div><button class="btn-reveal" onclick="toggleAnswer(446)">show solution</button><div id="ans446" class="explain-hint"><strong>✅ solution:</strong> F = mv²/r = 3·36/2 = 54 N.</div></div>
+        <div class="question-card"><span class="q-num">Q47</span><div class="q-text">A 50 N force pulls a 10 kg block at 30° for 5 m. Find work done.</div><button class="btn-reveal" onclick="toggleAnswer(447)">show solution</button><div id="ans447" class="explain-hint"><strong>✅ solution:</strong> W = F s cosθ = 50·5·0.866=216.5 J.</div></div>
+        <div class="question-card"><span class="q-num">Q48</span><div class="q-text">A 0.5 kg ball is swung in a vertical circle radius 1 m with speed 4 m/s at bottom. Find tension at bottom.</div><button class="btn-reveal" onclick="toggleAnswer(448)">show solution</button><div id="ans448" class="explain-hint"><strong>✅ solution:</strong> T - mg = mv²/r → T = 0.5·10 + 0.5·16/1 =5+8=13 N.</div></div>
+        <div class="question-card"><span class="q-num">Q49</span><div class="q-text">A 2 kg mass at (1,4) and a 3 kg mass at (5,2). Find center of mass.</div><button class="btn-reveal" onclick="toggleAnswer(449)">show solution</button><div id="ans449" class="explain-hint"><strong>✅ solution:</strong> x_cm = (2·1+3·5)/5 = (2+15)/5=17/5=3.4; y_cm = (2·4+3·2)/5 = (8+6)/5=14/5=2.8.</div></div>
+        <div class="question-card"><span class="q-num">Q50</span><div class="q-text">A force F= (4i+5j) N acts on a 2 kg mass. Find acceleration vector.</div><button class="btn-reveal" onclick="toggleAnswer(450)">show solution</button><div id="ans450" class="explain-hint"><strong>✅ solution:</strong> a = F/m = (2i+2.5j) m/s².</div></div>
+        <div class="question-card"><span class="q-num">Q51</span><div class="q-text">A 10 kg box is pushed with 60 N at 20° below horizontal. μk=0.2. Find acceleration. (g=10, cos20≈0.94, sin20≈0.342)</div><button class="btn-reveal" onclick="toggleAnswer(451)">show solution</button><div id="ans451" class="explain-hint"><strong>✅ solution:</strong> Fx=60·0.94=56.4; Fy downward =60·0.342=20.52. F_N = mg + Fy =100+20.52=120.52; f_k=0.2·120.52=24.104. Net Fx =56.4-24.104=32.296; a=3.23 m/s².</div></div>
+        <div class="question-card"><span class="q-num">Q52</span><div class="q-text">A 0.3 kg ball is thrown at 20 m/s at 60°. Find potential energy at top.</div><button class="btn-reveal" onclick="toggleAnswer(452)">show solution</button><div id="ans452" class="explain-hint"><strong>✅ solution:</strong> H = (u² sin²θ)/(2g)= (400·0.75)/20 =300/20=15 m. PE = mgh = 0.3·10·15=45 J.</div></div>
+        <div class="question-card"><span class="q-num">Q53</span><div class="q-text">A 2 kg mass compresses a spring 0.1 m (k=800 N/m). Find speed when spring is half compressed (0.05 m).</div><button class="btn-reveal" onclick="toggleAnswer(453)">show solution</button><div id="ans453" class="explain-hint"><strong>✅ solution:</strong> Energy: ½kA² = ½kx² + ½mv² → ½·800·0.01 = ½·800·0.0025 + ½·2·v² → 4 = 1 + v² → v²=3 → v=1.732 m/s.</div></div>
+        <div class="question-card"><span class="q-num">Q54</span><div class="q-text">A 0.5 kg ball moving at 10 m/s strikes a wall at 30° and rebounds with same speed at same angle. Find impulse magnitude. (Component perpendicular to wall changes)</div><button class="btn-reveal" onclick="toggleAnswer(454)">show solution</button><div id="ans454" class="explain-hint"><strong>✅ solution:</strong> Perpendicular component v_perp = 10 sin30=5 m/s. Change = 5 - (-5)=10 m/s. Δp = 0.5·10=5 kg·m/s (impulse perpendicular to wall).</div></div>
+        <div class="question-card"><span class="q-num">Q55</span><div class="q-text">A 4 kg block on frictionless table is tied to a string passing over pulley to a 1 kg hanging mass. Find acceleration.</div><button class="btn-reveal" onclick="toggleAnswer(455)">show solution</button><div id="ans455" class="explain-hint"><strong>✅ solution:</strong> 1·10 - T =1a; T=4a → 10 =5a → a=2 m/s².</div></div>
+        <div class="question-card"><span class="q-num">Q56</span><div class="q-text">A 1500 kg car climbs a 5° slope at constant speed 25 m/s. Find power if μk=0.05. (g=10, sin5≈0.087, cos5≈0.996)</div><button class="btn-reveal" onclick="toggleAnswer(456)">show solution</button><div id="ans456" class="explain-hint"><strong>✅ solution:</strong> F = mg sinθ + μ mg cosθ =15000·0.087 + 0.05·15000·0.996 =1305 + 747 =2052 N. P = Fv = 2052·25 =51300 W.</div></div>
+        <div class="question-card"><span class="q-num">Q57</span><div class="q-text">A 2 kg object has KE 36 J. Find momentum.</div><button class="btn-reveal" onclick="toggleAnswer(457)">show solution</button><div id="ans457" class="explain-hint"><strong>✅ solution:</strong> ½mv²=36 → v²=36 → v=6 m/s. p = mv =12 kg·m/s.</div></div>
+        <div class="question-card"><span class="q-num">Q58</span><div class="q-text">A 0.2 kg ball is thrown at 12 m/s and caught with a glove that recoils 0.05 m. Find average stopping force.</div><button class="btn-reveal" onclick="toggleAnswer(458)">show solution</button><div id="ans458" class="explain-hint"><strong>✅ solution:</strong> v²=u²+2as → 0=144+2a·0.05 → a = -1440 m/s². F = ma = 0.2·1440=288 N.</div></div>
+        <div class="question-card"><span class="q-num">Q59</span><div class="q-text">A 0.5 kg object moving at 4 m/s collides inelastically with a 1 kg object at rest and they stick. Find final speed and energy loss.</div><button class="btn-reveal" onclick="toggleAnswer(459)">show solution</button><div id="ans459" class="explain-hint"><strong>✅ solution:</strong> p_i = 0.5·4=2; final mass 1.5 kg; v=2/1.5=1.333 m/s. KE_i = 0.5·0.5·16=4 J; KE_f = 0.5·1.5·(1.333)²=0.75·1.777=1.333 J; loss = 2.667 J.</div></div>
+        <div class="question-card"><span class="q-num">Q60</span><div class="q-text">A force \(F = 5t\) N acts on a 2 kg mass initially at rest. Find power at t=3 s.</div><button class="btn-reveal" onclick="toggleAnswer(460)">show solution</button><div id="ans460" class="explain-hint"><strong>✅ solution:</strong> a = F/m = 2.5t; dv/dt=2.5t → v = 1.25t². At t=3, v=1.25·9=11.25 m/s; F=15 N. P = F·v = 15·11.25 =168.75 W.
+        </div>
+    </div> <!-- end exam panel -->
+
+    <footer>⚡ Grade 11 Physics · Motion (1D & 2D) · Mobile Optimized · Entrance Exam Ready</footer>
+</div>
+
+<script>
+    const tabs = document.querySelectorAll(".tab-btn");
+    const panels = document.querySelectorAll(".panel");
+
+    tabs.forEach(t => {
+        t.addEventListener('click', () => {
+            tabs.forEach(b => b.classList.remove("active"));
+            panels.forEach(p => p.classList.remove("active-panel"));
+            t.classList.add("active");
+            document.getElementById(t.dataset.tab).classList.add("active-panel");
+        });
+    });
+
+    function toggleAnswer(id) {
+        const el = document.getElementById('ans' + id);
+        if (el) el.classList.toggle('show');
+    }
+</script>
+</body>
+</html>

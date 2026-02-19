@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Ultimate Adjectives & Adverbs · Notes + Exam Bank</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #e5edf5;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            padding: 16px 12px;
+            color: #13293D;
+            min-height: 100vh;
+        }
+        .master-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(3px);
+            border-radius: 48px;
+            box-shadow: 0 25px 45px -12px #163a5e;
+            padding: 30px 25px 35px 25px;
+            border: 1px solid #c4d9ed;
+        }
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #0d3d60, #245b86);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+        .subhead {
+            font-size: 1.3rem;
+            color: #2c5d8c;
+            border-left: 10px solid #f7b731;
+            padding-left: 20px;
+            margin: 5px 0 25px 5px;
+            font-weight: 400;
+        }
+        /* tabs */
+        .section-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 8px;
+            margin: 20px 0 20px;
+            justify-content: center;
+        }
+        .tab-btn {
+            background: white;
+            border: 2px solid #adc9e8;
+            border-radius: 60px;
+            padding: 12px 28px;
+            font-weight: 650;
+            font-size: 1.1rem;
+            color: #1b5177;
+            cursor: pointer;
+            transition: 0.15s;
+            box-shadow: 0 5px 10px #b8d1e9;
+            text-align: center;
+            -webkit-tap-highlight-color: transparent;
+            flex: 0 1 auto;
+        }
+        .tab-btn.active {
+            background: #1c527c;
+            color: white;
+            border-color: #0f314b;
+            box-shadow: 0 8px 16px #1c527c70;
+        }
+        .panel {
+            display: none;
+            background: transparent;
+            border-radius: 38px;
+            margin: 10px 0 5px;
+        }
+        .panel.active-panel {
+            display: block;
+        }
+        /* ---------- notes panel (immersive guide) ---------- */
+        .book {
+            background: #ffffffec;
+            border-radius: 42px;
+            padding: 30px 28px;
+            border: 2px solid white;
+        }
+        .author-note {
+            font-size: 1.3rem;
+            color: #2d638c;
+            border-left: 12px solid #f7b731;
+            padding-left: 24px;
+            margin: 0 0 25px 0;
+        }
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 18px;
+            margin: 30px 0 35px;
+        }
+        .topic-card {
+            background: #f1f8ff;
+            border-radius: 28px;
+            padding: 20px 18px;
+            border: 2px solid white;
+            box-shadow: 0 12px 20px -10px #b3cef0;
+        }
+        .topic-card h2 {
+            font-size: 1.8rem;
+            color: #003f66;
+            margin-bottom: 15px;
+            border-bottom: 4px solid #f7b731;
+            display: inline-block;
+        }
+        .super-list {
+            list-style: none;
+        }
+        .super-list li {
+            margin: 14px 0;
+            font-size: 1.05rem;
+            padding-left: 28px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="%233080b0"><circle cx="12" cy="12" r="8"/></svg>') left center no-repeat;
+            background-size: 18px;
+        }
+        .highlight-block {
+            background: #fff9e6;
+            border-radius: 24px;
+            padding: 16px 22px;
+            margin: 18px 0;
+            border-left: 10px solid #f7b731;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 12px #cbddec;
+        }
+        .three-d-example {
+            background: #ffffff;
+            border-radius: 36px;
+            padding: 24px 26px;
+            margin: 30px 0;
+            border: 2px solid #bed9f2;
+            box-shadow: 0 20px 30px -12px #244c6e;
+        }
+        .three-d-example h3 {
+            font-size: 1.9rem;
+            color: #00315a;
+            margin-bottom: 20px;
+        }
+        .comparison-table {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin: 25px 0;
+        }
+        .comp-item {
+            background: #e7f0fa;
+            border-radius: 24px;
+            padding: 18px;
+            flex: 1 1 220px;
+        }
+        .badge {
+            background: #0a3957;
+            color: white;
+            border-radius: 50px;
+            padding: 4px 16px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .immense-note {
+            background: linear-gradient(135deg, #1b3e5e, #153e5a);
+            color: white;
+            border-radius: 48px;
+            padding: 30px 32px;
+            margin-top: 40px;
+        }
+        .immense-note p {
+            font-size: 1.3rem;
+            line-height: 1.6;
+        }
+        hr {
+            border: none;
+            border-top: 4px dotted #9dbcdb;
+            margin: 35px 0;
+        }
+        /* ---------- questions panel (exam bank) ---------- */
+        .theory-panel {
+            background: #dceafa;
+            border-radius: 32px;
+            padding: 25px 28px;
+            margin: 30px 0 20px;
+            border: 2px solid white;
+        }
+        .theory-panel h2 {
+            font-size: 2rem;
+            color: #0b3f5c;
+            margin-bottom: 20px;
+            border-bottom: 4px solid #f6b83e;
+            display: inline-block;
+        }
+        .rule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+            margin: 20px 0;
+        }
+        .rule-card {
+            background: white;
+            border-radius: 22px;
+            padding: 16px 20px;
+            box-shadow: 0 6px 14px #b7cfec;
+        }
+        .rule-card h3 {
+            color: #00487c;
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+        .example-highlight {
+            background: #fef7e7;
+            border-left: 6px solid #f6b83e;
+            padding: 8px 14px;
+            border-radius: 16px;
+            margin: 10px 0;
+        }
+        .topic-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 15px;
+            margin: 15px 0 25px;
+            justify-content: center;
+        }
+        .topic-btn {
+            background: white;
+            border: 2px solid #adc9e8;
+            border-radius: 60px;
+            padding: 9px 22px;
+            font-weight: 600;
+            color: #1b5177;
+            cursor: pointer;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 8px #b8d1e9;
+        }
+        .topic-btn.active {
+            background: #1c527c;
+            color: white;
+            border-color: #0f314b;
+        }
+        .questions-area {
+            background: #f2f9ff;
+            border-radius: 38px;
+            padding: 22px 18px 20px;
+            margin: 20px 0;
+        }
+        .q-item {
+            background: white;
+            border-radius: 28px;
+            padding: 20px 22px;
+            margin-bottom: 22px;
+            box-shadow: 0 8px 16px #c3d6ed;
+            border-left: 8px solid #7fb2db;
+        }
+        .q-item.correct {
+            border-left-color: #2b9c6c;
+            background: #edf9f2;
+        }
+        .q-item.wrong {
+            border-left-color: #cc5a5a;
+            background: #ffeeed;
+        }
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #003057;
+            margin-bottom: 16px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 15px 0 18px;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: #f4f9ff;
+            padding: 12px 18px;
+            border-radius: 40px;
+            border: 1px solid #bfdaf5;
+        }
+        input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #1f6fa5;
+            flex-shrink: 0;
+        }
+        .btn-check {
+            background: #1f6fa5;
+            border: none;
+            color: white;
+            border-radius: 60px;
+            padding: 12px 26px;
+            font-weight: 700;
+            font-size: 1rem;
+            width: fit-content;
+            min-width: 160px;
+            cursor: pointer;
+            box-shadow: 0 5px 12px #0f3c5c;
+        }
+        .btn-check:disabled {
+            opacity: 0.6;
+        }
+        .explanation-box {
+            background: #e2f0fa;
+            border-radius: 24px;
+            padding: 16px 22px;
+            margin-top: 18px;
+            border-left: 6px solid #f6b83e;
+            display: none;
+        }
+        .explanation-box.show {
+            display: block;
+        }
+        .stats-row {
+            background: #13293D;
+            color: white;
+            border-radius: 60px;
+            padding: 16px 22px;
+            margin: 20px 0 15px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+        .score-large {
+            font-size: 2rem;
+            font-weight: 700;
+            background: #f6b83e;
+            color: #13293D;
+            padding: 6px 24px;
+            border-radius: 60px;
+        }
+        .reset-btn {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+            border-radius: 40px;
+            padding: 8px 22px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        footer {
+            text-align: center;
+            color: #3a6685;
+            margin-top: 25px;
+        }
+        @media (max-width: 600px) {
+            h1 { font-size: 2.2rem; }
+            .topic-card h2 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="master-container">
+    <h1>⚡ ADJECTIVES & ADVERBS · THE COMPLETE MASTERY</h1>
+    <div class="subhead">grade 11–12 entrance · immersive notes + 124 advanced questions</div>
+
+    <!-- tabs switch -->
+    <div class="section-tabs">
+        <span class="tab-btn active" data-tab="notes-panel">📘 IMMERSIVE NOTES</span>
+        <span class="tab-btn" data-tab="questions-panel">🎯 EXAM BANK (124 Q)</span>
+    </div>
+
+    <!-- ========== NOTES PANEL (full immersive guide) ========== -->
+    <div id="notes-panel" class="panel active-panel">
+        <div class="book">
+            <div class="author-note">for grade 11–12 entrance warriors – every rule, every exception, every exam nuance</div>
+            <!-- quick navigation cards -->
+            <div class="topic-grid">
+                <div class="topic-card"><h2>📌 adj vs adv</h2><ul class="super-list"><li><strong>Adjective</strong> modifies noun: <em>a quiet room</em></li><li><strong>Adverb</strong> modifies verb/adj/adv: <em>speaks quietly</em></li><li>🔸 linking verbs (feel, look, taste) → adjective</li><li>🔹 "She felt bad" (not badly) – emotion</li></ul></div>
+                <div class="topic-card"><h2>📊 comparatives & superlatives</h2><ul class="super-list"><li>1‑syll: <em>small → smaller → smallest</em></li><li>2‑syll ‑y: <em>happy → happier → happiest</em></li><li>2+ syll: <em>beautiful → more beautiful → most beautiful</em></li><li>⚠️ irregular: good/better/best; bad/worse/worst; far/farther/further</li></ul></div>
+                <div class="topic-card"><h2>🧩 order of adjectives</h2><ul class="super-list"><li><strong>OSASCOMP</strong> – Opinion, Size, Age, Shape, Color, Origin, Material, Purpose</li><li><em>a lovely small old rectangular green French wooden writing desk</em></li><li>determiner first: <em>the, a, my</em></li></ul></div>
+                <div class="topic-card"><h2>🔧 adverb formation</h2><ul class="super-list"><li>adj + ‑ly: <em>quick → quickly</em></li><li>‑y → ‑ily: <em>happy → happily</em></li><li>‑ic → ‑ically: <em>dramatic → dramatically</em></li><li>‑le → ‑ly: <em>gentle → gently</em></li><li>⚠️ irregular: fast, hard, late, early, daily</li></ul></div>
+            </div>
+            <!-- DEEP DIVE 1 -->
+            <div class="three-d-example"><h3>🔹 1. ADJECTIVES & ADVERBS — the fine line</h3>
+                <div class="highlight-block"><strong>📘 Definition:</strong> Adjectives describe nouns. Adverbs describe verbs, adjectives, or other adverbs.</div>
+                <div class="comparison-table"><div class="comp-item"><span class="badge">adjective</span> <strong>She is a <u>careful</u> driver.</strong><br>➡️ linking verb: <em>She seems <u>careful</u>.</em></div><div class="comp-item"><span class="badge">adverb</span> <strong>She drives <u>carefully</u>.</strong><br>➡️ <em>She drives very <u>carefully</u>.</em></div></div>
+                <div class="highlight-block"><strong>🚨 EXAM CLASSIC: linking verbs + adjective</strong><br>✦ “The soup <u>tastes</u> <strong>delicious</strong>.” ✦ “He <u>felt</u> <strong>bad</strong> about the news.”</div>
+                <div class="highlight-block"><strong>⚡ tricky pairs — same form (adj & adv)</strong><br>✅ <strong>fast</strong> – a fast car / drives fast · ✅ <strong>hard</strong> – works hard (hardly = barely) · ✅ <strong>late</strong> / <strong>early</strong> / <strong>daily</strong></div>
+                <div class="highlight-block"><strong>💡 good vs well</strong> – She speaks <strong>good</strong> English. / She speaks English <strong>well</strong>. (well = healthy: “I feel well”)</div>
+            </div>
+            <!-- COMPARATIVE & SUPERLATIVE -->
+            <div class="three-d-example"><h3>📈 2. COMPARATIVE & SUPERLATIVE – everything you need</h3>
+                <div class="highlight-block"><strong>🔸 one syllable → ‑er / ‑est</strong> tall → taller → tallest · big → bigger (double g)</div>
+                <div class="highlight-block"><strong>🔸 two syllables -y → ‑ier / ‑iest</strong> happy → happier → happiest</div>
+                <div class="highlight-block"><strong>🔸 two+ syllables → more / most</strong> beautiful → more beautiful → most beautiful</div>
+                <div class="highlight-block"><strong>🔸 IRREGULAR</strong> good/well → better/best · bad/badly → worse/worst · far → farther/further</div>
+                <div class="highlight-block"><strong>🧪 advanced structures</strong> • the + comp, the + comp • comp + and + comp • as ... as • less / least</div>
+                <div class="highlight-block"><strong>⚠️ double comparative trap:</strong> “more better” ✘ · use “better” alone.</div>
+            </div>
+            <!-- ORDER OF ADJECTIVES -->
+            <div class="three-d-example"><h3>📏 3. ORDER OF ADJECTIVES – OSASCOMP</h3>
+                <div class="highlight-block"><span style="background:#f7b731; padding:5px 12px; border-radius:40px;">OPINION</span> → <span style="background:#a2c9f0; padding:5px 12px; border-radius:40px;">SIZE</span> → <span style="background:#f7b731; padding:5px 12px; border-radius:40px;">AGE</span> → <span style="background:#a2c9f0; padding:5px 12px; border-radius:40px;">SHAPE</span> → <span style="background:#f7b731; padding:5px 12px; border-radius:40px;">COLOR</span> → <span style="background:#a2c9f0; padding:5px 12px; border-radius:40px;">ORIGIN</span> → <span style="background:#f7b731; padding:5px 12px; border-radius:40px;">MATERIAL</span> → <span style="background:#a2c9f0; padding:5px 12px; border-radius:40px;">PURPOSE</span></div>
+                <div class="highlight-block"><strong>🌟 examples:</strong> ✔ a <u>lovely small old rectangular green French wooden writing</u> desk. ✔ a <u>beautiful big new black Italian leather</u> bag.</div>
+                <div class="highlight-block"><strong>🚫 common mistakes:</strong> ✘ red small bag → a small red bag. ✘ a wooden round table → a round wooden table.</div>
+            </div>
+            <!-- ADVERB FORMATION -->
+            <div class="three-d-example"><h3>⚙️ 4. ADVERB FORMATION – from adjective to adverb</h3>
+                <div class="comparison-table"><div class="comp-item"><span class="badge">+ly</span> quick→quickly</div><div class="comp-item"><span class="badge">-y → -ily</span> happy→happily</div><div class="comp-item"><span class="badge">-ic → -ically</span> dramatic→dramatically</div><div class="comp-item"><span class="badge">-le → -ly</span> gentle→gently</div><div class="comp-item"><span class="badge">-ue drop e</span> true→truly</div><div class="comp-item"><span class="badge">-ll add y</span> full→fully</div></div>
+                <div class="highlight-block"><strong>⚠️ irregular adverbs:</strong> fast, hard, late, early, straight, daily. “He works hard” (adv) vs “hardly” (barely).</div>
+                <div class="highlight-block"><strong>🧠 special:</strong> public → publicly, shy → shyly.</div>
+            </div>
+            <!-- extra -->
+            <hr>
+            <div style="background:#d7e9ff; border-radius:50px; padding:25px;">
+                <h2 style="font-size:2rem; color:#003863;">🧬 comparative & superlative adverbs</h2>
+                <div style="display:flex; gap:20px; flex-wrap:wrap;"><div><h3>📊 comparative</h3> faster, more quickly, better, worse</div><div><h3>📊 superlative</h3> fastest, most quickly, best, worst</div></div>
+                <div class="highlight-block" style="margin-top:15px;">✅ “He reacted <strong>the most calmly</strong>.” “He drives <strong>more carefully</strong> than his brother.”</div>
+            </div>
+            <div class="immense-note"><p>🎯 <strong>THE ENTRANCE EXAM GOLDEN RULES</strong><br>• After linking verbs → adjective. • Adverbs often end in -ly, but not always. • Double comparatives are illegal. • Order: never color before size; origin near material. • -y → -ily, -ic → -ically, -le → -ly. • “Hard” vs “hardly” changes meaning. • Use “the” in superlatives.</p><p style="font-size:1.8rem; margin-top:15px;">✍️ now you’re ready.</p></div>
+            <hr>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;"><div style="background:#e7f2fd; border-radius:30px; padding:20px;"><h3 style="color:#003057;">📋 50+ pairs</h3><p>slow/slowly · quick/quickly · happy/happily · dramatic/dramatically · gentle/gently · true/truly · public/publicly · busy/busily · etc.</p></div><div style="background:#f9f0db; border-radius:30px; padding:20px;"><h3 style="color:#a15507;">⚡ idioms</h3><p>feel strong · hold tight · run deep · go easy · play fair · work hard · think straight · dream big · shine bright</p></div></div>
+            <footer style="margin-top:25px;">⚡ immersive notes complete</footer>
+        </div>
+    </div>
+
+    <!-- ========== QUESTIONS PANEL (full exam bank) ========== -->
+    <div id="questions-panel" class="panel">
+        <div class="theory-panel">
+            <h2>📘 exam‑ready notes (quick recap)</h2>
+            <div class="rule-grid">
+                <div class="rule-card"><h3>🔹 adj/adv</h3><p>good (adj) / well (adv). Linking verbs + adj. “She looks beautiful.”</p></div>
+                <div class="rule-card"><h3>🔸 comparative</h3><p>‑er/‑est, more/most, irregular: good/better/best, bad/worse/worst.</p></div>
+                <div class="rule-card"><h3>📏 order</h3><p>OSASCOMP: opinion, size, age, shape, color, origin, material, purpose.</p></div>
+                <div class="rule-card"><h3>⚙️ formation</h3><p>‑ly, ‑ily, ‑ically, ‑ly (gentle→gently). Exceptions: fast, hard, late.</p></div>
+            </div>
+        </div>
+
+        <!-- topic filter pills -->
+        <div class="topic-nav" id="topicNav">
+            <span class="topic-btn active" data-topic="all">ALL TOPICS</span>
+            <span class="topic-btn" data-topic="adjadv">Adj/Adv</span>
+            <span class="topic-btn" data-topic="comparative">Comparative</span>
+            <span class="topic-btn" data-topic="order">Order of adj</span>
+            <span class="topic-btn" data-topic="formation">Adverb form</span>
+        </div>
+
+        <!-- stats -->
+        <div class="stats-row" id="statsRow">
+            <div class="score-large" id="scoreDisplay">0 / 124</div>
+            <div id="topicCorrect">all topics</div>
+            <button class="reset-btn" id="resetAll">⟲ reset</button>
+        </div>
+
+        <!-- questions injected -->
+        <div class="questions-area" id="questionsContainer"></div>
+        <footer>✅ verify each answer to see explanation</footer>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---------- FULL QUESTION BANK (124) from the second file ----------
+        const questions = [
+            // adjadv (32)
+            { topic: 'adjadv', q: 'She sings ______.', options: ['A) beautiful', 'B) beautifully', 'C) beauty', 'D) beautify'], correct: 1, explanation: 'Adverb modifies verb “sings” → beautifully.' },
+            { topic: 'adjadv', q: 'He felt ______ about the result.', options: ['A) bad', 'B) badly', 'C) worse', 'D) worst'], correct: 0, explanation: 'Linking verb “felt” + adjective (bad).' },
+            { topic: 'adjadv', q: 'The soup tastes ______.', options: ['A) wonderfully', 'B) wonderful', 'C) wonder', 'D) wondered'], correct: 1, explanation: 'Taste = linking verb → adjective wonderful.' },
+            { topic: 'adjadv', q: 'She drives very ______.', options: ['A) careful', 'B) carefulness', 'C) carefully', 'D) caring'], correct: 2, explanation: 'Adverb modifying verb drives → carefully.' },
+            { topic: 'adjadv', q: 'He is a ______ worker.', options: ['A) fast', 'B) fastly', 'C) quick', 'D) both A & C possible'], correct: 3, explanation: 'Adjective before noun: fast/quick worker (fastly incorrect).' },
+            { topic: 'adjadv', q: 'The sky grew ______.', options: ['A) dark', 'B) darkly', 'C) darkness', 'D) darker'], correct: 0, explanation: 'Linking verb grew → adjective dark (darkly = suspiciously).' },
+            { topic: 'adjadv', q: 'She smiled ______.', options: ['A) happy', 'B) happily', 'C) happiness', 'D) happier'], correct: 1, explanation: 'Adverb modifying action smiled → happily.' },
+            { topic: 'adjadv', q: 'That pizza smells ______.', options: ['A) deliciously', 'B) delicious', 'C) more delicious', 'D) most delicious'], correct: 1, explanation: 'Linking verb smell + adjective delicious.' },
+            { topic: 'adjadv', q: 'He worked ______ to finish on time.', options: ['A) hardly', 'B) hard', 'C) more hard', 'D) hardest'], correct: 1, explanation: 'Hard as adverb = with effort. Hardly = barely.' },
+            { topic: 'adjadv', q: 'The test was ______ easy.', options: ['A) surprising', 'B) surprisingly', 'C) surprised', 'D) surprise'], correct: 1, explanation: 'Adverb modifying adjective easy → surprisingly.' },
+            { topic: 'adjadv', q: 'She looked ______ at the mess.', options: ['A) angry', 'B) angrily', 'C) anger', 'D) more angry'], correct: 1, explanation: 'Action looked (verb) requires adverb angrily.' },
+            { topic: 'adjadv', q: 'This coffee is ______ hot.', options: ['A) extreme', 'B) extremely', 'C) extremeness', 'D) more extreme'], correct: 1, explanation: 'Adverb modifying adjective hot → extremely.' },
+            { topic: 'adjadv', q: 'He became ______ after the news.', options: ['A) sad', 'B) sadly', 'C) sadness', 'D) more sad'], correct: 0, explanation: 'Became = linking verb → adjective sad.' },
+            { topic: 'adjadv', q: 'They treated her ______.', options: ['A) bad', 'B) badly', 'C) worse', 'D) worst'], correct: 1, explanation: 'Action verb treated → adverb badly.' },
+            { topic: 'adjadv', q: 'The flowers smell ______.', options: ['A) sweet', 'B) sweetly', 'C) sweetness', 'D) more sweet'], correct: 0, explanation: 'Linking verb smell → adjective sweet.' },
+            { topic: 'adjadv', q: 'She spoke ______ than usual.', options: ['A) more quietly', 'B) more quiet', 'C) quietlier', 'D) most quiet'], correct: 0, explanation: 'Comparative adverb → more quietly.' },
+            { topic: 'adjadv', q: 'He is a ______ man.', options: ['A) kind', 'B) kindly', 'C) kindness', 'D) kindest'], correct: 0, explanation: 'Adjective modifying man → kind. Kindly can be adj but old-fashioned.' },
+            { topic: 'adjadv', q: 'The car goes ______.', options: ['A) fast', 'B) fastly', 'C) more fast', 'D) most fast'], correct: 0, explanation: 'Fast = adjective and adverb; no -ly.' },
+            { topic: 'adjadv', q: 'She feels ______ today.', options: ['A) good', 'B) well', 'C) both possible (with diff meanings)', 'D) goodly'], correct: 2, explanation: 'Good = adjective (mood); well = healthy or adverb.' },
+            { topic: 'adjadv', q: 'He runs very ______.', options: ['A) quick', 'B) quickly', 'C) quickness', 'D) more quick'], correct: 1, explanation: 'Adverb modifying runs → quickly.' },
+            { topic: 'adjadv', q: 'The situation turned ______.', options: ['A) bad', 'B) badly', 'C) worse', 'D) worst'], correct: 0, explanation: 'Turned = linking verb → adjective bad.' },
+            { topic: 'adjadv', q: 'She was ______ injured in the accident.', options: ['A) serious', 'B) seriously', 'C) more serious', 'D) most serious'], correct: 1, explanation: 'Adverb modifying injured → seriously.' },
+            { topic: 'adjadv', q: 'He stayed ______ throughout the meeting.', options: ['A) quiet', 'B) quietly', 'C) quieter', 'D) quietest'], correct: 0, explanation: 'Stayed = linking verb → adjective quiet.' },
+            { topic: 'adjadv', q: 'The food was ______ cooked.', options: ['A) perfect', 'B) perfectly', 'C) more perfect', 'D) most perfect'], correct: 1, explanation: 'Adverb modifying cooked → perfectly.' },
+            { topic: 'adjadv', q: 'She answered ______.', options: ['A) intelligent', 'B) intelligently', 'C) intelligence', 'D) more intelligent'], correct: 1, explanation: 'Adverb modifying answered → intelligently.' },
+            { topic: 'adjadv', q: 'The child appears ______.', options: ['A) happy', 'B) happily', 'C) happiness', 'D) happier'], correct: 0, explanation: 'Appears linking → adjective happy.' },
+            { topic: 'adjadv', q: 'He finished the race ______ of all.', options: ['A) fast', 'B) fastest', 'C) most fast', 'D) more fast'], correct: 1, explanation: 'Superlative adverb → fastest.' },
+            { topic: 'adjadv', q: 'The team played ______.', options: ['A) brilliant', 'B) brilliantly', 'C) more brilliant', 'D) most brilliant'], correct: 1, explanation: 'Adverb played → brilliantly.' },
+            { topic: 'adjadv', q: 'She looks ______ in that dress.', options: ['A) lovely', 'B) lovelily', 'C) more lovely', 'D) most lovely'], correct: 0, explanation: 'Lovely is adjective (looks lovely).' },
+            { topic: 'adjadv', q: 'He drives ______ than his brother.', options: ['A) more careful', 'B) more carefully', 'C) carefuler', 'D) most carefully'], correct: 1, explanation: 'Comparative adverb → more carefully.' },
+            { topic: 'adjadv', q: 'The milk went ______.', options: ['A) sour', 'B) sourly', 'C) more sour', 'D) sourest'], correct: 0, explanation: 'Went = linking verb → adjective sour.' },
+            { topic: 'adjadv', q: 'She speaks English ______.', options: ['A) fluent', 'B) fluently', 'C) more fluent', 'D) most fluent'], correct: 1, explanation: 'Adverb modifies speaks → fluently.' },
+            // comparative (32)
+            { topic: 'comparative', q: 'Mount Everest is ______ mountain in the world.', options: ['A) taller than', 'B) the tallest', 'C) taller', 'D) most tall'], correct: 1, explanation: 'Superlative (the + -est).' },
+            { topic: 'comparative', q: 'This exercise is ______ than the last one.', options: ['A) more difficult', 'B) most difficult', 'C) difficulter', 'D) more difficult than'], correct: 0, explanation: 'Two+ syllables → more + adj.' },
+            { topic: 'comparative', q: 'She is ______ her sister.', options: ['A) more intelligent than', 'B) most intelligent', 'C) intelligenter than', 'D) intelligent than'], correct: 0, explanation: 'Comparative structure: more + adj + than.' },
+            { topic: 'comparative', q: 'Today is ______ day of the year.', options: ['A) hotter', 'B) the hottest', 'C) more hot', 'D) most hot'], correct: 1, explanation: 'Superlative of one-syllable: the + -est.' },
+            { topic: 'comparative', q: 'He ran ______ than I expected.', options: ['A) more fast', 'B) faster', 'C) most fast', 'D) fast'], correct: 1, explanation: 'One syllable → faster.' },
+            { topic: 'comparative', q: 'This is ______ movie I have ever seen.', options: ['A) the most boring', 'B) more boring', 'C) boringest', 'D) the boringest'], correct: 0, explanation: 'Two+ syllables → the most + adj.' },
+            { topic: 'comparative', q: 'Her condition is ______ than yesterday.', options: ['A) worse', 'B) badder', 'C) worst', 'D) more bad'], correct: 0, explanation: 'Irregular comparative: bad → worse.' },
+            { topic: 'comparative', q: 'He has ______ money than his brother.', options: ['A) less', 'B) fewer', 'C) lesser', 'D) more less'], correct: 0, explanation: 'Less (uncountable) money. Fewer for count.' },
+            { topic: 'comparative', q: 'She is the ______ player on the team.', options: ['A) best', 'B) goodest', 'C) better', 'D) most good'], correct: 0, explanation: 'Irregular superlative: good → best.' },
+            { topic: 'comparative', q: 'The journey took ______ than we thought.', options: ['A) longer', 'B) more long', 'C) longest', 'D) most long'], correct: 0, explanation: 'One syllable long → longer.' },
+            { topic: 'comparative', q: 'This is ______ option.', options: ['A) the least expensive', 'B) the less expensive', 'C) the most cheapest', 'D) cheaper'], correct: 0, explanation: 'Least + adj = superlative.' },
+            { topic: 'comparative', q: 'He speaks Spanish ______ than his sister.', options: ['A) more fluently', 'B) fluently', 'C) most fluently', 'D) fluentlier'], correct: 0, explanation: 'Comparative adverb: more fluently.' },
+            { topic: 'comparative', q: 'This is ______ cake I have ever eaten.', options: ['A) the most delicious', 'B) the more delicious', 'C) deliciouser', 'D) most delicious'], correct: 0, explanation: 'Superlative → the most delicious.' },
+            { topic: 'comparative', q: 'She is ______ than her friend.', options: ['A) taller', 'B) tallest', 'C) more tall', 'D) most tall'], correct: 0, explanation: 'One syllable taller.' },
+            { topic: 'comparative', q: 'The weather is getting ______.', options: ['A) colder and colder', 'B) more cold', 'C) most cold', 'D) cold'], correct: 0, explanation: 'Double comparative: colder and colder.' },
+            { topic: 'comparative', q: 'He is ______ person I know.', options: ['A) the most kind', 'B) the kindest', 'C) kinder', 'D) more kind'], correct: 1, explanation: 'One syllable kind → kindest.' },
+            { topic: 'comparative', q: 'She arrived ______ than everyone else.', options: ['A) later', 'B) more late', 'C) latter', 'D) latest'], correct: 0, explanation: 'Comparative of late → later.' },
+            { topic: 'comparative', q: 'This is ______ book I’ve read.', options: ['A) the least interesting', 'B) the less interesting', 'C) the most interestingest', 'D) least interesting'], correct: 0, explanation: 'Superlative: the least interesting.' },
+            { topic: 'comparative', q: 'His health is getting ______.', options: ['A) worse and worse', 'B) worst', 'C) badder', 'D) more bad'], correct: 0, explanation: 'worse and worse.' },
+            { topic: 'comparative', q: 'She is ______ than her brother.', options: ['A) more patient', 'B) patienter', 'C) most patient', 'D) the most patient'], correct: 0, explanation: 'more patient.' },
+            { topic: 'comparative', q: 'This is ______ meal we’ve had.', options: ['A) the best', 'B) the goodest', 'C) better', 'D) most good'], correct: 0, explanation: 'the best.' },
+            { topic: 'comparative', q: 'He works ______ than anyone.', options: ['A) harder', 'B) more hard', 'C) hardly', 'D) hard'], correct: 0, explanation: 'harder.' },
+            { topic: 'comparative', q: 'Today is ______ yesterday.', options: ['A) as cold as', 'B) colder as', 'C) more cold than', 'D) cold as'], correct: 0, explanation: 'as cold as.' },
+            { topic: 'comparative', q: 'She is ______ her mother.', options: ['A) the same height as', 'B) same height', 'C) as taller as', 'D) so tall as'], correct: 0, explanation: 'the same + noun + as.' },
+            { topic: 'comparative', q: 'It’s ______ time to travel.', options: ['A) the best', 'B) better', 'C) most good', 'D) the better'], correct: 0, explanation: 'the best.' },
+            { topic: 'comparative', q: 'This year’s exam was ______ than last year’s.', options: ['A) more easy', 'B) easier', 'C) easyer', 'D) most easy'], correct: 1, explanation: 'easier.' },
+            { topic: 'comparative', q: 'He is ______ student in class.', options: ['A) the most intelligent', 'B) more intelligent', 'C) the intelligenter', 'D) most intelligent'], correct: 0, explanation: 'the most intelligent.' },
+            { topic: 'comparative', q: 'She felt ______ than before.', options: ['A) more confident', 'B) confidenter', 'C) most confident', 'D) the more confident'], correct: 0, explanation: 'more confident.' },
+            { topic: 'comparative', q: 'The ____ you study, the better you score.', options: ['A) more', 'B) most', 'C) much', 'D) many'], correct: 0, explanation: 'the more ..., the better.' },
+            { topic: 'comparative', q: 'This is ______ expensive car in the showroom.', options: ['A) the most', 'B) the more', 'C) most', 'D) more'], correct: 0, explanation: 'the most expensive.' },
+            { topic: 'comparative', q: 'He is ______ than his colleague.', options: ['A) more experienced', 'B) experiencer', 'C) most experienced', 'D) the most experienced'], correct: 0, explanation: 'more experienced.' },
+            { topic: 'comparative', q: 'It was ______ holiday of my life.', options: ['A) the worst', 'B) worse', 'C) the bad', 'D) most bad'], correct: 0, explanation: 'the worst.' },
+            // order (30)
+            { topic: 'order', q: 'Choose correct order: a/an + opinion + size + age + shape + color + origin + material + purpose + noun', options: ['A) a beautiful large old round blue French wooden table', 'B) a large beautiful old round blue French wooden table', 'C) a beautiful old large round blue French wooden table', 'D) a beautiful large old blue round French wooden table'], correct: 0, explanation: 'OSASCOMP: opinion (beautiful), size (large), age (old), shape (round), color (blue), origin (French), material (wooden).' },
+            { topic: 'order', q: 'Correct order?', options: ['A) a red small Italian leather bag', 'B) a small red Italian leather bag', 'C) a small Italian red leather bag', 'D) a leather small red Italian bag'], correct: 1, explanation: 'Size (small) → color (red) → origin (Italian) → material (leather).' },
+            { topic: 'order', q: 'Choose the right sequence: ', options: ['A) an old beautiful German car', 'B) a beautiful old German car', 'C) a German beautiful old car', 'D) an old German beautiful car'], correct: 1, explanation: 'Opinion(beautiful) → age(old) → origin(German).' },
+            { topic: 'order', q: 'Which is correct?', options: ['A) a wooden big round table', 'B) a big round wooden table', 'C) a round big wooden table', 'D) a wooden round big table'], correct: 1, explanation: 'Size(big) → shape(round) → material(wooden).' },
+            { topic: 'order', q: 'Correct order: ', options: ['A) a new green nice dress', 'B) a nice new green dress', 'C) a green nice new dress', 'D) a nice green new dress'], correct: 1, explanation: 'Opinion(nice) → age(new) → color(green).' },
+            { topic: 'order', q: 'Choose the best: ', options: ['A) an French old ugly painting', 'B) an ugly old French painting', 'C) an old ugly French painting', 'D) a French ugly old painting'], correct: 1, explanation: 'Opinion(ugly) → age(old) → origin(French).' },
+            { topic: 'order', q: 'Which is grammatically correct?', options: ['A) a metal black box', 'B) a black metal box', 'C) a box black metal', 'D) black metal a box'], correct: 1, explanation: 'Color(black) → material(metal).' },
+            { topic: 'order', q: 'Correct sequence: ', options: ['A) a plastic small blue cup', 'B) a small blue plastic cup', 'C) a blue small plastic cup', 'D) a small plastic blue cup'], correct: 1, explanation: 'Size(small) → color(blue) → material(plastic).' },
+            { topic: 'order', q: 'Arrange: ', options: ['A) a young tall handsome man', 'B) a handsome tall young man', 'C) a tall handsome young man', 'D) a handsome young tall man'], correct: 1, explanation: 'Opinion(handsome) → size(tall) → age(young).' },
+            { topic: 'order', q: 'Choose: ', options: ['A) an antique silver beautiful coin', 'B) a beautiful antique silver coin', 'C) a silver beautiful antique coin', 'D) an antique beautiful silver coin'], correct: 1, explanation: 'Opinion(beautiful) → age(antique) → material(silver).' },
+            { topic: 'order', q: 'Select correct: ', options: ['A) a round large brown wooden table', 'B) a large round brown wooden table', 'C) a brown large round wooden table', 'D) a wooden large round brown table'], correct: 1, explanation: 'Size(large) → shape(round) → color(brown) → material(wooden).' },
+            { topic: 'order', q: 'Correct order: ', options: ['A) a French new exciting movie', 'B) an exciting new French movie', 'C) a new exciting French movie', 'D) an exciting French new movie'], correct: 1, explanation: 'Opinion(exciting) → age(new) → origin(French).' },
+            { topic: 'order', q: 'Which is correct?', options: ['A) a grey woolen old jumper', 'B) an old grey woolen jumper', 'C) a woolen old grey jumper', 'D) a grey old woolen jumper'], correct: 1, explanation: 'Age(old) → color(grey) → material(woolen).' },
+            { topic: 'order', q: 'Arrange: ', options: ['A) a delicious Italian hot pizza', 'B) a hot delicious Italian pizza', 'C) a delicious hot Italian pizza', 'D) an Italian delicious hot pizza'], correct: 2, explanation: 'Opinion(delicious) → temperature(hot) → origin(Italian).' },
+            { topic: 'order', q: 'Select correct: ', options: ['A) a red racing fast car', 'B) a fast red racing car', 'C) a racing fast red car', 'D) a red fast racing car'], correct: 1, explanation: 'Opinion/quality(fast) → color(red) → purpose/type(racing).' },
+            { topic: 'order', q: 'Choose best order: ', options: ['A) a cotton summer nice dress', 'B) a nice cotton summer dress', 'C) a nice summer cotton dress', 'D) a summer nice cotton dress'], correct: 1, explanation: 'Opinion(nice) → material(cotton) → purpose(summer).' },
+            { topic: 'order', q: 'Correct: ', options: ['A) an old stone beautiful cottage', 'B) a beautiful old stone cottage', 'C) a stone old beautiful cottage', 'D) an old beautiful stone cottage'], correct: 1, explanation: 'Opinion(beautiful) → age(old) → material(stone).' },
+            { topic: 'order', q: 'Which sequence is right?', options: ['A) a Japanese tall businessman', 'B) a tall Japanese businessman', 'C) a businessman tall Japanese', 'D) a Japanese businessman tall'], correct: 1, explanation: 'Size(tall) → origin(Japanese) → noun.' },
+            { topic: 'order', q: 'Arrange: ', options: ['A) a blue large ocean liner', 'B) a large blue ocean liner', 'C) an ocean large blue liner', 'D) a blue ocean large liner'], correct: 1, explanation: 'Size(large) → color(blue) → purpose/type(ocean).' },
+            { topic: 'order', q: 'Select correct: ', options: ['A) a musical new amazing show', 'B) an amazing new musical show', 'C) a new amazing musical show', 'D) an amazing musical new show'], correct: 1, explanation: 'Opinion(amazing) → age(new) → type/purpose(musical).' },
+            { topic: 'order', q: 'Choose best: ', options: ['A) a steel round small bowl', 'B) a small round steel bowl', 'C) a round small steel bowl', 'D) a steel small round bowl'], correct: 1, explanation: 'Size(small) → shape(round) → material(steel).' },
+            { topic: 'order', q: 'Correct sequence: ', options: ['A) a plastic blue new container', 'B) a new blue plastic container', 'C) a blue new plastic container', 'D) a new plastic blue container'], correct: 1, explanation: 'Age(new) → color(blue) → material(plastic).' },
+            { topic: 'order', q: 'Which is correct?', options: ['A) a black lovely cat', 'B) a lovely black cat', 'C) a cat black lovely', 'D) black lovely a cat'], correct: 1, explanation: 'Opinion(lovely) → color(black).' },
+            { topic: 'order', q: 'Arrange: ', options: ['A) a rectangular old ugly carpet', 'B) an ugly old rectangular carpet', 'C) an old ugly rectangular carpet', 'D) a rectangular ugly old carpet'], correct: 1, explanation: 'Opinion(ugly) → age(old) → shape(rectangular).' },
+            { topic: 'order', q: 'Select best: ', options: ['A) a French white wine', 'B) a white French wine', 'C) a wine French white', 'D) a French wine white'], correct: 1, explanation: 'Color(white) → origin(French) is possible; more natural: white French wine.' },
+            { topic: 'order', q: 'Correct order: ', options: ['A) a heavy black metal door', 'B) a black heavy metal door', 'C) a metal heavy black door', 'D) a heavy metal black door'], correct: 0, explanation: 'Opinion/quality(heavy) → color(black) → material(metal).' },
+            { topic: 'order', q: 'Choose correct: ', options: ['A) a green new comfortable sofa', 'B) a comfortable new green sofa', 'C) a new comfortable green sofa', 'D) a comfortable green new sofa'], correct: 1, explanation: 'Opinion(comfortable) → age(new) → color(green).' },
+            { topic: 'order', q: 'Arrange: ', options: ['A) a silk beautiful pink scarf', 'B) a beautiful pink silk scarf', 'C) a pink beautiful silk scarf', 'D) a beautiful silk pink scarf'], correct: 1, explanation: 'Opinion(beautiful) → color(pink) → material(silk).' },
+            { topic: 'order', q: 'Which is correct?', options: ['A) a wooden round dining table', 'B) a round wooden dining table', 'C) a dining round wooden table', 'D) a wooden dining round table'], correct: 1, explanation: 'Shape(round) → material(wooden) → purpose(dining).' },
+            { topic: 'order', q: 'Select best order: ', options: ['A) an old brick beautiful house', 'B) a beautiful old brick house', 'C) a brick old beautiful house', 'D) an old beautiful brick house'], correct: 1, explanation: 'Opinion(beautiful) → age(old) → material(brick).' },
+            // formation (30)
+            { topic: 'formation', q: 'Form the adverb from "quick".', options: ['A) quick', 'B) quickly', 'C) quickness', 'D) quicken'], correct: 1, explanation: 'Adj + -ly = quickly.' },
+            { topic: 'formation', q: 'Adverb of "happy"?', options: ['A) happyly', 'B) happily', 'C) happiness', 'D) h appily'], correct: 1, explanation: 'y → ily: happy → happily.' },
+            { topic: 'formation', q: 'Adverb of "dramatic"?', options: ['A) dramaticly', 'B) dramatically', 'C) dramatics', 'D) dramatic'], correct: 1, explanation: '-ic + ally = dramatically (exception).' },
+            { topic: 'formation', q: 'Adverb of "gentle"?', options: ['A) gently', 'B) gentlly', 'C) gentlely', 'D) gentely'], correct: 0, explanation: 'le → ly: gentle → gently.' },
+            { topic: 'formation', q: 'Adverb of "true"?', options: ['A) truely', 'B) truly', 'C) truely', 'D) truthly'], correct: 1, explanation: 'true → truly (drop e).' },
+            { topic: 'formation', q: 'Adverb of "full"?', options: ['A) fully', 'B) full', 'C) ful ly', 'D) fullsome'], correct: 0, explanation: 'full → fully (double l).' },
+            { topic: 'formation', q: 'Adverb of "whole"?', options: ['A) wholly', 'B) wholely', 'C) wholy', 'D) whole'], correct: 0, explanation: 'whole → wholly (drop e).' },
+            { topic: 'formation', q: 'Adverb of "terrible"?', options: ['A) terribly', 'B) terribley', 'C) terriblely', 'D) terrably'], correct: 0, explanation: 'le → ly: terrible → terribly.' },
+            { topic: 'formation', q: 'Adverb of "possible"?', options: ['A) possibly', 'B) possiblely', 'C) posibly', 'D) possibily'], correct: 0, explanation: 'possible → possibly (le→ly).' },
+            { topic: 'formation', q: 'Adverb of "shy"?', options: ['A) shyly', 'B) shily', 'C) shyyly', 'D) shi ly'], correct: 0, explanation: 'shy → shyly (simply add -ly).' },
+            { topic: 'formation', q: 'Adverb of "economic"?', options: ['A) economicly', 'B) economically', 'C) economical', 'D) econo mically'], correct: 1, explanation: '-ic → -ically: economically.' },
+            { topic: 'formation', q: 'Adverb of "public"?', options: ['A) publicly', 'B) publically', 'C) publicly', 'D) publiclly'], correct: 0, explanation: 'public → publicly (not publically).' },
+            { topic: 'formation', q: 'Adverb of "basic"?', options: ['A) basicly', 'B) basically', 'C) basical ly', 'D) basic'], correct: 1, explanation: 'basic → basically.' },
+            { topic: 'formation', q: 'Adverb of "automatic"?', options: ['A) automaticly', 'B) automatically', 'C) auto matically', 'D) automative'], correct: 1, explanation: '-ic → -ically: automatically.' },
+            { topic: 'formation', q: 'Adverb of "simple"?', options: ['A) simplily', 'B) simply', 'C) simplely', 'D) simpl y'], correct: 1, explanation: 'simple → simply (le→ly).' },
+            { topic: 'formation', q: 'Adverb of "probable"?', options: ['A) probably', 'B) probabily', 'C) probablely', 'D) probaly'], correct: 0, explanation: 'probable → probably.' },
+            { topic: 'formation', q: 'Adverb of "incredible"?', options: ['A) incredibly', 'B) incredibily', 'C) incrediblly', 'D) incrediblely'], correct: 0, explanation: 'incredible → incredibly.' },
+            { topic: 'formation', q: 'Adverb of "steady"?', options: ['A) steadly', 'B) steadily', 'C) steadilly', 'D) stead y'], correct: 1, explanation: 'y→ily: steady → steadily.' },
+            { topic: 'formation', q: 'Adverb of "easy"?', options: ['A) easyly', 'B) easely', 'C) easily', 'D) easy'], correct: 2, explanation: 'easy → easily (y→i + ly).' },
+            { topic: 'formation', q: 'Adverb of "heavy"?', options: ['A) heavily', 'B) heavly', 'C) heavyly', 'D) heavilly'], correct: 0, explanation: 'heavy → heavily.' },
+            { topic: 'formation', q: 'Adverb of "greedy"?', options: ['A) greedily', 'B) greedyly', 'C) greedely', 'D) greedilly'], correct: 0, explanation: 'greedy → greedily.' },
+            { topic: 'formation', q: 'Adverb of "noisy"?', options: ['A) noisily', 'B) noisyly', 'C) noisely', 'D) noise'], correct: 0, explanation: 'noisy → noisily.' },
+            { topic: 'formation', q: 'Adverb of "angry"?', options: ['A) angrily', 'B) angryly', 'C) angrely', 'D) angr ily'], correct: 0, explanation: 'angry → angrily.' },
+            { topic: 'formation', q: 'Adverb of "lazy"?', options: ['A) lazily', 'B) lazyly', 'C) lazely', 'D) la zily'], correct: 0, explanation: 'lazy → lazily.' },
+            { topic: 'formation', q: 'Adverb of "busy"?', options: ['A) busily', 'B) busyly', 'C) busilly', 'D) busely'], correct: 0, explanation: 'busy → busily.' },
+            { topic: 'formation', q: 'Adverb of "crazy"?', options: ['A) crazily', 'B) crazyly', 'C) crazely', 'D) crazi ly'], correct: 0, explanation: 'crazy → crazily.' },
+            { topic: 'formation', q: 'Adverb of "merry"?', options: ['A) merrily', 'B) merryly', 'C) merrely', 'D) merrly'], correct: 0, explanation: 'merry → merrily.' },
+            { topic: 'formation', q: 'Adverb of "willing"?', options: ['A) willingly', 'B) willing ly', 'C) willing', 'D) will ingly'], correct: 0, explanation: 'willing → willingly.' },
+            { topic: 'formation', q: 'Adverb of "sudden"?', options: ['A) suddenly', 'B) suddently', 'C) sudden ly', 'D) suddainly'], correct: 0, explanation: 'sudden → suddenly.' },
+            { topic: 'formation', q: 'Adverb of "happy"? (repeat check)', options: ['A) happily', 'B) happly', 'C) happyly', 'D) hapily'], correct: 0, explanation: 'happy -> happily.' }
+        ];
+
+        // ----- state for questions panel -----
+        let currentTopic = 'all';
+        let userAnswers = new Array(questions.length).fill(null);
+        let checkedStatus = new Array(questions.length).fill(false);
+
+        const container = document.getElementById('questionsContainer');
+        const scoreSpan = document.getElementById('scoreDisplay');
+        const topicCorrectSpan = document.getElementById('topicCorrect');
+        const resetBtn = document.getElementById('resetAll');
+        const topicBtns = document.querySelectorAll('#topicNav .topic-btn');
+
+        function renderQuestions() {
+            let filtered = questions.filter((q, idx) => currentTopic === 'all' || q.topic === currentTopic);
+            let html = '';
+            filtered.forEach((q, idx) => {
+                const globalIdx = questions.indexOf(q);
+                const selected = userAnswers[globalIdx];
+                const checked = checkedStatus[globalIdx];
+                let qClass = 'q-item';
+                if (checked && selected !== null) {
+                    qClass += (selected === q.correct) ? ' correct' : ' wrong';
+                }
+                let optionsHtml = '';
+                q.options.forEach((opt, optIdx) => {
+                    const checkedAttr = (selected === optIdx) ? 'checked' : '';
+                    optionsHtml += `<div class="option"><input type="radio" name="q${globalIdx}" value="${optIdx}" ${checkedAttr} ${checked ? 'disabled' : ''}> ${opt}</div>`;
+                });
+                let explanationHtml = `<div class="explanation-box ${(checked && selected !== null) ? 'show' : ''}"><strong>🔍 explanation:</strong> ${q.explanation}</div>`;
+                html += `<div class="${qClass}" data-global="${globalIdx}">
+                    <div class="question-text">${q.q}</div>
+                    <div class="options" data-qidx="${globalIdx}">${optionsHtml}</div>
+                    <button class="btn-check" data-qidx="${globalIdx}" ${checked ? 'disabled' : ''}>✓ verify</button>
+                    ${explanationHtml}
+                </div>`;
+            });
+            container.innerHTML = html || '<p style="padding: 30px;">No questions for selected topic.</p>';
+
+            document.querySelectorAll('#questionsContainer .options input').forEach(radio => {
+                radio.addEventListener('change', function(e) {
+                    if (checkedStatus[this.closest('.q-item').dataset.global]) return;
+                    const qIdx = parseInt(this.closest('.options').dataset.qidx);
+                    userAnswers[qIdx] = parseInt(this.value);
+                });
+            });
+
+            document.querySelectorAll('#questionsContainer .btn-check').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    const qIdx = parseInt(this.dataset.qidx);
+                    if (checkedStatus[qIdx]) return;
+                    if (userAnswers[qIdx] === null || userAnswers[qIdx] === undefined) {
+                        alert('Please select an option first.');
+                        return;
+                    }
+                    checkedStatus[qIdx] = true;
+                    renderQuestions();
+                    updateStats();
+                });
+            });
+        }
+
+        function updateStats() {
+            let totalChecked = checkedStatus.filter(v => v).length;
+            let correct = 0;
+            checkedStatus.forEach((c, idx) => {
+                if (c && userAnswers[idx] === questions[idx].correct) correct++;
+            });
+            scoreSpan.innerText = `${correct} / ${questions.length}`;
+            topicCorrectSpan.innerText = `✅ ${correct} correct of ${totalChecked} attempted`;
+        }
+
+        topicBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                topicBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentTopic = this.dataset.topic;
+                renderQuestions();
+            });
+        });
+
+        resetBtn.addEventListener('click', function() {
+            userAnswers = new Array(questions.length).fill(null);
+            checkedStatus = new Array(questions.length).fill(false);
+            renderQuestions();
+            updateStats();
+        });
+
+        // tab switching logic
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const panels = document.querySelectorAll('.panel');
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                panels.forEach(p => p.classList.remove('active-panel'));
+                document.getElementById(this.dataset.tab).classList.add('active-panel');
+            });
+        });
+
+        // initial render for questions
+        renderQuestions();
+        updateStats();
+    })();
+</script>
+</body>
+</html>

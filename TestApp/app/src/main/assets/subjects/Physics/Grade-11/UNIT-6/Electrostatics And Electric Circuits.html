@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Grade 11 Physics · Chapter 6 · ELECTROSTATICS & CIRCUITS (Expert)</title>
+    <style>
+        :root {
+            --bg-deep: #0c1420;
+            --bg-card: #1e2f40;
+            --accent-glow: #ffaa33;
+            --accent-soft: #ffd966;
+            --text-bright: #f0f9ff;
+            --text-code: #b8e2ff;
+            --border-light: #3a5f7a;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: var(--bg-deep);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text-bright);
+            line-height: 1.6;
+            padding: 8px;
+        }
+        .master-chapter {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: #132433;
+            border-radius: 32px;
+            padding: clamp(18px, 5vw, 38px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+            border: 1px solid #2b5470;
+        }
+        h1 {
+            font-size: clamp(1.8rem, 6vw, 3rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffe09c, #ffb347);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+        .chapter-badge {
+            font-size: clamp(1rem, 3.5vw, 1.3rem);
+            color: var(--accent-soft);
+            border-left: 6px solid var(--accent-glow);
+            padding-left: 16px;
+            margin: 10px 0 20px;
+        }
+        /* tabs */
+        .section-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin: 25px 0;
+        }
+        .tab-btn {
+            flex: 1 1 140px;
+            max-width: 200px;
+            background: #1e3f5a;
+            border: 2px solid #3b7fa0;
+            color: white;
+            font-weight: 700;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            padding: 12px 12px;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+        }
+        .tab-btn.active {
+            background: var(--accent-glow);
+            color: #0a1a2a;
+            border-color: #f9b81b;
+        }
+        .panel { display: none; }
+        .panel.active-panel { display: block; }
+
+        /* notes style */
+        .section-card {
+            background: var(--bg-card);
+            border-radius: 28px;
+            padding: clamp(18px, 4vw, 30px);
+            margin: 25px 0;
+            border: 1px solid #2c688b;
+        }
+        .section-card h2 {
+            font-size: clamp(1.4rem, 4vw, 2.2rem);
+            color: var(--accent-soft);
+            border-bottom: 4px solid var(--accent-glow);
+            display: inline-block;
+            margin-bottom: 18px;
+            padding-right: 15px;
+        }
+        .concept-block {
+            background: #1c3850;
+            border-left: 8px solid var(--accent-glow);
+            border-radius: 22px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .concept-block h3 {
+            font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+            color: var(--accent-soft);
+            margin-bottom: 12px;
+        }
+        .note-list {
+            list-style: none;
+        }
+        .note-list li {
+            margin: 12px 0;
+            padding-left: 24px;
+            position: relative;
+        }
+        .note-list li::before {
+            content: "►";
+            position: absolute;
+            left: 0;
+            color: var(--accent-glow);
+            font-size: 1.1rem;
+        }
+        .example-box {
+            background: #0e2b40;
+            border-radius: 20px;
+            padding: 16px 20px;
+            margin: 18px 0;
+            border-left: 6px solid #1e90ff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(0.9rem, 2.2vw, 1.05rem);
+            color: var(--text-code);
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .highlight-box {
+            background: #0f2f44;
+            border-radius: 18px;
+            padding: 16px;
+            border-left: 8px solid var(--accent-glow);
+            margin: 20px 0;
+        }
+        .figure-place {
+            background: #1f3c54;
+            border: 2px dashed var(--accent-glow);
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+            margin: 15px 0;
+            color: #b8d8ff;
+        }
+
+        /* exam panel */
+        .exam-paper {
+            background: #0f2639;
+            border-radius: 28px;
+            padding: clamp(16px, 4vw, 28px);
+        }
+        .question-card {
+            background: #1d3c58;
+            border-radius: 24px;
+            padding: 22px;
+            margin: 22px 0;
+            border: 1px solid #3f85b0;
+        }
+        .q-num {
+            background: var(--accent-glow);
+            color: #102030;
+            font-weight: 800;
+            padding: 8px 20px;
+            border-radius: 60px;
+            display: inline-block;
+            font-size: 1.2rem;
+        }
+        .q-text {
+            margin: 18px 0;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+        }
+        .btn-reveal {
+            background: #2b6c9e;
+            border: none;
+            color: white;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: 60px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .explain-hint {
+            display: none;
+            margin-top: 20px;
+            background: #12344d;
+            border-left: 8px solid var(--accent-glow);
+            padding: 18px;
+            border-radius: 20px;
+            font-size: 1rem;
+        }
+        .explain-hint.show { display: block; }
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #8fb4d0;
+        }
+        hr { border: 2px solid #2b5b7a; margin: 30px 0; }
+    </style>
+</head>
+<body>
+<div class="master-chapter">
+    <h1>⚡ UNIT 6 · ELECTROSTATICS & ELECTRIC CIRCUITS</h1>
+    <div class="chapter-badge">Expert notes + 70 exam‑ready problems · mobile optimized</div>
+
+    <div class="section-tabs">
+        <button class="tab-btn active" data-tab="notes">📘 Notes</button>
+        <button class="tab-btn" data-tab="exam">🎯 70 Exam Q</button>
+    </div>
+
+    <!-- ================ NOTES PANEL (full chapter 6) ================ -->
+    <div id="notes" class="panel active-panel">
+        <!-- introduction -->
+        <div class="section-card">
+            <h2>⚡ Introduction</h2>
+            <div class="highlight-box">
+                This unit covers electrostatics (charges, Coulomb's law, electric field, potential) and electric circuits (current, resistance, Ohm's law, Kirchhoff's rules, capacitors). Fundamental for entrance exams.
+            </div>
+        </div>
+
+        <!-- 6.1 Coulomb's Law -->
+        <div class="section-card">
+            <h2>🔋 6.1 Coulomb's Law</h2>
+            <div class="concept-block">
+                <h3>Properties of charges</h3>
+                <ul class="note-list">
+                    <li>Like charges repel, unlike attract.</li>
+                    <li>Charge is conserved: \(q_{total} = constant\).</li>
+                    <li>Charge is quantized: \(q = ne\) where \(e = 1.6\times10^{-19}\ \mathrm{C}\).</li>
+                </ul>
+            </div>
+            <div class="concept-block">
+                <h3>Coulomb's law</h3>
+                <p>\(F = k\frac{q_1 q_2}{r^2}\) with \(k = 8.99\times10^9\ \mathrm{N\,m^2/C^2}\)</p>
+                <p>Vector form: \(\vec{F}_{12} = k\frac{q_1q_2}{r^2}\hat{r}_{12}\)</p>
+            </div>
+            <div class="example-box">
+                <strong>Example 6.2:</strong> Two charges \(-1.0\times10^{-10}\) C each, 1 cm apart → repulsive force \(9.0\times10^{-7}\) N.
+            </div>
+            <div class="concept-block">
+                <h3>Multiple charges</h3>
+                <p>Superposition principle: net force = vector sum of individual forces.</p>
+            </div>
+        </div>
+
+        <!-- 6.2 Electric Fields -->
+        <div class="section-card">
+            <h2>🧲 6.2 Electric Fields</h2>
+            <div class="concept-block">
+                <h3>Electric field definition</h3>
+                <p>\(\vec{E} = \frac{\vec{F}}{q}\) (test charge). For point charge: \(E = k\frac{|q|}{r^2}\) direction away from +q, toward -q.</p>
+                <h3>Electric field lines</h3>
+                <p>Start on +, end on -; density indicates strength; never cross.</p>
+            </div>
+            <div class="concept-block">
+                <h3>Electric flux</h3>
+                <p>\(\Phi = \vec{E}\cdot\vec{A} = EA\cos\theta\)</p>
+                <p>Gauss's law: \(\Phi = \frac{Q_{inside}}{\epsilon_0}\)</p>
+            </div>
+            <div class="example-box">
+                <strong>Example 6.4:</strong> E due to 2.0 nC at 5.0 mm = \(7.2\times10^5\) N/C away from charge.
+            </div>
+        </div>
+
+        <!-- 6.3 Electric Potential -->
+        <div class="section-card">
+            <h2>🔌 6.3 Electric Potential</h2>
+            <div class="concept-block">
+                <h3>Electric potential energy & potential</h3>
+                <p>\(U = k\frac{qQ}{r}\) , \(V = \frac{U}{q} = k\frac{Q}{r}\)</p>
+                <p>Potential difference: \(\Delta V = V_B - V_A = -\int_A^B \vec{E}\cdot d\vec{l}\)</p>
+                <p>For uniform field: \(\Delta V = E d\)</p>
+            </div>
+            <div class="concept-block">
+                <h3>Equipotential surfaces</h3>
+                <p>Surfaces of constant V; perpendicular to E; no work moving along them.</p>
+            </div>
+            <div class="example-box">
+                <strong>Example 6.7:</strong> V from 1 μC at 1 mm = \(9\times10^6\) V = 9 MV.
+            </div>
+        </div>
+
+        <!-- 6.4 Electric Current, Resistance, Ohm's Law -->
+        <div class="section-card">
+            <h2>⚡ 6.4 Current, Resistance, Ohm's Law</h2>
+            <div class="concept-block">
+                <h3>Electric current</h3>
+                <p>\(I = \frac{\Delta Q}{\Delta t}\) (A). Direction = flow of positive charge.</p>
+                <h3>Current density</h3>
+                <p>\(J = \frac{I}{A} = \sigma E = n e v_d\)</p>
+                <h3>Resistance & resistivity</h3>
+                <p>\(R = \rho \frac{L}{A}\) ; Ohm's law: \(V = IR\) (for ohmic materials).</p>
+            </div>
+            <div class="example-box">
+                <strong>Example 6.10:</strong> I=6 mA, A=12 mm² → J = 500 A/m².
+            </div>
+        </div>
+
+        <!-- 6.5 Resistor combinations -->
+        <div class="section-card">
+            <h2>🔗 6.5 Resistors in series & parallel</h2>
+            <div class="concept-block">
+                <h3>Series</h3>
+                <p>\(R_{eq} = R_1 + R_2 + \dots\) ; same current, voltage divides.</p>
+                <h3>Parallel</h3>
+                <p>\(\frac{1}{R_{eq}} = \frac{1}{R_1} + \frac{1}{R_2} + \dots\) ; same voltage, current divides.</p>
+            </div>
+            <div class="example-box">
+                <strong>Example 6.12:</strong> 5Ω, 4Ω||12Ω, 8Ω → R_eq = 5+3+8=16Ω; currents: 1.5 A through 5Ω, 8Ω; 1.125 A through 4Ω, 0.375 A through 12Ω.
+            </div>
+        </div>
+
+        <!-- 6.6 Capacitors -->
+        <div class="section-card">
+            <h2>📦 6.6 Capacitors</h2>
+            <div class="concept-block">
+                <h3>Capacitance</h3>
+                <p>\(C = \frac{Q}{V}\) (F). Parallel plate: \(C = \epsilon_0 \frac{A}{d}\) with dielectric \(C = \kappa C_0\).</p>
+                <h3>Series/parallel capacitors</h3>
+                <p>Parallel: \(C_{eq} = C_1 + C_2 + \dots\) ; Series: \(\frac{1}{C_{eq}} = \frac{1}{C_1} + \frac{1}{C_2} + \dots\)</p>
+                <h3>Energy stored</h3>
+                <p>\(U = \frac{1}{2}CV^2 = \frac{Q^2}{2C}\)</p>
+            </div>
+            <div class="example-box">
+                <strong>Example 6.19:</strong> A=200 cm², d=2 mm, κ=6, V=12V → C=5.31×10⁻¹⁰ F, Q=6.37 nC.
+            </div>
+        </div>
+
+        <!-- 6.7 Kirchhoff's rules -->
+        <div class="section-card">
+            <h2>🔄 6.7 Kirchhoff's Rules</h2>
+            <div class="concept-block">
+                <h3>Junction rule</h3>
+                <p>Sum of currents entering = sum leaving (charge conservation).</p>
+                <h3>Loop rule</h3>
+                <p>Sum of potential changes around any closed loop = 0 (energy conservation).</p>
+            </div>
+            <div class="example-box">
+                <strong>Example 6.17:</strong> Multi‑loop circuit → solve simultaneous equations for I₁, I₂, I₃.
+            </div>
+        </div>
+
+        <!-- summary equations -->
+        <div class="section-card">
+            <h2>📌 Key Equations</h2>
+            <div class="highlight-box">
+                \(F = k\frac{q_1q_2}{r^2}\) ; \(E = \frac{F}{q} = k\frac{Q}{r^2}\)<br>
+                \(V = k\frac{Q}{r}\) ; \(\Delta V = E d\)<br>
+                \(I = \frac{\Delta Q}{\Delta t}\) ; \(V = IR\) ; \(R = \rho \frac{L}{A}\)<br>
+                \(C = \frac{Q}{V} = \epsilon_0\frac{A}{d}\) ; \(C_{series}\): \(\frac{1}{C}=\sum\frac{1}{C_i}\) ; \(C_{parallel}=\sum C_i\)<br>
+                Kirchhoff: \(\sum I_{in}= \sum I_{out}\) ; \(\sum \Delta V = 0\)
+            </div>
+        </div>
+    </div> <!-- end notes panel -->
+
+    <!-- ================ EXAM PANEL (70 challenging problems) ================ -->
+    <div id="exam" class="panel">
+        <div class="exam-paper">
+            <h2 style="color:#ffcc66; margin-bottom:20px;">🎯 70 Electrostatics & Circuits Problems</h2>
+
+            <!-- Q1 to Q70 with ids ans601..ans670 -->
+            <div class="question-card"><span class="q-num">Q1</span><div class="q-text">Two charges \(q_1 = +2\mu C\) and \(q_2 = -3\mu C\) are 10 cm apart. Find the force on each (magnitude and direction).</div><button class="btn-reveal" onclick="toggleAnswer(601)">solution</button><div id="ans601" class="explain-hint"><strong>✅ solution:</strong> \(F = k\frac{|q_1q_2|}{r^2} = 8.99\times10^9 \frac{2\times10^{-6}\cdot3\times10^{-6}}{0.1^2} = 8.99\times10^9 \frac{6\times10^{-12}}{0.01} = 8.99\times10^9 \times 6\times10^{-10} = 5.394\) N. Attractive, so force on q₁ is toward q₂, on q₂ toward q₁.</div></div>
+            <div class="question-card"><span class="q-num">Q2</span><div class="q-text">Three charges \(q_1 = +4\mu C\) at (0,0), \(q_2 = -2\mu C\) at (0.3 m, 0), \(q_3 = +5\mu C\) at (0,0.4 m). Find net force on q₁.</div><button class="btn-reveal" onclick="toggleAnswer(602)">solution</button><div id="ans602" class="explain-hint"><strong>✅ solution:</strong> F₁₂ (repulsive on q₁? q₁+ q₂- → attractive, so toward q₂): magnitude \(k·4e-6·2e-6/0.3² = 8.99e9·8e-12/0.09 = 8.99e9·8.888e-11 = 0.799\) N in +x. F₁₃ (repulsive because both +): \(k·4e-6·5e-6/0.4² = 8.99e9·20e-12/0.16 = 8.99e9·1.25e-10 = 1.124\) N in +y. Net force: \(\sqrt{0.799²+1.124²} = 1.38\) N at θ = arctan(1.124/0.799) = 54.6° above +x.</div></div>
+            <div class="question-card"><span class="q-num">Q3</span><div class="q-text">What is the electric field at (0,0) due to a charge \(Q = +6\mu C\) placed at (0.2 m, 0)?</div><button class="btn-reveal" onclick="toggleAnswer(603)">solution</button><div id="ans603" class="explain-hint"><strong>✅ solution:</strong> \(E = kQ/r² = 8.99e9·6e-6/0.04 = 8.99e9·1.5e-4 = 1.3485\times10^6\) N/C directed away from Q, so along -x direction (since Q is at +x).</div></div>
+            <div class="question-card"><span class="q-num">Q4</span><div class="q-text">Two point charges \(q_1 = +5nC\) at x=0, \(q_2 = -5nC\) at x=10 cm. Find E at x=5 cm.</div><button class="btn-reveal" onclick="toggleAnswer(604)">solution</button><div id="ans604" class="explain-hint"><strong>✅ solution:</strong> At midpoint, fields from both are in same direction (toward negative charge). E₁ = k·5e-9/(0.05)² = 8.99e9·5e-9/0.0025 = 8.99e9·2e-6 = 17980 N/C (away from q₁, so right). E₂ = same magnitude but toward q₂ (also right). Total = 35960 N/C right.</div></div>
+            <div class="question-card"><span class="q-num">Q5</span><div class="q-text">A proton is placed in a uniform electric field of 500 N/C. Find its acceleration. (\(m_p = 1.67\times10^{-27}\) kg, \(q_p = 1.6\times10^{-19}\) C)</div><button class="btn-reveal" onclick="toggleAnswer(605)">solution</button><div id="ans605" class="explain-hint"><strong>✅ solution:</strong> \(F = qE = 1.6e-19·500 = 8e-17\) N. \(a = F/m = 8e-17 / 1.67e-27 = 4.79\times10^{10}\) m/s².</div></div>
+            <div class="question-card"><span class="q-num">Q6</span><div class="q-text">A 2 μC charge is placed in an electric field \(\vec{E} = (3\hat{i} + 4\hat{j})\times10^3\) N/C. Find the force vector on it.</div><button class="btn-reveal" onclick="toggleAnswer(606)">solution</button><div id="ans606" class="explain-hint"><strong>✅ solution:</strong> \(\vec{F} = q\vec{E} = 2\times10^{-6}(3000\hat{i} + 4000\hat{j}) = (6\times10^{-3}\hat{i} + 8\times10^{-3}\hat{j})\) N.</div></div>
+            <div class="question-card"><span class="q-num">Q7</span><div class="q-text">Find the electric potential at the midpoint of the two charges in Q4.</div><button class="btn-reveal" onclick="toggleAnswer(607)">solution</button><div id="ans607" class="explain-hint"><strong>✅ solution:</strong> \(V = kq_1/r_1 + kq_2/r_2 = 8.99e9·5e-9/0.05 + 8.99e9·(-5e-9)/0.05 = 0\).</div></div>
+            <div class="question-card"><span class="q-num">Q8</span><div class="q-text">How much work is required to bring a +2 μC charge from infinity to a point 20 cm from a +5 μC charge?</div><button class="btn-reveal" onclick="toggleAnswer(608)">solution</button><div id="ans608" class="explain-hint"><strong>✅ solution:</strong> \(W = qV = 2e-6 · k·5e-6/0.2 = 2e-6·8.99e9·5e-6/0.2 = 2e-6·(44.95e3/0.2?) \) Actually \(kqQ/r = 8.99e9·5e-6·2e-6/0.2 = 8.99e9·1e-11/0.2 = 8.99e9·5e-11 = 0.4495\) J. So W = 0.45 J.</div></div>
+            <div class="question-card"><span class="q-num">Q9</span><div class="q-text">A 10 V battery is connected across a 5 Ω resistor. Find current and power dissipated.</div><button class="btn-reveal" onclick="toggleAnswer(609)">solution</button><div id="ans609" class="explain-hint"><strong>✅ solution:</strong> \(I = V/R = 10/5 = 2\) A. \(P = I^2R = 4·5 = 20\) W, also \(P=VI=10·2=20\) W.</div></div>
+            <div class="question-card"><span class="q-num">Q10</span><div class="q-text">A wire of length 2 m, cross‑sectional area 0.5 mm² has resistance 5 Ω. Find resistivity.</div><button class="btn-reveal" onclick="toggleAnswer(610)">solution</button><div id="ans610" class="explain-hint"><strong>✅ solution:</strong> \(\rho = R A / L = 5·0.5\times10^{-6} / 2 = 2.5\times10^{-6}/2 = 1.25\times10^{-6}\) Ω·m.</div></div>
+            <div class="question-card"><span class="q-num">Q11</span><div class="q-text">Three resistors 2 Ω, 4 Ω, 6 Ω are connected in series to a 12 V battery. Find current and voltage across each.</div><button class="btn-reveal" onclick="toggleAnswer(611)">solution</button><div id="ans611" class="explain-hint"><strong>✅ solution:</strong> \(R_eq = 12 Ω\). I = 12/12 = 1 A. V₁ = 1·2 = 2 V, V₂ = 1·4 = 4 V, V₃ = 1·6 = 6 V.</div></div>
+            <div class="question-card"><span class="q-num">Q12</span><div class="q-text">The same resistors connected in parallel to a 12 V battery. Find total current and current through each.</div><button class="btn-reveal" onclick="toggleAnswer(612)">solution</button><div id="ans612" class="explain-hint"><strong>✅ solution:</strong> \(1/R_eq = 1/2+1/4+1/6 = 0.5+0.25+0.1667 = 0.9167\), \(R_eq = 1.091 Ω\). Total I = 12/1.091 = 11 A. I₁ = 12/2 = 6 A, I₂ = 12/4 = 3 A, I₃ = 12/6 = 2 A.</div></div>
+            <div class="question-card"><span class="q-num">Q13</span><div class="q-text">A 10 Ω and a 20 Ω resistor are connected in parallel and this combination in series with a 5 Ω resistor. Find equivalent resistance across the battery.</div><button class="btn-reveal" onclick="toggleAnswer(613)">solution</button><div id="ans613" class="explain-hint"><strong>✅ solution:</strong> Parallel: \(1/R_p = 1/10+1/20 = 0.1+0.05=0.15 → R_p = 6.667 Ω\). Series with 5 Ω → \(R_eq = 11.667 Ω\).</div></div>
+            <div class="question-card"><span class="q-num">Q14</span><div class="q-text">A 100 μF capacitor is charged to 50 V. Find charge and energy stored.</div><button class="btn-reveal" onclick="toggleAnswer(614)">solution</button><div id="ans614" class="explain-hint"><strong>✅ solution:</strong> \(Q = CV = 100\times10^{-6}·50 = 5\times10^{-3}\) C = 5 mC. \(U = \frac12 CV^2 = 0.5·100e-6·2500 = 0.5·0.25 = 0.125\) J.</div></div>
+            <div class="question-card"><span class="q-num">Q15</span><div class="q-text">A parallel plate capacitor has plates of area 0.1 m² separated by 1 mm. Find capacitance (air).</div><button class="btn-reveal" onclick="toggleAnswer(615)">solution</button><div id="ans615" class="explain-hint"><strong>✅ solution:</strong> \(C = \epsilon_0 A/d = 8.85\times10^{-12}·0.1 / 0.001 = 8.85\times10^{-10}\) F = 885 pF.</div></div>
+            <div class="question-card"><span class="q-num">Q16</span><div class="q-text">If a dielectric of κ=4 is inserted, find new capacitance and charge if connected to 50 V battery.</div><button class="btn-reveal" onclick="toggleAnswer(616)">solution</button><div id="ans616" class="explain-hint"><strong>✅ solution:</strong> \(C' = κC = 4·885 pF = 3.54 nF\). Q = C'·V = 3.54e-9·50 = 177 nC.</div></div>
+            <div class="question-card"><span class="q-num">Q17</span><div class="q-text">Two capacitors 2 μF and 4 μF are connected in series to a 12 V battery. Find charge on each and voltage across each.</div><button class="btn-reveal" onclick="toggleAnswer(617)">solution</button><div id="ans617" class="explain-hint"><strong>✅ solution:</strong> \(1/C_eq = 1/2+1/4 = 0.5+0.25=0.75 → C_eq = 1.333 μF\). Q = C_eq·V = 1.333e-6·12 = 16 μC. Same Q on each. V₁ = Q/2μF = 16/2 = 8 V, V₂ = 16/4 = 4 V.</div></div>
+            <div class="question-card"><span class="q-num">Q18</span><div class="q-text">Two capacitors 3 μF and 6 μF in parallel to 12 V. Find total charge and energy.</div><button class="btn-reveal" onclick="toggleAnswer(618)">solution</button><div id="ans618" class="explain-hint"><strong>✅ solution:</strong> C_eq = 3+6 = 9 μF. Q = 9e-6·12 = 108 μC. U = ½·9e-6·144 = 648 μJ.</div></div>
+            <div class="question-card"><span class="q-num">Q19</span><div class="q-text">In the circuit below, find the current through the 2 Ω resistor. (Battery 10V, internal resistance 1Ω, external 2Ω)</div><button class="btn-reveal" onclick="toggleAnswer(619)">solution</button><div id="ans619" class="explain-hint"><strong>✅ solution:</strong> Total R = 1+2 = 3 Ω. I = 10/3 = 3.333 A. Current through 2 Ω = 3.333 A.</div></div>
+            <div class="question-card"><span class="q-num">Q20</span><div class="q-text">A 12 V battery with internal resistance 0.5 Ω is connected to a 5.5 Ω load. Find terminal voltage and power delivered to load.</div><button class="btn-reveal" onclick="toggleAnswer(620)">solution</button><div id="ans620" class="explain-hint"><strong>✅ solution:</strong> I = 12/(0.5+5.5) = 12/6 = 2 A. Terminal V = emf - Ir = 12 - 2·0.5 = 11 V. P_load = I²·5.5 = 4·5.5 = 22 W.</div></div>
+            <div class="question-card"><span class="q-num">Q21</span><div class="q-text">A 5 Ω and 10 Ω are connected in parallel with a 15 V battery. Find total current and power.</div><button class="btn-reveal" onclick="toggleAnswer(621)">solution</button><div id="ans621" class="explain-hint"><strong>✅ solution:</strong> \(1/R_eq = 1/5+1/10 = 0.2+0.1=0.3 → R_eq=3.333 Ω\). I_total = 15/3.333 = 4.5 A. P = V·I = 15·4.5 = 67.5 W, also I²R = 20.25·3.333=67.5.</div></div>
+            <div class="question-card"><span class="q-num">Q22</span><div class="q-text">Find the equivalent resistance between A and B: R1=2Ω, R2=3Ω, R3=6Ω all in parallel.</div><button class="btn-reveal" onclick="toggleAnswer(622)">solution</button><div id="ans622" class="explain-hint"><strong>✅ solution:</strong> \(1/R_eq = 1/2+1/3+1/6 = 0.5+0.3333+0.1667 = 1.0 → R_eq = 1 Ω\).</div></div>
+            <div class="question-card"><span class="q-num">Q23</span><div class="q-text">A 4 μF capacitor is charged to 100 V and then disconnected. It is then connected across an uncharged 6 μF capacitor. Find final voltage and energy loss.</div><button class="btn-reveal" onclick="toggleAnswer(623)">solution</button><div id="ans623" class="explain-hint"><strong>✅ solution:</strong> Initial Q = 4e-6·100 = 400 μC. After parallel, total C = 10 μF, V = Q/C = 400/10 = 40 V. Initial energy = ½·4e-6·10000 = 0.02 J. Final energy = ½·10e-6·1600 = 0.008 J. Loss = 0.012 J.</div></div>
+            <div class="question-card"><span class="q-num">Q24</span><div class="q-text">Find the current in each branch of the circuit: 10V battery with internal 1Ω, two parallel branches: (2Ω) and (3Ω+4Ω).</div><button class="btn-reveal" onclick="toggleAnswer(624)">solution</button><div id="ans624" class="explain-hint"><strong>✅ solution:</strong> Branch1: 2Ω. Branch2: 3+4=7Ω. Parallel: 1/Rp = 1/2+1/7 = 0.5+0.142857=0.642857 → Rp=1.5556Ω. Total R = Rp + 1 = 2.5556Ω. I_total = 10/2.5556 = 3.913 A. V_parallel = I_total·Rp = 3.913·1.5556 = 6.087 V. I₁ = 6.087/2 = 3.0435 A, I₂ = 6.087/7 = 0.8696 A.</div></div>
+            <div class="question-card"><span class="q-num">Q25</span><div class="q-text">A 100 W, 200 V bulb is connected to a 150 V source. Find power consumed (assume resistance constant).</div><button class="btn-reveal" onclick="toggleAnswer(625)">solution</button><div id="ans625" class="explain-hint"><strong>✅ solution:</strong> R = V²/P = 200²/100 = 400 Ω. At 150 V, P = 150²/400 = 22500/400 = 56.25 W.</div></div>
+            <div class="question-card"><span class="q-num">Q26</span><div class="q-text">A galvanometer of resistance 50 Ω gives full‑scale deflection at 1 mA. How to convert to 0‑10 V voltmeter?</div><button class="btn-reveal" onclick="toggleAnswer(626)">solution</button><div id="ans626" class="explain-hint"><strong>✅ solution:</strong> Series resistor R such that Ig(G+R) = 10 V → 0.001(50+R) = 10 → 50+R = 10000 → R = 9950 Ω.</div></div>
+            <div class="question-card"><span class="q-num">Q27</span><div class="q-text">Same galvanometer to be converted to 0‑2 A ammeter. Find shunt resistance.</div><button class="btn-reveal" onclick="toggleAnswer(627)">solution</button><div id="ans627" class="explain-hint"><strong>✅ solution:</strong> Shunt R_sh such that Ig·G = (I - Ig)R_sh → 0.001·50 = (2-0.001)R_sh → 0.05 = 1.999 R_sh → R_sh = 0.025 Ω.</div></div>
+            <div class="question-card"><span class="q-num">Q28</span><div class="q-text">In a Wheatstone bridge, R₁=100Ω, R₂=200Ω, R₃=150Ω, and R₄ unknown. Find R₄ for balance.</div><button class="btn-reveal" onclick="toggleAnswer(628)">solution</button><div id="ans628" class="explain-hint"><strong>✅ solution:</strong> Balance: R₁/R₂ = R₃/R₄ → 100/200 = 150/R₄ → 0.5 = 150/R₄ → R₄ = 300 Ω.</div></div>
+            <div class="question-card"><span class="q-num">Q29</span><div class="q-text">A 10 μF capacitor is charged to 100 V. Find the energy stored and the charge.</div><button class="btn-reveal" onclick="toggleAnswer(629)">solution</button><div id="ans629" class="explain-hint"><strong>✅ solution:</strong> Q = CV = 10e-6·100 = 0.001 C. U = ½CV² = 0.5·10e-6·10000 = 0.05 J.</div></div>
+            <div class="question-card"><span class="q-num">Q30</span><div class="q-text">A 20 Ω and 30 Ω resistor are connected in parallel. This combination is in series with a 10 Ω resistor, and the total is connected to a 24 V battery. Find current in 20 Ω.</div><button class="btn-reveal" onclick="toggleAnswer(630)">solution</button><div id="ans630" class="explain-hint"><strong>✅ solution:</strong> Parallel: 1/Rp = 1/20+1/30 = 0.05+0.03333=0.08333 → Rp=12 Ω. Total R = 12+10=22 Ω. I_total = 24/22 = 1.0909 A. V_parallel = I_total·12 = 13.09 V. I₂₀ = 13.09/20 = 0.6545 A.</div></div>
+            <div class="question-card"><span class="q-num">Q31</span><div class="q-text">A charge of 2 μC is placed at the origin. Find the electric field at (3 m, 4 m).</div><button class="btn-reveal" onclick="toggleAnswer(631)">solution</button><div id="ans631" class="explain-hint"><strong>✅ solution:</strong> r = 5 m. E = kQ/r² = 8.99e9·2e-6/25 = 8.99e9·8e-8 = 719.2 N/C. Direction: (3,4) gives unit vector (0.6,0.8). So \(\vec{E} = 719.2(0.6\hat{i}+0.8\hat{j})\) N/C.</div></div>
+            <div class="question-card"><span class="q-num">Q32</span><div class="q-text">Find the potential at (3,4) due to that charge.</div><button class="btn-reveal" onclick="toggleAnswer(632)">solution</button><div id="ans632" class="explain-hint"><strong>✅ solution:</strong> V = kQ/r = 8.99e9·2e-6/5 = 8.99e9·4e-7 = 3596 V.</div></div>
+            <div class="question-card"><span class="q-num">Q33</span><div class="q-text">Two point charges 5 μC and -5 μC are 10 cm apart. Find electric field at a point on the perpendicular bisector 10 cm from the midpoint.</div><button class="btn-reveal" onclick="toggleAnswer(633)">solution</button><div id="ans633" class="explain-hint"><strong>✅ solution:</strong> Each charge distance = √(0.05²+0.1²)=√0.0125=0.1118 m. Fields: magnitude equal = k·5e-6/0.0125 = 8.99e9·4e-4 = 3.596e6 N/C. Components parallel to line cancel; perpendicular add. Each perpendicular component = E·sinθ where sinθ = 0.1/0.1118=0.894. Total = 2·3.596e6·0.894 = 6.43×10⁶ N/C (direction away from + toward -).</div></div>
+            <div class="question-card"><span class="q-num">Q34</span><div class="q-text">A 2 μC charge is placed at each vertex of an equilateral triangle of side 10 cm. Find force on one charge due to the other two.</div><button class="btn-reveal" onclick="toggleAnswer(634)">solution</button><div id="ans634" class="explain-hint"><strong>✅ solution:</strong> Each force magnitude F = k·(2e-6)²/0.1² = 8.99e9·4e-12/0.01 = 8.99e9·4e-10 = 3.596 N. Angle 60° between forces. Net force = F√3 = 3.596·1.732 = 6.23 N directed away from opposite vertex.</div></div>
+            <div class="question-card"><span class="q-num">Q35</span><div class="q-text">A 100 pF capacitor is charged to 200 V and then isolated. A dielectric κ=5 is inserted. Find new voltage and energy.</div><button class="btn-reveal" onclick="toggleAnswer(635)">solution</button><div id="ans635" class="explain-hint"><strong>✅ solution:</strong> C' = κC = 500 pF. Q constant = CV = 100e-12·200 = 2e-8 C. V' = Q/C' = 2e-8/500e-12 = 40 V. Initial U = ½·100e-12·40000 = 2e-6 J. Final U = ½·500e-12·1600 = 4e-7 J. Energy decreased.</div></div>
+            <div class="question-card"><span class="q-num">Q36</span><div class="q-text">A 5 μF capacitor is charged to 100 V and then connected across an uncharged 10 μF capacitor. Find final voltage and energy lost.</div><button class="btn-reveal" onclick="toggleAnswer(636)">solution</button><div id="ans636" class="explain-hint"><strong>✅ solution:</strong> Initial Q = 5e-6·100 = 500 μC. Total C = 15 μF. V_f = 500/15 = 33.33 V. Initial energy = 0.5·5e-6·10000 = 0.025 J. Final energy = 0.5·15e-6·(33.33)² = 0.5·15e-6·1111 = 0.00833 J. Loss = 0.01667 J.</div></div>
+            <div class="question-card"><span class="q-num">Q37</span><div class="q-text">A wire of resistivity 1.6×10⁻⁸ Ω·m, length 10 m, radius 0.5 mm. Find its resistance.</div><button class="btn-reveal" onclick="toggleAnswer(637)">solution</button><div id="ans637" class="explain-hint"><strong>✅ solution:</strong> A = πr² = π·(0.5e-3)² = 7.854e-7 m². R = ρL/A = 1.6e-8·10/7.854e-7 = 1.6e-7/7.854e-7 = 0.2037 Ω.</div></div>
+            <div class="question-card"><span class="q-num">Q38</span><div class="q-text">Find the equivalent resistance between two points if you have infinite ladder of 1Ω resistors (each rung 1Ω, sides 1Ω).</div><button class="btn-reveal" onclick="toggleAnswer(638)">solution</button><div id="ans638" class="explain-hint"><strong>✅ solution:</strong> Let R be equivalent. Then R = 1 + (1∥R) + 1? Actually typical infinite ladder: R = 2 + (1∥R). Solve R = 2 + (R/(1+R)). Multiply: R(1+R) = 2(1+R)+R → R+R² = 2+2R+R → R² -2R -2=0 → R = 1±√3 → positive 1+1.732=2.732 Ω.</div></div>
+            <div class="question-card"><span class="q-num">Q39</span><div class="q-text">A battery of emf 12 V and internal resistance 1 Ω is connected to an external resistor R. For what R is maximum power transferred? Find that power.</div><button class="btn-reveal" onclick="toggleAnswer(639)">solution</button><div id="ans639" class="explain-hint"><strong>✅ solution:</strong> Maximum power when R = r = 1 Ω. Current I = 12/(1+1)=6 A. P = I²R = 36·1 = 36 W.</div></div>
+            <div class="question-card"><span class="q-num">Q40</span><div class="q-text">In the circuit, find the current through the 4Ω resistor using Kirchhoff's laws: 12V battery, 2Ω internal, then 4Ω and 6Ω in parallel.</div><button class="btn-reveal" onclick="toggleAnswer(640)">solution</button><div id="ans640" class="explain-hint"><strong>✅ solution:</strong> Parallel: 1/Rp = 1/4+1/6 = 0.25+0.1667=0.4167 → Rp=2.4 Ω. Total R = 2.4+2 = 4.4 Ω. I_total = 12/4.4 = 2.727 A. V_parallel = I_total·2.4 = 6.545 V. I₄ = 6.545/4 = 1.636 A.</div></div>
+            <div class="question-card"><span class="q-num">Q41</span><div class="q-text">Two charges +4 μC and -4 μC are 5 cm apart. Find the electric field at a point on the axis 5 cm from the positive charge, on the side away from the negative charge.</div><button class="btn-reveal" onclick="toggleAnswer(641)">solution</button><div id="ans641" class="explain-hint"><strong>✅ solution:</strong> Let +4 at x=0, -4 at x=0.05 m. Point at x=0.05 m? Actually "away from negative" means beyond +, say at x=0.1 m. Then E from +: k·4e-6/(0.1)² = 8.99e9·4e-6/0.01 = 3.596e6 N/C away. From -: distance 0.05 m, field toward -: magnitude k·4e-6/0.0025 = 8.99e9·1.6e-3 = 1.438e7 N/C. Direction: negative is at 0.05, so at 0.1, field from - is left (toward -). So net E = 3.596e6 - 1.438e7 = -1.078e7 N/C (toward negative).</div></div>
+            <div class="question-card"><span class="q-num">Q42</span><div class="q-text">A 10 μC charge is at (0,0). Another -5 μC is at (0,0.3 m). Find point on y-axis where E=0.</div><button class="btn-reveal" onclick="toggleAnswer(642)">solution</button><div id="ans642" class="explain-hint"><strong>✅ solution:</strong> For E=0, fields must cancel. Between them? Not possible because fields same direction (toward negative). Beyond negative: let y > 0.3. Then E from +10 (up) and from -5 (down). Magnitudes: k·10e-6/y² = k·5e-6/(y-0.3)² → 10/y² = 5/(y-0.3)² → 2(y-0.3)² = y² → √2(y-0.3)=y → 1.414y -0.424 = y → 0.414y = 0.424 → y = 1.024 m. So point at y=1.024 m.</div></div>
+            <div class="question-card"><span class="q-num">Q43</span><div class="q-text">A 2 μF and 3 μF capacitor in series are connected to 10 V. Find charge and voltage on each.</div><button class="btn-reveal" onclick="toggleAnswer(643)">solution</button><div id="ans643" class="explain-hint"><strong>✅ solution:</strong> 1/C_eq = 1/2+1/3 = 0.5+0.3333=0.83333 → C_eq = 1.2 μF. Q = 1.2·10 = 12 μC. V₁ = Q/2 = 6 V, V₂ = Q/3 = 4 V.</div></div>
+            <div class="question-card"><span class="q-num">Q44</span><div class="q-text">Find equivalent capacitance between A and B: 4 μF and 6 μF in parallel, then series with 5 μF.</div><button class="btn-reveal" onclick="toggleAnswer(644)">solution</button><div id="ans644" class="explain-hint"><strong>✅ solution:</strong> Parallel 4+6=10 μF. Series with 5: 1/C_eq = 1/10+1/5 = 0.1+0.2=0.3 → C_eq = 3.333 μF.</div></div>
+            <div class="question-card"><span class="q-num">Q45</span><div class="q-text">A 5 Ω resistor carries 2 A for 10 minutes. Find heat dissipated.</div><button class="btn-reveal" onclick="toggleAnswer(645)">solution</button><div id="ans645" class="explain-hint"><strong>✅ solution:</strong> P = I²R = 4·5 = 20 W. Time = 600 s. Energy = 20·600 = 12000 J.</div></div>
+            <div class="question-card"><span class="q-num">Q46</span><div class="q-text">Three 2 Ω resistors are connected to form a triangle. Find resistance between any two vertices.</div><button class="btn-reveal" onclick="toggleAnswer(646)">solution</button><div id="ans646" class="explain-hint"><strong>✅ solution:</strong> Between two vertices, one resistor direct (2Ω) and the other two in series (4Ω) in parallel with it. So 2Ω ∥ 4Ω → 1/R = 1/2+1/4 = 0.5+0.25=0.75 → R = 1.333 Ω.</div></div>
+            <div class="question-card"><span class="q-num">Q47</span><div class="q-text">A charge of 3 μC is placed at the center of a cube of side 0.1 m. Find electric flux through one face.</div><button class="btn-reveal" onclick="toggleAnswer(647)">solution</button><div id="ans647" class="explain-hint"><strong>✅ solution:</strong> Total flux = Q/ε₀ = 3e-6/8.85e-12 = 3.39e5 N·m²/C. Through one face = 1/6 of total = 5.65e4 N·m²/C.</div></div>
+            <div class="question-card"><span class="q-num">Q48</span><div class="q-text">A parallel plate capacitor has plate area 0.2 m², separation 2 mm, and dielectric κ=3. Find capacitance.</div><button class="btn-reveal" onclick="toggleAnswer(648)">solution</button><div id="ans648" class="explain-hint"><strong>✅ solution:</strong> C = κε₀A/d = 3·8.85e-12·0.2 / 0.002 = 3·1.77e-12/0.002? Actually 8.85e-12·0.2 = 1.77e-12; /0.002 = 8.85e-10; times 3 = 2.655e-9 F = 2.655 nF.</div></div>
+            <div class="question-card"><span class="q-num">Q49</span><div class="q-text">A 12 V battery is connected across a series combination of 4 Ω and 6 Ω. Find voltage across 6 Ω.</div><button class="btn-reveal" onclick="toggleAnswer(649)">solution</button><div id="ans649" class="explain-hint"><strong>✅ solution:</strong> I = 12/(4+6) = 1.2 A. V₆ = 1.2·6 = 7.2 V.</div></div>
+            <div class="question-card"><span class="q-num">Q50</span><div class="q-text">A 10 Ω and 15 Ω in parallel are connected to a 20 V source. Find total current.</div><button class="btn-reveal" onclick="toggleAnswer(650)">solution</button><div id="ans650" class="explain-hint"><strong>✅ solution:</strong> 1/Rp = 1/10+1/15 = 0.1+0.06667=0.16667 → Rp=6 Ω. I = 20/6 = 3.333 A.</div></div>
+            <div class="question-card"><span class="q-num">Q51</span><div class="q-text">A 200 Ω resistor and a 300 Ω resistor are in series with a 100 V battery. Find power in 300 Ω.</div><button class="btn-reveal" onclick="toggleAnswer(651)">solution</button><div id="ans651" class="explain-hint"><strong>✅ solution:</strong> R_eq=500 Ω, I=100/500=0.2 A. P₃₀₀ = I²·300 = 0.04·300 = 12 W.</div></div>
+            <div class="question-card"><span class="q-num">Q52</span><div class="q-text">A 5 μF capacitor is charged to 50 V and then disconnected. It is then connected across a 10 μF uncharged capacitor. Find final common voltage.</div><button class="btn-reveal" onclick="toggleAnswer(652)">solution</button><div id="ans652" class="explain-hint"><strong>✅ solution:</strong> Q_initial = 5·50 = 250 μC. C_total = 15 μF. V = 250/15 = 16.67 V.</div></div>
+            <div class="question-card"><span class="q-num">Q53</span><div class="q-text">A 2 μC charge is placed at (0,0). A -4 μC charge is placed at (0.4 m, 0). Find electric field at (0.2 m, 0).</div><button class="btn-reveal" onclick="toggleAnswer(653)">solution</button><div id="ans653" class="explain-hint"><strong>✅ solution:</strong> At x=0.2, E from +2 μC (right) = k·2e-6/(0.2)² = 8.99e9·2e-6/0.04 = 8.99e9·5e-5 = 449500 N/C right. From -4 μC at 0.4, distance 0.2 m, field toward -4 (left) = k·4e-6/(0.2)² = 2·449500 = 899000 N/C left. Net = 449500 left (899000-449500=449500).</div></div>
+            <div class="question-card"><span class="q-num">Q54</span><div class="q-text">A 10 pF capacitor is charged to 100 V. Find the number of electrons on the negative plate.</div><button class="btn-reveal" onclick="toggleAnswer(654)">solution</button><div id="ans654" class="explain-hint"><strong>✅ solution:</strong> Q = CV = 10e-12·100 = 1e-9 C. Number of electrons = Q/e = 1e-9/1.6e-19 = 6.25e9 electrons.</div></div>
+            <div class="question-card"><span class="q-num">Q55</span><div class="q-text">A 12 V battery with internal resistance 2 Ω is connected to a variable resistor R. For R=4 Ω, find current and terminal voltage.</div><button class="btn-reveal" onclick="toggleAnswer(655)">solution</button><div id="ans655" class="explain-hint"><strong>✅ solution:</strong> I = 12/(2+4) = 2 A. V_terminal = 12 - 2·2 = 8 V.</div></div>
+            <div class="question-card"><span class="q-num">Q56</span><div class="q-text">Find equivalent resistance between A and B: three 1Ω resistors in a delta configuration.</div><button class="btn-reveal" onclick="toggleAnswer(656)">solution</button><div id="ans656" class="explain-hint"><strong>✅ solution:</strong> Delta to star: each star resistor = product of two delta / sum delta. But easier: between A and B: one 1Ω direct, and the other two in series (2Ω) parallel with it → 1Ω∥2Ω = 2/3 Ω = 0.667 Ω.</div></div>
+            <div class="question-card"><span class="q-num">Q57</span><div class="q-text">A 0.5 μF capacitor is connected to a 1000 Hz AC source of 10 V peak. Find peak current.</div><button class="btn-reveal" onclick="toggleAnswer(657)">solution</button><div id="ans657" class="explain-hint"><strong>✅ solution:</strong> Reactance Xc = 1/(2πfC) = 1/(2π·1000·0.5e-6) = 1/(3.1416e-3) = 318.3 Ω. I_peak = V_peak/Xc = 10/318.3 = 0.0314 A = 31.4 mA.</div></div>
+            <div class="question-card"><span class="q-num">Q58</span><div class="q-text">A 2 H inductor has resistance 10 Ω. Find time constant.</div><button class="btn-reveal" onclick="toggleAnswer(658)">solution</button><div id="ans658" class="explain-hint"><strong>✅ solution:</strong> τ = L/R = 2/10 = 0.2 s.</div></div>
+            <div class="question-card"><span class="q-num">Q59</span><div class="q-text">A 20 Ω and 30 Ω are in parallel with a 60 Ω in series. Find total resistance.</div><button class="btn-reveal" onclick="toggleAnswer(659)">solution</button><div id="ans659" class="explain-hint"><strong>✅ solution:</strong> Parallel: 1/Rp = 1/20+1/30 = 0.05+0.03333=0.08333 → Rp=12 Ω. Total = 12+60=72 Ω.</div></div>
+            <div class="question-card"><span class="q-num">Q60</span><div class="q-text">A 2 μF and 3 μF in parallel are in series with a 5 μF. Find total C.</div><button class="btn-reveal" onclick="toggleAnswer(660)">solution</button><div id="ans660" class="explain-hint"><strong>✅ solution:</strong> Parallel first: 2+3=5 μF. Then series with 5: 1/C = 1/5+1/5 = 0.2+0.2=0.4 → C = 2.5 μF.</div></div>
+            <div class="question-card"><span class="q-num">Q61</span><div class="q-text">A 10 V battery with internal resistance 1 Ω is connected to a parallel combination of 2 Ω and 3 Ω. Find current through 2 Ω.</div><button class="btn-reveal" onclick="toggleAnswer(661)">solution</button><div id="ans661" class="explain-hint"><strong>✅ solution:</strong> Parallel: 1/Rp = 1/2+1/3 = 0.5+0.3333=0.83333 → Rp=1.2 Ω. Total R = 1.2+1=2.2 Ω. I_total = 10/2.2 = 4.545 A. V_parallel = I_total·1.2 = 5.4545 V. I₂ = 5.4545/2 = 2.727 A.</div></div>
+            <div class="question-card"><span class="q-num">Q62</span><div class="q-text">Find the potential at the center of a square of side 0.2 m with charges +2 μC at each corner.</div><button class="btn-reveal" onclick="toggleAnswer(662)">solution</button><div id="ans662" class="explain-hint"><strong>✅ solution:</strong> Distance from center to corner = half diagonal = 0.2·√2/2 = 0.1414 m. V = 4·k·2e-6/0.1414 = 4·8.99e9·2e-6/0.1414 = 4·(17980/0.1414?) Actually 8.99e9·2e-6 = 17980, /0.1414 = 127140, times 4 = 508560 V = 508.6 kV.</div></div>
+            <div class="question-card"><span class="q-num">Q63</span><div class="q-text">A 5 μF capacitor is charged to 100 V and then connected across a 3 μF uncharged capacitor. Find final voltage and energy lost.</div><button class="btn-reveal" onclick="toggleAnswer(663)">solution</button><div id="ans663" class="explain-hint"><strong>✅ solution:</strong> Q_initial = 5·100 = 500 μC. C_total = 8 μF. V = 500/8 = 62.5 V. Initial energy = 0.5·5e-6·10000 = 0.025 J. Final = 0.5·8e-6·3906.25 = 0.015625 J. Loss = 0.009375 J.</div></div>
+            <div class="question-card"><span class="q-num">Q64</span><div class="q-text">A wire of length L, radius r has resistance R. If length is doubled and radius halved, find new resistance.</div><button class="btn-reveal" onclick="toggleAnswer(664)">solution</button><div id="ans664" class="explain-hint"><strong>✅ solution:</strong> R = ρL/A. New L' = 2L, new A' = π(r/2)² = A/4. So R' = ρ·2L/(A/4) = 8·ρL/A = 8R.</div></div>
+            <div class="question-card"><span class="q-num">Q65</span><div class="q-text">A 12 V battery is connected to a series combination of 3 Ω and 6 Ω. Find voltage across 6 Ω.</div><button class="btn-reveal" onclick="toggleAnswer(665)">solution</button><div id="ans665" class="explain-hint"><strong>✅ solution:</strong> I = 12/9 = 1.333 A. V₆ = 1.333·6 = 8 V.</div></div>
+            <div class="question-card"><span class="q-num">Q66</span><div class="q-text">A 100 μF capacitor is charged to 50 V and then discharged through a 10 kΩ resistor. Find time constant and initial current.</div><button class="btn-reveal" onclick="toggleAnswer(666)">solution</button><div id="ans666" class="explain-hint"><strong>✅ solution:</strong> τ = RC = 10000·100e-6 = 1 s. I_initial = V/R = 50/10000 = 5 mA.</div></div>
+            <div class="question-card"><span class="q-num">Q67</span><div class="q-text">A 2 μC charge is at (0,0), a -3 μC at (0.3 m, 0). Find point on x-axis where V=0.</div><button class="btn-reveal" onclick="toggleAnswer(667)">solution</button><div id="ans667" class="explain-hint"><strong>✅ solution:</strong> Let x be coordinate. For x between 0 and 0.3, potentials opposite sign cancel. k·2/x + k·(-3)/(0.3-x) = 0 → 2/x = 3/(0.3-x) → 2(0.3-x) = 3x → 0.6 - 2x = 3x → 0.6 = 5x → x=0.12 m. For x>0.3, both positive? Actually -3 gives negative, but distance (x-0.3) so equation 2/x = 3/(x-0.3) → 2(x-0.3)=3x → 2x-0.6=3x → -0.6=x impossible. So only x=0.12 m.</div></div>
+            <div class="question-card"><span class="q-num">Q68</span><div class="q-text">A 10 Ω and 20 Ω are in parallel with a 30 Ω in series with this combination. All connected to 24 V. Find power in 20 Ω.</div><button class="btn-reveal" onclick="toggleAnswer(668)">solution</button><div id="ans668" class="explain-hint"><strong>✅ solution:</strong> Parallel: 1/Rp = 1/10+1/20 = 0.1+0.05=0.15 → Rp=6.667 Ω. Total R = 6.667+30=36.667 Ω. I_total = 24/36.667 = 0.6545 A. V_parallel = 0.6545·6.667 = 4.3636 V. I₂₀ = 4.3636/20 = 0.21818 A. P₂₀ = I²·20 = 0.04762·20 = 0.9524 W.</div></div>
+            <div class="question-card"><span class="q-num">Q69</span><div class="q-text">A 4 μF capacitor is charged to 60 V and then connected across an uncharged 6 μF capacitor. Find final charge on 4 μF.</div><button class="btn-reveal" onclick="toggleAnswer(669)">solution</button><div id="ans669" class="explain-hint"><strong>✅ solution:</strong> Initial Q = 4·60 = 240 μC. Final V = 240/10 = 24 V. Q₄ = 4·24 = 96 μC.</div></div>
+            <div class="question-card"><span class="q-num">Q70</span><div class="q-text">A 1.5 V cell with internal resistance 0.5 Ω is short‑circuited. Find short‑circuit current and power dissipated internally.</div><button class="btn-reveal" onclick="toggleAnswer(670)">solution</button><div id="ans670" class="explain-hint"><strong>✅ solution:</strong> I_sc = 1.5/0.5 = 3 A. Power dissipated = I²r = 9·0.5 = 4.5 W.</div></div>
+        </div>
+    </div> <!-- end exam panel -->
+
+    <footer>⚡ Grade 11 Physics · Chapter 6 · Electrostatics & Circuits · 70 expert problems</footer>
+</div>
+
+<script>
+    const tabs = document.querySelectorAll(".tab-btn");
+    const panels = document.querySelectorAll(".panel");
+    tabs.forEach(t => {
+        t.addEventListener('click', () => {
+            tabs.forEach(b => b.classList.remove("active"));
+            panels.forEach(p => p.classList.remove("active-panel"));
+            t.classList.add("active");
+            document.getElementById(t.dataset.tab).classList.add("active-panel");
+        });
+    });
+
+    function toggleAnswer(id) {
+        const el = document.getElementById('ans' + id);
+        if (el) el.classList.toggle('show');
+    }
+</script>
+</body>
+</html>

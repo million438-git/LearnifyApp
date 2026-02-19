@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Grade 11 Physics · Chapter 5 · HEAT & CALORIMETRY (Expert)</title>
+    <style>
+        :root {
+            --bg-deep: #0c1420;
+            --bg-card: #1e2f40;
+            --accent-glow: #ffaa33;
+            --accent-soft: #ffd966;
+            --text-bright: #f0f9ff;
+            --text-code: #b8e2ff;
+            --border-light: #3a5f7a;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: var(--bg-deep);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text-bright);
+            line-height: 1.6;
+            padding: 8px;
+        }
+        .master-chapter {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: #132433;
+            border-radius: 32px;
+            padding: clamp(18px, 5vw, 38px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+            border: 1px solid #2b5470;
+        }
+        h1 {
+            font-size: clamp(1.8rem, 6vw, 3rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffe09c, #ffb347);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+        .chapter-badge {
+            font-size: clamp(1rem, 3.5vw, 1.3rem);
+            color: var(--accent-soft);
+            border-left: 6px solid var(--accent-glow);
+            padding-left: 16px;
+            margin: 10px 0 20px;
+        }
+        /* tabs */
+        .section-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin: 25px 0;
+        }
+        .tab-btn {
+            flex: 1 1 140px;
+            max-width: 200px;
+            background: #1e3f5a;
+            border: 2px solid #3b7fa0;
+            color: white;
+            font-weight: 700;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            padding: 12px 12px;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+        }
+        .tab-btn.active {
+            background: var(--accent-glow);
+            color: #0a1a2a;
+            border-color: #f9b81b;
+        }
+        .panel { display: none; }
+        .panel.active-panel { display: block; }
+
+        /* notes style */
+        .section-card {
+            background: var(--bg-card);
+            border-radius: 28px;
+            padding: clamp(18px, 4vw, 30px);
+            margin: 25px 0;
+            border: 1px solid #2c688b;
+        }
+        .section-card h2 {
+            font-size: clamp(1.4rem, 4vw, 2.2rem);
+            color: var(--accent-soft);
+            border-bottom: 4px solid var(--accent-glow);
+            display: inline-block;
+            margin-bottom: 18px;
+            padding-right: 15px;
+        }
+        .concept-block {
+            background: #1c3850;
+            border-left: 8px solid var(--accent-glow);
+            border-radius: 22px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .concept-block h3 {
+            font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+            color: var(--accent-soft);
+            margin-bottom: 12px;
+        }
+        .note-list {
+            list-style: none;
+        }
+        .note-list li {
+            margin: 12px 0;
+            padding-left: 24px;
+            position: relative;
+        }
+        .note-list li::before {
+            content: "►";
+            position: absolute;
+            left: 0;
+            color: var(--accent-glow);
+            font-size: 1.1rem;
+        }
+        .example-box {
+            background: #0e2b40;
+            border-radius: 20px;
+            padding: 16px 20px;
+            margin: 18px 0;
+            border-left: 6px solid #1e90ff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(0.9rem, 2.2vw, 1.05rem);
+            color: var(--text-code);
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .highlight-box {
+            background: #0f2f44;
+            border-radius: 18px;
+            padding: 16px;
+            border-left: 8px solid var(--accent-glow);
+            margin: 20px 0;
+        }
+        .figure-place {
+            background: #1f3c54;
+            border: 2px dashed var(--accent-glow);
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+            margin: 15px 0;
+            color: #b8d8ff;
+        }
+
+        /* exam panel */
+        .exam-paper {
+            background: #0f2639;
+            border-radius: 28px;
+            padding: clamp(16px, 4vw, 28px);
+        }
+        .question-card {
+            background: #1d3c58;
+            border-radius: 24px;
+            padding: 22px;
+            margin: 22px 0;
+            border: 1px solid #3f85b0;
+        }
+        .q-num {
+            background: var(--accent-glow);
+            color: #102030;
+            font-weight: 800;
+            padding: 8px 20px;
+            border-radius: 60px;
+            display: inline-block;
+            font-size: 1.2rem;
+        }
+        .q-text {
+            margin: 18px 0;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+        }
+        .btn-reveal {
+            background: #2b6c9e;
+            border: none;
+            color: white;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: 60px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .explain-hint {
+            display: none;
+            margin-top: 20px;
+            background: #12344d;
+            border-left: 8px solid var(--accent-glow);
+            padding: 18px;
+            border-radius: 20px;
+            font-size: 1rem;
+        }
+        .explain-hint.show { display: block; }
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #8fb4d0;
+        }
+        hr { border: 2px solid #2b5b7a; margin: 30px 0; }
+    </style>
+</head>
+<body>
+<div class="master-chapter">
+    <h1>🔥 UNIT 5 · HEAT CONDUCTION & CALORIMETRY</h1>
+    <div class="chapter-badge">Expert notes + 70 exam‑ready problems · mobile optimized</div>
+
+    <div class="section-tabs">
+        <button class="tab-btn active" data-tab="notes">📘 Notes</button>
+        <button class="tab-btn" data-tab="exam">🎯 70 Exam Q</button>
+    </div>
+
+    <!-- ================ NOTES PANEL (full chapter) ================ -->
+    <div id="notes" class="panel active-panel">
+        <!-- intro -->
+        <div class="section-card">
+            <h2>🔥 Introduction</h2>
+            <div class="highlight-box">
+                Heat is energy in transit due to temperature difference. This unit covers:
+                <ul class="note-list" style="margin-top:10px;">
+                    <li>Concept of heat, internal energy, thermodynamic work</li>
+                    <li>Heat transfer: conduction, convection, radiation</li>
+                    <li>Heat capacity & specific heat capacity</li>
+                    <li>Thermal expansion (linear, area, volume)</li>
+                    <li>Change of phase & latent heat</li>
+                    <li>Calorimetry – measurement of heat transfer</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 5.1 The Concept of Heat -->
+        <div class="section-card">
+            <h2>🌡️ 5.1 The Concept of Heat</h2>
+            <div class="concept-block">
+                <h3>Heat vs Temperature</h3>
+                <p><strong>Heat</strong> is energy transferred due to temperature difference (Joules).<br>
+                    <strong>Temperature</strong> is average kinetic energy of particles (K or °C).</p>
+            </div>
+            <div class="concept-block">
+                <h3>Internal energy & work</h3>
+                <p>Internal energy U = KE_molecular + PE_molecular. Heat and work are two ways to change U.<br>
+                    First law of thermodynamics: \(\Delta U = Q - W\) (will be used in calorimetry).</p>
+            </div>
+            <div class="example-box">
+                <strong>Example:</strong> Gas in cylinder – heating increases U, expansion does work.
+            </div>
+        </div>
+
+        <!-- 5.2 Heat transfer mechanisms -->
+        <div class="section-card">
+            <h2>⚡ 5.2 Heat Transfer Mechanisms</h2>
+            <div class="concept-block">
+                <h3>Conduction</h3>
+                <p>Transfer through collisions in solids. Fourier’s law: \(Q = \frac{kA\Delta T}{L}t\).<br>
+                    Good conductors (metals), insulators (wood, air).</p>
+            </div>
+            <div class="concept-block">
+                <h3>Convection</h3>
+                <p>Transfer by fluid movement – natural (buoyancy) or forced.</p>
+            </div>
+            <div class="concept-block">
+                <h3>Radiation</h3>
+                <p>Electromagnetic waves; Stefan‑Boltzmann: \(P = \sigma \epsilon A T^4\). No medium needed.</p>
+            </div>
+        </div>
+
+        <!-- 5.3 Heat Capacity & Specific Heat -->
+        <div class="section-card">
+            <h2>📊 5.3 Heat Capacity & Specific Heat</h2>
+            <div class="concept-block">
+                <h3>Heat capacity</h3>
+                <p>\(C = \frac{Q}{\Delta T}\) (J/K).</p>
+                <h3>Specific heat capacity</h3>
+                <p>\(c = \frac{Q}{m\Delta T}\) (J/(kg·K)). Water: \(c_w = 4186\) J/(kg·K).</p>
+            </div>
+            <div class="example-box">
+                <strong>Example 5.1:</strong> 600 g lead, c=128, ΔT=80 K → Q = 0.6·128·80 = 6144 J.
+            </div>
+        </div>
+
+        <!-- 5.4 Thermal expansion -->
+        <div class="section-card">
+            <h2>📏 5.4 Thermal Expansion</h2>
+            <div class="concept-block">
+                <h3>Linear expansion</h3>
+                <p>\(\Delta L = L_0 \alpha \Delta T\)</p>
+                <h3>Area expansion</h3>
+                <p>\(\Delta A = A_0 \beta \Delta T,\; \beta = 2\alpha\)</p>
+                <h3>Volume expansion</h3>
+                <p>\(\Delta V = V_0 \gamma \Delta T,\; \gamma = 3\alpha\)</p>
+                <p>For liquids: apparent expansion \(\gamma_{app} = \gamma_{real} - \gamma_{container}\).</p>
+            </div>
+            <div class="example-box">
+                <strong>Example 5.2:</strong> Steel bridge L0=20 m, α=1.1e-5, gap 4 cm → ΔT = ΔL/(αL0) = 0.04/(1.1e-5·20) = 180°C.
+            </div>
+        </div>
+
+        <!-- 5.5 Change of phase -->
+        <div class="section-card">
+            <h2>❄️🔥 5.5 Change of Phase</h2>
+            <div class="concept-block">
+                <h3>Latent heat</h3>
+                <p>\(Q = mL\) (fusion \(L_f\), vaporization \(L_v\)). Temperature constant during phase change.</p>
+                <p>Water: \(L_f=3.33\times10^5\) J/kg, \(L_v=2.26\times10^6\) J/kg.</p>
+                <h3>Phase diagram</h3>
+                <p>Triple point, critical point.</p>
+            </div>
+            <div class="example-box">
+                <strong>Example 5.6:</strong> 4 kg ice -50°C → steam 100°C: total Q = 132.4 MJ.
+            </div>
+        </div>
+
+        <!-- 5.6 Calorimetry -->
+        <div class="section-card">
+            <h2>⚖️ 5.6 Calorimetry</h2>
+            <div class="concept-block">
+                <h3>Principle</h3>
+                <p>Heat lost = heat gained (isolated system).</p>
+                <h3>Methods</h3>
+                <p>Mixture method, electrical method.</p>
+                <p>\(m_1c_1(T_1-T_f) = m_2c_2(T_f-T_2) + m_{cal}c_{cal}(T_f-T_2)\).</p>
+            </div>
+            <div class="example-box">
+                <strong>Example 5.7:</strong> 0.05 kg metal 200°C into 0.4 kg water 20°C → Tf=22.4°C → c_metal = 453 J/kg·K (iron).
+            </div>
+        </div>
+
+        <!-- summary -->
+        <div class="section-card">
+            <h2>📌 Key Equations</h2>
+            <div class="highlight-box">
+                \(Q = mc\Delta T\) · \(Q = mL\) · \(\Delta L = \alpha L_0\Delta T\)<br>
+                \(\Delta A = 2\alpha A_0\Delta T\) · \(\Delta V = 3\alpha V_0\Delta T\)<br>
+                Heat lost = heat gained · \(P = \frac{kA\Delta T}{L}\)
+            </div>
+        </div>
+    </div> <!-- end notes -->
+
+    <!-- ================ EXAM PANEL (70 challenging problems) ================ -->
+    <div id="exam" class="panel">
+        <div class="exam-paper">
+            <h2 style="color:#ffcc66; margin-bottom:20px;">🎯 70 Advanced Heat & Calorimetry Problems</h2>
+
+            <!-- Q1 to Q70 with ids ans501..ans570 -->
+            <div class="question-card"><span class="q-num">Q1</span><div class="q-text">How much heat is required to raise the temperature of 200 g of aluminum from 20°C to 120°C? (c_al = 900 J/kg·K)</div><button class="btn-reveal" onclick="toggleAnswer(501)">solution</button><div id="ans501" class="explain-hint"><strong>✅ solution:</strong> Q = m c ΔT = 0.2·900·100 = 18000 J = 18 kJ.</div></div>
+            <div class="question-card"><span class="q-num">Q2</span><div class="q-text">A 0.5 kg copper block (c=385 J/kg·K) at 150°C is placed in 1 kg water at 20°C. Find final temperature (ignore container).</div><button class="btn-reveal" onclick="toggleAnswer(502)">solution</button><div id="ans502" class="explain-hint"><strong>✅ solution:</strong> Heat lost = heat gained: 0.5·385·(150-Tf) = 1·4186·(Tf-20). 192.5(150-Tf) = 4186(Tf-20) → 28875 -192.5Tf = 4186Tf -83720 → 28875+83720 = (4186+192.5)Tf → 112595 = 4378.5 Tf → Tf ≈ 25.7°C.</div></div>
+            <div class="question-card"><span class="q-num">Q3</span><div class="q-text">A 100 g ice cube at -10°C is dropped into 300 g water at 30°C. Find final temperature. (c_ice=2100, c_w=4186, L_f=3.33e5)</div><button class="btn-reveal" onclick="toggleAnswer(503)">solution</button><div id="ans503" class="explain-hint"><strong>✅ solution:</strong> Warm water cools to 0°C: Q_water = 0.3·4186·30 = 37674 J. Ice to 0°C: Q1 = 0.1·2100·10 = 2100 J. Melt ice: Q2 = 0.1·3.33e5 = 33300 J. Total needed = 35400 J. 37674 > 35400, so all ice melts and final T>0. Extra heat = 37674-35400 = 2274 J heats melted water (0.1 kg) + original water: total mass = 0.4 kg. ΔT = 2274/(0.4·4186) ≈ 1.36°C. Tf = 1.36°C.</div></div>
+            <div class="question-card"><span class="q-num">Q4</span><div class="q-text">A 50 g aluminum calorimeter (c=900) contains 150 g water at 25°C. A 80 g metal at 95°C is added, final T=30°C. Find specific heat of metal.</div><button class="btn-reveal" onclick="toggleAnswer(504)">solution</button><div id="ans504" class="explain-hint"><strong>✅ solution:</strong> Heat gained by water + cal: Q = (0.15·4186 + 0.05·900)·(30-25) = (627.9 +45)·5 = 672.9·5 = 3364.5 J. This equals heat lost by metal: 0.08·c·(95-30)=0.08·c·65 = 5.2 c = 3364.5 → c = 647 J/kg·K.</div></div>
+            <div class="question-card"><span class="q-num">Q5</span><div class="q-text">A copper wire of length 2 m at 20°C is heated to 80°C. If α=1.7e-5 /K, find expansion.</div><button class="btn-reveal" onclick="toggleAnswer(505)">solution</button><div id="ans505" class="explain-hint"><strong>✅ solution:</strong> ΔL = L0 α ΔT = 2·1.7e-5·60 = 2.04e-3 m = 2.04 mm.</div></div>
+            <div class="question-card"><span class="q-num">Q6</span><div class="q-text">A steel rod and a brass rod are each 1 m at 0°C. At 100°C their lengths differ by 0.02 cm. Find α_steel if α_brass=1.9e-5 /K.</div><button class="btn-reveal" onclick="toggleAnswer(506)">solution</button><div id="ans506" class="explain-hint"><strong>✅ solution:</strong> ΔL_brass - ΔL_steel = 0.0002 m → L0(α_b - α_s)ΔT = 0.0002 → 1·(1.9e-5 - α_s)·100 = 0.0002 → (1.9e-5 - α_s) = 2e-6 → α_s = 1.7e-5 /K.</div></div>
+            <div class="question-card"><span class="q-num">Q7</span><div class="q-text">A glass flask (α=9e-6) has volume 500 mL at 20°C. How much overflow when filled with mercury and heated to 80°C? γ_mercury=1.8e-4 /K.</div><button class="btn-reveal" onclick="toggleAnswer(507)">solution</button><div id="ans507" class="explain-hint"><strong>✅ solution:</strong> ΔV_glass = 3α V ΔT = 3·9e-6·500·60 = 0.81 mL. ΔV_mercury = γ V ΔT = 1.8e-4·500·60 = 5.4 mL. Overflow = 5.4 - 0.81 = 4.59 mL.</div></div>
+            <div class="question-card"><span class="q-num">Q8</span><div class="q-text">A 200 W heater is used for 5 minutes to heat 1 kg of a liquid from 20°C to 35°C. Find specific heat (neglect losses).</div><button class="btn-reveal" onclick="toggleAnswer(508)">solution</button><div id="ans508" class="explain-hint"><strong>✅ solution:</strong> Energy = P·t = 200·300 = 60000 J. Q = m c ΔT → c = 60000/(1·15) = 4000 J/kg·K.</div></div>
+            <div class="question-card"><span class="q-num">Q9</span><div class="q-text">A 5 kg iron block at 200°C is dropped into 10 kg water at 20°C. Find entropy change of universe? (c_iron=450, c_w=4186, assume reversible? Not needed – just final T)</div><button class="btn-reveal" onclick="toggleAnswer(509)">solution</button><div id="ans509" class="explain-hint"><strong>✅ solution:</strong> First find Tf: 5·450·(200-Tf) = 10·4186·(Tf-20) → 2250(200-Tf)=41860(Tf-20) → 450000-2250Tf=41860Tf-837200 → 450000+837200 = (41860+2250)Tf → 1.2872e6 = 44110 Tf → Tf ≈ 29.2°C.</div></div>
+            <div class="question-card"><span class="q-num">Q10</span><div class="q-text">How much ice at -5°C must be added to 200 g water at 40°C to cool it to 10°C? (c_ice=2100, L_f=3.33e5)</div><button class="btn-reveal" onclick="toggleAnswer(510)">solution</button><div id="ans510" class="explain-hint"><strong>✅ solution:</strong> Let m = mass ice. Heat to warm ice to 0°C: m·2100·5 = 10500m. Melt ice: m·3.33e5 = 333000m. Warm melted water from 0 to 10°C: m·4186·10 = 41860m. Total heat absorbed by ice = (10500+333000+41860)m = 385360m. Heat lost by water cooling 40→10°C: 0.2·4186·30 = 25116 J. Equate: 385360m = 25116 → m = 0.0652 kg = 65.2 g.</div></div>
+            <div class="question-card"><span class="q-num">Q11</span><div class="q-text">A steel bridge is 500 m long at 10°C. The maximum temperature reaches 45°C. If the expansion coefficient is 1.2e-5 /K, what expansion gap must be left?</div><button class="btn-reveal" onclick="toggleAnswer(511)">solution</button><div id="ans511" class="explain-hint"><strong>✅ solution:</strong> ΔL = α L ΔT = 1.2e-5·500·35 = 0.21 m = 21 cm. So gap at least 21 cm total (both ends).</div></div>
+            <div class="question-card"><span class="q-num">Q12</span><div class="q-text">A copper sphere of radius 5 cm at 20°C is heated to 120°C. Find change in volume (α=1.7e-5).</div><button class="btn-reveal" onclick="toggleAnswer(512)">solution</button><div id="ans512" class="explain-hint"><strong>✅ solution:</strong> V0 = (4/3)π(0.05)^3 = 5.236e-4 m³. γ=3α=5.1e-5. ΔV = γ V0 ΔT = 5.1e-5·5.236e-4·100 = 2.67e-6 m³ = 2.67 cm³.</div></div>
+            <div class="question-card"><span class="q-num">Q13</span><div class="q-text">A 100 g glass beaker (c=840) contains 200 g water at 60°C. 50 g ice at 0°C is added. Find final T.</div><button class="btn-reveal" onclick="toggleAnswer(513)">solution</button><div id="ans513" class="explain-hint"><strong>✅ solution:</strong> Melt ice: Q1=0.05·3.33e5=16650 J. Cooling water+beaker 60→0°C would give Qmax = 0.2·4186·60 + 0.1·840·60 = 50232+5040=55272 J >16650, so all ice melts. Remaining heat warms system: heat to warm melted ice 0→Tf: 0.05·4186·Tf = 209.3 Tf. Heat capacity of original water + beaker = 0.2·4186 + 0.1·840 = 837.2+84=921.2 J/K. Heat lost by them: 921.2·(60-Tf). Set: 921.2(60-Tf) = 16650 + 209.3 Tf → 55272 -921.2 Tf = 16650 + 209.3 Tf → 55272-16650 = (921.2+209.3)Tf → 38622 = 1130.5 Tf → Tf ≈ 34.16°C.</div></div>
+            <div class="question-card"><span class="q-num">Q14</span><div class="q-text">A 2 kW electric kettle contains 1.5 L water at 15°C. How long to boil? (c=4186, ignore kettle)</div><button class="btn-reveal" onclick="toggleAnswer(514)">solution</button><div id="ans514" class="explain-hint"><strong>✅ solution:</strong> Q = m c ΔT = 1.5·4186·85 = 533715 J. Time t = Q/P = 533715/2000 = 266.9 s ≈ 4.45 min.</div></div>
+            <div class="question-card"><span class="q-num">Q15</span><div class="q-text">A 50 g copper calorimeter (c=385) contains 100 g water at 30°C. 20 g ice at -10°C added. Find final T.</div><button class="btn-reveal" onclick="toggleAnswer(515)">solution</button><div id="ans515" class="explain-hint"><strong>✅ solution:</strong> Ice to 0°C: 0.02·2100·10=420 J. Melt: 0.02·3.33e5=6660 J. Total to melt = 7080 J. Warm water+cal 30→0°C would release (0.1·4186+0.05·385)·30 = (418.6+19.25)·30 = 437.85·30 = 13135.5 J >7080, so all ice melts. Remaining = 13135.5-7080=6055.5 J heats system (0.1+0.02=0.12 kg water + cal 0.05 kg copper) from 0 to Tf. C_sys = 0.12·4186 + 0.05·385 = 502.32+19.25=521.57 J/K. Tf = 6055.5/521.57 ≈ 11.61°C.</div></div>
+            <div class="question-card"><span class="q-num">Q16</span><div class="q-text">A steel tape measure is calibrated at 20°C. If it measures 50.00 m at 35°C, what is the true length? α=1.2e-5.</div><button class="btn-reveal" onclick="toggleAnswer(516)">solution</button><div id="ans516" class="explain-hint"><strong>✅ solution:</strong> At 35°C tape expanded, so it reads less than true length. True length L = measured L (1 + α ΔT) = 50(1+1.2e-5·15) = 50.009 m.</div></div>
+            <div class="question-card"><span class="q-num">Q17</span><div class="q-text">A gas flame supplies 500 J/s. How long to melt 2 kg ice at 0°C? L_f=3.34e5.</div><button class="btn-reveal" onclick="toggleAnswer(517)">solution</button><div id="ans517" class="explain-hint"><strong>✅ solution:</strong> Q = 2·3.34e5 = 6.68e5 J. t = Q/P = 6.68e5/500 = 1336 s = 22.3 min.</div></div>
+            <div class="question-card"><span class="q-num">Q18</span><div class="q-text">A 200 g aluminum cup (c=900) contains 300 g water at 25°C. A 50 g ice cube at 0°C is added. Find final T.</div><button class="btn-reveal" onclick="toggleAnswer(518)">solution</button><div id="ans518" class="explain-hint"><strong>✅ solution:</strong> Melt ice: Q_melt = 0.05·3.33e5 = 16650 J. Cooling water+cup 25→0°C gives (0.3·4186+0.2·900)·25 = (1255.8+180)·25 = 1435.8·25 = 35895 J >16650, so ice melts and warms. Remaining heat = 35895-16650=19245 J heats system (0.35 kg water + 0.2 kg cup) from 0°C. C_sys = 0.35·4186 + 0.2·900 = 1465.1+180=1645.1 J/K. Tf = 19245/1645.1 ≈ 11.7°C.</div></div>
+            <div class="question-card"><span class="q-num">Q19</span><div class="q-text">A concrete slab (α=1.2e-5) is 10 m long at 15°C. Find length at 40°C.</div><button class="btn-reveal" onclick="toggleAnswer(519)">solution</button><div id="ans519" class="explain-hint"><strong>✅ solution:</strong> ΔL = 10·1.2e-5·25 = 0.003 m = 3 mm. L = 10.003 m.</div></div>
+            <div class="question-card"><span class="q-num">Q20</span><div class="q-text">A 1 kg piece of metal at 90°C is placed in 2 kg water at 20°C. Final T=23°C. Find c_metal.</div><button class="btn-reveal" onclick="toggleAnswer(520)">solution</button><div id="ans520" class="explain-hint"><strong>✅ solution:</strong> Heat lost = heat gained: 1·c·(90-23) = 2·4186·(23-20) → 67c = 2·4186·3 = 25116 → c = 374.9 J/kg·K.</div></div>
+            <div class="question-card"><span class="q-num">Q21</span><div class="q-text">How much heat to convert 500 g ice at -20°C to steam at 100°C? (c_ice=2100, L_f=3.33e5, c_w=4186, L_v=2.26e6)</div><button class="btn-reveal" onclick="toggleAnswer(521)">solution</button><div id="ans521" class="explain-hint"><strong>✅ solution:</strong> Ice -20→0°C: 0.5·2100·20 = 21000 J. Melt: 0.5·3.33e5 = 166500 J. Water 0→100°C: 0.5·4186·100 = 209300 J. Vaporize: 0.5·2.26e6 = 1.13e6 J. Total = 21000+166500+209300+1.13e6 = 1.527e6 J.</div></div>
+            <div class="question-card"><span class="q-num">Q22</span><div class="q-text">A brass rod (α=1.9e-5) and steel rod (α=1.1e-5) are each 1 m at 0°C. At what temperature will the brass be 1 mm longer than steel?</div><button class="btn-reveal" onclick="toggleAnswer(522)">solution</button><div id="ans522" class="explain-hint"><strong>✅ solution:</strong> ΔL_b - ΔL_s = 0.001 m → L0(α_b - α_s)ΔT = 0.001 → 1·(0.8e-5)ΔT = 0.001 → ΔT = 125°C. T = 125°C (since at 0°C they were equal).</div></div>
+            <div class="question-card"><span class="q-num">Q23</span><div class="q-text">A 100 W heater operates for 10 minutes heating 0.5 kg oil from 20°C to 45°C. Find c_oil.</div><button class="btn-reveal" onclick="toggleAnswer(523)">solution</button><div id="ans523" class="explain-hint"><strong>✅ solution:</strong> Energy = 100·600 = 60000 J. Q = m c ΔT → c = 60000/(0.5·25) = 4800 J/kg·K.</div></div>
+            <div class="question-card"><span class="q-num">Q24</span><div class="q-text">A 5 cm diameter steel sphere at 200°C is placed on a large ice block at 0°C. How much ice melts? (ρ_steel=7800, c_steel=450, L_f=3.34e5)</div><button class="btn-reveal" onclick="toggleAnswer(524)">solution</button><div id="ans524" class="explain-hint"><strong>✅ solution:</strong> Volume = (4/3)π(0.025)^3 = 6.54e-5 m³, mass = 7800·6.54e-5 = 0.51 kg. Heat released = m c ΔT = 0.51·450·200 = 45900 J. Ice melted = Q/L_f = 45900/3.34e5 = 0.137 kg = 137 g.</div></div>
+            <div class="question-card"><span class="q-num">Q25</span><div class="q-text">A gas is contained in a cylinder with a piston. 2000 J of heat is supplied, and the gas does 600 J of work. Find change in internal energy.</div><button class="btn-reveal" onclick="toggleAnswer(525)">solution</button><div id="ans525" class="explain-hint"><strong>✅ solution:</strong> ΔU = Q - W = 2000 - 600 = 1400 J.</div></div>
+            <div class="question-card"><span class="q-num">Q26</span><div class="q-text">A 100 g copper block at 100°C is dropped into 150 g water at 20°C in a 50 g copper calorimeter. Find final T. (c_Cu=385)</div><button class="btn-reveal" onclick="toggleAnswer(526)">solution</button><div id="ans526" class="explain-hint"><strong>✅ solution:</strong> Heat lost by hot Cu = 0.1·385·(100-Tf) + 0.05·385·(Tf-20)? Wait calorimeter initially at 20°C, so it gains heat. Let Tf final. Gains: water: 0.15·4186·(Tf-20); calorimeter: 0.05·385·(Tf-20). Loss: hot Cu: 0.1·385·(100-Tf). Equation: 38.5(100-Tf) = (0.15·4186+0.05·385)(Tf-20) = (627.9+19.25)(Tf-20)=647.15(Tf-20). 3850 -38.5Tf = 647.15Tf -12943 → 3850+12943 = (647.15+38.5)Tf → 16793 = 685.65 Tf → Tf = 24.5°C.</div></div>
+            <div class="question-card"><span class="q-num">Q27</span><div class="q-text">A steel rod of length 2 m is heated from 20°C to 120°C. If α=1.2e-5, find strain.</div><button class="btn-reveal" onclick="toggleAnswer(527)">solution</button><div id="ans527" class="explain-hint"><strong>✅ solution:</strong> Strain = ΔL/L0 = α ΔT = 1.2e-5·100 = 1.2e-3.</div></div>
+            <div class="question-card"><span class="q-num">Q28</span><div class="q-text">A 200 g aluminum calorimeter (c=900) contains 300 g water at 20°C. 50 g ice at 0°C added. Find final T.</div><button class="btn-reveal" onclick="toggleAnswer(528)">solution</button><div id="ans528" class="explain-hint"><strong>✅ solution:</strong> Melt ice: Q_melt = 0.05·3.33e5 = 16650 J. Cooling water+cal 20→0°C would give (0.3·4186+0.2·900)·20 = (1255.8+180)·20 = 1435.8·20 = 28716 J >16650, so ice melts. Remaining = 28716-16650=12066 J heats system (0.35 kg water +0.2 kg Al) from 0°C. C_sys = 0.35·4186 + 0.2·900 = 1465.1+180=1645.1 J/K. Tf = 12066/1645.1 ≈ 7.33°C.</div></div>
+            <div class="question-card"><span class="q-num">Q29</span><div class="q-text">A 2 kg iron ball at 200°C is dropped into 5 kg water at 15°C. Find the change in entropy of the universe. (c_iron=450, c_w=4186)</div><button class="btn-reveal" onclick="toggleAnswer(529)">solution</button><div id="ans529" class="explain-hint"><strong>✅ solution:</strong> First find Tf: 2·450·(200-Tf)=5·4186·(Tf-15) → 900(200-Tf)=20930(Tf-15) → 180000-900Tf=20930Tf-313950 → 180000+313950 = (20930+900)Tf → 493950 = 21830 Tf → Tf=22.62°C. Then ΔS_iron = ∫ dQ/T = m c ln(Tf/Ti) = 2·450 ln(295.77/473.15) = 900 ln(0.625) = 900·(-0.47)= -423 J/K. ΔS_water = 5·4186 ln(295.77/288.15) = 20930 ln(1.02644)=20930·0.0261=546 J/K. Total ΔS_univ = 123 J/K.</div></div>
+            <div class="question-card"><span class="q-num">Q30</span><div class="q-text">A 50 g ice cube at -20°C is dropped into 200 g water at 30°C in a 100 g glass container (c=840). Find final T.</div><button class="btn-reveal" onclick="toggleAnswer(530)">solution</button><div id="ans530" class="explain-hint"><strong>✅ solution:</strong> Ice to 0°C: 0.05·2100·20=2100 J. Melt: 0.05·3.33e5=16650 J. Total to melt =18750 J. Cooling water+glass 30→0°C gives (0.2·4186+0.1·840)·30 = (837.2+84)·30 = 921.2·30 = 27636 J >18750, so ice melts. Remaining = 27636-18750=8886 J heats system (0.25 kg water + 0.1 kg glass) from 0°C. C_sys = 0.25·4186+0.1·840 = 1046.5+84=1130.5 J/K. Tf = 8886/1130.5 ≈ 7.86°C.</div></div>
+            <div class="question-card"><span class="q-num">Q31</span><div class="q-text">A gas flame transfers 5000 J to a system while the system does 2000 J work. Find ΔU.</div><button class="btn-reveal" onclick="toggleAnswer(531)">solution</button><div id="ans531" class="explain-hint"><strong>✅ solution:</strong> ΔU = Q - W = 5000 - 2000 = 3000 J.</div></div>
+            <div class="question-card"><span class="q-num">Q32</span><div class="q-text">A 100 g piece of ice at 0°C is dropped into 500 g water at 25°C. Find final T (ignore container).</div><button class="btn-reveal" onclick="toggleAnswer(532)">solution</button><div id="ans532" class="explain-hint"><strong>✅ solution:</strong> Melt ice: Q1=0.1·3.33e5=33300 J. Cooling water 25→0°C gives 0.5·4186·25=52325 J >33300, so all ice melts. Remaining =52325-33300=19025 J warms melted ice + original water (0.6 kg) from 0°C. C_sys = 0.6·4186=2511.6 J/K. Tf = 19025/2511.6 ≈ 7.58°C.</div></div>
+            <div class="question-card"><span class="q-num">Q33</span><div class="q-text">A copper ring of inner diameter 5 cm at 20°C is to be slipped over a steel shaft of diameter 5.01 cm. To what temperature must the ring be heated? α_Cu=1.7e-5.</div><button class="btn-reveal" onclick="toggleAnswer(533)">solution</button><div id="ans533" class="explain-hint"><strong>✅ solution:</strong> Need ΔL = 0.01 cm = 1e-4 m. ΔL = L0 α ΔT → 0.05·1.7e-5·ΔT = 1e-4 → 8.5e-7 ΔT = 1e-4 → ΔT = 117.6°C. T = 20+117.6 = 137.6°C.</div></div>
+            <div class="question-card"><span class="q-num">Q34</span><div class="q-text">A 2 kW electric heater is used to heat 5 kg of oil (c=2000) from 10°C to 50°C. Find time required.</div><button class="btn-reveal" onclick="toggleAnswer(534)">solution</button><div id="ans534" class="explain-hint"><strong>✅ solution:</strong> Q = 5·2000·40 = 400000 J. t = Q/P = 400000/2000 = 200 s.</div></div>
+            <div class="question-card"><span class="q-num">Q35</span><div class="q-text">A 1 kg block of ice at -10°C is placed in a large lake at 5°C. Find the change in entropy of the universe when the ice reaches 5°C. (c_ice=2100, c_w=4186, L_f=3.34e5)</div><button class="btn-reveal" onclick="toggleAnswer(535)">solution</button><div id="ans535" class="explain-hint"><strong>✅ solution:</strong> Process: ice -10→0°C, melt, then 0→5°C. ΔS_ice = 1·2100 ln(273.15/263.15) + 1·3.34e5/273.15 + 1·4186 ln(278.15/273.15) = 2100·0.0372 + 1222.6 + 4186·0.0182 = 78.1 + 1222.6 + 76.2 = 1376.9 J/K. Lake loses heat Q = 1·2100·10 + 1·3.34e5 + 1·4186·5 = 21000+334000+20930 = 375930 J at constant T=5°C=278.15 K. ΔS_lake = -375930/278.15 = -1352 J/K. ΔS_univ = 1376.9-1352 ≈ 24.9 J/K.</div></div>
+            <div class="question-card"><span class="q-num">Q36</span><div class="q-text">A 300 g copper calorimeter contains 400 g water at 25°C. 100 g ice at -15°C is added. Find final T. (c_Cu=385, c_ice=2100, L_f=3.33e5)</div><button class="btn-reveal" onclick="toggleAnswer(536)">solution</button><div id="ans536" class="explain-hint"><strong>✅ solution:</strong> Ice to 0°C: 0.1·2100·15 = 3150 J. Melt: 0.1·3.33e5 = 33300 J. Total to melt = 36450 J. Cooling water+Cu 25→0°C gives (0.4·4186+0.3·385)·25 = (1674.4+115.5)·25 = 1789.9·25 = 44747.5 J >36450, so ice melts. Remaining = 44747.5-36450=8297.5 J heats system (0.5 kg water +0.3 kg Cu) from 0°C. C_sys = 0.5·4186 + 0.3·385 = 2093+115.5=2208.5 J/K. Tf = 8297.5/2208.5 ≈ 3.76°C.</div></div>
+            <div class="question-card"><span class="q-num">Q37</span><div class="q-text">A steel tape measure is calibrated at 20°C. If it reads 30.00 m at 5°C, what is the true length? α=1.2e-5.</div><button class="btn-reveal" onclick="toggleAnswer(537)">solution</button><div id="ans537" class="explain-hint"><strong>✅ solution:</strong> At lower T, tape contracts, so it reads longer than true. True length L = measured / (1+αΔT) with ΔT = -15°C. L = 30 / (1 - 1.8e-4) ≈ 30.0054 m.</div></div>
+            <div class="question-card"><span class="q-num">Q38</span><div class="q-text">A 50 g ice cube at 0°C is dropped into 200 g water at 40°C in a 100 g glass container (c=840). Find final T.</div><button class="btn-reveal" onclick="toggleAnswer(538)">solution</button><div id="ans538" class="explain-hint"><strong>✅ solution:</strong> Melt ice: Q1=0.05·3.33e5=16650 J. Cooling water+glass 40→0°C gives (0.2·4186+0.1·840)·40 = (837.2+84)·40 = 921.2·40 = 36848 J >16650, so ice melts. Remaining = 36848-16650=20198 J heats system (0.25 kg water +0.1 kg glass) from 0°C. C_sys = 0.25·4186+0.1·840 = 1046.5+84=1130.5 J/K. Tf = 20198/1130.5 ≈ 17.87°C.</div></div>
+            <div class="question-card"><span class="q-num">Q39</span><div class="q-text">A 500 W immersion heater is placed in 1 kg of water at 20°C. How long to boil away half the water? (L_v=2.26e6)</div><button class="btn-reveal" onclick="toggleAnswer(539)">solution</button><div id="ans539" class="explain-hint"><strong>✅ solution:</strong> Heat to reach 100°C: Q1 = 1·4186·80 = 334880 J. Heat to vaporize 0.5 kg: Q2 = 0.5·2.26e6 = 1.13e6 J. Total = 1.46488e6 J. t = Q/P = 1.46488e6/500 = 2929.8 s ≈ 48.8 min.</div></div>
+            <div class="question-card"><span class="q-num">Q40</span><div class="q-text">A copper rod of length 1.5 m at 10°C is heated to 90°C. Find its new length if α=1.7e-5.</div><button class="btn-reveal" onclick="toggleAnswer(540)">solution</button><div id="ans540" class="explain-hint"><strong>✅ solution:</strong> ΔL = 1.5·1.7e-5·80 = 2.04e-3 m = 2.04 mm. L = 1.50204 m.</div></div>
+            <div class="question-card"><span class="q-num">Q41</span><div class="q-text">A 200 g aluminum calorimeter (c=900) contains 300 g water at 20°C. 80 g ice at -5°C added. Find final T.</div><button class="btn-reveal" onclick="toggleAnswer(541)">solution</button><div id="ans541" class="explain-hint"><strong>✅ solution:</strong> Ice to 0°C: 0.08·2100·5 = 840 J. Melt: 0.08·3.33e5 = 26640 J. Total = 27480 J. Cooling water+Al 20→0°C gives (0.3·4186+0.2·900)·20 = (1255.8+180)·20 = 1435.8·20 = 28716 J >27480, so ice melts. Remaining = 28716-27480=1236 J heats system (0.38 kg water +0.2 kg Al) from 0°C. C_sys = 0.38·4186 + 0.2·900 = 1590.68+180=1770.68 J/K. Tf = 1236/1770.68 ≈ 0.698°C.</div></div>
+            <div class="question-card"><span class="q-num">Q42</span><div class="q-text">A steel beam of length 8 m is installed at 10°C. What expansion gap is needed if temperature can reach 45°C? α=1.2e-5.</div><button class="btn-reveal" onclick="toggleAnswer(542)">solution</button><div id="ans542" class="explain-hint"><strong>✅ solution:</strong> ΔL = 8·1.2e-5·35 = 0.00336 m = 3.36 mm. Gap = 3.36 mm (if fixed at one end).</div></div>
+            <div class="question-card"><span class="q-num">Q43</span><div class="q-text">A 100 g brass sphere (c=380) at 200°C is dropped into 500 g water at 20°C. Find final T.</div><button class="btn-reveal" onclick="toggleAnswer(543)">solution</button><div id="ans543" class="explain-hint"><strong>✅ solution:</strong> 0.1·380·(200-Tf) = 0.5·4186·(Tf-20) → 38(200-Tf)=2093(Tf-20) → 7600-38Tf=2093Tf-41860 → 7600+41860 = (2093+38)Tf → 49460 = 2131 Tf → Tf = 23.2°C.</div></div>
+            <div class="question-card"><span class="q-num">Q44</span><div class="q-text">A 2 kW kettle contains 1.2 L water at 15°C. How long to reach 95°C? (c=4186)</div><button class="btn-reveal" onclick="toggleAnswer(544)">solution</button><div id="ans544" class="explain-hint"><strong>✅ solution:</strong> Q = 1.2·4186·80 = 401856 J. t = 401856/2000 = 200.9 s ≈ 3.35 min.</div></div>
+            <div class="question-card"><span class="q-num">Q45</span><div class="q-text">A 5 cm diameter brass sphere at 150°C is placed on a large ice block. How much ice melts? ρ_brass=8500, c=380, L_f=3.34e5.</div><button class="btn-reveal" onclick="toggleAnswer(545)">solution</button><div id="ans545" class="explain-hint"><strong>✅ solution:</strong> Volume = (4/3)π(0.025)^3 = 6.54e-5 m³, mass = 8500·6.54e-5 = 0.556 kg. Heat = 0.556·380·150 = 31692 J. Ice melted = 31692/3.34e5 = 0.0949 kg = 94.9 g.</div></div>
+            <div class="question-card"><span class="q-num">Q46</span><div class="q-text">A 200 g copper calorimeter (c=385) contains 400 g water at 30°C. 100 g ice at -10°C added. Find final T.</div><button class="btn-reveal" onclick="toggleAnswer(546)">solution</button><div id="ans546" class="explain-hint"><strong>✅ solution:</strong> Ice to 0°C: 0.1·2100·10 = 2100 J. Melt: 0.1·3.33e5 = 33300 J. Total = 35400 J. Cooling water+Cu 30→0°C gives (0.4·4186+0.2·385)·30 = (1674.4+77)·30 = 1751.4·30 = 52542 J >35400, so ice melts. Remaining = 52542-35400=17142 J heats system (0.5 kg water +0.2 kg Cu) from 0°C. C_sys = 0.5·4186+0.2·385 = 2093+77=2170 J/K. Tf = 17142/2170 ≈ 7.9°C.</div></div>
+            <div class="question-card"><span class="q-num">Q47</span><div class="q-text">A 100 g glass (c=840) contains 200 g water at 60°C. 50 g ice at 0°C added. Find final T.</div><button class="btn-reveal" onclick="toggleAnswer(547)">solution</button><div id="ans547" class="explain-hint"><strong>✅ solution:</strong> Melt ice: 0.05·3.33e5=16650 J. Cooling water+glass 60→0°C gives (0.2·4186+0.1·840)·60 = (837.2+84)·60 = 921.2·60 = 55272 J >16650, so ice melts. Remaining = 55272-16650=38622 J heats system (0.25 kg water +0.1 kg glass) from 0°C. C_sys = 0.25·4186+0.1·840 = 1046.5+84=1130.5 J/K. Tf = 38622/1130.5 ≈ 34.16°C.</div></div>
+            <div class="question-card"><span class="q-num">Q48</span><div class="q-text">A 500 g iron block at 250°C is placed in 2 kg water at 15°C. Find final T. (c_iron=450)</div><button class="btn-reveal" onclick="toggleAnswer(548)">solution</button><div id="ans548" class="explain-hint"><strong>✅ solution:</strong> 0.5·450·(250-Tf) = 2·4186·(Tf-15) → 225(250-Tf)=8372(Tf-15) → 56250-225Tf=8372Tf-125580 → 56250+125580 = (8372+225)Tf → 181830 = 8597 Tf → Tf = 21.15°C.</div></div>
+            <div class="question-card"><span class="q-num">Q49</span><div class="q-text">A 2 kg block of ice at -20°C is placed in a large room at 25°C. Find the entropy change of the ice when it becomes water at 25°C. (c_ice=2100, L_f=3.34e5)</div><button class="btn-reveal" onclick="toggleAnswer(549)">solution</button><div id="ans549" class="explain-hint"><strong>✅ solution:</strong> Ice -20→0°C: ΔS1 = 2·2100 ln(273.15/253.15)=4200·0.077 = 323.4 J/K. Melt: ΔS2 = 2·3.34e5/273.15 = 668000/273.15 = 2445 J/K. Water 0→25°C: ΔS3 = 2·4186 ln(298.15/273.15)=8372·0.0876 = 733.6 J/K. Total = 323.4+2445+733.6 = 3502 J/K.</div></div>
+            <div class="question-card"><span class="q-num">Q50</span><div class="q-text">A brass rod (α=1.9e-5) is 2 m at 20°C. Find length at 150°C.</div><button class="btn-reveal" onclick="toggleAnswer(550)">solution</button><div id="ans550" class="explain-hint"><strong>✅ solution:</strong> ΔL = 2·1.9e-5·130 = 4.94e-3 m = 4.94 mm. L = 2.00494 m.</div></div>
+            <div class="question-card"><span class="q-num">Q51</span><div class="q-text">A 100 g copper calorimeter contains 200 g water at 25°C. 50 g ice at -5°C added. Find final T.</div><button class="btn-reveal" onclick="toggleAnswer(551)">solution</button><div id="ans551" class="explain-hint"><strong>✅ solution:</strong> Ice to 0°C: 0.05·2100·5 = 525 J. Melt: 0.05·3.33e5 = 16650 J. Total = 17175 J. Cooling water+Cu 25→0°C gives (0.2·4186+0.1·385)·25 = (837.2+38.5)·25 = 875.7·25 = 21892.5 J >17175, so ice melts. Remaining = 21892.5-17175=4717.5 J heats system (0.25 kg water +0.1 kg Cu) from 0°C. C_sys = 0.25·4186+0.1·385 = 1046.5+38.5=1085 J/K. Tf = 4717.5/1085 ≈ 4.35°C.</div></div>
+            <div class="question-card"><span class="q-num">Q52</span><div class="q-text">A 500 W heater is used to heat 2 kg of a liquid from 15°C to 45°C in 300 s. Find specific heat.</div><button class="btn-reveal" onclick="toggleAnswer(552)">solution</button><div id="ans552" class="explain-hint"><strong>✅ solution:</strong> Energy = 500·300 = 150000 J. c = Q/(mΔT) = 150000/(2·30) = 2500 J/kg·K.</div></div>
+            <div class="question-card"><span class="q-num">Q53</span><div class="q-text">A steel rod and a copper rod have lengths L_s and L_c at 0°C. At 100°C the difference in lengths remains constant. Find ratio L_s/L_c. α_s=1.1e-5, α_c=1.7e-5.</div><button class="btn-reveal" onclick="toggleAnswer(553)">solution</button><div id="ans553" class="explain-hint"><strong>✅ solution:</strong> For difference constant: L_s α_s = L_c α_c → L_s/L_c = α_c/α_s = 1.7/1.1 = 1.545.</div></div>
+            <div class="question-card"><span class="q-num">Q54</span><div class="q-text">A 200 g aluminum calorimeter contains 300 g water at 20°C. 100 g ice at -10°C added. Find final T.</div><button class="btn-reveal" onclick="toggleAnswer(554)">solution</button><div id="ans554" class="explain-hint"><strong>✅ solution:</strong> Ice to 0°C: 0.1·2100·10=2100 J. Melt: 0.1·3.33e5=33300 J. Total=35400 J. Cooling water+Al 20→0°C gives (0.3·4186+0.2·900)·20 = (1255.8+180)·20 = 1435.8·20 = 28716 J <35400 → not enough to melt all ice. Some ice remains, final T=0°C. Let m melted = mass melted. Heat to warm ice to 0°C + melt m = 2100 + m·3.33e5 = 28716 → m·3.33e5 = 26616 → m = 0.08 kg = 80 g. Remaining ice = 20 g. System at 0°C with ice and water.</div></div>
+            <div class="question-card"><span class="q-num">Q55</span><div class="q-text">A 1 kg piece of metal at 300°C is dropped into 2 kg water at 20°C. Final T=30°C. Find c_metal.</div><button class="btn-reveal" onclick="toggleAnswer(555)">solution</button><div id="ans555" class="explain-hint"><strong>✅ solution:</strong> 1·c·270 = 2·4186·10 → 270c = 83720 → c = 310 J/kg·K.</div></div>
+            <div class="question-card"><span class="q-num">Q56</span><div class="q-text">A copper rod of length 50 cm at 20°C expands by 0.17 mm when heated. Find final T. α=1.7e-5.</div><button class="btn-reveal" onclick="toggleAnswer(556)">solution</button><div id="ans556" class="explain-hint"><strong>✅ solution:</strong> ΔL = 0.00017 m = α L0 ΔT → 0.00017 = 1.7e-5·0.5·ΔT → 0.00017 = 8.5e-6 ΔT → ΔT = 20°C. Tf = 40°C.</div></div>
+            <div class="question-card"><span class="q-num">Q57</span><div class="q-text">A 100 g ice cube at -15°C is dropped into 500 g water at 25°C. Find final T (ignore container).</div><button class="btn-reveal" onclick="toggleAnswer(557)">solution</button><div id="ans557" class="explain-hint"><strong>✅ solution:</strong> Ice to 0°C: 0.1·2100·15=3150 J. Melt: 0.1·3.33e5=33300 J. Total=36450 J. Cooling water 25→0°C gives 0.5·4186·25=52325 J >36450, so ice melts. Remaining = 52325-36450=15875 J heats system (0.6 kg water) from 0°C. ΔT = 15875/(0.6·4186) = 15875/2511.6 = 6.32°C. Tf = 6.32°C.</div></div>
+            <div class="question-card"><span class="q-num">Q58</span><div class="q-text">A 200 W heater is used for 10 minutes to heat 0.5 kg of a liquid from 18°C to 38°C. Find c_liquid.</div><button class="btn-reveal" onclick="toggleAnswer(558)">solution</button><div id="ans558" class="explain-hint"><strong>✅ solution:</strong> Q = 200·600 = 120000 J. c = 120000/(0.5·20) = 12000 J/kg·K.</div></div>
+            <div class="question-card"><span class="q-num">Q59</span><div class="q-text">A steel bridge is 200 m long at 10°C. The maximum temperature is 40°C. If α=1.2e-5, find expansion.</div><button class="btn-reveal" onclick="toggleAnswer(559)">solution</button><div id="ans559" class="explain-hint"><strong>✅ solution:</strong> ΔL = 200·1.2e-5·30 = 0.072 m = 7.2 cm.</div></div>
+            <div class="question-card"><span class="q-num">Q60</span><div class="q-text">A 2 kg block of ice at -20°C is placed in 10 kg water at 30°C. Find final T (ignore container).</div><button class="btn-reveal" onclick="toggleAnswer(560)">solution</button><div id="ans560" class="explain-hint"><strong>✅ solution:</strong> Ice to 0°C: 2·2100·20 = 84000 J. Melt: 2·3.33e5 = 666000 J. Total to melt = 750000 J. Cooling water 30→0°C gives 10·4186·30 = 1.2558e6 J >750000, so all ice melts. Remaining = 1.2558e6-750000 = 505800 J heats system (12 kg water) from 0°C. ΔT = 505800/(12·4186) = 505800/50232 = 10.07°C. Tf = 10.07°C.</div></div>
+            <div class="question-card"><span class="q-num">Q61</span><div class="q-text">A 100 g copper calorimeter contains 200 g water at 30°C. 50 g ice at 0°C added. Find final T.</div><button class="btn-reveal" onclick="toggleAnswer(561)">solution</button><div id="ans561" class="explain-hint"><strong>✅ solution:</strong> Melt ice: 0.05·3.33e5 = 16650 J. Cooling water+Cu 30→0°C gives (0.2·4186+0.1·385)·30 = (837.2+38.5)·30 = 875.7·30 = 26271 J >16650, so ice melts. Remaining = 26271-16650=9621 J heats system (0.25 kg water +0.1 kg Cu) from 0°C. C_sys = 0.25·4186+0.1·385 = 1046.5+38.5=1085 J/K. Tf = 9621/1085 ≈ 8.87°C.</div></div>
+            <div class="question-card"><span class="q-num">Q62</span><div class="q-text">A 500 W kettle boils 1 L water initially at 20°C. How long to boil? (L_v not needed, just to 100°C)</div><button class="btn-reveal" onclick="toggleAnswer(562)">solution</button><div id="ans562" class="explain-hint"><strong>✅ solution:</strong> Q = 1·4186·80 = 334880 J. t = 334880/500 = 669.8 s ≈ 11.2 min.</div></div>
+            <div class="question-card"><span class="q-num">Q63</span><div class="q-text">A steel rod and a brass rod have lengths such that their difference in length is constant at all temperatures. If α_s=1.1e-5, α_b=1.9e-5, and the brass rod is 1 m at 0°C, find length of steel rod.</div><button class="btn-reveal" onclick="toggleAnswer(563)">solution</button><div id="ans563" class="explain-hint"><strong>✅ solution:</strong> For constant difference: L_s α_s = L_b α_b → L_s = L_b α_b/α_s = 1·1.9e-5/1.1e-5 = 1.727 m.</div></div>
+            <div class="question-card"><span class="q-num">Q64</span><div class="q-text">A 200 g ice cube at -10°C is dropped into 500 g water at 50°C. Find final T.</div><button class="btn-reveal" onclick="toggleAnswer(564)">solution</button><div id="ans564" class="explain-hint"><strong>✅ solution:</strong> Ice to 0°C: 0.2·2100·10=4200 J. Melt: 0.2·3.33e5=66600 J. Total=70800 J. Cooling water 50→0°C gives 0.5·4186·50=104650 J >70800, so ice melts. Remaining = 104650-70800=33850 J heats system (0.7 kg water) from 0°C. ΔT = 33850/(0.7·4186) = 33850/2930.2 = 11.55°C. Tf = 11.55°C.</div></div>
+            <div class="question-card"><span class="q-num">Q65</span><div class="q-text">A 300 g aluminum calorimeter contains 500 g water at 40°C. 150 g ice at 0°C added. Find final T.</div><button class="btn-reveal" onclick="toggleAnswer(565)">solution</button><div id="ans565" class="explain-hint"><strong>✅ solution:</strong> Melt ice: 0.15·3.33e5=49950 J. Cooling water+Al 40→0°C gives (0.5·4186+0.3·900)·40 = (2093+270)·40 = 2363·40 = 94520 J >49950, so ice melts. Remaining = 94520-49950=44570 J heats system (0.65 kg water +0.3 kg Al) from 0°C. C_sys = 0.65·4186+0.3·900 = 2720.9+270=2990.9 J/K. Tf = 44570/2990.9 ≈ 14.9°C.</div></div>
+            <div class="question-card"><span class="q-num">Q66</span><div class="q-text">A 1 kg block of ice at 0°C is placed in 5 kg water at 30°C. Find final T.</div><button class="btn-reveal" onclick="toggleAnswer(566)">solution</button><div id="ans566" class="explain-hint"><strong>✅ solution:</strong> Melt ice: 1·3.33e5=333000 J. Cooling water 30→0°C gives 5·4186·30=627900 J >333000, so ice melts. Remaining = 627900-333000=294900 J heats system (6 kg water) from 0°C. ΔT = 294900/(6·4186) = 294900/25116 = 11.74°C. Tf = 11.74°C.</div></div>
+            <div class="question-card"><span class="q-num">Q67</span><div class="q-text">A steel ring of inner diameter 10 cm at 20°C is to be heated to fit over a shaft of diameter 10.02 cm. Find minimum temperature. α=1.2e-5.</div><button class="btn-reveal" onclick="toggleAnswer(567)">solution</button><div id="ans567" class="explain-hint"><strong>✅ solution:</strong> Need ΔD = 0.02 cm = 0.0002 m. ΔD = D0 α ΔT → 0.1·1.2e-5·ΔT = 0.0002 → 1.2e-6 ΔT = 0.0002 → ΔT = 166.7°C. Tf = 186.7°C.</div></div>
+            <div class="question-card"><span class="q-num">Q68</span><div class="q-text">A 50 g copper calorimeter contains 150 g water at 25°C. 40 g ice at -5°C added. Find final T.</div><button class="btn-reveal" onclick="toggleAnswer(568)">solution</button><div id="ans568" class="explain-hint"><strong>✅ solution:</strong> Ice to 0°C: 0.04·2100·5 = 420 J. Melt: 0.04·3.33e5 = 13320 J. Total=13740 J. Cooling water+Cu 25→0°C gives (0.15·4186+0.05·385)·25 = (627.9+19.25)·25 = 647.15·25 = 16178.75 J >13740, so ice melts. Remaining = 16178.75-13740=2438.75 J heats system (0.19 kg water +0.05 kg Cu) from 0°C. C_sys = 0.19·4186+0.05·385 = 795.34+19.25=814.59 J/K. Tf = 2438.75/814.59 ≈ 2.99°C.</div></div>
+            <div class="question-card"><span class="q-num">Q69</span><div class="q-text">A 2 kW heater is used to melt 5 kg ice at 0°C. How long? L_f=3.34e5.</div><button class="btn-reveal" onclick="toggleAnswer(569)">solution</button><div id="ans569" class="explain-hint"><strong>✅ solution:</strong> Q = 5·3.34e5 = 1.67e6 J. t = Q/P = 1.67e6/2000 = 835 s ≈ 13.9 min.</div></div>
+            <div class="question-card"><span class="q-num">Q70</span><div class="q-text">A 100 g glass (c=840) contains 200 g water at 50°C. 80 g ice at -10°C added. Find final T.</div><button class="btn-reveal" onclick="toggleAnswer(570)">solution</button><div id="ans570" class="explain-hint"><strong>✅ solution:</strong> Ice to 0°C: 0.08·2100·10=1680 J. Melt: 0.08·3.33e5=26640 J. Total=28320 J. Cooling water+glass 50→0°C gives (0.2·4186+0.1·840)·50 = (837.2+84)·50 = 921.2·50 = 46060 J >28320, so ice melts. Remaining = 46060-28320=17740 J heats system (0.28 kg water +0.1 kg glass) from 0°C. C_sys = 0.28·4186+0.1·840 = 1172.08+84=1256.08 J/K. Tf = 17740/1256.08 ≈ 14.12°C.</div></div>
+        </div>
+    </div> <!-- end exam panel -->
+
+    <footer>🔥 Grade 11 Physics · Chapter 5 · Heat & Calorimetry · 70 expert problems</footer>
+</div>
+
+<script>
+    const tabs = document.querySelectorAll(".tab-btn");
+    const panels = document.querySelectorAll(".panel");
+    tabs.forEach(t => {
+        t.addEventListener('click', () => {
+            tabs.forEach(b => b.classList.remove("active"));
+            panels.forEach(p => p.classList.remove("active-panel"));
+            t.classList.add("active");
+            document.getElementById(t.dataset.tab).classList.add("active-panel");
+        });
+    });
+
+    function toggleAnswer(id) {
+        const el = document.getElementById('ans' + id);
+        if (el) el.classList.toggle('show');
+    }
+</script>
+</body>
+</html>

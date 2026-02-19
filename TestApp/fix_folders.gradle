@@ -1,0 +1,38 @@
+task fixProjectStructure {
+    doLast {
+        def subjectsDir = file("app/src/main/assets/subjects")
+        
+        // 1. Delete the stubborn questions.html file
+        def qFile = file("app/src/main/assets/subjects/physics/Grade-11/questions.html")
+        if (qFile.exists()) {
+            if (qFile.delete()) {
+                println "Successfully deleted questions.html"
+            } else {
+                println "Failed to delete questions.html"
+            }
+        }
+
+        // 2. Capitalize biology -> Biology
+        def bio = new File(subjectsDir, "biology")
+        def targetBio = new File(subjectsDir, "Biology")
+        if (bio.exists() && !targetBio.exists()) {
+            // On Windows, renaming to the same name with different case requires a temp step
+            def tempBio = new File(subjectsDir, "biology_temp_rename")
+            if (bio.renameTo(tempBio)) {
+                tempBio.renameTo(targetBio)
+                println "Renamed biology to Biology"
+            }
+        }
+
+        // 3. Capitalize physics -> Physics
+        def phys = new File(subjectsDir, "physics")
+        def targetPhys = new File(subjectsDir, "Physics")
+        if (phys.exists() && !targetPhys.exists()) {
+            def tempPhys = new File(subjectsDir, "physics_temp_rename")
+            if (phys.renameTo(tempPhys)) {
+                tempPhys.renameTo(targetPhys)
+                println "Renamed physics to Physics"
+            }
+        }
+    }
+}

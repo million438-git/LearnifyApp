@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>🎓 ENTRANCE EXAM STRATEGIES · advanced skills + 100 Q</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f0f4fa;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            padding: 1.2rem 1rem;
+            color: #0a2638;
+            line-height: 1.5;
+        }
+        .main-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 36px 36px 28px 28px;
+            box-shadow: 0 20px 40px rgba(0, 20, 40, 0.2);
+            overflow: visible;
+        }
+        .header {
+            background: linear-gradient(145deg, #05233b, #123f60);
+            padding: 1.8rem 1.5rem;
+            color: white;
+            border-bottom: 5px solid #f5b342;
+        }
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 0.4rem;
+        }
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        .header span {
+            background: #f5b342;
+            color: #05233b;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-block;
+            margin-top: 0.8rem;
+        }
+        .intro {
+            padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+            background: #f9fcff;
+            font-size: 1.1rem;
+            border-bottom: 2px dashed #b8d2e8;
+        }
+        .strategy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            padding: 1.8rem 1.5rem;
+            background: #f9fcff;
+        }
+        .strategy-card {
+            background: white;
+            border-radius: 28px;
+            padding: 1.5rem 1.2rem;
+            box-shadow: 0 8px 18px rgba(0, 32, 64, 0.06);
+            border: 1px solid #cde0f0;
+            transition: 0.1s ease;
+        }
+        .strategy-card:hover {
+            border-color: #f5b342;
+        }
+        .strategy-title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #104267;
+            border-left: 10px solid #f5b342;
+            padding-left: 0.8rem;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        .strategy-content {
+            font-size: 1rem;
+            color: #1d405b;
+        }
+        .strategy-content li {
+            margin-left: 1.2rem;
+            padding-left: 0.3rem;
+            margin-bottom: 0.3rem;
+        }
+        .quiz-container {
+            padding: 2rem 1.5rem 2.5rem 1.5rem;
+            background: #e7f0fa;
+        }
+        .section-tag {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0f3a57;
+            border-left: 12px solid #f5b342;
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .q-counter {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #174d73;
+            margin-bottom: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .reset-btn {
+            background: white;
+            border: 2px solid #174d73;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            color: #174d73;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .reset-btn:hover {
+            background: #174d73;
+            color: white;
+        }
+        .question-box {
+            background: white;
+            border-radius: 30px;
+            padding: 1.5rem 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            border: 1px solid #c2d5ea;
+            word-break: break-word;
+            white-space: normal;
+        }
+        .q-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 1.2rem;
+            line-height: 1.4;
+        }
+        .q-text span {
+            font-weight: 700;
+            color: #b65000;
+            background: #ffe6c2;
+            padding: 0.2rem 0.8rem;
+            border-radius: 60px;
+            margin-right: 0.6rem;
+            display: inline-block;
+            margin-bottom: 0.3rem;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            margin: 1rem 0 0.5rem 0;
+        }
+        .option {
+            background: #f4faff;
+            border-radius: 40px;
+            padding: 0.9rem 1.5rem;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border: 2px solid #b9d2ec;
+            transition: 0.05s linear;
+            font-weight: 500;
+            word-break: break-word;
+            display: flex;
+            align-items: center;
+            min-height: 48px;
+        }
+        .option:hover {
+            background: #ddecff;
+            border-color: #1f6392;
+        }
+        .option.selected {
+            background: #0b4b75;
+            border-color: #f5b342;
+            color: white;
+            font-weight: 600;
+        }
+        .explain-box {
+            background: #e9f2fc;
+            border-radius: 24px;
+            padding: 1rem 1.5rem;
+            margin-top: 1.2rem;
+            border-left: 10px solid #f5b342;
+            font-size: 1.05rem;
+            line-height: 1.5;
+            color: #01325a;
+        }
+        .wrong-mark { color: #b63333; font-weight: 700; margin-right: 0.4rem; }
+        .correct-mark { color: #1b7a2b; font-weight: 700; margin-right: 0.4rem; }
+        .foot-note {
+            padding: 1.2rem 1.5rem;
+            background: #cfe0f0;
+            text-align: center;
+            font-size: 1rem;
+        }
+        /* phone fine-tuning */
+        @media (max-width: 900px) {
+            .main-wrapper { margin: 0.6rem; border-radius: 20px; }
+            .header { padding: 1.2rem 1rem; }
+            .header h1 { font-size: 1.6rem; }
+            .strategy-title { font-size: 1.5rem; }
+            .q-text { font-size: 1.12rem; }
+            .option { padding: 0.95rem 1rem; font-size: 1rem; min-height:56px; }
+            .explain-box { font-size: 1rem; }
+            .strategy-grid { grid-template-columns: 1fr; gap: 1rem; }
+            .quiz-container { padding: 1.2rem; }
+        }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.5rem; }
+            .strategy-title { font-size: 1.3rem; }
+            .q-text { font-size: 1.05rem; }
+            .option { padding: 0.95rem 0.9rem; font-size: 1rem; min-height:58px; }
+            .explain-box { font-size: 0.98rem; }
+            .strategy-grid { grid-template-columns: 1fr; }
+            .quiz-container { padding: 1rem; }
+        }
+
+        @media (max-width: 420px) {
+            body { padding: 0.6rem; }
+            .main-wrapper { border-radius: 14px; }
+            .header { padding: 1rem 0.8rem; }
+            .header h1 { font-size: 1.35rem; }
+            .section-tag { font-size: 1.1rem; }
+            .q-text { font-size: 1rem; }
+            .option { font-size: 0.98rem; padding: 0.9rem 0.8rem; min-height:52px; }
+            .reset-btn { padding: 0.5rem 0.9rem; font-size: 0.95rem; }
+            .strategy-card { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="main-wrapper">
+    <div class="header">
+        <h1>🧠 ENTRANCE EXAM · ADVANCED STRATEGIES</h1>
+        <p>multiple-choice · time management · skimming/scanning · elimination · instructions</p>
+        <span>🔖 5 core skills · 20 questions each · total 100 · full explanations</span>
+    </div>
+
+    <!-- brief strategy overview -->
+    <div class="intro">
+        <p><strong>⚡ Master these exam-specific skills to maximise your score.</strong> Each question below tests not just knowledge, but your ability to apply strategy under pressure. Read explanations carefully.</p>
+    </div>
+
+    <!-- strategy summary cards -->
+    <div class="strategy-grid">
+        <div class="strategy-card"><div class="strategy-title">🎯 Multiple-choice</div><div class="strategy-content">• read all options first<br>• look for absolutes (never, always)<br>• best answer vs correct answer<br>• use context clues</div></div>
+        <div class="strategy-card"><div class="strategy-title">⏱️ Time management</div><div class="strategy-content">• easy questions first<br>• set max time per Q<br>• skip & return<br>• watch the clock</div></div>
+        <div class="strategy-card"><div class="strategy-title">📑 Skimming/scanning</div><div class="strategy-content">• titles, headings, topic sentences<br>• key words, numbers, names<br>• first & last paragraphs</div></div>
+        <div class="strategy-card"><div class="strategy-title">❌ Eliminating wrong</div><div class="strategy-content">• opposite answers cancel<br>• rule out extremes<br>• similar options often wrong<br>• grammar clues</div></div>
+        <div class="strategy-card"><div class="strategy-title">📋 Instructions</div><div class="strategy-content">• underline what's asked<br>• note exceptions (NOT, EXCEPT)<br>• single vs multiple answers<br>• direction words</div></div>
+    </div>
+
+    <!-- 100 QUESTIONS area -->
+    <div class="quiz-container" id="quizContainer">
+        <div class="section-tag">📝 100 STRATEGY-BASED QUESTIONS · ADVANCED</div>
+        <div class="q-counter">
+            <span id="counterDisplay">0 / 100 answered</span>
+            <button class="reset-btn" id="resetQuiz">↻ reset all</button>
+        </div>
+        <div id="questionsArea"></div>
+    </div>
+
+    <div class="foot-note">
+        ⚡ designed for Ethiopian university entrance · mobile-friendly · professional strategic explanations ⚡
+    </div>
+</div>
+
+<script>
+    (function() {
+        'use strict';
+        console.log('skill.html init — FIXED version');
+        try {
+            // 100 questions: 20 per strategy
+            const qBank = [];
+
+            function addQ(text, opts, correctInd, exp) {
+                qBank.push({ text, options: opts, correct: correctInd, explanation: exp });
+            }
+
+            // ==================== 1-20 : MULTIPLE-CHOICE STRATEGIES ====================
+            addQ('In multiple-choice questions, which option should you usually be suspicious of?', ['The one that repeats exact words from the text', 'The option with qualifiers like "sometimes"', 'The one that is grammatically inconsistent', 'The longest option'], 0, '✅ STRATEGY: Options that copy exact words are often distractors. Correct answers are often paraphrased. A is suspicious; B qualifiers are often safe; C is always wrong; D can go either way.');
+            addQ('When two options are direct opposites, what is a good strategy?', ['Choose neither', 'One of them is likely correct', 'Pick the one with more detail', 'Both are usually wrong'], 1, '✅ STRATEGY: Opposites often indicate that one is correct, because test makers set clear contrast. A,C,D are not reliable.');
+            addQ('What should you do if you are unsure between two seemingly correct answers?', ['Guess randomly', 'Choose the one with absolute words (never, always)', 'Look for the one that is most comprehensive or qualifies', 'Pick the shortest'], 2, '✅ STRATEGY: The more comprehensive or moderately worded option is often safer. Absolutes are often wrong. A is last resort; B risky; D not reliable.');
+            addQ('The presence of words like "always", "never", "all" in an option often indicates:', ['It is probably correct', 'It might be too extreme and likely false', 'It is a trick to confuse', 'Both B and C'], 3, '✅ STRATEGY: Absolutes are usually false because exceptions exist. B and C are both valid. A is wrong.');
+            addQ('In a "best answer" question (not "correct answer"), you should:', ['Pick the first right one', 'Look for the most precise and complete option', 'Choose the most common answer', 'Avoid long options'], 1, '✅ STRATEGY: "Best answer" requires comparison; choose the most accurate/detailed. A ignores comparison; C,D not strategies.');
+            addQ('Which of the following is a poor multiple-choice strategy?', ['Reading all options before selecting', 'Looking for grammatical agreement', 'Choosing an answer because it contains technical terms', 'Eliminating clearly wrong ones first'], 2, '✅ STRATEGY: Technical terms can be traps; always check meaning. A,B,D are good practices.');
+            addQ('When a question says "Which of the following is NOT true?", you should:', ['Find the true ones first', 'Look for the false statement', 'Guess quickly', 'Skip it'], 1, '✅ STRATEGY: NOT questions: identify the false one. Finding true ones helps eliminate, but you need the false. A is a step, but B is the direct goal. We choose B as the final action.');
+            addQ('If an unfamiliar word appears in an option, what should you do?', ['Always avoid that option', 'Use context from the passage or question', 'Pick it because it looks sophisticated', 'Eliminate all options with difficult words'], 1, '✅ STRATEGY: Context clues help deduce meaning. A,C,D are not strategic.');
+            addQ('How can grammar help in multiple choice?', ['The correct answer always sounds formal', 'Subject-verb agreement can eliminate mismatches', 'Long sentences are always correct', 'Passive voice is preferred'], 1, '✅ STRATEGY: Grammatical errors (e.g., subject-verb disagreement) can eliminate distractors. A,C,D false.');
+            addQ('What is the danger of "answer patterns" (e.g., believing answers follow a pattern)?', ['They sometimes work', 'Test makers randomize to avoid patterns', 'You might change correct answers', 'Both B and C'], 3, '✅ STRATEGY: Relying on patterns leads to second-guessing. B and C are valid. A is not a danger.');
+            addQ('In reading comprehension, what should you do first?', ['Read the questions', 'Read the entire passage carefully', 'Skim the passage for main idea', 'Look at the answer choices'], 2, '✅ STRATEGY: Skim first for gist, then read questions. A (reading questions first) can be effective too, but classic strategy is skim then questions. Many experts say read questions first. We pick 2 as common. But for variety, we choose C (skim).');
+            addQ('When options contain numbers, what is a good check?', ['Assume the middle number is correct', 'Verify against the text quickly', 'Choose the largest number', 'Choose the smallest'], 1, '✅ STRATEGY: Always verify numbers. A,C,D are guessing.');
+            addQ('A question asks for the "main idea". Which option is likely correct?', ['A very specific detail', 'A broad statement covering the whole passage', 'A quote from the text', 'An opinion'], 1, '✅ STRATEGY: Main idea is broad, not detail. A specific; C too narrow; D subjective.');
+            addQ('If you must guess, which option is statistically less frequent?', ['A', 'B', 'C', 'No pattern'], 3, '✅ STRATEGY: Test makers randomize; no pattern. Guessing should be random, but many say "all of the above" appears less. But D is correct: no pattern.');
+            addQ('"All of the above" is correct when:', ['You know at least two are correct', 'You know all individual options are true', 'It seems plausible', 'It is the longest'], 1, '✅ STRATEGY: Only choose "all of the above" if you are sure every option is correct. A might be incomplete.');
+            addQ('What should you do if you spot two identical options?', ['Pick one of them', 'Both are probably wrong', 'They are both correct', 'Notify the instructor'], 1, '✅ STRATEGY: Identical options are usually a mistake or trap; both likely wrong. A,C not reliable; D unrealistic.');
+            addQ('Which word in an option often signals a correct statement?', ['never', 'always', 'sometimes', 'none'], 2, '✅ STRATEGY: "Sometimes" is moderate and often true. Absolutes are often false.');
+            addQ('When a question includes "EXCEPT", you should:', ['Find the one that does NOT belong', 'Find the one that IS true', 'Pick the longest', 'Skip'], 0, '✅ STRATEGY: EXCEPT asks for the option that is false or not included. B opposite.');
+            addQ('If an answer choice seems too obvious or simple, it might be:', ['a trick; re-check', 'the correct one', 'a gift', 'probably right'], 0, '✅ STRATEGY: Too obvious can be a trap; verify. B,C,D not cautious.');
+            addQ('The best strategy for multiple choice overall is:', ['Go with first hunch if well-prepared', 'Change answers often', 'Pick the most technical', 'Avoid C'], 0, '✅ STRATEGY: Research shows first instinct is often right if you studied. Changing often harms. B,C,D wrong.');
+
+            // ==================== 21-40 : TIME MANAGEMENT ====================
+            addQ('What is the first thing you should do when the exam starts?', ['Start with the hardest question', 'Quickly scan the entire test and note sections', 'Solve all easy questions first', 'Read the instructions carefully'], 3, '✅ TIME: Always read instructions first. B is good after instructions. C is part of plan. But instructions first. We pick 3.');
+            addQ('If a question is taking too long, you should:', ['Spend extra time to get it right', 'Skip and come back later if time permits', 'Guess immediately', 'Leave it blank'], 1, '✅ TIME: Mark and return. A wastes time; C premature; D bad.');
+            addQ('How much time should you spend on a 2-mark question compared to a 1-mark?', ['Same time', 'Roughly double', 'Less time', 'Five minutes regardless'], 1, '✅ TIME: Weight should guide time allocation. 2-mark ≈ 2x time. A,C not logical; D arbitrary.');
+            addQ('What is a good way to pace yourself?', ['Check time after every question', 'Divide total time by number of questions and set mini-deadlines', 'Work as fast as possible', 'Ignore clock'], 1, '✅ TIME: Segmenting time prevents overruns. A too frequent; C leads to errors; D risky.');
+            addQ('If you finish 10 minutes early, what should you do?', ['Hand in immediately', 'Review answers, especially marked ones', 'Relax and do nothing', 'Change all answers'], 1, '✅ TIME: Review carefully. A rushes; C wastes opportunity; D harmful.');
+            addQ('The best time to attempt difficult questions is:', ['At the very beginning', 'After completing all easy ones', 'In the middle', 'At the end with remaining time'], 1, '✅ TIME: Easy first to secure marks. D also possible but B is better.');
+            addQ('What should you do if you cannot answer a question after 2 minutes?', ['Keep trying until you solve it', 'Make an educated guess and move on', 'Leave it blank', 'Write random answer'], 1, '✅ TIME: Guess and move if you can eliminate. A bad; C blank=zero; D random but guess is better.');
+            addQ('Which is a poor time management habit?', ['Spending too long on hard questions', 'Skipping instructions', 'Not wearing a watch', 'All of the above'], 3, '✅ TIME: All are poor habits. A, B, C each waste time or cause errors.');
+            addQ('How should you use extra time at the end?', ['Recheck calculations and marked questions', 'Take a nap', 'Redo entire test', 'Chat'], 0, '✅ TIME: Targeted review. B,C,D unproductive.');
+            addQ('When the exam has different sections, you should:', ['Spend all time on first section', 'Allocate time per section based on marks', 'Do sections randomly', 'Focus only on your strength'], 1, '✅ TIME: Allocate by weight. A,C,D not strategic.');
+            addQ('What is the "two-pass" method?', ['Do questions twice', 'First answer easy, then return to hard', 'Read passage twice', 'Write answers twice'], 1, '✅ TIME: Classic strategy: easy first pass, second pass for hard. A vague; C reading; D not relevant.');
+            addQ('If you have 60 minutes for 60 questions, your pace should be about:', ['2 minutes per question', '1 minute per question', '30 seconds per question', 'unlimited'], 1, '✅ TIME: 60/60 = 1 min per Q. A would be 120 min; C too fast.');
+            addQ('What should you do if you realise you are behind schedule?', ['Panic and rush', 'Skip more questions', 'Increase speed slightly but maintain accuracy', 'Guess all remaining'], 2, '✅ TIME: Slightly faster, don\'t sacrifice accuracy. A,B,D harmful.');
+            addQ('The best use of the first 5 minutes of an exam is:', ['Answering 5 easy questions', 'Reading all instructions and scanning the test', 'Sharpening pencils', 'Meditating'], 1, '✅ TIME: Instructions and overview. A possible but instructions first.');
+            addQ('How can you avoid running out of time on reading passages?', ['Read every word slowly', 'Skim first, then read questions, then scan', 'Skip passages', 'Read only first line'], 1, '✅ TIME: Efficient reading method. A too slow; C foolish; D insufficient.');
+            addQ('What should you do with questions that have negative marking?', ['Attempt all without worry', 'Avoid guessing unless you can eliminate', 'Leave them blank always', 'Guess quickly'], 1, '✅ TIME: With negative marking, educated guess only. A risky; B correct; C loses opportunity; D reckless.');
+            addQ('If you have 5 minutes left and 10 questions remain, you should:', ['Try to solve all carefully', 'Guess quickly for all', 'Scan and answer only the ones you can do quickly, guess rest', 'Leave them blank'], 2, '✅ TIME: Quick scan + educated guesses. A unrealistic; B pure guess; D bad.');
+            addQ('Which is a sign of poor time management?', ['Finishing 30 minutes early every time', 'Rushing through last 10 questions', 'Having 5 minutes to review', 'Allocating time per section'], 1, '✅ TIME: Rushing indicates bad pace. A too early might mean you rushed; B is direct; C good; D good.');
+            addQ('What is the recommended time to spend on a 5-mark essay question in a 2-hour exam?', ['5 minutes', '15-20 minutes', '45 minutes', '2 hours'], 1, '✅ TIME: Proportional to marks. 5-mark should get ~15-20 min in 120 min total (if total marks ~100).');
+            addQ('Time management primarily helps you to:', ['Finish early', 'Maximize score by allocating effort wisely', 'Avoid stress', 'Show off speed'], 1, '✅ TIME: Goal is score maximization, not just finish. A,C byproducts, D irrelevant.');
+
+            // ==================== 41-60 : SKIMMING & SCANNING ====================
+            addQ('What is the main purpose of skimming a passage?', ['To understand every detail', 'To get the general idea and structure', 'To find specific data', 'To memorise'], 1, '✅ SKIM: General idea. C is scanning; A deep read; D not.');
+            addQ('Scanning is best used to find:', ['main idea', 'specific information (dates, names)', 'author’s tone', 'conclusion'], 1, '✅ SCAN: Specific details. A,C,D are for skimming/detailed reading.');
+            addQ('When skimming, which parts should you focus on?', ['First and last paragraphs, topic sentences', 'Every word', 'Only the middle', 'Quotes'], 0, '✅ SKIM: Key structural areas. B too detailed; C misses intro/conclusion; D narrow.');
+            addQ('To quickly locate a date in a text, you should:', ['read every word carefully', 'move eyes rapidly looking for numbers', 'skim topic sentences', 'read conclusion'], 1, '✅ SCAN: Numbers stand out. A slow; C,D not precise.');
+            addQ('What should you do before reading a passage for comprehension questions?', ['Read questions first to know what to skim/scan for', 'Memorize the passage', 'Read aloud', 'Count paragraphs'], 0, '✅ SKIM/SCAN: Questions guide your reading. B,C,D not efficient.');
+            addQ('Skimming a passage should take about:', ['10-15 minutes', '1-2 minutes', 'same as full reading', '30 seconds'], 1, '✅ SKIM: Quick overview. A too long; C defeats purpose; D may be too fast for long text.');
+            addQ('Which of the following is NOT a skimming technique?', ['Reading titles and headings', 'Looking at bold or italic words', 'Reading every line slowly', 'Noticing transition words'], 2, '✅ SKIM: Slow reading is opposite. A,B,D are skimming techniques.');
+            addQ('Scanning is most effective when you:', ['know exactly what you are looking for', 'have no clue', 'want to enjoy the text', 'are summarizing'], 0, '✅ SCAN: Need a target. B random; C not; D not scanning.');
+            addQ('When you scan for a name like "Tsegaye Gebremedhin", you look for:', ['words that look similar', 'capital letters', 'long words', 'common nouns'], 1, '✅ SCAN: Proper names capitalized. A vague; C not reliable; D not.');
+            addQ('Skimming can help you with:', ['understanding vocabulary', 'identifying passage structure', 'deep analysis', 'poetic devices'], 1, '✅ SKIM: Structure. A requires context; C detailed; D specific.');
+            addQ('After skimming, you should be able to:', ['recite the passage', 'answer main idea questions', 'recall all numbers', 'quote exact sentences'], 1, '✅ SKIM: Main idea. A,C,D need detailed reading.');
+            addQ('What do you scan for when looking for a cause-effect relationship?', ['words like "because", "therefore"', 'dates', 'capital letters', 'adjectives'], 0, '✅ SCAN: Transition words signal relationships. B numbers; C names; D descriptors.');
+            addQ('Skimming a newspaper article first involves:', ['reading the headline and first paragraph', 'checking every fact', 'reading the last paragraph only', 'looking at pictures only'], 0, '✅ SKIM: Headline + lead. B detailed; C partial; D not enough.');
+            addQ('Which strategy is best for answering a question about the author’s attitude?', ['Scan for opinion words (positive/negative)', 'Look for dates', 'Count facts', 'Read only the conclusion'], 0, '✅ SKIM/SCAN: Attitude words. B,C not helpful; D might work but scanning opinion words is better.');
+            addQ('You are asked to find the population of Ethiopia in a text. You should:', ['skim the whole text', 'scan for numbers like million, thousand', 'read the first paragraph', 'look for graphs'], 1, '✅ SCAN: Numbers. A less efficient; C may not contain; D if present.');
+            addQ('Skimming helps you decide:', ['whether to read in detail', 'the exact answer', 'grammar rules', 'vocabulary'], 0, '✅ SKIM: Decide if passage is relevant. B,C,D need detailed reading.');
+            addQ('While scanning, your eyes move:', ['line by line slowly', 'quickly in a zigzag or search pattern', 'only left to right slowly', 'in circles'], 1, '✅ SCAN: Quick, targeted movement. A slow; C too slow; D not.');
+            addQ('What is a common mistake in skimming?', ['Reading too fast and missing key ideas', 'Reading too slowly', 'Looking at pictures', 'Counting words'], 0, '✅ SKIM: Too fast can miss main idea. B is not skimming; C may be okay; D pointless.');
+            addQ('To skim a paragraph effectively, read:', ['the first and last sentence', 'every word', 'only the middle', 'random lines'], 0, '✅ SKIM: Topic sentences often first/last. B detailed; C,D not systematic.');
+            addQ('Scanning is to ________ as skimming is to ________.', ['detail / gist', 'gist / detail', 'fast / slow', 'reading / writing'], 0, '✅ SCAN: Detail; SKIM: Gist. A correct. B reversed; C not accurate; D unrelated.');
+
+            // ==================== 61-80 : ELIMINATING WRONG ANSWERS ====================
+            addQ('Which option is easiest to eliminate?', ['One with grammatical error', 'One that uses moderate language', 'One that matches your prediction', 'One that contains a qualifier'], 0, '✅ ELIMINATE: Grammar errors make option invalid. B,C,D are not automatically wrong.');
+            addQ('If two options are very similar in meaning, they are probably:', ['both correct', 'both incorrect', 'one is correct', 'distractors'], 1, '✅ ELIMINATE: Similar options often both wrong because test makers avoid two correct. C possible but rare.');
+            addQ('An option that is completely irrelevant to the question should be:', ['kept as possibility', 'eliminated', 'chosen if others are worse', 'researched'], 1, '✅ ELIMINATE: Irrelevant = wrong. A,C illogical; D not possible.');
+            addQ('Which of the following is a valid elimination criterion?', ['Option contradicts known fact', 'Option is too vague', 'Option uses extreme language', 'All of the above'], 3, '✅ ELIMINATE: All are red flags. A,B,C all valid.');
+            addQ('In a question with "all of the above", if you find one option false, you:', ['can still choose "all"', 'must eliminate "all"', 'guess', 'ignore'], 1, '✅ ELIMINATE: "All" requires every option true. If one false, eliminate.');
+            addQ('What can eliminate an answer in a vocabulary question?', ['The word is not the same part of speech', 'It has too many letters', 'It sounds similar', 'It is a common word'], 0, '✅ ELIMINATE: Part of speech mismatch (e.g., adjective needed but noun given) eliminates. B,C,D not reliable.');
+            addQ('If an answer choice is a direct quote from the text but doesn’t answer the question, you should:', ['select it anyway', 'eliminate it', 'keep it as possible', 'look for another quote'], 1, '✅ ELIMINATE: Must answer the question, not just be true. B correct; A wrong; C not; D may not help.');
+            addQ('Options that are too broad (e.g., "always true") are often:', ['correct', 'incorrect because exceptions exist', 'good guesses', 'specific'], 1, '✅ ELIMINATE: Overly broad often false. A,C,D not typical.');
+            addQ('Elimination works best when combined with:', ['guessing randomly', 'knowing common traps', 'choosing the longest', 'picking C'], 1, '✅ ELIMINATE: Knowledge of traps enhances elimination. A not strategic; B correct; C,D baseless.');
+            addQ('When you eliminate two options, you should:', ['guess between the remaining two', 'pick the shorter', 'leave it blank', 'flip a coin'], 0, '✅ ELIMINATE: 50% chance, educated guess. B,C,D not optimal.');
+            addQ('What is a sign of a distractor?', ['It looks correct but slightly twists facts', 'It is obviously false', 'It is identical to another', 'It contains numbers'], 0, '✅ ELIMINATE: Distractor = tempting but wrong. A describes; B too obvious; C rare; D not always.');
+            addQ('If an option uses "may" or "could", it is often:', ['a safe correct answer', 'always wrong', 'too vague', 'extreme'], 0, '✅ ELIMINATE: Qualifiers make statements flexible, often correct. A true; B,C,D not.');
+            addQ('Which cannot be used to eliminate an answer?', ['It is too short', 'It disagrees with the main idea', 'It misinterprets a fact', 'It is not mentioned in the text'], 0, '✅ ELIMINATE: Length alone not valid. B,C,D are valid elimination reasons.');
+            addQ('If a question asks for a reason and one option is a result, you can:', ['keep it', 'eliminate it (cause vs effect mix-up)', 'choose it', 'ignore'], 1, '✅ ELIMINATE: Confusing cause/effect is common trap; eliminate if it\'s effect instead of cause.');
+            addQ('In a "which is true" question, an option that is partially true but has one false element is:', ['completely true', 'completely false', 'partially correct', 'need to check'], 1, '✅ ELIMINATE: One false element makes the whole option false. A wrong; B correct; C no partial in multiple choice.');
+            addQ('What should you do when an option contains unfamiliar technical jargon?', ['Eliminate it immediately', 'Try to relate to context; if not, consider eliminating', 'Always choose it', 'Look for same jargon elsewhere'], 1, '✅ ELIMINATE: Jargon can be a trap; use context. A too quick; B balanced; C dangerous; D not efficient.');
+            addQ('Elimination can be based on:', ['logic and common sense', 'personal feelings', 'the way it sounds', 'the letter'], 0, '✅ ELIMINATE: Logic. B,C,D not reliable.');
+            addQ('If an answer choice is factually correct but does not answer the question, it should be:', ['selected', 'eliminated', 'marked for review', 'changed'], 1, '✅ ELIMINATE: Must answer the specific question. B correct; A wrong; C maybe but still wrong.');
+            addQ('After eliminating three options, the remaining one:', ['must be correct', 'should be double-checked', 'is probably a trick', 'is wrong'], 1, '✅ ELIMINATE: Even after elimination, verify. A overconfident; B wise; C,D not necessarily.');
+            addQ('The elimination process should be:', ['random', 'systematic and logical', 'emotional', 'based on pattern'], 1, '✅ ELIMINATE: Systematic. A,C,D not effective.');
+
+            // ==================== 81-100 : UNDERSTANDING INSTRUCTIONS ====================
+            addQ('What is the first step before answering any question?', ['Read the instructions carefully', 'Start with first question', 'Look at answer choices', 'Check time'], 0, '✅ INSTRUCT: Instructions first. B,C,D come after.');
+            addQ('If instructions say "Choose the incorrect option", you are looking for:', ['the true statement', 'the false statement', 'the best answer', 'any answer'], 1, '✅ INSTRUCT: "Incorrect" = false. A opposite.');
+            addQ('When a question says "Answer all questions", it means:', ['you may skip some', 'attempt every item', 'guess if unsure', 'both B and C'], 3, '✅ INSTRUCT: "Answer all" = attempt every, even if guess. B and C together. D is 3.');
+            addQ('The phrase "mark your answers on the answer sheet" implies:', ['answers in booklet count', 'transfer answers carefully', 'circle in booklet', 'use pencil only'], 1, '✅ INSTRUCT: Must transfer. A wrong; C not; D not always.');
+            addQ('If the instruction says "select the best answer", you should:', ['pick any correct one', 'choose the most accurate/comprehensive', 'select the first', 'choose C'], 1, '✅ INSTRUCT: "Best" requires comparison. A not enough; C,D arbitrary.');
+            addQ('What does "You have 2 hours" indicate?', ['Start anytime', 'Finish within time', 'You can leave early', 'Both B and C'], 3, '✅ INSTRUCT: B and C true (if allowed). D = 3.');
+            addQ('Instructions often include "Read the passage carefully". This means:', ['skim quickly', 'detailed reading before questions', 'read only first sentence', 'ignore passage'], 1, '✅ INSTRUCT: Careful = detailed. A skimming not enough; C,D wrong.');
+            addQ('If a question says "according to the passage", you must:', ['use your own knowledge', 'rely only on passage information', 'guess', 'ask teacher'], 1, '✅ INSTRUCT: Based on text only. A outside knowledge irrelevant.');
+            addQ('The instruction "Choose two options" means:', ['any two', 'exactly two correct', 'at least two', 'the first two'], 1, '✅ INSTRUCT: Exactly two answers required. A vague; C,D not accurate.');
+            addQ('"No marks will be deducted for wrong answers" means you should:', ['skip difficult', 'attempt all questions even if unsure', 'leave blank', 'be extra cautious'], 1, '✅ INSTRUCT: No penalty = guess. A opposite; B correct; C foolish; D not needed.');
+            addQ('What is the danger of misreading instructions?', ['Answering correctly but losing marks', 'Running out of time', 'Misinterpreting what is asked', 'All of the above'], 3, '✅ INSTRUCT: All consequences. A,B,C possible.');
+            addQ('If instructions say "Use a blue or black pen", what happens if you use pencil?', ['Answer may not scan', 'It’s fine', 'Extra points', 'Better'], 0, '✅ INSTRUCT: Pencil may not be read. B,C,D false.');
+            addQ('"You are not allowed to use calculators" means:', ['estimate mentally', 'bring calculator anyway', 'leave those questions', 'use phone'], 0, '✅ INSTRUCT: Must obey. B,C,D violate rules.');
+            addQ('The phrase "Turn over the page" appears. You should:', ['continue reading', 'stop', 'close booklet', 'raise hand'], 0, '✅ INSTRUCT: Means go to next page. B,C,D wrong.');
+            addQ('What should you underline in instructions?', ['Key words like NOT, EXCEPT, always', 'every word', 'the date', 'your name'], 0, '✅ INSTRUCT: Key direction words. B unnecessary; C irrelevant; D name separate.');
+            addQ('If the instruction says "Answer any five questions from section B", you:', ['must answer all', 'choose exactly five', 'can answer six', 'answer only easy'], 1, '✅ INSTRUCT: "Any five" = exactly five (or at most five?). Usually exactly five. B correct.');
+            addQ('"Write your answers in the spaces provided" means:', ['use extra paper', 'stay within given area', 'write anywhere', 'use margins'], 1, '✅ INSTRUCT: Designated space only. A not allowed; C,D wrong.');
+            addQ('What does "This examination consists of 100 questions" tell you?', ['total number to expect', 'you must answer 100', 'there are 100 pages', 'both A and B'], 3, '✅ INSTRUCT: A and B (if "consists of" means you answer all). D=3.');
+            addQ('Why is reading instructions at the start critical?', ['Avoids wasting time on wrong format', 'Increases stress', 'It’s optional', 'None'], 0, '✅ INSTRUCT: Saves time/errors. B negative; C false; D wrong.');
+            addQ('After finishing, a final instruction often says "Check your work". This means:', ['hand in immediately', 'review answers for mistakes', 'leave quietly', 'start chatting'], 1, '✅ INSTRUCT: Review. A contradicts; C,D not checking.');
+
+            // total 100
+
+            console.log('qBank built, length =', qBank.length);
+
+            // render
+            const questionsDiv = document.getElementById('questionsArea');
+            const counterSpan = document.getElementById('counterDisplay');
+            const resetBtn = document.getElementById('resetQuiz');
+
+            if (!questionsDiv) throw new Error('questionsArea not found');
+            if (!counterSpan) throw new Error('counterDisplay not found');
+            if (!resetBtn) throw new Error('resetBtn not found');
+
+            let selected = new Array(qBank.length).fill(null);
+
+            function renderAll() {
+                let html = '';
+                for (let i = 0; i < qBank.length; i++) {
+                    const q = qBank[i];
+                    const sel = selected[i];
+                    html += `<div class="question-box" id="q-${i}">`;
+                    html += `<div class="q-text"><span>${i+1}</span> ${q.text}</div>`;
+                    html += `<div class="options">`;
+                    for (let optIdx = 0; optIdx < q.options.length; optIdx++) {
+                        let optClass = 'option';
+                        if (sel === optIdx) optClass += ' selected';
+                        html += `<div class="${optClass}" data-qidx="${i}" data-oidx="${optIdx}">${String.fromCharCode(65+optIdx)}. ${q.options[optIdx]}</div>`;
+                    }
+                    html += `</div>`;
+                    if (sel !== null) {
+                        let isCorrect = (sel === q.correct);
+                        let mark = isCorrect ? '✅ CORRECT' : '❌ WRONG';
+                        html += `<div class="explain-box"><span class="${isCorrect ? 'correct-mark' : 'wrong-mark'}">${mark}</span> ${q.explanation}</div>`;
+                    }
+                    html += `</div>`;
+                }
+                questionsDiv.innerHTML = html;
+                counterSpan.innerText = `${selected.filter(s => s!==null).length} / ${qBank.length} answered`;
+            }
+
+            // Event delegation for options
+            questionsDiv.addEventListener('click', function(e) {
+                const opt = e.target.closest('.option');
+                if (!opt) return;
+                const qIdx = parseInt(opt.dataset.qidx, 10);
+                const oIdx = parseInt(opt.dataset.oidx, 10);
+                if (!isNaN(qIdx) && !isNaN(oIdx) && qIdx >= 0 && qIdx < qBank.length) {
+                    selected[qIdx] = oIdx;
+                    renderAll();
+                }
+            });
+
+            resetBtn.addEventListener('click', function() {
+                selected = new Array(qBank.length).fill(null);
+                renderAll();
+            });
+
+            renderAll();
+
+        } catch (err) {
+            console.error('skill.html runtime error:', err);
+            const qc = document.getElementById('quizContainer') || document.body;
+            const box = document.createElement('div');
+            box.style.background = '#ffecec';
+            box.style.color = '#a00';
+            box.style.padding = '1.5rem';
+            box.style.borderRadius = '12px';
+            box.style.margin = '1rem';
+            box.style.fontSize = '1.2rem';
+            box.innerText = '⚠️ A runtime error occurred. Please refresh or check console. Error: ' + err.message;
+            qc.prepend(box);
+        }
+    })();
+</script>
+</body>
+</html>

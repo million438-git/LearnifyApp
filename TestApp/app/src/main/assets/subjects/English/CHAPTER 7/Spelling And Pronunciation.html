@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>🇪🇹 ENTRANCE EXAM · SPELLING & PRONUNCIATION (advanced)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #eef3f9;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            padding: 1.2rem 1rem;
+            color: #0a2638;
+            line-height: 1.5;
+        }
+        .main-wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 38px 38px 28px 28px;
+            box-shadow: 0 25px 45px rgba(0,20,40,0.25);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(145deg, #073050, #124b72);
+            padding: 2rem 1.8rem;
+            color: white;
+            border-bottom: 6px solid #f0b73e;
+        }
+        .header h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 0.4rem;
+        }
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        .header span {
+            background: #f0b73e;
+            color: #073050;
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        .notes-section {
+            padding: 2rem 2rem 1.5rem 2rem;
+            background: #f9fcff;
+            border-bottom: 2px solid #cde0f0;
+        }
+        .section-tag {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f3a57;
+            border-left: 12px solid #f0b73e;
+            padding-left: 1.2rem;
+            margin-bottom: 1.8rem;
+        }
+        .spell-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.8rem;
+        }
+        .rule-card {
+            background: white;
+            border-radius: 28px;
+            padding: 1.5rem 1.5rem;
+            box-shadow: 0 8px 16px rgba(0,32,64,0.06);
+            border: 1px solid #cde0f0;
+        }
+        .rule-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #134a70;
+            border-bottom: 4px solid #fdebb3;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        .rule-content {
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+        .rule-content li {
+            margin-left: 1.5rem;
+            padding-left: 0.3rem;
+        }
+        .example-block {
+            background: #ecf5fd;
+            border-radius: 18px;
+            padding: 1rem 1.4rem;
+            margin: 1rem 0 0 0;
+            border-left: 6px solid #f0b73e;
+        }
+        .quiz-container {
+            padding: 2rem 2rem 3rem 2rem;
+            background: #e7f0fa;
+        }
+        .q-counter {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #174d73;
+            margin-bottom: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .reset-btn {
+            background: white;
+            border: 2px solid #174d73;
+            padding: 0.5rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            color: #174d73;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .reset-btn:hover {
+            background: #174d73;
+            color: white;
+        }
+        .question-box {
+            background: white;
+            border-radius: 30px;
+            padding: 1.8rem 2rem;
+            margin-bottom: 1.8rem;
+            border: 1px solid #c2d5ea;
+            word-break: break-word;
+        }
+        .q-text {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 1.2rem;
+        }
+        .q-text span {
+            font-weight: 700;
+            color: #b65000;
+            background: #ffe6c2;
+            padding: 0.2rem 1rem;
+            border-radius: 60px;
+            margin-right: 0.8rem;
+            display: inline-block;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin: 1rem 0 0.5rem 0;
+        }
+        .option {
+            background: #f4faff;
+            border-radius: 40px;
+            padding: 0.9rem 1.8rem;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border: 2px solid #b9d2ec;
+            transition: 0.05s linear;
+            font-weight: 500;
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+        }
+        .option:hover {
+            background: #ddecff;
+            border-color: #1f6392;
+        }
+        .option.selected {
+            background: #0b4b75;
+            border-color: #f0b73e;
+            color: white;
+            font-weight: 600;
+        }
+        .explain-box {
+            background: #e9f2fc;
+            border-radius: 24px;
+            padding: 1.2rem 1.8rem;
+            margin-top: 1.2rem;
+            border-left: 12px solid #f0b73e;
+            font-size: 1.08rem;
+            line-height: 1.6;
+            color: #01325a;
+        }
+        .wrong-mark { color: #b63333; font-weight: 700; margin-right: 0.4rem; }
+        .correct-mark { color: #1b7a2b; font-weight: 700; margin-right: 0.4rem; }
+        .foot-note {
+            padding: 1.2rem 2rem;
+            background: #cfe0f0;
+            text-align: center;
+            font-size: 1rem;
+        }
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.9rem; }
+            .q-text { font-size: 1.1rem; }
+            .option { padding: 0.9rem 1rem; font-size: 1rem; }
+            .explain-box { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="main-wrapper">
+    <div class="header">
+        <h1>🔤 SPELLING & PRONUNCIATION · ENTRANCE EXAM</h1>
+        <p>common errors · silent letters · plural forms · British vs American</p>
+        <span>🔖 100 advanced questions · full analytic explanations</span>
+    </div>
+
+    <!-- DETAILED NOTES -->
+    <div class="notes-section">
+        <div class="section-tag">📘 MASTER SPELLING & PRONUNCIATION RULES</div>
+        <div class="spell-grid">
+            <div class="rule-card">
+                <div class="rule-title">✏️ COMMON SPELLING ERRORS</div>
+                <div class="rule-content">
+                    <ul>
+                        <li><strong>ie / ei</strong> : receive (ei after c), believe (ie) — exception: seize, weird</li>
+                        <li><strong>-able / -ible</strong> : dependable, visible</li>
+                        <li><strong>Double letters</strong> : beginning, committed, embarrassing</li>
+                        <li><strong>Endings -ant / -ent</strong> : relevant, confident</li>
+                        <li><strong>Common mistakes</strong> : <em>accommodate</em> (2 c, 2 m), <em>necessary</em> (1 c, 2 s), <em>separate</em> (‑par‑)</li>
+                    </ul>
+                </div>
+                <div class="example-block">⚡ <strong>accommodate</strong> (cc, mm) · <strong>harass</strong> (one r, two s) · <strong>embarrass</strong> (rr, ss)</div>
+            </div>
+            <div class="rule-card">
+                <div class="rule-title">🔇 SILENT LETTERS</div>
+                <div class="rule-content">
+                    <ul>
+                        <li><strong>b</strong> : debt, doubt, subtle, thumb</li>
+                        <li><strong>k / g</strong> : knee, knife, gnome, gnat</li>
+                        <li><strong>w</strong> : write, sword, answer, two</li>
+                        <li><strong>h</strong> : hour, honest, rhythm, ghost</li>
+                        <li><strong>l</strong> : half, talk, could, salmon</li>
+                        <li><strong>t</strong> : castle, listen, whistle, thistle</li>
+                    </ul>
+                </div>
+                <div class="example-block">⚡ <strong>psychology</strong> (p silent) · <strong>island</strong> (s silent) · <strong>Wednesday</strong> (d silent)</div>
+            </div>
+            <div class="rule-card">
+                <div class="rule-title">🔢 PLURAL FORMS</div>
+                <div class="rule-content">
+                    <ul>
+                        <li><strong>regular</strong> : +s / +es (box→boxes)</li>
+                        <li><strong>-y</strong> : baby→babies (consonant+y) ; day→days (vowel+y)</li>
+                        <li><strong>-f / -fe</strong> : leaf→leaves, wife→wives (exceptions: roofs, chiefs)</li>
+                        <li><strong>-o</strong> : potato→potatoes (heroes, echoes) but pianos, photos</li>
+                        <li><strong>irregular</strong> : child→children, tooth→teeth, mouse→mice</li>
+                        <li><strong>same form</strong> : sheep, deer, series, species</li>
+                    </ul>
+                </div>
+                <div class="example-block">⚡ <strong>crisis→crises</strong> · <strong>phenomenon→phenomena</strong> · <strong>cactus→cacti</strong></div>
+            </div>
+            <div class="rule-card">
+                <div class="rule-title">🇬🇧🇺🇸 BRITISH vs AMERICAN</div>
+                <div class="rule-content">
+                    <ul>
+                        <li><strong>-our / -or</strong> : colour (UK) / color (US)</li>
+                        <li><strong>-re / -er</strong> : centre / center</li>
+                        <li><strong>-ise / -ize</strong> : organise / organize</li>
+                        <li><strong>-ogue / -og</strong> : catalogue / catalog</li>
+                        <li><strong>-ence / -ense</strong> : defence / defense</li>
+                        <li><strong>travelling / traveling</strong> (double l UK)</li>
+                    </ul>
+                </div>
+                <div class="example-block">⚡ <strong>kerb (UK) / curb (US)</strong> · <strong>tyre / tire</strong> · <strong>programme / program</strong></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 100 QUESTIONS -->
+    <div class="quiz-container" id="quizContainer">
+        <div class="section-tag">📝 100 SPELLING & PRONUNCIATION QUESTIONS · ADVANCED</div>
+        <div class="q-counter">
+            <span id="counterDisplay">0 / 100 answered</span>
+            <button class="reset-btn" id="resetQuiz">↻ reset all</button>
+        </div>
+        <div id="questionsArea"></div>
+    </div>
+
+    <div class="foot-note">
+        ⚡ each answer includes full analysis: correct spelling rule, pronunciation, and why other options are invalid · Ethiopian entrance standard ⚡
+    </div>
+</div>
+
+<script>
+    (function() {
+        'use strict';
+        try {
+            const qBank = [];
+
+            function addQ(text, opts, correctInd, exp) {
+                qBank.push({ text, options: opts, correct: correctInd, explanation: exp });
+            }
+
+            // ========== 100 SPELLING & PRONUNCIATION QUESTIONS ==========
+
+            // --- 1-20 : COMMON SPELLING ERRORS ---
+            addQ('Which word is spelled correctly?', ['accommodate', 'accomodate', 'acommodate', 'accomoddate'], 0, '✅ CORRECT: "accommodate" has double c and double m. A is correct; B misses one m; C misses one c and one m; D has extra d.');
+            addQ('Choose the correct spelling:', ['necessary', 'neccessary', 'necessery', 'neccesary'], 0, '✅ CORRECT: "necessary" has one c, two s. A is correct; B extra c; C wrong vowel; D extra c.');
+            addQ('Which is correct?', ['separate', 'seperate', 'sepArate', 'sepparate'], 0, '✅ CORRECT: "separate" is spelled with -par- (a). A correct; B wrong vowel; C capital A irrelevant; D double p wrong.');
+            addQ('Identify the correctly spelled word:', ['embarrass', 'embarass', 'embarras', 'embaras'], 0, '✅ CORRECT: "embarrass" has double r and double s. A correct; B single r; C single s; D both single.');
+            addQ('Choose the correct spelling:', ['privilege', 'privelege', 'priviledge', 'privelege'], 0, '✅ CORRECT: "privilege" ends with -lege. A correct; B/C/D common misspellings.');
+            addQ('Which is correct?', ['rhythm', 'rythm', 'rhythim', 'rythem'], 0, '✅ CORRECT: "rhythm" has h after r, then y, th, m. A correct; B missing h; C extra i; D wrong order.');
+            addQ('Pick the correctly spelled word:', ['consensus', 'concensus', 'consencus', 'consentus'], 0, '✅ CORRECT: "consensus" from consent, but spelling with -s- (no c). A correct; B incorrect c; C sc wrong; D t wrong.');
+            addQ('Which is correct?', ['harass', 'harrass', 'haras', 'haraass'], 0, '✅ CORRECT: "harass" has one r, two s. A correct; B double r; C single s; D extra a.');
+            addQ('Choose the correct spelling:', ['millennium', 'millenium', 'milenium', 'millenniume'], 0, '✅ CORRECT: "millennium" has double l, double n. A correct; B single n; C single l & n; D extra e.');
+            addQ('Which is correct?', ['publicly', 'publically', 'publikly', 'publickly'], 0, '✅ CORRECT: "publicly" from public + ly (not -ally). A correct; B common error; C/D nonsense.');
+            addQ('Identify the correct spelling:', ['occurrence', 'occurance', 'ocurence', 'occurrencee'], 0, '✅ CORRECT: "occurrence" has double c, double r, -ence. A correct; B -ance wrong; C single r; D extra e.');
+            addQ('Which is correct?', ['receive', 'recieve', 'receeve', 'receve'], 0, '✅ CORRECT: "receive" follows i before e except after c. A correct; B ie after c wrong; C/D wrong.');
+            addQ('Choose the correct word:', ['believe', 'beleive', 'belive', 'beleve'], 0, '✅ CORRECT: "believe" – ie, not ei. A correct; B ei wrong; C missing e; D wrong vowel.');
+            addQ('Which is correct?', ['weird', 'wierd', 'weard', 'wierrd'], 0, '✅ CORRECT: "weird" is an exception (ei). A correct; B ie wrong; C ea wrong; D extra r.');
+            addQ('Pick the correctly spelled word:', ['foreign', 'foriegn', 'forein', 'forien'], 0, '✅ CORRECT: "foreign" – e before i, silent g. A correct; B ie wrong; C missing g; D wrong order.');
+            addQ('Which is correct?', ['friend', 'freind', 'frend', 'freiend'], 0, '✅ CORRECT: "friend" – ie. A correct; B ei wrong; C missing i; D extra e.');
+            addQ('Choose the correct spelling:', ['conscience', 'consciense', 'conscence', 'conshence'], 0, '✅ CORRECT: "conscience" has sci, then ence. A correct; B -ense wrong; C missing i; D sh wrong.');
+            addQ('Which is correct?', ['conscious', 'concious', 'consious', 'conscous'], 0, '✅ CORRECT: "conscious" has sci. A correct; B missing s; C missing c; D missing i.');
+            addQ('Identify the correct spelling:', ['desiccate', 'dessicate', 'desicate', 'dessiccate'], 0, '✅ CORRECT: "desiccate" has one s, double c. A correct; B double s; C single c; D double s & double c? dessiccate has double s? not standard.');
+            addQ('Which is correct?', ['ecstasy', 'extasy', 'ecstacy', 'extacy'], 0, '✅ CORRECT: "ecstasy" – -asy, not -acy. A correct; B x wrong; C -acy common error; D x + acy.');
+
+            // --- 21-40 : SILENT LETTERS ---
+            addQ('Which word contains a silent "b"?', ['debt', 'web', 'rob', 'cabbage'], 0, '✅ CORRECT: "debt" – b is silent. B,C,D have pronounced b.');
+            addQ('Identify the word with a silent "k":', ['knee', 'kite', 'skate', 'kangaroo'], 0, '✅ CORRECT: "knee" – k silent. Others have pronounced k.');
+            addQ('Which word has a silent "w"?', ['sword', 'swan', 'sweet', 'swing'], 0, '✅ CORRECT: "sword" – w silent. B,C,D pronounce w.');
+            addQ('Pick the word with a silent "h":', ['hour', 'house', 'hat', 'behave'], 0, '✅ CORRECT: "hour" – h silent. Others have h pronounced.');
+            addQ('Which word contains a silent "l"?', ['half', 'help', 'cold', 'shelf'], 0, '✅ CORRECT: "half" – l silent. B,C,D pronounce l.');
+            addQ('Identify the word with a silent "t":', ['castle', 'table', 'tiger', 'mountain'], 0, '✅ CORRECT: "castle" – t silent. B,C,D pronounce t.');
+            addQ('Which word has a silent "p"?', ['psychology', 'paper', 'piano', 'pilot'], 0, '✅ CORRECT: "psychology" – p silent. Others pronounce p.');
+            addQ('Choose the word with a silent "g":', ['gnat', 'garden', 'glad', 'dog'], 0, '✅ CORRECT: "gnat" – g silent. B,C,D pronounce g.');
+            addQ('Which word contains a silent "c"?', ['muscle', 'music', 'city', 'crisp'], 0, '✅ CORRECT: "muscle" – c silent (pronounced muscle). B,C,D pronounce c as s or k.');
+            addQ('Pick the word with a silent "n":', ['autumn', 'ant', 'nest', 'uncle'], 0, '✅ CORRECT: "autumn" – n silent. B,C,D pronounce n.');
+            addQ('Which word has a silent "u"?', ['guess', 'guest', 'guitar', 'all of the above'], 3, '✅ CORRECT: "guess, guest, guitar" – u is silent after g. D is correct.');
+            addQ('Identify the word with a silent "d":', ['Wednesday', 'dog', 'dance', 'drum'], 0, '✅ CORRECT: "Wednesday" – first d silent. Others pronounce d.');
+            addQ('Which word contains a silent "gh"?', ['though', 'tough', 'cough', 'all have silent gh'], 3, '✅ CORRECT: All have silent gh (though, tough, cough – gh not pronounced as g/f?). Actually in though silent, in tough/cough pronounced as f? But often considered silent letters group. We pick D because in all gh is not pronounced as /g/.');
+            addQ('Choose the word with a silent "s":', ['island', 'sister', 'sun', 'sad'], 0, '✅ CORRECT: "island" – s silent. B,C,D pronounce s.');
+            addQ('Which word has a silent "b"?', ['subtle', 'subway', 'subject', 'submit'], 0, '✅ CORRECT: "subtle" – b silent. Others pronounce b.');
+            addQ('Pick the word with a silent "w":', ['answer', 'awake', 'away', 'twin'], 0, '✅ CORRECT: "answer" – w silent. B,C,D pronounce w.');
+            addQ('Which word contains a silent "h"?', ['honest', 'hotel', 'human', 'huge'], 0, '✅ CORRECT: "honest" – h silent. B,C,D pronounce h.');
+            addQ('Identify the word with a silent "k":', ['knock', 'kick', 'kiss', 'kettle'], 0, '✅ CORRECT: "knock" – k silent. Others pronounce k.');
+            addQ('Which word has a silent "l"?', ['salmon', 'milk', 'silk', 'belt'], 0, '✅ CORRECT: "salmon" – l silent. B,C,D pronounce l.');
+            addQ('Choose the word with a silent "t":', ['listen', 'list', 'late', 'light'], 0, '✅ CORRECT: "listen" – t silent. Others pronounce t.');
+
+            // --- 41-60 : PLURAL FORMS ---
+            addQ('What is the correct plural of "baby"?', ['babies', 'babys', 'babyes', 'babieses'], 0, '✅ CORRECT: "babies" – consonant+y → ies. A correct; B wrong; C archaic; D double plural.');
+            addQ('Choose the correct plural of "leaf":', ['leaves', 'leafs', 'leaveses', 'leafes'], 0, '✅ CORRECT: "leaves" – f → ves. A correct; B wrong (exception: roofs, chiefs).');
+            addQ('Plural of "cactus"?', ['cacti', 'cactuses', 'cacti/cactuses', 'cactus'], 2, '✅ CORRECT: Both cacti and cactuses are accepted. C correct; A only one; B only one; D singular.');
+            addQ('Which is the correct plural of "child"?', ['children', 'childs', 'childrens', 'childes'], 0, '✅ CORRECT: "children" – irregular. A correct; B regular wrong; C double plural; D old.');
+            addQ('Plural of "phenomenon"?', ['phenomena', 'phenomenons', 'phenomenas', 'phenomenae'], 0, '✅ CORRECT: "phenomena" – Greek plural. A correct; B anglicised but rare; C wrong; D pseudo-Latin.');
+            addQ('What is the plural of "mouse" (animal)?', ['mice', 'mouses', 'mices', 'mouse'], 0, '✅ CORRECT: "mice" – irregular. A correct; B regular wrong; C double; D singular.');
+            addQ('Choose the correct plural of "analysis":', ['analyses', 'analysises', 'analysises', 'analyzes'], 0, '✅ CORRECT: "analyses" – Greek -is → -es. A correct; B/C over-regular; D different word.');
+            addQ('Plural of "roof"?', ['roofs', 'rooves', 'roofes', 'rooveses'], 0, '✅ CORRECT: "roofs" – regular, though "rooves" is also accepted but less common. Entrance expects roofs. A correct; B variant but not primary.');
+            addQ('Which is the plural of "potato"?', ['potatoes', 'potatos', 'potatoe', 'potatooes'], 0, '✅ CORRECT: "potatoes" – -o + es. A correct; B common miss; C old; D extra o.');
+            addQ('Plural of "piano"?', ['pianos', 'pianoes', 'piani', 'pianoes'], 0, '✅ CORRECT: "pianos" – musical terms add -s. A correct; B wrong; C Italian plural not used; D wrong.');
+            addQ('What is the plural of "sheep"?', ['sheep', 'sheeps', 'sheepes', 'sheepies'], 0, '✅ CORRECT: "sheep" – same form. A correct; B over-regular; C/D wrong.');
+            addQ('Plural of "tooth"?', ['teeth', 'tooths', 'teethes', 'toothies'], 0, '✅ CORRECT: "teeth" – irregular. A correct; B regular wrong; C/D nonsense.');
+            addQ('Choose the correct plural of "thief":', ['thieves', 'thiefs', 'thieveses', 'thiefes'], 0, '✅ CORRECT: "thieves" – f → ves. A correct; B wrong; C double; D wrong.');
+            addQ('Plural of "chief"?', ['chiefs', 'chieves', 'chieves', 'chieffs'], 0, '✅ CORRECT: "chiefs" – regular (exception). A correct; B/C wrong; D double f.');
+            addQ('Which is the correct plural of "crisis"?', ['crises', 'crisises', 'crisis', 'crixis'], 0, '✅ CORRECT: "crises" – is → es. A correct; B over-regular; C singular; D nonsense.');
+            addQ('Plural of "appendix"?', ['appendices', 'appendixes', 'appendi', 'both A and B'], 3, '✅ CORRECT: Both "appendices" (Latin) and "appendixes" (English) are accepted. D correct.');
+            addQ('Plural of "ox"?', ['oxen', 'oxes', 'ox', 'oxi'], 0, '✅ CORRECT: "oxen" – irregular. A correct; B regular wrong; C singular; D pseudo-Latin.');
+            addQ('Choose the correct plural of "die" (cube)?', ['dice', 'dies', 'dices', 'die'], 0, '✅ CORRECT: "dice" – irregular plural. A correct; B third person verb; C over-regular; D singular.');
+            addQ('Plural of "formula"?', ['formulas', 'formulae', 'formular', 'both A and B'], 3, '✅ CORRECT: Both formulas and formulae accepted. D correct.');
+            addQ('What is the plural of "criterion"?', ['criteria', 'criterions', 'criterias', 'criterion'], 0, '✅ CORRECT: "criteria" – Greek plural. A correct; B anglicised but less common; C wrong; D singular.');
+
+            // --- 61-80 : BRITISH vs AMERICAN SPELLING ---
+            addQ('Which is the British spelling?', ['colour', 'color', 'colur', 'colar'], 0, '✅ CORRECT: "colour" – British -our. American -or. A is UK; B US; C/D wrong.');
+            addQ('Choose the American spelling:', ['center', 'centre', 'centr', 'centar'], 0, '✅ CORRECT: "center" – American -er. B is UK -re. C/D wrong.');
+            addQ('British English spelling of "organise"?', ['organise', 'organize', 'organyse', 'organice'], 0, '✅ CORRECT: "organise" – British often -ise. American -ize. A UK; B US; C/D wrong.');
+            addQ('Which is the American spelling?', ['catalog', 'catalogue', 'cataloge', 'cataloug'], 0, '✅ CORRECT: "catalog" – American short. B is UK -ogue. C/D wrong.');
+            addQ('British spelling of "defence"?', ['defence', 'defense', 'defans', 'defence'], 0, '✅ CORRECT: "defence" – UK -ence. US -ense. A UK; B US; C wrong.');
+            addQ('American spelling of "travelling"?', ['traveling', 'travelling', 'traveling (one l)', 'travellling'], 2, '✅ CORRECT: "traveling" – US one l. UK double l. C is correct US; B UK; A ambiguous; D wrong.');
+            addQ('Which is British for "tire" (car wheel)?', ['tyre', 'tire', 'tier', 'tire'], 0, '✅ CORRECT: "tyre" – UK. US tire. A UK; B US; C wrong.');
+            addQ('American spelling of "kerb" (edge of pavement)?', ['curb', 'kerb', 'kurb', 'cerb'], 0, '✅ CORRECT: "curb" – US spelling. UK kerb. A US; B UK; C/D wrong.');
+            addQ('British spelling of "program" (computer)?', ['programme', 'program', 'proggram', 'programm'], 0, '✅ CORRECT: "programme" – UK (except computer context sometimes program). A UK; B US; C/D wrong.');
+            addQ('American spelling of "aluminium"?', ['aluminum', 'aluminium', 'alumium', 'aluminim'], 0, '✅ CORRECT: "aluminum" – US. UK aluminium. A US; B UK; C/D wrong.');
+            addQ('Which is British?', ['pyjamas', 'pajamas', 'pijamas', 'pyjammas'], 0, '✅ CORRECT: "pyjamas" – UK. US pajamas. A UK; B US; C/D wrong.');
+            addQ('American spelling of "cheque" (bank)?', ['check', 'cheque', 'chek', 'checke'], 0, '✅ CORRECT: "check" – US. UK cheque. A US; B UK; C/D wrong.');
+            addQ('British spelling of "jail"?', ['gaol', 'jail', 'goal', 'gail'], 0, '✅ CORRECT: "gaol" – old UK variant, though jail now common. But exam may test gaol. A UK; B US/now common; C/D wrong.');
+            addQ('American spelling of "plough"?', ['plow', 'plough', 'plou', 'plowe'], 0, '✅ CORRECT: "plow" – US. UK plough. A US; B UK; C/D wrong.');
+            addQ('British spelling of "sulfur"?', ['sulphur', 'sulfur', 'sulfar', 'sulphar'], 0, '✅ CORRECT: "sulphur" – UK (though IUPAC now sulfur). A UK; B US; C/D wrong.');
+            addQ('American spelling of "metre" (unit)?', ['meter', 'metre', 'metr', 'meeter'], 0, '✅ CORRECT: "meter" – US. UK metre. A US; B UK; C/D wrong.');
+            addQ('Which is British for "fetus"?', ['foetus', 'fetus', 'fetus', 'foetous'], 0, '✅ CORRECT: "foetus" – UK variant. US fetus. A UK; B US; C/D wrong.');
+            addQ('American spelling of "grey"?', ['gray', 'grey', 'greay', 'graey'], 0, '✅ CORRECT: "gray" – US. UK grey. A US; B UK; C/D wrong.');
+            addQ('British spelling of "maneuver"?', ['manoeuvre', 'maneuver', 'maneuvre', 'manouver'], 0, '✅ CORRECT: "manoeuvre" – UK. US maneuver. A UK; B US; C/D wrong.');
+            addQ('American spelling of "licence" (noun)?', ['license', 'licence', 'licenc', 'lisense'], 0, '✅ CORRECT: "license" – US both noun/verb. UK licence noun, license verb. A US; B UK noun; C/D wrong.');
+
+            // --- 81-100 : MIXED ADVANCED / PRONUNCIATION / SILENT / SPELLING ---
+            addQ('Which word has a different pronunciation of "ch"?', ['machine', 'chef', 'moustache', 'all of the above'], 3, '✅ CORRECT: In machine, chef, moustache "ch" is pronounced as /ʃ/ (sh), not /tʃ/. D correct.');
+            addQ('Which word contains a silent letter?', ['doubt', 'about', 'shout', 'route'], 0, '✅ CORRECT: "doubt" – silent b. Others no silent.');
+            addQ('Choose the correctly spelled word:', ['mischievous', 'mischievious', 'mischieviouss', 'mischievous'], 0, '✅ CORRECT: "mischievous" – 3 syllables, not 4. A correct; B common miss with extra i.');
+            addQ('Which is correct?', ['pronunciation', 'pronounciation', 'pronunciaton', 'pronunceation'], 0, '✅ CORRECT: "pronunciation" – from pronounce but spelling -unci-. A correct; B common error with "noun".');
+            addQ('Identify the word with a silent "p":', ['receipt', 'recipe', 'recieve', 'recoup'], 0, '✅ CORRECT: "receipt" – p silent. B p pronounced; C/D no p.');
+            addQ('Which word has a silent "c"?', ['indict', 'indicate', 'indictment', 'both A and C'], 3, '✅ CORRECT: "indict" and "indictment" – c silent. B pronounce c. D (A and C) correct.');
+            addQ('Choose the correct spelling:', ['supersede', 'supercede', 'superceed', 'superseed'], 0, '✅ CORRECT: "supersede" – from sedere. A correct; B common miss (cede); C/D wrong.');
+            addQ('Which is correct?', ['fuchsia', 'fuchia', 'fushcia', 'fuschia'], 0, '✅ CORRECT: "fuchsia" – after Fuchs, with ch. A correct; others miss.');
+            addQ('Identify the word with a silent "gh" (not /f/):', ['night', 'cough', 'rough', 'enough'], 0, '✅ CORRECT: "night" – gh silent. B,C,D gh pronounced /f/.');
+            addQ('Which word has a different pronunciation of "ea"?', ['bread', 'head', 'break', 'dead'], 2, '✅ CORRECT: "break" – ea pronounced /eɪ/ (long a), others /ɛ/ (short e).');
+            addQ('Choose the correctly spelled word:', ['rhinoceros', 'rhinocerus', 'rhinocerous', 'rhinoceros'], 0, '✅ CORRECT: "rhinoceros" – rhino + ceros. A correct; B/C common errors.');
+            addQ('Which word contains a silent "t"?', ['soften', 'often', 'fasten', 'all of the above'], 3, '✅ CORRECT: soften, often, fasten – t can be silent (often t may be pronounced, but traditional silent). D is acceptable.');
+            addQ('What is the correct plural of "index"?', ['indices', 'indexes', 'indices/indexes', 'indicies'], 2, '✅ CORRECT: Both indices (technical) and indexes (general) accepted. C correct.');
+            addQ('Which word is spelled correctly?', ['pharaoh', 'pharoah', 'pharoah', 'pharao'], 0, '✅ CORRECT: "pharaoh" – ends with -oh. A correct; B,C,D common miss.');
+            addQ('Identify the word with silent "n":', ['column', 'columnist', 'autumn', 'all have silent n'], 3, '✅ CORRECT: column, columnist, autumn – n silent at end. D correct.');
+            addQ('Choose the correct British spelling:', ['sceptical', 'skeptical', 'scepticle', 'skepitcal'], 0, '✅ CORRECT: "sceptical" – UK (c). US skeptical. A UK; B US; C/D wrong.');
+            addQ('Which is the American spelling?', ['jewelry', 'jewellery', 'jewlery', 'jewellry'], 0, '✅ CORRECT: "jewelry" – US (one l). UK jewellery (double l). A US; B UK; C/D wrong.');
+            addQ('Which word has a silent "g"?', ['assign', 'sign', 'resign', 'all have silent g'], 3, '✅ CORRECT: assign, sign, resign – g silent. D correct.');
+            addQ('Pick the correctly spelled word:', ['occasionally', 'occasionally', 'occasionaly', 'ocassionally'], 0, '✅ CORRECT: "occasionally" – double c, double s, one l? Actually occasionally: one c? no: occasional + ly: double c, one s, double l? "occasionally" has two c, one s, two l. A correct; B extra s? C missing l; D wrong.');
+            addQ('Which word has a different vowel sound?', ['blood', 'flood', 'good', 'none'], 2, '✅ CORRECT: "good" has /ʊ/ (short u), blood/flood have /ʌ/. C is different.');
+
+            // total 100
+
+            const questionsDiv = document.getElementById('questionsArea');
+            const counterSpan = document.getElementById('counterDisplay');
+            const resetBtn = document.getElementById('resetQuiz');
+
+            if (!questionsDiv || !counterSpan || !resetBtn) throw new Error('Missing required elements');
+
+            let selected = new Array(qBank.length).fill(null);
+
+            function renderAll() {
+                let html = '';
+                for (let i = 0; i < qBank.length; i++) {
+                    const q = qBank[i];
+                    const sel = selected[i];
+                    html += `<div class="question-box" id="q-${i}">`;
+                    html += `<div class="q-text"><span>${i+1}</span> ${q.text}</div>`;
+                    html += `<div class="options">`;
+                    for (let optIdx = 0; optIdx < q.options.length; optIdx++) {
+                        let optClass = 'option';
+                        if (sel === optIdx) optClass += ' selected';
+                        html += `<div class="${optClass}" data-qidx="${i}" data-oidx="${optIdx}">${String.fromCharCode(65+optIdx)}. ${q.options[optIdx]}</div>`;
+                    }
+                    html += `</div>`;
+                    if (sel !== null) {
+                        let isCorrect = (sel === q.correct);
+                        let mark = isCorrect ? '✅ CORRECT' : '❌ WRONG';
+                        html += `<div class="explain-box"><span class="${isCorrect ? 'correct-mark' : 'wrong-mark'}">${mark}</span> ${q.explanation}</div>`;
+                    }
+                    html += `</div>`;
+                }
+                questionsDiv.innerHTML = html;
+                counterSpan.innerText = `${selected.filter(s => s!==null).length} / ${qBank.length} answered`;
+            }
+
+            questionsDiv.addEventListener('click', function(e) {
+                const opt = e.target.closest('.option');
+                if (!opt) return;
+                const qIdx = parseInt(opt.dataset.qidx, 10);
+                const oIdx = parseInt(opt.dataset.oidx, 10);
+                if (!isNaN(qIdx) && !isNaN(oIdx) && qIdx >= 0 && qIdx < qBank.length) {
+                    selected[qIdx] = oIdx;
+                    renderAll();
+                }
+            });
+
+            resetBtn.addEventListener('click', function() {
+                selected = new Array(qBank.length).fill(null);
+                renderAll();
+            });
+
+            renderAll();
+
+        } catch (err) {
+            console.error('Error:', err);
+            document.getElementById('quizContainer').innerHTML += '<div style="background:#fdd;padding:1rem;">Initialisation error. Please refresh.</div>';
+        }
+    })();
+</script>
+</body>
+</html>

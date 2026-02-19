@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Entrance Exam · 300+ Vocab Questions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #e5ecf5;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            padding: 25px 15px;
+            color: #152b40;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffffdd;
+            backdrop-filter: blur(2px);
+            border-radius: 48px;
+            box-shadow: 0 25px 45px -12px #1d35578f;
+            padding: 35px 40px;
+        }
+        h1 {
+            font-size: 3.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0a3147, #2b5876);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+        .subhead {
+            font-size: 1.3rem;
+            color: #31698e;
+            border-left: 8px solid #f4b740;
+            padding-left: 25px;
+            margin: 0 0 35px 0;
+            font-weight: 400;
+        }
+        .topic-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px 20px;
+            margin: 30px 0 20px;
+            justify-content: center;
+        }
+        .topic-pill {
+            background: white;
+            border: 1.5px solid #b3cee5;
+            border-radius: 60px;
+            padding: 10px 22px;
+            font-weight: 600;
+            color: #1b4d6e;
+            box-shadow: 0 4px 8px #c3d9ec;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-size: 1rem;
+        }
+        .topic-pill.active {
+            background: #1d4e75;
+            color: white;
+            border-color: #0e2e45;
+            box-shadow: 0 8px 14px #1d4e7550;
+        }
+        .question-panel {
+            background: #f3f9ff;
+            border-radius: 38px;
+            padding: 30px 30px 20px;
+            margin: 20px 0 30px;
+            border: 2px solid white;
+        }
+        .q-item {
+            background: white;
+            border-radius: 28px;
+            padding: 20px 25px;
+            margin-bottom: 22px;
+            box-shadow: 0 6px 14px #acc4db50;
+            transition: 0.1s;
+            border-left: 8px solid #90c0e0;
+        }
+        .q-item.correct {
+            border-left: 8px solid #2e9a6e;
+            background: #effaf3;
+        }
+        .q-item.wrong {
+            border-left: 8px solid #c95b5b;
+            background: #fff2f0;
+        }
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 550;
+            margin-bottom: 15px;
+            color: #003057;
+        }
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px 30px;
+            margin: 10px 0 10px;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #1e6f9f;
+        }
+        .btn-check {
+            background: #1e6f9f;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            padding: 10px 28px;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-right: 15px;
+            cursor: pointer;
+            transition: 0.1s;
+            box-shadow: 0 4px 10px #0b3450;
+        }
+        .btn-check:hover {
+            background: #134b6e;
+        }
+        .explanation-box {
+            background: #ebf3fa;
+            border-radius: 22px;
+            padding: 18px 22px;
+            margin-top: 20px;
+            font-size: 1.0rem;
+            border-left: 6px solid #f4b740;
+            display: none;
+        }
+        .explanation-box.show {
+            display: block;
+        }
+        .def-badge {
+            background: #113955;
+            color: white;
+            border-radius: 40px;
+            padding: 5px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            margin: 12px 5px 0 0;
+        }
+        .stats-bar {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            flex-wrap: wrap;
+            background: #1a2f40;
+            color: white;
+            border-radius: 60px;
+            padding: 15px 30px;
+            margin: 30px 0 15px;
+        }
+        .score {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: #f4b740;
+            color: #1a2f40;
+            padding: 5px 28px;
+            border-radius: 50px;
+        }
+        .reset-btn {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+            border-radius: 40px;
+            padding: 9px 25px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        hr {
+            border: 2px solid #c3d9ec;
+            margin: 25px 0;
+        }
+        footer {
+            text-align: center;
+            color: #3c6e9c;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🎓 ENTRANCE EXAM PRO: VOCAB</h1>
+    <div class="subhead">10 topics · 30+ advanced questions each · detailed answer logic</div>
+
+    <!-- topic filter -->
+    <div class="topic-grid" id="topicFilters">
+        <span class="topic-pill active" data-topic="all">ALL TOPICS</span>
+        <span class="topic-pill" data-topic="syn">Synonyms</span>
+        <span class="topic-pill" data-topic="ant">Antonyms</span>
+        <span class="topic-pill" data-topic="mean">Word meanings</span>
+        <span class="topic-pill" data-topic="context">Context‑based</span>
+        <span class="topic-pill" data-topic="affix">Prefixes/suffixes</span>
+        <span class="topic-pill" data-topic="homo">Homophones/homonyms</span>
+        <span class="topic-pill" data-topic="coll">Collocations</span>
+        <span class="topic-pill" data-topic="phrasal">Phrasal verbs</span>
+        <span class="topic-pill" data-topic="idiom">Idioms</span>
+        <span class="topic-pill" data-topic="form">Word formation</span>
+    </div>
+
+    <!-- stats row -->
+    <div class="stats-bar">
+        <div class="score" id="scoreDisplay">0 / 330</div>
+        <div id="topicCorrect">all topics</div>
+        <button class="reset-btn" id="resetBtn">⟲ reset progress</button>
+    </div>
+
+    <!-- questions panel injected via js -->
+    <div class="question-panel" id="questionsContainer"></div>
+    <footer>click "verify" to reveal explanation · each wrong attempt helps learning</footer>
+</div>
+
+<script>
+    (function() {
+        // ---------- ADVANCED QUESTION BANK (10 topics, min 30 each, total 330) ----------
+        const questionBank = [
+            // 1. synonyms (32)
+            { topic: 'syn', q: 'Which word is the closest synonym to "PERSISTENT"?', options: ['A) tenacious', 'B) temporary', 'C) feeble', 'D) yielding'], correct: 0, explanation: 'Tenacious means holding fast; persistent. Temporary, feeble, yielding are opposites or unrelated.' },
+            { topic: 'syn', q: 'Choose the best synonym for "CACOPHONY".', options: ['A) melody', 'B) silence', 'C) discord', 'D) rhythm'], correct: 2, explanation: 'Cacophony = harsh mixture of sounds → discord. Melody/silence are antonyms.' },
+            { topic: 'syn', q: 'Select the synonym of "MITIGATE".', options: ['A) intensify', 'B) alleviate', 'C) worsen', 'D) accuse'], correct: 1, explanation: 'Mitigate = make less severe. Alleviate = same. Intensify/worsen are antonyms.' },
+            { topic: 'syn', q: 'What is a synonym for "LACONIC"?', options: ['A) verbose', 'B) terse', 'C) rambling', 'D) eloquent'], correct: 1, explanation: 'Laconic = using few words → terse. Verbose/rambling = opposite.' },
+            { topic: 'syn', q: 'Synonym for "BENEVOLENT"?', options: ['A) malicious', 'B) kindhearted', 'C) greedy', 'D) hostile'], correct: 1, explanation: 'Bene = good;volent = wishing → kindhearted.' },
+            { topic: 'syn', q: 'Which is a synonym for "EPHEMERAL"?', options: ['A) eternal', 'B) fleeting', 'C) lasting', 'D) permanent'], correct: 1, explanation: 'Ephemeral = short-lived → fleeting. Others are antonyms.' },
+            { topic: 'syn', q: 'Synonym of "VINDICATE"?', options: ['A) accuse', 'B) exonerate', 'C) blame', 'D) convict'], correct: 1, explanation: 'Vindicate = clear from blame → exonerate.' },
+            { topic: 'syn', q: 'Choose the synonym for "SPURIOUS".', options: ['A) authentic', 'B) fake', 'C) genuine', 'D) real'], correct: 1, explanation: 'Spurious = false, counterfeit → fake.' },
+            { topic: 'syn', q: 'Synonym: "PRODIGAL"', options: ['A) wasteful', 'B) frugal', 'C) economical', 'D) cautious'], correct: 0, explanation: 'Prodigal = spending too much → wasteful.' },
+            { topic: 'syn', q: 'Synonym for "COGENT"?', options: ['A) weak', 'B) persuasive', 'C) irrelevant', 'D) confusing'], correct: 1, explanation: 'Cogent argument = clear, convincing.' },
+            { topic: 'syn', q: 'Synonym of "MUNIFICENT"?', options: ['A) stingy', 'B) generous', 'C) poor', 'D) selfish'], correct: 1, explanation: 'Munificent = very generous.' },
+            { topic: 'syn', q: 'Synonym for "OBFUSCATE"?', options: ['A) clarify', 'B) confuse', 'C) illuminate', 'D) explain'], correct: 1, explanation: 'Obfuscate = make unclear → confuse.' },
+            { topic: 'syn', q: 'Which word means the same as "INNOCUOUS"?', options: ['A) harmful', 'B) harmless', 'C) toxic', 'D) dangerous'], correct: 1, explanation: 'Innocuous = not harmful.' },
+            { topic: 'syn', q: 'Synonym: "MALEVOLENT"', options: ['A) kind', 'B) spiteful', 'C) generous', 'D) loving'], correct: 1, explanation: 'Malevolent = wishing evil → spiteful.' },
+            { topic: 'syn', q: 'Synonym for "SERENDIPITY"?', options: ['A) disaster', 'B) luck', 'C) misfortune', 'D) design'], correct: 1, explanation: 'Serendipity = accidental good fortune.' },
+            { topic: 'syn', q: 'Synonym of "PERFUNCTORY"?', options: ['A) thorough', 'B) careless', 'C) detailed', 'D) careful'], correct: 1, explanation: 'Perfunctory = done without care → careless.' },
+            { topic: 'syn', q: 'Synonym for "ABATE"?', options: ['A) increase', 'B) lessen', 'C) intensify', 'D) expand'], correct: 1, explanation: 'Abate = reduce, lessen.' },
+            { topic: 'syn', q: 'Synonym: "CAPRICIOUS"', options: ['A) steady', 'B) unpredictable', 'C) constant', 'D) reliable'], correct: 1, explanation: 'Capricious = impulsive, unpredictable.' },
+            { topic: 'syn', q: 'Synonym for "ENIGMA"?', options: ['A) puzzle', 'B) solution', 'C) clarity', 'D) open book'], correct: 0, explanation: 'Enigma = mystery, puzzle.' },
+            { topic: 'syn', q: 'Synonym of "NEFARIOUS"?', options: ['A) virtuous', 'B) wicked', 'C) honest', 'D) noble'], correct: 1, explanation: 'Nefarious = evil, wicked.' },
+            { topic: 'syn', q: 'Synonym for "PLACATE"?', options: ['A) anger', 'B) soothe', 'C) enrage', 'D) upset'], correct: 1, explanation: 'Placate = calm someone down.' },
+            { topic: 'syn', q: 'Synonym: "OSTENTATIOUS"', options: ['A) modest', 'B) showy', 'C) plain', 'D) simple'], correct: 1, explanation: 'Ostentatious = showing off.' },
+            { topic: 'syn', q: 'Synonym for "VERBOSE"?', options: ['A) concise', 'B) wordy', 'C) brief', 'D) short'], correct: 1, explanation: 'Verbose = using more words than needed.' },
+            { topic: 'syn', q: 'Synonym: "AMELIORATE"', options: ['A) worsen', 'B) improve', 'C) damage', 'D) destroy'], correct: 1, explanation: 'Ameliorate = make better.' },
+            { topic: 'syn', q: 'Synonym for "BOLSTER"?', options: ['A) undermine', 'B) strengthen', 'C) weaken', 'D) hinder'], correct: 1, explanation: 'Bolster = support, strengthen.' },
+            { topic: 'syn', q: 'Synonym of "CHICANERY"?', options: ['A) honesty', 'B) deception', 'C) fairness', 'D) truth'], correct: 1, explanation: 'Chicanery = trickery, deception.' },
+            { topic: 'syn', q: 'Synonym for "EQUIVOCATE"?', options: ['A) clarify', 'B) lie indirectly', 'C) confront', 'D) decide'], correct: 1, explanation: 'Equivocate = speak ambiguously to deceive.' },
+            { topic: 'syn', q: 'Synonym: "FALLACIOUS"', options: ['A) correct', 'B) false', 'C) accurate', 'D) valid'], correct: 1, explanation: 'Fallacious = based on false reasoning.' },
+            { topic: 'syn', q: 'Synonym for "GREGARIOUS"?', options: ['A) antisocial', 'B) sociable', 'C) shy', 'D) aloof'], correct: 1, explanation: 'Gregarious = fond of company.' },
+            { topic: 'syn', q: 'Synonym for "HACKNEYED"?', options: ['A) original', 'B) clichéd', 'C) fresh', 'D) new'], correct: 1, explanation: 'Hackneyed = unoriginal, cliché.' },
+            { topic: 'syn', q: 'Synonym: "ICONOCLAST"', options: ['A) conformist', 'B) critic of tradition', 'C) follower', 'D) believer'], correct: 1, explanation: 'Iconoclast = attacks established beliefs.' },
+            { topic: 'syn', q: 'Synonym for "JUXTAPOSE"?', options: ['A) separate', 'B) place side by side', 'C) combine', 'D) distance'], correct: 1, explanation: 'Juxtapose = place close together for contrast.' },
+            // 2. antonyms (30)
+            { topic: 'ant', q: 'Antonym of "EPHEMERAL"?', options: ['A) fleeting', 'B) permanent', 'C) brief', 'D) momentary'], correct: 1, explanation: 'Ephemeral means short-lived; permanent is opposite.' },
+            { topic: 'ant', q: 'Antonym: "MITIGATE"', options: ['A) alleviate', 'B) intensify', 'C) lessen', 'D) soothe'], correct: 1, explanation: 'Mitigate = reduce; intensify = increase.' },
+            { topic: 'ant', q: 'Antonym of "BENEVOLENT"?', options: ['A) kind', 'B) malevolent', 'C) charitable', 'D) generous'], correct: 1, explanation: 'Benevolent = kind; malevolent = evil.' },
+            { topic: 'ant', q: 'Antonym: "CACOPHONY"', options: ['A) noise', 'B) discord', 'C) silence', 'D) racket'], correct: 2, explanation: 'Cacophony = harsh sound; silence = absence.' },
+            { topic: 'ant', q: 'Antonym of "LACONIC"?', options: ['A) terse', 'B) concise', 'C) verbose', 'D) brief'], correct: 2, explanation: 'Laconic = using few words; verbose = wordy.' },
+            { topic: 'ant', q: 'Antonym: "PRODIGAL"', options: ['A) wasteful', 'B) frugal', 'C) lavish', 'D) extravagant'], correct: 1, explanation: 'Prodigal = wasteful; frugal = economical.' },
+            { topic: 'ant', q: 'Antonym of "COGENT"?', options: ['A) convincing', 'B) strong', 'C) weak', 'D) persuasive'], correct: 2, explanation: 'Cogent = strong, convincing; weak = opposite.' },
+            { topic: 'ant', q: 'Antonym: "MUNIFICENT"', options: ['A) generous', 'B) stingy', 'C) benevolent', 'D) liberal'], correct: 1, explanation: 'Munificent = very generous; stingy = ungenerous.' },
+            { topic: 'ant', q: 'Antonym of "OBFUSCATE"?', options: ['A) confuse', 'B) clarify', 'C) muddle', 'D) obscure'], correct: 1, explanation: 'Obfuscate = confuse; clarify = make clear.' },
+            { topic: 'ant', q: 'Antonym: "INNOCUOUS"', options: ['A) harmless', 'B) safe', 'C) harmful', 'D) benign'], correct: 2, explanation: 'Innocuous = harmless; harmful = opposite.' },
+            { topic: 'ant', q: 'Antonym of "MALEVOLENT"?', options: ['A) spiteful', 'B) kind', 'C) evil', 'D) hostile'], correct: 1, explanation: 'Malevolent = evil; kind = opposite.' },
+            { topic: 'ant', q: 'Antonym: "PERFUNCTORY"', options: ['A) careless', 'B) thorough', 'C) superficial', 'D) halfhearted'], correct: 1, explanation: 'Perfunctory = done carelessly; thorough = careful.' },
+            { topic: 'ant', q: 'Antonym of "ABATE"?', options: ['A) decrease', 'B) increase', 'C) reduce', 'D) lessen'], correct: 1, explanation: 'Abate = reduce; increase = enlarge.' },
+            { topic: 'ant', q: 'Antonym: "CAPRICIOUS"', options: ['A) fickle', 'B) steady', 'C) unpredictable', 'D) erratic'], correct: 1, explanation: 'Capricious = impulsive; steady = constant.' },
+            { topic: 'ant', q: 'Antonym of "NEFARIOUS"?', options: ['A) wicked', 'B) virtuous', 'C) evil', 'D) vile'], correct: 1, explanation: 'Nefarious = evil; virtuous = good.' },
+            { topic: 'ant', q: 'Antonym: "PLACATE"', options: ['A) soothe', 'B) anger', 'C) calm', 'D) pacify'], correct: 1, explanation: 'Placate = calm; anger = opposite.' },
+            { topic: 'ant', q: 'Antonym of "OSTENTATIOUS"?', options: ['A) showy', 'B) modest', 'C) flashy', 'D) pretentious'], correct: 1, explanation: 'Ostentatious = showy; modest = humble.' },
+            { topic: 'ant', q: 'Antonym: "VERBOSE"', options: ['A) wordy', 'B) concise', 'C) lengthy', 'D) rambling'], correct: 1, explanation: 'Verbose = wordy; concise = brief.' },
+            { topic: 'ant', q: 'Antonym of "AMELIORATE"?', options: ['A) improve', 'B) worsen', 'C) better', 'D) enhance'], correct: 1, explanation: 'Ameliorate = improve; worsen = opposite.' },
+            { topic: 'ant', q: 'Antonym: "BOLSTER"', options: ['A) strengthen', 'B) weaken', 'C) support', 'D) reinforce'], correct: 1, explanation: 'Bolster = strengthen; weaken = opposite.' },
+            { topic: 'ant', q: 'Antonym of "CHICANERY"?', options: ['A) deception', 'B) honesty', 'C) trickery', 'D) fraud'], correct: 1, explanation: 'Chicanery = deception; honesty = opposite.' },
+            { topic: 'ant', q: 'Antonym: "EQUIVOCATE"', options: ['A) prevaricate', 'B) speak directly', 'C) hedge', 'D) dodge'], correct: 1, explanation: 'Equivocate = speak ambiguously; speak directly = opposite.' },
+            { topic: 'ant', q: 'Antonym of "FALLACIOUS"?', options: ['A) false', 'B) correct', 'C) mistaken', 'D) invalid'], correct: 1, explanation: 'Fallacious = false; correct = true.' },
+            { topic: 'ant', q: 'Antonym: "GREGARIOUS"', options: ['A) sociable', 'B) antisocial', 'C) friendly', 'D) outgoing'], correct: 1, explanation: 'Gregarious = sociable; antisocial = opposite.' },
+            { topic: 'ant', q: 'Antonym of "HACKNEYED"?', options: ['A) clichéd', 'B) original', 'C) trite', 'D) stale'], correct: 1, explanation: 'Hackneyed = clichéd; original = fresh.' },
+            { topic: 'ant', q: 'Antonym: "JUXTAPOSE"', options: ['A) separate', 'B) place apart', 'C) side by side', 'D) combine'], correct: 0, explanation: 'Juxtapose = place close; separate = move apart.' },
+            { topic: 'ant', q: 'Antonym of "ALTRUISTIC"?', options: ['A) selfish', 'B) selfless', 'C) charitable', 'D) generous'], correct: 0, explanation: 'Altruistic = unselfish; selfish = opposite.' },
+            { topic: 'ant', q: 'Antonym: "DOGMA"', options: ['A) belief', 'B) doubt', 'C) doctrine', 'D) tenet'], correct: 1, explanation: 'Dogma = established belief; doubt = skepticism.' },
+            { topic: 'ant', q: 'Antonym of "EXACERBATE"?', options: ['A) worsen', 'B) alleviate', 'C) intensify', 'D) aggravate'], correct: 1, explanation: 'Exacerbate = make worse; alleviate = make better.' },
+            { topic: 'ant', q: 'Antonym: "FERVENT"', options: ['A) passionate', 'B) apathetic', 'C) ardent', 'D) enthusiastic'], correct: 1, explanation: 'Fervent = passionate; apathetic = indifferent.' },
+            // 3. word meanings (31)
+            { topic: 'mean', q: 'What does "HARBOR" mean as a verb?', options: ['A) to hide or hold a thought', 'B) a port', 'C) to abandon', 'D) to release'], correct: 0, explanation: 'As verb: harbor a grudge = keep in mind.' },
+            { topic: 'mean', q: 'Meaning of "TABLE" as a verb in US English?', options: ['A) to propose', 'B) to postpone', 'C) to furnish', 'D) to discuss'], correct: 1, explanation: 'US: table = postpone; UK: propose for discussion.' },
+            { topic: 'mean', q: 'What does "WEATHER" mean in "weather the crisis"?', options: ['A) endure', 'B) climate', 'C) avoid', 'D) predict'], correct: 0, explanation: 'Weather as verb = withstand.' },
+            { topic: 'mean', q: 'Choose the meaning of "PITCH" in "sales pitch".', options: ['A) throw', 'B) black sticky substance', 'C) persuasive talk', 'D) musical note'], correct: 2, explanation: 'Sales pitch = persuasive speech.' },
+            { topic: 'mean', q: 'Meaning of "CLEAR" in "clear a debt"?', options: ['A) obvious', 'B) transparent', 'C) pay off', 'D) empty'], correct: 2, explanation: 'Clear a debt = pay in full.' },
+            { topic: 'mean', q: 'What does "MOOT" mean in "moot point"?', options: ['A) debatable', 'B) resolved', 'C) urgent', 'D) important'], correct: 0, explanation: 'Moot = open to debate; also irrelevant in US.' },
+            { topic: 'mean', q: 'Define "CHAPERONE".', options: ['A) a young adult', 'B) supervisor', 'C) dancer', 'D) teacher'], correct: 1, explanation: 'Chaperone = person who accompanies for supervision.' },
+            { topic: 'mean', q: 'Meaning of "STEM" in "stem the tide"?', options: ['A) originate', 'B) stop', 'C) flow', 'D) plant part'], correct: 1, explanation: 'Stem = stop, restrain.' },
+            { topic: 'mean', q: 'What is "CURRY" in "curry favor"?', options: ['A) spice', 'B) seek', 'C) cook', 'D) give'], correct: 1, explanation: 'Curry favor = ingratiate oneself.' },
+            { topic: 'mean', q: 'Define "CIRCUMSCRIBE".', options: ['A) limit', 'B) draw circle', 'C) free', 'D) expand'], correct: 0, explanation: 'Circumscribe = restrict, confine.' },
+            { topic: 'mean', q: 'Meaning of "IMPASSE"?', options: ['A) breakthrough', 'B) deadlock', 'C) progress', 'D) solution'], correct: 1, explanation: 'Impasse = situation with no progress.' },
+            { topic: 'mean', q: 'What does "DESICCATED" mean?', options: ['A) moist', 'B) dried out', 'C) fresh', 'D) wet'], correct: 1, explanation: 'Desiccated = thoroughly dried.' },
+            { topic: 'mean', q: 'Define "GAMUT".', options: ['A) limited range', 'B) complete range', 'C) game', 'D) gamble'], correct: 1, explanation: 'Gamut = entire scale or range.' },
+            { topic: 'mean', q: 'Meaning of "HUBRIS"?', options: ['A) humility', 'B) excessive pride', 'C) anger', 'D) wisdom'], correct: 1, explanation: 'Hubris = overbearing pride.' },
+            { topic: 'mean', q: 'What is "LACUNA"?', options: ['A) lake', 'B) gap', 'C) bridge', 'D) connection'], correct: 1, explanation: 'Lacuna = missing part, gap.' },
+            { topic: 'mean', q: 'Meaning of "MARTINET"?', options: ['A) strict disciplinarian', 'B) flexible leader', 'C) bird', 'D) rebel'], correct: 0, explanation: 'Martinet = rigid enforcer of rules.' },
+            { topic: 'mean', q: 'Define "NOSTALGIA".', options: ['A) future hope', 'B) sentimental longing', 'C) pain', 'D) fear'], correct: 1, explanation: 'Nostalgia = wistful affection for past.' },
+            { topic: 'mean', q: 'Meaning of "OBSEQUIOUS"?', options: ['A) respectful', 'B) fawning', 'C) rude', 'D) arrogant'], correct: 1, explanation: 'Obsequious = excessively obedient, ingratiating.' },
+            { topic: 'mean', q: 'What does "PARSIMONIOUS" mean?', options: ['A) generous', 'B) stingy', 'C) talkative', 'D) wasteful'], correct: 1, explanation: 'Parsimonious = frugal to excess.' },
+            { topic: 'mean', q: 'Define "QUIXOTIC".', options: ['A) practical', 'B) idealistic', 'C) cynical', 'D) realistic'], correct: 1, explanation: 'Quixotic = extravagantly idealistic.' },
+            { topic: 'mean', q: 'Meaning of "REDOLENT"?', options: ['A) smelly', 'B) fragrant', 'C) reminiscent', 'D) both B & C'], correct: 3, explanation: 'Redolent = strongly smelling or suggestive.' },
+            { topic: 'mean', q: 'What is "SANGUINE"?', options: ['A) pessimistic', 'B) optimistic', 'C) bloody', 'D) B & C'], correct: 3, explanation: 'Sanguine = cheerful (blood-related historically).' },
+            { topic: 'mean', q: 'Define "TIRADE".', options: ['A) long angry speech', 'B) praise', 'C) quiet talk', 'D) joke'], correct: 0, explanation: 'Tirade = outburst, rant.' },
+            { topic: 'mean', q: 'Meaning of "UKASE"?', options: ['A) decree', 'B) request', 'C) rumor', 'D) question'], correct: 0, explanation: 'Ukase = arbitrary command.' },
+            { topic: 'mean', q: 'What does "VENERABLE" mean?', options: ['A) young', 'B) respected due to age', 'C) despised', 'D) modern'], correct: 1, explanation: 'Venerable = accorded respect because of age.' },
+            { topic: 'mean', q: 'Define "WELTER".', options: ['A) orderly', 'B) confusion', 'C) calm', 'D) clarity'], correct: 1, explanation: 'Welter = turmoil, disorder.' },
+            { topic: 'mean', q: 'Meaning of "XENOPHOBIA"?', options: ['A) love of foreigners', 'B) fear of foreigners', 'C) fear of animals', 'D) love of xeno'], correct: 1, explanation: 'Xenophobia = dislike of strangers/foreigners.' },
+            { topic: 'mean', q: 'What is "YOKEL"?', options: ['A) city dweller', 'B) unsophisticated country person', 'C) intellectual', 'D) leader'], correct: 1, explanation: 'Yokel = rustic, naive person.' },
+            { topic: 'mean', q: 'Define "ZEALOT".', options: ['A) moderate', 'B) fanatic', 'C) skeptic', 'D) beginner'], correct: 1, explanation: 'Zealot = extreme enthusiast.' },
+            { topic: 'mean', q: 'Meaning of "ABSCOND"?', options: ['A) to stay', 'B) to leave hurriedly', 'C) to appear', 'D) to confess'], correct: 1, explanation: 'Abscond = depart secretly, often with something.' },
+            { topic: 'mean', q: 'What does "BILK" mean?', options: ['A) cheat', 'B) pay', 'C) give', 'D) help'], correct: 0, explanation: 'Bilk = defraud, swindle.' },
+            // 4. context-based (30)
+            { topic: 'context', q: 'Despite the ___ rain, the football match continued.', options: ['A) heavy', 'B) strong', 'C) powerful', 'D) thick'], correct: 0, explanation: 'Collocation: heavy rain. Others unnatural.' },
+            { topic: 'context', q: 'The CEO tried to ___ the conflict between departments.', options: ['A) mitigate', 'B) precipitate', 'C) aggravate', 'D) intensify'], correct: 0, explanation: 'Mitigate = reduce; context calls for lessening conflict.' },
+            { topic: 'context', q: 'Her ___ remarks offended the audience.', options: ['A) innocuous', 'B) vitriolic', 'C) gentle', 'D) kind'], correct: 1, explanation: 'Vitriolic = filled with bitter criticism, fits offended.' },
+            { topic: 'context', q: 'He is so ___ that he believes everything he reads online.', options: ['A) cynical', 'B) gullible', 'C) skeptical', 'D) suspicious'], correct: 1, explanation: 'Gullible = easily fooled, matches believing everything.' },
+            { topic: 'context', q: 'The meeting was ___ until the manager recovered.', options: ['A) postponed', 'B) cancelled', 'C) advanced', 'D) held'], correct: 0, explanation: 'Postponed = delayed, fits until recovery.' },
+            { topic: 'context', q: 'His speech was so ___ that everyone fell asleep.', options: ['A) animated', 'B) lively', 'C) tedious', 'D) electrifying'], correct: 2, explanation: 'Tedious = boring, explains sleeping.' },
+            { topic: 'context', q: 'She ___ the offer because it was too low.', options: ['A) accepted', 'B) embraced', 'C) rejected', 'D) welcomed'], correct: 2, explanation: 'Rejected = refused because too low.' },
+            { topic: 'context', q: 'The ancient tradition is still ___ in rural areas.', options: ['A) prevalent', 'B) extinct', 'C) forgotten', 'D) rare'], correct: 0, explanation: 'Prevalent = widespread, still existing.' },
+            { topic: 'context', q: 'He ___ his brother of stealing the money.', options: ['A) accused', 'B) acquitted', 'C) praised', 'D) thanked'], correct: 0, explanation: 'Accused = charged with wrongdoing.' },
+            { topic: 'context', q: 'The medicine will ___ the pain within minutes.', options: ['A) alleviate', 'B) exacerbate', 'C) prolong', 'D) cause'], correct: 0, explanation: 'Alleviate = reduce pain.' },
+            { topic: 'context', q: 'Her ___ dedication led to the project\'s success.', options: ['A) unwavering', 'B) wavering', 'C) inconsistent', 'D) occasional'], correct: 0, explanation: 'Unwavering = steady, constant dedication.' },
+            { topic: 'context', q: 'The detective found a ___ clue that solved the case.', options: ['A) trivial', 'B) crucial', 'C) minor', 'D) insignificant'], correct: 1, explanation: 'Crucial = very important, solves case.' },
+            { topic: 'context', q: 'They decided to ___ the old building despite its history.', options: ['A) demolish', 'B) restore', 'C) preserve', 'D) renovate'], correct: 0, explanation: 'Demolish = tear down; despite history = contrast.' },
+            { topic: 'context', q: 'Her explanation was ___ — no one understood.', options: ['A) lucid', 'B) clear', 'C) incomprehensible', 'D) simple'], correct: 2, explanation: 'Incomprehensible = impossible to understand.' },
+            { topic: 'context', q: 'The company\'s profits ___ after the new strategy.', options: ['A) soared', 'B) plummeted', 'C) remained', 'D) dropped'], correct: 0, explanation: 'Soared = increased rapidly; after new strategy likely positive.' },
+            { topic: 'context', q: 'He is an ___ writer; he has published ten novels.', options: ['A) inexperienced', 'B) prolific', 'C) unproductive', 'D) amateur'], correct: 1, explanation: 'Prolific = producing many works.' },
+            { topic: 'context', q: 'The food was so ___ that he asked for the recipe.', options: ['A) bland', 'B) delicious', 'C) tasteless', 'D) awful'], correct: 1, explanation: 'Delicious = tasty, fits asking for recipe.' },
+            { topic: 'context', q: 'Her opinion ___ from mine on many issues.', options: ['A) differs', 'B) agrees', 'C) coincides', 'D) matches'], correct: 0, explanation: 'Differs = is different; from mine.' },
+            { topic: 'context', q: 'They tried to ___ the problem before it escalated.', options: ['A) ignore', 'B) resolve', 'C) worsen', 'D) overlook'], correct: 1, explanation: 'Resolve = solve, prevent escalation.' },
+            { topic: 'context', q: 'The storm caused ___ damage to the coast.', options: ['A) minimal', 'B) extensive', 'C) slight', 'D) little'], correct: 1, explanation: 'Extensive = large amount; storm implies severity.' },
+            { topic: 'context', q: 'He is known for his ___ opinions, often offending people.', options: ['A) tactful', 'B) blunt', 'C) diplomatic', 'D) polite'], correct: 1, explanation: 'Blunt = direct and often rude, fits offending.' },
+            { topic: 'context', q: 'She ___ her success to hard work.', options: ['A) attributed', 'B) contributed', 'C) distributed', 'D) dedicated'], correct: 0, explanation: 'Attributed = credited cause.' },
+            { topic: 'context', q: 'The teacher ___ the students to do their best.', options: ['A) encouraged', 'B) discouraged', 'C) forbade', 'D) prevented'], correct: 0, explanation: 'Encouraged = gave support/confidence.' },
+            { topic: 'context', q: 'The movie was so ___ that we left early.', options: ['A) engaging', 'B) boring', 'C) exciting', 'D) thrilling'], correct: 1, explanation: 'Boring = dull, causing early leave.' },
+            { topic: 'context', q: 'He tried to ___ the heavy box, but it was too heavy.', options: ['A) lift', 'B) drop', 'C) push', 'D) roll'], correct: 0, explanation: 'Lift = raise, fits attempt.' },
+            { topic: 'context', q: 'Her ___ behavior at the party embarrassed her parents.', options: ['A) appropriate', 'B) proper', 'C) inappropriate', 'D) correct'], correct: 2, explanation: 'Inappropriate = unsuitable, causing embarrassment.' },
+            { topic: 'context', q: 'The new evidence ___ the previous theory.', options: ['A) contradicts', 'B) supports', 'C) confirms', 'D) proves'], correct: 0, explanation: 'Contradicts = opposes; new evidence often challenges.' },
+            { topic: 'context', q: 'He has a ___ memory, remembering every detail.', options: ['A) poor', 'B) selective', 'C) photographic', 'D) short'], correct: 2, explanation: 'Photographic memory = precise recall.' },
+            { topic: 'context', q: 'The government will ___ new laws next month.', options: ['A) enact', 'B) repeal', 'C) abolish', 'D) cancel'], correct: 0, explanation: 'Enact = put into effect; new laws.' },
+            { topic: 'context', q: 'Her speech was ___; it went on for two hours.', options: ['A) brief', 'B) endless', 'C) concise', 'D) short'], correct: 1, explanation: 'Endless = very long, two hours.' },
+            // 5. affix (prefixes/suffixes) (31)
+            { topic: 'affix', q: 'What does the prefix "MAL-" mean?', options: ['A) good', 'B) bad', 'C) before', 'D) after'], correct: 1, explanation: 'Mal- = bad (malignant, malady).' },
+            { topic: 'affix', q: 'Suffix "-ICIDE" means?', options: ['A) kill', 'B) love', 'C) fear', 'D) make'], correct: 0, explanation: '-cide = killing (pesticide, homicide).' },
+            { topic: 'affix', q: 'Meaning of prefix "ANTE-"?', options: ['A) against', 'B) before', 'C) after', 'D) opposite'], correct: 1, explanation: 'Ante- = before (anteroom, antedate).' },
+            { topic: 'affix', q: 'Suffix "-LOGUE" means?', options: ['A) speech', 'B) write', 'C) study', 'D) fear'], correct: 0, explanation: '-logue = discourse (monologue, prologue).' },
+            { topic: 'affix', q: 'Prefix "OMNI-" means?', options: ['A) all', 'B) one', 'C) many', 'D) none'], correct: 0, explanation: 'Omni- = all (omnipotent, omniscient).' },
+            { topic: 'affix', q: 'Suffix "-LESS" as in "relentless"?', options: ['A) full of', 'B) without', 'C) able to', 'D) quality of'], correct: 1, explanation: '-less = without.' },
+            { topic: 'affix', q: 'What does "SUB-" mean in "submarine"?', options: ['A) above', 'B) under', 'C) across', 'D) beyond'], correct: 1, explanation: 'Sub- = under.' },
+            { topic: 'affix', q: 'Prefix "INTER-" in "interject"?', options: ['A) between', 'B) within', 'C) outside', 'D) beyond'], correct: 0, explanation: 'Inter- = between.' },
+            { topic: 'affix', q: 'Suffix "-IVE" forms which part of speech?', options: ['A) noun', 'B) verb', 'C) adjective', 'D) adverb'], correct: 2, explanation: '-ive = adjective (explosive, creative).' },
+            { topic: 'affix', q: 'Meaning of "HYPER-" (hyperactive)?', options: ['A) under', 'B) over', 'C) normal', 'D) less'], correct: 1, explanation: 'Hyper- = excessive, over.' },
+            { topic: 'affix', q: 'Suffix "-FUL" as in "masterful"?', options: ['A) without', 'B) full of', 'C) causing', 'D) like'], correct: 1, explanation: '-ful = full of.' },
+            { topic: 'affix', q: 'Prefix "MIS-" in "misinterpret"?', options: ['A) correctly', 'B) wrongly', 'C) again', 'D) before'], correct: 1, explanation: 'Mis- = wrong, badly.' },
+            { topic: 'affix', q: 'Suffix "-ABLE" means?', options: ['A) without', 'B) capable of', 'C) full of', 'D) like'], correct: 1, explanation: '-able = able to be (washable).' },
+            { topic: 'affix', q: 'Prefix "POST-" as in "postpone"?', options: ['A) before', 'B) after', 'C) during', 'D) against'], correct: 1, explanation: 'Post- = after.' },
+            { topic: 'affix', q: 'What does "PRE-" mean in "precede"?', options: ['A) after', 'B) before', 'C) together', 'D) away'], correct: 1, explanation: 'Pre- = before.' },
+            { topic: 'affix', q: 'Suffix "-IST" refers to?', options: ['A) one who does', 'B) quality', 'C) like', 'D) without'], correct: 0, explanation: '-ist = person who (artist, scientist).' },
+            { topic: 'affix', q: 'Prefix "CO-" in "cooperate"?', options: ['A) together', 'B) against', 'C) separate', 'D) before'], correct: 0, explanation: 'Co- = together, jointly.' },
+            { topic: 'affix', q: 'Suffix "-NESS" changes word to?', options: ['A) adjective', 'B) adverb', 'C) noun', 'D) verb'], correct: 2, explanation: '-ness = state of being (happiness).' },
+            { topic: 'affix', q: 'Meaning of "ANTI-" (antisocial)?', options: ['A) for', 'B) against', 'C) with', 'D) inside'], correct: 1, explanation: 'Anti- = opposed to.' },
+            { topic: 'affix', q: 'Suffix "-OUS" as in "dangerous"?', options: ['A) without', 'B) full of', 'C) causing', 'D) able'], correct: 1, explanation: '-ous = possessing, full of.' },
+            { topic: 'affix', q: 'Prefix "BI-" in "bicycle"?', options: ['A) one', 'B) two', 'C) three', 'D) half'], correct: 1, explanation: 'Bi- = two.' },
+            { topic: 'affix', q: 'Suffix "-MENT" forms?', options: ['A) verb', 'B) noun', 'C) adjective', 'D) adverb'], correct: 1, explanation: '-ment = noun (enjoyment, government).' },
+            { topic: 'affix', q: 'Prefix "TRANS-" means?', options: ['A) across', 'B) under', 'C) above', 'D) behind'], correct: 0, explanation: 'Trans- = across, beyond.' },
+            { topic: 'affix', q: 'Suffix "-IFY" changes to?', options: ['A) noun', 'B) verb', 'C) adjective', 'D) adverb'], correct: 1, explanation: '-ify = verb (simplify, clarify).' },
+            { topic: 'affix', q: 'Prefix "DIS-" in "disagree"?', options: ['A) not', 'B) again', 'C) before', 'D) together'], correct: 0, explanation: 'Dis- = negation, reverse.' },
+            { topic: 'affix', q: 'Suffix "-TUDE" as in "gratitude"?', options: ['A) state of', 'B) full of', 'C) one who', 'D) like'], correct: 0, explanation: '-tude = noun suffix denoting condition.' },
+            { topic: 'affix', q: 'Prefix "RE-" in "rewrite"?', options: ['A) before', 'B) again', 'C) after', 'D) not'], correct: 1, explanation: 'Re- = again.' },
+            { topic: 'affix', q: 'Suffix "-WARD" in "backward"?', options: ['A) direction', 'B) place', 'C) time', 'D) quality'], correct: 0, explanation: '-ward = in a direction.' },
+            { topic: 'affix', q: 'Prefix "EX-" in "exhale"?', options: ['A) in', 'B) out', 'C) up', 'D) down'], correct: 1, explanation: 'Ex- = out, outward.' },
+            { topic: 'affix', q: 'Suffix "-SHIP" as in "friendship"?', options: ['A) state of', 'B) act of', 'C) skill', 'D) like'], correct: 0, explanation: '-ship = condition, quality.' },
+            { topic: 'affix', q: 'Prefix "UN-" means?', options: ['A) not', 'B) again', 'C) before', 'D) with'], correct: 0, explanation: 'Un- = not (unclear, unhappy).' },
+            // 6. homophones/homonyms (30)
+            { topic: 'homo', q: 'Which word completes the sentence: "He gave me good ___." (advice/advise)', options: ['A) advise', 'B) advice'], correct: 1, explanation: 'Advice = noun; advise = verb.' },
+            { topic: 'homo', q: 'Choose correct: "The car is ___ over there." (stationary/stationery)', options: ['A) stationary', 'B) stationery'], correct: 0, explanation: 'Stationary = not moving; stationery = paper.' },
+            { topic: 'homo', q: '___ car is parked outside? (Whose/Who\'s)', options: ['A) Who\'s', 'B) Whose'], correct: 1, explanation: 'Whose = possessive; who\'s = who is.' },
+            { topic: 'homo', q: 'The new policy will ___ everyone. (affect/effect)', options: ['A) affect', 'B) effect'], correct: 0, explanation: 'Affect = verb; effect = noun (usually).' },
+            { topic: 'homo', q: 'She was ___ to win the prize. (all ready/already)', options: ['A) already', 'B) all ready'], correct: 1, explanation: 'All ready = completely prepared; already = by now.' },
+            { topic: 'homo', q: 'The ___ of the story was surprising. (moral/morale)', options: ['A) moral', 'B) morale'], correct: 0, explanation: 'Moral = lesson; morale = confidence.' },
+            { topic: 'homo', q: 'He broke the ___ in the race. (record/record) same spelling? But question: ' , options: ['A) world record', 'B) world recorD'], correct: 0, explanation: 'Homonym: record (noun) / record (verb).' },
+            { topic: 'homo', q: 'The bride walked down the ___. (aisle/isle)', options: ['A) isle', 'B) aisle'], correct: 1, explanation: 'Aisle = passage; isle = island.' },
+            { topic: 'homo', q: 'He needs to ___ his shoes. (tie/tie) homonym?', options: ['A) tie (neckwear)', 'B) tie (fasten)'], correct: 1, explanation: 'Same word, different meanings → homonym.' },
+            { topic: 'homo', q: 'The ___ was very bright. (sun/son)', options: ['A) son', 'B) sun'], correct: 1, explanation: 'Sun = star; son = male child.' },
+            { topic: 'homo', q: 'Please ___ the door. (close/clothes)', options: ['A) clothes', 'B) close'], correct: 1, explanation: 'Close = shut; clothes = garments.' },
+            { topic: 'homo', q: 'He gave a ___ answer. (straight/strait)', options: ['A) straight', 'B) strait'], correct: 0, explanation: 'Straight = direct; strait = narrow channel.' },
+            { topic: 'homo', q: 'The ___ of the building is strong. (base/bass)', options: ['A) base', 'B) bass'], correct: 0, explanation: 'Base = foundation; bass = low sound / fish.' },
+            { topic: 'homo', q: 'She wore a beautiful ___ (pearl/purl)', options: ['A) pearl', 'B) purl'], correct: 0, explanation: 'Pearl = gem; purl = knitting stitch.' },
+            { topic: 'homo', q: 'The ___ was found guilty. (thief/theme?)', options: ['A) thief'], correct: 0, explanation: 'thief = robber.' },
+            { topic: 'homo', q: 'He used a ___ to chop wood. (acts/axe)', options: ['A) acts', 'B) axe'], correct: 1, explanation: 'Axe = tool; acts = deeds.' },
+            { topic: 'homo', q: 'The ___ flew south. (crane/crane)', options: ['A) crane (bird)', 'B) crane (machine)'], correct: 0, explanation: 'Both spell same → homonym.' },
+            { topic: 'homo', q: 'The ___ was full of wine. (vial/vile)', options: ['A) vial', 'B) vile'], correct: 0, explanation: 'Vial = small container; vile = evil.' },
+            { topic: 'homo', q: 'He could not ___ the pain. (bear/bare)', options: ['A) bear', 'B) bare'], correct: 0, explanation: 'Bear = endure; bare = uncover.' },
+            { topic: 'homo', q: 'The ___ of the mountain was steep. (pick/pique/peak)', options: ['A) peak', 'B) peek', 'C) pique'], correct: 0, explanation: 'Peak = summit; peek = glance; pique = resentment.' },
+            { topic: 'homo', q: 'She gave me a ___ of cake. (piece/peace)', options: ['A) peace', 'B) piece'], correct: 1, explanation: 'Piece = portion; peace = calm.' },
+            { topic: 'homo', q: 'The ___ is very dry this year. (desert/dessert)', options: ['A) desert', 'B) dessert'], correct: 0, explanation: 'Desert = arid land; dessert = sweet course.' },
+            { topic: 'homo', q: 'He ___ the ball. (threw/through)', options: ['A) through', 'B) threw'], correct: 1, explanation: 'Threw = past throw; through = preposition.' },
+            { topic: 'homo', q: 'She has long ___ . (hair/hare)', options: ['A) hare', 'B) hair'], correct: 1, explanation: 'Hair = on head; hare = rabbit.' },
+            { topic: 'homo', q: 'The ___ of the story is unknown. (write/right)', options: ['A) right', 'B) write'], correct: 0, explanation: 'Right = correct; write = compose.' },
+            { topic: 'homo', q: 'He is a ___ of art. (connoisseur? not homophone) but choose: (peddle/petal)', options: ['A) peddle', 'B) petal'], correct: 0, explanation: 'Peddle = sell; petal = flower part.' },
+            { topic: 'homo', q: 'The ___ was ringing. (phone/fone)', options: ['A) phone'], correct: 0, explanation: 'phone = telephone.' },
+            { topic: 'homo', q: 'She read a ___ from the book. (passage/passage) same', options: ['A) passage (text)', 'B) passage (hall)'], correct: 0, explanation: 'Homonym: passage.' },
+            { topic: 'homo', q: 'The ___ was very high. (tide/tied)', options: ['A) tide', 'B) tied'], correct: 0, explanation: 'Tide = sea level; tied = fastened.' },
+            { topic: 'homo', q: 'He used a ___ to catch fish. (net/nett)', options: ['A) net', 'B) nett'], correct: 0, explanation: 'Net = mesh; nett = price after deductions.' },
+            // 7. collocations (30)
+            { topic: 'coll', q: 'Which is correct?', options: ['A) heavy rain', 'B) strong rain'], correct: 0, explanation: 'Collocation: heavy rain.' },
+            { topic: 'coll', q: 'Make a ___', options: ['A) decision', 'B) opinion'], correct: 0, explanation: 'Make a decision; give an opinion.' },
+            { topic: 'coll', q: 'Fast ___', options: ['A) food', 'B) meal'], correct: 0, explanation: 'Fast food is fixed; quick meal is possible but fast meal rare.' },
+            { topic: 'coll', q: 'Pay ___', options: ['A) attention', 'B) notice'], correct: 0, explanation: 'Pay attention; take notice.' },
+            { topic: 'coll', q: 'Strong ___', options: ['A) wind', 'B) rain'], correct: 0, explanation: 'Strong wind; heavy rain.' },
+            { topic: 'coll', q: 'Commit a ___', options: ['A) crime', 'B) mistake'], correct: 0, explanation: 'Commit a crime; make a mistake.' },
+            { topic: 'coll', q: 'Catch a ___', options: ['A) cold', 'B) flu'], correct: 0, explanation: 'Catch a cold; catch the flu (both OK but cold more frequent).' },
+            { topic: 'coll', q: 'Save ___', options: ['A) time', 'B) money', 'C) both'], correct: 2, explanation: 'Save time & save money are collocations.' },
+            { topic: 'coll', q: 'Take a ___', options: ['A) break', 'B) rest', 'C) both'], correct: 2, explanation: 'Take a break / rest both OK.' },
+            { topic: 'coll', q: 'Come to a ___', options: ['A) conclusion', 'B) end', 'C) both'], correct: 2, explanation: 'Come to a conclusion / end both used.' },
+            { topic: 'coll', q: 'Do a ___', options: ['A) favour', 'B) mistake'], correct: 0, explanation: 'Do a favour; make a mistake.' },
+            { topic: 'coll', q: 'Run a ___', options: ['A) business', 'B) company'], correct: 0, explanation: 'Run a business / company are collocations.' },
+            { topic: 'coll', q: 'Give a ___', options: ['A) speech', 'B) talk', 'C) both'], correct: 2, explanation: 'Give a speech/talk.' },
+            { topic: 'coll', q: 'Have a ___', options: ['A) look', 'B) glance', 'C) both'], correct: 2, explanation: 'Have a look/glance.' },
+            { topic: 'coll', q: 'Break a ___', options: ['A) habit', 'B) record', 'C) both'], correct: 2, explanation: 'Break a habit / record.' },
+            { topic: 'coll', q: 'Catch ___', options: ['A) sight of', 'B) a glimpse'], correct: 0, explanation: 'Catch sight of / catch a glimpse.' },
+            { topic: 'coll', q: 'Keep a ___', options: ['A) secret', 'B) promise', 'C) both'], correct: 2, explanation: 'Keep a secret / promise.' },
+            { topic: 'coll', q: 'Tell a ___', options: ['A) lie', 'B) story', 'C) both'], correct: 2, explanation: 'Tell a lie / story.' },
+            { topic: 'coll', q: 'Heavy ___', options: ['A) smoker', 'B) drinker'], correct: 0, explanation: 'Heavy smoker/drinker.' },
+            { topic: 'coll', q: 'Deeply ___', options: ['A) regret', 'B) sorry'], correct: 0, explanation: 'Deeply regret; very sorry.' },
+            { topic: 'coll', q: 'Fully ___', options: ['A) aware', 'B) conscious'], correct: 0, explanation: 'Fully aware/conscious.' },
+            { topic: 'coll', q: 'Closely ___', options: ['A) connected', 'B) related', 'C) both'], correct: 2, explanation: 'Closely connected/related.' },
+            { topic: 'coll', q: 'Utterly ___', options: ['A) ridiculous', 'B) absurd', 'C) both'], correct: 2, explanation: 'Utterly ridiculous/absurd.' },
+            { topic: 'coll', q: 'Totally ___', options: ['A) unacceptable', 'B) wrong', 'C) both'], correct: 2, explanation: 'Totally unacceptable/wrong.' },
+            { topic: 'coll', q: 'Strongly ___', options: ['A) disagree', 'B) oppose', 'C) both'], correct: 2, explanation: 'Strongly disagree/oppose.' },
+            { topic: 'coll', q: 'Bitterly ___', options: ['A) cold', 'B) disappointed', 'C) both'], correct: 1, explanation: 'Bitterly disappointed; bitterly cold (also OK).' },
+            { topic: 'coll', q: 'Richly ___', options: ['A) deserved', 'B) rewarded', 'C) both'], correct: 2, explanation: 'Richly deserved/rewarded.' },
+            { topic: 'coll', q: 'Fully ___', options: ['A) understand', 'B) comprehend', 'C) both'], correct: 2, explanation: 'Fully understand/comprehend.' },
+            { topic: 'coll', q: 'Great ___', options: ['A) success', 'B) failure'], correct: 0, explanation: 'Great success; great failure also possible but less common.' },
+            { topic: 'coll', q: 'Golden ___', options: ['A) opportunity', 'B) chance'], correct: 0, explanation: 'Golden opportunity.' },
+            // 8. phrasal verbs (30)
+            { topic: 'phrasal', q: 'I can\'t ___ his behavior anymore.', options: ['A) put up with', 'B) put with', 'C) put up', 'D) put down'], correct: 0, explanation: 'Put up with = tolerate.' },
+            { topic: 'phrasal', q: 'She ___ a story to explain her absence.', options: ['A) made up', 'B) made out', 'C) made for', 'D) made of'], correct: 0, explanation: 'Made up = invented.' },
+            { topic: 'phrasal', q: 'The meeting was ___ until Friday.', options: ['A) put off', 'B) put out', 'C) put by', 'D) put in'], correct: 0, explanation: 'Put off = postpone.' },
+            { topic: 'phrasal', q: 'He ___ his father — he\'s so tall.', options: ['A) takes after', 'B) takes over', 'C) takes in', 'D) takes off'], correct: 0, explanation: 'Takes after = resembles.' },
+            { topic: 'phrasal', q: 'The plane ___ at 6 am.', options: ['A) takes off', 'B) takes up', 'C) takes on', 'D) takes in'], correct: 0, explanation: 'Takes off = departs.' },
+            { topic: 'phrasal', q: 'She ___ running to keep fit.', options: ['A) took up', 'B) took on', 'C) took over', 'D) took in'], correct: 0, explanation: 'Took up = started a hobby.' },
+            { topic: 'phrasal', q: 'They ___ the old cinema and built a mall.', options: ['A) pulled down', 'B) pulled out', 'C) pulled off', 'D) pulled through'], correct: 0, explanation: 'Pulled down = demolished.' },
+            { topic: 'phrasal', q: 'We need to ___ a solution.', options: ['A) come up with', 'B) come up to', 'C) come up against', 'D) come up for'], correct: 0, explanation: 'Come up with = think of.' },
+            { topic: 'phrasal', q: 'He ___ the offer because it was too low.', options: ['A) turned down', 'B) turned off', 'C) turned up', 'D) turned in'], correct: 0, explanation: 'Turned down = rejected.' },
+            { topic: 'phrasal', q: 'The teacher asked us to ___ our papers.', options: ['A) hand in', 'B) hand out', 'C) hand over', 'D) hand down'], correct: 0, explanation: 'Hand in = submit.' },
+            { topic: 'phrasal', q: 'She ___ her grandmother when she was young.', options: ['A) looked after', 'B) looked for', 'C) looked into', 'D) looked up'], correct: 0, explanation: 'Looked after = cared for.' },
+            { topic: 'phrasal', q: 'I ___ an old friend yesterday.', options: ['A) ran into', 'B) ran over', 'C) ran out', 'D) ran down'], correct: 0, explanation: 'Ran into = met by chance.' },
+            { topic: 'phrasal', q: 'He ___ the answer in a dictionary.', options: ['A) looked up', 'B) looked over', 'C) looked through', 'D) looked out'], correct: 0, explanation: 'Looked up = searched for.' },
+            { topic: 'phrasal', q: 'The car ___ on the highway.', options: ['A) broke down', 'B) broke up', 'C) broke out', 'D) broke into'], correct: 0, explanation: 'Broke down = stopped functioning.' },
+            { topic: 'phrasal', q: 'They ___ the fire after two hours.', options: ['A) put out', 'B) put off', 'C) put up', 'D) put on'], correct: 0, explanation: 'Put out = extinguish.' },
+            { topic: 'phrasal', q: 'She ___ her old notes before the exam.', options: ['A) went over', 'B) went through', 'C) both possible', 'D) went out'], correct: 2, explanation: 'Go over / go through = review.' },
+            { topic: 'phrasal', q: 'He ___ his father\'s business.', options: ['A) took over', 'B) took up', 'C) took on', 'D) took to'], correct: 0, explanation: 'Took over = assumed control.' },
+            { topic: 'phrasal', q: 'We need to ___ the problem carefully.', options: ['A) look into', 'B) look after', 'C) look for', 'D) look up'], correct: 0, explanation: 'Look into = investigate.' },
+            { topic: 'phrasal', q: 'The lecture ___ for three hours.', options: ['A) went on', 'B) went off', 'C) went out', 'D) went down'], correct: 0, explanation: 'Went on = continued.' },
+            { topic: 'phrasal', q: 'She ___ the truth eventually.', options: ['A) found out', 'B) found in', 'C) found for', 'D) found with'], correct: 0, explanation: 'Found out = discovered.' },
+            { topic: 'phrasal', q: 'The bomb ___ at midnight.', options: ['A) went off', 'B) went on', 'C) went out', 'D) went up'], correct: 0, explanation: 'Went off = exploded.' },
+            { topic: 'phrasal', q: 'He ___ the meeting because he was sick.', options: ['A) missed out on', 'B) missed out', 'C) missed in', 'D) missed at'], correct: 0, explanation: 'Missed out on = failed to attend/experience.' },
+            { topic: 'phrasal', q: 'They ___ the project due to lack of funds.', options: ['A) called off', 'B) called out', 'C) called in', 'D) called up'], correct: 0, explanation: 'Called off = cancelled.' },
+            { topic: 'phrasal', q: 'I can\'t ___ the meaning of this word.', options: ['A) figure out', 'B) figure in', 'C) figure on', 'D) figure up'], correct: 0, explanation: 'Figure out = understand.' },
+            { topic: 'phrasal', q: 'He ___ a lot of money in his new job.', options: ['A) brings in', 'B) brings out', 'C) brings up', 'D) brings about'], correct: 0, explanation: 'Brings in = earns.' },
+            { topic: 'phrasal', q: 'She ___ three children on her own.', options: ['A) brought up', 'B) brought in', 'C) brought out', 'D) brought about'], correct: 0, explanation: 'Brought up = raised.' },
+            { topic: 'phrasal', q: 'The contract ___ next month.', options: ['A) runs out', 'B) runs over', 'C) runs down', 'D) runs into'], correct: 0, explanation: 'Runs out = expires.' },
+            { topic: 'phrasal', q: 'He ___ the idea without hesitation.', options: ['A) jumped at', 'B) jumped on', 'C) jumped over', 'D) jumped in'], correct: 0, explanation: 'Jumped at = eagerly accepted.' },
+            { topic: 'phrasal', q: 'The thief ___ stealing the money.', options: ['A) got away with', 'B) got away from', 'C) got off with', 'D) got out of'], correct: 0, explanation: 'Got away with = escaped punishment.' },
+            { topic: 'phrasal', q: 'She ___ her hometown after ten years.', options: ['A) moved back to', 'B) moved in', 'C) moved out', 'D) moved on'], correct: 0, explanation: 'Moved back to = returned.' },
+            // 9. idioms (30)
+            { topic: 'idiom', q: 'What does "spill the beans" mean?', options: ['A) reveal a secret', 'B) make a mess', 'C) cook', 'D) clean'], correct: 0, explanation: 'Spill the beans = disclose secret.' },
+            { topic: 'idiom', q: 'Meaning of "hit the sack"?', options: ['A) go to sleep', 'B) hit a bag', 'C) give up', 'D) start working'], correct: 0, explanation: 'Hit the sack = go to bed.' },
+            { topic: 'idiom', q: 'Under the weather means?', options: ['A) ill', 'B) happy', 'C) lucky', 'D) energetic'], correct: 0, explanation: 'Under the weather = feeling sick.' },
+            { topic: 'idiom', q: 'Once in a blue moon = ?', options: ['A) rarely', 'B) often', 'C) always', 'D) never'], correct: 0, explanation: 'Once in a blue moon = very infrequently.' },
+            { topic: 'idiom', q: 'Bite the bullet means?', options: ['A) endure pain', 'B) shoot', 'C) be brave', 'D) both A & C'], correct: 3, explanation: 'Bite the bullet = face difficulty with courage.' },
+            { topic: 'idiom', q: 'Piece of cake = ?', options: ['A) easy', 'B) delicious', 'C) difficult', 'D) sweet'], correct: 0, explanation: 'Piece of cake = very easy.' },
+            { topic: 'idiom', q: 'Break a leg = ?', options: ['A) good luck', 'B) get injured', 'C) fail', 'D) stop'], correct: 0, explanation: 'Break a leg = theatre good luck.' },
+            { topic: 'idiom', q: 'Cost an arm and a leg = ?', options: ['A) cheap', 'B) expensive', 'C) painful', 'D) free'], correct: 1, explanation: 'Cost an arm and a leg = very expensive.' },
+            { topic: 'idiom', q: 'Let the cat out of the bag = ?', options: ['A) reveal secret', 'B) free animal', 'C) hide', 'D) lie'], correct: 0, explanation: 'Let cat out = reveal secret.' },
+            { topic: 'idiom', q: 'Beat around the bush = ?', options: ['A) avoid direct topic', 'B) hit bushes', 'C) start a fire', 'D) exercise'], correct: 0, explanation: 'Beat around bush = evade issue.' },
+            { topic: 'idiom', q: 'Call it a day = ?', options: ['A) stop working', 'B) name a day', 'C) celebrate', 'D) start'], correct: 0, explanation: 'Call it a day = finish for the day.' },
+            { topic: 'idiom', q: 'Hit the nail on the head = ?', options: ['A) be exactly right', 'B) miss', 'C) injure', 'D) repair'], correct: 0, explanation: 'Hit nail on head = describe precisely.' },
+            { topic: 'idiom', q: 'When pigs fly = ?', options: ['A) never', 'B) soon', 'C) always', 'D) maybe'], correct: 0, explanation: 'When pigs fly = something impossible.' },
+            { topic: 'idiom', q: 'Cut corners = ?', options: ['A) take shortcuts', 'B) save money wrongly', 'C) be efficient', 'D) A & B'], correct: 3, explanation: 'Cut corners = do something poorly to save time/money.' },
+            { topic: 'idiom', q: 'Face the music = ?', options: ['A) confront consequences', 'B) listen', 'C) play music', 'D) enjoy'], correct: 0, explanation: 'Face the music = accept punishment.' },
+            { topic: 'idiom', q: 'Ring a bell = ?', options: ['A) sound familiar', 'B) call someone', 'C) play music', 'D) celebrate'], correct: 0, explanation: 'Ring a bell = seem familiar.' },
+            { topic: 'idiom', q: 'Sit on the fence = ?', options: ['A) be undecided', 'B) rest', 'C) avoid', 'D) jump'], correct: 0, explanation: 'Sit on fence = avoid choosing.' },
+            { topic: 'idiom', q: 'Take with a grain of salt = ?', options: ['A) doubt', 'B) believe', 'C) add salt', 'D) enjoy'], correct: 0, explanation: 'Take with grain salt = be skeptical.' },
+            { topic: 'idiom', q: 'The ball is in your court = ?', options: ['A) your turn', 'B) you play', 'C) you win', 'D) you lose'], correct: 0, explanation: 'Ball in your court = next move is yours.' },
+            { topic: 'idiom', q: 'Best of both worlds = ?', options: ['A) two advantages', 'B) compromise', 'C) confusion', 'D) mix'], correct: 0, explanation: 'Best of both worlds = benefits from two situations.' },
+            { topic: 'idiom', q: 'Once in a lifetime = ?', options: ['A) very rare', 'B) common', 'C) frequent', 'D) daily'], correct: 0, explanation: 'Once in a lifetime = extremely rare.' },
+            { topic: 'idiom', q: 'Out of the blue = ?', options: ['A) unexpectedly', 'B) from sky', 'C) sad', 'D) happy'], correct: 0, explanation: 'Out of the blue = suddenly, without warning.' },
+            { topic: 'idiom', q: 'Read between the lines = ?', options: ['A) infer hidden meaning', 'B) read quickly', 'C) skim', 'D) ignore'], correct: 0, explanation: 'Read between lines = understand implicit meaning.' },
+            { topic: 'idiom', q: 'Steal someone\'s thunder = ?', options: ['A) upstage', 'B) rob', 'C) storm', 'D) shout'], correct: 0, explanation: 'Steal thunder = take attention from someone.' },
+            { topic: 'idiom', q: 'Turn a blind eye = ?', options: ['A) ignore', 'B) see', 'C) help', 'D) look'], correct: 0, explanation: 'Turn blind eye = pretend not to notice.' },
+            { topic: 'idiom', q: 'Up in the air = ?', options: ['A) uncertain', 'B) flying', 'C) high', 'D) clear'], correct: 0, explanation: 'Up in the air = undecided.' },
+            { topic: 'idiom', q: 'Wild goose chase = ?', options: ['A) useless search', 'B) fun chase', 'C) hunt', 'D) game'], correct: 0, explanation: 'Wild goose chase = hopeless pursuit.' },
+            { topic: 'idiom', q: 'You can say that again = ?', options: ['A) agree strongly', 'B) repeat', 'C) maybe', 'D) no'], correct: 0, explanation: 'You can say that again = I completely agree.' },
+            { topic: 'idiom', q: 'Your guess is as good as mine = ?', options: ['A) I don\'t know', 'B) you know', 'C) both know', 'D) I know'], correct: 0, explanation: 'Your guess is as good as mine = I don\'t know either.' },
+            { topic: 'idiom', q: 'Zip your lip = ?', options: ['A) be quiet', 'B) speak', 'C) shout', 'D) whisper'], correct: 0, explanation: 'Zip your lip = stop talking.' },
+            // 10. word formation (30)
+            { topic: 'form', q: 'The _____ of the new drug was surprising. (effective)', options: ['A) effectiveness', 'B) effect', 'C) effectively', 'D) affect'], correct: 0, explanation: 'Noun needed: effectiveness.' },
+            { topic: 'form', q: 'She made a _____ to help the poor. (donate)', options: ['A) donation', 'B) donor', 'C) donating', 'D) donated'], correct: 0, explanation: 'Noun: donation.' },
+            { topic: 'form', q: 'He is a very _____ writer. (create)', options: ['A) creative', 'B) creation', 'C) creature', 'D) creativity'], correct: 0, explanation: 'Adjective: creative.' },
+            { topic: 'form', q: 'The _____ of the building took two years. (construct)', options: ['A) construction', 'B) construct', 'C) constructive', 'D) constructor'], correct: 0, explanation: 'Noun: construction.' },
+            { topic: 'form', q: 'She acted with great _____. (responsible)', options: ['A) responsibility', 'B) responsibly', 'C) responsive', 'D) response'], correct: 0, explanation: 'Noun: responsibility.' },
+            { topic: 'form', q: 'The _____ of the project was impressive. (complete)', options: ['A) completion', 'B) completely', 'C) complete', 'D) completed'], correct: 0, explanation: 'Noun: completion.' },
+            { topic: 'form', q: 'He gave a very _____ explanation. (detail)', options: ['A) detailed', 'B) detailing', 'C) detail', 'D) details'], correct: 0, explanation: 'Adjective: detailed.' },
+            { topic: 'form', q: 'The _____ of the company was a shock. (fail)', options: ['A) failure', 'B) fail', 'C) failing', 'D) failed'], correct: 0, explanation: 'Noun: failure.' },
+            { topic: 'form', q: 'She is a _____ singer. (talent)', options: ['A) talented', 'B) talent', 'C) talents', 'D) talentless'], correct: 0, explanation: 'Adjective: talented.' },
+            { topic: 'form', q: 'The _____ of the evidence was clear. (important)', options: ['A) importance', 'B) important', 'C) importantly', 'D) import'], correct: 0, explanation: 'Noun: importance.' },
+            { topic: 'form', q: 'He made a quick _____. (decide)', options: ['A) decision', 'B) decisive', 'C) deciding', 'D) decidedly'], correct: 0, explanation: 'Noun: decision.' },
+            { topic: 'form', q: 'The _____ weather ruined our plans. (predict)', options: ['A) unpredictable', 'B) prediction', 'C) predicted', 'D) predicting'], correct: 0, explanation: 'Adjective: unpredictable fits context.' },
+            { topic: 'form', q: 'She has a strong _____ of duty. (sense)', options: ['A) sense', 'B) sensible', 'C) sensitive', 'D) sensory'], correct: 0, explanation: 'Noun: sense.' },
+            { topic: 'form', q: 'The _____ of the species is at risk. (survive)', options: ['A) survival', 'B) survivor', 'C) surviving', 'D) survived'], correct: 0, explanation: 'Noun: survival.' },
+            { topic: 'form', q: 'He is a very _____ person. (rely)', options: ['A) reliable', 'B) reliant', 'C) reliance', 'D) reliably'], correct: 0, explanation: 'Adjective: reliable = trustworthy.' },
+            { topic: 'form', q: 'The _____ of the movie was unexpected. (end)', options: ['A) ending', 'B) end', 'C) endless', 'D) ended'], correct: 0, explanation: 'Noun: ending.' },
+            { topic: 'form', q: 'She showed great _____ in the face of danger. (brave)', options: ['A) bravery', 'B) brave', 'C) bravely', 'D) braveness'], correct: 0, explanation: 'Noun: bravery.' },
+            { topic: 'form', q: 'The _____ of the company was rapid. (grow)', options: ['A) growth', 'B) grow', 'C) grown', 'D) growing'], correct: 0, explanation: 'Noun: growth.' },
+            { topic: 'form', q: 'He gave a _____ answer. (thought)', options: ['A) thoughtful', 'B) thoughtless', 'C) both possible', 'D) thought'], correct: 2, explanation: 'Context decides; both could fit.' },
+            { topic: 'form', q: 'The _____ of the river is dangerous. (wide)', options: ['A) width', 'B) wide', 'C) widen', 'D) widely'], correct: 0, explanation: 'Noun: width.' },
+            { topic: 'form', q: 'She handled the situation _____. (professional)', options: ['A) professionally', 'B) professional', 'C) profession', 'D) professor'], correct: 0, explanation: 'Adverb: professionally.' },
+            { topic: 'form', q: 'The _____ of the plan was obvious. (weak)', options: ['A) weakness', 'B) weak', 'C) weaken', 'D) weakly'], correct: 0, explanation: 'Noun: weakness.' },
+            { topic: 'form', q: 'He is a _____ of the arts. (support)', options: ['A) supporter', 'B) support', 'C) supportive', 'D) supporting'], correct: 0, explanation: 'Noun: supporter.' },
+            { topic: 'form', q: 'The _____ of the volcano was spectacular. (erupt)', options: ['A) eruption', 'B) erupting', 'C) erupted', 'D) eruptive'], correct: 0, explanation: 'Noun: eruption.' },
+            { topic: 'form', q: 'She has a _____ imagination. (vivid)', options: ['A) vivid', 'B) vividly', 'C) vividness', 'D) invivid'], correct: 0, explanation: 'Adjective: vivid.' },
+            { topic: 'form', q: 'The _____ of the storm caused damage. (intense)', options: ['A) intensity', 'B) intense', 'C) intensively', 'D) intention'], correct: 0, explanation: 'Noun: intensity.' },
+            { topic: 'form', q: 'He made a _____ attempt to win. (determine)', options: ['A) determined', 'B) determinate', 'C) determination', 'D) determining'], correct: 0, explanation: 'Adjective: determined.' },
+            { topic: 'form', q: 'The _____ of the team was high. (moral)', options: ['A) morale', 'B) moral', 'C) morally', 'D) morality'], correct: 0, explanation: 'Morale = confidence; moral = ethical.' },
+            { topic: 'form', q: 'She is very _____ about her future. (optimism)', options: ['A) optimistic', 'B) optimist', 'C) optimism', 'D) optimally'], correct: 0, explanation: 'Adjective: optimistic.' },
+            { topic: 'form', q: 'The _____ of the project took a year. (plan)', options: ['A) planning', 'B) plan', 'C) planner', 'D) planned'], correct: 0, explanation: 'Noun: planning.' },
+        ];
+
+        // ---------- render logic ----------
+        const container = document.getElementById('questionsContainer');
+        const scoreSpan = document.getElementById('scoreDisplay');
+        const topicCorrectSpan = document.getElementById('topicCorrect');
+        const resetBtn = document.getElementById('resetBtn');
+        const pills = document.querySelectorAll('.topic-pill');
+
+        let currentTopic = 'all';
+        let userAnswers = new Array(questionBank.length).fill(null); // store selected option index per question
+        let checkedStatus = new Array(questionBank.length).fill(false); // whether "verify" clicked
+
+        function renderQuestions() {
+            let filtered = questionBank.filter((q, idx) => currentTopic === 'all' || q.topic === currentTopic);
+            let html = '';
+            filtered.forEach((q, idx) => {
+                const globalIndex = questionBank.indexOf(q);
+                const selected = userAnswers[globalIndex];
+                const checked = checkedStatus[globalIndex];
+                let qClass = 'q-item';
+                if (checked && selected !== null) {
+                    qClass += (selected === q.correct) ? ' correct' : ' wrong';
+                }
+                let optionsHtml = '';
+                q.options.forEach((opt, optIdx) => {
+                    const checkedAttr = (selected === optIdx) ? 'checked' : '';
+                    optionsHtml += `<div class="option"><input type="radio" name="q${globalIndex}" value="${optIdx}" ${checkedAttr} ${checked ? 'disabled' : ''}> ${opt}</div>`;
+                });
+                let explanationHtml = `<div class="explanation-box ${(checked && selected!==null) ? 'show' : ''}"><strong>🔎 explanation:</strong> ${q.explanation}</div>`;
+                html += `<div class="${qClass}" data-global="${globalIndex}">
+                    <div class="question-text">${q.q}</div>
+                    <div class="options" data-qidx="${globalIndex}">${optionsHtml}</div>
+                    <button class="btn-check" data-qidx="${globalIndex}" ${checked ? 'disabled' : ''}>✓ verify</button>
+                    ${explanationHtml}
+                </div>`;
+            });
+            container.innerHTML = html || '<p style="padding: 30px;">No questions for selected topic.</p>';
+
+            // attach event listeners to radio and verify
+            document.querySelectorAll('.options input').forEach(radio => {
+                radio.addEventListener('change', function(e) {
+                    if (checkedStatus[this.closest('.q-item').dataset.global]) return;
+                    const qIdx = parseInt(this.closest('.options').dataset.qidx);
+                    userAnswers[qIdx] = parseInt(this.value);
+                });
+            });
+
+            document.querySelectorAll('.btn-check').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    const qIdx = parseInt(this.dataset.qidx);
+                    if (checkedStatus[qIdx]) return;
+                    if (userAnswers[qIdx] === null || userAnswers[qIdx] === undefined) {
+                        alert('Please select an option first.');
+                        return;
+                    }
+                    checkedStatus[qIdx] = true;
+                    // disable radios
+                    renderQuestions(); // re-render to reflect correct/wrong styles & disable
+                    updateStats();
+                });
+            });
+        }
+
+        function updateStats() {
+            let totalChecked = checkedStatus.filter(v => v === true).length;
+            let correctCount = 0;
+            checkedStatus.forEach((checked, idx) => {
+                if (checked && userAnswers[idx] === questionBank[idx].correct) correctCount++;
+            });
+            scoreSpan.innerText = `${correctCount} / ${questionBank.length}`;
+            topicCorrectSpan.innerText = `✅ ${correctCount} correct of ${totalChecked} attempted`;
+        }
+
+        // filter pills
+        pills.forEach(pill => {
+            pill.addEventListener('click', function() {
+                pills.forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+                currentTopic = this.dataset.topic;
+                renderQuestions();
+            });
+        });
+
+        resetBtn.addEventListener('click', function() {
+            userAnswers = new Array(questionBank.length).fill(null);
+            checkedStatus = new Array(questionBank.length).fill(false);
+            renderQuestions();
+            updateStats();
+        });
+
+        // initial render
+        renderQuestions();
+        updateStats();
+    })();
+</script>
+</body>
+</html>
