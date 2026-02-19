@@ -30,20 +30,20 @@ Learnify is a student-focused educational application designed to support high s
 ## 📂 Project Structure
 
 TestApp/
-├─ app/src/main/java/ # Android source code (Java & Kotlin)
-├─ app/src/main/assets/ # Educational content (HTML notes and questions)
-│ ├─ subjects/
-│ │ ├─ Biology/
-│ │ ├─ Chemistry/
-│ │ ├─ Mathematics/
-│ │ ├─ English/
-│ │ ├─ Physics/
-│ │ └─ Scholastic Aptitude/
-├─ app/src/main/res/ # Layouts, images, icons, drawable resources
-├─ app/build.gradle # Gradle build configuration
-├─ TestApp/settings.gradle # Project settings
-├─ TestApp/gradle/ # Gradle wrapper and scripts
-└─ README.md # Project documentation
+├─ app/src/main/java/            # Android source code (Java & Kotlin)  
+├─ app/src/main/assets/          # Educational content (HTML notes and questions)  
+│  ├─ subjects/  
+│  │  ├─ Biology/  
+│  │  ├─ Chemistry/  
+│  │  ├─ Mathematics/  
+│  │  ├─ English/  
+│  │  ├─ Physics/  
+│  │  └─ Scholastic Aptitude/  
+├─ app/src/main/res/             # Layouts, images, icons, drawable resources  
+├─ app/build.gradle              # Gradle build configuration  
+├─ TestApp/settings.gradle       # Project settings  
+├─ TestApp/gradle/               # Gradle wrapper and scripts  
+└─ README.md                     # Project documentation  
 
 ## 📂 Project Structure
 - `app/src/main/java/` – Android source code (Java & Kotlin)
