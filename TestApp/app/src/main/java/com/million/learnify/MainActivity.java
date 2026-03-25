@@ -13,7 +13,7 @@ import com.google.android.material.card.MaterialCardView;
 import java.util.Locale;
 
 /**
- * MainActivity - Portal Selection with Motion Styles.
+ * MainActivity - Portal Selection with Normal Transition Styles.
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -27,10 +27,10 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         
-        // Entrance animation for the root layout (fade + spring-like scale)
+        // Entrance animation for the root layout (fade)
         View root = findViewById(android.R.id.content);
         root.setAlpha(0f);
-        root.animate().alpha(1f).setDuration(600).start();
+        root.animate().alpha(1f).setDuration(400).start();
         
         initPortalSelection();
     }
@@ -53,15 +53,12 @@ public class MainActivity extends AppCompatActivity {
             cardStudent.setVisibility(View.INVISIBLE);
             cardStudent.postDelayed(() -> {
                 cardStudent.setVisibility(View.VISIBLE);
-                Animation anim = AnimationUtils.loadAnimation(this, R.anim.fade_in_scale);
+                Animation anim = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
                 cardStudent.startAnimation(anim);
-            }, 200);
+            }, 100);
             
             cardStudent.setOnClickListener(v -> {
-                v.animate().scaleX(0.97f).scaleY(0.97f).setDuration(100).withEndAction(() -> {
-                    v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
-                    navigateToStudentLogin();
-                }).start();
+                navigateToStudentLogin();
             });
         }
 
@@ -69,15 +66,12 @@ public class MainActivity extends AppCompatActivity {
             cardAdmin.setVisibility(View.INVISIBLE);
             cardAdmin.postDelayed(() -> {
                 cardAdmin.setVisibility(View.VISIBLE);
-                Animation anim = AnimationUtils.loadAnimation(this, R.anim.fade_in_scale);
+                Animation anim = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
                 cardAdmin.startAnimation(anim);
-            }, 400);
+            }, 200);
 
             cardAdmin.setOnClickListener(v -> {
-                v.animate().scaleX(0.97f).scaleY(0.97f).setDuration(100).withEndAction(() -> {
-                    v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
-                    navigateToAdminLogin();
-                }).start();
+                navigateToAdminLogin();
             });
         }
     }
@@ -86,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             Intent intent = new Intent(MainActivity.this, StudentLoginActivity.class);
             startActivity(intent);
-            overridePendingTransition(R.anim.slide_up_enter, android.R.anim.fade_out);
+            // Using system default "normal" transition
         } catch (Exception e) {
             Toast.makeText(this, "Error opening Student Portal", Toast.LENGTH_SHORT).show();
         }
@@ -96,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             Intent intent = new Intent(MainActivity.this, AdminLoginActivity.class);
             startActivity(intent);
-            overridePendingTransition(R.anim.slide_up_enter, android.R.anim.fade_out);
+            // Using system default "normal" transition
         } catch (Exception e) {
             Toast.makeText(this, "Error opening Admin Portal", Toast.LENGTH_SHORT).show();
         }

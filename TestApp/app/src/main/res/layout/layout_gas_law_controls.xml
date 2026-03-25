@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Volume (L)"
+        android:textColor="#1E293B"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <SeekBar
+            android:id="@+id/sbVolume"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="5"
+            android:progress="2" />
+        <TextView
+            android:id="@+id/tvVolVal"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="2.0 L"
+            android:gravity="end"
+            android:textColor="#3B82F6"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Temperature (K)"
+        android:textColor="#1E293B"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <SeekBar
+            android:id="@+id/sbTemp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:min="100"
+            android:max="1000"
+            android:progress="300" />
+        <TextView
+            android:id="@+id/tvTempVal"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="300 K"
+            android:gravity="end"
+            android:textColor="#3B82F6"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Spring Constant (k)"
+        android:textColor="#1E293B"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <SeekBar
+            android:id="@+id/sbK"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="50"
+            android:progress="10" />
+        <TextView
+            android:id="@+id/tvKVal"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="10 N/m"
+            android:gravity="end"
+            android:textColor="#10B981"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Mass (kg)"
+        android:textColor="#1E293B"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <SeekBar
+            android:id="@+id/sbMass"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="10"
+            android:progress="1" />
+        <TextView
+            android:id="@+id/tvMassVal"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="1 kg"
+            android:gravity="end"
+            android:textColor="#10B981"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp">
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnStart"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Simulate"
+            android:backgroundTint="#10B981"
+            app:cornerRadius="8dp" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnReset"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Reset"
+            android:layout_marginStart="8dp"
+            app:strokeColor="#10B981"
+            android:textColor="#10B981"
+            app:cornerRadius="8dp" />
+    </LinearLayout>
+
+</LinearLayout>

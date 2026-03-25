@@ -78,7 +78,7 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
         try {
             voiceStudyManager = new VoiceStudyManager(this, this);
         } catch (Exception e) {
-            Log.e("Dashboard", "Voice manager init failed", e);
+            Log.e("Dashboard", "voice manager init failed", e);
         }
 
         initViews();
@@ -94,7 +94,7 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 registerReceiver(notificationUpdateReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
             } else {
-                registerReceiver(notificationUpdateReceiver, filter);
+                ContextCompat.registerReceiver(this, notificationUpdateReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
             }
         } catch (Exception e) {
             Log.e("Dashboard", "Receiver registration failed", e);

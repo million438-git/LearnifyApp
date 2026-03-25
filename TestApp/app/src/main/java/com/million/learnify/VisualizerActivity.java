@@ -1,5 +1,6 @@
 package com.million.learnify;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.webkit.WebSettings;
@@ -80,6 +81,15 @@ public class VisualizerActivity extends AppCompatActivity {
     private void updateSimList(int position) {
         simButtonsContainer.removeAllViews();
         List<SimInfo> sims = new ArrayList<>();
+
+        if (position == 0) { // Physics - Added the Full Lab entry point
+            MaterialButton btnFullLab = (MaterialButton) LayoutInflater.from(this).inflate(R.layout.item_sim_button, simButtonsContainer, false);
+            btnFullLab.setText("🚀 FULL PHYSICS LAB (40+)");
+            btnFullLab.setTextColor(getResources().getColor(R.color.blue_600));
+            btnFullLab.setStrokeColorResource(R.color.blue_600);
+            btnFullLab.setOnClickListener(v -> startActivity(new Intent(this, PhysicsLabActivity.class)));
+            simButtonsContainer.addView(btnFullLab);
+        }
 
         switch (position) {
             case 0: // Physics

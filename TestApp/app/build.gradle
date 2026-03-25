@@ -37,6 +37,8 @@ android {
                 // No external dependencies required for voice_brain.py
             }
         }
+
+        multiDexEnabled true
     }
 
     buildFeatures {
@@ -85,7 +87,11 @@ dependencies {
     implementation libs.androidx.camera.lifecycle
     implementation libs.androidx.camera.view
 
+    implementation libs.androidx.multidex
+
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+
+    debugImplementation libs.leakcanary.android
 }

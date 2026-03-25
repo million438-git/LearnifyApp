@@ -24,7 +24,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
 
 /**
- * StudentLoginActivity - With Full Login Flow Motion Styles.
+ * StudentLoginActivity - With normal system transitions.
  */
 public class StudentLoginActivity extends BaseActivity {
 
@@ -48,52 +48,10 @@ public class StudentLoginActivity extends BaseActivity {
             loginPrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
             initViews();
             loadRememberedData();
-            
-            // Step 4: Login Page Appearance (Staggered fade-up)
-            animateEntrance();
-            
         } catch (Exception e) {
             Log.e("StudentLogin", "Initialization Error", e);
             Toast.makeText(this, "System Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
-    }
-
-    private void animateEntrance() {
-        View header = findViewById(R.id.tvLoginHeader);
-        View subHeader = findViewById(R.id.tvLoginSubHeader);
-        View userLabel = findViewById(R.id.labelUser);
-        View userField = findViewById(R.id.tilStudentUser);
-        View passLabel = findViewById(R.id.labelPassword);
-        View passField = findViewById(R.id.tilStudentPassword);
-        View options = findViewById(R.id.optionsLayout);
-        View loginBtn = findViewById(R.id.btnStudentLogin);
-        View signup = findViewById(R.id.signupRedirectContainer);
-
-        long delay = 100;
-        long step = 50;
-
-        fadeUp(header, delay);
-        fadeUp(subHeader, delay += step);
-        fadeUp(userLabel, delay += step);
-        fadeUp(userField, delay += step);
-        fadeUp(passLabel, delay += step);
-        fadeUp(passField, delay += step);
-        fadeUp(options, delay += step);
-        fadeUp(loginBtn, delay += step);
-        fadeUp(signup, delay += step);
-    }
-
-    private void fadeUp(View v, long delay) {
-        if (v == null) return;
-        v.setAlpha(0f);
-        v.setTranslationY(20f);
-        v.animate()
-            .alpha(1f)
-            .translationY(0f)
-            .setDuration(400)
-            .setStartDelay(delay)
-            .setInterpolator(new android.view.animation.DecelerateInterpolator())
-            .start();
     }
 
     private void initViews() {
@@ -118,11 +76,7 @@ public class StudentLoginActivity extends BaseActivity {
 
         if (btnStudentLogin != null) {
             btnStudentLogin.setOnClickListener(v -> {
-                // Step 5: Login Button Interaction (Scale down feedback)
-                v.animate().scaleX(0.97f).scaleY(0.97f).setDuration(100).withEndAction(() -> {
-                    v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
-                    handleLogin();
-                }).start();
+                handleLogin();
             });
         }
         
@@ -161,24 +115,20 @@ public class StudentLoginActivity extends BaseActivity {
         String password = etStudentPassword != null ? etStudentPassword.getText().toString().trim() : "";
 
         if (input.isEmpty() || password.isEmpty()) {
-            showErrorFeedback();
             Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Show loading state
         setLoading(true);
 
-        // Simulate network delay for professional feel
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             if (dbHelper.checkUser(input, password, "STUDENT")) {
                 onLoginSuccess(input, password);
             } else {
                 setLoading(false);
-                showErrorFeedback();
                 Toast.makeText(this, "Invalid student credentials", Toast.LENGTH_SHORT).show();
             }
-        }, 1200);
+        }, 800);
     }
 
     private void setLoading(boolean loading) {
@@ -188,15 +138,6 @@ public class StudentLoginActivity extends BaseActivity {
         }
         if (loginProgress != null) {
             loginProgress.setVisibility(loading ? View.VISIBLE : View.GONE);
-        }
-    }
-
-    private void showErrorFeedback() {
-        // Step 5: Error (Shake animation)
-        View card = findViewById(R.id.loginCard);
-        if (card != null) {
-            Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
-            card.startAnimation(shake);
         }
     }
 
@@ -235,14 +176,12 @@ public class StudentLoginActivity extends BaseActivity {
             loginPrefs.edit().clear().apply();
         }
 
-        // Success: Button icon change (simulated via toast for now, can add icon to btn)
-        Toast.makeText(this, "Welcome to Learnify! ✓", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Welcome to Learnify!", Toast.LENGTH_SHORT).show();
         
-        // Step 6: Transition from Login to Home Screen (Cross-fade)
         Intent intent = new Intent(StudentLoginActivity.this, DashboardActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        // System default transition
         finish();
     }
 }
