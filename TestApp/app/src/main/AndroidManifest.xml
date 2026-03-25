@@ -14,6 +14,12 @@
 
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
+    <queries>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+    </queries>
+
     <application
         android:name=".MainApplication"
         android:allowBackup="true"
@@ -25,6 +31,16 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.TestApp">
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
         <activity
             android:name=".WelcomeActivity"
@@ -71,6 +87,12 @@
         <activity android:name=".NotificationListActivity" android:exported="false" />
         <activity android:name=".PhysicsLabActivity" android:exported="false" />
         <activity android:name=".PhysicsSimulationActivity" android:exported="false" />
+        <activity android:name=".BiologyLabActivity" android:exported="false" />
+        <activity android:name=".BiologySimulationActivity" android:exported="false" />
+        <activity android:name=".ClassScheduleActivity" android:exported="false" />
+        <activity android:name=".ChemistryLabActivity" android:exported="false" />
+        <activity android:name=".ChemistrySimulationActivity" android:exported="false" />
+        <activity android:name=".VoiceAssistantActivity" android:exported="false" />
 
         <!-- Connections Activities -->
         <activity android:name=".LinkedAccountsActivity" android:exported="false" />

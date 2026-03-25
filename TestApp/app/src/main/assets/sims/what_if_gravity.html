@@ -1,72 +1,380 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Learnify Physics – Gravity Explorer</title>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #0f172a; color: white; padding: 20px; overflow: hidden; }
-        .space { width: 100%; height: 250px; background: black; border: 2px solid #334155; border-radius: 15px; position: relative; margin-top: 20px; overflow: hidden; }
-        .ball { width: 30px; height: 30px; background: #fbbf24; border-radius: 50%; position: absolute; left: 50%; top: 0; transform: translateX(-50%); }
-        .controls { margin-top: 20px; background: #1e293b; padding: 15px; border-radius: 10px; }
-        input { width: 80%; }
-        .stats { margin-top: 10px; font-size: 18px; color: #3b82f6; }
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+        .card {
+            max-width: 550px;
+            width: 100%;
+            background: #1e293b;
+            border-radius: 2rem;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        h1 {
+            background: #0f172a;
+            color: #fbbf24;
+            margin: 0;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+        .sub {
+            text-align: center;
+            background: #0f172a;
+            padding: 0.5rem;
+            color: #94a3b8;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #334155;
+        }
+        .content {
+            padding: 1.2rem;
+        }
+        .canvas-container {
+            background: #0f172a;
+            border-radius: 1rem;
+            padding: 0.5rem;
+            text-align: center;
+        }
+        canvas {
+            width: 100%;
+            height: auto;
+            background: #000000;
+            border-radius: 1rem;
+            display: block;
+            margin: 0 auto;
+            cursor: pointer;
+            touch-action: none; /* prevent touch scrolling on canvas */
+        }
+        .controls {
+            background: #0f172a;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .slider-container {
+            margin: 0.8rem 0;
+        }
+        label {
+            display: flex;
+            justify-content: space-between;
+            color: #e2e8f0;
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+        input {
+            width: 100%;
+            cursor: pointer;
+            accent-color: #fbbf24;
+        }
+        .button-group {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 1rem;
+            min-width: 100px;
+        }
+        button:active {
+            transform: scale(0.96);
+        }
+        .reset-btn {
+            background: #475569;
+        }
+        .stats {
+            background: #0f172a;
+            border-radius: 1rem;
+            padding: 0.8rem;
+            margin-top: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .stat {
+            background: #1e293b;
+            border-radius: 1rem;
+            padding: 0.5rem 0.8rem;
+            flex: 1;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #fbbf24;
+        }
+        .explain {
+            background: #0f172a;
+            border-left: 4px solid #fbbf24;
+            padding: 0.7rem;
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #5b6e8e;
+            padding: 1rem;
+            border-top: 1px solid #334155;
+        }
+        @media (max-width: 550px) {
+            button { padding: 8px 16px; font-size: 0.9rem; min-width: 80px; }
+            .stat { font-size: 0.75rem; padding: 0.4rem 0.5rem; }
+            .explain { font-size: 0.75rem; }
+        }
     </style>
 </head>
 <body>
-    <h3>🤔 What If? Gravity Explorer</h3>
-    <p>Change the gravity constant and observe the fall.</p>
+<div class="card">
+    <h1>⚡ Gravity Explorer</h1>
+    <div class="sub">Adjust gravity • Drop the ball • Real‑time physics</div>
 
-    <div class="space">
-        <div id="ball" class="ball"></div>
+    <div class="content">
+        <div class="canvas-container">
+            <canvas id="gravityCanvas" width="400" height="400" style="width:100%; height:auto; max-width:400px;"></canvas>
+        </div>
+
+        <div class="controls">
+            <div class="slider-container">
+                <label>🌍 Gravity <span id="gValue">9.8</span> m/s²</label>
+                <input type="range" id="gravitySlider" min="0" max="25" step="0.1" value="9.8">
+            </div>
+
+            <div class="button-group">
+                <button id="dropBtn">🎾 Drop</button>
+                <button id="pauseBtn">⏸ Pause</button>
+                <button id="resetBtn" class="reset-btn">⟳ Reset</button>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat">⏱️ Time: <span id="timeValue">0.00</span> s</div>
+            <div class="stat">📈 Velocity: <span id="velValue">0.00</span> m/s</div>
+            <div class="stat">📏 Height: <span id="distValue">5.00</span> m</div>
+        </div>
+
+        <div class="explain" id="explainText">
+            💡 <strong>How it works:</strong> The ball accelerates downward due to gravity. The higher the gravity, the faster it falls.
+            Tap <strong>Drop</strong> to start, <strong>Pause</strong> to freeze, and <strong>Reset</strong> to bring the ball back up.
+        </div>
     </div>
+    <footer>⚡ Change gravity while the ball is falling – it adapts instantly! Perfect for exploring Newton's laws.</footer>
+</div>
 
-    <div class="controls">
-        <label>Gravity ($g$): <span id="gVal">9.8</span> m/s²</label><br>
-        <input type="range" min="0" max="50" step="0.1" value="9.8" oninput="updateGravity(this.value)"><br><br>
-        <button onclick="resetDrop()" style="padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 5px;">🎾 Drop Ball</button>
-    </div>
+<script>
+    // Canvas setup
+    const canvas = document.getElementById('gravityCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    const GROUND_LEVEL_M = 5.0;      // total fall distance (meters)
+    const BALL_RADIUS_REL = 0.07;     // relative to canvas width
 
-    <div class="stats" id="stats">
-        Time to Hit: -- | Velocity: --
-    </div>
+    // Physics state
+    let pos = GROUND_LEVEL_M;         // height from top (m) – start at top = 0, but we'll invert
+    // Actually we'll define pos = distance fallen from top (0 = at top, 5 = ground)
+    let fallen = 0;                   // distance fallen (0 to 5)
+    let vel = 0;
+    let g = 9.8;
+    let animating = false;
+    let lastFrameTime = 0;
+    let animationId = null;
+    let timeElapsed = 0;
 
-    <script>
-        let g = 9.8;
-        let pos = 0;
-        let vel = 0;
-        let timer = null;
-        let startTime = 0;
+    // DOM elements
+    const gravitySlider = document.getElementById('gravitySlider');
+    const gValueSpan = document.getElementById('gValue');
+    const dropBtn = document.getElementById('dropBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const timeSpan = document.getElementById('timeValue');
+    const velSpan = document.getElementById('velValue');
+    const distSpan = document.getElementById('distValue');
+    const explainText = document.getElementById('explainText');
 
-        function updateGravity(val) {
-            g = parseFloat(val);
-            document.getElementById('gVal').innerText = val;
-            resetDrop();
-        }
+    // Convert fallen distance (0..GROUND_LEVEL_M) to Y coordinate (pixels)
+    function fallenToY(distFallen) {
+        const groundY = height - 20;              // margin from bottom
+        const topY = 20;                          // margin from top
+        const t = distFallen / GROUND_LEVEL_M;
+        return topY + t * (groundY - topY);
+    }
 
-        function resetDrop() {
-            clearInterval(timer);
-            timer = null;
-            pos = 0;
+    function drawBall() {
+        if (!ctx) return;
+        ctx.clearRect(0, 0, width, height);
+        // Draw ground line (at bottom)
+        const groundY = height - 20;
+        ctx.beginPath();
+        ctx.moveTo(0, groundY);
+        ctx.lineTo(width, groundY);
+        ctx.strokeStyle = "#fbbf24";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        // Draw a small platform
+        ctx.fillStyle = "#facc15";
+        ctx.fillRect(width*0.4, groundY-5, width*0.2, 5);
+
+        // Draw ball
+        const ballRadius = width * BALL_RADIUS_REL;
+        const ballY = fallenToY(fallen);
+        ctx.shadowBlur = 0;
+        ctx.beginPath();
+        ctx.arc(width/2, ballY, ballRadius, 0, 2*Math.PI);
+        ctx.fillStyle = "#facc15";
+        ctx.fill();
+        ctx.fillStyle = "#ffd966";
+        ctx.beginPath();
+        ctx.arc(width/2, ballY, ballRadius*0.8, 0, 2*Math.PI);
+        ctx.fill();
+        // Shadow
+        ctx.fillStyle = "rgba(0,0,0,0.3)";
+        ctx.beginPath();
+        ctx.ellipse(width/2, groundY+5, ballRadius*1.2, ballRadius*0.4, 0, 0, 2*Math.PI);
+        ctx.fill();
+
+        // Additional info: gravity value
+        ctx.fillStyle = "#aaa";
+        ctx.font = "12px monospace";
+        ctx.fillText(`g = ${g.toFixed(1)} m/s²`, 10, 30);
+    }
+
+    // Physics update using delta time (seconds)
+    function updatePhysics(dt) {
+        if (!animating) return;
+        if (dt > 0.03) dt = 0.03; // safety
+
+        vel += g * dt;
+        fallen += vel * dt;
+
+        // Ground collision
+        if (fallen >= GROUND_LEVEL_M) {
+            fallen = GROUND_LEVEL_M;
             vel = 0;
-            document.getElementById('ball').style.top = '0px';
-            document.getElementById('stats').innerText = "Time to Hit: -- | Velocity: --";
-            startDrop();
+            animating = false;
+            cancelAnimationFrame(animationId);
+            animationId = null;
+            explainText.innerHTML = `💡 <strong>Landed!</strong> The ball hit the ground in ${timeElapsed.toFixed(2)} seconds. Change gravity and drop again.`;
         }
 
-        function startDrop() {
-            if(timer) return;
-            startTime = Date.now();
-            timer = setInterval(() => {
-                vel += g * 0.02;
-                pos += vel;
-                if(pos >= 220) {
-                    pos = 220;
-                    clearInterval(timer);
-                    let timeTaken = (Date.now() - startTime) / 1000;
-                    document.getElementById('stats').innerText = `Time to Hit: ${timeTaken.toFixed(2)}s | Final Vel: ${vel.toFixed(1)} m/s`;
-                }
-                document.getElementById('ball').style.top = pos + 'px';
-            }, 20);
+        timeElapsed += dt;
+
+        // Update stats display
+        const heightRemaining = GROUND_LEVEL_M - fallen;
+        timeSpan.innerText = timeElapsed.toFixed(2);
+        velSpan.innerText = vel.toFixed(2);
+        distSpan.innerText = heightRemaining.toFixed(2);
+
+        drawBall();
+    }
+
+    // Animation loop
+    let lastTimestamp = null;
+    function animate(now) {
+        if (!lastTimestamp) lastTimestamp = now;
+        let dt = Math.min(0.033, (now - lastTimestamp) / 1000);
+        if (dt > 0 && animating) {
+            updatePhysics(dt);
         }
-    </script>
+        lastTimestamp = now;
+        animationId = requestAnimationFrame(animate);
+    }
+
+    function startDrop() {
+        if (fallen >= GROUND_LEVEL_M - 0.01) {
+            // if on ground, reset first
+            resetSimulation();
+        }
+        if (!animating) {
+            animating = true;
+            if (!animationId) {
+                lastTimestamp = null;
+                animationId = requestAnimationFrame(animate);
+            }
+            explainText.innerHTML = `💡 <strong>Falling with g = ${g.toFixed(1)} m/s²</strong> – watch velocity increase.`;
+        }
+    }
+
+    function pauseSim() {
+        if (animating) {
+            animating = false;
+            explainText.innerHTML = `💡 <strong>Paused</strong> at height ${(GROUND_LEVEL_M - fallen).toFixed(2)} m, velocity ${vel.toFixed(2)} m/s. Press Drop to continue.`;
+        }
+    }
+
+    function resetSimulation() {
+        animating = false;
+        fallen = 0;
+        vel = 0;
+        timeElapsed = 0;
+        timeSpan.innerText = "0.00";
+        velSpan.innerText = "0.00";
+        distSpan.innerText = GROUND_LEVEL_M.toFixed(2);
+        drawBall();
+        explainText.innerHTML = `💡 <strong>Reset</strong>. Ball at top. Adjust gravity and tap Drop.`;
+    }
+
+    function updateGravity() {
+        g = parseFloat(gravitySlider.value);
+        gValueSpan.innerText = g.toFixed(1);
+        if (!animating) {
+            explainText.innerHTML = `💡 <strong>Gravity set to ${g.toFixed(1)} m/s²</strong>. Tap Drop to see the effect.`;
+            drawBall(); // redraw to update g display on canvas
+        }
+    }
+
+    // Resize canvas and adapt ball size
+    function resizeCanvas() {
+        const container = canvas.parentElement;
+        const size = Math.min(400, container.clientWidth - 20);
+        canvas.width = size;
+        canvas.height = size;
+        width = size;
+        height = size;
+        drawBall();
+    }
+
+    // Event listeners
+    gravitySlider.addEventListener('input', updateGravity);
+    dropBtn.addEventListener('click', startDrop);
+    pauseBtn.addEventListener('click', pauseSim);
+    resetBtn.addEventListener('click', resetSimulation);
+    window.addEventListener('resize', () => {
+        resizeCanvas();
+        drawBall();
+    });
+
+    // Initialize
+    resizeCanvas();
+    resetSimulation();
+    updateGravity();
+    // Start animation loop (idle, waiting for drop)
+    animationId = requestAnimationFrame(animate);
+</script>
 </body>
 </html>

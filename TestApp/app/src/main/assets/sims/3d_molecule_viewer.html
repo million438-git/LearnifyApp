@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        body { margin: 0; background: radial-gradient(circle, #1e293b 0%, #0f172a 100%); overflow: hidden; font-family: sans-serif; color: white; }
+        canvas { width: 100vw; height: 100vh; display: block; cursor: move; }
+        .info { position: absolute; top: 20px; left: 20px; pointer-events: none; }
+        .controls { position: absolute; bottom: 30px; right: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 10px 15px; border-radius: 8px; backdrop-filter: blur(5px); }
+        .label { position: absolute; background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 4px; font-size: 12px; pointer-events: none; }
+    </style>
+</head>
+<body>
+    <div class="info">
+        <h2 id="molName">Methane (CH₄)</h2>
+        <p id="molDesc">Tetrahedral Structure • 109.5° Angles</p>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <div class="controls">
+        <button class="btn" onclick="rotateX += 0.1">Rotate X</button>
+        <button class="btn" onclick="rotateY += 0.1">Rotate Y</button>
+        <button class="btn" onclick="resetRotation()">Reset View</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let rotateX = 0.5, rotateY = 0.5;
+        let scale = 100;
+        let showLabels = true;
+
+        const atoms = [
+            { x: 0, y: 0, z: 0, color: '#475569', size: 25, symbol: 'C' }, // Carbon
+            { x: 1, y: 1, z: 1, color: '#f8fafc', size: 15, symbol: 'H' },
+            { x: -1, y: -1, z: 1, color: '#f8fafc', size: 15, symbol: 'H' },
+            { x: 1, y: -1, z: -1, color: '#f8fafc', size: 15, symbol: 'H' },
+            { x: -1, y: 1, z: -1, color: '#f8fafc', size: 15, symbol: 'H' }
+        ];
+
+        const bonds = [
+            [0, 1], [0, 2], [0, 3], [0, 4]
+        ];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            scale = Math.min(width, height) / 5;
+        }
+
+        function project(x, y, z) {
+            // Rotation Y
+            let x1 = x * Math.cos(rotateY) + z * Math.sin(rotateY);
+            let z1 = z * Math.cos(rotateY) - x * Math.sin(rotateY);
+            // Rotation X
+            let y2 = y * Math.cos(rotateX) - z1 * Math.sin(rotateX);
+            let z2 = z1 * Math.cos(rotateX) + y * Math.sin(rotateX);
+
+            let factor = 4 / (4 + z2);
+            return {
+                x: x1 * factor * scale + width / 2,
+                y: y2 * factor * scale + height / 2,
+                z: z2,
+                factor: factor
+            };
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Sort atoms by depth (z) for correct rendering
+            let projected = atoms.map((a, i) => ({...project(a.x, a.y, a.z), a, i}));
+            projected.sort((a, b) => b.z - a.z);
+
+            // Draw bonds
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.lineWidth = 4;
+            bonds.forEach(bond => {
+                let p1 = projected.find(p => p.i === bond[0]);
+                let p2 = projected.find(p => p.i === bond[1]);
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.stroke();
+            });
+
+            // Draw atoms
+            projected.forEach(p => {
+                let radius = p.a.size * p.factor;
+
+                // Shadow/Glow
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = p.a.color;
+
+                let gradient = ctx.createRadialGradient(p.x - radius/3, p.y - radius/3, radius/10, p.x, p.y, radius);
+                gradient.addColorStop(0, '#fff');
+                gradient.addColorStop(0.2, p.a.color);
+                gradient.addColorStop(1, '#000');
+
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                if (showLabels) {
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 12px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.shadowBlur = 0;
+                    ctx.fillText(p.a.symbol, p.x, p.y + 5);
+                }
+            });
+
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('resize', resize);
+
+        // Touch Interaction
+        let lastX, lastY;
+        canvas.addEventListener('touchstart', e => {
+            lastX = e.touches[0].clientX;
+            lastY = e.touches[0].clientY;
+        });
+        canvas.addEventListener('touchmove', e => {
+            let dx = e.touches[0].clientX - lastX;
+            let dy = e.touches[0].clientY - lastY;
+            rotateY += dx * 0.01;
+            rotateX += dy * 0.01;
+            lastX = e.touches[0].clientX;
+            lastY = e.touches[0].clientY;
+            e.preventDefault();
+        });
+
+        function toggleLabels() {
+            showLabels = !showLabels;
+        }
+
+        function resetRotation() {
+            rotateX = 0.5;
+            rotateY = 0.5;
+        }
+
+        resize();
+        draw();
+    </script>
+</body>
+</html>

@@ -16,14 +16,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * RegisterActivity handles the student registration process.
- * Fixed the Grade selection field to be interactive and clickable.
+ * Updated with Grade dropdown and Country Code selection.
  */
 public class RegisterActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
 
-    private EditText fullNameEditText, emailEditText, studentIdEditText, usernameEditText, passwordEditText;
-    private AutoCompleteTextView gradeDropdown;
+    private EditText fullNameEditText, emailEditText, studentIdEditText, usernameEditText, passwordEditText, phoneEditText;
+    private AutoCompleteTextView gradeDropdown, countryCodeDropdown;
     private ImageView profileImage;
     private DatabaseHelper dbHelper;
 
@@ -35,7 +35,7 @@ public class RegisterActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
 
         initViews();
-        setupGradeDropdown();
+        setupDropdowns();
     }
 
     private void initViews() {
@@ -46,13 +46,15 @@ public class RegisterActivity extends AppCompatActivity {
         profileImage = findViewById(R.id.profileImage);
         findViewById(R.id.btnCamera).setOnClickListener(v -> openGallery());
 
-        // Mapping to new XML IDs
+        // Mapping to XML IDs
         fullNameEditText = findViewById(R.id.regFullName);
         emailEditText = findViewById(R.id.regEmail);
         studentIdEditText = findViewById(R.id.regStudentId);
         gradeDropdown = findViewById(R.id.regGrade);
         usernameEditText = findViewById(R.id.regUsername);
         passwordEditText = findViewById(R.id.regPassword);
+        phoneEditText = findViewById(R.id.regPhone);
+        countryCodeDropdown = findViewById(R.id.regCountryCode);
 
         Button registerButton = findViewById(R.id.registerButton);
         registerButton.setOnClickListener(v -> handleRegistration());
@@ -60,15 +62,31 @@ public class RegisterActivity extends AppCompatActivity {
         findViewById(R.id.loginRedirect).setOnClickListener(v -> finish());
     }
 
-    private void setupGradeDropdown() {
-        // Defined standard grades: 9, 10, 11, 12
+    private void setupDropdowns() {
+        // 1. Grade Dropdown
         String[] grades = {"9", "10", "11", "12"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, 
+        ArrayAdapter<String> gradeAdapter = new ArrayAdapter<>(this, 
                 android.R.layout.simple_dropdown_item_1line, grades);
-        gradeDropdown.setAdapter(adapter);
-        
-        // Ensure the dropdown opens on click
+        gradeDropdown.setAdapter(gradeAdapter);
         gradeDropdown.setOnClickListener(v -> gradeDropdown.showDropDown());
+
+        // 2. Country Code Dropdown (10 Countries)
+        String[] countries = {
+            "🇪🇹 +251 (Ethiopia)",
+            "🇺🇸 +1 (USA)",
+            "🇬🇧 +44 (UK)",
+            "🇰🇪 +254 (Kenya)",
+            "🇳🇬 +234 (Nigeria)",
+            "🇮🇳 +91 (India)",
+            "🇨🇦 +1 (Canada)",
+            "🇦🇪 +971 (UAE)",
+            "🇿🇦 +27 (South Africa)",
+            "🇩🇪 +49 (Germany)"
+        };
+        ArrayAdapter<String> countryAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_dropdown_item_1line, countries);
+        countryCodeDropdown.setAdapter(countryAdapter);
+        countryCodeDropdown.setOnClickListener(v -> countryCodeDropdown.showDropDown());
     }
 
     private void openGallery() {
@@ -93,6 +111,8 @@ public class RegisterActivity extends AppCompatActivity {
         String grade = gradeDropdown.getText().toString().trim();
         String username = getText(usernameEditText);
         String password = getText(passwordEditText);
+        String countryCode = countryCodeDropdown.getText().toString().trim();
+        String phoneNumber = getText(phoneEditText);
         String imageUriStr = profileImage.getTag() != null ? profileImage.getTag().toString() : "";
 
         if (fullName.isEmpty() || email.isEmpty() || username.isEmpty() || password.isEmpty() || studentId.isEmpty() || grade.isEmpty()) {
@@ -100,7 +120,9 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        // Fixed: Matching DatabaseHelper signature with 8 parameters
+        // Full phone number string
+        String fullPhone = countryCode + " " + phoneNumber;
+
         boolean isRegistered = dbHelper.registerUser(fullName, studentId, grade, username, email, password, imageUriStr, "STUDENT");
 
         if (isRegistered) {

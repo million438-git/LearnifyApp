@@ -7,11 +7,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,8 +32,7 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.List;
 
 /**
- * DashboardActivity - Fixed navigation and inflation crashes.
- * Now extends BaseActivity for consistent Appearance settings.
+ * DashboardActivity - Updated to sync and display user profile image and details.
  */
 public class DashboardActivity extends BaseActivity implements VoiceStudyManager.VoiceCallback {
 
@@ -52,14 +54,12 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // BaseActivity handles Theme and Appearance settings
         super.onCreate(savedInstanceState);
         
         try {
             setContentView(R.layout.activity_dashboard);
         } catch (Exception e) {
             Log.e("Dashboard", "Inflation Error", e);
-            // Fallback or alert user
             Toast.makeText(this, "UI Load Error. Please restart.", Toast.LENGTH_LONG).show();
             finish();
             return;
@@ -84,11 +84,11 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
         initViews();
         setupNavigation();
         loadMaterials();
+        updateHeaderAndWelcome();
         
         checkMicrophonePermission();
         updateNotificationUI();
 
-        // Register receiver for real-time notification updates
         try {
             IntentFilter filter = new IntentFilter("com.million.learnify.UPDATE_NOTIFICATION_UI");
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -100,11 +100,45 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
             Log.e("Dashboard", "Receiver registration failed", e);
         }
         
-        // Trigger welcome notification on first entry
         sendWelcomeNotification();
-
-        // Initial motivation scheduling
         NotificationHelper.scheduleGenericNotification(this, "motivation", 500, 1);
+    }
+
+    private void updateHeaderAndWelcome() {
+        // Update Dashboard Welcome Title
+        if (tvWelcomeTitle != null) {
+            SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
+            String fullName = pref.getString("full_name", currentUsername);
+            tvWelcomeTitle.setText("Welcome " + fullName + "!");
+        }
+
+        // Update Navigation Drawer Header (Image and Info)
+        NavigationView navView = findViewById(R.id.navigationView);
+        if (navView != null && navView.getHeaderCount() > 0) {
+            View header = navView.getHeaderView(0);
+            ImageView ivHeaderProfile = header.findViewById(R.id.ivUserHeader);
+            TextView tvHeaderName = header.findViewById(R.id.tvUserNameHeader);
+            TextView tvHeaderEmail = header.findViewById(R.id.tvUserEmailHeader);
+
+            Cursor cursor = dbHelper.getUserDetails(currentUsername);
+            if (cursor != null && cursor.moveToFirst()) {
+                String fullName = cursor.getString(cursor.getColumnIndexOrThrow("full_name"));
+                String email = cursor.getString(cursor.getColumnIndexOrThrow("email"));
+                String imageUriStr = cursor.getString(cursor.getColumnIndexOrThrow("profile_image"));
+
+                if (tvHeaderName != null) tvHeaderName.setText(fullName);
+                if (tvHeaderEmail != null) tvHeaderEmail.setText(email);
+                
+                if (ivHeaderProfile != null && imageUriStr != null && !imageUriStr.isEmpty()) {
+                    try {
+                        ivHeaderProfile.setImageURI(Uri.parse(imageUriStr));
+                    } catch (Exception e) {
+                        Log.e("Dashboard", "Profile Image Load Failed", e);
+                    }
+                }
+                cursor.close();
+            }
+        }
     }
 
     private void sendWelcomeNotification() {
@@ -123,19 +157,12 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
         Toolbar toolbar = findViewById(R.id.toolbar);
         if (toolbar != null) setSupportActionBar(toolbar);
 
-        if (tvWelcomeTitle != null) {
-            SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
-            String fullName = pref.getString("full_name", currentUsername);
-            tvWelcomeTitle.setText("Welcome " + fullName + "!");
-        }
-
         if (rlNotificationContainer != null) {
             rlNotificationContainer.setOnClickListener(v -> {
                 startActivity(new Intent(this, NotificationListActivity.class));
             });
         }
 
-        // Dashboard Feature Navigation
         safeSetClick(R.id.cardTimetable, v -> startActivity(new Intent(this, ClassScheduleActivity.class)));
         safeSetClick(R.id.cardCourses, v -> startActivity(new Intent(this, SubjectActivity.class)));
         safeSetClick(R.id.cardAssignments, v -> startActivity(new Intent(this, TasksActivity.class)));
@@ -278,6 +305,7 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
     protected void onResume() {
         super.onResume();
         updateNotificationUI();
+        updateHeaderAndWelcome();
     }
 
     @Override

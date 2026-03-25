@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <style>
+        body { margin: 0; background: #f0fdf4; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        .leaf { width: 200px; height: 120px; background: #22c55e; border-radius: 100px 10px 100px 10px; border: 3px solid #166534; position: relative; overflow: hidden; }
+        .cover { position: absolute; width: 60px; height: 100%; background: #1e293b; left: 70px; top: 0; opacity: 0.8; }
+        .iodine-drop { position: absolute; width: 10px; height: 10px; background: #78350f; border-radius: 50%; top: -20px; transition: top 0.5s; }
+        #status { margin-top: 20px; font-weight: bold; color: #166534; text-align: center; padding: 0 20px; }
+        .result { background: #1e1b4b !important; }
+    </style>
+</head>
+<body>
+    <div class="leaf" id="leaf">
+        <div class="cover" id="cover"></div>
+    </div>
+    <div id="status">Leaf part is covered to block light. <br/>Apply Iodine to test for starch.</div>
+    <script>
+        function interact() {
+            document.getElementById('leaf').style.background = "#1e1b4b";
+            document.getElementById('cover').style.background = "#22c55e"; // Stays green because no starch formed
+            document.getElementById('status').innerText = "Result: Covered part stayed green (No Starch). Uncovered part turned Blue-Black (Starch Present).";
+        }
+    </script>
+</body>
+</html>

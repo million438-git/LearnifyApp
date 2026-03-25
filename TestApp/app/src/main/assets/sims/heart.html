@@ -1,42 +1,297 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Learnify Biology – Heart Anatomy</title>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #fff1f2; padding: 20px; overflow: hidden; }
-        .heart { width: 100px; height: 100px; background: #e11d48; position: relative; transform: rotate(-45deg); margin: 50px auto; animation: beat 1s infinite; }
-        .heart:before, .heart:after { content: ""; width: 100px; height: 100px; background: #e11d48; border-radius: 50%; position: absolute; }
-        .heart:before { top: -50px; left: 0; }
-        .heart:after { top: 0; left: 50px; }
-        @keyframes beat {
-            0% { transform: rotate(-45deg) scale(1); }
-            20% { transform: rotate(-45deg) scale(1.2); }
-            40% { transform: rotate(-45deg) scale(1.1); }
-            60% { transform: rotate(-45deg) scale(1.3); }
-            100% { transform: rotate(-45deg) scale(1); }
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
-        .controls { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-top: 50px; }
-        input { width: 80%; }
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #fff5e8;
+            margin: 0;
+            padding: 16px;
+            line-height: 1.4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fffaf2;
+            border-radius: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            overflow: hidden;
+            padding: 1rem;
+        }
+        h1 {
+            background: #b91c1c;
+            color: white;
+            padding: 0.6rem;
+            text-align: center;
+            border-radius: 1rem;
+            font-size: 1.3rem;
+            margin: 0 0 1rem;
+        }
+        .canvas-container {
+            text-align: center;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 1rem;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+            height: auto;
+            background: #fff5e8;
+            border-radius: 1rem;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        .info-panel {
+            background: #b91c1c;
+            color: #fff5e6;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+        }
+        .info-panel strong {
+            color: #ffd966;
+        }
+        .circulation {
+            background: #fff0e0;
+            border-left: 5px solid #b91c1c;
+            padding: 0.8rem;
+            border-radius: 0.8rem;
+            margin: 1rem 0;
+            font-size: 0.8rem;
+        }
+        button {
+            background: #b91c1c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #b98a6e;
+            margin-top: 1rem;
+        }
+        @media (max-width: 550px) {
+            body { padding: 8px; }
+            .container { padding: 0.8rem; }
+            .info-panel { font-size: 0.75rem; }
+        }
     </style>
 </head>
 <body>
-    <h3>Biology: Human Heart Rate</h3>
-    <div class="heart" id="heart"></div>
-    <div class="controls">
-        <label>Heart Rate (BPM): <span id="bpmVal">70</span></label><br>
-        <input type="range" min="40" max="180" value="70" oninput="updateBPM(this.value)">
-        <p id="status">Normal Resting Rate</p>
+<div class="container">
+    <h1>❤️ Heart Anatomy</h1>
+    <div class="canvas-container">
+        <canvas id="heartCanvas" width="500" height="500" style="max-width:500px; width:100%; height:auto;"></canvas>
     </div>
-    <script>
-        function updateBPM(val) {
-            document.getElementById('bpmVal').innerText = val;
-            let duration = 60 / val;
-            document.getElementById('heart').style.animationDuration = duration + 's';
-            let status = document.getElementById('status');
-            if(val < 60) status.innerText = "Bradycardia (Low)";
-            else if(val > 100) status.innerText = "Tachycardia (High/Exercise)";
-            else status.innerText = "Normal Heart Rate";
+    <div class="info-panel" id="infoPanel">
+        <strong>💖 Tap on a heart part</strong><br>
+        Click or touch any region to learn its name and function.
+    </div>
+    <div class="circulation">
+        <strong>🩸 Blood Flow & Vessels</strong><br>
+        <strong>Arteries</strong> carry blood away from the heart (high pressure).<br>
+        <strong>Capillaries</strong> are microscopic vessels where oxygen and nutrients are exchanged with tissues.<br>
+        <strong>Veins</strong> carry blood back to the heart (contain valves to prevent backflow).<br>
+        <em>Pathway:</em> Right heart → pulmonary artery → lungs → pulmonary veins → left heart → aorta → body → vena cava → back.
+    </div>
+    <button id="resetBtn">⟳ Reset selection</button>
+    <footer>💡 Tap on any coloured region – explanations appear below. Scroll to see all.</footer>
+</div>
+
+<script>
+    (function() {
+        const canvas = document.getElementById('heartCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let currentRegion = null;
+
+        // ---- Interactive regions (normalized coordinates 0-1) ----
+        const regions = [
+            { name: "Right Atrium", desc: "Receives deoxygenated blood from superior and inferior vena cava.",
+              hitTest: (x,y) => (x > 0.45 && x < 0.65 && y > 0.15 && y < 0.35) },
+            { name: "Left Atrium", desc: "Receives oxygenated blood from the pulmonary veins.",
+              hitTest: (x,y) => (x > 0.65 && x < 0.85 && y > 0.1 && y < 0.28) },
+            { name: "Right Ventricle", desc: "Pumps deoxygenated blood to the lungs via pulmonary artery.",
+              hitTest: (x,y) => (x > 0.45 && x < 0.68 && y > 0.55 && y < 0.8) },
+            { name: "Left Ventricle", desc: "Pumps oxygenated blood to the body through the aorta. Thickest wall.",
+              hitTest: (x,y) => (x > 0.68 && x < 0.88 && y > 0.55 && y < 0.82) },
+            { name: "Aorta", desc: "Largest artery; carries oxygenated blood from left ventricle to the body.",
+              hitTest: (x,y) => (x > 0.8 && x < 0.95 && y > 0.25 && y < 0.45) },
+            { name: "Pulmonary Artery", desc: "Carries deoxygenated blood from right ventricle to the lungs.",
+              hitTest: (x,y) => (x > 0.65 && x < 0.85 && y > 0.35 && y < 0.52) },
+            { name: "Superior Vena Cava", desc: "Brings deoxygenated blood from upper body to right atrium.",
+              hitTest: (x,y) => (x > 0.55 && x < 0.75 && y > 0.02 && y < 0.18) },
+            { name: "Inferior Vena Cava", desc: "Brings deoxygenated blood from lower body to right atrium.",
+              hitTest: (x,y) => (x > 0.35 && x < 0.55 && y > 0.82 && y < 0.98) },
+            { name: "Pulmonary Veins", desc: "Carry oxygenated blood from lungs to left atrium.",
+              hitTest: (x,y) => (x > 0.75 && x < 0.92 && y > 0.05 && y < 0.15) },
+            { name: "Tricuspid Valve", desc: "Valve between right atrium and right ventricle; prevents backflow.",
+              hitTest: (x,y) => (x > 0.5 && x < 0.6 && y > 0.35 && y < 0.45) },
+            { name: "Mitral Valve", desc: "Valve between left atrium and left ventricle; prevents backflow.",
+              hitTest: (x,y) => (x > 0.7 && x < 0.8 && y > 0.3 && y < 0.4) }
+        ];
+
+        // ---- Drawing function (compact, all labels inside) ----
+        function drawHeart() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.save();
+
+            // Heart outline
+            ctx.beginPath();
+            ctx.moveTo(width*0.5, height*0.05);
+            ctx.quadraticCurveTo(width*0.7, height*0.1, width*0.8, height*0.2);
+            ctx.quadraticCurveTo(width*0.9, height*0.35, width*0.85, height*0.55);
+            ctx.quadraticCurveTo(width*0.8, height*0.75, width*0.6, height*0.85);
+            ctx.quadraticCurveTo(width*0.5, height*0.9, width*0.4, height*0.85);
+            ctx.quadraticCurveTo(width*0.2, height*0.75, width*0.15, height*0.55);
+            ctx.quadraticCurveTo(width*0.1, height*0.35, width*0.2, height*0.2);
+            ctx.quadraticCurveTo(width*0.3, height*0.1, width*0.5, height*0.05);
+            ctx.fillStyle = "#ffd0b0";
+            ctx.fill();
+            ctx.strokeStyle = "#b91c1c";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Chambers (coloured)
+            ctx.fillStyle = "#ffb6b6";
+            ctx.beginPath(); ctx.ellipse(width*0.55, height*0.22, width*0.1, height*0.07, 0, 0, 2*Math.PI); ctx.fill(); // RA
+            ctx.beginPath(); ctx.ellipse(width*0.75, height*0.18, width*0.09, height*0.07, 0, 0, 2*Math.PI); ctx.fill(); // LA
+            ctx.fillStyle = "#ff9999";
+            ctx.beginPath(); ctx.ellipse(width*0.57, height*0.68, width*0.12, height*0.12, 0, 0, 2*Math.PI); ctx.fill(); // RV
+            ctx.beginPath(); ctx.ellipse(width*0.78, height*0.68, width*0.13, height*0.13, 0, 0, 2*Math.PI); ctx.fill(); // LV
+
+            // Valves (small triangles)
+            ctx.fillStyle = "#b91c1c";
+            ctx.beginPath(); ctx.moveTo(width*0.52, height*0.3); ctx.lineTo(width*0.58, height*0.32); ctx.lineTo(width*0.55, height*0.36); ctx.fill();
+            ctx.beginPath(); ctx.moveTo(width*0.72, height*0.27); ctx.lineTo(width*0.78, height*0.28); ctx.lineTo(width*0.75, height*0.32); ctx.fill();
+            ctx.beginPath(); ctx.moveTo(width*0.68, height*0.48); ctx.lineTo(width*0.74, height*0.5); ctx.lineTo(width*0.71, height*0.54); ctx.fill();
+            ctx.beginPath(); ctx.moveTo(width*0.84, height*0.52); ctx.lineTo(width*0.9, height*0.54); ctx.lineTo(width*0.87, height*0.58); ctx.fill();
+
+            // Major vessels (simple shapes)
+            ctx.fillStyle = "#7aaae0";
+            ctx.beginPath(); ctx.moveTo(width*0.6, height*0.08); ctx.lineTo(width*0.55, height*0.16); ctx.lineTo(width*0.52, height*0.2); ctx.fill(); // SVC
+            ctx.beginPath(); ctx.moveTo(width*0.48, height*0.82); ctx.lineTo(width*0.52, height*0.76); ctx.lineTo(width*0.56, height*0.72); ctx.fill(); // IVC
+            ctx.fillStyle = "#e05a5a";
+            ctx.beginPath(); ctx.moveTo(width*0.72, height*0.44); ctx.lineTo(width*0.85, height*0.38); ctx.lineTo(width*0.82, height*0.32); ctx.fill(); // Pulm Art
+            ctx.beginPath(); ctx.moveTo(width*0.86, height*0.38); ctx.lineTo(width*0.94, height*0.42); ctx.lineTo(width*0.92, height*0.48); ctx.fill(); // Aorta
+            ctx.fillStyle = "#7aaae0";
+            ctx.beginPath(); ctx.moveTo(width*0.82, height*0.12); ctx.lineTo(width*0.78, height*0.18); ctx.lineTo(width*0.74, height*0.16); ctx.fill(); // Pulm Vein
+            ctx.beginPath(); ctx.moveTo(width*0.86, height*0.1); ctx.lineTo(width*0.82, height*0.16); ctx.lineTo(width*0.78, height*0.14); ctx.fill();
+
+            // Labels (small, within the canvas)
+            ctx.font = `${Math.max(9, width*0.02)}px "Segoe UI", monospace`;
+            ctx.fillStyle = "#2c3e2c";
+            ctx.fillText("RA", width*0.52, height*0.23);
+            ctx.fillText("LA", width*0.73, height*0.19);
+            ctx.fillText("RV", width*0.54, height*0.69);
+            ctx.fillText("LV", width*0.75, height*0.69);
+            ctx.fillText("SVC", width*0.45, height*0.12);
+            ctx.fillText("IVC", width*0.35, height*0.85);
+            ctx.fillText("Pulm Art", width*0.7, height*0.3);
+            ctx.fillText("Aorta", width*0.88, height*0.46);
+            ctx.fillText("Pulm Veins", width*0.68, height*0.09);
+            ctx.fillText("Tricuspid", width*0.43, height*0.34);
+            ctx.fillText("Mitral", width*0.68, height*0.31);
+            ctx.fillText("Pulmonic", width*0.6, height*0.52);
+            ctx.fillText("Aortic", width*0.82, height*0.57);
+
+            // Highlight selected region
+            if (currentRegion) {
+                ctx.save();
+                ctx.strokeStyle = "#facc15";
+                ctx.lineWidth = 3;
+                if (currentRegion.name === "Right Atrium") ctx.strokeRect(width*0.45, height*0.15, width*0.2, height*0.2);
+                else if (currentRegion.name === "Left Atrium") ctx.strokeRect(width*0.65, height*0.1, width*0.2, height*0.18);
+                else if (currentRegion.name === "Right Ventricle") ctx.strokeRect(width*0.45, height*0.55, width*0.23, height*0.25);
+                else if (currentRegion.name === "Left Ventricle") ctx.strokeRect(width*0.68, height*0.55, width*0.2, height*0.27);
+                else if (currentRegion.name === "Aorta") ctx.strokeRect(width*0.8, height*0.25, width*0.15, height*0.2);
+                else if (currentRegion.name === "Pulmonary Artery") ctx.strokeRect(width*0.65, height*0.35, width*0.2, height*0.18);
+                else if (currentRegion.name === "Superior Vena Cava") ctx.strokeRect(width*0.55, height*0.02, width*0.2, height*0.16);
+                else if (currentRegion.name === "Inferior Vena Cava") ctx.strokeRect(width*0.35, height*0.82, width*0.2, height*0.16);
+                else if (currentRegion.name === "Pulmonary Veins") ctx.strokeRect(width*0.75, height*0.05, width*0.17, height*0.1);
+                else if (currentRegion.name === "Tricuspid Valve") ctx.strokeRect(width*0.5, height*0.35, width*0.1, height*0.1);
+                else if (currentRegion.name === "Mitral Valve") ctx.strokeRect(width*0.7, height*0.3, width*0.1, height*0.1);
+                ctx.restore();
+            }
+
+            ctx.restore();
         }
-    </script>
+
+        // ---- Hit detection ----
+        function handleTap(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            let clientX, clientY;
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+                e.preventDefault();
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            let canvasX = (clientX - rect.left) * scaleX;
+            let canvasY = (clientY - rect.top) * scaleY;
+            let nx = canvasX / width;
+            let ny = canvasY / height;
+
+            for (let r of regions) {
+                if (r.hitTest(nx, ny)) {
+                    currentRegion = r;
+                    document.getElementById('infoPanel').innerHTML = `<strong>❤️ ${r.name}</strong><br>${r.desc}`;
+                    drawHeart();
+                    return;
+                }
+            }
+            // background tap
+            currentRegion = null;
+            document.getElementById('infoPanel').innerHTML = `<strong>💖 Tap on a heart part</strong><br>Click or touch any coloured region to learn its name and function.`;
+            drawHeart();
+        }
+
+        function resetSelection() {
+            currentRegion = null;
+            document.getElementById('infoPanel').innerHTML = `<strong>💖 Tap on a heart part</strong><br>Click or touch any coloured region to learn its name and function.`;
+            drawHeart();
+        }
+
+        // Resize canvas to be square but fit width
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            const maxSize = Math.min(500, container.clientWidth);
+            canvas.width = maxSize;
+            canvas.height = maxSize;
+            width = maxSize;
+            height = maxSize;
+            drawHeart();
+        }
+
+        // Event listeners
+        canvas.addEventListener('click', handleTap);
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleTap(e); });
+        document.getElementById('resetBtn').addEventListener('click', resetSelection);
+        window.addEventListener('resize', () => { resizeCanvas(); drawHeart(); });
+
+        resizeCanvas();
+        drawHeart();
+    })();
+</script>
 </body>
 </html>

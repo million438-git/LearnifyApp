@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Chemistry Research Lab</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background-color: #0f172a; color: #e2e8f0; line-height: 1.6; }
+        .container { max-width: 900px; margin: auto; background: #1e293b; padding: 30px; border-radius: 15px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); border: 1px solid #334155; }
+        h1 { color: #818cf8; text-align: center; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+        .lab-status { display: flex; justify-content: space-between; margin-bottom: 30px; background: #0f172a; padding: 15px; border-radius: 10px; font-family: monospace; color: #10B981; border: 1px solid #10B981; }
+        .research-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .data-readout { background: #334155; padding: 15px; border-radius: 8px; }
+        .interactive-area { text-align: center; margin-top: 30px; padding: 40px; border: 2px solid #818cf8; border-radius: 15px; background: radial-gradient(circle, #1e293b 0%, #0f172a 100%); position: relative; }
+        .flask { width: 120px; height: 150px; margin: 20px auto; position: relative; }
+        .flask-body { width: 100%; height: 80%; background: rgba(255,255,255,0.1); border: 3px solid #cbd5e1; border-radius: 50% 50% 10% 10%; position: absolute; bottom: 0; overflow: hidden; }
+        .flask-neck { width: 30%; height: 30%; background: rgba(255,255,255,0.1); border: 3px solid #cbd5e1; border-bottom: none; position: absolute; top: 0; left: 35%; border-radius: 5px 5px 0 0; }
+        .reaction-fluid { position: absolute; bottom: 0; width: 100%; height: 0%; background: linear-gradient(to top, #4f46e5, #818cf8); transition: all 1s ease; }
+        .bubble { position: absolute; background: rgba(255,255,255,0.4); border-radius: 50%; animation: rise 2s infinite; opacity: 0; }
+        @keyframes rise { 0% { bottom: 0; opacity: 1; } 100% { bottom: 100%; opacity: 0; } }
+        button { background: #4f46e5; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: transform 0.2s; }
+        button:hover { background: #6366f1; transform: scale(1.05); }
+        .theory-section { margin-top: 30px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 10px; font-size: 0.9em; border-left: 4px solid #818cf8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Advanced Synthesis Unit</h1>
+
+        <div class="lab-status">
+            <span>SYSTEM: ONLINE</span>
+            <span>TEMP: 298.15 K</span>
+            <span>PRESSURE: 1.01 ATM</span>
+        </div>
+
+        <div class="research-panel">
+            <div class="data-readout">
+                <h4>Spectroscopic Data</h4>
+                <p>Waiting for reaction...</p>
+            </div>
+            <div class="data-readout">
+                <h4>Kinetics Monitor</h4>
+                <p>Rate: 0.00 M/s</p>
+            </div>
+        </div>
+
+        <div class="interactive-area">
+            <div class="flask">
+                <div class="flask-neck"></div>
+                <div class="flask-body">
+                    <div id="fluid" class="reaction-fluid"></div>
+                </div>
+            </div>
+            <button onclick="initiateReaction()">Initiate Synthesis</button>
+        </div>
+
+        <div class="theory-section">
+            <h3>Advanced Theory</h3>
+            <p>This simulation explores the thermodynamic favorability of complex chemical reactions. By modulating the activation energy through catalytic intervention, students can visualize the transition state and product formation in real-time.</p>
+        </div>
+    </div>
+
+    <script>
+        function initiateReaction() {
+            const fluid = document.getElementById('fluid');
+            fluid.style.height = '60%';
+
+            // Create bubbles
+            for(let i=0; i<10; i++) {
+                setTimeout(() => {
+                    const bubble = document.createElement('div');
+                    bubble.className = 'bubble';
+                    bubble.style.left = Math.random() * 100 + '%';
+                    bubble.style.width = bubble.style.height = (Math.random() * 10 + 5) + 'px';
+                    document.getElementById('fluid').appendChild(bubble);
+                }, i * 200);
+            }
+
+            setTimeout(() => {
+                fluid.style.background = 'linear-gradient(to top, #059669, #10b981)';
+                document.querySelector('.lab-status span:nth-child(2)').innerText = 'TEMP: 345.20 K';
+                document.querySelector('.data-readout p').innerText = 'Peak at 450nm detected.';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

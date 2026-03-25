@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Learnify Biology – Plant Structure</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(145deg, #e8f5e9 0%, #c8e6d9 100%);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .card {
+            max-width: 1100px;
+            width: 100%;
+            background: rgba(255, 255, 245, 0.96);
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        h1 {
+            background: #2e7d32;
+            color: white;
+            margin: 0;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .sub {
+            text-align: center;
+            background: #f1f8e9;
+            padding: 0.5rem;
+            color: #2e7d32;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #c5e1a5;
+        }
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            padding: 1.5rem;
+        }
+        .canvas-area {
+            flex: 2;
+            min-width: 280px;
+            background: #fffef7;
+            border-radius: 1rem;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        canvas {
+            width: 100%;
+            height: auto;
+            background: #fef9e8;
+            border-radius: 1rem;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .info-area {
+            flex: 1;
+            min-width: 240px;
+            background: #fafaf2;
+            border-radius: 1rem;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .info-panel {
+            background: #2e5c2e;
+            color: #fef9e6;
+            border-radius: 1rem;
+            padding: 1rem;
+            min-height: 150px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .info-panel strong {
+            color: #ffd966;
+        }
+        .facts {
+            background: #eef5e8;
+            border-left: 5px solid #5aae5a;
+            padding: 0.7rem;
+            font-size: 0.8rem;
+            border-radius: 0.8rem;
+        }
+        button {
+            background: #5aae5a;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+            width: 100%;
+        }
+        button:active { transform: scale(0.96); }
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #6c8e6c;
+            padding: 1rem;
+            border-top: 1px solid #ddd;
+        }
+        @media (max-width: 700px) {
+            .content { padding: 1rem; }
+            .info-panel { font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>🌿 Plant Structure</h1>
+    <div class="sub">Tap any part to learn its function</div>
+
+    <div class="content">
+        <div class="canvas-area">
+            <canvas id="plantCanvas" width="600" height="500" style="max-width:100%; height:auto;"></canvas>
+        </div>
+
+        <div class="info-area">
+            <div class="info-panel" id="infoPanel">
+                <strong>🌱 Tap on a plant part</strong><br>
+                Click on roots, stem, leaf, flower, or fruit to learn about its role.
+            </div>
+            <div class="facts">
+                🌸 <strong>Did you know?</strong><br>
+                Plants make their own food through photosynthesis in leaves. Roots anchor the plant and absorb water.
+            </div>
+            <button id="resetBtn">⟳ Reset selection</button>
+        </div>
+    </div>
+    <footer>💡 Touch or click on different parts of the plant – an explanation will appear.</footer>
+</div>
+
+<script>
+    (function() {
+        // ---- Canvas setup ----
+        const canvas = document.getElementById('plantCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+
+        // ---- Define interactive regions with hitTest functions ----
+        // All coordinates are normalized (0-1) relative to canvas size
+        const regions = [
+            { name: "Roots",
+              desc: "Anchor the plant in soil and absorb water and minerals. Root hairs increase surface area.",
+              hitTest: (x,y) => (y > 0.75 && x > 0.2 && x < 0.8 && y < 0.95) },
+            { name: "Stem",
+              desc: "Supports leaves and flowers; transports water and nutrients between roots and leaves.",
+              hitTest: (x,y) => (x > 0.45 && x < 0.55 && y > 0.3 && y < 0.75) },
+            { name: "Leaf",
+              desc: "Site of photosynthesis – converts sunlight, CO₂, and water into food (glucose).",
+              hitTest: (x,y) => {
+                // left leaf
+                let inLeft = (x > 0.1 && x < 0.4 && y > 0.4 && y < 0.6);
+                // right leaf
+                let inRight = (x > 0.6 && x < 0.9 && y > 0.4 && y < 0.6);
+                return inLeft || inRight;
+              } },
+            { name: "Flower (Petal)",
+              desc: "Attracts pollinators; colorful part of the flower. Flowers are the reproductive organs.",
+              hitTest: (x,y) => {
+                // flower region around top
+                let cx = 0.5, cy = 0.2;
+                let r = 0.15;
+                return Math.hypot(x-cx, y-cy) < r;
+              } },
+            { name: "Stamen (male)",
+              desc: "Produces pollen (male gametes). Usually consists of anther and filament.",
+              hitTest: (x,y) => {
+                let cx = 0.52, cy = 0.22;
+                let r = 0.06;
+                return Math.hypot(x-cx, y-cy) < r;
+              } },
+            { name: "Pistil (female)",
+              desc: "Contains ovary with ovules. Receives pollen for fertilization.",
+              hitTest: (x,y) => {
+                let cx = 0.48, cy = 0.21;
+                let r = 0.05;
+                return Math.hypot(x-cx, y-cy) < r;
+              } }
+        ];
+
+        let currentRegion = null;
+
+        // ---- Drawing functions ----
+        function drawPlant() {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, width, height);
+
+            // Background (sky and ground)
+            ctx.fillStyle = "#e6f7e6";
+            ctx.fillRect(0, 0, width, height);
+            ctx.fillStyle = "#c8e6c9";
+            ctx.fillRect(0, height*0.7, width, height*0.3);
+
+            // Roots (brown)
+            ctx.fillStyle = "#8d6e63";
+            ctx.beginPath();
+            ctx.moveTo(width*0.5, height*0.75);
+            for (let i=0; i<8; i++) {
+                let xoff = (Math.random() - 0.5) * width*0.4;
+                let yoff = height*0.1 + Math.random()*height*0.1;
+                ctx.lineTo(width*0.5 + xoff, height*0.75 + yoff);
+            }
+            ctx.fill();
+            // finer root hairs
+            ctx.beginPath();
+            for (let i=0; i<20; i++) {
+                let x = width*(0.3 + Math.random()*0.4);
+                let y = height*(0.75 + Math.random()*0.15);
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + (Math.random()-0.5)*10, y + 5);
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = "#6d4c41";
+                ctx.stroke();
+            }
+
+            // Stem (green)
+            ctx.fillStyle = "#5d8c48";
+            ctx.beginPath();
+            ctx.rect(width*0.48, height*0.3, width*0.04, height*0.45);
+            ctx.fill();
+            // add some texture lines
+            ctx.beginPath();
+            ctx.strokeStyle = "#3b5e2b";
+            for (let i=0; i<8; i++) {
+                let y = height*(0.3 + i*0.05);
+                ctx.moveTo(width*0.48, y);
+                ctx.lineTo(width*0.52, y);
+                ctx.stroke();
+            }
+
+            // Leaves (two big leaves)
+            ctx.fillStyle = "#4caf50";
+            // left leaf
+            ctx.beginPath();
+            ctx.moveTo(width*0.45, height*0.5);
+            ctx.quadraticCurveTo(width*0.2, height*0.45, width*0.25, height*0.3);
+            ctx.quadraticCurveTo(width*0.35, height*0.35, width*0.45, height*0.5);
+            ctx.fill();
+            ctx.fillStyle = "#66bb6a";
+            ctx.beginPath();
+            ctx.moveTo(width*0.45, height*0.5);
+            ctx.quadraticCurveTo(width*0.3, height*0.55, width*0.25, height*0.7);
+            ctx.quadraticCurveTo(width*0.35, height*0.65, width*0.45, height*0.5);
+            ctx.fill();
+            // right leaf
+            ctx.fillStyle = "#4caf50";
+            ctx.beginPath();
+            ctx.moveTo(width*0.55, height*0.5);
+            ctx.quadraticCurveTo(width*0.8, height*0.45, width*0.75, height*0.3);
+            ctx.quadraticCurveTo(width*0.65, height*0.35, width*0.55, height*0.5);
+            ctx.fill();
+            ctx.fillStyle = "#66bb6a";
+            ctx.beginPath();
+            ctx.moveTo(width*0.55, height*0.5);
+            ctx.quadraticCurveTo(width*0.7, height*0.55, width*0.75, height*0.7);
+            ctx.quadraticCurveTo(width*0.65, height*0.65, width*0.55, height*0.5);
+            ctx.fill();
+
+            // Leaf veins
+            ctx.beginPath();
+            ctx.strokeStyle = "#2c5e2c";
+            ctx.lineWidth = 1;
+            for (let i=0; i<4; i++) {
+                let x = width*(0.3 + i*0.1);
+                ctx.moveTo(width*0.45, height*0.5);
+                ctx.lineTo(x, height*0.45 - i*5);
+                ctx.stroke();
+            }
+
+            // Flower (big petal circle)
+            ctx.fillStyle = "#fdd835";
+            ctx.beginPath();
+            ctx.ellipse(width*0.5, height*0.2, width*0.1, height*0.08, 0, 0, 2*Math.PI);
+            ctx.fill();
+            ctx.fillStyle = "#ffb74d";
+            for (let i=0; i<6; i++) {
+                let angle = i * Math.PI*2/6;
+                let dx = Math.cos(angle) * width*0.12;
+                let dy = Math.sin(angle) * height*0.1;
+                ctx.beginPath();
+                ctx.ellipse(width*0.5 + dx, height*0.2 + dy, width*0.07, height*0.06, 0, 0, 2*Math.PI);
+                ctx.fill();
+            }
+            // Stamen (anthers)
+            ctx.fillStyle = "#ffaa66";
+            for (let i=0; i<8; i++) {
+                let angle = i * Math.PI*2/8;
+                let dx = Math.cos(angle) * width*0.05;
+                let dy = Math.sin(angle) * height*0.04;
+                ctx.beginPath();
+                ctx.arc(width*0.5 + dx, height*0.2 + dy, width*0.02, 0, 2*Math.PI);
+                ctx.fill();
+            }
+            // Pistil (center)
+            ctx.fillStyle = "#dd9966";
+            ctx.beginPath();
+            ctx.ellipse(width*0.5, height*0.2, width*0.03, height*0.03, 0, 0, 2*Math.PI);
+            ctx.fill();
+
+            // Fruit (small apple-like)
+            ctx.fillStyle = "#e64a19";
+            ctx.beginPath();
+            ctx.ellipse(width*0.7, height*0.4, width*0.07, height*0.06, 0, 0, 2*Math.PI);
+            ctx.fill();
+            ctx.fillStyle = "#bf360c";
+            ctx.beginPath();
+            ctx.moveTo(width*0.7, height*0.37);
+            ctx.lineTo(width*0.705, height*0.34);
+            ctx.lineTo(width*0.695, height*0.34);
+            ctx.fill();
+
+            // Highlight selected region (outline)
+            if (currentRegion) {
+                ctx.save();
+                ctx.strokeStyle = "#f9a825";
+                ctx.lineWidth = 3;
+                ctx.shadowBlur = 0;
+                if (currentRegion.name === "Roots") {
+                    ctx.strokeRect(width*0.2, height*0.75, width*0.6, height*0.2);
+                } else if (currentRegion.name === "Stem") {
+                    ctx.strokeRect(width*0.45, height*0.3, width*0.1, height*0.45);
+                } else if (currentRegion.name === "Leaf") {
+                    ctx.beginPath();
+                    ctx.ellipse(width*0.35, height*0.5, width*0.2, height*0.2, 0, 0, 2*Math.PI);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.ellipse(width*0.65, height*0.5, width*0.2, height*0.2, 0, 0, 2*Math.PI);
+                    ctx.stroke();
+                } else if (currentRegion.name === "Flower (Petal)") {
+                    ctx.beginPath();
+                    ctx.ellipse(width*0.5, height*0.2, width*0.18, height*0.15, 0, 0, 2*Math.PI);
+                    ctx.stroke();
+                } else if (currentRegion.name === "Stamen (male)") {
+                    ctx.beginPath();
+                    ctx.arc(width*0.52, height*0.22, width*0.06, 0, 2*Math.PI);
+                    ctx.stroke();
+                } else if (currentRegion.name === "Pistil (female)") {
+                    ctx.beginPath();
+                    ctx.arc(width*0.48, height*0.21, width*0.05, 0, 2*Math.PI);
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+        }
+
+        // ---- Hit detection ----
+        function handleCanvasClick(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            let clientX, clientY;
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+                e.preventDefault();
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            let canvasX = (clientX - rect.left) * scaleX;
+            let canvasY = (clientY - rect.top) * scaleY;
+            let nx = canvasX / width;
+            let ny = canvasY / height;
+
+            for (let r of regions) {
+                if (r.hitTest(nx, ny)) {
+                    currentRegion = r;
+                    document.getElementById('infoPanel').innerHTML = `<strong>🌿 ${r.name}</strong><br>${r.desc}`;
+                    drawPlant();
+                    return;
+                }
+            }
+            // Click on background -> show general info
+            currentRegion = null;
+            document.getElementById('infoPanel').innerHTML = `<strong>🌱 Tap on a plant part</strong><br>Click on roots, stem, leaf, flower, or fruit to learn about its role.`;
+            drawPlant();
+        }
+
+        // Reset selection
+        function resetSelection() {
+            currentRegion = null;
+            document.getElementById('infoPanel').innerHTML = `<strong>🌱 Tap on a plant part</strong><br>Click on roots, stem, leaf, flower, or fruit to learn about its role.`;
+            drawPlant();
+        }
+
+        // Resize canvas
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            const maxWidth = Math.min(600, container.clientWidth - 20);
+            canvas.width = maxWidth;
+            canvas.height = maxWidth * 0.85;  // maintain aspect
+            width = canvas.width;
+            height = canvas.height;
+            drawPlant();
+        }
+
+        // Event listeners
+        canvas.addEventListener('click', handleCanvasClick);
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleCanvasClick(e); });
+        document.getElementById('resetBtn').addEventListener('click', resetSelection);
+        window.addEventListener('resize', () => { resizeCanvas(); drawPlant(); });
+
+        // Initialization
+        resizeCanvas();
+        drawPlant();
+    })();
+</script>
+</body>
+</html>

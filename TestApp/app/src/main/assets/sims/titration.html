@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acid-Base Titration Lab</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; background-color: #f3f4f6; color: #1f2937; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .lab-bench { display: flex; justify-content: center; align-items: flex-end; height: 400px; gap: 50px; margin: 40px 0; border-bottom: 4px solid #4b5563; }
+
+        .buret-container { width: 40px; height: 300px; position: relative; }
+        .buret { width: 15px; height: 100%; border: 2px solid #9ca3af; border-radius: 0 0 5px 5px; margin: 0 auto; position: relative; background: rgba(255,255,255,0.5); }
+        .buret-fluid { position: absolute; bottom: 0; width: 100%; height: 80%; background: rgba(59, 130, 246, 0.3); transition: height 0.3s; }
+        .stopcock { position: absolute; bottom: 20px; left: -10px; width: 35px; height: 10px; background: #374151; border-radius: 5px; cursor: pointer; }
+
+        .flask { width: 100px; height: 120px; position: relative; }
+        .flask-body { width: 100%; height: 80%; background: rgba(255,255,255,0.8); border: 3px solid #6b7280; border-radius: 50% 50% 10% 10%; position: absolute; bottom: 0; overflow: hidden; }
+        .flask-neck { width: 30%; height: 30%; background: rgba(255,255,255,0.8); border: 3px solid #6b7280; border-bottom: none; position: absolute; top: 0; left: 35%; }
+        .flask-fluid { position: absolute; bottom: 0; width: 100%; height: 30%; background: #fff; transition: background-color 0.5s, height 0.5s; }
+
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .readout { background: #111827; color: #10b981; padding: 15px; border-radius: 8px; font-family: monospace; margin-top: 20px; }
+        button { background: #4f46e5; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        button:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Acid-Base Titration</h1>
+        <p>Objective: Determine the concentration of HCl using 0.1M NaOH and Phenolphthalein.</p>
+
+        <div class="lab-bench">
+            <div class="buret-container">
+                <div class="buret">
+                    <div id="buretFluid" class="buret-fluid"></div>
+                </div>
+                <div class="stopcock" onclick="addDrop()"></div>
+            </div>
+
+            <div class="flask">
+                <div class="flask-neck"></div>
+                <div class="flask-body">
+                    <div id="flaskFluid" class="flask-fluid"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="readout">
+            <div>NaOH Added: <span id="volDisp">0.00</span> mL</div>
+            <div>Flask pH: <span id="phDisp">1.20</span></div>
+            <div id="status">Status: Ready</div>
+        </div>
+
+        <div class="controls">
+            <button onclick="addDrop()">Add Drop (0.5 mL)</button>
+            <button onclick="resetSim()" style="background: #ef4444;">Reset Lab</button>
+        </div>
+
+        <div style="margin-top: 20px; font-size: 0.9em; color: #6b7280;">
+            <h3>Theory:</h3>
+            <p>In this titration, Phenolphthalein is used as an indicator. It remains colorless in acidic solutions and turns pink when the solution becomes slightly basic (equivalence point reached).</p>
+        </div>
+    </div>
+
+    <script>
+        let vol = 0;
+        let ph = 1.2;
+        const eqPt = 22.5; // Random equivalence point for this simulation
+
+        function addDrop() {
+            if (vol >= 50) return;
+            vol += 0.5;
+            updateUI();
+        }
+
+        function addVolume(v) {
+            vol = parseFloat(v);
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('volDisp').innerText = vol.toFixed(2);
+            document.getElementById('buretFluid').style.height = (80 - (vol * 1.5)) + '%';
+            document.getElementById('flaskFluid').style.height = (30 + (vol * 0.5)) + '%';
+
+            // pH Logic
+            if (vol < eqPt - 0.5) {
+                ph = 1.2 + (vol * 0.05);
+                document.getElementById('flaskFluid').style.backgroundColor = "#fff";
+            } else if (vol >= eqPt - 0.5 && vol <= eqPt + 0.5) {
+                ph = 7.0;
+                document.getElementById('flaskFluid').style.backgroundColor = "#fbcfe8"; // Pale pink
+                document.getElementById('status').innerText = "Status: Near Equivalence Point!";
+            } else {
+                ph = 12.5;
+                document.getElementById('flaskFluid').style.backgroundColor = "#ec4899"; // Bright pink
+                document.getElementById('status').innerText = "Status: Over Titrated";
+            }
+            document.getElementById('phDisp').innerText = ph.toFixed(2);
+        }
+
+        function resetSim() {
+            vol = 0;
+            ph = 1.2;
+            document.getElementById('status').innerText = "Status: Ready";
+            updateUI();
+        }
+
+        updateUI();
+    </script>
+</body>
+</html>

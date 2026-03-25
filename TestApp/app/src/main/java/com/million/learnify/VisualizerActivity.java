@@ -82,12 +82,26 @@ public class VisualizerActivity extends AppCompatActivity {
         simButtonsContainer.removeAllViews();
         List<SimInfo> sims = new ArrayList<>();
 
-        if (position == 0) { // Physics - Added the Full Lab entry point
+        if (position == 0) { // Physics
             MaterialButton btnFullLab = (MaterialButton) LayoutInflater.from(this).inflate(R.layout.item_sim_button, simButtonsContainer, false);
             btnFullLab.setText("🚀 FULL PHYSICS LAB (40+)");
             btnFullLab.setTextColor(getResources().getColor(R.color.blue_600));
             btnFullLab.setStrokeColorResource(R.color.blue_600);
             btnFullLab.setOnClickListener(v -> startActivity(new Intent(this, PhysicsLabActivity.class)));
+            simButtonsContainer.addView(btnFullLab);
+        } else if (position == 1) { // Chemistry
+            MaterialButton btnFullLab = (MaterialButton) LayoutInflater.from(this).inflate(R.layout.item_sim_button, simButtonsContainer, false);
+            btnFullLab.setText("⚗️ FULL CHEMISTRY LAB (40+)");
+            btnFullLab.setTextColor(getResources().getColor(R.color.purple_600));
+            btnFullLab.setStrokeColorResource(R.color.purple_600);
+            btnFullLab.setOnClickListener(v -> startActivity(new Intent(this, ChemistryLabActivity.class)));
+            simButtonsContainer.addView(btnFullLab);
+        } else if (position == 2) { // Biology
+            MaterialButton btnFullLab = (MaterialButton) LayoutInflater.from(this).inflate(R.layout.item_sim_button, simButtonsContainer, false);
+            btnFullLab.setText("🧬 FULL BIOLOGY LAB (35+)");
+            btnFullLab.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+            btnFullLab.setStrokeColorResource(android.R.color.holo_green_dark);
+            btnFullLab.setOnClickListener(v -> startActivity(new Intent(this, BiologyLabActivity.class)));
             simButtonsContainer.addView(btnFullLab);
         }
 

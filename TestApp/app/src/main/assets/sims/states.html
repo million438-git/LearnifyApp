@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>States of Matter Simulation</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background-color: #0f172a; color: white; overflow: hidden; }
+        .container { max-width: 800px; margin: auto; height: 90vh; display: flex; flex-direction: column; }
+        .sim-box { flex-grow: 1; background: #1e293b; border: 2px solid #334155; border-radius: 20px; position: relative; overflow: hidden; margin: 20px 0; }
+        .particle { position: absolute; background: #60a5fa; border-radius: 50%; width: 15px; height: 15px; box-shadow: 0 0 10px rgba(96, 165, 250, 0.5); }
+        .controls { background: #334155; padding: 20px; border-radius: 15px; display: flex; justify-content: space-around; align-items: center; }
+        button { background: #3b82f6; color: white; border: none; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .temp-display { font-size: 24px; font-family: monospace; color: #10b981; }
+        .label { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 5px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>States of Matter</h1>
+        <div class="sim-box" id="container">
+            <div class="label" id="stateLabel">State: Solid</div>
+            <!-- Particles will be injected here -->
+        </div>
+        <div class="controls">
+            <div class="temp-display">TEMP: <span id="temp">50</span> K</div>
+            <button onclick="changeState('solid')">Solid</button>
+            <button onclick="changeState('liquid')">Liquid</button>
+            <button onclick="changeState('gas')">Gas</button>
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('container');
+        const particles = [];
+        const numParticles = 40;
+        let currentState = 'solid';
+        let temperature = 50;
+
+        function createParticles() {
+            for (let i = 0; i < numParticles; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                container.appendChild(p);
+                particles.push({
+                    el: p,
+                    x: Math.random() * 80 + 10,
+                    y: Math.random() * 80 + 10,
+                    vx: 0,
+                    vy: 0
+                });
+            }
+        }
+
+        function update() {
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            particles.forEach((p, i) => {
+                if (currentState === 'solid') {
+                    // Lattice structure with vibration
+                    const row = i % 6;
+                    const col = Math.floor(i / 6);
+                    const targetX = (width / 2 - 60) + row * 20;
+                    const targetY = (height / 2 - 60) + col * 20;
+                    p.x += (targetX - p.x) * 0.1 + (Math.random() - 0.5) * (temperature / 50);
+                    p.y += (targetY - p.y) * 0.1 + (Math.random() - 0.5) * (temperature / 50);
+                } else if (currentState === 'liquid') {
+                    // Clumped but moving
+                    p.vx += (Math.random() - 0.5) * (temperature / 100);
+                    p.vy += (Math.random() - 0.5) * (temperature / 100) + 0.05; // Gravity-ish
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    // Boundary for liquid (bottom)
+                    if (p.y > height - 20) { p.y = height - 20; p.vy *= -0.5; }
+                    if (p.x < 10) { p.x = 10; p.vx *= -0.5; }
+                    if (p.x > width - 20) { p.x = width - 20; p.vx *= -0.5; }
+                } else {
+                    // Free moving gas
+                    p.vx += (Math.random() - 0.5) * (temperature / 20);
+                    p.vy += (Math.random() - 0.5) * (temperature / 20);
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    // Boundary bounce
+                    if (p.x < 0 || p.x > width - 15) p.vx *= -1;
+                    if (p.y < 0 || p.y > height - 15) p.vy *= -1;
+                }
+
+                p.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
+            });
+            requestAnimationFrame(update);
+        }
+
+        function changeState(state) {
+            currentState = state;
+            document.getElementById('stateLabel').innerText = "State: " + state.toUpperCase();
+            if (state === 'solid') temperature = 50;
+            if (state === 'liquid') temperature = 200;
+            if (state === 'gas') temperature = 500;
+            document.getElementById('temp').innerText = temperature;
+        }
+
+        function setEnergy(val) {
+            temperature = val * 5;
+            document.getElementById('temp').innerText = temperature;
+            if (temperature < 100) currentState = 'solid';
+            else if (temperature < 350) currentState = 'liquid';
+            else currentState = 'gas';
+            document.getElementById('stateLabel').innerText = "State: " + currentState.toUpperCase();
+        }
+
+        createParticles();
+        update();
+    </script>
+</body>
+</html>

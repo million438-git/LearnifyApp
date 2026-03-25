@@ -23,18 +23,11 @@ android {
         }
 
         python {
-            // Bundled Python version for the app
             version "3.11"
-            
-            // Specify the Python 3.11 executable on your machine.
-            // On Windows, if you have the Python Launcher installed, use:
             buildPython "py", "-3.11"
-            
-            // If the above doesn't work, provide the absolute path:
-            // buildPython "C:/Users/<YourUser>/AppData/Local/Programs/Python/Python311/python.exe"
 
             pip {
-                // No external dependencies required for voice_brain.py
+                install "rank-bm25"
             }
         }
 
@@ -72,7 +65,6 @@ dependencies {
     implementation libs.androidx.core.splashscreen
     implementation libs.androidx.gridlayout
     
-    // Explicit dependencies to help Layout Preview resolve classes
     implementation libs.androidx.coordinatorlayout
     implementation libs.androidx.drawerlayout
     implementation libs.androidx.recyclerview
@@ -81,7 +73,6 @@ dependencies {
     implementation libs.androidx.lifecycle.viewmodel
     implementation libs.androidx.lifecycle.livedata
 
-    // CameraX dependencies
     implementation libs.androidx.camera.core
     implementation libs.androidx.camera.camera2
     implementation libs.androidx.camera.lifecycle

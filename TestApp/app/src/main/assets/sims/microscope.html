@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <style>
+        body { margin: 0; background: #0f172a; font-family: sans-serif; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        .view-port { width: 280px; height: 280px; border-radius: 50%; border: 12px solid #334155; overflow: hidden; position: relative; background: #000; box-shadow: inset 0 0 50px #000, 0 0 20px rgba(0,0,0,0.5); }
+        #slide { width: 1000px; height: 1000px; position: absolute; top: -350px; left: -350px; background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="none" stroke="rgba(16,185,129,0.3)" stroke-width="0.5"/><path d="M30 50 Q 50 20 70 50" fill="none" stroke="rgba(16,185,129,0.4)"/><circle cx="45" cy="45" r="2" fill="rgba(16,185,129,0.6)"/></svg>'); background-size: 80px 80px; transition: filter 0.2s; }
+        .lens-flare { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1) 0%, transparent 60%); pointer-events: none; }
+        .info { margin-top: 20px; text-align: center; }
+        #mag-text { font-size: 18px; color: #10b981; font-weight: bold; }
+        #focus-status { font-size: 12px; color: #94a3b8; }
+    </style>
+</head>
+<body>
+    <div class="view-port">
+        <div id="slide"></div>
+        <div class="lens-flare"></div>
+    </div>
+    <div class="info">
+        <div id="mag-text">40x Magnification</div>
+        <div id="focus-status">Adjust fine focus slider</div>
+    </div>
+    <script>
+        const slide = document.getElementById('slide');
+        const magText = document.getElementById('mag-text');
+        const focusStatus = document.getElementById('focus-status');
+
+        function setFocus(val) {
+            const blur = Math.abs(val - 50) / 5;
+            slide.style.filter = `blur(${blur}px) brightness(${0.8 + (1-blur/10)*0.4})`;
+            focusStatus.innerText = blur < 1 ? "🎯 Perfect Focus" : "Adjusting Focus...";
+            focusStatus.style.color = blur < 1 ? "#10b981" : "#94a3b8";
+        }
+
+        function setMag(val) {
+            const scale = 1 + (val / 50);
+            slide.style.transform = `scale(${scale})`;
+            magText.innerText = (40 + val * 4) + "x Magnification";
+        }
+
+        setFocus(50);
+        setMag(0);
+    </script>
+</body>
+</html>

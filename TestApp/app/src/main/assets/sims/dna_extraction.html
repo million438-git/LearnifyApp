@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Learnify Biology Lab – DNA Extraction</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(145deg, #f8f0e7 0%, #e6d5c3 100%);
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+        .lab-card {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(255, 250, 240, 0.95);
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.6);
+            overflow: hidden;
+            backdrop-filter: blur(2px);
+            padding: 1.2rem;
+        }
+        h1 {
+            font-size: 1.6rem;
+            margin: 0 0 0.25rem;
+            text-align: center;
+            color: #4a1d3d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .sub {
+            text-align: center;
+            color: #7a4c6e;
+            font-size: 0.8rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #e2c7b0;
+            display: inline-block;
+            width: auto;
+            margin-left: auto;
+            margin-right: auto;
+            padding-bottom: 0.3rem;
+        }
+        .experiment-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .canvas-container {
+            flex: 2;
+            min-width: 240px;
+            background: #fef3e4;
+            border-radius: 1.5rem;
+            padding: 1rem;
+            box-shadow: inset 0 0 0 1px #fff8, 0 8px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        canvas {
+            width: 100%;
+            height: auto;
+            background: #fffaf2;
+            border-radius: 1rem;
+            display: block;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+        .controls-panel {
+            flex: 1;
+            min-width: 200px;
+            background: #fff5e8;
+            border-radius: 1.5rem;
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .step-info {
+            background: #5e2a4c20;
+            border-radius: 1rem;
+            padding: 0.8rem;
+            margin-bottom: 1.2rem;
+            border-left: 5px solid #9b4b6e;
+        }
+        .step-title {
+            font-weight: bold;
+            font-size: 1rem;
+            color: #4a1d3d;
+        }
+        .step-desc {
+            font-size: 0.9rem;
+            color: #2d1a2a;
+            margin-top: 0.3rem;
+        }
+        .button-group {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+            margin: 1rem 0 0.5rem;
+        }
+        button {
+            background: #9b4b6e;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 2rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        button:active {
+            transform: scale(0.96);
+            background: #7a3a58;
+        }
+        .reset-btn {
+            background: #5e6b5e;
+        }
+        .reset-btn:active {
+            background: #3e4b3e;
+        }
+        .badge {
+            background: #d9b48b;
+            color: #4a1d3d;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #9b7c6b;
+            margin-top: 1rem;
+        }
+        @media (max-width: 700px) {
+            .lab-card { padding: 0.9rem; }
+            button { padding: 6px 16px; font-size: 0.8rem; }
+            .step-desc { font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="lab-card">
+    <h1>🧬 DNA Extraction Lab</h1>
+    <div style="text-align: center;"><span class="sub">Real‑world simulation • Touch & zoom</span></div>
+
+    <div class="experiment-area">
+        <div class="canvas-container">
+            <canvas id="labCanvas" width="500" height="400" style="width:100%; height:auto; max-width:500px;"></canvas>
+        </div>
+        <div class="controls-panel">
+            <div class="step-info">
+                <div class="step-title" id="stepTitle">Step 1</div>
+                <div class="step-desc" id="stepDesc">Mash fruit and add lysis buffer</div>
+            </div>
+            <div class="button-group">
+                <button id="prevBtn" disabled>◀ Previous</button>
+                <button id="nextBtn">Next ▶</button>
+                <button id="resetBtn" class="reset-btn">⟳ Reset</button>
+            </div>
+            <div class="badge" id="statusBadge">🍓 Strawberry DNA extraction</div>
+        </div>
+    </div>
+    <footer>💡 Pinch to zoom • Tap canvas to see details • Follow the lab steps</footer>
+</div>
+
+<script>
+    (function(){
+        // ----- Simulation state -----
+        let currentStep = 0;          // 0=mash, 1=filter, 2=ethanol, 3=DNA visible
+        const steps = [
+            { title: "Step 1: Mash & Lysis", desc: "Mash the fruit (strawberry) in a bag with lysis buffer (soap + salt) to break cell membranes." },
+            { title: "Step 2: Filter", desc: "Pour the mixture through a filter (cheesecloth) to remove large debris." },
+            { title: "Step 3: Add Ethanol", desc: "Slowly pour chilled ethanol (or isopropyl alcohol) down the side. Do not mix!" },
+            { title: "Step 4: DNA Precipitated", desc: "White cloudy strands appear at the interface – that's DNA! Spool with a glass rod." }
+        ];
+
+        // Canvas & drawing
+        const canvas = document.getElementById('labCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+
+        // Animation & visual effects
+        let bubbles = [];
+        let animationId = null;
+        let dnaVisible = false;      // shows white strands when step >= 3
+        let liquidHeight = 0.4;      // fraction of beaker height (0-1)
+
+        // DOM elements
+        const stepTitleEl = document.getElementById('stepTitle');
+        const stepDescEl = document.getElementById('stepDesc');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const statusBadge = document.getElementById('statusBadge');
+
+        // Resize canvas to maintain proper ratio
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            const maxWidth = Math.min(500, container.clientWidth - 20);
+            canvas.width = maxWidth;
+            canvas.height = maxWidth * 0.85;  // 5:4 aspect
+            width = canvas.width;
+            height = canvas.height;
+            drawBeaker();
+        }
+
+        // Draw realistic beaker with liquid, bubbles, and DNA strands
+        function drawBeaker() {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, width, height);
+
+            // Beaker shape (glass)
+            const beakerX = width * 0.15;
+            const beakerW = width * 0.7;
+            const beakerY = height * 0.1;
+            const beakerH = height * 0.8;
+            const rimRadius = 12;
+
+            ctx.save();
+            // Glass background
+            ctx.shadowBlur = 0;
+            ctx.beginPath();
+            ctx.moveTo(beakerX + rimRadius, beakerY);
+            ctx.lineTo(beakerX + beakerW - rimRadius, beakerY);
+            ctx.quadraticCurveTo(beakerX + beakerW, beakerY, beakerX + beakerW, beakerY + rimRadius);
+            ctx.lineTo(beakerX + beakerW, beakerY + beakerH - rimRadius);
+            ctx.quadraticCurveTo(beakerX + beakerW, beakerY + beakerH, beakerX + beakerW - rimRadius, beakerY + beakerH);
+            ctx.lineTo(beakerX + rimRadius, beakerY + beakerH);
+            ctx.quadraticCurveTo(beakerX, beakerY + beakerH, beakerX, beakerY + beakerH - rimRadius);
+            ctx.lineTo(beakerX, beakerY + rimRadius);
+            ctx.quadraticCurveTo(beakerX, beakerY, beakerX + rimRadius, beakerY);
+            ctx.closePath();
+
+            // Fill glass (semi‑transparent)
+            ctx.fillStyle = "#f9efe3";
+            ctx.fill();
+            ctx.strokeStyle = "#b87c6a";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Liquid
+            const liquidTop = beakerY + beakerH * (1 - liquidHeight);
+            ctx.beginPath();
+            ctx.moveTo(beakerX + rimRadius, liquidTop);
+            ctx.lineTo(beakerX + beakerW - rimRadius, liquidTop);
+            ctx.lineTo(beakerX + beakerW, liquidTop + rimRadius);
+            ctx.lineTo(beakerX + beakerW, beakerY + beakerH - rimRadius);
+            ctx.quadraticCurveTo(beakerX + beakerW, beakerY + beakerH, beakerX + beakerW - rimRadius, beakerY + beakerH);
+            ctx.lineTo(beakerX + rimRadius, beakerY + beakerH);
+            ctx.quadraticCurveTo(beakerX, beakerY + beakerH, beakerX, beakerY + beakerH - rimRadius);
+            ctx.lineTo(beakerX, liquidTop + rimRadius);
+            ctx.quadraticCurveTo(beakerX, liquidTop, beakerX + rimRadius, liquidTop);
+            ctx.closePath();
+
+            const gradient = ctx.createLinearGradient(beakerX, liquidTop, beakerX, beakerY+beakerH);
+            gradient.addColorStop(0, "#fbb9c4");
+            gradient.addColorStop(1, "#f27ea6");
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // Bubbles (if step >= 1 and not yet DNA visible)
+            if (currentStep >= 1 && !dnaVisible) {
+                for (let i = 0; i < bubbles.length; i++) {
+                    ctx.beginPath();
+                    ctx.arc(bubbles[i].x, bubbles[i].y, bubbles[i].r, 0, 2*Math.PI);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${bubbles[i].alpha})`;
+                    ctx.fill();
+                }
+            }
+
+            // DNA strands (visible only after ethanol addition)
+            if (dnaVisible) {
+                ctx.save();
+                ctx.shadowBlur = 0;
+                ctx.globalCompositeOperation = 'lighter';
+                for (let i = 0; i < 12; i++) {
+                    const x = beakerX + beakerW * (0.2 + Math.random() * 0.6);
+                    const y = liquidTop + Math.random() * (beakerH * 0.6);
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x + 8, y - 6);
+                    ctx.lineTo(x - 8, y - 12);
+                    ctx.fillStyle = `rgba(255, 255, 220, ${0.5 + Math.random() * 0.4})`;
+                    ctx.fill();
+                }
+                // Thicker strands
+                for (let i = 0; i < 5; i++) {
+                    const x = beakerX + beakerW * (0.3 + i * 0.1);
+                    const y = liquidTop + 15;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.quadraticCurveTo(x+10, y-8, x+20, y-4);
+                    ctx.strokeStyle = "#fffbe0";
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+
+            // Rim highlight
+            ctx.beginPath();
+            ctx.moveTo(beakerX + rimRadius, beakerY);
+            ctx.lineTo(beakerX + beakerW - rimRadius, beakerY);
+            ctx.lineTo(beakerX + beakerW, beakerY + rimRadius);
+            ctx.strokeStyle = "#fff9";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        // Update simulation based on currentStep
+        function updateStep() {
+            // Update text
+            stepTitleEl.innerText = steps[currentStep].title;
+            stepDescEl.innerText = steps[currentStep].desc;
+
+            // Visual changes
+            if (currentStep === 0) {
+                liquidHeight = 0.4;
+                dnaVisible = false;
+                statusBadge.innerText = "🥣 Mash fruit + lysis buffer";
+            } else if (currentStep === 1) {
+                liquidHeight = 0.45;
+                dnaVisible = false;
+                statusBadge.innerText = "🧻 Filtering mixture...";
+                if (bubbles.length === 0) generateBubbles();
+            } else if (currentStep === 2) {
+                liquidHeight = 0.7;    // ethanol added
+                dnaVisible = false;
+                statusBadge.innerText = "❄️ Adding cold ethanol...";
+            } else if (currentStep === 3) {
+                liquidHeight = 0.7;
+                dnaVisible = true;
+                statusBadge.innerText = "🧬 DNA precipitated! White strands visible.";
+            }
+
+            // Enable/disable prev button
+            prevBtn.disabled = (currentStep === 0);
+            drawBeaker();
+        }
+
+        // Bubble animation loop
+        function animateBubbles() {
+            if (currentStep >= 1 && currentStep < 3 && !dnaVisible) {
+                // Update bubble positions
+                for (let i = 0; i < bubbles.length; i++) {
+                    bubbles[i].y -= 0.8;
+                    bubbles[i].alpha = Math.min(1, bubbles[i].alpha + 0.01);
+                    if (bubbles[i].y < height * 0.2) {
+                        bubbles[i].y = height * 0.85;
+                        bubbles[i].x = width * (0.2 + Math.random() * 0.6);
+                        bubbles[i].alpha = 0.3;
+                    }
+                }
+                drawBeaker();
+            } else {
+                // If no bubbles needed, just draw static
+                drawBeaker();
+            }
+            animationId = requestAnimationFrame(animateBubbles);
+        }
+
+        function generateBubbles() {
+            bubbles = [];
+            for (let i = 0; i < 25; i++) {
+                bubbles.push({
+                    x: width * (0.2 + Math.random() * 0.6),
+                    y: height * (0.5 + Math.random() * 0.4),
+                    r: 2 + Math.random() * 5,
+                    alpha: 0.3 + Math.random() * 0.5
+                });
+            }
+        }
+
+        // Step navigation
+        function nextStep() {
+            if (currentStep < 3) {
+                currentStep++;
+                updateStep();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                updateStep();
+            }
+        }
+
+        function resetExperiment() {
+            currentStep = 0;
+            updateStep();
+            generateBubbles();
+        }
+
+        // Event listeners
+        nextBtn.addEventListener('click', nextStep);
+        prevBtn.addEventListener('click', prevStep);
+        resetBtn.addEventListener('click', resetExperiment);
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            if (currentStep >= 1 && currentStep < 3) generateBubbles();
+            updateStep();
+        });
+
+        // Initial setup
+        resizeCanvas();
+        generateBubbles();
+        updateStep();
+        animateBubbles();
+
+        // Optional: tap canvas gives a fun message
+        canvas.addEventListener('click', () => {
+            if (currentStep === 3) {
+                statusBadge.innerText = "🧬 You extracted DNA! Spool with a rod.";
+                setTimeout(() => {
+                    statusBadge.innerText = "🧬 DNA visible!";
+                }, 1500);
+            }
+        });
+    })();
+</script>
+</body>
+</html>

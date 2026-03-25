@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <style>
+        body { margin: 0; background: #f0f9ff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        .beaker { width: 200px; height: 200px; border: 4px solid #0ea5e9; border-top: none; border-radius: 0 0 20px 20px; position: relative; background: rgba(255,255,255,0.8); overflow: hidden; }
+        .membrane { position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; background: #38bdf8; border-left: 2px dashed #0369a1; }
+        .side { position: absolute; bottom: 0; width: 50%; transition: height 0.5s; }
+        #left-side { left: 0; background: rgba(14, 165, 233, 0.3); }
+        #right-side { right: 0; background: rgba(14, 165, 233, 0.6); }
+        .solute { position: absolute; width: 6px; height: 6px; background: #0369a1; border-radius: 50%; }
+        #status { margin-top: 20px; font-weight: bold; color: #0c4a6e; }
+    </style>
+</head>
+<body>
+    <div class="beaker">
+        <div id="left-side" class="side" style="height: 50%"></div>
+        <div id="right-side" class="side" style="height: 50%"></div>
+        <div class="membrane"></div>
+    </div>
+    <div id="status">Equilibrium State</div>
+    <script>
+        function setConc(val) {
+            const leftH = 50 + (val - 50) / 2;
+            const rightH = 100 - leftH;
+            document.getElementById('left-side').style.height = leftH + '%';
+            document.getElementById('right-side').style.height = rightH + '%';
+            document.getElementById('status').innerText = val > 50 ? "Water moving to Right (Hypertonic)" : (val < 50 ? "Water moving to Left (Hypotonic)" : "Dynamic Equilibrium");
+        }
+    </script>
+</body>
+</html>

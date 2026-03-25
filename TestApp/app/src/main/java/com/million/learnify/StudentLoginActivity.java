@@ -6,37 +6,49 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
+
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
-import com.google.android.material.textfield.TextInputEditText;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
- * StudentLoginActivity - With normal system transitions.
+ * StudentLoginActivity - Updated with Social Login Functionality.
  */
 public class StudentLoginActivity extends BaseActivity {
 
-    private TextInputEditText etStudentUser, etStudentPassword;
+    private EditText etStudentUser, etStudentPassword;
     private MaterialButton btnStudentLogin;
     private CircularProgressIndicator loginProgress;
     private TextView tvRegisterRedirect, tvForgotPassword;
-    private ImageView loginProfileIcon;
+    private ImageView loginProfileIcon, btnGoogleLogin, btnLinkedinLogin;
     private CheckBox cbRememberMe;
     private DatabaseHelper dbHelper;
     private SharedPreferences loginPrefs;
     private static final String PREFS_NAME = "LoginPrefs";
+    
+    private static final int REQUEST_IMAGE_CAPTURE = 101;
+    private String currentPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +75,12 @@ public class StudentLoginActivity extends BaseActivity {
         tvForgotPassword = findViewById(R.id.tvForgotPassword);
         loginProfileIcon = findViewById(R.id.loginProfileIcon);
         cbRememberMe = findViewById(R.id.cbRememberMe);
+        btnGoogleLogin = findViewById(R.id.btnGoogleLogin);
+        btnLinkedinLogin = findViewById(R.id.btnLinkedinLogin);
+
+        if (loginProfileIcon != null) {
+            loginProfileIcon.setOnClickListener(v -> dispatchTakePictureIntent());
+        }
 
         if (etStudentUser != null) {
             etStudentUser.addTextChangedListener(new TextWatcher() {
@@ -75,13 +93,94 @@ public class StudentLoginActivity extends BaseActivity {
         }
 
         if (btnStudentLogin != null) {
-            btnStudentLogin.setOnClickListener(v -> {
-                handleLogin();
-            });
+            btnStudentLogin.setOnClickListener(v -> handleLogin());
         }
         
+        if (btnGoogleLogin != null) {
+            btnGoogleLogin.setOnClickListener(v -> handleSocialLogin("Google"));
+        }
+
+        if (btnLinkedinLogin != null) {
+            btnLinkedinLogin.setOnClickListener(v -> handleSocialLogin("LinkedIn"));
+        }
+
         if (tvRegisterRedirect != null) tvRegisterRedirect.setOnClickListener(v -> startActivity(new Intent(this, RegisterActivity.class)));
         if (tvForgotPassword != null) tvForgotPassword.setOnClickListener(v -> startActivity(new Intent(this, ForgotPasswordActivity.class)));
+    }
+
+    private void handleSocialLogin(String provider) {
+        setLoading(true);
+        Toast.makeText(this, "Connecting to " + provider + "...", Toast.LENGTH_SHORT).show();
+        
+        // Simulate social login process
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            String mockEmail = provider.toLowerCase() + "_user@example.com";
+            String mockName = provider + " User";
+            
+            // Check if user exists or create a placeholder for simulation
+            if (!dbHelper.checkUser(mockEmail, "social_pass", "STUDENT")) {
+                 // In a real app, we'd sign up here. For simulation, we'll just log in as a guest
+                 Log.d("SocialLogin", "New social user: " + mockName);
+            }
+            
+            setLoading(false);
+            onSocialLoginSuccess(mockEmail, mockName);
+        }, 1500);
+    }
+
+    private void onSocialLoginSuccess(String email, String name) {
+        getSharedPreferences("UserSession", MODE_PRIVATE).edit()
+            .putString("username", email)
+            .putString("full_name", name)
+            .putString("grade", "10")
+            .putString("user_type", "STUDENT")
+            .putBoolean("isLoggedIn", true)
+            .apply();
+
+        Toast.makeText(this, "Logged in via " + (email.contains("google") ? "Google" : "LinkedIn"), Toast.LENGTH_SHORT).show();
+        
+        Intent intent = new Intent(StudentLoginActivity.this, DashboardActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                Log.e("StudentLogin", "Error creating image file", ex);
+            }
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        getApplicationContext().getPackageName() + ".fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            if (loginProfileIcon != null && currentPhotoPath != null) {
+                loginProfileIcon.setImageURI(Uri.fromFile(new File(currentPhotoPath)));
+            }
+        }
     }
 
     private void loadRememberedData() {
@@ -103,10 +202,10 @@ public class StudentLoginActivity extends BaseActivity {
             if (imageUriStr != null && !imageUriStr.isEmpty()) {
                 loginProfileIcon.setImageURI(Uri.parse(imageUriStr));
             } else {
-                loginProfileIcon.setImageResource(android.R.drawable.ic_menu_camera);
+                loginProfileIcon.setImageResource(R.drawable.ic_real_camera);
             }
         } catch (Exception e) {
-            loginProfileIcon.setImageResource(android.R.drawable.ic_menu_camera);
+            loginProfileIcon.setImageResource(R.drawable.ic_real_camera);
         }
     }
 
@@ -133,7 +232,7 @@ public class StudentLoginActivity extends BaseActivity {
 
     private void setLoading(boolean loading) {
         if (btnStudentLogin != null) {
-            btnStudentLogin.setText(loading ? "" : "Sign In Now");
+            btnStudentLogin.setText(loading ? "" : "Login");
             btnStudentLogin.setEnabled(!loading);
         }
         if (loginProgress != null) {
@@ -181,7 +280,6 @@ public class StudentLoginActivity extends BaseActivity {
         Intent intent = new Intent(StudentLoginActivity.this, DashboardActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-        // System default transition
         finish();
     }
 }
