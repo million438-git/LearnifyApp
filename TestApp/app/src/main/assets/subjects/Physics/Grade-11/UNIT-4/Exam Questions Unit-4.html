@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 11 Physics – Unit 4 · Dynamics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f8fafc;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: #1e293b;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-radius: 40px 40px 20px 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(180,83,9,0.2);
+        }
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.15s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.07);
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #d97706;
+            border-left: 8px solid #d97706;
+            padding-left: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .remember, .wow {
+            padding: 1.2rem 1.5rem;
+            border-radius: 20px;
+            margin: 1.5rem 0;
+            font-weight: 500;
+        }
+        .remember {
+            background: #ecfeff;
+            border-left: 6px solid #22c55e;
+        }
+        .wow {
+            background: #fff7ed;
+            border-left: 6px solid #f59e0b;
+        }
+        ul, ol {
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+        .question-block {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin: 1.2rem 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.02);
+        }
+        .q-num {
+            display: inline-block;
+            background: #d97706;
+            color: white;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+        .q-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .answer-btn {
+            background: #d97706;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem 0;
+            transition: background 0.1s;
+        }
+        .answer-btn:hover {
+            background: #b45309;
+        }
+        .answer {
+            display: none;
+            background: #ecfeff;
+            padding: 1.2rem;
+            border-radius: 18px;
+            margin-top: 1rem;
+            border-left: 5px solid #d97706;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #cbd5e1, transparent);
+            margin: 2.5rem 0;
+        }
+        .footer-note {
+            text-align: center;
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 50px;
+            border: 1px dashed #64748b;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>⚙️ Grade 11 Physics – Unit 4</h1>
+        <p>Dynamics · 30 challenging questions · exam‑ready</p>
+    </header>
+
+    <!-- Unit notes -->
+    <div class="card">
+        <h2>📘 Dynamics – forces and motion</h2>
+        <p>Dynamics explains why objects move – it connects force and motion. Newton's laws are central: inertia (first law), F = m a (second law), action‑reaction (third law). Key concepts include friction, normal force, tension, centripetal force, and equilibrium. Understanding dynamics allows us to predict the motion of everything from cars to planets.</p>
+        <div class="remember">📌 REMEMBER: Net force = mass × acceleration. Forces are vectors – always consider components.</div>
+        <div class="wow">✨ WOW: The same laws that govern a falling apple also govern the orbit of the Moon!</div>
+    </div>
+
+    <!-- ========== 30 QUESTIONS ========== -->
+    <!-- Part A: Conceptual (Q1–Q15) -->
+    <div class="question-block">
+        <div class="q-num">Q1 (conceptual)</div>
+        <div class="q-text">A block is on a frictionless horizontal surface. A force F is applied at an angle θ above the horizontal. Which component of the force causes acceleration along the surface?</div>
+        <button class="answer-btn" onclick="toggle('a1')">Show answer</button>
+        <div class="answer" id="a1">
+            <strong>Answer:</strong> Only the horizontal component: F cos θ.<br>
+            <strong>Concept:</strong> Vertical component affects the normal force but does not accelerate the block horizontally.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q2 (conceptual)</div>
+        <div class="q-text">Why does mass resist acceleration?</div>
+        <button class="answer-btn" onclick="toggle('a2')">Show answer</button>
+        <div class="answer" id="a2">
+            <strong>Answer:</strong> Due to inertia – mass is a measure of resistance to change in motion. Newton’s second law: F = m × a.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q3 (conceptual)</div>
+        <div class="q-text">A car rounds a circular track at constant speed. Is there acceleration?</div>
+        <button class="answer-btn" onclick="toggle('a3')">Show answer</button>
+        <div class="answer" id="a3">
+            <strong>Answer:</strong> Yes, centripetal acceleration toward the center. Magnitude = v² / r.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q4 (conceptual)</div>
+        <div class="q-text">Explain why two forces of equal magnitude acting at an angle θ produce a smaller resultant than their sum.</div>
+        <button class="answer-btn" onclick="toggle('a4')">Show answer</button>
+        <div class="answer" id="a4">
+            <strong>Explanation:</strong> Because they are not collinear; the resultant depends on the angle: R = square root of (F² + F² + 2 F F cos θ). When θ > 0, cos θ < 1, so R < 2F.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q5 (conceptual)</div>
+        <div class="q-text">A body is in equilibrium under three forces. What is the condition?</div>
+        <button class="answer-btn" onclick="toggle('a5')">Show answer</button>
+        <div class="answer" id="a5">
+            <strong>Answer:</strong> The vector sum of forces must be zero in both horizontal and vertical directions. The three forces form a closed triangle when drawn head‑to‑tail.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q6 (conceptual)</div>
+        <div class="q-text">Why does friction depend on the normal force?</div>
+        <button class="answer-btn" onclick="toggle('a6')">Show answer</button>
+        <div class="answer" id="a6">
+            <strong>Answer:</strong> Frictional force = μ × N, where N is the normal force. Higher normal force increases contact and interlocking, so friction is stronger.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q7 (conceptual)</div>
+        <div class="q-text">A person in an elevator feels heavier or lighter. Explain using dynamics.</div>
+        <button class="answer-btn" onclick="toggle('a7')">Show answer</button>
+        <div class="answer" id="a7">
+            <strong>Explanation:</strong> Apparent weight = m (g + a). Upward acceleration increases apparent weight (heavier); downward acceleration decreases it (lighter).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q8 (conceptual)</div>
+        <div class="q-text">Why does an object sliding on a rough incline eventually reach terminal speed?</div>
+        <button class="answer-btn" onclick="toggle('a8')">Show answer</button>
+        <div class="answer" id="a8">
+            <strong>Explanation:</strong> As speed increases, friction (which may depend on speed) balances the component of weight along incline, net force becomes zero, so acceleration = 0 and speed becomes constant.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q9 (conceptual)</div>
+        <div class="q-text">A box is pushed along a rough horizontal surface at constant speed. What is the net force?</div>
+        <button class="answer-btn" onclick="toggle('a9')">Show answer</button>
+        <div class="answer" id="a9">
+            <strong>Answer:</strong> Net force = 0 because acceleration = 0. Applied force = friction.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q10 (conceptual)</div>
+        <div class="q-text">Why is centripetal force not a new force?</div>
+        <button class="answer-btn" onclick="toggle('a10')">Show answer</button>
+        <div class="answer" id="a10">
+            <strong>Answer:</strong> It is the resultant of actual forces (tension, gravity, normal, etc.) that point toward the center. Centripetal force is the required net force for circular motion.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q11 (conceptual)</div>
+        <div class="q-text">Two blocks connected over a frictionless pulley. Which block accelerates more?</div>
+        <button class="answer-btn" onclick="toggle('a11')">Show answer</button>
+        <div class="answer" id="a11">
+            <strong>Answer:</strong> Both blocks have the same magnitude of acceleration (they are connected). The acceleration is given by a = (m₁ − m₂)g / (m₁ + m₂). The lighter mass accelerates upward, heavier downward.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q12 (conceptual)</div>
+        <div class="q-text">A body moves in a circle at non‑uniform speed. What types of acceleration exist?</div>
+        <button class="answer-btn" onclick="toggle('a12')">Show answer</button>
+        <div class="answer" id="a12">
+            <strong>Answer:</strong> Tangential acceleration (due to change in speed) and radial (centripetal) acceleration (due to change in direction).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q13 (conceptual)</div>
+        <div class="q-text">Why is rolling friction smaller than sliding friction?</div>
+        <button class="answer-btn" onclick="toggle('a13')">Show answer</button>
+        <div class="answer" id="a13">
+            <strong>Answer:</strong> Because the deformation area is smaller and there is no interlocking of surfaces at the microscopic level; energy loss is much less.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q14 (conceptual)</div>
+        <div class="q-text">Explain the effect of angle of incline on acceleration of a sliding block (frictionless).</div>
+        <button class="answer-btn" onclick="toggle('a14')">Show answer</button>
+        <div class="answer" id="a14">
+            <strong>Explanation:</strong> a = g sin θ, so acceleration increases with θ. Greater angle → larger component of gravity along incline → higher acceleration.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q15 (conceptual)</div>
+        <div class="q-text">Why does the normal force change on an inclined plane when a force is applied vertically?</div>
+        <button class="answer-btn" onclick="toggle('a15')">Show answer</button>
+        <div class="answer" id="a15">
+            <strong>Explanation:</strong> Normal force = mg cos θ − F vertical component (if force is upward). It changes because the vertical component either lifts the block or presses it down, altering the contact force.
+        </div>
+    </div>
+
+    <!-- Part B: Numerical (Q16–Q30) -->
+    <div class="question-block">
+        <div class="q-num">Q16 (numerical)</div>
+        <div class="q-text">A 5 kg block is on a frictionless table. A force of 20 N acts at 30° above horizontal. Find acceleration of the block.</div>
+        <button class="answer-btn" onclick="toggle('a16')">Show answer</button>
+        <div class="answer" id="a16">
+            <strong>Step‑by‑step:</strong><br>
+            Horizontal component = 20 × cos30° = 20 × 0.8660 ≈ 17.32 N.<br>
+            Acceleration a = F / m = 17.32 / 5 ≈ 3.464 m/s².<br>
+            ✅ Answer: 3.46 m/s² (approx)
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q17 (numerical)</div>
+        <div class="q-text">A 10 kg mass is pulled up a 30° incline with friction μ = 0.2. g = 10 m/s². Find acceleration if applied force along incline is 100 N.</div>
+        <button class="answer-btn" onclick="toggle('a17')">Show answer</button>
+        <div class="answer" id="a17">
+            <strong>Step‑by‑step:</strong><br>
+            Weight component down incline = m g sin30° = 10×10×0.5 = 50 N.<br>
+            Normal force N = m g cos30° = 10×10×0.8660 = 86.6 N.<br>
+            Friction = μ N = 0.2 × 86.6 ≈ 17.32 N.<br>
+            Net force up incline = 100 – 50 – 17.32 = 32.68 N.<br>
+            a = F / m = 32.68 / 10 ≈ 3.27 m/s².<br>
+            ✅ Answer: 3.27 m/s²
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q18 (numerical)</div>
+        <div class="q-text">Two blocks, 8 kg and 12 kg, connected over a frictionless pulley. Find acceleration.</div>
+        <button class="answer-btn" onclick="toggle('a18')">Show answer</button>
+        <div class="answer" id="a18">
+            <strong>Step‑by‑step:</strong><br>
+            a = (m₂ – m₁) g / (m₁ + m₂) = (12 – 8) × 10 / (8+12) = 4 × 10 / 20 = 2 m/s².<br>
+            ✅ Answer: 2 m/s² (the 12 kg mass accelerates downward, 8 kg upward)
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q19 (numerical)</div>
+        <div class="q-text">A block of 5 kg slides down an incline 30° with μ = 0.1. Find acceleration. (g = 10 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a19')">Show answer</button>
+        <div class="answer" id="a19">
+            <strong>Step‑by‑step:</strong><br>
+            a = g (sinθ – μ cosθ) = 10 (0.5 – 0.1 × 0.8660) = 10 (0.5 – 0.0866) = 10 × 0.4134 = 4.134 m/s².<br>
+            ✅ Answer: 4.13 m/s² (approx)
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q20 (numerical)</div>
+        <div class="q-text">A 2 kg ball moves in a circle of radius 1 m at 4 m/s. Find centripetal force.</div>
+        <button class="answer-btn" onclick="toggle('a20')">Show answer</button>
+        <div class="answer" id="a20">
+            <strong>Step‑by‑step:</strong><br>
+            F = m v² / r = 2 × 16 / 1 = 32 N.<br>
+            ✅ Answer: 32 N
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q21 (numerical)</div>
+        <div class="q-text">A 1 kg block on a horizontal surface with μ = 0.3 is pulled with 10 N. g = 10 m/s². Find acceleration.</div>
+        <button class="answer-btn" onclick="toggle('a21')">Show answer</button>
+        <div class="answer" id="a21">
+            <strong>Step‑by‑step:</strong><br>
+            Friction = μ m g = 0.3 × 1 × 10 = 3 N.<br>
+            Net force = 10 – 3 = 7 N.<br>
+            a = 7 / 1 = 7 m/s².<br>
+            ✅ Answer: 7 m/s²
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q22 (numerical)</div>
+        <div class="q-text">A car accelerates from 20 m/s to 50 m/s in 10 s. Find acceleration and distance traveled.</div>
+        <button class="answer-btn" onclick="toggle('a22')">Show answer</button>
+        <div class="answer" id="a22">
+            <strong>Step‑by‑step:</strong><br>
+            a = (50 – 20) / 10 = 3 m/s².<br>
+            s = average speed × time = ((50+20)/2) × 10 = 35 × 10 = 350 m.<br>
+            ✅ Answer: a = 3 m/s², s = 350 m
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q23 (numerical)</div>
+        <div class="q-text">A body moves along a circle of radius 5 m with speed increasing from 2 m/s to 6 m/s in 4 s. Find tangential acceleration.</div>
+        <button class="answer-btn" onclick="toggle('a23')">Show answer</button>
+        <div class="answer" id="a23">
+            <strong>Step‑by‑step:</strong><br>
+            a_t = (v – u) / t = (6 – 2) / 4 = 4 / 4 = 1 m/s².<br>
+            ✅ Answer: 1 m/s²
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q24 (numerical)</div>
+        <div class="q-text">A 3 kg block is acted upon by two perpendicular forces: 4 N east, 3 N north. Find resultant force.</div>
+        <button class="answer-btn" onclick="toggle('a24')">Show answer</button>
+        <div class="answer" id="a24">
+            <strong>Step‑by‑step:</strong><br>
+            F = square root of (4² + 3²) = square root of (16 + 9) = square root of 25 = 5 N.<br>
+            ✅ Answer: 5 N
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q25 (numerical)</div>
+        <div class="q-text">A 5 kg mass hangs vertically. Find tension in rope when mass accelerates upward at 2 m/s². (g = 10 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a25')">Show answer</button>
+        <div class="answer" id="a25">
+            <strong>Step‑by‑step:</strong><br>
+            T = m (g + a) = 5 × (10 + 2) = 5 × 12 = 60 N.<br>
+            ✅ Answer: 60 N
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q26 (numerical)</div>
+        <div class="q-text">A 10 kg block is pulled horizontally with 50 N. μ = 0.2, g = 10 m/s². Find acceleration.</div>
+        <button class="answer-btn" onclick="toggle('a26')">Show answer</button>
+        <div class="answer" id="a26">
+            <strong>Step‑by‑step:</strong><br>
+            Friction = μ m g = 0.2 × 10 × 10 = 20 N.<br>
+            Net force = 50 – 20 = 30 N.<br>
+            a = 30 / 10 = 3 m/s².<br>
+            ✅ Answer: 3 m/s²
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q27 (numerical)</div>
+        <div class="q-text">A car moves in a circle of radius 50 m at 20 m/s. Find centripetal acceleration.</div>
+        <button class="answer-btn" onclick="toggle('a27')">Show answer</button>
+        <div class="answer" id="a27">
+            <strong>Step‑by‑step:</strong><br>
+            a_c = v² / r = 400 / 50 = 8 m/s².<br>
+            ✅ Answer: 8 m/s²
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q28 (numerical)</div>
+        <div class="q-text">A 4 kg mass is pulled at 30° with 40 N. Find horizontal and vertical components.</div>
+        <button class="answer-btn" onclick="toggle('a28')">Show answer</button>
+        <div class="answer" id="a28">
+            <strong>Step‑by‑step:</strong><br>
+            Horizontal = 40 × cos30° ≈ 40 × 0.8660 = 34.64 N.<br>
+            Vertical = 40 × sin30° = 40 × 0.5 = 20 N.<br>
+            ✅ Answer: 34.64 N, 20 N
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q29 (numerical)</div>
+        <div class="q-text">Two blocks 6 kg and 4 kg on a frictionless pulley. Find acceleration and tension. (g = 10 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a29')">Show answer</button>
+        <div class="answer" id="a29">
+            <strong>Step‑by‑step:</strong><br>
+            a = (6 – 4) × 10 / (6+4) = 20 / 10 = 2 m/s².<br>
+            For the 4 kg block (upward): T – 4g = 4a → T = 4(g + a) = 4(10 + 2) = 48 N.<br>
+            ✅ Answer: a = 2 m/s², T = 48 N
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q30 (numerical)</div>
+        <div class="q-text">A 5 kg block slides down a frictionless incline 30°. Find acceleration. (g = 10 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a30')">Show answer</button>
+        <div class="answer" id="a30">
+            <strong>Step‑by‑step:</strong><br>
+            a = g sinθ = 10 × 0.5 = 5 m/s².<br>
+            ✅ Answer: 5 m/s²
+        </div>
+    </div>
+
+    <hr>
+    <div class="footer-note">
+        ✅ UNIT 4 COMPLETE · 30 questions · half conceptual · half numerical · exam‑ready · feel the WOW!
+    </div>
+</div>
+
+<script>
+    function toggle(id) {
+        var el = document.getElementById(id);
+        if (el.style.display === "block") {
+            el.style.display = "none";
+        } else {
+            el.style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>

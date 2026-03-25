@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/adminLoginRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_admin_mix"
@@ -13,6 +14,7 @@
         android:background="#11000000" />
 
     <LinearLayout
+        android:id="@+id/adminLoginContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -22,6 +24,7 @@
 
         <!-- 🛡 Admin Identity Header -->
         <FrameLayout
+            android:id="@+id/adminHeaderIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -52,6 +55,7 @@
         </FrameLayout>
 
         <TextView
+            android:id="@+id/tvAdminTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -61,6 +65,7 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/tvAdminSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -69,6 +74,7 @@
             android:textSize="14sp" />
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/adminLoginCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
@@ -84,6 +90,7 @@
                 android:padding="24dp">
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilAdminUser"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -108,6 +115,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilAdminPassword"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -134,19 +142,34 @@
                         android:textSize="16sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnAdminLogin"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="32dp"
-                    android:text="SECURE LOGIN"
-                    android:textColor="@android:color/white"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:letterSpacing="0.05"
-                    app:backgroundTint="#312E81"
-                    app:cornerRadius="12dp"
-                    app:elevation="4dp" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAdminLogin"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:text="SECURE LOGIN"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:letterSpacing="0.05"
+                        app:backgroundTint="#312E81"
+                        app:cornerRadius="12dp"
+                        app:elevation="4dp" />
+
+                    <com.google.android.material.progressindicator.CircularProgressIndicator
+                        android:id="@+id/adminLoginProgress"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:indeterminate="true"
+                        android:visibility="gone"
+                        app:indicatorColor="@android:color/white"
+                        app:trackThickness="3dp" />
+                </FrameLayout>
 
                 <TextView
                     android:id="@+id/tvAdminRegisterLink"

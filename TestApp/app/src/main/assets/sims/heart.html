@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #fff1f2; padding: 20px; overflow: hidden; }
+        .heart { width: 100px; height: 100px; background: #e11d48; position: relative; transform: rotate(-45deg); margin: 50px auto; animation: beat 1s infinite; }
+        .heart:before, .heart:after { content: ""; width: 100px; height: 100px; background: #e11d48; border-radius: 50%; position: absolute; }
+        .heart:before { top: -50px; left: 0; }
+        .heart:after { top: 0; left: 50px; }
+        @keyframes beat {
+            0% { transform: rotate(-45deg) scale(1); }
+            20% { transform: rotate(-45deg) scale(1.2); }
+            40% { transform: rotate(-45deg) scale(1.1); }
+            60% { transform: rotate(-45deg) scale(1.3); }
+            100% { transform: rotate(-45deg) scale(1); }
+        }
+        .controls { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-top: 50px; }
+        input { width: 80%; }
+    </style>
+</head>
+<body>
+    <h3>Biology: Human Heart Rate</h3>
+    <div class="heart" id="heart"></div>
+    <div class="controls">
+        <label>Heart Rate (BPM): <span id="bpmVal">70</span></label><br>
+        <input type="range" min="40" max="180" value="70" oninput="updateBPM(this.value)">
+        <p id="status">Normal Resting Rate</p>
+    </div>
+    <script>
+        function updateBPM(val) {
+            document.getElementById('bpmVal').innerText = val;
+            let duration = 60 / val;
+            document.getElementById('heart').style.animationDuration = duration + 's';
+            let status = document.getElementById('status');
+            if(val < 60) status.innerText = "Bradycardia (Low)";
+            else if(val > 100) status.innerText = "Tachycardia (High/Exercise)";
+            else status.innerText = "Normal Heart Rate";
+        }
+    </script>
+</body>
+</html>

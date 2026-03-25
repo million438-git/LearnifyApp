@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_off_white"
+    tools:context=".NotificationPreferencesActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/surface_white"
+        app:elevation="0dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/notificationsToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:navigationIconTint="@color/text_primary_dark"
+            app:title="@string/settings_notifications"
+            app:titleCentered="true"
+            app:titleTextColor="@color/text_primary_dark" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="40dp">
+
+            <!-- NOTIFICATION TYPES -->
+            <TextView style="@style/SettingsSectionHeader" android:text="@string/section_notification_types" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+
+                    <LinearLayout style="@style/SettingsItem">
+                        <TextView style="@style/SettingsItemText" android:text="@string/pref_daily_challenge" />
+                        <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switchDailyChallenge" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="20dp" />
+
+                    <LinearLayout style="@style/SettingsItem">
+                        <TextView style="@style/SettingsItemText" android:text="@string/pref_friend_requests" />
+                        <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switchFriendRequests" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="20dp" />
+
+                    <LinearLayout style="@style/SettingsItem">
+                        <TextView style="@style/SettingsItemText" android:text="@string/pref_friend_activity" />
+                        <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switchFriendActivity" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="20dp" />
+
+                    <LinearLayout style="@style/SettingsItem">
+                        <TextView style="@style/SettingsItemText" android:text="@string/pref_achievements" />
+                        <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switchAchievements" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="20dp" />
+
+                    <LinearLayout style="@style/SettingsItem">
+                        <TextView style="@style/SettingsItemText" android:text="@string/pref_xp_milestones" />
+                        <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switchXPMilestones" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="20dp" />
+
+                    <LinearLayout style="@style/SettingsItem">
+                        <TextView style="@style/SettingsItemText" android:text="@string/pref_streak_alerts" />
+                        <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switchStreakAlerts" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="20dp" />
+
+                    <LinearLayout style="@style/SettingsItem">
+                        <TextView style="@style/SettingsItemText" android:text="@string/pref_announcements" />
+                        <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switchAnnouncements" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- PUSH NOTIFICATIONS -->
+            <TextView style="@style/SettingsSectionHeader" android:text="@string/section_push_notifications" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+                    <LinearLayout style="@style/SettingsItem">
+                        <TextView style="@style/SettingsItemText" android:text="@string/pref_enable_push" />
+                        <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switchPushNotifications" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- REMINDER SCHEDULE -->
+            <TextView style="@style/SettingsSectionHeader" android:text="@string/section_reminder_schedule" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout android:id="@+id/llReminderTime" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
+                    <TextView style="@style/SettingsItemText" android:text="@string/pref_reminder_time" />
+                    <TextView android:id="@+id/tvReminderTime" style="@style/SettingsItemValue" android:text="⏰ 5:00 PM" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

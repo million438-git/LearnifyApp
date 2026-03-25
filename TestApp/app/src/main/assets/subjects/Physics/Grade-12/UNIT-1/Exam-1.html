@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 12 Physics – Unit 1 · Application of Physics in Other Fields</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f8fafc;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: #1e293b;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-radius: 40px 40px 20px 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(30,64,175,0.2);
+        }
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.15s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.07);
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #2563eb;
+            border-left: 8px solid #2563eb;
+            padding-left: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .remember, .wow {
+            padding: 1.2rem 1.5rem;
+            border-radius: 20px;
+            margin: 1.5rem 0;
+            font-weight: 500;
+        }
+        .remember {
+            background: #ecfeff;
+            border-left: 6px solid #22c55e;
+        }
+        .wow {
+            background: #fff7ed;
+            border-left: 6px solid #f59e0b;
+        }
+        ul, ol {
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+        .question-block {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin: 1.2rem 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.02);
+        }
+        .q-num {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+        .q-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .answer-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem 0;
+            transition: background 0.1s;
+        }
+        .answer-btn:hover {
+            background: #1e40af;
+        }
+        .answer {
+            display: none;
+            background: #ecfeff;
+            padding: 1.2rem;
+            border-radius: 18px;
+            margin-top: 1rem;
+            border-left: 5px solid #2563eb;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #cbd5e1, transparent);
+            margin: 2.5rem 0;
+        }
+        .footer-note {
+            text-align: center;
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 50px;
+            border: 1px dashed #64748b;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>🔬 Grade 12 Physics – Unit 1</h1>
+        <p>Application of Physics in Other Fields · 30 advanced questions · exam‑ready</p>
+    </header>
+
+    <!-- Unit notes -->
+    <div class="card">
+        <h2>📘 Physics in the real world</h2>
+        <p>Physics is not just a classroom subject – its principles are applied everywhere: from engineering and medicine to transportation and energy production. Mechanics helps design safe structures and vehicles; electromagnetism powers motors and MRI machines; optics enables communication and laser cutting; nuclear physics generates electricity. Understanding these applications shows how physics shapes modern life and technology.</p>
+        <div class="remember">📌 REMEMBER: Real‑world problems often combine multiple physics concepts – energy, forces, waves, and electricity work together.</div>
+        <div class="wow">✨ WOW: The same physics that explains why a roller coaster loops also helps design earthquake‑resistant buildings!</div>
+    </div>
+
+    <!-- ========== 30 QUESTIONS ========== -->
+    <!-- Part A: Conceptual (Q1–Q15) -->
+    <div class="question-block">
+        <div class="q-num">Q1 (conceptual)</div>
+        <div class="q-text">Explain how the principles of mechanics are applied in designing roller coasters.</div>
+        <button class="answer-btn" onclick="toggle('a1')">Show answer</button>
+        <div class="answer" id="a1">
+            <strong>Answer:</strong><br>
+            Energy conservation: potential energy converts to kinetic energy, determining speed. Centripetal force is needed in loops to maintain forces on riders. Friction is minimized but controlled to ensure a smooth, safe ride.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q2 (conceptual)</div>
+        <div class="q-text">How does projectile motion help engineers in ballistics?</div>
+        <button class="answer-btn" onclick="toggle('a2')">Show answer</button>
+        <div class="answer" id="a2">
+            <strong>Answer:</strong><br>
+            Projectile motion equations predict trajectory, maximum height, and range. Engineers adjust launch angle and initial velocity to achieve precision targeting.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q3 (conceptual)</div>
+        <div class="q-text">Why do bridges use trusses instead of solid beams?</div>
+        <button class="answer-btn" onclick="toggle('a3')">Show answer</button>
+        <div class="answer" id="a3">
+            <strong>Answer:</strong><br>
+            Trusses distribute forces efficiently using tension and compression members, reducing material while preventing bending. This makes bridges both strong and lightweight.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q4 (conceptual)</div>
+        <div class="q-text">Explain why aerodynamics is critical in car and airplane design.</div>
+        <button class="answer-btn" onclick="toggle('a4')">Show answer</button>
+        <div class="answer" id="a4">
+            <strong>Answer:</strong><br>
+            Aerodynamics reduces drag, increasing fuel efficiency. For airplanes, shape creates lift via Bernoulli’s principle. Stability and control are also achieved through careful design.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q5 (conceptual)</div>
+        <div class="q-text">How are principles of electricity used in MRI machines?</div>
+        <button class="answer-btn" onclick="toggle('a5')">Show answer</button>
+        <div class="answer" id="a5">
+            <strong>Answer:</strong><br>
+            Strong magnetic fields align protons in the body. Radio waves (electric currents) disturb them; as they relax, they emit signals that are detected and converted into detailed images.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q6 (conceptual)</div>
+        <div class="q-text">Explain why conservation of momentum is crucial in collision safety design.</div>
+        <button class="answer-btn" onclick="toggle('a6')">Show answer</button>
+        <div class="answer" id="a6">
+            <strong>Answer:</strong><br>
+            Airbags and crumple zones increase the time over which momentum changes, reducing the average force (F = Δp/Δt). This protects passengers by spreading the impact.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q7 (conceptual)</div>
+        <div class="q-text">How is heat transfer principle used in cooking appliances?</div>
+        <button class="answer-btn" onclick="toggle('a7')">Show answer</button>
+        <div class="answer" id="a7">
+            <strong>Answer:</strong><br>
+            Conduction (pans on a stove), convection (oven fans circulate hot air), and radiation (broilers) ensure efficient energy delivery. Material choice affects heat distribution.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q8 (conceptual)</div>
+        <div class="q-text">Why is knowledge of fluid mechanics important for blood flow analysis?</div>
+        <button class="answer-btn" onclick="toggle('a8')">Show answer</button>
+        <div class="answer" id="a8">
+            <strong>Answer:</strong><br>
+            Viscosity and pressure gradients determine flow rates. Turbulence analysis helps diagnose cardiovascular risks like aneurysms or blockages.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q9 (conceptual)</div>
+        <div class="q-text">How is nuclear physics applied in power generation?</div>
+        <button class="answer-btn" onclick="toggle('a9')">Show answer</button>
+        <div class="answer" id="a9">
+            <strong>Answer:</strong><br>
+            Fission of heavy nuclei releases heat, which boils water to steam, driving turbines that generate electricity. Chain reactions are controlled to extract energy safely.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q10 (conceptual)</div>
+        <div class="q-text">Explain why optical physics is important in fiber optic communication.</div>
+        <button class="answer-btn" onclick="toggle('a10')">Show answer</button>
+        <div class="answer" id="a10">
+            <strong>Answer:</strong><br>
+            Total internal reflection confines light within the fiber, allowing data transmission over long distances with minimal loss. High bandwidth makes it ideal for internet.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q11 (conceptual)</div>
+        <div class="q-text">How do principles of electromagnetism improve electric motors?</div>
+        <button class="answer-btn" onclick="toggle('a11')">Show answer</button>
+        <div class="answer" id="a11">
+            <strong>Answer:</strong><br>
+            Force on a current‑carrying conductor in a magnetic field produces torque, causing rotation. Optimizing magnetic field design and current control increases efficiency.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q12 (conceptual)</div>
+        <div class="q-text">Why is Newton’s law applied in spacecraft orbit calculations?</div>
+        <button class="answer-btn" onclick="toggle('a12')">Show answer</button>
+        <div class="answer" id="a12">
+            <strong>Answer:</strong><br>
+            Gravitational force provides the centripetal force needed for circular orbits. Newton’s law of gravitation allows precise prediction of orbit paths and fuel requirements.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q13 (conceptual)</div>
+        <div class="q-text">Explain why thermodynamics is critical in car engine design.</div>
+        <button class="answer-btn" onclick="toggle('a13')">Show answer</button>
+        <div class="answer" id="a13">
+            <strong>Answer:</strong><br>
+            Engines convert heat from fuel combustion into mechanical work. Thermodynamic cycles (e.g., Otto cycle) determine efficiency, and engineers minimize heat loss to improve fuel economy.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q14 (conceptual)</div>
+        <div class="q-text">How is physics used in earthquake‑resistant building design?</div>
+        <button class="answer-btn" onclick="toggle('a14')">Show answer</button>
+        <div class="answer" id="a14">
+            <strong>Answer:</strong><br>
+            Damping systems absorb vibrational energy. Resonance is avoided by tuning building frequencies away from earthquake frequencies. Flexible materials and force distribution reduce damage.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q15 (conceptual)</div>
+        <div class="q-text">Explain why optics and photonics are applied in laser cutting tools.</div>
+        <button class="answer-btn" onclick="toggle('a15')">Show answer</button>
+        <div class="answer" id="a15">
+            <strong>Answer:</strong><br>
+            Lasers concentrate light into a tiny, intense beam. Photonics controls the beam’s focus and intensity, enabling precise cutting with minimal material waste.
+        </div>
+    </div>
+
+    <!-- Part B: Numerical/Application (Q16–Q30) -->
+    <div class="question-block">
+        <div class="q-num">Q16 (application)</div>
+        <div class="q-text">A roller coaster car of mass 500 kg starts from rest at height 40 m. Find its speed at the bottom (ignore friction). (g = 9.8 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a16')">Show answer</button>
+        <div class="answer" id="a16">
+            <strong>Step‑by‑step:</strong><br>
+            Conservation of energy: m g h = ½ m v² → v = √(2 g h) = √(2 × 9.8 × 40) = √(784) = 28 m/s.<br>
+            ✅ Answer: 28 m/s
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q17 (application)</div>
+        <div class="q-text">A car travels at 30 m/s around a curve of radius 50 m. Find the centripetal acceleration and the force if the mass is 1000 kg.</div>
+        <button class="answer-btn" onclick="toggle('a17')">Show answer</button>
+        <div class="answer" id="a17">
+            <strong>Step‑by‑step:</strong><br>
+            a_c = v² / r = (30)² / 50 = 900 / 50 = 18 m/s².<br>
+            Force F = m a_c = 1000 × 18 = 18,000 N.<br>
+            ✅ Answer: 18 m/s², 18,000 N
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q18 (application)</div>
+        <div class="q-text">Water flows through a pipe of radius 0.05 m at 2 m/s. Find the volumetric flow rate.</div>
+        <button class="answer-btn" onclick="toggle('a18')">Show answer</button>
+        <div class="answer" id="a18">
+            <strong>Step‑by‑step:</strong><br>
+            Q = A v = π r² v = 3.1416 × (0.05)² × 2 = 3.1416 × 0.0025 × 2 = 0.0157 m³/s.<br>
+            ✅ Answer: about 0.0157 m³/s
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q19 (application)</div>
+        <div class="q-text">A motor delivers 10 kW of power to raise a 500 kg elevator 20 m in 10 s. Find the efficiency. (g = 9.8 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a19')">Show answer</button>
+        <div class="answer" id="a19">
+            <strong>Step‑by‑step:</strong><br>
+            Useful work = m g h = 500 × 9.8 × 20 = 98,000 J.<br>
+            Input energy = power × time = 10,000 W × 10 s = 100,000 J.<br>
+            Efficiency = (useful / input) × 100 = (98,000 / 100,000) × 100 = 98%.<br>
+            ✅ Answer: 98%
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q20 (application)</div>
+        <div class="q-text">A laser emits 2 mW of power. Each photon has energy 3.2×10⁻¹⁹ J. Find the number of photons emitted per second.</div>
+        <button class="answer-btn" onclick="toggle('a20')">Show answer</button>
+        <div class="answer" id="a20">
+            <strong>Step‑by‑step:</strong><br>
+            Power = 2×10⁻³ J/s.<br>
+            Number of photons per second = power / energy per photon = 2×10⁻³ / 3.2×10⁻¹⁹ ≈ 6.25×10¹⁵ photons/s.<br>
+            ✅ Answer: 6.25×10¹⁵ photons/s
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q21 (application)</div>
+        <div class="q-text">A spacecraft of mass 1000 kg orbits Earth at a radius of 6.7×10⁶ m. Find its orbital speed (g = 9.8 m/s², GM = g R² with R = 6.4×10⁶ m).</div>
+        <button class="answer-btn" onclick="toggle('a21')">Show answer</button>
+        <div class="answer" id="a21">
+            <strong>Step‑by‑step:</strong><br>
+            GM = g R² = 9.8 × (6.4×10⁶)² ≈ 9.8 × 4.096×10¹³ = 4.014×10¹⁴ m³/s².<br>
+            Orbital speed v = √(GM / r) = √(4.014×10¹⁴ / 6.7×10⁶) = √(5.99×10⁷) ≈ 7740 m/s.<br>
+            ✅ Answer: about 7740 m/s
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q22 (application)</div>
+        <div class="q-text">A patient of mass 70 kg absorbs a radiation dose of 2 Gy. Find the energy absorbed.</div>
+        <button class="answer-btn" onclick="toggle('a22')">Show answer</button>
+        <div class="answer" id="a22">
+            <strong>Step‑by‑step:</strong><br>
+            Energy = dose × mass = 2 Gy × 70 kg = 140 J (since 1 Gy = 1 J/kg).<br>
+            ✅ Answer: 140 J
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q23 (application)</div>
+        <div class="q-text">A light beam passes from water (n = 1.33) to air. Find the critical angle.</div>
+        <button class="answer-btn" onclick="toggle('a23')">Show answer</button>
+        <div class="answer" id="a23">
+            <strong>Step‑by‑step:</strong><br>
+            sin θ_c = n₂ / n₁ = 1 / 1.33 ≈ 0.7519.<br>
+            θ_c = sin⁻¹(0.7519) ≈ 48.75°.<br>
+            ✅ Answer: about 48.8°
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q24 (application)</div>
+        <div class="q-text">An electric car operates at 360 V and draws 120 A. Find the power.</div>
+        <button class="answer-btn" onclick="toggle('a24')">Show answer</button>
+        <div class="answer" id="a24">
+            <strong>Step‑by‑step:</strong><br>
+            Power = V I = 360 × 120 = 43,200 W = 43.2 kW.<br>
+            ✅ Answer: 43.2 kW
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q25 (application)</div>
+        <div class="q-text">A bridge cable can withstand 2×10⁶ N. With a safety factor of 2, what is the maximum allowed load?</div>
+        <button class="answer-btn" onclick="toggle('a25')">Show answer</button>
+        <div class="answer" id="a25">
+            <strong>Step‑by‑step:</strong><br>
+            Max allowed load = breaking strength / safety factor = 2×10⁶ / 2 = 1×10⁶ N.<br>
+            ✅ Answer: 1×10⁶ N
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q26 (application)</div>
+        <div class="q-text">In an MRI scanner, the magnetic field is 3 T. The gyromagnetic ratio for protons is γ = 2.675×10⁸ rad/(s·T). Find the precession frequency in Hz.</div>
+        <button class="answer-btn" onclick="toggle('a26')">Show answer</button>
+        <div class="answer" id="a26">
+            <strong>Step‑by‑step:</strong><br>
+            Angular frequency ω = γ B = 2.675×10⁸ × 3 = 8.025×10⁸ rad/s.<br>
+            Frequency f = ω / (2π) = 8.025×10⁸ / 6.283 ≈ 1.277×10⁸ Hz.<br>
+            ✅ Answer: about 1.28×10⁸ Hz
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q27 (application)</div>
+        <div class="q-text">An airplane wing generates a lift force of 5×10⁵ N at a speed of 70 m/s. Air density ρ = 1.225 kg/m³, lift coefficient C_L = 1.2. Find the wing area using lift formula: F = ½ ρ v² C_L A.</div>
+        <button class="answer-btn" onclick="toggle('a27')">Show answer</button>
+        <div class="answer" id="a27">
+            <strong>Step‑by‑step:</strong><br>
+            Rearrange: A = F / (½ ρ v² C_L) = 5×10⁵ / (0.5 × 1.225 × 70² × 1.2) = 5×10⁵ / (0.5 × 1.225 × 4900 × 1.2).<br>
+            0.5 × 1.225 = 0.6125; 0.6125 × 4900 = 3001.25; ×1.2 = 3601.5.<br>
+            A = 5×10⁵ / 3601.5 ≈ 138.8 m².<br>
+            ✅ Answer: about 139 m²
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q28 (application)</div>
+        <div class="q-text">A satellite of mass 2000 kg orbits at a height of 500 km above Earth’s surface. Earth’s radius R = 6.37×10⁶ m, g = 9.8 m/s². Find the gravitational potential energy change relative to the surface. (Use ΔU = m g h approximation? But for precise: U = –GMm/r. We need difference.)</div>
+        <button class="answer-btn" onclick="toggle('a28')">Show answer</button>
+        <div class="answer" id="a28">
+            <strong>Step‑by‑step:</strong><br>
+            GM = g R² = 9.8 × (6.37×10⁶)² = 9.8 × 4.057×10¹³ = 3.976×10¹⁴ m³/s².<br>
+            r_surface = R = 6.37×10⁶ m; r_orbit = R + h = 6.37×10⁶ + 0.5×10⁶ = 6.87×10⁶ m.<br>
+            U_surface = –GMm / R = –3.976×10¹⁴ × 2000 / 6.37×10⁶ = –7.952×10¹⁷ / 6.37×10⁶ ≈ –1.248×10¹¹ J.<br>
+            U_orbit = –GMm / r_orbit = –3.976×10¹⁴ × 2000 / 6.87×10⁶ = –7.952×10¹⁷ / 6.87×10⁶ ≈ –1.158×10¹¹ J.<br>
+            Change ΔU = U_orbit – U_surface = (–1.158 + 1.248)×10¹¹ = 0.090×10¹¹ = 9.0×10⁹ J.<br>
+            ✅ Answer: about 9.0×10⁹ J (positive, meaning energy added)
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q29 (application)</div>
+        <div class="q-text">A car experiences an air resistance force of 1000 N while moving 20 m. Find the work done against drag.</div>
+        <button class="answer-btn" onclick="toggle('a29')">Show answer</button>
+        <div class="answer" id="a29">
+            <strong>Step‑by‑step:</strong><br>
+            Work = force × distance = 1000 × 20 = 20,000 J.<br>
+            ✅ Answer: 20,000 J
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q30 (conceptual)</div>
+        <div class="q-text">Explain why advanced physics applications require multi‑disciplinary understanding.</div>
+        <button class="answer-btn" onclick="toggle('a30')">Show answer</button>
+        <div class="answer" id="a30">
+            <strong>Answer:</strong><br>
+            Real‑world systems combine mechanics, electromagnetism, thermodynamics, nuclear physics, optics, and fluid dynamics. Design, safety, and efficiency depend on interlinked principles – for example, a car engine uses thermodynamics, materials science, and fluid flow. Engineers must integrate multiple physics areas to innovate.
+        </div>
+    </div>
+
+    <hr>
+    <div class="footer-note">
+        ✅ UNIT 1 COMPLETE · 30 questions · conceptual + applied · exam‑ready · feel the WOW!
+    </div>
+</div>
+
+<script>
+    function toggle(id) {
+        var el = document.getElementById(id);
+        if (el.style.display === "block") {
+            el.style.display = "none";
+        } else {
+            el.style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>

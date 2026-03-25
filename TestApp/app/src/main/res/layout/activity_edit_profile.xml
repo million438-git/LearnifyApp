@@ -4,22 +4,62 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_nature_gradient"
+    android:background="#F8FAFC"
     tools:context=".EditProfileActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
+        android:background="@android:color/white"
+        app:elevation="2dp">
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/editProfileToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="?attr/homeAsUpIndicator"
-            app:navigationIconTint="@android:color/white"
-            app:title="Edit Student Profile"
-            app:titleTextColor="@android:color/white" />
+            app:navigationIconTint="#1E293B">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="Profile"
+                    android:textColor="#1E293B"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSaveTop"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💾 Save"
+                        android:textAllCaps="false"
+                        android:textColor="#3B82F6"
+                        android:textStyle="bold" />
+
+                    <ImageButton
+                        android:id="@+id/btnLanguageTop"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@android:drawable/ic_menu_mapmode"
+                        app:tint="#64748B"
+                        android:contentDescription="Language" />
+                </LinearLayout>
+            </RelativeLayout>
+        </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -32,126 +72,200 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:paddingBottom="32dp">
 
-            <!-- Profile Image Edit Section -->
-            <FrameLayout
-                android:layout_width="140dp"
-                android:layout_height="140dp"
-                android:layout_gravity="center"
-                android:layout_marginBottom="32dp">
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/ivEditProfilePic"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@android:drawable/ic_menu_myplaces"
-                    app:shapeAppearanceOverlay="@style/CircleImageView"
-                    app:strokeColor="@android:color/white"
-                    app:strokeWidth="4dp" />
-
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/btnChangePic"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:layout_margin="4dp"
-                    app:backgroundTint="#FFFFFF"
-                    app:fabCustomSize="40dp"
-                    app:srcCompat="@android:drawable/ic_menu_camera"
-                    app:tint="#064E3B" />
-            </FrameLayout>
-
-            <androidx.cardview.widget.CardView
+            <!-- Header Section -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="#CCFFFFFF"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="4dp">
+                android:background="@android:color/white"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingVertical="32dp">
 
-                <LinearLayout
+                <FrameLayout
+                    android:layout_width="120dp"
+                    android:layout_height="120dp">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/ivEditProfilePic"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="2dp"
+                        android:scaleType="centerCrop"
+                        android:src="@android:drawable/ic_menu_camera"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+                        app:strokeColor="#E2E8F0"
+                        app:strokeWidth="4dp" />
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/btnChangePic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end"
+                        app:backgroundTint="#FFFFFF"
+                        app:fabCustomSize="36dp"
+                        app:srcCompat="@android:drawable/ic_menu_camera"
+                        app:tint="#3B82F6" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvDisplayFullName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Alex Chen"
+                    android:textColor="#1E293B"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvDisplayUsername"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="\@alex_chen"
+                    android:textColor="#64748B"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E2E8F0" />
+
+            <!-- Personal Info -->
+            <TextView style="@style/ProfileSectionHeader" android:text="📝 Personal Info" />
+            <com.google.android.material.card.MaterialCardView style="@style/ProfileSectionCard">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+                    <com.google.android.material.textfield.TextInputLayout style="@style/ProfileInputStyle" android:hint="Full Name">
+                        <com.google.android.material.textfield.TextInputEditText android:id="@+id/etFullName" android:layout_width="match_parent" android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout style="@style/ProfileInputStyle" android:hint="Username">
+                        <com.google.android.material.textfield.TextInputEditText android:id="@+id/etUsername" android:layout_width="match_parent" android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout style="@style/ProfileInputStyle" android:hint="Email">
+                        <com.google.android.material.textfield.TextInputEditText android:id="@+id/etEmail" android:layout_width="match_parent" android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout style="@style/ProfileInputStyle" android:hint="Phone (optional)">
+                        <com.google.android.material.textfield.TextInputEditText android:id="@+id/etPhone" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="phone" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Academic -->
+            <TextView style="@style/ProfileSectionHeader" android:text="🏫 Academic" />
+            <com.google.android.material.card.MaterialCardView style="@style/ProfileSectionCard">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+                    <com.google.android.material.textfield.TextInputLayout style="@style/ProfileInputStyle" android:hint="University / School">
+                        <com.google.android.material.textfield.TextInputEditText android:id="@+id/etUniversity" android:layout_width="match_parent" android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout style="@style/ProfileInputStyle" android:hint="Year">
+                        <com.google.android.material.textfield.TextInputEditText android:id="@+id/etYear" android:layout_width="match_parent" android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout style="@style/ProfileInputStyle" android:hint="Major / Focus">
+                        <com.google.android.material.textfield.TextInputEditText android:id="@+id/etMajor" android:layout_width="match_parent" android:layout_height="wrap_content" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Learning Preferences -->
+            <TextView style="@style/ProfileSectionHeader" android:text="🎯 Learning Preferences" />
+            <com.google.android.material.card.MaterialCardView style="@style/ProfileSectionCard">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Subjects" android:textColor="#64748B" android:textSize="14sp" android:textStyle="bold" />
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipGroupSubjects"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp">
+                        <com.google.android.material.chip.Chip style="@style/Widget.MaterialComponents.Chip.Action" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Math" />
+                        <com.google.android.material.chip.Chip style="@style/Widget.MaterialComponents.Chip.Action" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Physics" />
+                        <com.google.android.material.chip.Chip style="@style/Widget.MaterialComponents.Chip.Action" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+ Add" android:id="@+id/btnAddSubject" />
+                    </com.google.android.material.chip.ChipGroup>
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="Daily XP Goal" android:textColor="#64748B" android:textSize="14sp" android:textStyle="bold" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
+                        <com.google.android.material.slider.Slider
+                            android:id="@+id/sliderXP"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:valueFrom="100"
+                            android:valueTo="2000"
+                            android:stepSize="100"
+                            android:value="500" />
+                        <TextView android:id="@+id/tvXPValue" android:layout_width="80dp" android:layout_height="wrap_content" android:text="500 XP" android:textAlignment="viewEnd" android:textColor="#3B82F6" android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout android:id="@+id/llReminderTime" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:clickable="true" android:focusable="true" android:orientation="horizontal" android:paddingVertical="8dp">
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Reminder time" android:textColor="#1E293B" />
+                        <TextView android:id="@+id/tvReminderTime" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="⏰ 5:00 PM" android:textColor="#3B82F6" android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- App Language -->
+            <TextView style="@style/ProfileSectionHeader" android:text="🌐 App Language" />
+            <com.google.android.material.card.MaterialCardView style="@style/ProfileSectionCard">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="8dp">
+                    <LinearLayout style="@style/ProfileRowStyle">
+                        <TextView style="@style/ProfileRowLabel" android:text="Current language" />
+                        <TextView android:id="@+id/tvCurrentLanguage" style="@style/ProfileRowValue" android:text="English" />
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
+                    <LinearLayout android:id="@+id/llChangeLanguage" style="@style/ProfileRowStyle" android:clickable="true" android:focusable="true">
+                        <TextView style="@style/ProfileRowLabel" android:text="Change language" />
+                        <TextView style="@style/ProfileRowValue" android:text="→ Select" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Privacy & Security -->
+            <TextView style="@style/ProfileSectionHeader" android:text="🔒 Privacy &amp; Security" />
+            <com.google.android.material.card.MaterialCardView style="@style/ProfileSectionCard">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="8dp">
+                    <LinearLayout style="@style/ProfileRowStyle">
+                        <TextView style="@style/ProfileRowLabel" android:text="Profile Visibility" />
+                        <TextView android:id="@+id/tvVisibility" style="@style/ProfileRowValue" android:text="Public ▼" />
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
+                    <LinearLayout style="@style/ProfileRowStyle">
+                        <TextView style="@style/ProfileRowLabel" android:text="Show on Leaderboard" />
+                        <TextView android:id="@+id/tvLeaderboard" style="@style/ProfileRowValue" android:text="Yes ▼" />
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
+                    <LinearLayout style="@style/ProfileRowStyle">
+                        <TextView style="@style/ProfileRowLabel" android:text="Email Notifications" />
+                        <TextView android:id="@+id/tvNotifications" style="@style/ProfileRowValue" android:text="On ▼" />
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#F1F5F9" />
+                    <LinearLayout android:id="@+id/llChangePassword" style="@style/ProfileRowStyle" android:clickable="true" android:focusable="true">
+                        <TextView style="@style/ProfileRowLabel" android:text="Change Password" />
+                        <TextView style="@style/ProfileRowValue" android:text="→ Edit" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Achievements -->
+            <TextView style="@style/ProfileSectionHeader" android:text="🏆 Achievements (read-only)" />
+            <com.google.android.material.card.MaterialCardView style="@style/ProfileSectionCard">
+                <GridLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="16dp" android:columnCount="2">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🧠 Algebra Ace" android:textColor="#475569" android:padding="4dp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🏅 Quick Thinker" android:textColor="#475569" android:padding="4dp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🔥 7-day streak" android:textColor="#475569" android:padding="4dp" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="💎 2,450 total XP" android:textColor="#475569" android:padding="4dp" />
+                </GridLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Danger Zone -->
+            <TextView style="@style/ProfileSectionHeader" android:text="⚠️ Danger Zone" android:textColor="#EF4444" />
+            <com.google.android.material.card.MaterialCardView style="@style/ProfileSectionCard" app:strokeColor="#FEE2E2" app:strokeWidth="1dp">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDeactivate"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="24dp">
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Full Name"
-                        android:textColorHint="#064E3B"
-                        app:boxStrokeColor="#064E3B"
-                        app:hintTextColor="#064E3B">
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etFullName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textColor="#064E3B" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:hint="Username"
-                        android:textColorHint="#064E3B"
-                        app:boxStrokeColor="#064E3B"
-                        app:hintTextColor="#064E3B">
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etUsername"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textColor="#064E3B" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:hint="Email"
-                        android:textColorHint="#064E3B"
-                        app:boxStrokeColor="#064E3B"
-                        app:hintTextColor="#064E3B">
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etEmail"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textColor="#064E3B" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:hint="Current Grade"
-                        android:textColorHint="#064E3B"
-                        app:boxStrokeColor="#064E3B"
-                        app:hintTextColor="#064E3B">
-                        <AutoCompleteTextView
-                            android:id="@+id/actvGrade"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="none"
-                            android:textColor="#064E3B" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnSaveProfile"
-                        android:layout_width="match_parent"
-                        android:layout_height="60dp"
-                        android:layout_marginTop="32dp"
-                        android:text="SAVE CHANGES"
-                        android:textStyle="bold"
-                        app:backgroundTint="#059669"
-                        app:cornerRadius="12dp" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                    android:text="Deactivate Account"
+                    android:textAllCaps="false"
+                    android:textColor="#EF4444" />
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 12 Physics – Chapter 2 (expanded)</title>
+    <style>
+        *{
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+        }
+        :root{
+          --primary: #1d4ed8;
+          --secondary: #0f172a;
+          --bg: #f8fafc;
+          --card: #ffffff;
+          --accent: #22c55e;
+          --warning: #f59e0b;
+          --highlight: #ecfeff;
+        }
+        body{
+          font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+          background: var(--bg);
+          color: #1e293b;
+          line-height: 1.7;
+        }
+        header{
+          background: linear-gradient(135deg, #2563eb, #1e40af);
+          color: white;
+          padding: 2rem 1rem;
+          text-align: center;
+          box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+        }
+        header h1{
+          font-size: 2rem;
+          margin-bottom: 0.25rem;
+          letter-spacing: -0.02em;
+        }
+        header p{
+          font-size: 1.2rem;
+          opacity: 0.95;
+        }
+        .container{
+          max-width: 1000px;
+          margin: 0 auto;
+          padding: 1.5rem 1rem;
+        }
+        .card{
+          background: var(--card);
+          border-radius: 28px;
+          padding: 1.8rem;
+          margin-bottom: 2rem;
+          box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+          transition: transform 0.15s;
+        }
+        .card:hover{
+          transform: translateY(-4px);
+        }
+        h2{
+          font-size: 1.8rem;
+          color: var(--primary);
+          border-left: 8px solid var(--primary);
+          padding-left: 1rem;
+          margin-top: 0;
+          margin-bottom: 1.2rem;
+        }
+        h3{
+          font-size: 1.3rem;
+          margin: 1.5rem 0 0.5rem;
+          color: var(--secondary);
+        }
+        .remember, .wow{
+          padding: 1.2rem 1.5rem;
+          border-radius: 20px;
+          margin: 1.5rem 0;
+          font-weight: 500;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+        .remember{
+          background: #ecfeff;
+          border-left: 6px solid var(--accent);
+        }
+        .wow{
+          background: #fff7ed;
+          border-left: 6px solid var(--warning);
+        }
+        ul, ol{
+          padding-left: 2rem;
+          margin: 1rem 0;
+        }
+        li{
+          margin: 0.5rem 0;
+        }
+        .question{
+          background: #f1f5f9;
+          border-radius: 24px;
+          padding: 1.4rem;
+          margin: 1.2rem 0;
+          border: 1px solid #e2e8f0;
+        }
+        .question strong{
+          color: var(--secondary);
+          font-size: 1.1rem;
+        }
+        .answer{
+          display: none;
+          margin-top: 1.2rem;
+          padding: 1.2rem;
+          background: #e6f7ff;
+          border-radius: 18px;
+          border-left: 5px solid #0099ff;
+        }
+        button{
+          background: var(--primary);
+          color: white;
+          border: none;
+          padding: 0.7rem 1.8rem;
+          border-radius: 40px;
+          font-size: 0.95rem;
+          font-weight: 600;
+          cursor: pointer;
+          margin-top: 0.8rem;
+          box-shadow: 0 6px 14px rgba(29,78,216,0.25);
+          transition: background 0.2s;
+        }
+        button:hover{
+          background: #1e40af;
+        }
+        hr{
+          border: none;
+          height: 2px;
+          background: linear-gradient(to right, transparent, #cbd5e1, transparent);
+          margin: 2.5rem 0;
+        }
+        .badge{
+          background: var(--accent);
+          color: white;
+          padding: 0.2rem 1rem;
+          border-radius: 30px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          display: inline-block;
+          margin-right: 0.6rem;
+        }
+        footer{
+          text-align: center;
+          padding: 2rem;
+          color: #64748b;
+          border-top: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>⚡ Grade 12 Physics – Chapter 2</h1>
+    <p>Two‑dimensional motion, rotation, and gravitation (expanded notes + 30 challenges)</p>
+</header>
+
+<div class="container">
+
+    <!-- ========== 2.1 VECTORS & TWO‑DIMENSIONAL MOTION ========= -->
+    <div class="card">
+        <h2>2.1 Motion in a plane</h2>
+        <p>When an object moves in both horizontal and vertical directions at the same time, we call it <strong>two‑dimensional motion</strong>. To describe it we need vectors – quantities with both magnitude and direction.</p>
+        <ul>
+            <li><span class="badge">key</span> <strong>Vector</strong> : displacement, velocity, acceleration, force.</li>
+            <li><span class="badge">key</span> <strong>Scalar</strong> : speed, distance, time, mass.</li>
+            <li><strong>Independence of motion</strong> – horizontal and vertical movements do not affect each other.</li>
+        </ul>
+        <div class="wow">
+            🌊 WOW: When you throw a ball, its horizontal speed stays almost constant (if we ignore air), while gravity pulls it down faster and faster.
+        </div>
+        <div class="remember">
+            📘 REMEMBER: Two‑dimensional motion = horizontal motion + vertical motion analysed separately.
+        </div>
+    </div>
+
+    <!-- ========== 2.2 PROJECTILE MOTION (detailed) ========= -->
+    <div class="card">
+        <h2>2.2 Projectile motion – deep dive</h2>
+        <p>A projectile is any object launched into the air and left to move under gravity alone. No engine, no wings.</p>
+        <h3>Horizontal part</h3>
+        <ul>
+            <li>Velocity is constant (no horizontal force).</li>
+            <li>Horizontal distance = horizontal speed × time of flight.</li>
+        </ul>
+        <h3>Vertical part</h3>
+        <ul>
+            <li>Acceleration = g downward (about 9.8 m/s²).</li>
+            <li>Vertical velocity changes: decreases going up, increases going down.</li>
+            <li>Time to top = initial vertical speed ÷ g.</li>
+        </ul>
+        <h3>Key quantities (in words)</h3>
+        <ul>
+            <li><strong>Time of flight</strong> – total time in air. Depends only on vertical motion and g.</li>
+            <li><strong>Maximum height</strong> – reached when vertical speed becomes zero.</li>
+            <li><strong>Range</strong> – total horizontal distance. Depends on horizontal speed and time of flight.</li>
+        </ul>
+        <div class="wow">
+            🏀 WOW: Without gravity, a basketball thrown would go in a straight line forever. Gravity bends the path into a parabola.
+        </div>
+    </div>
+
+    <!-- ========== 2.3 UNIFORM CIRCULAR MOTION ========= -->
+    <div class="card">
+        <h2>2.3 Uniform circular motion</h2>
+        <p>An object moves in a circle at constant speed. Its velocity changes because direction changes – so it accelerates.</p>
+        <ul>
+            <li><strong>Centripetal acceleration</strong> – always points toward the centre.</li>
+            <li><strong>Centripetal force</strong> – any force (tension, gravity, friction) that pulls inward.</li>
+            <li>Examples: a car turning a curve, Earth orbiting the Sun, a spinning fan blade.</li>
+        </ul>
+        <div class="remember">
+            📘 REMEMBER: In circular motion, speed may be constant, but velocity is not – so there is acceleration.
+        </div>
+    </div>
+
+    <!-- ========== 2.4 ROTATIONAL MOTION (angular quantities) ========= -->
+    <div class="card">
+        <h2>2.4 Rotational motion basics</h2>
+        <p>Instead of metres and seconds, we describe rotation using angles.</p>
+        <ul>
+            <li><strong>Angular displacement</strong> – how many degrees or revolutions an object turns.</li>
+            <li><strong>Angular velocity</strong> – how fast it rotates (revolutions per second or degrees per second).</li>
+            <li><strong>Angular acceleration</strong> – change in angular velocity.</li>
+            <li>All points in a rigid rotating body have the same angular velocity, but different linear speeds (outer points move faster).</li>
+        </ul>
+        <div class="wow">
+            ⚙️ WOW: The tip of a fan blade moves much faster than a point near the centre – but both complete one circle in the same time.
+        </div>
+    </div>
+
+    <!-- ========== 2.5 TORQUE AND ROTATIONAL DYNAMICS ========= -->
+    <div class="card">
+        <h2>2.5 Torque – the twist that causes rotation</h2>
+        <p>Torque is the turning effect of a force. It depends on:</p>
+        <ul>
+            <li>How much force you apply.</li>
+            <li>How far from the pivot you apply it (lever arm).</li>
+        </ul>
+        <p><strong>Larger force or longer lever arm → larger torque.</strong></p>
+        <h3>Moment of inertia</h3>
+        <p>Just as mass resists changes in straight‑line motion, <strong>moment of inertia</strong> resists changes in rotation. It depends on mass and how far it is from the axis.</p>
+        <h3>Angular momentum</h3>
+        <p>Rotational counterpart of momentum. Spinning objects keep spinning unless a torque acts. That’s why a bicycle wheel helps you balance.</p>
+        <div class="remember">
+            📘 REMEMBER: Torque changes angular momentum – just as force changes linear momentum.
+        </div>
+    </div>
+
+    <!-- ========== 2.6 GRAVITATION & PLANETARY MOTION ========= -->
+    <div class="card">
+        <h2>2.6 Universal gravitation & Kepler’s laws</h2>
+        <p><strong>Newton’s law:</strong> Every mass attracts every other mass with a force that is:</p>
+        <ul>
+            <li>greater for larger masses,</li>
+            <li>smaller when distance increases (inverse square).</li>
+        </ul>
+        <h3>Kepler’s three laws (written simply)</h3>
+        <ol>
+            <li>Planets move in ellipses with the Sun at one focus.</li>
+            <li>A line from planet to Sun sweeps equal areas in equal times – so planets move faster when closer.</li>
+            <li>The square of the orbital period is proportional to the cube of the average distance from the Sun.</li>
+        </ol>
+        <p><strong>Satellites</strong> stay in orbit because gravity provides the centripetal force. They are always falling toward Earth but moving sideways so fast they keep missing.</p>
+        <div class="wow">
+            🛰️ WOW: Astronauts feel weightless not because there’s no gravity, but because they are in free fall along with their spacecraft.
+        </div>
+    </div>
+
+    <!-- ========== EXTRA APPLICATION EXAMPLES ========= -->
+    <div class="card">
+        <h2>🚀 Where do we see these in real life?</h2>
+        <ul>
+            <li>Projectile motion – basketball shots, fireworks, sprinklers.</li>
+            <li>Circular motion – merry‑go‑round, artificial satellites, centrifuges.</li>
+            <li>Torque – opening a door, using a wrench, pedalling a bicycle.</li>
+            <li>Gravitation – tides, orbits, weighing objects.</li>
+        </ul>
+    </div>
+
+    <hr>
+
+    <!-- ========== 30 CHALLENGING QUESTIONS ========= -->
+    <div class="card">
+        <h2>📋 30 challenging questions (conceptual & problem‑solving)</h2>
+        <p><em>All answers are written in plain language – no symbols, just clear physics reasoning.</em></p>
+
+        <!-- question 1 -->
+        <div class="question">
+            <strong>1.</strong> A ball is thrown horizontally from a cliff. Does a heavier ball hit the ground sooner than a lighter one? Explain.
+            <br><button onclick="toggle('ans1')">Show answer</button>
+            <div class="answer" id="ans1">
+                No. In the absence of air resistance, vertical acceleration is the same (g) for all masses. Both hit the ground at the same time.
+            </div>
+        </div>
+
+        <!-- 2 -->
+        <div class="question">
+            <strong>2.</strong> Why does a projectile follow a curved path?
+            <br><button onclick="toggle('ans2')">Show answer</button>
+            <div class="answer" id="ans2">
+                Because it has constant horizontal velocity while its vertical velocity changes uniformly due to gravity. The combination produces a parabola.
+            </div>
+        </div>
+
+        <!-- 3 -->
+        <div class="question">
+            <strong>3.</strong> If you double the initial horizontal speed of a projectile (same vertical speed), what happens to its time of flight and range?
+            <br><button onclick="toggle('ans3')">Show answer</button>
+            <div class="answer" id="ans3">
+                Time of flight depends only on vertical motion, so it stays the same. Range = horizontal speed × time, so range doubles.
+            </div>
+        </div>
+
+        <!-- 4 -->
+        <div class="question">
+            <strong>4.</strong> A car rounds a curve at constant speed. Is it accelerating? Explain.
+            <br><button onclick="toggle('ans4')">Show answer</button>
+            <div class="answer" id="ans4">
+                Yes. Acceleration is change in velocity (direction changes), even if speed is constant. The acceleration points toward the centre of the curve.
+            </div>
+        </div>
+
+        <!-- 5 -->
+        <div class="question">
+            <strong>5.</strong> Why do astronauts inside the International Space Station float?
+            <br><button onclick="toggle('ans5')">Show answer</button>
+            <div class="answer" id="ans5">
+                They are in free fall along with the station. Gravity still pulls them, but they have enough tangential speed to keep falling around Earth, creating apparent weightlessness.
+            </div>
+        </div>
+
+        <!-- 6 -->
+        <div class="question">
+            <strong>6.</strong> What is torque, and how is it different from force?
+            <br><button onclick="toggle('ans6')">Show answer</button>
+            <div class="answer" id="ans6">
+                Force causes linear acceleration. Torque causes angular acceleration. Torque depends on force and the distance from the pivot (lever arm).
+            </div>
+        </div>
+
+        <!-- 7 -->
+        <div class="question">
+            <strong>7.</strong> Two satellites orbit Earth at different heights. Which one has a longer orbital period?
+            <br><button onclick="toggle('ans7')">Show answer</button>
+            <div class="answer" id="ans7">
+                The satellite farther from Earth (higher altitude) has a longer period because gravity is weaker and it must travel a larger circle.
+            </div>
+        </div>
+
+        <!-- 8 -->
+        <div class="question">
+            <strong>8.</strong> Explain why a figure skater spins faster when she pulls her arms in.
+            <br><button onclick="toggle('ans8')">Show answer</button>
+            <div class="answer" id="ans8">
+                Conservation of angular momentum. When she pulls her arms in, her moment of inertia decreases, so her angular velocity increases.
+            </div>
+        </div>
+
+        <!-- 9 -->
+        <div class="question">
+            <strong>9.</strong> Does the mass of a projectile affect its maximum height (ignoring air)?
+            <br><button onclick="toggle('ans9')">Show answer</button>
+            <div class="answer" id="ans9">
+                No. Maximum height depends only on initial vertical velocity and g. Mass cancels out in the equations.
+            </div>
+        </div>
+
+        <!-- 10 -->
+        <div class="question">
+            <strong>10.</strong> Why is it easier to close a heavy door by pushing at the edge rather than near the hinge?
+            <br><button onclick="toggle('ans10')">Show answer</button>
+            <div class="answer" id="ans10">
+                Torque = force × distance from pivot. Pushing at the edge gives a larger lever arm, so more torque for the same force.
+            </div>
+        </div>
+
+        <!-- 11 -->
+        <div class="question">
+            <strong>11.</strong> What would happen to Earth’s orbit if the Sun’s gravity suddenly vanished?
+            <br><button onclick="toggle('ans11')">Show answer</button>
+            <div class="answer" id="ans11">
+                Earth would fly off in a straight line at the velocity it had at that moment (Newton’s first law).
+            </div>
+        </div>
+
+        <!-- 12 -->
+        <div class="question">
+            <strong>12.</strong> In projectile motion, at which point is the speed minimum?
+            <br><button onclick="toggle('ans12')">Show answer</button>
+            <div class="answer" id="ans12">
+                At the highest point, because vertical velocity becomes zero and only horizontal velocity remains.
+            </div>
+        </div>
+
+        <!-- 13 -->
+        <div class="question">
+            <strong>13.</strong> A car moves around a roundabout. What provides the centripetal force?
+            <br><button onclick="toggle('ans13')">Show answer</button>
+            <div class="answer" id="ans13">
+                Friction between the tyres and the road.
+            </div>
+        </div>
+
+        <!-- 14 -->
+        <div class="question">
+            <strong>14.</strong> State Kepler’s second law in your own words.
+            <br><button onclick="toggle('ans14')">Show answer</button>
+            <div class="answer" id="ans14">
+                A planet sweeps out equal areas in equal times – meaning it moves faster when closer to the sun.
+            </div>
+        </div>
+
+        <!-- 15 -->
+        <div class="question">
+            <strong>15.</strong> If Earth were twice as massive, would your weight double? Explain.
+            <br><button onclick="toggle('ans15')">Show answer</button>
+            <div class="answer" id="ans15">
+                Yes, because gravitational force is proportional to Earth’s mass. So weight (force on you) would double.
+            </div>
+        </div>
+
+        <!-- 16 -->
+        <div class="question">
+            <strong>16.</strong> Why do projectiles launched at 45° have the maximum range (same initial speed)?
+            <br><button onclick="toggle('ans16')">Show answer</button>
+            <div class="answer" id="ans16">
+                At 45°, the initial speed is evenly split between horizontal and vertical, giving the best combination of time of flight and horizontal speed.
+            </div>
+        </div>
+
+        <!-- 17 -->
+        <div class="question">
+            <strong>17.</strong> Can an object have zero acceleration and still be moving? Give an example.
+            <br><button onclick="toggle('ans17')">Show answer</button>
+            <div class="answer" id="ans17">
+                Yes. Constant velocity means zero acceleration. Example: a car cruising straight on a highway at steady speed.
+            </div>
+        </div>
+
+        <!-- 18 -->
+        <div class="question">
+            <strong>18.</strong> In circular motion, is there a force pushing you outward? Explain.
+            <br><button onclick="toggle('ans18')">Show answer</button>
+            <div class="answer" id="ans18">
+                No. The sensation of being pushed outward is inertia – your body wants to go straight, but the car seat pushes you inward (centripetal force).
+            </div>
+        </div>
+
+        <!-- 19 -->
+        <div class="question">
+            <strong>19.</strong> A ball is thrown upward at an angle. Describe the direction of acceleration during the flight.
+            <br><button onclick="toggle('ans19')">Show answer</button>
+            <div class="answer" id="ans19">
+                Always straight downward (toward Earth’s centre), constant magnitude g.
+            </div>
+        </div>
+
+        <!-- 20 -->
+        <div class="question">
+            <strong>20.</strong> What is the difference between angular velocity and linear velocity?
+            <br><button onclick="toggle('ans20')">Show answer</button>
+            <div class="answer" id="ans20">
+                Angular velocity measures how fast something rotates (angle per time). Linear velocity measures how fast a point moves along its path. For a given rotation, outer points have larger linear velocity.
+            </div>
+        </div>
+
+        <!-- 21 -->
+        <div class="question">
+            <strong>21.</strong> If a planet’s distance from the sun is doubled, what happens to its orbital period (roughly)?
+            <br><button onclick="toggle('ans21')">Show answer</button>
+            <div class="answer" id="ans21">
+                From Kepler’s third law, period increases by a factor of about 2.8 (square root of 2 cubed).
+            </div>
+        </div>
+
+        <!-- 22 -->
+        <div class="question">
+            <strong>22.</strong> Why does a bicycle remain upright when moving but fall when stopped?
+            <br><button onclick="toggle('ans22')">Show answer</button>
+            <div class="answer" id="ans22">
+                Angular momentum of the spinning wheels provides stability (gyroscopic effect), and also the rider makes small corrections.
+            </div>
+        </div>
+
+        <!-- 23 -->
+        <div class="question">
+            <strong>23.</strong> A stone is whirled in a horizontal circle on a string. What happens if the string breaks?
+            <br><button onclick="toggle('ans23')">Show answer</button>
+            <div class="answer" id="ans23">
+                The stone flies off in a straight line tangent to the circle (Newton’s first law).
+            </div>
+        </div>
+
+        <!-- 24 -->
+        <div class="question">
+            <strong>24.</strong> Explain why the handle of a wrench is made long.
+            <br><button onclick="toggle('ans24')">Show answer</button>
+            <div class="answer" id="ans24">
+                A longer handle increases the lever arm, so more torque is produced with the same force – makes turning easier.
+            </div>
+        </div>
+
+        <!-- 25 -->
+        <div class="question">
+            <strong>25.</strong> What is the direction of centripetal force for a car turning left?
+            <br><button onclick="toggle('ans25')">Show answer</button>
+            <div class="answer" id="ans25">
+                Toward the centre of the turn – so to the left (if turning left, centre is left).
+            </div>
+        </div>
+
+        <!-- 26 -->
+        <div class="question">
+            <strong>26.</strong> If you fire a bullet horizontally and drop a bullet at the same time from the same height, which hits the ground first? (Ignore air)
+            <br><button onclick="toggle('ans26')">Show answer</button>
+            <div class="answer" id="ans26">
+                Both hit at the same time. Gravity affects them equally in the vertical direction.
+            </div>
+        </div>
+
+        <!-- 27 -->
+        <div class="question">
+            <strong>27.</strong> Why do astronauts in orbit feel weightless even though gravity is still strong?
+            <br><button onclick="toggle('ans27')">Show answer</button>
+            <div class="answer" id="ans27">
+                Because they are in continuous free fall toward Earth. Their sensation of weight comes from the floor pushing up – in free fall there’s no push.
+            </div>
+        </div>
+
+        <!-- 28 -->
+        <div class="question">
+            <strong>28.</strong> A force is applied perpendicular to a door at its edge. Does the door rotate faster if the same force is applied closer to the hinge? Explain.
+            <br><button onclick="toggle('ans28')">Show answer</button>
+            <div class="answer" id="ans28">
+                No, it rotates slower because torque is smaller (smaller lever arm). Same force at the edge gives greater torque, so greater angular acceleration.
+            </div>
+        </div>
+
+        <!-- 29 -->
+        <div class="question">
+            <strong>29.</strong> What is the only force acting on a satellite (like the Moon) after it is in orbit?
+            <br><button onclick="toggle('ans29')">Show answer</button>
+            <div class="answer" id="ans29">
+                Gravity (from Earth or the Sun). In the vacuum of space, there is no air resistance or other forces.
+            </div>
+        </div>
+
+        <!-- 30 -->
+        <div class="question">
+            <strong>30. (challenge)</strong> Imagine you throw a ball upward at an angle on the Moon, where g is one‑sixth of Earth’s. How do the time of flight and maximum height compare to Earth (same initial velocity)?
+            <br><button onclick="toggle('ans30')">Show answer</button>
+            <div class="answer" id="ans30">
+                On the Moon, time of flight would be six times longer (because acceleration downward is smaller). Maximum height would also be six times higher.
+            </div>
+        </div>
+    </div>
+
+    <!-- final motivational card -->
+    <div class="card" style="background: #e6f7ff;">
+        <h2 style="color: #0f172a;">💡 key insight</h2>
+        <p style="font-size: 1.2rem;">Two‑dimensional motion, rotation, and gravitation are everywhere – from sports to space. Understanding them deeply helps you see the world like a physicist.</p>
+    </div>
+
+</div>
+
+<footer>
+    ⚡ Grade 12 Physics – Chapter 2 | Ethiopian curriculum friendly | 30 challenging questions | offline & mobile ready
+</footer>
+
+<script>
+    function toggle(id) {
+      var el = document.getElementById(id);
+      if (el.style.display === "block") {
+        el.style.display = "none";
+      } else {
+        el.style.display = "block";
+      }
+    }
+</script>
+
+</body>
+</html>

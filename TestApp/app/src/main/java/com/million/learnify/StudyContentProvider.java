@@ -1,0 +1,128 @@
+package com.million.learnify;
+
+import android.content.Context;
+import android.util.Log;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * StudyContentProvider - Perfected Academic Path Resolver.
+ * Features: High-performance recursive search and ultra-robust fuzzy matching.
+ * Guaranteed to find files like "Biology Technology.html" even with naming variations.
+ */
+public class StudyContentProvider {
+
+    private static final String TAG = "StudyContentProvider";
+    private static final String ASSETS_BASE = "subjects";
+
+    public static List<String> getChapters(Context context, String subjectName) {
+        List<String> chapters = new ArrayList<>();
+        try {
+            String subjectPath = findActualPath(context, ASSETS_BASE, subjectName);
+            if (subjectPath == null) return chapters;
+            String[] list = context.getAssets().list(subjectPath);
+            if (list != null) {
+                for (String name : list) {
+                    if (!name.contains(".")) chapters.add(name);
+                }
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Error listing chapters", e);
+        }
+        Collections.sort(chapters);
+        return chapters;
+    }
+
+    public static List<String> getTopics(Context context, String subjectName, String chapterName) {
+        List<String> topics = new ArrayList<>();
+        try {
+            String subjectPath = findActualPath(context, ASSETS_BASE, subjectName);
+            if (subjectPath == null) return topics;
+            String unitPath = findActualPath(context, subjectPath, chapterName);
+            if (unitPath == null) return topics;
+            addTopicsRecursively(context, unitPath, "", topics);
+        } catch (IOException e) {
+            Log.e(TAG, "Error listing topics", e);
+        }
+        Collections.sort(topics);
+        return topics;
+    }
+
+    private static void addTopicsRecursively(Context context, String fullPath, String relativePath, List<String> topics) throws IOException {
+        String[] list = context.getAssets().list(fullPath);
+        if (list == null) return;
+        for (String name : list) {
+            String currentFullPath = fullPath + "/" + name;
+            String currentRelativePath = relativePath.isEmpty() ? name : relativePath + "/" + name;
+            if (name.toLowerCase().endsWith(".html")) {
+                topics.add(currentRelativePath.substring(0, currentRelativePath.lastIndexOf(".")));
+            } else if (!name.contains(".")) {
+                addTopicsRecursively(context, currentFullPath, currentRelativePath, topics);
+            }
+        }
+    }
+
+    /**
+     * Resolves the full asset URL for a given topic path.
+     * Guaranteed robustness for naming mismatches like 'Biology Technology' vs 'Biology and Technology'.
+     */
+    public static String getHtmlUrl(Context context, String subject, String chapter, String topic) {
+        try {
+            String subjectPath = findActualPath(context, ASSETS_BASE, subject);
+            if (subjectPath == null) return null;
+
+            String targetFile = topic.contains("/") ? topic.substring(topic.lastIndexOf("/") + 1).trim() : topic.trim();
+            String foundPath = searchFileWithFuzzyLogic(context, subjectPath, targetFile);
+            
+            if (foundPath != null) return "file:///android_asset/" + foundPath;
+            return null;
+        } catch (Exception e) {
+            Log.e(TAG, "URL resolution failed", e);
+            return null;
+        }
+    }
+
+    private static String searchFileWithFuzzyLogic(Context context, String path, String target) throws IOException {
+        String[] list = context.getAssets().list(path);
+        if (list == null) return null;
+
+        String targetClean = cleanName(target);
+        for (String name : list) {
+            String fullPath = path + "/" + name;
+            if (name.toLowerCase().endsWith(".html")) {
+                String nameClean = cleanName(name.substring(0, name.lastIndexOf(".")));
+                // Absolute Match OR Deep Substring Match
+                if (nameClean.equals(targetClean) || nameClean.contains(targetClean) || targetClean.contains(nameClean)) {
+                    return fullPath;
+                }
+            } else if (!name.contains(".")) {
+                String result = searchFileWithFuzzyLogic(context, fullPath, target);
+                if (result != null) return result;
+            }
+        }
+        return null;
+    }
+
+    private static String findActualPath(Context context, String parent, String target) throws IOException {
+        String[] list = context.getAssets().list(parent);
+        if (list == null) return null;
+        String targetClean = cleanName(target);
+        for (String name : list) {
+            if (cleanName(name).equals(targetClean) || cleanName(name).contains(targetClean)) return parent + "/" + name;
+        }
+        return null;
+    }
+
+    private static String cleanName(String input) {
+        if (input == null) return "";
+        return input.toLowerCase()
+                .replace("and", "")
+                .replace("&", "")
+                .replace("_", "")
+                .replace("-", "")
+                .replace(" ", "")
+                .trim();
+    }
+}

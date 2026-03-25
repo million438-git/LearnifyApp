@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 11 Physics – Unit 5 · Heat Conduction and Calorimetry</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f8fafc;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: #1e293b;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #16a34a, #166534);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-radius: 40px 40px 20px 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(22,101,52,0.2);
+        }
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.15s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.07);
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #16a34a;
+            border-left: 8px solid #16a34a;
+            padding-left: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .remember, .wow {
+            padding: 1.2rem 1.5rem;
+            border-radius: 20px;
+            margin: 1.5rem 0;
+            font-weight: 500;
+        }
+        .remember {
+            background: #ecfeff;
+            border-left: 6px solid #22c55e;
+        }
+        .wow {
+            background: #fff7ed;
+            border-left: 6px solid #f59e0b;
+        }
+        ul, ol {
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+        .question-block {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin: 1.2rem 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.02);
+        }
+        .q-num {
+            display: inline-block;
+            background: #16a34a;
+            color: white;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+        .q-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .answer-btn {
+            background: #16a34a;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem 0;
+            transition: background 0.1s;
+        }
+        .answer-btn:hover {
+            background: #166534;
+        }
+        .answer {
+            display: none;
+            background: #ecfeff;
+            padding: 1.2rem;
+            border-radius: 18px;
+            margin-top: 1rem;
+            border-left: 5px solid #16a34a;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #cbd5e1, transparent);
+            margin: 2.5rem 0;
+        }
+        .footer-note {
+            text-align: center;
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 50px;
+            border: 1px dashed #64748b;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>🔥 Grade 11 Physics – Unit 5</h1>
+        <p>Heat Conduction and Calorimetry · 30 advanced questions · exam‑ready</p>
+    </header>
+
+    <!-- Unit notes -->
+    <div class="card">
+        <h2>📘 Heat and calorimetry – key concepts</h2>
+        <p>Heat is energy transferred due to temperature difference. Conduction is the transfer of thermal energy through a material without bulk motion. Calorimetry measures heat exchange using the principle of conservation of energy. Specific heat capacity, latent heat, and thermal conductivity are essential properties. Understanding these allows us to predict temperature changes, phase changes, and energy flow in real‑world systems.</p>
+        <div class="remember">📌 REMEMBER: Heat gained = heat lost (in an isolated system). Q = m c ΔT for temperature change, Q = m L for phase change.</div>
+        <div class="wow">✨ WOW: The same principles that keep your coffee warm also help design spacecraft heat shields!</div>
+    </div>
+
+    <!-- ========== 30 QUESTIONS ========== -->
+    <!-- Part A: Conceptual (Q1–Q15) -->
+    <div class="question-block">
+        <div class="q-num">Q1 (conceptual)</div>
+        <div class="q-text">Explain why temperature is not the same as heat.</div>
+        <button class="answer-btn" onclick="toggle('a1')">Show answer</button>
+        <div class="answer" id="a1">
+            <strong>Answer:</strong><br>
+            Temperature = measure of average kinetic energy of particles → scalar.<br>
+            Heat = energy transfer due to temperature difference → measured in joules.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q2 (conceptual)</div>
+        <div class="q-text">Why does a good conductor of heat reach thermal equilibrium faster than an insulator?</div>
+        <button class="answer-btn" onclick="toggle('a2')">Show answer</button>
+        <div class="answer" id="a2">
+            <strong>Answer:</strong><br>
+            High thermal conductivity → energy transfer faster → equilibrium reached sooner.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q3 (conceptual)</div>
+        <div class="q-text">Explain why specific heat capacity differs for different substances.</div>
+        <button class="answer-btn" onclick="toggle('a3')">Show answer</button>
+        <div class="answer" id="a3">
+            <strong>Answer:</strong><br>
+            Depends on mass of particles, bonding, and energy required to raise temperature per kg.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q4 (conceptual)</div>
+        <div class="q-text">Why is calorimetry used to measure heat transfer?</div>
+        <button class="answer-btn" onclick="toggle('a4')">Show answer</button>
+        <div class="answer" id="a4">
+            <strong>Answer:</strong><br>
+            It quantifies energy exchanged, allows determination of specific heat or latent heat.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q5 (conceptual)</div>
+        <div class="q-text">A metal rod is heated at one end. Why does heat flow to the other end?</div>
+        <button class="answer-btn" onclick="toggle('a5')">Show answer</button>
+        <div class="answer" id="a5">
+            <strong>Answer:</strong><br>
+            Heat flows from high to low temperature due to molecular vibration → conduction.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q6 (conceptual)</div>
+        <div class="q-text">Explain why adding water at 80°C to 20°C water results in an intermediate temperature.</div>
+        <button class="answer-btn" onclick="toggle('a6')">Show answer</button>
+        <div class="answer" id="a6">
+            <strong>Answer:</strong><br>
+            Energy conservation: Heat lost by hot = Heat gained by cold → final temp is between 20°C and 80°C.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q7 (conceptual)</div>
+        <div class="q-text">Why is heat transfer faster in metals than in wood?</div>
+        <button class="answer-btn" onclick="toggle('a7')">Show answer</button>
+        <div class="answer" id="a7">
+            <strong>Answer:</strong><br>
+            Metals have free electrons → conduct energy faster. Wood is insulating → slower conduction.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q8 (conceptual)</div>
+        <div class="q-text">Why is latent heat important in phase changes?</div>
+        <button class="answer-btn" onclick="toggle('a8')">Show answer</button>
+        <div class="answer" id="a8">
+            <strong>Answer:</strong><br>
+            Energy absorbed or released without temperature change → changes internal energy.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q9 (conceptual)</div>
+        <div class="q-text">Explain why a mixture of ice and water remains at 0°C until all ice melts.</div>
+        <button class="answer-btn" onclick="toggle('a9')">Show answer</button>
+        <div class="answer" id="a9">
+            <strong>Answer:</strong><br>
+            Energy goes into breaking bonds (latent heat) → no temperature change.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q10 (conceptual)</div>
+        <div class="q-text">Why does thermal expansion differ for solids, liquids, and gases?</div>
+        <button class="answer-btn" onclick="toggle('a10')">Show answer</button>
+        <div class="answer" id="a10">
+            <strong>Answer:</strong><br>
+            Depends on molecular spacing and strength of intermolecular forces.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q11 (conceptual)</div>
+        <div class="q-text">Explain why calorimeters must be insulated.</div>
+        <button class="answer-btn" onclick="toggle('a11')">Show answer</button>
+        <div class="answer" id="a11">
+            <strong>Answer:</strong><br>
+            To prevent energy loss to surroundings → accurate measurement.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q12 (conceptual)</div>
+        <div class="q-text">Why does a thin metal rod conduct heat faster than a thick wooden rod of same length?</div>
+        <button class="answer-btn" onclick="toggle('a12')">Show answer</button>
+        <div class="answer" id="a12">
+            <strong>Answer:</strong><br>
+            Higher thermal conductivity → faster transfer; thickness also matters but conductivity dominates.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q13 (conceptual)</div>
+        <div class="q-text">Explain the difference between conduction, convection, and radiation.</div>
+        <button class="answer-btn" onclick="toggle('a13')">Show answer</button>
+        <div class="answer" id="a13">
+            <strong>Answer:</strong><br>
+            Conduction: direct particle interaction.<br>
+            Convection: bulk fluid motion.<br>
+            Radiation: electromagnetic waves → no medium needed.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q14 (conceptual)</div>
+        <div class="q-text">Why does water have a high specific heat capacity?</div>
+        <button class="answer-btn" onclick="toggle('a14')">Show answer</button>
+        <div class="answer" id="a14">
+            <strong>Answer:</strong><br>
+            Hydrogen bonding → requires more energy to raise temperature.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q15 (conceptual)</div>
+        <div class="q-text">Why is it incorrect to say “hot objects contain heat”?</div>
+        <button class="answer-btn" onclick="toggle('a15')">Show answer</button>
+        <div class="answer" id="a15">
+            <strong>Answer:</strong><br>
+            Heat is energy in transit, not contained in object. Object contains internal energy.
+        </div>
+    </div>
+
+    <!-- Part B: Numerical (Q16–Q30) -->
+    <div class="question-block">
+        <div class="q-num">Q16 (numerical)</div>
+        <div class="q-text">500 g of water at 80°C is mixed with 300 g at 20°C. Find final temperature (ignore heat loss).</div>
+        <button class="answer-btn" onclick="toggle('a16')">Show answer</button>
+        <div class="answer" id="a16">
+            <strong>Step‑by‑step:</strong><br>
+            Heat lost by hot = Heat gained by cold<br>
+            m₁ c (T₁ – T_f) = m₂ c (T_f – T₂)<br>
+            0.5 × (80 – T_f) = 0.3 × (T_f – 20)<br>
+            40 – 0.5 T_f = 0.3 T_f – 6<br>
+            46 = 0.8 T_f → T_f = 57.5°C.<br>
+            ✅ Answer: 57.5°C
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q17 (numerical)</div>
+        <div class="q-text">A 2 kg metal block at 150°C is dropped into 3 kg water at 30°C. Find equilibrium temperature. (c_metal = 400 J/kg°C, c_water = 4200 J/kg°C)</div>
+        <button class="answer-btn" onclick="toggle('a17')">Show answer</button>
+        <div class="answer" id="a17">
+            <strong>Step‑by‑step:</strong><br>
+            Heat lost by metal = Heat gained by water<br>
+            m_m c_m (150 – T_f) = m_w c_w (T_f – 30)<br>
+            2×400×(150 – T_f) = 3×4200×(T_f – 30)<br>
+            800×(150 – T_f) = 12600×(T_f – 30)<br>
+            120000 – 800 T_f = 12600 T_f – 378000<br>
+            120000 + 378000 = 12600 T_f + 800 T_f<br>
+            498000 = 13400 T_f → T_f ≈ 37.2°C.<br>
+            ✅ Answer: 37.2°C
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q18 (numerical)</div>
+        <div class="q-text">Calculate heat required to raise 500 g water from 20°C to 80°C (c = 4200 J/kg°C).</div>
+        <button class="answer-btn" onclick="toggle('a18')">Show answer</button>
+        <div class="answer" id="a18">
+            <strong>Step‑by‑step:</strong><br>
+            Q = m c ΔT = 0.5 × 4200 × 60 = 126000 J.<br>
+            ✅ Answer: 126 kJ
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q19 (numerical)</div>
+        <div class="q-text">Ice 100 g at 0°C is added to 200 g water at 30°C. Find final temperature. (L_f = 334 kJ/kg, c = 4200 J/kg°C)</div>
+        <button class="answer-btn" onclick="toggle('a19')">Show answer</button>
+        <div class="answer" id="a19">
+            <strong>Step‑by‑step:</strong><br>
+            Heat gained by ice = mass × L_f + mass × c × T_f<br>
+            = 0.1×334000 + 0.1×4200×T_f = 33400 + 420 T_f.<br>
+            Heat lost by water = 0.2×4200×(30 – T_f) = 840×(30 – T_f) = 25200 – 840 T_f.<br>
+            Equate: 25200 – 840 T_f = 33400 + 420 T_f<br>
+            25200 – 33400 = 840 T_f + 420 T_f<br>
+            –8200 = 1260 T_f → T_f ≈ –6.5°C? That's impossible (below freezing). It means not all ice melts. We need to check if the water can melt all ice. Maximum heat water can give cooling to 0°C = 0.2×4200×30 = 25200 J. Heat needed to melt all ice = 0.1×334000 = 33400 J > 25200 J, so only part of ice melts. The mixture stays at 0°C.<br>
+            ✅ Answer: 0°C (some ice remains)
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q20 (numerical)</div>
+        <div class="q-text">A metal rod 2 m long, area 0.01 m², k = 200 W/m°C, ΔT = 50°C across its ends. Find heat conducted per second.</div>
+        <button class="answer-btn" onclick="toggle('a20')">Show answer</button>
+        <div class="answer" id="a20">
+            <strong>Step‑by‑step:</strong><br>
+            Q/t = k A ΔT / L = 200 × 0.01 × 50 / 2 = 50 W.<br>
+            ✅ Answer: 50 W
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q21 (numerical)</div>
+        <div class="q-text">A calorimeter absorbs 500 J. Water inside rises 5°C. Mass = 0.2 kg. Find specific heat of calorimeter.</div>
+        <button class="answer-btn" onclick="toggle('a21')">Show answer</button>
+        <div class="answer" id="a21">
+            <strong>Step‑by‑step:</strong><br>
+            Q = m_cal c_cal ΔT → c_cal = Q / (m_cal ΔT) = 500 / (0.2 × 5) = 500 J/kg°C.<br>
+            ✅ Answer: 500 J/kg°C
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q22 (numerical)</div>
+        <div class="q-text">A 100 g ice cube melts in water. How much heat absorbed? (L_f = 334 kJ/kg)</div>
+        <button class="answer-btn" onclick="toggle('a22')">Show answer</button>
+        <div class="answer" id="a22">
+            <strong>Step‑by‑step:</strong><br>
+            Q = m L = 0.1 × 334000 = 33400 J.<br>
+            ✅ Answer: 33400 J
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q23 (numerical)</div>
+        <div class="q-text">500 g water at 90°C loses 50,000 J. Find final temperature. (c = 4200 J/kg°C)</div>
+        <button class="answer-btn" onclick="toggle('a23')">Show answer</button>
+        <div class="answer" id="a23">
+            <strong>Step‑by‑step:</strong><br>
+            Q = m c ΔT → ΔT = Q / (m c) = 50000 / (0.5 × 4200) ≈ 23.8°C.<br>
+            T_f = 90 – 23.8 ≈ 66.2°C.<br>
+            ✅ Answer: 66.2°C
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q24 (numerical)</div>
+        <div class="q-text">Metal block mass 1 kg, c = 400 J/kg°C, loses 10,000 J. Find temperature change.</div>
+        <button class="answer-btn" onclick="toggle('a24')">Show answer</button>
+        <div class="answer" id="a24">
+            <strong>Step‑by‑step:</strong><br>
+            ΔT = Q / (m c) = 10000 / (1 × 400) = 25°C.<br>
+            ✅ Answer: 25°C
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q25 (numerical)</div>
+        <div class="q-text">Water 2 kg is heated from 20°C to 100°C. Find energy needed. (c = 4200 J/kg°C)</div>
+        <button class="answer-btn" onclick="toggle('a25')">Show answer</button>
+        <div class="answer" id="a25">
+            <strong>Step‑by‑step:</strong><br>
+            Q = m c ΔT = 2 × 4200 × 80 = 672000 J = 672 kJ.<br>
+            ✅ Answer: 672 kJ
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q26 (numerical)</div>
+        <div class="q-text">Ice 200 g melts in water. Find heat absorbed. (L_f = 334 kJ/kg)</div>
+        <button class="answer-btn" onclick="toggle('a26')">Show answer</button>
+        <div class="answer" id="a26">
+            <strong>Step‑by‑step:</strong><br>
+            Q = m L = 0.2 × 334000 = 66800 J.<br>
+            ✅ Answer: 66800 J
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q27 (numerical)</div>
+        <div class="q-text">Calorimeter mass 0.1 kg, absorbs 500 J, ΔT = 5°C. Find its specific heat.</div>
+        <button class="answer-btn" onclick="toggle('a27')">Show answer</button>
+        <div class="answer" id="a27">
+            <strong>Step‑by‑step:</strong><br>
+            c = Q / (m ΔT) = 500 / (0.1 × 5) = 1000 J/kg°C.<br>
+            ✅ Answer: 1000 J/kg°C
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q28 (numerical)</div>
+        <div class="q-text">A metal rod 1.5 m long, area 0.005 m², ΔT = 40°C, k = 150 W/m°C. Heat conducted per second?</div>
+        <button class="answer-btn" onclick="toggle('a28')">Show answer</button>
+        <div class="answer" id="a28">
+            <strong>Step‑by‑step:</strong><br>
+            Q/t = k A ΔT / L = 150 × 0.005 × 40 / 1.5 = 20 W.<br>
+            ✅ Answer: 20 W
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q29 (numerical)</div>
+        <div class="q-text">200 g ice at 0°C added to 300 g water at 50°C. Find final temperature. (L_f = 334 kJ/kg, c = 4200 J/kg°C)</div>
+        <button class="answer-btn" onclick="toggle('a29')">Show answer</button>
+        <div class="answer" id="a29">
+            <strong>Step‑by‑step:</strong><br>
+            Heat to melt all ice = 0.2×334000 = 66800 J.<br>
+            Heat water can give cooling to 0°C = 0.3×4200×50 = 63000 J < 66800 J, so not all ice melts. Final temperature = 0°C with some ice remaining.<br>
+            ✅ Answer: 0°C (ice‑water mixture)
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q30 (conceptual)</div>
+        <div class="q-text">Explain why calorimetry is crucial for experimental physics.</div>
+        <button class="answer-btn" onclick="toggle('a30')">Show answer</button>
+        <div class="answer" id="a30">
+            <strong>Answer:</strong><br>
+            It measures energy exchange accurately, allows determination of specific heat, latent heat, and thermodynamic calculations. Essential for realistic, quantitative physics experiments.
+        </div>
+    </div>
+
+    <hr>
+    <div class="footer-note">
+        ✅ UNIT 5 COMPLETE · 30 questions · half conceptual · half numerical · exam‑ready · feel the WOW!
+    </div>
+</div>
+
+<script>
+    function toggle(id) {
+        var el = document.getElementById(id);
+        if (el.style.display === "block") {
+            el.style.display = "none";
+        } else {
+            el.style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>

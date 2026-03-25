@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 12 Physics – Unit 6 · Electrostatics and Electric Circuits</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f8fafc;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: #1e293b;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #0f766e, #0b5e57);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-radius: 40px 40px 20px 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(11,94,87,0.2);
+        }
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.15s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.07);
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #0f766e;
+            border-left: 8px solid #0f766e;
+            padding-left: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .remember, .wow {
+            padding: 1.2rem 1.5rem;
+            border-radius: 20px;
+            margin: 1.5rem 0;
+            font-weight: 500;
+        }
+        .remember {
+            background: #ecfeff;
+            border-left: 6px solid #22c55e;
+        }
+        .wow {
+            background: #fff7ed;
+            border-left: 6px solid #f59e0b;
+        }
+        ul, ol {
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+        .question-block {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin: 1.2rem 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.02);
+        }
+        .q-num {
+            display: inline-block;
+            background: #0f766e;
+            color: white;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+        .q-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .answer-btn {
+            background: #0f766e;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem 0;
+            transition: background 0.1s;
+        }
+        .answer-btn:hover {
+            background: #0b5e57;
+        }
+        .answer {
+            display: none;
+            background: #ecfeff;
+            padding: 1.2rem;
+            border-radius: 18px;
+            margin-top: 1rem;
+            border-left: 5px solid #0f766e;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #cbd5e1, transparent);
+            margin: 2.5rem 0;
+        }
+        .footer-note {
+            text-align: center;
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 50px;
+            border: 1px dashed #64748b;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>⚡ Grade 12 Physics – Unit 6</h1>
+        <p>Electrostatics and Electric Circuits · 60 advanced questions · exam‑ready</p>
+    </header>
+
+    <!-- Unit notes -->
+    <div class="card">
+        <h2>📘 Electrostatics and circuits – key ideas</h2>
+        <p>Electrostatics deals with stationary charges: Coulomb's law (F = k q₁ q₂ / r²), electric field (E = F/q), potential (V = kq/r), and capacitance (C = Q/V). Electric circuits involve current (I = dQ/dt), resistance (R = ρL/A), Ohm's law (V = IR), series/parallel combinations, and Kirchhoff's laws. Energy in capacitors (U = ½CV²) and resistors (P = I²R) are essential. Understanding these concepts is fundamental to electronics, power systems, and everyday devices.</p>
+        <div class="remember">📌 REMEMBER: For point charges, forces add as vectors. In equilibrium, conductors have zero internal field. For resistors in series: R<sub>eq</sub> = R₁ + R₂ + …; in parallel: 1/R<sub>eq</sub> = 1/R₁ + 1/R₂ + …</div>
+        <div class="wow">✨ WOW: The same principles that make a lightning bolt also make your phone's touchscreen work!</div>
+    </div>
+
+    <!-- ========== 60 QUESTIONS ========== -->
+    <!-- Part A: Conceptual (Q1–Q30) -->
+    <div class="question-block"><div class="q-num">Q1 (conceptual)</div><div class="q-text">Explain why electric charge is quantized.</div><button class="answer-btn" onclick="toggle('a1')">Show answer</button><div class="answer" id="a1"><strong>Answer:</strong><br>Charges exist in multiples of elementary charge e = 1.6×10⁻¹⁹ C. No fractional charges exist naturally. Basis: electron & proton carry ±e.</div></div>
+    <div class="question-block"><div class="q-num">Q2 (conceptual)</div><div class="q-text">Why are like charges repelled and opposite charges attracted?</div><button class="answer-btn" onclick="toggle('a2')">Show answer</button><div class="answer" id="a2"><strong>Answer:</strong><br>Coulomb’s law: F = k q₁ q₂ / r². Force direction: same charges → repel, opposite → attract.</div></div>
+    <div class="question-block"><div class="q-num">Q3 (conceptual)</div><div class="q-text">Explain why conductors allow charges to move freely but insulators do not.</div><button class="answer-btn" onclick="toggle('a3')">Show answer</button><div class="answer" id="a3"><strong>Answer:</strong><br>Conductors have free electrons that can move under an electric field. Insulators have electrons tightly bound to atoms → minimal conduction.</div></div>
+    <div class="question-block"><div class="q-num">Q4 (conceptual)</div><div class="q-text">Why is Coulomb’s law valid only for point charges or spherically symmetric charge distributions?</div><button class="answer-btn" onclick="toggle('a4')">Show answer</button><div class="answer" id="a4"><strong>Answer:</strong><br>The law assumes distance much greater than charge size. For extended charges, one must integrate over the distribution to find the net force.</div></div>
+    <div class="question-block"><div class="q-num">Q5 (conceptual)</div><div class="q-text">Explain the principle of superposition of electric forces.</div><button class="answer-btn" onclick="toggle('a5')">Show answer</button><div class="answer" id="a5"><strong>Answer:</strong><br>The net force on a charge is the vector sum of the individual forces from all other charges. This allows solving multiple-charge systems.</div></div>
+    <div class="question-block"><div class="q-num">Q6 (conceptual)</div><div class="q-text">Why does electric field inside a conductor in electrostatic equilibrium become zero?</div><button class="answer-btn" onclick="toggle('a6')">Show answer</button><div class="answer" id="a6"><strong>Answer:</strong><br>Charges redistribute until they cancel any internal field. If there were a field, charges would move; equilibrium means no net motion → E = 0 inside.</div></div>
+    <div class="question-block"><div class="q-num">Q7 (conceptual)</div><div class="q-text">Explain electric potential and its relation to electric field.</div><button class="answer-btn" onclick="toggle('a7')">Show answer</button><div class="answer" id="a7"><strong>Answer:</strong><br>Electric potential V is work done per unit charge to move a charge from a reference point to that point. E = –dV/dx (in one dimension) → field points in the direction of decreasing potential.</div></div>
+    <div class="question-block"><div class="q-num">Q8 (conceptual)</div><div class="q-text">Why is potential difference required to move charges in a circuit?</div><button class="answer-btn" onclick="toggle('a8')">Show answer</button><div class="answer" id="a8"><strong>Answer:</strong><br>Potential difference provides the energy to push charges through the circuit. Without V, charges would not have a net motion (no current).</div></div>
+    <div class="question-block"><div class="q-num">Q9 (conceptual)</div><div class="q-text">Explain why capacitors store energy.</div><button class="answer-btn" onclick="toggle('a9')">Show answer</button><div class="answer" id="a9"><strong>Answer:</strong><br>Separating opposite charges creates an electric field. The energy stored in that field is U = ½ C V².</div></div>
+    <div class="question-block"><div class="q-num">Q10 (conceptual)</div><div class="q-text">Why does current exist in metals?</div><button class="answer-btn" onclick="toggle('a10')">Show answer</button><div class="answer" id="a10"><strong>Answer:</strong><br>Free electrons move under an applied electric field. Their drift velocity produces current: I = n e v_d A.</div></div>
+    <div class="question-block"><div class="q-num">Q11 (conceptual)</div><div class="q-text">Explain Ohm’s law.</div><button class="answer-btn" onclick="toggle('a11')">Show answer</button><div class="answer" id="a11"><strong>Answer:</strong><br>V = I R. The current through a conductor is proportional to the voltage across it. Resistance R depends on material, length, cross‑section, and temperature.</div></div>
+    <div class="question-block"><div class="q-num">Q12 (conceptual)</div><div class="q-text">Why does resistance of a wire increase with temperature?</div><button class="answer-btn" onclick="toggle('a12')">Show answer</button><div class="answer" id="a12"><strong>Answer:</strong><br>Thermal vibrations of lattice atoms increase, causing more collisions for electrons → higher resistivity → higher resistance.</div></div>
+    <div class="question-block"><div class="q-num">Q13 (conceptual)</div><div class="q-text">Explain the difference between series and parallel circuits.</div><button class="answer-btn" onclick="toggle('a13')">Show answer</button><div class="answer" id="a13"><strong>Answer:</strong><br>Series: same current through all components, total resistance = sum of individual resistances. Parallel: same voltage across each branch, total resistance found from reciprocals.</div></div>
+    <div class="question-block"><div class="q-num">Q14 (conceptual)</div><div class="q-text">Why is the electric field stronger near point charges?</div><button class="answer-btn" onclick="toggle('a14')">Show answer</button><div class="answer" id="a14"><strong>Answer:</strong><br>E = k q / r², so field strength is inversely proportional to the square of distance. Closer to the charge → smaller r → larger E.</div></div>
+    <div class="question-block"><div class="q-num">Q15 (conceptual)</div><div class="q-text">Explain why charges reside on the surface of conductors.</div><button class="answer-btn" onclick="toggle('a15')">Show answer</button><div class="answer" id="a15"><strong>Answer:</strong><br>Electrostatic repulsion forces charges to move as far apart as possible, which is on the surface. Inside the conductor, the field is zero.</div></div>
+    <div class="question-block"><div class="q-num">Q16 (conceptual)</div><div class="q-text">Why is grounding important in circuits?</div><button class="answer-btn" onclick="toggle('a16')">Show answer</button><div class="answer" id="a16"><strong>Answer:</strong><br>Grounding provides a low‑resistance path to Earth, preventing excess charge buildup and reducing shock risk. It also serves as a common reference point (0 V).</div></div>
+    <div class="question-block"><div class="q-num">Q17 (conceptual)</div><div class="q-text">Explain why a capacitor charges rapidly at first and then slowly.</div><button class="answer-btn" onclick="toggle('a17')">Show answer</button><div class="answer" id="a17"><strong>Answer:</strong><br>Initially, the voltage across the capacitor is zero, so the voltage across the resistor is large → high current. As charge builds up, the capacitor voltage increases, reducing the net voltage and current → slower charging.</div></div>
+    <div class="question-block"><div class="q-num">Q18 (conceptual)</div><div class="q-text">Why does current split in parallel branches?</div><button class="answer-btn" onclick="toggle('a18')">Show answer</button><div class="answer" id="a18"><strong>Answer:</strong><br>Current divides inversely proportional to the resistance of each branch. Total current equals the sum of branch currents (Kirchhoff’s current law).</div></div>
+    <div class="question-block"><div class="q-num">Q19 (conceptual)</div><div class="q-text">Explain why energy is dissipated in resistors.</div><button class="answer-btn" onclick="toggle('a19')">Show answer</button><div class="answer" id="a19"><strong>Answer:</strong><br>Electrons collide with lattice atoms, transferring kinetic energy as heat. Power dissipated = I² R = V I = V² / R.</div></div>
+    <div class="question-block"><div class="q-num">Q20 (conceptual)</div><div class="q-text">Why is the concept of electric potential energy useful?</div><button class="answer-btn" onclick="toggle('a20')">Show answer</button><div class="answer" id="a20"><strong>Answer:</strong><br>Potential energy (scalar) simplifies calculations; energy differences drive charges and determine work done by electric fields.</div></div>
+    <div class="question-block"><div class="q-num">Q21 (conceptual)</div><div class="q-text">Explain the principle of a voltmeter.</div><button class="answer-btn" onclick="toggle('a21')">Show answer</button><div class="answer" id="a21"><strong>Answer:</strong><br>A voltmeter measures potential difference between two points. It is connected in parallel and has very high resistance to avoid drawing significant current that would alter the circuit.</div></div>
+    <div class="question-block"><div class="q-num">Q22 (conceptual)</div><div class="q-text">Why is an ammeter connected in series?</div><button class="answer-btn" onclick="toggle('a22')">Show answer</button><div class="answer" id="a22"><strong>Answer:</strong><br>An ammeter measures the current flowing through a branch. Connecting it in series ensures the entire current passes through it. Its resistance is very low to minimize voltage drop.</div></div>
+    <div class="question-block"><div class="q-num">Q23 (conceptual)</div><div class="q-text">Explain Kirchhoff’s laws.</div><button class="answer-btn" onclick="toggle('a23')">Show answer</button><div class="answer" id="a23"><strong>Answer:</strong><br>Kirchhoff’s current law (KCL): sum of currents entering a junction equals sum leaving. Kirchhoff’s voltage law (KVL): sum of voltage gains and drops around any closed loop is zero.</div></div>
+    <div class="question-block"><div class="q-num">Q24 (conceptual)</div><div class="q-text">Why are high‑resistance wires used in voltmeters?</div><button class="answer-btn" onclick="toggle('a24')">Show answer</button><div class="answer" id="a24"><strong>Answer:</strong><br>High resistance ensures that the voltmeter draws negligible current from the circuit, so the measured voltage is very close to the actual potential difference without loading the circuit.</div></div>
+    <div class="question-block"><div class="q-num">Q25 (conceptual)</div><div class="q-text">Why does resistance depend on wire length and area?</div><button class="answer-btn" onclick="toggle('a25')">Show answer</button><div class="answer" id="a25"><strong>Answer:</strong><br>R = ρ L / A. Longer wire → more collisions → higher R. Larger cross‑sectional area → more paths for electrons → lower R.</div></div>
+    <div class="question-block"><div class="q-num">Q26 (conceptual)</div><div class="q-text">Explain why power dissipated in a resistor is given by P = I V = I² R = V² / R.</div><button class="answer-btn" onclick="toggle('a26')">Show answer</button><div class="answer" id="a26"><strong>Answer:</strong><br>Joule heating: energy converted to heat per unit time. From Ohm’s law (V = I R), all three forms are equivalent.</div></div>
+    <div class="question-block"><div class="q-num">Q27 (conceptual)</div><div class="q-text">Why is a capacitor used in smoothing DC after rectification?</div><button class="answer-btn" onclick="toggle('a27')">Show answer</button><div class="answer" id="a27"><strong>Answer:</strong><br>The capacitor charges when the voltage rises and discharges when it dips, reducing the ripple and providing a smoother DC output.</div></div>
+    <div class="question-block"><div class="q-num">Q28 (conceptual)</div><div class="q-text">Explain the role of a dielectric in a capacitor.</div><button class="answer-btn" onclick="toggle('a28')">Show answer</button><div class="answer" id="a28"><strong>Answer:</strong><br>A dielectric increases capacitance (C = κ C₀) by reducing the effective electric field for the same charge, allowing more energy storage. It also provides mechanical spacing and insulation.</div></div>
+    <div class="question-block"><div class="q-num">Q29 (conceptual)</div><div class="q-text">Why does a resistor oppose current flow?</div><button class="answer-btn" onclick="toggle('a29')">Show answer</button><div class="answer" id="a29"><strong>Answer:</strong><br>Electrons moving through the resistor collide with the lattice atoms, losing energy and causing resistance to flow.</div></div>
+    <div class="question-block"><div class="q-num">Q30 (conceptual)</div><div class="q-text">Explain why electrostatics is important in electronics and real‑world devices.</div><button class="answer-btn" onclick="toggle('a30')">Show answer</button><div class="answer" id="a30"><strong>Answer:</strong><br>Electric fields, potential, and charge control circuits, sensors, capacitors, insulation, and high‑voltage systems. Understanding these is essential for designing and troubleshooting electronic devices.</div></div>
+
+    <!-- Part B: Calculation/Application (Q31–Q60) -->
+    <div class="question-block"><div class="q-num">Q31 (calculation)</div><div class="q-text">Two point charges q₁ = 5 μC and q₂ = –3 μC are separated by 2 m. Find the force between them (k = 9×10⁹ N·m²/C²).</div><button class="answer-btn" onclick="toggle('a31')">Show answer</button><div class="answer" id="a31"><strong>Step‑by‑step:</strong><br>F = k |q₁ q₂| / r² = 9×10⁹ × (5×10⁻⁶ × 3×10⁻⁶) / 4 = 9×10⁹ × 15×10⁻¹² / 4 = (135×10⁻³) / 4 = 0.03375 N ≈ 33.8 mN (attractive).<br>✅ Answer: 33.8 mN</div></div>
+    <div class="question-block"><div class="q-num">Q32 (calculation)</div><div class="q-text">A charge of 2 μC is placed in an electric field of 1000 N/C. Find the force on the charge.</div><button class="answer-btn" onclick="toggle('a32')">Show answer</button><div class="answer" id="a32"><strong>Step‑by‑step:</strong><br>F = q E = 2×10⁻⁶ × 1000 = 0.002 N = 2 mN.<br>✅ Answer: 2 mN</div></div>
+    <div class="question-block"><div class="q-num">Q33 (calculation)</div><div class="q-text">A capacitor of 10 μF is charged to 12 V. Find the stored energy.</div><button class="answer-btn" onclick="toggle('a33')">Show answer</button><div class="answer" id="a33"><strong>Step‑by‑step:</strong><br>U = ½ C V² = 0.5 × 10×10⁻⁶ × 144 = 0.5 × 1.44×10⁻³ = 7.2×10⁻⁴ J = 0.72 mJ.<br>✅ Answer: 0.72 mJ</div></div>
+    <div class="question-block"><div class="q-num">Q34 (calculation)</div><div class="q-text">Two resistors, 100 Ω and 200 Ω, are in series with a 12 V battery. Find the total current.</div><button class="answer-btn" onclick="toggle('a34')">Show answer</button><div class="answer" id="a34"><strong>Step‑by‑step:</strong><br>R_total = 100 + 200 = 300 Ω. I = V / R_total = 12 / 300 = 0.04 A = 40 mA.<br>✅ Answer: 40 mA</div></div>
+    <div class="question-block"><div class="q-num">Q35 (calculation)</div><div class="q-text">Two resistors, 100 Ω and 200 Ω, are in parallel with a 12 V battery. Find the total current.</div><button class="answer-btn" onclick="toggle('a35')">Show answer</button><div class="answer" id="a35"><strong>Step‑by‑step:</strong><br>1/R = 1/100 + 1/200 = 3/200 → R = 200/3 ≈ 66.67 Ω. I = V / R = 12 / 66.67 ≈ 0.18 A.<br>✅ Answer: 0.18 A</div></div>
+    <div class="question-block"><div class="q-num">Q36 (calculation)</div><div class="q-text">Two equal charges q = 4 μC are placed 3 m apart. Find the electric field at the midpoint between them.</div><button class="answer-btn" onclick="toggle('a36')">Show answer</button><div class="answer" id="a36"><strong>Step‑by‑step:</strong><br>Each charge produces field E₁ = E₂ = k q / (1.5)² = 9×10⁹ × 4×10⁻⁶ / 2.25 = 36×10³ / 2.25 = 16×10³ N/C. At the midpoint, the fields are equal and opposite (since both charges have same sign), so they cancel. Net E = 0.<br>✅ Answer: 0</div></div>
+    <div class="question-block"><div class="q-num">Q37 (calculation)</div><div class="q-text">A voltage divider uses R₁ = 2 kΩ and R₂ = 3 kΩ with input 12 V. Find the output voltage across R₂.</div><button class="answer-btn" onclick="toggle('a37')">Show answer</button><div class="answer" id="a37"><strong>Step‑by‑step:</strong><br>V_out = V_in × R₂ / (R₁ + R₂) = 12 × 3000 / 5000 = 12 × 0.6 = 7.2 V.<br>✅ Answer: 7.2 V</div></div>
+    <div class="question-block"><div class="q-num">Q38 (calculation)</div><div class="q-text">A resistor of 50 Ω has a voltage of 10 V across it. Find the current.</div><button class="answer-btn" onclick="toggle('a38')">Show answer</button><div class="answer" id="a38"><strong>Step‑by‑step:</strong><br>I = V / R = 10 / 50 = 0.2 A = 200 mA.<br>✅ Answer: 200 mA</div></div>
+    <div class="question-block"><div class="q-num">Q39 (calculation)</div><div class="q-text">A 100 μF capacitor is connected to a 12 V battery. Find the charge stored.</div><button class="answer-btn" onclick="toggle('a39')">Show answer</button><div class="answer" id="a39"><strong>Step‑by‑step:</strong><br>Q = C V = 100×10⁻⁶ × 12 = 1.2×10⁻³ C = 1.2 mC.<br>✅ Answer: 1.2 mC</div></div>
+    <div class="question-block"><div class="q-num">Q40 (calculation)</div><div class="q-text">A 50 Ω resistor carries 0.2 A. Find the power dissipated.</div><button class="answer-btn" onclick="toggle('a40')">Show answer</button><div class="answer" id="a40"><strong>Step‑by‑step:</strong><br>P = I² R = (0.2)² × 50 = 0.04 × 50 = 2 W.<br>✅ Answer: 2 W</div></div>
+    <div class="question-block"><div class="q-num">Q41 (calculation)</div><div class="q-text">Two charges +3 μC and –2 μC are 1 m apart. Find the electric potential at the midpoint (k = 9×10⁹).</div><button class="answer-btn" onclick="toggle('a41')">Show answer</button><div class="answer" id="a41"><strong>Step‑by‑step:</strong><br>r₁ = r₂ = 0.5 m. V = k (q₁/r₁ + q₂/r₂) = 9×10⁹ × (3×10⁻⁶ / 0.5 + (–2×10⁻⁶) / 0.5) = 9×10⁹ × (6×10⁻⁶ – 4×10⁻⁶) = 9×10⁹ × 2×10⁻⁶ = 18×10³ V = 18 kV.<br>✅ Answer: 18 kV</div></div>
+    <div class="question-block"><div class="q-num">Q42 (calculation)</div><div class="q-text">A capacitor of 20 μF is charged to 5 V. Find the stored energy.</div><button class="answer-btn" onclick="toggle('a42')">Show answer</button><div class="answer" id="a42"><strong>Step‑by‑step:</strong><br>U = ½ C V² = 0.5 × 20×10⁻⁶ × 25 = 0.5 × 500×10⁻⁶ = 250×10⁻⁶ J = 0.25 mJ.<br>✅ Answer: 0.25 mJ</div></div>
+    <div class="question-block"><div class="q-num">Q43 (calculation)</div><div class="q-text">Two parallel resistors, 100 Ω and 200 Ω, are connected to a 12 V battery. Find the current in each branch.</div><button class="answer-btn" onclick="toggle('a43')">Show answer</button><div class="answer" id="a43"><strong>Step‑by‑step:</strong><br>I₁ = V / R₁ = 12 / 100 = 0.12 A. I₂ = 12 / 200 = 0.06 A.<br>✅ Answer: 0.12 A, 0.06 A</div></div>
+    <div class="question-block"><div class="q-num">Q44 (calculation)</div><div class="q-text">A capacitor of 50 μF is connected to 10 V. Find the charge stored.</div><button class="answer-btn" onclick="toggle('a44')">Show answer</button><div class="answer" id="a44"><strong>Step‑by‑step:</strong><br>Q = C V = 50×10⁻⁶ × 10 = 500×10⁻⁶ C = 0.5 mC.<br>✅ Answer: 0.5 mC</div></div>
+    <div class="question-block"><div class="q-num">Q45 (calculation)</div><div class="q-text">A point charge of 5 μC is placed 2 m away. Find the electric field at that point.</div><button class="answer-btn" onclick="toggle('a45')">Show answer</button><div class="answer" id="a45"><strong>Step‑by‑step:</strong><br>E = k q / r² = 9×10⁹ × 5×10⁻⁶ / 4 = 45×10³ / 4 = 11,250 N/C.<br>✅ Answer: 11,250 N/C</div></div>
+    <div class="question-block"><div class="q-num">Q46 (calculation)</div><div class="q-text">A series circuit has a 100 Ω resistor and a 9 V battery. Find the power dissipated.</div><button class="answer-btn" onclick="toggle('a46')">Show answer</button><div class="answer" id="a46"><strong>Step‑by‑step:</strong><br>P = V² / R = 81 / 100 = 0.81 W.<br>✅ Answer: 0.81 W</div></div>
+    <div class="question-block"><div class="q-num">Q47 (calculation)</div><div class="q-text">A parallel circuit has a 50 Ω resistor and a 12 V battery. Find the power dissipated.</div><button class="answer-btn" onclick="toggle('a47')">Show answer</button><div class="answer" id="a47"><strong>Step‑by‑step:</strong><br>P = V² / R = 144 / 50 = 2.88 W.<br>✅ Answer: 2.88 W</div></div>
+    <div class="question-block"><div class="q-num">Q48 (calculation)</div><div class="q-text">An RC circuit has R = 1 kΩ and C = 10 μF. Find the time constant.</div><button class="answer-btn" onclick="toggle('a48')">Show answer</button><div class="answer" id="a48"><strong>Step‑by‑step:</strong><br>τ = R C = 1000 × 10×10⁻⁶ = 0.01 s = 10 ms.<br>✅ Answer: 10 ms</div></div>
+    <div class="question-block"><div class="q-num">Q49 (calculation)</div><div class="q-text">A resistor of 10 Ω carries a current of 2 A. Find the voltage across it.</div><button class="answer-btn" onclick="toggle('a49')">Show answer</button><div class="answer" id="a49"><strong>Step‑by‑step:</strong><br>V = I R = 2 × 10 = 20 V.<br>✅ Answer: 20 V</div></div>
+    <div class="question-block"><div class="q-num">Q50 (calculation)</div><div class="q-text">Two point charges each of 4 μC are separated by 2 m. Find the force between them.</div><button class="answer-btn" onclick="toggle('a50')">Show answer</button><div class="answer" id="a50"><strong>Step‑by‑step:</strong><br>F = k q² / r² = 9×10⁹ × (4×10⁻⁶)² / 4 = 9×10⁹ × 16×10⁻¹² / 4 = 144×10⁻³ / 4 = 0.036 N = 36 mN (repulsive).<br>✅ Answer: 36 mN</div></div>
+    <div class="question-block"><div class="q-num">Q51 (calculation)</div><div class="q-text">Ohm’s law: a resistor of 12 Ω has a voltage of 6 V. Find the current.</div><button class="answer-btn" onclick="toggle('a51')">Show answer</button><div class="answer" id="a51"><strong>Step‑by‑step:</strong><br>I = V / R = 6 / 12 = 0.5 A.<br>✅ Answer: 0.5 A</div></div>
+    <div class="question-block"><div class="q-num">Q52 (calculation)</div><div class="q-text">A capacitor of 100 μF is charged to 20 V. Find the stored energy.</div><button class="answer-btn" onclick="toggle('a52')">Show answer</button><div class="answer" id="a52"><strong>Step‑by‑step:</strong><br>U = ½ C V² = 0.5 × 100×10⁻⁶ × 400 = 0.5 × 0.04 = 0.02 J = 20 mJ.<br>✅ Answer: 20 mJ</div></div>
+    <div class="question-block"><div class="q-num">Q53 (calculation)</div><div class="q-text">Two resistors 10 Ω and 20 Ω are in series with a 12 V battery. Find the current.</div><button class="answer-btn" onclick="toggle('a53')">Show answer</button><div class="answer" id="a53"><strong>Step‑by‑step:</strong><br>R = 10 + 20 = 30 Ω. I = 12 / 30 = 0.4 A = 400 mA.<br>✅ Answer: 400 mA</div></div>
+    <div class="question-block"><div class="q-num">Q54 (calculation)</div><div class="q-text">A 10 Ω resistor has a current of 0.5 A. Find the voltage across it.</div><button class="answer-btn" onclick="toggle('a54')">Show answer</button><div class="answer" id="a54"><strong>Step‑by‑step:</strong><br>V = I R = 0.5 × 10 = 5 V.<br>✅ Answer: 5 V</div></div>
+    <div class="question-block"><div class="q-num">Q55 (calculation)</div><div class="q-text">A capacitor of 50 μF is charged to 12 V. Find the stored energy.</div><button class="answer-btn" onclick="toggle('a55')">Show answer</button><div class="answer" id="a55"><strong>Step‑by‑step:</strong><br>U = ½ C V² = 0.5 × 50×10⁻⁶ × 144 = 0.5 × 7200×10⁻⁶ = 3600×10⁻⁶ J = 3.6 mJ.<br>✅ Answer: 3.6 mJ</div></div>
+    <div class="question-block"><div class="q-num">Q56 (calculation)</div><div class="q-text">Find the potential at a distance 0.5 m from a point charge of 2 μC.</div><button class="answer-btn" onclick="toggle('a56')">Show answer</button><div class="answer" id="a56"><strong>Step‑by‑step:</strong><br>V = k q / r = 9×10⁹ × 2×10⁻⁶ / 0.5 = 18×10³ / 0.5 = 36×10³ V = 36 kV.<br>✅ Answer: 36 kV</div></div>
+    <div class="question-block"><div class="q-num">Q57 (calculation)</div><div class="q-text">Two resistors 100 Ω and 200 Ω are in parallel with a 10 V battery. Find the current in each branch.</div><button class="answer-btn" onclick="toggle('a57')">Show answer</button><div class="answer" id="a57"><strong>Step‑by‑step:</strong><br>I₁ = 10 / 100 = 0.1 A, I₂ = 10 / 200 = 0.05 A.<br>✅ Answer: 0.1 A, 0.05 A</div></div>
+    <div class="question-block"><div class="q-num">Q58 (calculation)</div><div class="q-text">A 25 Ω resistor carries 0.4 A. Find the power dissipated.</div><button class="answer-btn" onclick="toggle('a58')">Show answer</button><div class="answer" id="a58"><strong>Step‑by‑step:</strong><br>P = I² R = (0.4)² × 25 = 0.16 × 25 = 4 W.<br>✅ Answer: 4 W</div></div>
+    <div class="question-block"><div class="q-num">Q59 (calculation)</div><div class="q-text">Two resistors 50 Ω and 100 Ω are in series. The current is 0.1 A. Find the voltage across each.</div><button class="answer-btn" onclick="toggle('a59')">Show answer</button><div class="answer" id="a59"><strong>Step‑by‑step:</strong><br>V₁ = I R₁ = 0.1 × 50 = 5 V. V₂ = 0.1 × 100 = 10 V.<br>✅ Answer: 5 V, 10 V</div></div>
+    <div class="question-block"><div class="q-num">Q60 (conceptual)</div><div class="q-text">Explain why understanding electrostatics and circuits is crucial for engineers and students.</div><button class="answer-btn" onclick="toggle('a60')">Show answer</button><div class="answer" id="a60"><strong>Answer:</strong><br>These principles are the foundation of electronic devices, power distribution, communication systems, sensors, and instrumentation. They enable engineers to design, analyse, and innovate in fields ranging from microelectronics to high‑voltage power systems – essential for solving real‑world problems.</div></div>
+
+    <hr>
+    <div class="footer-note">
+        ✅ UNIT 6 COMPLETE · 60 questions · 30 conceptual + 30 applied · exam‑ready · feel the WOW!
+    </div>
+</div>
+
+<script>
+    function toggle(id) {
+        var el = document.getElementById(id);
+        if (el.style.display === "block") {
+            el.style.display = "none";
+        } else {
+            el.style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>

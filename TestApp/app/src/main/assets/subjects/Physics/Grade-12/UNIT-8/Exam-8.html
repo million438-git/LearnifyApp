@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 12 Physics – Unit 5 · Thermodynamics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f8fafc;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: #1e293b;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #e11d48, #9d174d);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-radius: 40px 40px 20px 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(157,23,77,0.2);
+        }
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.15s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.07);
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #e11d48;
+            border-left: 8px solid #e11d48;
+            padding-left: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .remember, .wow {
+            padding: 1.2rem 1.5rem;
+            border-radius: 20px;
+            margin: 1.5rem 0;
+            font-weight: 500;
+        }
+        .remember {
+            background: #ecfeff;
+            border-left: 6px solid #22c55e;
+        }
+        .wow {
+            background: #fff7ed;
+            border-left: 6px solid #f59e0b;
+        }
+        ul, ol {
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+        .question-block {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin: 1.2rem 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.02);
+        }
+        .q-num {
+            display: inline-block;
+            background: #e11d48;
+            color: white;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+        .q-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .answer-btn {
+            background: #e11d48;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem 0;
+            transition: background 0.1s;
+        }
+        .answer-btn:hover {
+            background: #9d174d;
+        }
+        .answer {
+            display: none;
+            background: #ecfeff;
+            padding: 1.2rem;
+            border-radius: 18px;
+            margin-top: 1rem;
+            border-left: 5px solid #e11d48;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #cbd5e1, transparent);
+            margin: 2.5rem 0;
+        }
+        .footer-note {
+            text-align: center;
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 50px;
+            border: 1px dashed #64748b;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>🔥 Grade 12 Physics – Unit 5</h1>
+        <p>Thermodynamics · 60 advanced questions · exam‑ready</p>
+    </header>
+
+    <!-- Unit notes -->
+    <div class="card">
+        <h2>📘 Thermodynamics – key ideas</h2>
+        <p>Thermodynamics studies heat, work, temperature, and energy. The first law (ΔU = Q – W) is energy conservation. The second law (entropy increases) sets limits on efficiency. Key concepts: heat capacity, latent heat, ideal gas law (PV = nRT), isothermal, adiabatic, isobaric, isochoric processes. Phase changes, engines, refrigerators all rely on these principles.</p>
+        <div class="remember">📌 REMEMBER: For ideal gases, ΔU = nCvΔT, work is area under P–V curve, efficiency η = 1 – Tc/Th (Carnot).</div>
+        <div class="wow">✨ WOW: The same laws that explain why steam burns also tell us why you can’t build a 100% efficient engine!</div>
+    </div>
+
+    <!-- ========== 60 QUESTIONS ========== -->
+    <!-- Part A: Conceptual (Q1–Q30) -->
+    <div class="question-block">
+        <div class="q-num">Q1 (conceptual)</div>
+        <div class="q-text">Explain why heat and temperature are different physical quantities.</div>
+        <button class="answer-btn" onclick="toggle('a1')">Show answer</button>
+        <div class="answer" id="a1">
+            <strong>Answer:</strong><br>
+            Temperature measures the average kinetic energy of particles. Heat is the energy transferred due to a temperature difference. Two objects can have the same temperature but different heat content (e.g., large vs small object).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q2 (conceptual)</div>
+        <div class="q-text">Why does specific heat capacity depend on the material?</div>
+        <button class="answer-btn" onclick="toggle('a2')">Show answer</button>
+        <div class="answer" id="a2">
+            <strong>Answer:</strong><br>
+            Different materials store kinetic energy differently due to molecular mass, bonding, and degrees of freedom. Q = mcΔT shows that for the same mass and ΔT, different materials need different Q.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q3 (conceptual)</div>
+        <div class="q-text">Why does conduction occur better in metals than in liquids?</div>
+        <button class="answer-btn" onclick="toggle('a3')">Show answer</button>
+        <div class="answer" id="a3">
+            <strong>Answer:</strong><br>
+            Metals have free electrons that move rapidly and transfer energy efficiently. In liquids, energy transfer relies on slower molecular collisions.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q4 (conceptual)</div>
+        <div class="q-text">Explain why thermal expansion occurs.</div>
+        <button class="answer-btn" onclick="toggle('a4')">Show answer</button>
+        <div class="answer" id="a4">
+            <strong>Answer:</strong><br>
+            As temperature increases, particles gain kinetic energy and their average separation increases, causing the material to expand (linear, area, volume expansion).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q5 (conceptual)</div>
+        <div class="q-text">Why does water have maximum density at 4°C?</div>
+        <button class="answer-btn" onclick="toggle('a5')">Show answer</button>
+        <div class="answer" id="a5">
+            <strong>Answer:</strong><br>
+            Hydrogen bonding creates an open crystalline structure below 4°C. At 4°C, the structure is most compact; below, it expands (ice floats).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q6 (conceptual)</div>
+        <div class="q-text">Explain why pressure of a gas increases when compressed at constant temperature.</div>
+        <button class="answer-btn" onclick="toggle('a6')">Show answer</button>
+        <div class="answer" id="a6">
+            <strong>Answer:</strong><br>
+            Boyle’s law: PV = constant. Decreasing volume increases collisions per unit area, so pressure rises.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q7 (conceptual)</div>
+        <div class="q-text">Why does the ideal gas law fail at high pressure?</div>
+        <button class="answer-btn" onclick="toggle('a7')">Show answer</button>
+        <div class="answer" id="a7">
+            <strong>Answer:</strong><br>
+            At high pressure, gas molecules occupy a significant fraction of the volume, and intermolecular forces become significant, so PV ≠ nRT.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q8 (conceptual)</div>
+        <div class="q-text">Explain why a refrigerator cools its contents.</div>
+        <button class="answer-btn" onclick="toggle('a8')">Show answer</button>
+        <div class="answer" id="a8">
+            <strong>Answer:</strong><br>
+            Compressor increases pressure of refrigerant, which then condenses and rejects heat outside. Expansion valve lowers pressure, causing rapid cooling, and the cold refrigerant absorbs heat from inside.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q9 (conceptual)</div>
+        <div class="q-text">Why is internal energy of an ideal gas only kinetic?</div>
+        <button class="answer-btn" onclick="toggle('a9')">Show answer</button>
+        <div class="answer" id="a9">
+            <strong>Answer:</strong><br>
+            Ideal gas assumes no intermolecular forces, so potential energy is zero. Internal energy comes only from translational (and rotational/vibrational for polyatomic) kinetic energy.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q10 (conceptual)</div>
+        <div class="q-text">Explain why work done by a gas is the area under the PV diagram.</div>
+        <button class="answer-btn" onclick="toggle('a10')">Show answer</button>
+        <div class="answer" id="a10">
+            <strong>Answer:</strong><br>
+            Work dW = P dV. Integrating from initial to final volume gives total work, which equals the area under the P‑V curve.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q11 (conceptual)</div>
+        <div class="q-text">Why does an adiabatic process cool a gas faster than an isothermal expansion?</div>
+        <button class="answer-btn" onclick="toggle('a11')">Show answer</button>
+        <div class="answer" id="a11">
+            <strong>Answer:</strong><br>
+            In adiabatic expansion, no heat is added, so the gas does work at the expense of its internal energy, causing temperature to drop. In isothermal, heat is supplied to maintain constant temperature.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q12 (conceptual)</div>
+        <div class="q-text">Explain why specific heat at constant volume differs from constant pressure.</div>
+        <button class="answer-btn" onclick="toggle('a12')">Show answer</button>
+        <div class="answer" id="a12">
+            <strong>Answer:</strong><br>
+            At constant pressure, gas expands and does work, so extra heat is needed compared to constant volume. Cp = Cv + nR for ideal gas.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q13 (conceptual)</div>
+        <div class="q-text">Why is latent heat independent of mass?</div>
+        <button class="answer-btn" onclick="toggle('a13')">Show answer</button>
+        <div class="answer" id="a13">
+            <strong>Answer:</strong><br>
+            Latent heat is energy per kilogram to change phase. It is a material property, so total Q = m L, but L itself does not depend on mass.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q14 (conceptual)</div>
+        <div class="q-text">Explain why steam burns more than boiling water at the same temperature.</div>
+        <button class="answer-btn" onclick="toggle('a14')">Show answer</button>
+        <div class="answer" id="a14">
+            <strong>Answer:</strong><br>
+            Steam releases latent heat of vaporization when it condenses on the skin, transferring much more energy than just hot water at 100°C.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q15 (conceptual)</div>
+        <div class="q-text">Why is thermodynamic efficiency always less than 100%?</div>
+        <button class="answer-btn" onclick="toggle('a15')">Show answer</button>
+        <div class="answer" id="a15">
+            <strong>Answer:</strong><br>
+            Second law: some heat must be rejected to a cold reservoir. Carnot efficiency η = 1 – Tc/Th is always < 1 unless Tc = 0 K (unattainable).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q16 (conceptual)</div>
+        <div class="q-text">Explain why heat flows spontaneously from hot to cold.</div>
+        <button class="answer-btn" onclick="toggle('a16')">Show answer</button>
+        <div class="answer" id="a16">
+            <strong>Answer:</strong><br>
+            This increases total entropy, following the second law of thermodynamics.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q17 (conceptual)</div>
+        <div class="q-text">Why does pressure remain constant during phase change at boiling point?</div>
+        <button class="answer-btn" onclick="toggle('a17')">Show answer</button>
+        <div class="answer" id="a17">
+            <strong>Answer:</strong><br>
+            During phase change, temperature is constant and pressure equals the vapor pressure at that temperature (e.g., atmospheric pressure for boiling water).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q18 (conceptual)</div>
+        <div class="q-text">Explain why Maxwell’s demon violates classical thermodynamics.</div>
+        <button class="answer-btn" onclick="toggle('a18')">Show answer</button>
+        <div class="answer" id="a18">
+            <strong>Answer:</strong><br>
+            The demon would sort fast and slow molecules, decreasing entropy without doing work, contradicting the second law.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q19 (conceptual)</div>
+        <div class="q-text">Why does gas expand in Joule‑Thomson effect cool or heat?</div>
+        <button class="answer-btn" onclick="toggle('a19')">Show answer</button>
+        <div class="answer" id="a19">
+            <strong>Answer:</strong><br>
+            For real gases, intermolecular forces cause energy redistribution during expansion. Ideal gases would have ΔT = 0.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q20 (conceptual)</div>
+        <div class="q-text">Why does conduction depend on cross‑sectional area and length?</div>
+        <button class="answer-btn" onclick="toggle('a20')">Show answer</button>
+        <div class="answer" id="a20">
+            <strong>Answer:</strong><br>
+            Q/t = k A ΔT / L: more area → more heat flow; longer path → slower transfer.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q21 (conceptual)</div>
+        <div class="q-text">Explain why black surfaces emit and absorb heat efficiently.</div>
+        <button class="answer-btn" onclick="toggle('a21')">Show answer</button>
+        <div class="answer" id="a21">
+            <strong>Answer:</strong><br>
+            High emissivity and absorptivity. They are good emitters (cooling) and good absorbers (heating) for thermal radiation.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q22 (conceptual)</div>
+        <div class="q-text">Why do gases exert pressure on container walls?</div>
+        <button class="answer-btn" onclick="toggle('a22')">Show answer</button>
+        <div class="answer" id="a22">
+            <strong>Answer:</strong><br>
+            Gas molecules collide with the walls, transferring momentum, which results in force per unit area – pressure.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q23 (conceptual)</div>
+        <div class="q-text">Explain why temperature rises slower for high‑specific‑heat liquids.</div>
+        <button class="answer-btn" onclick="toggle('a23')">Show answer</button>
+        <div class="answer" id="a23">
+            <strong>Answer:</strong><br>
+            Q = mcΔT, so for the same Q and m, larger c means smaller ΔT.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q24 (conceptual)</div>
+        <div class="q-text">Why is water used as coolant in engines?</div>
+        <button class="answer-btn" onclick="toggle('a24')">Show answer</button>
+        <div class="answer" id="a24">
+            <strong>Answer:</strong><br>
+            High specific heat capacity allows water to absorb large amounts of heat with moderate temperature rise. It is also abundant and flows easily.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q25 (conceptual)</div>
+        <div class="q-text">Explain why phase diagrams are important.</div>
+        <button class="answer-btn" onclick="toggle('a25')">Show answer</button>
+        <div class="answer" id="a25">
+            <strong>Answer:</strong><br>
+            They show stable phases at different T and P, and predict conditions for melting, boiling, sublimation, and triple point.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q26 (conceptual)</div>
+        <div class="q-text">Why is real gas compressibility factor > 1 at high P?</div>
+        <button class="answer-btn" onclick="toggle('a26')">Show answer</button>
+        <div class="answer" id="a26">
+            <strong>Answer:</strong><br>
+            Molecules occupy significant volume, making effective volume larger than ideal; repulsive forces dominate.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q27 (conceptual)</div>
+        <div class="q-text">Explain why thermometers use liquid expansion.</div>
+        <button class="answer-btn" onclick="toggle('a27')">Show answer</button>
+        <div class="answer" id="a27">
+            <strong>Answer:</strong><br>
+            Liquids expand linearly with temperature over a range, allowing calibration of a scale.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q28 (conceptual)</div>
+        <div class="q-text">Why does ice float on water?</div>
+        <button class="answer-btn" onclick="toggle('a28')">Show answer</button>
+        <div class="answer" id="a28">
+            <strong>Answer:</strong><br>
+            Ice density is less than water because of the open crystalline structure from hydrogen bonding, so buoyant force exceeds weight.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q29 (conceptual)</div>
+        <div class="q-text">Explain why heat engines use cyclic processes.</div>
+        <button class="answer-btn" onclick="toggle('a29')">Show answer</button>
+        <div class="answer" id="a29">
+            <strong>Answer:</strong><br>
+            The engine returns to its initial state after each cycle, so it can produce work repeatedly. Efficiency is defined over one cycle.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q30 (conceptual)</div>
+        <div class="q-text">Why is understanding thermodynamics critical for students and engineers?</div>
+        <button class="answer-btn" onclick="toggle('a30')">Show answer</button>
+        <div class="answer" id="a30">
+            <strong>Answer:</strong><br>
+            It governs heat, energy, and work in engines, refrigeration, power plants, and climate systems. Optimizing efficiency and predicting system behaviour are essential in engineering.
+        </div>
+    </div>
+
+    <!-- Part B: Calculation/Application (Q31–Q60) -->
+    <div class="question-block">
+        <div class="q-num">Q31 (calculation)</div>
+        <div class="q-text">1 kg of water is heated from 20°C to 80°C. Specific heat c = 4200 J/kg°C. Find the heat absorbed.</div>
+        <button class="answer-btn" onclick="toggle('a31')">Show answer</button>
+        <div class="answer" id="a31">
+            <strong>Step‑by‑step:</strong><br>
+            Q = m c ΔT = 1 × 4200 × (80 – 20) = 4200 × 60 = 252,000 J.<br>
+            ✅ Answer: 252 kJ
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q32 (calculation)</div>
+        <div class="q-text">0.5 kg of ice at 0°C melts completely. Latent heat Lf = 334 kJ/kg. Find the heat required.</div>
+        <button class="answer-btn" onclick="toggle('a32')">Show answer</button>
+        <div class="answer" id="a32">
+            <strong>Step‑by‑step:</strong><br>
+            Q = m L = 0.5 × 334,000 = 167,000 J.<br>
+            ✅ Answer: 167 kJ
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q33 (calculation)</div>
+        <div class="q-text">1 kg of steam condenses at 100°C. Latent heat Lv = 2.26×10⁶ J/kg. Heat released?</div>
+        <button class="answer-btn" onclick="toggle('a33')">Show answer</button>
+        <div class="answer" id="a33">
+            <strong>Step‑by‑step:</strong><br>
+            Q = m L = 1 × 2.26×10⁶ = 2.26×10⁶ J.<br>
+            ✅ Answer: 2.26 MJ
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q34 (calculation)</div>
+        <div class="q-text">1 mol of gas expands isothermally at 300 K from V₁ = 0.01 m³ to V₂ = 0.03 m³. Find work done (R = 8.314 J/mol·K).</div>
+        <button class="answer-btn" onclick="toggle('a34')">Show answer</button>
+        <div class="answer" id="a34">
+            <strong>Step‑by‑step:</strong><br>
+            W = n R T ln(V₂ / V₁) = 1 × 8.314 × 300 × ln(3) ≈ 8.314 × 300 × 1.0986 ≈ 2739 J.<br>
+            ✅ Answer: about 2740 J
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q35 (calculation)</div>
+        <div class="q-text">1 mol of gas has Cv = 12.5 J/mol·K. If temperature rises by 20 K, find ΔU.</div>
+        <button class="answer-btn" onclick="toggle('a35')">Show answer</button>
+        <div class="answer" id="a35">
+            <strong>Step‑by‑step:</strong><br>
+            ΔU = n Cv ΔT = 1 × 12.5 × 20 = 250 J.<br>
+            ✅ Answer: 250 J
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q36 (calculation)</div>
+        <div class="q-text">Gas at 2 atm expands adiabatically, γ = 1.4, V₂ / V₁ = 2. Find P₂.</div>
+        <button class="answer-btn" onclick="toggle('a36')">Show answer</button>
+        <div class="answer" id="a36">
+            <strong>Step‑by‑step:</strong><br>
+            P₂ = P₁ (V₁ / V₂)^γ = 2 × (1/2)^1.4 = 2 × 0.5^1.4. 0.5^1.4 ≈ 0.378. P₂ ≈ 0.756 atm.<br>
+            ✅ Answer: about 0.76 atm
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q37 (calculation)</div>
+        <div class="q-text">An ideal engine absorbs 500 J at 600 K and rejects to 300 K. Find its efficiency.</div>
+        <button class="answer-btn" onclick="toggle('a37')">Show answer</button>
+        <div class="answer" id="a37">
+            <strong>Step‑by‑step:</strong><br>
+            η = 1 – Tc/Th = 1 – 300/600 = 0.5 = 50%.<br>
+            ✅ Answer: 50%
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q38 (calculation)</div>
+        <div class="q-text">1 kg of air (Cp ≈ 1005 J/kg·K) is heated at constant pressure from 300 K to 600 K. Find Q.</div>
+        <button class="answer-btn" onclick="toggle('a38')">Show answer</button>
+        <div class="answer" id="a38">
+            <strong>Step‑by‑step:</strong><br>
+            Q = m Cp ΔT = 1 × 1005 × (600 – 300) = 1005 × 300 = 301,500 J = 301.5 kJ.<br>
+            ✅ Answer: 301.5 kJ
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q39 (calculation)</div>
+        <div class="q-text">A heat engine does 400 J of work and rejects 600 J. Find its efficiency.</div>
+        <button class="answer-btn" onclick="toggle('a39')">Show answer</button>
+        <div class="answer" id="a39">
+            <strong>Step‑by‑step:</strong><br>
+            Q_h = W + Q_c = 400 + 600 = 1000 J. η = W / Q_h = 400 / 1000 = 0.4 = 40%.<br>
+            ✅ Answer: 40%
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q40 (calculation)</div>
+        <div class="q-text">1 kg of water vapor at 100°C occupies 0.1 m³. Find its pressure (M = 18 g/mol, R = 8.314).</div>
+        <button class="answer-btn" onclick="toggle('a40')">Show answer</button>
+        <div class="answer" id="a40">
+            <strong>Step‑by‑step:</strong><br>
+            n = mass / molar mass = 1000 g / 18 g/mol ≈ 55.56 mol.<br>
+            P = n R T / V = 55.56 × 8.314 × 373 / 0.1 ≈ 55.56 × 8.314 × 3730 ≈ 55.56 × 31000 ≈ 1.72×10⁶ Pa.<br>
+            ✅ Answer: about 1.72 MPa
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q41 (calculation)</div>
+        <div class="q-text">Gas expands isobarically at P = 2×10⁵ Pa from V₁ = 1 L to V₂ = 3 L. Find work done.</div>
+        <button class="answer-btn" onclick="toggle('a41')">Show answer</button>
+        <div class="answer" id="a41">
+            <strong>Step‑by‑step:</strong><br>
+            ΔV = 3 L – 1 L = 2 L = 2×10⁻³ m³. W = P ΔV = 2×10⁵ × 2×10⁻³ = 400 J.<br>
+            ✅ Answer: 400 J
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q42 (calculation)</div>
+        <div class="q-text">0.5 kg of ice at –10°C is warmed to 0°C. c_ice = 2100 J/kg·K. Find heat required.</div>
+        <button class="answer-btn" onclick="toggle('a42')">Show answer</button>
+        <div class="answer" id="a42">
+            <strong>Step‑by‑step:</strong><br>
+            Q = m c ΔT = 0.5 × 2100 × 10 = 10,500 J.<br>
+            ✅ Answer: 10.5 kJ
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q43 (calculation)</div>
+        <div class="q-text">2 mol of gas, Cp = 29 J/mol·K, heated at constant pressure by 50 K. Find Q.</div>
+        <button class="answer-btn" onclick="toggle('a43')">Show answer</button>
+        <div class="answer" id="a43">
+            <strong>Step‑by‑step:</strong><br>
+            Q = n Cp ΔT = 2 × 29 × 50 = 2,900 J.<br>
+            ✅ Answer: 2900 J
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q44 (calculation)</div>
+        <div class="q-text">A cylinder contains gas at P₁ = 10⁵ Pa, V₁ = 0.01 m³. It expands adiabatically (γ = 1.4) to V₂ = 0.02 m³. Find work done.</div>
+        <button class="answer-btn" onclick="toggle('a44')">Show answer</button>
+        <div class="answer" id="a44">
+            <strong>Step‑by‑step:</strong><br>
+            P₂ = P₁ (V₁/V₂)^γ = 10⁵ × (0.5)^1.4 ≈ 10⁵ × 0.378 = 3.78×10⁴ Pa.<br>
+            W = (P₂V₂ – P₁V₁) / (1 – γ) = (3.78×10⁴×0.02 – 10⁵×0.01) / (1 – 1.4) = (756 – 1000) / (–0.4) = (–244) / (–0.4) = 610 J.<br>
+            ✅ Answer: about 610 J
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q45 (calculation)</div>
+        <div class="q-text">A steam engine absorbs 1×10⁶ J and rejects 4×10⁵ J. Find work done and efficiency.</div>
+        <button class="answer-btn" onclick="toggle('a45')">Show answer</button>
+        <div class="answer" id="a45">
+            <strong>Step‑by‑step:</strong><br>
+            W = Q_h – Q_c = 1×10⁶ – 4×10⁵ = 6×10⁵ J. η = W / Q_h = 6×10⁵ / 1×10⁶ = 0.6 = 60%.<br>
+            ✅ Answer: 600 kJ, 60%
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q46 (calculation)</div>
+        <div class="q-text">Air at P₁ = 10⁵ Pa, V₁ = 0.01 m³ is compressed isothermally so that volume halves. Find work done on the gas.</div>
+        <button class="answer-btn" onclick="toggle('a46')">Show answer</button>
+        <div class="answer" id="a46">
+            <strong>Step‑by‑step:</strong><br>
+            Work done by gas: W = nRT ln(V₂/V₁) = P₁V₁ ln(0.5) = 10⁵ × 0.01 × (–0.693) = –693 J. Work done on gas = +693 J.<br>
+            ✅ Answer: 693 J (on the gas)
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q47 (calculation)</div>
+        <div class="q-text">A gas absorbs 500 J of heat and does 200 J of work. Find ΔU.</div>
+        <button class="answer-btn" onclick="toggle('a47')">Show answer</button>
+        <div class="answer" id="a47">
+            <strong>Step‑by‑step:</strong><br>
+            ΔU = Q – W = 500 – 200 = 300 J.<br>
+            ✅ Answer: 300 J
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q48 (calculation)</div>
+        <div class="q-text">1 mol of monatomic gas (Cv = 12.5 J/mol·K) is heated by 100 K. Find ΔU.</div>
+        <button class="answer-btn" onclick="toggle('a48')">Show answer</button>
+        <div class="answer" id="a48">
+            <strong>Step‑by‑step:</strong><br>
+            ΔU = n Cv ΔT = 1 × 12.5 × 100 = 1250 J.<br>
+            ✅ Answer: 1250 J
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q49 (calculation)</div>
+        <div class="q-text">1 kg of water cools from 80°C to 20°C. Find heat released (c = 4200 J/kg°C).</div>
+        <button class="answer-btn" onclick="toggle('a49')">Show answer</button>
+        <div class="answer" id="a49">
+            <strong>Step‑by‑step:</strong><br>
+            Q = m c ΔT = 1 × 4200 × (80 – 20) = 4200 × 60 = 252,000 J.<br>
+            ✅ Answer: 252 kJ
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q50 (calculation)</div>
+        <div class="q-text">0.1 m³ of ideal gas at 10⁵ Pa and 300 K. Find number of moles (R = 8.314).</div>
+        <button class="answer-btn" onclick="toggle('a50')">Show answer</button>
+        <div class="answer" id="a50">
+            <strong>Step‑by‑step:</strong><br>
+            n = P V / (R T) = 10⁵ × 0.1 / (8.314 × 300) = 10⁴ / 2494.2 ≈ 4.01 mol.<br>
+            ✅ Answer: about 4.01 mol
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q51 (calculation)</div>
+        <div class="q-text">Latent heat of fusion is 334 kJ/kg. How much heat to melt 0.2 kg of ice at 0°C?</div>
+        <button class="answer-btn" onclick="toggle('a51')">Show answer</button>
+        <div class="answer" id="a51">
+            <strong>Step‑by‑step:</strong><br>
+            Q = m L = 0.2 × 334,000 = 66,800 J.<br>
+            ✅ Answer: 66.8 kJ
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q52 (calculation)</div>
+        <div class="q-text">1 mol gas, γ = 1.4, P₁ = 10⁵ Pa, V₁ = 0.01 m³, expands adiabatically to V₂ = 0.02 m³. Find P₂.</div>
+        <button class="answer-btn" onclick="toggle('a52')">Show answer</button>
+        <div class="answer" id="a52">
+            <strong>Step‑by‑step:</strong><br>
+            P₂ = P₁ (V₁/V₂)^γ = 10⁵ × (0.5)^1.4 ≈ 10⁵ × 0.378 = 3.78×10⁴ Pa.<br>
+            ✅ Answer: 3.78×10⁴ Pa
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q53 (calculation)</div>
+        <div class="q-text">1 kg of water at 0°C is heated to 100°C and then vaporized. Total heat? (c = 4200, Lv = 2.26×10⁶ J/kg)</div>
+        <button class="answer-btn" onclick="toggle('a53')">Show answer</button>
+        <div class="answer" id="a53">
+            <strong>Step‑by‑step:</strong><br>
+            Sensible: Q₁ = 1×4200×100 = 420,000 J. Latent: Q₂ = 1×2.26×10⁶ = 2,260,000 J. Total = 2,680,000 J = 2.68 MJ.<br>
+            ✅ Answer: 2.68 MJ
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q54 (calculation)</div>
+        <div class="q-text">Ideal gas: P = 2×10⁵ Pa, V = 0.05 m³, n = 2 mol. Find T (R = 8.314).</div>
+        <button class="answer-btn" onclick="toggle('a54')">Show answer</button>
+        <div class="answer" id="a54">
+            <strong>Step‑by‑step:</strong><br>
+            T = P V / (n R) = 2×10⁵ × 0.05 / (2 × 8.314) = 10⁴ / 16.628 ≈ 601 K.<br>
+            ✅ Answer: about 601 K
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q55 (calculation)</div>
+        <div class="q-text">A heat engine absorbs 1 MJ and rejects 300 kJ. Find work and efficiency.</div>
+        <button class="answer-btn" onclick="toggle('a55')">Show answer</button>
+        <div class="answer" id="a55">
+            <strong>Step‑by‑step:</strong><br>
+            W = 1,000,000 – 300,000 = 700,000 J. η = 700,000 / 1,000,000 = 0.7 = 70%.<br>
+            ✅ Answer: 700 kJ, 70%
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q56 (calculation)</div>
+        <div class="q-text">1 mol diatomic gas, Cv = 20.8 J/mol·K, heated by 50 K. Find ΔU.</div>
+        <button class="answer-btn" onclick="toggle('a56')">Show answer</button>
+        <div class="answer" id="a56">
+            <strong>Step‑by‑step:</strong><br>
+            ΔU = n Cv ΔT = 1 × 20.8 × 50 = 1040 J.<br>
+            ✅ Answer: 1040 J
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q57 (calculation)</div>
+        <div class="q-text">0.5 kg steam at 100°C condenses and then cools to 50°C. Total heat released? (Lv = 2.26×10⁶, c = 4200)</div>
+        <button class="answer-btn" onclick="toggle('a57')">Show answer</button>
+        <div class="answer" id="a57">
+            <strong>Step‑by‑step:</strong><br>
+            Condensation: Q₁ = 0.5 × 2.26×10⁶ = 1,130,000 J. Cooling: Q₂ = 0.5 × 4200 × (100 – 50) = 0.5 × 4200 × 50 = 105,000 J. Total = 1,235,000 J = 1.235 MJ.<br>
+            ✅ Answer: 1.235 MJ
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q58 (calculation)</div>
+        <div class="q-text">A gas expands isothermally, doing 500 J of work. Find ΔU and Q.</div>
+        <button class="answer-btn" onclick="toggle('a58')">Show answer</button>
+        <div class="answer" id="a58">
+            <strong>Step‑by‑step:</strong><br>
+            Isothermal: ΔU = 0. Q = W = 500 J.<br>
+            ✅ Answer: ΔU = 0, Q = 500 J
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q59 (calculation)</div>
+        <div class="q-text">1 kg of ice at –10°C is turned into steam at 100°C. Total heat? (c_ice = 2100, Lf = 334,000, c_water = 4200, Lv = 2.26×10⁶)</div>
+        <button class="answer-btn" onclick="toggle('a59')">Show answer</button>
+        <div class="answer" id="a59">
+            <strong>Step‑by‑step:</strong><br>
+            Warm ice to 0°C: Q₁ = 1×2100×10 = 21,000 J. Melt ice: Q₂ = 1×334,000 = 334,000 J. Heat water to 100°C: Q₃ = 1×4200×100 = 420,000 J. Vaporize: Q₄ = 1×2.26×10⁶ = 2,260,000 J. Total = 3,035,000 J = 3.035 MJ.<br>
+            ✅ Answer: 3.035 MJ
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q60 (conceptual)</div>
+        <div class="q-text">Explain why understanding thermodynamics is crucial for modern energy systems.</div>
+        <button class="answer-btn" onclick="toggle('a60')">Show answer</button>
+        <div class="answer" id="a60">
+            <strong>Answer:</strong><br>
+            Thermodynamics predicts energy conversion efficiency, designs engines, refrigeration, power plants, and climate systems. It is essential for sustainable technology and real‑world applications.
+        </div>
+    </div>
+
+    <hr>
+    <div class="footer-note">
+        ✅ UNIT 5 COMPLETE · 60 questions · 30 conceptual + 30 applied · exam‑ready · feel the WOW!
+    </div>
+</div>
+
+<script>
+    function toggle(id) {
+        var el = document.getElementById(id);
+        if (el.style.display === "block") {
+            el.style.display = "none";
+        } else {
+            el.style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>

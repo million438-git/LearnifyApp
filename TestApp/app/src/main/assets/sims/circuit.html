@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background: #0f172a; color: white; margin: 0; padding: 15px; }
+        .lab-bench { background: #1e293b; border-radius: 20px; padding: 20px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); margin-bottom: 20px; position: relative; }
+        canvas { display: block; margin: 0 auto; background: #1e293b; border-radius: 10px; touch-action: none; }
+        .controls { background: #334155; padding: 15px; border-radius: 15px; text-align: left; }
+        .control-row { margin-bottom: 15px; }
+        label { display: block; font-size: 14px; margin-bottom: 5px; color: #94a3b8; }
+        input[type=range] { width: 100%; height: 8px; border-radius: 5px; background: #475569; outline: none; -webkit-appearance: none; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #3b82f6; cursor: pointer; }
+        button { padding: 10px 15px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 5px; }
+        button.reverse { background: #6366f1; }
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-bottom: 10px; }
+        .status-on { background: #065f46; color: #34d399; }
+        .status-off { background: #7f1d1d; color: #f87171; }
+        .exp { font-size: 13px; color: #94a3b8; margin-top: 10px; line-height: 1.4; }
+    </style>
+</head>
+<body>
+    <div class="lab-bench">
+        <div id="status" class="status-badge status-off">CIRCUIT OPEN</div>
+        <canvas id="circuitCanvas"></canvas>
+    </div>
+
+    <div class="controls">
+        <div class="control-row">
+            <label>Resistance ($R$): <span id="resVal">500</span> Ω</label>
+            <input type="range" id="resInput" min="100" max="2000" value="500" oninput="updateCircuit()">
+        </div>
+        <div class="control-row">
+            <label>Battery Voltage ($V$): <span id="volVal">9</span> V</label>
+            <input type="range" id="volInput" min="1" max="24" value="9" oninput="updateCircuit()">
+        </div>
+        <button class="reverse" onclick="reversePolarity()">🔄 Reverse Battery Polarity</button>
+        <button id="switchBtn" onclick="toggleSwitch()">🔌 Close Switch</button>
+
+        <div class="exp">
+            <b>Real Physics:</b> LED is a diode. Current only flows in one direction (Forward Bias). If polarity is reversed, current is blocked.
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('circuitCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 300;
+        canvas.height = 200;
+
+        let isOn = false;
+        let isForward = true;
+        let resistance = 500;
+        let voltage = 9;
+        let electrons = [];
+        let electronTimer = 0;
+
+        // Initialize electron positions
+        for(let i=0; i<20; i++) {
+            electrons.push(i / 20);
+        }
+
+        function toggleSwitch() {
+            isOn = !isOn;
+            const btn = document.getElementById('switchBtn');
+            const status = document.getElementById('status');
+            btn.innerText = isOn ? "🔌 Open Switch" : "🔌 Close Switch";
+            status.innerText = isOn ? "CIRCUIT CLOSED" : "CIRCUIT OPEN";
+            status.className = "status-badge " + (isOn ? "status-on" : "status-off");
+        }
+
+        function reversePolarity() {
+            isForward = !isForward;
+        }
+
+        function updateCircuit() {
+            resistance = document.getElementById('resInput').value;
+            voltage = document.getElementById('volInput').value;
+            document.getElementById('resVal').innerText = resistance;
+            document.getElementById('volVal').innerText = voltage;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const current = (isOn && isForward) ? (voltage / resistance) : 0;
+            const flowSpeed = current * 500;
+
+            // Draw Wire Path
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.rect(50, 50, 200, 100);
+            ctx.stroke();
+
+            // Draw Components
+            // 1. Battery (Bottom)
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(120, 140, 60, 20);
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 10px sans-serif';
+            ctx.fillText(isForward ? "-  BAT  +" : "+  BAT  -", 128, 154);
+
+            // 2. Resistor (Top)
+            ctx.fillStyle = '#92400e';
+            ctx.fillRect(125, 42, 50, 16);
+            ctx.fillStyle = 'white';
+            ctx.fillText("RES", 140, 54);
+
+            // 3. LED (Right)
+            let ledColor = '#475569'; // Off
+            if (isOn) {
+                if (isForward) {
+                    // Brightness based on current
+                    const brightness = Math.min(255, current * 10000);
+                    ledColor = `rgb(${brightness}, ${brightness}, 0)`;
+                    ctx.shadowBlur = brightness / 10;
+                    ctx.shadowColor = 'yellow';
+                } else {
+                    ledColor = '#ef4444'; // Red hint for reverse bias blocked
+                }
+            }
+            ctx.fillStyle = ledColor;
+            ctx.beginPath();
+            ctx.arc(250, 100, 12, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            // 4. Switch (Left)
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            if (isOn) {
+                ctx.moveTo(50, 90); ctx.lineTo(50, 110);
+            } else {
+                ctx.moveTo(50, 90); ctx.lineTo(35, 105);
+            }
+            ctx.stroke();
+
+            // Draw Electrons
+            if (isOn && isForward) {
+                ctx.fillStyle = '#fbbf24';
+                electronTimer += flowSpeed;
+                electrons.forEach(pos => {
+                    let p = (pos + electronTimer) % 1;
+                    let x, y;
+                    // Path logic (Clockwise)
+                    if (p < 0.25) { // Top: left to right
+                        x = 50 + (p / 0.25) * 200; y = 50;
+                    } else if (p < 0.5) { // Right: top to bottom
+                        x = 250; y = 50 + ((p - 0.25) / 0.25) * 100;
+                    } else if (p < 0.75) { // Bottom: right to left
+                        x = 250 - ((p - 0.5) / 0.25) * 200; y = 150;
+                    } else { // Left: bottom to top
+                        x = 50; y = 150 - ((p - 0.75) / 0.25) * 100;
+                    }
+                    ctx.beginPath();
+                    ctx.arc(x, y, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    </script>
+</body>
+</html>

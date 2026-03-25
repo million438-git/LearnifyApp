@@ -1,19 +1,46 @@
 plugins {
     alias(libs.plugins.android.application)
+    id 'com.chaquo.python'
 }
 
 android {
-    namespace 'com.example.testapp'
+    namespace 'com.million.learnify'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.testapp"
+        applicationId "com.million.learnify"
         minSdk 24
         targetSdk 34
-        versionCode 1
-        versionName "1.0"
+        versionCode 28
+        versionName "2.8 Professional"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        
+        buildConfigField "String", "OPENAI_API_KEY", "\"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\""
+
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+        }
+
+        python {
+            // Bundled Python version for the app
+            version "3.11"
+            
+            // Specify the Python 3.11 executable on your machine.
+            // On Windows, if you have the Python Launcher installed, use:
+            buildPython "py", "-3.11"
+            
+            // If the above doesn't work, provide the absolute path:
+            // buildPython "C:/Users/<YourUser>/AppData/Local/Programs/Python/Python311/python.exe"
+
+            pip {
+                // No external dependencies required for voice_brain.py
+            }
+        }
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
@@ -41,6 +68,23 @@ dependencies {
     implementation libs.retrofit
     implementation libs.retrofit.gson
     implementation libs.androidx.core.splashscreen
+    implementation libs.androidx.gridlayout
+    
+    // Explicit dependencies to help Layout Preview resolve classes
+    implementation libs.androidx.coordinatorlayout
+    implementation libs.androidx.drawerlayout
+    implementation libs.androidx.recyclerview
+    implementation libs.androidx.core.ktx
+    
+    implementation libs.androidx.lifecycle.viewmodel
+    implementation libs.androidx.lifecycle.livedata
+
+    // CameraX dependencies
+    implementation libs.androidx.camera.core
+    implementation libs.androidx.camera.camera2
+    implementation libs.androidx.camera.lifecycle
+    implementation libs.androidx.camera.view
+
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

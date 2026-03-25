@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_dashboard_glass"
-    tools:context=".MainActivity">
+    android:background="@drawable/bg_admin_mix"
+    tools:context="com.million.learnify.MainActivity">
 
     <!-- 1. Header Section -->
     <LinearLayout
@@ -22,10 +22,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="EduPortal"
-            android:textColor="@color/neon_cyan"
-            android:textSize="40sp"
+            android:textColor="@color/text_on_dark"
+            android:textSize="50sp"
             android:textStyle="bold"
-            android:shadowColor="#4D000000"
+            android:shadowColor="#480D66"
             android:shadowDx="2"
             android:shadowDy="4"
             android:shadowRadius="8" />
@@ -35,23 +35,26 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Select Your Destination"
-            android:textColor="#124D9A"
+            android:textColor="#122ED0"
             android:textSize="16sp"
             android:letterSpacing="0.1"
             android:textAllCaps="true"
             android:textStyle="bold" />
     </LinearLayout>
 
-    <!-- 2. Portal Selection Cards -->
+    <!-- 2. Portal Selection Cards (Flexible Responsive Width) -->
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="24dp"
+        app:layout_constraintWidth_max="600dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/footerText"
         app:layout_constraintTop_toBottomOf="@id/headerLayout">
 
-        <!-- Beautiful Student Portal Card -->
+        <!-- Student Portal Card -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardStudentPortal"
             android:layout_width="match_parent"
@@ -101,17 +104,10 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:src="@android:drawable/ic_media_play"
-                    app:tint="@color/dashboard_bg" />
             </RelativeLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Beautiful Admin Portal Card -->
+        <!-- Admin Portal Card -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardAdminPortal"
             android:layout_width="match_parent"
@@ -156,17 +152,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="System &amp; content control"
-                        android:textColor="#00C853"
+                        android:textColor="#10D05F"
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:src="@android:drawable/ic_media_play"
-                    app:tint="@android:color/white" />
             </RelativeLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -178,8 +167,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:text="AceGrade • Professional Learning"
-        android:textColor="#D50000"
-        android:textSize="12sp"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

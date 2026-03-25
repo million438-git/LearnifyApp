@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 11 Physics – Unit 6 · Electrostatics and Electric Circuits</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f8fafc;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: #1e293b;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-radius: 40px 40px 20px 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(79,70,229,0.2);
+        }
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.15s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.07);
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #4f46e5;
+            border-left: 8px solid #4f46e5;
+            padding-left: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .remember, .wow {
+            padding: 1.2rem 1.5rem;
+            border-radius: 20px;
+            margin: 1.5rem 0;
+            font-weight: 500;
+        }
+        .remember {
+            background: #ecfeff;
+            border-left: 6px solid #22c55e;
+        }
+        .wow {
+            background: #fff7ed;
+            border-left: 6px solid #f59e0b;
+        }
+        ul, ol {
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+        .question-block {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin: 1.2rem 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.02);
+        }
+        .q-num {
+            display: inline-block;
+            background: #4f46e5;
+            color: white;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+        .q-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .answer-btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem 0;
+            transition: background 0.1s;
+        }
+        .answer-btn:hover {
+            background: #4338ca;
+        }
+        .answer {
+            display: none;
+            background: #ecfeff;
+            padding: 1.2rem;
+            border-radius: 18px;
+            margin-top: 1rem;
+            border-left: 5px solid #4f46e5;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #cbd5e1, transparent);
+            margin: 2.5rem 0;
+        }
+        .footer-note {
+            text-align: center;
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 50px;
+            border: 1px dashed #64748b;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>⚡ Grade 11 Physics – Unit 6</h1>
+        <p>Electrostatics and Electric Circuits · 30 advanced questions · exam‑ready</p>
+    </header>
+
+    <!-- Unit notes -->
+    <div class="card">
+        <h2>📘 Electrostatics and circuits – key ideas</h2>
+        <p>Electrostatics deals with forces, fields, and potentials from stationary charges. Coulomb’s law, electric field, and potential are fundamental. In electric circuits, charge flows due to potential difference. Ohm’s law, resistance (series/parallel), power, and capacitors are essential. Kirchhoff’s laws conserve charge and energy. These principles explain everything from lightning to household wiring.</p>
+        <div class="remember">📌 REMEMBER: F = k |q₁ q₂|/r², E = F/q, V = W/q, I = V/R, P = I²R = V²/R.</div>
+        <div class="wow">✨ WOW: The electric field inside a conductor in electrostatic equilibrium is always zero – that's why you're safe inside a car during a lightning storm!</div>
+    </div>
+
+    <!-- ========== 30 QUESTIONS ========== -->
+    <!-- Part A: Conceptual (Q1–Q15) -->
+    <div class="question-block">
+        <div class="q-num">Q1 (conceptual)</div>
+        <div class="q-text">Explain why like charges repel and unlike charges attract.</div>
+        <button class="answer-btn" onclick="toggle('a1')">Show answer</button>
+        <div class="answer" id="a1">
+            <strong>Answer:</strong><br>
+            Electric force is a vector along the line joining charges. According to Coulomb's law, F = k |q₁ q₂| / r². The sign of the product q₁ q₂ determines direction: same sign → repulsion; opposite signs → attraction.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q2 (conceptual)</div>
+        <div class="q-text">Why is the electric field a vector quantity?</div>
+        <button class="answer-btn" onclick="toggle('a2')">Show answer</button>
+        <div class="answer" id="a2">
+            <strong>Answer:</strong><br>
+            Electric field has both magnitude and direction (the direction of the force on a positive test charge). Therefore it is a vector.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q3 (conceptual)</div>
+        <div class="q-text">Explain why a conductor in electrostatic equilibrium has zero electric field inside.</div>
+        <button class="answer-btn" onclick="toggle('a3')">Show answer</button>
+        <div class="answer" id="a3">
+            <strong>Answer:</strong><br>
+            Free charges in the conductor redistribute until they cancel any internal field. If there were a field, charges would move; equilibrium means no net motion → E = 0 inside.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q4 (conceptual)</div>
+        <div class="q-text">Why does a charged object induce charge separation in a neutral conductor?</div>
+        <button class="answer-btn" onclick="toggle('a4')">Show answer</button>
+        <div class="answer" id="a4">
+            <strong>Answer:</strong><br>
+            The electric field of the charged object repels or attracts free electrons in the conductor, causing one side to become negative and the other positive – induced charge.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q5 (conceptual)</div>
+        <div class="q-text">Explain why potential difference drives current in a circuit.</div>
+        <button class="answer-btn" onclick="toggle('a5')">Show answer</button>
+        <div class="answer" id="a5">
+            <strong>Answer:</strong><br>
+            Voltage provides energy per unit charge, creating an electric field that pushes charges. Without potential difference, charges would not flow.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q6 (conceptual)</div>
+        <div class="q-text">Why is resistance of a wire proportional to its length?</div>
+        <button class="answer-btn" onclick="toggle('a6')">Show answer</button>
+        <div class="answer" id="a6">
+            <strong>Answer:</strong><br>
+            Longer wire means more collisions for electrons → higher opposition to flow → resistance increases with length.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q7 (conceptual)</div>
+        <div class="q-text">Why does resistance decrease with increasing cross-sectional area?</div>
+        <button class="answer-btn" onclick="toggle('a7')">Show answer</button>
+        <div class="answer" id="a7">
+            <strong>Answer:</strong><br>
+            More area provides more paths for electrons → easier flow → resistance decreases (R ∝ 1/A).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q8 (conceptual)</div>
+        <div class="q-text">Explain why insulators prevent charge flow.</div>
+        <button class="answer-btn" onclick="toggle('a8')">Show answer</button>
+        <div class="answer" id="a8">
+            <strong>Answer:</strong><br>
+            Electrons are tightly bound to atoms and cannot move freely → no charge flow (no current).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q9 (conceptual)</div>
+        <div class="q-text">Why does current split in parallel branches?</div>
+        <button class="answer-btn" onclick="toggle('a9')">Show answer</button>
+        <div class="answer" id="a9">
+            <strong>Answer:</strong><br>
+            Current divides inversely proportional to resistance; total current entering a junction equals sum leaving (Kirchhoff’s current law).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q10 (conceptual)</div>
+        <div class="q-text">Explain why series resistors share the same current but different voltages.</div>
+        <button class="answer-btn" onclick="toggle('a10')">Show answer</button>
+        <div class="answer" id="a10">
+            <strong>Answer:</strong><br>
+            In series, there’s only one path → same current through each. Voltage divides: V = I R, so larger resistance gets larger voltage.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q11 (conceptual)</div>
+        <div class="q-text">Why does the electric field between parallel plates remain uniform?</div>
+        <button class="answer-btn" onclick="toggle('a11')">Show answer</button>
+        <div class="answer" id="a11">
+            <strong>Answer:</strong><br>
+            For infinite parallel plates with equal and opposite charge, field lines are parallel and equally spaced → constant magnitude and direction.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q12 (conceptual)</div>
+        <div class="q-text">Explain why grounding neutralizes excess charge.</div>
+        <button class="answer-btn" onclick="toggle('a12')">Show answer</button>
+        <div class="answer" id="a12">
+            <strong>Answer:</strong><br>
+            Ground provides a large reservoir of charge. Electrons move to or from ground until the object reaches zero potential, neutralizing excess charge.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q13 (conceptual)</div>
+        <div class="q-text">Why is energy dissipated as heat in resistors?</div>
+        <button class="answer-btn" onclick="toggle('a13')">Show answer</button>
+        <div class="answer" id="a13">
+            <strong>Answer:</strong><br>
+            Electrons collide with atoms, transferring kinetic energy to thermal energy. Power dissipated = I² R.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q14 (conceptual)</div>
+        <div class="q-text">Why is a capacitor used to store charge?</div>
+        <button class="answer-btn" onclick="toggle('a14')">Show answer</button>
+        <div class="answer" id="a14">
+            <strong>Answer:</strong><br>
+            Capacitors store energy in the electric field between plates. Energy = ½ C V², and charge Q = C V can be released later.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q15 (conceptual)</div>
+        <div class="q-text">Why does current increase if voltage is increased in Ohm’s law?</div>
+        <button class="answer-btn" onclick="toggle('a15')">Show answer</button>
+        <div class="answer" id="a15">
+            <strong>Answer:</strong><br>
+            I = V / R, so for constant R, current is directly proportional to voltage. More voltage pushes more charge per second.
+        </div>
+    </div>
+
+    <!-- Part B: Numerical (Q16–Q30) -->
+    <div class="question-block">
+        <div class="q-num">Q16 (numerical)</div>
+        <div class="q-text">Two charges q₁ = 5 μC and q₂ = –3 μC are 2 m apart. Find the force between them (k = 9×10⁹ N m²/C²).</div>
+        <button class="answer-btn" onclick="toggle('a16')">Show answer</button>
+        <div class="answer" id="a16">
+            <strong>Step‑by‑step:</strong><br>
+            F = k |q₁ q₂| / r² = 9×10⁹ × (5×10⁻⁶ × 3×10⁻⁶) / 4 = 9×10⁹ × 15×10⁻¹² / 4 = (135×10⁻³) / 4 = 0.03375 N.<br>
+            ✅ Answer: 0.0338 N (attractive).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q17 (numerical)</div>
+        <div class="q-text">A 12 V battery is connected to a 4 Ω resistor. Find current and power.</div>
+        <button class="answer-btn" onclick="toggle('a17')">Show answer</button>
+        <div class="answer" id="a17">
+            <strong>Step‑by‑step:</strong><br>
+            I = V / R = 12 / 4 = 3 A.<br>
+            P = I V = 3 × 12 = 36 W.<br>
+            ✅ Answer: 3 A, 36 W
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q18 (numerical)</div>
+        <div class="q-text">Two resistors 6 Ω and 3 Ω are in series. Find total resistance and current for 18 V.</div>
+        <button class="answer-btn" onclick="toggle('a18')">Show answer</button>
+        <div class="answer" id="a18">
+            <strong>Step‑by‑step:</strong><br>
+            R_total = 6 + 3 = 9 Ω.<br>
+            I = V / R_total = 18 / 9 = 2 A.<br>
+            ✅ Answer: 9 Ω, 2 A
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q19 (numerical)</div>
+        <div class="q-text">Two resistors 6 Ω and 3 Ω are in parallel. Find total resistance.</div>
+        <button class="answer-btn" onclick="toggle('a19')">Show answer</button>
+        <div class="answer" id="a19">
+            <strong>Step‑by‑step:</strong><br>
+            1/R = 1/6 + 1/3 = 1/6 + 2/6 = 3/6 = 1/2 → R = 2 Ω.<br>
+            ✅ Answer: 2 Ω
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q20 (numerical)</div>
+        <div class="q-text">A 0.5 F capacitor is charged to 12 V. Find stored energy.</div>
+        <button class="answer-btn" onclick="toggle('a20')">Show answer</button>
+        <div class="answer" id="a20">
+            <strong>Step‑by‑step:</strong><br>
+            U = ½ C V² = 0.5 × 0.5 × 144 = 36 J.<br>
+            ✅ Answer: 36 J
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q21 (numerical)</div>
+        <div class="q-text">A charge q = 2 μC experiences a force F = 0.1 N. Find the electric field.</div>
+        <button class="answer-btn" onclick="toggle('a21')">Show answer</button>
+        <div class="answer" id="a21">
+            <strong>Step‑by‑step:</strong><br>
+            E = F / q = 0.1 / (2×10⁻⁶) = 50,000 N/C.<br>
+            ✅ Answer: 5×10⁴ N/C
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q22 (numerical)</div>
+        <div class="q-text">A 10 Ω resistor carries 2 A. Find voltage across it and power dissipated.</div>
+        <button class="answer-btn" onclick="toggle('a22')">Show answer</button>
+        <div class="answer" id="a22">
+            <strong>Step‑by‑step:</strong><br>
+            V = I R = 2 × 10 = 20 V.<br>
+            P = I² R = 4 × 10 = 40 W.<br>
+            ✅ Answer: 20 V, 40 W
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q23 (numerical)</div>
+        <div class="q-text">A 12 V battery connected to R₁ = 4 Ω and R₂ = 6 Ω in series. Find voltage across each resistor.</div>
+        <button class="answer-btn" onclick="toggle('a23')">Show answer</button>
+        <div class="answer" id="a23">
+            <strong>Step‑by‑step:</strong><br>
+            R_total = 4 + 6 = 10 Ω.<br>
+            I = 12 / 10 = 1.2 A.<br>
+            V₁ = I R₁ = 1.2 × 4 = 4.8 V.<br>
+            V₂ = I R₂ = 1.2 × 6 = 7.2 V.<br>
+            ✅ Answer: 4.8 V, 7.2 V
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q24 (numerical)</div>
+        <div class="q-text">Three resistors 2 Ω, 3 Ω, 6 Ω are in parallel. Find equivalent resistance.</div>
+        <button class="answer-btn" onclick="toggle('a24')">Show answer</button>
+        <div class="answer" id="a24">
+            <strong>Step‑by‑step:</strong><br>
+            1/R = 1/2 + 1/3 + 1/6 = 3/6 + 2/6 + 1/6 = 6/6 = 1 → R = 1 Ω.<br>
+            ✅ Answer: 1 Ω
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q25 (numerical)</div>
+        <div class="q-text">A particle with charge q = 4 μC is at a point where electric potential V = 500 V. Find its potential energy.</div>
+        <button class="answer-btn" onclick="toggle('a25')">Show answer</button>
+        <div class="answer" id="a25">
+            <strong>Step‑by‑step:</strong><br>
+            U = q V = 4×10⁻⁶ × 500 = 0.002 J.<br>
+            ✅ Answer: 2×10⁻³ J
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q26 (numerical)</div>
+        <div class="q-text">A wire 10 m long, cross‑sectional area 0.001 m², resistivity ρ = 1.68×10⁻⁸ Ω·m. Find its resistance.</div>
+        <button class="answer-btn" onclick="toggle('a26')">Show answer</button>
+        <div class="answer" id="a26">
+            <strong>Step‑by‑step:</strong><br>
+            R = ρ L / A = 1.68×10⁻⁸ × 10 / 0.001 = 1.68×10⁻⁴ Ω.<br>
+            ✅ Answer: 1.68×10⁻⁴ Ω
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q27 (numerical)</div>
+        <div class="q-text">A 12 V battery connected to 2 Ω, 3 Ω, and 6 Ω resistors in series. Find total power.</div>
+        <button class="answer-btn" onclick="toggle('a27')">Show answer</button>
+        <div class="answer" id="a27">
+            <strong>Step‑by‑step:</strong><br>
+            R_total = 2 + 3 + 6 = 11 Ω.<br>
+            I = V / R_total = 12 / 11 ≈ 1.0909 A.<br>
+            P = I² R_total = (1.0909)² × 11 ≈ 1.190 × 11 ≈ 13.09 W.<br>
+            ✅ Answer: about 13.1 W
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q28 (numerical)</div>
+        <div class="q-text">A 2 μF capacitor is charged to 10 V. Find the charge stored.</div>
+        <button class="answer-btn" onclick="toggle('a28')">Show answer</button>
+        <div class="answer" id="a28">
+            <strong>Step‑by‑step:</strong><br>
+            Q = C V = 2×10⁻⁶ × 10 = 2×10⁻⁵ C.<br>
+            ✅ Answer: 20 μC
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q29 (numerical)</div>
+        <div class="q-text">Two charges 3 μC and 6 μC separated by 0.5 m. Find the force between them (k = 9×10⁹).</div>
+        <button class="answer-btn" onclick="toggle('a29')">Show answer</button>
+        <div class="answer" id="a29">
+            <strong>Step‑by‑step:</strong><br>
+            F = k |q₁ q₂| / r² = 9×10⁹ × (3×10⁻⁶ × 6×10⁻⁶) / (0.5)² = 9×10⁹ × 18×10⁻¹² / 0.25 = 162×10⁻³ / 0.25 = 0.648 N.<br>
+            ✅ Answer: 0.648 N (repulsive because same sign)
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q30 (conceptual)</div>
+        <div class="q-text">Explain why total current is conserved at junctions in a circuit.</div>
+        <button class="answer-btn" onclick="toggle('a30')">Show answer</button>
+        <div class="answer" id="a30">
+            <strong>Answer:</strong><br>
+            Kirchhoff’s first law (junction rule) states that the sum of currents entering a junction equals the sum leaving. This is a consequence of charge conservation – charge cannot accumulate at a junction.
+        </div>
+    </div>
+
+    <hr>
+    <div class="footer-note">
+        ✅ UNIT 6 COMPLETE · 30 questions · half conceptual · half numerical · exam‑ready · feel the WOW!
+    </div>
+</div>
+
+<script>
+    function toggle(id) {
+        var el = document.getElementById(id);
+        if (el.style.display === "block") {
+            el.style.display = "none";
+        } else {
+            el.style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>

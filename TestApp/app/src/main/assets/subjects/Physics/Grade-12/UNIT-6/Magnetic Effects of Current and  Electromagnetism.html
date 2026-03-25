@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 12 Physics – Chapter 6 · Magnetic Effects & Electromagnetism</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f8fafc;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: #1e293b;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #3b82f6, #1e40af);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-radius: 40px 40px 20px 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(30,64,175,0.2);
+        }
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.15s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.07);
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #2563eb;
+            border-left: 8px solid #2563eb;
+            padding-left: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .remember, .wow {
+            padding: 1.2rem 1.5rem;
+            border-radius: 20px;
+            margin: 1.5rem 0;
+            font-weight: 500;
+        }
+        .remember {
+            background: #ecfeff;
+            border-left: 6px solid #22c55e;
+        }
+        .wow {
+            background: #fff7ed;
+            border-left: 6px solid #f59e0b;
+        }
+        ul, ol {
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+        .diagram {
+            display: block;
+            margin: 1.5rem auto;
+            width: 90%;
+            max-width: 300px;
+            border-radius: 20px;
+            background: #f1f5f9;
+            padding: 0.5rem;
+            color: #475569;
+            font-style: italic;
+            text-align: center;
+        }
+        .question-block {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin: 1.2rem 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.02);
+        }
+        .q-num {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+        .q-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .answer-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem 0;
+            transition: background 0.1s;
+        }
+        .answer-btn:hover {
+            background: #1e40af;
+        }
+        .answer {
+            display: none;
+            background: #ecfeff;
+            padding: 1.2rem;
+            border-radius: 18px;
+            margin-top: 1rem;
+            border-left: 5px solid #2563eb;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #cbd5e1, transparent);
+            margin: 2.5rem 0;
+        }
+        .footer-note {
+            text-align: center;
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 50px;
+            border: 1px dashed #64748b;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>🧲 Chapter 6 · Magnetic Effects of Current & Electromagnetism</h1>
+        <p>80 questions (40 conceptual + 40 calculation) · complete notes · exam‑ready</p>
+    </header>
+
+    <!-- ========== NOTES ========== -->
+    <div class="card">
+        <h2>6.1 Magnetic field around a current‑carrying conductor</h2>
+        <p>An electric current produces a magnetic field. The field lines are concentric circles around the wire. The direction is given by the <strong>right‑hand grip rule</strong>: thumb in current direction, fingers curl along field.</p>
+        <p><strong>Strength:</strong> For a long straight wire, B = μ₀ I / (2π r) (in words: magnetic field strength = permeability × current ÷ (2π × distance)).</p>
+        <div class="remember">📘 REMEMBER: Field strength increases with current and decreases as you move away from the wire.</div>
+        <div class="wow">💡 WOW: Earth’s magnetic field is about 0.00005 tesla, while a powerful electromagnet can reach 1–2 tesla.</div>
+        <div class="diagram">🧲 (Image: circular field around wire)</div>
+    </div>
+
+    <div class="card">
+        <h2>6.2 Magnetic field of a solenoid</h2>
+        <p>A solenoid is a long coil of wire. When current flows, it produces a nearly uniform magnetic field inside, and a field like that of a bar magnet outside.</p>
+        <p><strong>Field inside:</strong> B = μ₀ n I (where n = number of turns per metre). Adding a soft iron core greatly increases B (electromagnet).</p>
+        <div class="remember">📘 REMEMBER: Inside a solenoid, field lines are parallel and equally spaced – uniform field.</div>
+        <div class="wow">🔩 WOW: Electromagnets can lift entire cars in scrapyards!</div>
+        <div class="diagram">🧲 (Image: solenoid field lines)</div>
+    </div>
+
+    <div class="card">
+        <h2>6.3 Force on a current‑carrying conductor in a magnetic field</h2>
+        <p>A wire carrying current I, of length L, placed in a magnetic field B, experiences a force: <strong>F = B I L sinθ</strong> (θ = angle between current and field). Direction: right‑hand rule (fingers = field, thumb = current, palm = force).</p>
+        <p>If current is perpendicular (θ = 90°), F = B I L.</p>
+        <div class="remember">📘 REMEMBER: This is the principle behind electric motors.</div>
+    </div>
+
+    <div class="card">
+        <h2>6.4 Electromagnetic induction – Faraday & Lenz</h2>
+        <p>When the magnetic flux through a circuit changes, an EMF is induced. <strong>Faraday’s law:</strong> induced EMF = –N ΔΦ/Δt (magnitude N ΔΦ/Δt).</p>
+        <p><strong>Lenz’s law:</strong> The induced current opposes the change that produced it.</p>
+        <p>Ways to change flux: move magnet, move coil, change area, change orientation.</p>
+        <div class="wow">⚡ WOW: All electricity in power stations is generated by electromagnetic induction!</div>
+        <div class="diagram">🧲 (Image: induction experiment)</div>
+    </div>
+
+    <div class="card">
+        <h2>6.5 Motional EMF</h2>
+        <p>When a conductor moves perpendicular to a magnetic field, an EMF is induced across its ends: <strong>EMF = B L v</strong> (L = length, v = speed).</p>
+        <p>This is a special case of Faraday’s law.</p>
+    </div>
+
+    <div class="card">
+        <h2>6.6 Electric motor</h2>
+        <p>A motor converts electrical energy into mechanical energy. A current‑carrying coil in a magnetic field experiences torque, causing rotation. A commutator reverses current every half turn to keep rotation in the same direction.</p>
+        <p><strong>Torque on a coil:</strong> τ = B I A N sinθ (A = area, N = number of turns).</p>
+        <div class="remember">📘 REMEMBER: Motors are everywhere – fans, pumps, electric vehicles.</div>
+        <div class="diagram">🧲 (Image: DC motor diagram)</div>
+    </div>
+
+    <div class="card">
+        <h2>6.7 Electric generator</h2>
+        <p>A generator converts mechanical energy into electrical energy. Rotating a coil in a magnetic field changes flux, inducing an alternating EMF. Slip rings deliver AC to external circuit.</p>
+        <p><strong>Peak EMF:</strong> ε₀ = N B A ω (ω = angular speed).</p>
+        <div class="wow">🏭 WOW: Power plants use huge generators spinning at 3000 rpm to produce 50 Hz AC.</div>
+    </div>
+
+    <div class="card">
+        <h2>6.8 Transformers (basics)</h2>
+        <p>A transformer transfers electrical energy between two coils via mutual induction. For an ideal transformer: Vₚ / Vₛ = Nₚ / Nₛ = Iₛ / Iₚ.</p>
+        <p>Step‑up: more turns in secondary → higher voltage. Step‑down: fewer turns in secondary → lower voltage.</p>
+        <div class="remember">📘 REMEMBER: Transformers only work with AC – they rely on changing flux.</div>
+    </div>
+
+    <div class="card">
+        <h2>6.9 Self‑inductance & mutual inductance</h2>
+        <p><strong>Self‑inductance L</strong> is the property of a coil to oppose change in current. EMF = –L ΔI/Δt. <strong>Mutual inductance M</strong> relates EMF in one coil to current change in another: EMF₂ = –M ΔI₁/Δt.</p>
+        <p>Inductors store energy in magnetic fields: U = ½ L I².</p>
+    </div>
+
+    <hr>
+
+    <!-- ========== 80 QUESTIONS ========== -->
+    <h2 style="margin-bottom:1.5rem;">📋 80 exam‑style questions</h2>
+
+    <!-- conceptual Q1–40, calculation Q41–80 (we'll label clearly) -->
+    <!-- we'll generate 80 blocks with unique ids a1..a80 -->
+    <!-- to save space, we'll produce a few as examples but the final answer must include all 80. I will write them systematically with increasing numbers. -->
+
+    <!-- 40 conceptual questions (Q1–Q40) -->
+    <div class="question-block"><div class="q-num">Q1 (conceptual)</div><div class="q-text">State the right‑hand grip rule for a straight current‑carrying conductor.</div><button class="answer-btn" onclick="toggle('a1')">Show answer</button><div class="answer" id="a1">If you grasp the wire with your right hand such that the thumb points in the direction of current, your fingers curl in the direction of the magnetic field lines.<br>📘 REMEMBER: The field is circular around the wire.</div></div>
+    <div class="question-block"><div class="q-num">Q2 (conceptual)</div><div class="q-text">How does the magnetic field strength vary with distance from a long straight wire?</div><button class="answer-btn" onclick="toggle('a2')">Show answer</button><div class="answer" id="a2">It decreases as the distance increases. For a straight wire, B is inversely proportional to distance (B ∝ 1/r).</div></div>
+    <div class="question-block"><div class="q-num">Q3 (conceptual)</div><div class="q-text">What is a solenoid? Sketch its magnetic field lines.</div><button class="answer-btn" onclick="toggle('a3')">Show answer</button><div class="answer" id="a3">A solenoid is a long coil of wire. Inside, field lines are parallel and uniform; outside, they resemble those of a bar magnet.<br>🌟 WOW: The uniform field inside a solenoid is used in many experiments.</div></div>
+    <div class="question-block"><div class="q-num">Q4 (conceptual)</div><div class="q-text">State Faraday’s law of electromagnetic induction.</div><button class="answer-btn" onclick="toggle('a4')">Show answer</button><div class="answer" id="a4">The magnitude of induced EMF is proportional to the rate of change of magnetic flux through a circuit. In words: induced EMF = number of turns × rate of change of flux.</div></div>
+    <div class="question-block"><div class="q-num">Q5 (conceptual)</div><div class="q-text">State Lenz’s law. What does it imply about energy conservation?</div><button class="answer-btn" onclick="toggle('a5')">Show answer</button><div class="answer" id="a5">Lenz’s law: The induced current opposes the change in magnetic flux that produced it. This ensures energy conservation – the work done against the opposing force appears as electrical energy.</div></div>
+    <div class="question-block"><div class="q-num">Q6 (conceptual)</div><div class="q-text">What is motional EMF? Give an expression.</div><button class="answer-btn" onclick="toggle('a6')">Show answer</button><div class="answer" id="a6">When a conductor moves perpendicular to a magnetic field, an EMF is induced across its ends. EMF = magnetic field × length × velocity (B L v).</div></div>
+    <div class="question-block"><div class="q-num">Q7 (conceptual)</div><div class="q-text">List three ways to change magnetic flux through a coil.</div><button class="answer-btn" onclick="toggle('a7')">Show answer</button><div class="answer" id="a7">1. Move a magnet toward or away from the coil. 2. Move the coil in a non‑uniform field. 3. Change the area or orientation of the coil in a constant field.</div></div>
+    <div class="question-block"><div class="q-num">Q8 (conceptual)</div><div class="q-text">Define the tesla (SI unit of magnetic field).</div><button class="answer-btn" onclick="toggle('a8')">Show answer</button><div class="answer" id="a8">One tesla is the magnetic field strength that exerts a force of one newton on a one‑metre wire carrying one ampere of current perpendicular to the field.</div></div>
+    <div class="question-block"><div class="q-num">Q9 (conceptual)</div><div class="q-text">What is the principle of an electric motor?</div><button class="answer-btn" onclick="toggle('a9')">Show answer</button><div class="answer" id="a9">A motor uses the force on a current‑carrying conductor in a magnetic field. The torque on a coil makes it rotate, converting electrical energy to mechanical energy.</div></div>
+    <div class="question-block"><div class="q-num">Q10 (conceptual)</div><div class="q-text">Why does a commutator reverse current in a DC motor?</div><button class="answer-btn" onclick="toggle('a10')">Show answer</button><div class="answer" id="a10">To keep the torque in the same direction every half turn, so the motor continues rotating in one direction.</div></div>
+    <div class="question-block"><div class="q-num">Q11 (conceptual)</div><div class="q-text">What is the function of brushes in a DC motor?</div><button class="answer-btn" onclick="toggle('a11')">Show answer</button><div class="answer" id="a11">Brushes (usually carbon) make sliding electrical contact with the commutator, allowing current to flow into the rotating coil.</div></div>
+    <div class="question-block"><div class="q-num">Q12 (conceptual)</div><div class="q-text">Explain the principle of an AC generator.</div><button class="answer-btn" onclick="toggle('a12')">Show answer</button><div class="answer" id="a12">A coil rotated in a magnetic field experiences changing flux, inducing an alternating EMF. Slip rings connect the coil to an external circuit, producing AC.</div></div>
+    <div class="question-block"><div class="q-num">Q13 (conceptual)</div><div class="q-text">What is the difference between an AC generator and a DC generator (dynamo)?</div><button class="answer-btn" onclick="toggle('a13')">Show answer</button><div class="answer" id="a13">AC generator uses slip rings and produces AC; DC generator uses a split‑ring commutator and produces DC (pulsating).</div></div>
+    <div class="question-block"><div class="q-num">Q14 (conceptual)</div><div class="q-text">What is a transformer? Name the two types.</div><button class="answer-btn" onclick="toggle('a14')">Show answer</button><div class="answer" id="a14">A transformer transfers electrical energy between two coils via mutual induction. Step‑up increases voltage; step‑down decreases voltage.</div></div>
+    <div class="question-block"><div class="q-num">Q15 (conceptual)</div><div class="q-text">Why does a transformer not work with DC?</div><button class="answer-btn" onclick="toggle('a15')">Show answer</button><div class="answer" id="a15">DC produces constant flux, so no change in flux – no induced EMF in secondary coil.</div></div>
+    <div class="question-block"><div class="q-num">Q16 (conceptual)</div><div class="q-text">State the transformer equation relating voltages and turns.</div><button class="answer-btn" onclick="toggle('a16')">Show answer</button><div class="answer" id="a16">Vₚ / Vₛ = Nₚ / Nₛ, where Vₚ, Vₛ are primary and secondary voltages, and Nₚ, Nₛ are turns.</div></div>
+    <div class="question-block"><div class="q-num">Q17 (conceptual)</div><div class="q-text">What is self‑inductance? Give its SI unit.</div><button class="answer-btn" onclick="toggle('a17')">Show answer</button><div class="answer" id="a17">Self‑inductance is the property of a coil to oppose any change in current through itself. Unit: henry (H).</div></div>
+    <div class="question-block"><div class="q-num">Q18 (conceptual)</div><div class="q-text">What is mutual inductance?</div><button class="answer-btn" onclick="toggle('a18')">Show answer</button><div class="answer" id="a18">Mutual inductance between two coils is the ratio of induced EMF in one coil to the rate of change of current in the other.</div></div>
+    <div class="question-block"><div class="q-num">Q19 (conceptual)</div><div class="q-text">How does a soft iron core increase the inductance of a coil?</div><button class="answer-btn" onclick="toggle('a19')">Show answer</button><div class="answer" id="a19">Soft iron has high permeability, which concentrates magnetic flux, increasing the inductance.</div></div>
+    <div class="question-block"><div class="q-num">Q20 (conceptual)</div><div class="q-text">What is the direction of force on a positive charge moving in a magnetic field?</div><button class="answer-btn" onclick="toggle('a20')">Show answer</button><div class="answer" id="a20">The force is perpendicular to both velocity and magnetic field. Use the right‑hand rule: fingers = field, thumb = velocity, palm = force (for positive charge).</div></div>
+    <div class="question-block"><div class="q-num">Q21 (conceptual)</div><div class="q-text">Define magnetic flux. Write its SI unit.</div><button class="answer-btn" onclick="toggle('a21')">Show answer</button><div class="answer" id="a21">Magnetic flux = magnetic field × area perpendicular to the field (Φ = B A cosθ). Unit: weber (Wb).</div></div>
+    <div class="question-block"><div class="q-num">Q22 (conceptual)</div><div class="q-text">What is eddy current? Give one application.</div><button class="answer-btn" onclick="toggle('a22')">Show answer</button><div class="answer" id="a22">Eddy currents are loops of induced current in bulk conductors moving in magnetic fields. Application: electromagnetic braking in trains.</div></div>
+    <div class="question-block"><div class="q-num">Q23 (conceptual)</div><div class="q-text">Why is the core of a transformer laminated?</div><button class="answer-btn" onclick="toggle('a23')">Show answer</button><div class="answer" id="a23">To reduce eddy currents and minimise energy loss as heat.</div></div>
+    <div class="question-block"><div class="q-num">Q24 (conceptual)</div><div class="q-text">What is the peak EMF of a generator coil rotating in a uniform field?</div><button class="answer-btn" onclick="toggle('a24')">Show answer</button><div class="answer" id="a24">ε₀ = N B A ω, where N = turns, B = field, A = area, ω = angular speed.</div></div>
+    <div class="question-block"><div class="q-num">Q25 (conceptual)</div><div class="q-text">What happens to the direction of induced current when you pull a magnet out of a coil?</div><button class="answer-btn" onclick="toggle('a25')">Show answer</button><div class="answer" id="a25">It reverses compared to when you push it in – it always opposes the motion (Lenz’s law).</div></div>
+    <div class="question-block"><div class="q-num">Q26 (conceptual)</div><div class="q-text">Define 1 henry.</div><button class="answer-btn" onclick="toggle('a26')">Show answer</button><div class="answer" id="a26">A coil has self‑inductance of 1 henry if an EMF of 1 volt is induced when the current changes at 1 ampere per second.</div></div>
+    <div class="question-block"><div class="q-num">Q27 (conceptual)</div><div class="q-text">What is the energy stored in an inductor?</div><button class="answer-btn" onclick="toggle('a27')">Show answer</button><div class="answer" id="a27">Energy = ½ L I², where L is inductance and I is current.</div></div>
+    <div class="question-block"><div class="q-num">Q28 (conceptual)</div><div class="q-text">What is the role of the earth wire in electrical appliances?</div><button class="answer-btn" onclick="toggle('a28')">Show answer</button><div class="answer" id="a28">It provides a low‑resistance path for leakage current to ground, preventing electric shock.</div></div>
+    <div class="question-block"><div class="q-num">Q29 (conceptual)</div><div class="q-text">Why are high‑voltage power lines often bundled?</div><button class="answer-btn" onclick="toggle('a29')">Show answer</button><div class="answer" id="a29">Bundling reduces corona discharge and increases effective radius, reducing line inductance.</div></div>
+    <div class="question-block"><div class="q-num">Q30 (conceptual)</div><div class="q-text">What is a magnetic hysteresis loop?</div><button class="answer-btn" onclick="toggle('a30')">Show answer</button><div class="answer" id="a30">It is the B‑H curve showing how magnetic material responds to magnetising field; area of loop represents energy loss per cycle.</div></div>
+    <div class="question-block"><div class="q-num">Q31 (conceptual)</div><div class="q-text">What is the advantage of using AC over DC for power transmission?</div><button class="answer-btn" onclick="toggle('a31')">Show answer</button><div class="answer" id="a31">AC voltage can be easily stepped up/down with transformers, allowing high‑voltage, low‑current transmission to reduce I²R loss.</div></div>
+    <div class="question-block"><div class="q-num">Q32 (conceptual)</div><div class="q-text">Define root‑mean‑square (RMS) value of AC.</div><button class="answer-btn" onclick="toggle('a32')">Show answer</button><div class="answer" id="a32">The RMS value of AC is the equivalent DC that produces the same heating effect in a resistor. For sinusoidal AC, I_rms = I_peak / √2.</div></div>
+    <div class="question-block"><div class="q-num">Q33 (conceptual)</div><div class="q-text">What is the phase relationship between voltage and current in a pure inductor?</div><button class="answer-btn" onclick="toggle('a33')">Show answer</button><div class="answer" id="a33">Voltage leads current by 90°.</div></div>
+    <div class="question-block"><div class="q-num">Q34 (conceptual)</div><div class="q-text">What is the phase relationship in a pure capacitor?</div><button class="answer-btn" onclick="toggle('a34')">Show answer</button><div class="answer" id="a34">Current leads voltage by 90°.</div></div>
+    <div class="question-block"><div class="q-num">Q35 (conceptual)</div><div class="q-text">What is power factor? Why is it important?</div><button class="answer-btn" onclick="toggle('a35')">Show answer</button><div class="answer" id="a35">Power factor = cos φ = R/Z. It indicates the fraction of apparent power that is real power. A low power factor causes higher current for the same real power, increasing losses.</div></div>
+    <div class="question-block"><div class="q-num">Q36 (conceptual)</div><div class="q-text">How can the power factor of an inductive load be improved?</div><button class="answer-btn" onclick="toggle('a36')">Show answer</button><div class="answer" id="a36">By connecting a capacitor in parallel (or series) to compensate for lagging current.</div></div>
+    <div class="question-block"><div class="q-num">Q37 (conceptual)</div><div class="q-text">What is resonance in an RLC circuit?</div><button class="answer-btn" onclick="toggle('a37')">Show answer</button><div class="answer" id="a37">Resonance occurs when inductive reactance equals capacitive reactance; impedance is minimum ( = R) and current is maximum.</div></div>
+    <div class="question-block"><div class="q-num">Q38 (conceptual)</div><div class="q-text">What is the function of a fuse?</div><button class="answer-btn" onclick="toggle('a38')">Show answer</button><div class="answer" id="a38">A fuse melts when current exceeds a safe value, breaking the circuit and preventing damage/fire.</div></div>
+    <div class="question-block"><div class="q-num">Q39 (conceptual)</div><div class="q-text">What is meant by “magnetic shielding”?</div><button class="answer-btn" onclick="toggle('a39')">Show answer</button><div class="answer" id="a39">Using high‑permeability materials to divert magnetic field lines away from sensitive components.</div></div>
+    <div class="question-block"><div class="q-num">Q40 (conceptual)</div><div class="q-text">Give two applications of electromagnets.</div><button class="answer-btn" onclick="toggle('a40')">Show answer</button><div class="answer" id="a40">Electric bells, magnetic cranes, relays, MRI machines.</div></div>
+
+    <!-- calculation questions Q41–80 -->
+    <div class="question-block"><div class="q-num">Q41 (calculation)</div><div class="q-text">A long straight wire carries 5 A. Calculate the magnetic field at a distance 0.1 m from the wire. (μ₀ = 4π × 10⁻⁷)</div><button class="answer-btn" onclick="toggle('a41')">Show answer</button><div class="answer" id="a41">B = μ₀ I / (2π r) = (4π × 10⁻⁷ × 5) / (2π × 0.1) = (2 × 10⁻⁷ × 5) / 0.1? Wait: Simplify: μ₀/(2π) = 2×10⁻⁷, so B = 2×10⁻⁷ × I / r = 2×10⁻⁷ × 5 / 0.1 = 2×10⁻⁷ × 50 = 1×10⁻⁵ T.<br>📘 REMEMBER: Use B = 2×10⁻⁷ × I/r (with I in A, r in m).</div></div>
+    <div class="question-block"><div class="q-num">Q42 (calculation)</div><div class="q-text">A solenoid has 500 turns per metre and carries 2 A. Find the magnetic field inside (μ₀ = 4π×10⁻⁷).</div><button class="answer-btn" onclick="toggle('a42')">Show answer</button><div class="answer" id="a42">B = μ₀ n I = 4π×10⁻⁷ × 500 × 2 = 4π×10⁻⁷ × 1000 = 4π×10⁻⁴ = 0.001256 T ≈ 1.26 mT.</div></div>
+    <div class="question-block"><div class="q-num">Q43 (calculation)</div><div class="q-text">A 0.2 m wire carrying 4 A is placed at 30° to a 0.3 T field. Find the force on the wire.</div><button class="answer-btn" onclick="toggle('a43')">Show answer</button><div class="answer" id="a43">F = B I L sinθ = 0.3 × 4 × 0.2 × sin30° = 0.3 × 4 × 0.2 × 0.5 = 0.3 × 4 × 0.1 = 0.12 N.</div></div>
+    <div class="question-block"><div class="q-num">Q44 (calculation)</div><div class="q-text">A wire of length 0.5 m carries 2 A perpendicular to a 0.4 T field. Find force.</div><button class="answer-btn" onclick="toggle('a44')">Show answer</button><div class="answer" id="a44">F = B I L = 0.4 × 2 × 0.5 = 0.4 N.</div></div>
+    <div class="question-block"><div class="q-num">Q45 (calculation)</div><div class="q-text">A proton (q = 1.6×10⁻¹⁹ C) moves at 2×10⁶ m/s perpendicular to a 0.2 T field. Find the magnetic force.</div><button class="answer-btn" onclick="toggle('a45')">Show answer</button><div class="answer" id="a45">F = q v B = 1.6×10⁻¹⁹ × 2×10⁶ × 0.2 = 1.6×10⁻¹⁹ × 4×10⁵ = 6.4×10⁻¹⁴ N.</div></div>
+    <div class="question-block"><div class="q-num">Q46 (calculation)</div><div class="q-text">A coil of 100 turns, area 0.01 m², rotates in a 0.1 T field. Find the peak EMF if it rotates at 50 rev/s.</div><button class="answer-btn" onclick="toggle('a46')">Show answer</button><div class="answer" id="a46">ω = 2πf = 2π×50 = 314 rad/s. ε₀ = N B A ω = 100 × 0.1 × 0.01 × 314 = 100 × 0.001 × 314 = 0.1 × 314 = 31.4 V.</div></div>
+    <div class="question-block"><div class="q-num">Q47 (calculation)</div><div class="q-text">A coil has 200 turns, and flux changes from 0.02 Wb to 0.08 Wb in 0.1 s. Find average induced EMF.</div><button class="answer-btn" onclick="toggle('a47')">Show answer</button><div class="answer" id="a47">ΔΦ = 0.08 – 0.02 = 0.06 Wb. EMF = N ΔΦ/Δt = 200 × 0.06 / 0.1 = 200 × 0.6 = 120 V.</div></div>
+    <div class="question-block"><div class="q-num">Q48 (calculation)</div><div class="q-text">A 0.3 m rod moves at 5 m/s perpendicular to a 0.2 T field. Find motional EMF.</div><button class="answer-btn" onclick="toggle('a48')">Show answer</button><div class="answer" id="a48">EMF = B L v = 0.2 × 0.3 × 5 = 0.3 V.</div></div>
+    <div class="question-block"><div class="q-num">Q49 (calculation)</div><div class="q-text">A transformer has 400 primary turns and 1200 secondary turns. Primary voltage 230 V. Find secondary voltage.</div><button class="answer-btn" onclick="toggle('a49')">Show answer</button><div class="answer" id="a49">Vₛ = Vₚ × (Nₛ/Nₚ) = 230 × (1200/400) = 230 × 3 = 690 V.</div></div>
+    <div class="question-block"><div class="q-num">Q50 (calculation)</div><div class="q-text">In an ideal transformer, primary voltage 220 V, secondary 55 V. If secondary current is 4 A, find primary current.</div><button class="answer-btn" onclick="toggle('a50')">Show answer</button><div class="answer" id="a50">Power in = power out → Vₚ Iₚ = Vₛ Iₛ → 220 × Iₚ = 55 × 4 = 220 → Iₚ = 1 A.</div></div>
+    <div class="question-block"><div class="q-num">Q51 (calculation)</div><div class="q-text">A coil of self‑inductance 0.5 H has current changing at 2 A/s. Find induced EMF.</div><button class="answer-btn" onclick="toggle('a51')">Show answer</button><div class="answer" id="a51">EMF = L ΔI/Δt = 0.5 × 2 = 1 V.</div></div>
+    <div class="question-block"><div class="q-num">Q52 (calculation)</div><div class="q-text">Calculate the energy stored in a 0.2 H inductor carrying 3 A.</div><button class="answer-btn" onclick="toggle('a52')">Show answer</button><div class="answer" id="a52">U = ½ L I² = 0.5 × 0.2 × 9 = 0.1 × 9 = 0.9 J.</div></div>
+    <div class="question-block"><div class="q-num">Q53 (calculation)</div><div class="q-text">A 10 Ω resistor and 0.1 H inductor in series are connected to 100 V DC. Find the initial rate of change of current.</div><button class="answer-btn" onclick="toggle('a53')">Show answer</button><div class="answer" id="a53">At t=0, current = 0, back EMF = L dI/dt = supply voltage → dI/dt = V/L = 100/0.1 = 1000 A/s.</div></div>
+    <div class="question-block"><div class="q-num">Q54 (calculation)</div><div class="q-text">A 20 μF capacitor has a capacitive reactance of 159 Ω at 50 Hz. Find the capacitance (using X_C = 1/(2πfC)).</div><button class="answer-btn" onclick="toggle('a54')">Show answer</button><div class="answer" id="a54">From X_C = 1/(2πfC) → C = 1/(2πf X_C) = 1/(2×3.14×50×159) = 1/(2×3.14×7950) = 1/49926 ≈ 2.0×10⁻⁵ F = 20 μF (consistent).</div></div>
+    <div class="question-block"><div class="q-num">Q55 (calculation)</div><div class="q-text">An inductor has reactance 62.8 Ω at 50 Hz. Find its inductance.</div><button class="answer-btn" onclick="toggle('a55')">Show answer</button><div class="answer" id="a55">X_L = 2πf L → L = X_L / (2πf) = 62.8 / (2×3.14×50) = 62.8 / 314 = 0.2 H.</div></div>
+    <div class="question-block"><div class="q-num">Q56 (calculation)</div><div class="q-text">A series RLC circuit has R = 20 Ω, X_L = 50 Ω, X_C = 30 Ω. Find impedance and phase angle.</div><button class="answer-btn" onclick="toggle('a56')">Show answer</button><div class="answer" id="a56">X_net = X_L – X_C = 20 Ω. Z = √(R² + X_net²) = √(400 + 400) = √800 ≈ 28.28 Ω. tan φ = X_net/R = 20/20 = 1 → φ = 45° (voltage leads current).</div></div>
+    <div class="question-block"><div class="q-num">Q57 (calculation)</div><div class="q-text">A 230 V, 50 Hz AC supply is connected to a 50 Ω resistor. Find current and power.</div><button class="answer-btn" onclick="toggle('a57')">Show answer</button><div class="answer" id="a57">I = V/R = 230/50 = 4.6 A. Power = I² R = (4.6)² × 50 = 21.16 × 50 = 1058 W. Or P = V I = 230×4.6 = 1058 W.</div></div>
+    <div class="question-block"><div class="q-num">Q58 (calculation)</div><div class="q-text">A 0.2 H inductor is connected to 100 V, 60 Hz supply. Find reactance and current.</div><button class="answer-btn" onclick="toggle('a58')">Show answer</button><div class="answer" id="a58">X_L = 2π×60×0.2 = 75.4 Ω. I = V / X_L = 100 / 75.4 ≈ 1.33 A.</div></div>
+    <div class="question-block"><div class="q-num">Q59 (calculation)</div><div class="q-text">A 30 μF capacitor is connected to 200 V, 50 Hz. Find capacitive reactance and current.</div><button class="answer-btn" onclick="toggle('a59')">Show answer</button><div class="answer" id="a59">X_C = 1/(2π×50×30×10⁻⁶) = 1/(2×3.14×50×3×10⁻⁵) = 1/(0.00942) ≈ 106.1 Ω. I = 200 / 106.1 ≈ 1.88 A.</div></div>
+    <div class="question-block"><div class="q-num">Q60 (calculation)</div><div class="q-text">A coil of resistance 10 Ω and inductance 0.05 H is connected to 100 V, 50 Hz. Find impedance and current.</div><button class="answer-btn" onclick="toggle('a60')">Show answer</button><div class="answer" id="a60">X_L = 2π×50×0.05 = 15.7 Ω. Z = √(10²+15.7²) = √(100+246.5) = √346.5 ≈ 18.62 Ω. I = 100/18.62 ≈ 5.37 A.</div></div>
+    <div class="question-block"><div class="q-num">Q61 (calculation)</div><div class="q-text">A 240 V, 60 W lamp is used on 220 V. Find the current and power consumed (assume constant resistance).</div><button class="answer-btn" onclick="toggle('a61')">Show answer</button><div class="answer" id="a61">R = V²/P = 240²/60 = 57600/60 = 960 Ω. At 220 V: I = 220/960 = 0.229 A. Power = I²R = (0.229)² × 960 ≈ 50.4 W.</div></div>
+    <div class="question-block"><div class="q-num">Q62 (calculation)</div><div class="q-text">A transformer has efficiency 90% and supplies 200 W to load. Find input power.</div><button class="answer-btn" onclick="toggle('a62')">Show answer</button><div class="answer" id="a62">η = P_out / P_in → P_in = P_out / η = 200 / 0.9 ≈ 222.2 W.</div></div>
+    <div class="question-block"><div class="q-num">Q63 (calculation)</div><div class="q-text">A coil of area 0.02 m², 50 turns, rotates at 3000 rpm in a 0.1 T field. Find peak EMF.</div><button class="answer-btn" onclick="toggle('a63')">Show answer</button><div class="answer" id="a63">ω = 2πf, f = 3000/60 = 50 Hz, ω = 314 rad/s. ε₀ = N B A ω = 50 × 0.1 × 0.02 × 314 = 50 × 0.002 × 314 = 0.1 × 314 = 31.4 V.</div></div>
+    <div class="question-block"><div class="q-num">Q64 (calculation)</div><div class="q-text">A 0.1 H inductor carries a current that increases from 0 to 5 A in 0.2 s. Find average induced EMF.</div><button class="answer-btn" onclick="toggle('a64')">Show answer</button><div class="answer" id="a64">ΔI/Δt = 5/0.2 = 25 A/s. EMF = L ΔI/Δt = 0.1 × 25 = 2.5 V.</div></div>
+    <div class="question-block"><div class="q-num">Q65 (calculation)</div><div class="q-text">Two coils have mutual inductance 0.2 H. If current in primary changes at 10 A/s, find induced EMF in secondary.</div><button class="answer-btn" onclick="toggle('a65')">Show answer</button><div class="answer" id="a65">EMF = M ΔI/Δt = 0.2 × 10 = 2 V.</div></div>
+    <div class="question-block"><div class="q-num">Q66 (calculation)</div><div class="q-text">A 100‑turn coil of area 0.01 m² is placed perpendicular to a 0.2 T field. If the field is reduced to 0 in 0.05 s, find average induced EMF.</div><button class="answer-btn" onclick="toggle('a66')">Show answer</button><div class="answer" id="a66">Initial flux = B A = 0.2 × 0.01 = 0.002 Wb. Final flux = 0. ΔΦ = 0.002 Wb. EMF = N ΔΦ/Δt = 100 × 0.002 / 0.05 = 100 × 0.04 = 4 V.</div></div>
+    <div class="question-block"><div class="q-num">Q67 (calculation)</div><div class="q-text">A wire of length 0.4 m moves at 2 m/s perpendicular to 0.5 T field. Find motional EMF.</div><button class="answer-btn" onclick="toggle('a67')">Show answer</button><div class="answer" id="a67">EMF = B L v = 0.5 × 0.4 × 2 = 0.4 V.</div></div>
+    <div class="question-block"><div class="q-num">Q68 (calculation)</div><div class="q-text">A 200 V, 50 Hz AC source is connected to a 20 Ω resistor and 0.05 H inductor in series. Find current and power factor.</div><button class="answer-btn" onclick="toggle('a68')">Show answer</button><div class="answer" id="a68">X_L = 2π×50×0.05 = 15.7 Ω. Z = √(20²+15.7²) = √(400+246.5) = √646.5 = 25.43 Ω. I = 200/25.43 ≈ 7.86 A. cos φ = R/Z = 20/25.43 ≈ 0.786.</div></div>
+    <div class="question-block"><div class="q-num">Q69 (calculation)</div><div class="q-text">A 120 V, 60 Hz supply is connected to a 50 μF capacitor. Find capacitive reactance and current.</div><button class="answer-btn" onclick="toggle('a69')">Show answer</button><div class="answer" id="a69">X_C = 1/(2π×60×50×10⁻⁶) = 1/(2×3.14×60×5×10⁻⁵) = 1/(0.01884) ≈ 53.1 Ω. I = 120/53.1 ≈ 2.26 A.</div></div>
+    <div class="question-block"><div class="q-num">Q70 (calculation)</div><div class="q-text">An RLC series circuit has R = 30 Ω, X_L = 50 Ω, X_C = 20 Ω at 50 Hz. Find impedance and phase angle.</div><button class="answer-btn" onclick="toggle('a70')">Show answer</button><div class="answer" id="a70">X_net = 50 – 20 = 30 Ω. Z = √(30²+30²) = √(900+900)=√1800 = 42.43 Ω. tan φ = 30/30 =1 → φ = 45° (voltage leads).</div></div>
+    <div class="question-block"><div class="q-num">Q71 (calculation)</div><div class="q-text">A transformer has primary turns 800, secondary turns 200. Primary voltage 240 V. Find secondary voltage and turns ratio.</div><button class="answer-btn" onclick="toggle('a71')">Show answer</button><div class="answer" id="a71">Turns ratio Nₚ/Nₛ = 800/200 = 4. Vₛ = Vₚ × Nₛ/Nₚ = 240 × 200/800 = 240 × 0.25 = 60 V.</div></div>
+    <div class="question-block"><div class="q-num">Q72 (calculation)</div><div class="q-text">A 10 Ω resistor and 0.02 H inductor in series carry 5 A DC. Find the energy stored in the inductor.</div><button class="answer-btn" onclick="toggle('a72')">Show answer</button><div class="answer" id="a72">U = ½ L I² = 0.5 × 0.02 × 25 = 0.01 × 25 = 0.25 J.</div></div>
+    <div class="question-block"><div class="q-num">Q73 (calculation)</div><div class="q-text">A 50 Hz AC source has peak voltage 325 V. Find RMS voltage.</div><button class="answer-btn" onclick="toggle('a73')">Show answer</button><div class="answer" id="a73">V_rms = V_peak / √2 = 325 / 1.414 ≈ 230 V.</div></div>
+    <div class="question-block"><div class="q-num">Q74 (calculation)</div><div class="q-text">A coil of 500 turns has flux 0.01 Wb when current is 2 A. Find self‑inductance.</div><button class="answer-btn" onclick="toggle('a74')">Show answer</button><div class="answer" id="a74">L = N Φ / I = 500 × 0.01 / 2 = 5 / 2 = 2.5 H.</div></div>
+    <div class="question-block"><div class="q-num">Q75 (calculation)</div><div class="q-text">A 0.5 H inductor has current changing at 4 A/s. Find induced EMF.</div><button class="answer-btn" onclick="toggle('a75')">Show answer</button><div class="answer" id="a75">EMF = L ΔI/Δt = 0.5 × 4 = 2 V.</div></div>
+    <div class="question-block"><div class="q-num">Q76 (calculation)</div><div class="q-text">A generator produces 100 V at 50 Hz. If the field is doubled, what happens to peak voltage?</div><button class="answer-btn" onclick="toggle('a76')">Show answer</button><div class="answer" id="a76">ε₀ = N B A ω, so doubling B doubles peak voltage → 200 V peak.</div></div>
+    <div class="question-block"><div class="q-num">Q77 (calculation)</div><div class="q-text">A 20 Ω resistor and a capacitor of reactance 15 Ω are in series across 100 V. Find current and power factor.</div><button class="answer-btn" onclick="toggle('a77')">Show answer</button><div class="answer" id="a77">Z = √(20²+15²) = √(400+225)=√625 = 25 Ω. I = 100/25 = 4 A. cos φ = R/Z = 20/25 = 0.8 leading.</div></div>
+    <div class="question-block"><div class="q-num">Q78 (calculation)</div><div class="q-text">A 10 Ω resistor and 0.1 H inductor in series at 50 Hz have impedance 18.6 Ω. Find current if voltage is 200 V.</div><button class="answer-btn" onclick="toggle('a78')">Show answer</button><div class="answer" id="a78">I = V/Z = 200/18.6 ≈ 10.75 A.</div></div>
+    <div class="question-block"><div class="q-num">Q79 (calculation)</div><div class="q-text">A transformer with 90% efficiency supplies 450 W at 30 V. Find input power and primary current if primary voltage is 220 V.</div><button class="answer-btn" onclick="toggle('a79')">Show answer</button><div class="answer" id="a79">P_in = P_out / η = 450/0.9 = 500 W. Primary current Iₚ = P_in / Vₚ = 500/220 ≈ 2.27 A.</div></div>
+    <div class="question-block"><div class="q-num">Q80 (calculation)</div><div class="q-text">A 0.2 H inductor and a 50 μF capacitor are connected in series at 50 Hz. Find net reactance.</div><button class="answer-btn" onclick="toggle('a80')">Show answer</button><div class="answer" id="a80">X_L = 2π×50×0.2 = 62.8 Ω. X_C = 1/(2π×50×50×10⁻⁶) = 1/(2×3.14×50×5×10⁻⁵) = 1/(0.0157) ≈ 63.7 Ω. Net X = X_L – X_C = –0.9 Ω (capacitive).</div></div>
+
+    <hr>
+    <div class="footer-note">
+        🧲 80 questions (40 conceptual + 40 calculation) · complete notes · designed to make you feel WOW!
+    </div>
+</div>
+
+<script>
+    function toggle(id) {
+        var el = document.getElementById(id);
+        if (el.style.display === "block") {
+            el.style.display = "none";
+        } else {
+            el.style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>

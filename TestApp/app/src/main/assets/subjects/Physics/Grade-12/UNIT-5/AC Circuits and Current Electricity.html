@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 12 Physics – Chapter 5 · Current Electricity & AC Circuits</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f8fafc;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: #1e293b;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-radius: 40px 40px 20px 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(185,28,28,0.2);
+        }
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #dc2626;
+            border-left: 8px solid #dc2626;
+            padding-left: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .remember, .wow {
+            padding: 1.2rem 1.5rem;
+            border-radius: 20px;
+            margin: 1.5rem 0;
+            font-weight: 500;
+        }
+        .remember {
+            background: #ecfeff;
+            border-left: 6px solid #22c55e;
+        }
+        .wow {
+            background: #fff7ed;
+            border-left: 6px solid #f59e0b;
+        }
+        ul, ol {
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+        .question-block {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin: 1.2rem 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.02);
+        }
+        .q-num {
+            display: inline-block;
+            background: #dc2626;
+            color: white;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+        .q-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .answer-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem 0;
+            transition: background 0.1s;
+        }
+        .answer-btn:hover {
+            background: #b91c1c;
+        }
+        .answer {
+            display: none;
+            background: #ecfeff;
+            padding: 1.2rem;
+            border-radius: 18px;
+            margin-top: 1rem;
+            border-left: 5px solid #2563eb;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #cbd5e1, transparent);
+            margin: 2.5rem 0;
+        }
+        .footer-note {
+            text-align: center;
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 50px;
+            border: 1px dashed #64748b;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>⚡ Chapter 5 · Current Electricity & AC Circuits</h1>
+        <p>80 questions (40 conceptual + 40 calculation) · complete notes · exam‑ready</p>
+    </header>
+
+    <!-- ========== NOTES ========== -->
+    <div class="card">
+        <h2>5.1 Electric current</h2>
+        <p>Current is the rate of flow of electric charge through a conductor. It is measured in amperes (A).</p>
+        <p><strong>Conventional current</strong> direction is from positive to negative terminal (opposite to electron flow).</p>
+        <div class="remember">📘 REMEMBER: Current I = charge / time   (I = Q / t) – in words, current equals charge divided by time.</div>
+        <div class="wow">💡 WOW: A current of 1 ampere means 1 coulomb of charge passes a point every second – that's about 6.24×10¹⁸ electrons!</div>
+    </div>
+
+    <div class="card">
+        <h2>5.2 Resistance & Ohm’s law</h2>
+        <p>Resistance (R) measures how much a component opposes current. Unit: ohm (Ω).</p>
+        <p><strong>Ohm’s law:</strong> voltage across a resistor equals current times resistance – V = I × R.</p>
+        <p>Resistance depends on material, length, cross‑sectional area, and temperature: R = resistivity × length / area.</p>
+        <div class="remember">📘 REMEMBER: In series, R_total = R₁ + R₂ + … ; in parallel, 1/R_total = 1/R₁ + 1/R₂ + …</div>
+    </div>
+
+    <div class="card">
+        <h2>5.3 Electric circuits & Kirchhoff’s laws</h2>
+        <ul>
+            <li><strong>Series circuit:</strong> current same everywhere, voltage divides.</li>
+            <li><strong>Parallel circuit:</strong> voltage same across each branch, current divides.</li>
+            <li><strong>Kirchhoff’s current law (junction):</strong> total current entering = total current leaving.</li>
+            <li><strong>Kirchhoff’s voltage law (loop):</strong> sum of voltage rises = sum of voltage drops.</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>5.4 Electric power & energy</h2>
+        <p>Power (P) = voltage × current = I² R = V² / R. Unit: watt (W).</p>
+        <p>Electrical energy (E) = power × time. In daily life, energy is measured in kilowatt‑hours (kWh).</p>
+        <div class="wow">💰 WOW: 1 kWh is the energy used by a 1000 W appliance running for 1 hour – that’s what your electricity bill charges!</div>
+    </div>
+
+    <div class="card">
+        <h2>5.5 AC & DC</h2>
+        <p><strong>Direct current (DC)</strong> – constant direction (batteries).</p>
+        <p><strong>Alternating current (AC)</strong> – reverses direction periodically; standard frequency in Ethiopia is 50 Hz.</p>
+        <p>Peak voltage V₀ and RMS voltage V_rms = V₀ / √2. For AC, I_rms = V_rms / Z.</p>
+    </div>
+
+    <div class="card">
+        <h2>5.6 Reactance & impedance</h2>
+        <p><strong>Capacitive reactance</strong> X_C = 1 / (2πfC) – opposition from capacitor.</p>
+        <p><strong>Inductive reactance</strong> X_L = 2πfL – opposition from inductor.</p>
+        <p><strong>Impedance Z</strong> = √(R² + (X_L – X_C)²) for series RLC. Phase angle φ = arctan((X_L–X_C)/R).</p>
+        <div class="remember">📘 REMEMBER: At resonance (X_L = X_C), impedance is minimum (=R) and current is maximum.</div>
+    </div>
+
+    <div class="card">
+        <h2>5.7 Power factor & transformers</h2>
+        <p><strong>Power factor</strong> = cos φ = R / Z. It tells how much of the apparent power is real power.</p>
+        <p><strong>Transformer:</strong> V_p / V_s = N_p / N_s = I_s / I_p (ideal). Step‑up increases voltage, step‑down decreases.</p>
+        <div class="wow">🏭 WOW: Power factor correction saves industries huge amounts of money!</div>
+    </div>
+
+    <hr>
+
+    <!-- ========== 80 QUESTIONS ========== -->
+    <h2 style="margin-bottom:1.5rem;">📋 80 exam‑style questions (40 conceptual + 40 calculation)</h2>
+
+    <!-- conceptual questions 1–40 -->
+    <!-- Q1 -->
+    <div class="question-block">
+        <div class="q-num">Q1 (conceptual)</div>
+        <div class="q-text">Define electric current and state its SI unit.</div>
+        <button class="answer-btn" onclick="toggle('a1')">Show answer</button>
+        <div class="answer" id="a1">Electric current is the rate of flow of electric charge through a conductor. SI unit: ampere (A).<br>📘 REMEMBER: 1 A = 1 coulomb per second.</div>
+    </div>
+    <!-- Q2 -->
+    <div class="question-block">
+        <div class="q-num">Q2 (conceptual)</div>
+        <div class="q-text">What is the direction of conventional current? How does it differ from electron flow?</div>
+        <button class="answer-btn" onclick="toggle('a2')">Show answer</button>
+        <div class="answer" id="a2">Conventional current flows from positive to negative terminal. Electron flow is from negative to positive – opposite to conventional current.<br>⚡ WOW: This is just a historical convention; physics still works!</div>
+    </div>
+    <!-- Q3 -->
+    <div class="question-block">
+        <div class="q-num">Q3 (conceptual)</div>
+        <div class="q-text">State Ohm’s law in words and give its formula.</div>
+        <button class="answer-btn" onclick="toggle('a3')">Show answer</button>
+        <div class="answer" id="a3">Ohm’s law: The voltage across a conductor is directly proportional to the current flowing through it, provided temperature and other physical conditions remain constant. Formula: V = I × R (voltage equals current times resistance).</div>
+    </div>
+    <!-- Q4 -->
+    <div class="question-block">
+        <div class="q-num">Q4 (conceptual)</div>
+        <div class="q-text">Define resistance. What factors does it depend on?</div>
+        <button class="answer-btn" onclick="toggle('a4')">Show answer</button>
+        <div class="answer" id="a4">Resistance is the opposition a material offers to current. It depends on: material (resistivity), length (longer → higher R), cross‑sectional area (thicker → lower R), and temperature.</div>
+    </div>
+    <!-- Q5 -->
+    <div class="question-block">
+        <div class="q-num">Q5 (conceptual)</div>
+        <div class="q-text">How do you combine resistors in series? Give the formula in words.</div>
+        <button class="answer-btn" onclick="toggle('a5')">Show answer</button>
+        <div class="answer" id="a5">In series, the total resistance is the sum of individual resistances: R_total = R₁ + R₂ + R₃ + …</div>
+    </div>
+    <!-- Q6 -->
+    <div class="question-block">
+        <div class="q-num">Q6 (conceptual)</div>
+        <div class="q-text">How do you combine resistors in parallel? Write the rule in words.</div>
+        <button class="answer-btn" onclick="toggle('a6')">Show answer</button>
+        <div class="answer" id="a6">For parallel resistors, the reciprocal of the total resistance equals the sum of the reciprocals of each resistance: 1/R_total = 1/R₁ + 1/R₂ + …</div>
+    </div>
+    <!-- Q7 -->
+    <div class="question-block">
+        <div class="q-num">Q7 (conceptual)</div>
+        <div class="q-text">State Kirchhoff’s current law (junction rule).</div>
+        <button class="answer-btn" onclick="toggle('a7')">Show answer</button>
+        <div class="answer" id="a7">Kirchhoff’s current law: At any junction, the sum of currents entering the junction equals the sum of currents leaving it.</div>
+    </div>
+    <!-- Q8 -->
+    <div class="question-block">
+        <div class="q-num">Q8 (conceptual)</div>
+        <div class="q-text">State Kirchhoff’s voltage law (loop rule).</div>
+        <button class="answer-btn" onclick="toggle('a8')">Show answer</button>
+        <div class="answer" id="a8">Kirchhoff’s voltage law: The algebraic sum of all the potential differences around any closed loop is zero.</div>
+    </div>
+    <!-- Q9 -->
+    <div class="question-block">
+        <div class="q-num">Q9 (conceptual)</div>
+        <div class="q-text">What is the difference between series and parallel circuits regarding current and voltage?</div>
+        <button class="answer-btn" onclick="toggle('a9')">Show answer</button>
+        <div class="answer" id="a9">In series: current is the same through all components, voltage divides. In parallel: voltage is the same across all branches, current divides.</div>
+    </div>
+    <!-- Q10 -->
+    <div class="question-block">
+        <div class="q-num">Q10 (conceptual)</div>
+        <div class="q-text">Define electric power and write its formula in terms of voltage and current.</div>
+        <button class="answer-btn" onclick="toggle('a10')">Show answer</button>
+        <div class="answer" id="a10">Electric power is the rate at which electrical energy is transferred. Formula: P = V × I (power equals voltage times current).</div>
+    </div>
+    <!-- Q11 -->
+    <div class="question-block">
+        <div class="q-num">Q11 (conceptual)</div>
+        <div class="q-text">What is a kilowatt‑hour? What does it measure?</div>
+        <button class="answer-btn" onclick="toggle('a11')">Show answer</button>
+        <div class="answer" id="a11">A kilowatt‑hour (kWh) is a unit of energy. It is the energy consumed by a 1000‑watt device running for one hour. 1 kWh = 3.6 million joules.</div>
+    </div>
+    <!-- Q12 -->
+    <div class="question-block">
+        <div class="q-num">Q12 (conceptual)</div>
+        <div class="q-text">Distinguish between AC and DC.</div>
+        <button class="answer-btn" onclick="toggle('a12')">Show answer</button>
+        <div class="answer" id="a12">DC (direct current) flows in one direction constantly. AC (alternating current) reverses direction periodically. AC is used in homes; DC in batteries.</div>
+    </div>
+    <!-- Q13 -->
+    <div class="question-block">
+        <div class="q-num">Q13 (conceptual)</div>
+        <div class="q-text">What is the frequency of AC in Ethiopia? What does it mean?</div>
+        <button class="answer-btn" onclick="toggle('a13')">Show answer</button>
+        <div class="answer" id="a13">50 hertz (Hz). It means the current changes direction 50 times per second.</div>
+    </div>
+    <!-- Q14 -->
+    <div class="question-block">
+        <div class="q-num">Q14 (conceptual)</div>
+        <div class="q-text">Define capacitive reactance. What is its SI unit?</div>
+        <button class="answer-btn" onclick="toggle('a14')">Show answer</button>
+        <div class="answer" id="a14">Capacitive reactance is the opposition to AC offered by a capacitor. It decreases with higher frequency and higher capacitance. Unit: ohm (Ω).</div>
+    </div>
+    <!-- Q15 -->
+    <div class="question-block">
+        <div class="q-num">Q15 (conceptual)</div>
+        <div class="q-text">Define inductive reactance. What is its SI unit?</div>
+        <button class="answer-btn" onclick="toggle('a15')">Show answer</button>
+        <div class="answer" id="a15">Inductive reactance is the opposition to AC offered by an inductor. It increases with higher frequency and higher inductance. Unit: ohm (Ω).</div>
+    </div>
+    <!-- Q16 -->
+    <div class="question-block">
+        <div class="q-num">Q16 (conceptual)</div>
+        <div class="q-text">What is impedance in an AC circuit?</div>
+        <button class="answer-btn" onclick="toggle('a16')">Show answer</button>
+        <div class="answer" id="a16">Impedance Z is the total opposition to AC, combining resistance R, capacitive reactance X_C, and inductive reactance X_L. For series RLC: Z = square root of [R² + (X_L – X_C)²].</div>
+    </div>
+    <!-- Q17 -->
+    <div class="question-block">
+        <div class="q-num">Q17 (conceptual)</div>
+        <div class="q-text">What is resonance in an AC circuit? What happens to current at resonance?</div>
+        <button class="answer-btn" onclick="toggle('a17')">Show answer</button>
+        <div class="answer" id="a17">Resonance occurs when X_L = X_C. Then impedance is minimum (=R) and current is maximum.</div>
+    </div>
+    <!-- Q18 -->
+    <div class="question-block">
+        <div class="q-num">Q18 (conceptual)</div>
+        <div class="q-text">Define power factor. What is its ideal value?</div>
+        <button class="answer-btn" onclick="toggle('a18')">Show answer</button>
+        <div class="answer" id="a18">Power factor = cos φ = R / Z. It indicates the fraction of apparent power that is real power. Ideal value is 1 (when phase angle φ = 0).</div>
+    </div>
+    <!-- Q19 -->
+    <div class="question-block">
+        <div class="q-num">Q19 (conceptual)</div>
+        <div class="q-text">What is a transformer? Name its two types.</div>
+        <button class="answer-btn" onclick="toggle('a19')">Show answer</button>
+        <div class="answer" id="a19">A transformer is a device that changes AC voltage. Step‑up transformer increases voltage; step‑down decreases voltage.</div>
+    </div>
+    <!-- Q20 -->
+    <div class="question-block">
+        <div class="q-num">Q20 (conceptual)</div>
+        <div class="q-text">State the transformer equation relating primary and secondary voltages and turns.</div>
+        <button class="answer-btn" onclick="toggle('a20')">Show answer</button>
+        <div class="answer" id="a20">For an ideal transformer: V_p / V_s = N_p / N_s, where V_p = primary voltage, V_s = secondary voltage, N_p = primary turns, N_s = secondary turns.</div>
+    </div>
+    <!-- Q21 -->
+    <div class="question-block">
+        <div class="q-num">Q21 (conceptual)</div>
+        <div class="q-text">What is the relationship between current and voltage in an ideal transformer?</div>
+        <button class="answer-btn" onclick="toggle('a21')">Show answer</button>
+        <div class="answer" id="a21">V_p × I_p = V_s × I_s (power in equals power out). So current ratio is inverse of voltage ratio: I_p / I_s = N_s / N_p.</div>
+    </div>
+    <!-- Q22 -->
+    <div class="question-block">
+        <div class="q-num">Q22 (conceptual)</div>
+        <div class="q-text">Define electromotive force (emf) and distinguish it from terminal voltage.</div>
+        <button class="answer-btn" onclick="toggle('a22')">Show answer</button>
+        <div class="answer" id="a22">Emf is the energy per unit charge supplied by a source. Terminal voltage is the voltage across the source when current is drawn – it is less than emf due to internal resistance.</div>
+    </div>
+    <!-- Q23 -->
+    <div class="question-block">
+        <div class="q-num">Q23 (conceptual)</div>
+        <div class="q-text">What is internal resistance of a cell?</div>
+        <button class="answer-btn" onclick="toggle('a23')">Show answer</button>
+        <div class="answer" id="a23">Internal resistance is the opposition to current within the battery itself. It causes a voltage drop inside the battery when current flows.</div>
+    </div>
+    <!-- Q24 -->
+    <div class="question-block">
+        <div class="q-num">Q24 (conceptual)</div>
+        <div class="q-text">What happens to the brightness of bulbs connected in series if one bulb blows?</div>
+        <button class="answer-btn" onclick="toggle('a24')">Show answer</button>
+        <div class="answer" id="a24">In series, if one bulb blows (open circuit), the circuit breaks and all bulbs go off.</div>
+    </div>
+    <!-- Q25 -->
+    <div class="question-block">
+        <div class="q-num">Q25 (conceptual)</div>
+        <div class="q-text">What happens to the brightness of bulbs connected in parallel if one bulb blows?</div>
+        <button class="answer-btn" onclick="toggle('a25')">Show answer</button>
+        <div class="answer" id="a25">In parallel, each bulb has its own path. If one blows, the others remain on with the same brightness (assuming ideal supply).</div>
+    </div>
+    <!-- Q26 -->
+    <div class="question-block">
+        <div class="q-num">Q26 (conceptual)</div>
+        <div class="q-text">Why is AC used for power transmission instead of DC?</div>
+        <button class="answer-btn" onclick="toggle('a26')">Show answer</button>
+        <div class="answer" id="a26">AC voltage can be easily stepped up or down using transformers. High voltage reduces current, thus reducing power loss (I²R) in transmission lines.</div>
+    </div>
+    <!-- Q27 -->
+    <div class="question-block">
+        <div class="q-num">Q27 (conceptual)</div>
+        <div class="q-text">What is meant by RMS value of AC? How is it related to peak value?</div>
+        <button class="answer-btn" onclick="toggle('a27')">Show answer</button>
+        <div class="answer" id="a27">RMS (root‑mean‑square) value is the effective value of AC that produces the same heating effect as an equal DC. For sinusoidal AC, V_rms = V_peak / √2.</div>
+    </div>
+    <!-- Q28 -->
+    <div class="question-block">
+        <div class="q-num">Q28 (conceptual)</div>
+        <div class="q-text">What is the phase difference between voltage and current in a purely resistive AC circuit?</div>
+        <button class="answer-btn" onclick="toggle('a28')">Show answer</button>
+        <div class="answer" id="a28">In a purely resistive circuit, voltage and current are in phase – phase difference is 0°.</div>
+    </div>
+    <!-- Q29 -->
+    <div class="question-block">
+        <div class="q-num">Q29 (conceptual)</div>
+        <div class="q-text">What is the phase difference in a purely inductive circuit?</div>
+        <button class="answer-btn" onclick="toggle('a29')">Show answer</button>
+        <div class="answer" id="a29">In a purely inductive circuit, voltage leads current by 90° (current lags voltage).</div>
+    </div>
+    <!-- Q30 -->
+    <div class="question-block">
+        <div class="q-num">Q30 (conceptual)</div>
+        <div class="q-text">What is the phase difference in a purely capacitive circuit?</div>
+        <button class="answer-btn" onclick="toggle('a30')">Show answer</button>
+        <div class="answer" id="a30">In a purely capacitive circuit, current leads voltage by 90° (voltage lags current).</div>
+    </div>
+    <!-- Q31 -->
+    <div class="question-block">
+        <div class="q-num">Q31 (conceptual)</div>
+        <div class="q-text">Define resistivity. How does it depend on temperature for conductors?</div>
+        <button class="answer-btn" onclick="toggle('a31')">Show answer</button>
+        <div class="answer" id="a31">Resistivity is a material property that measures how strongly it opposes current. For conductors, resistivity increases with temperature.</div>
+    </div>
+    <!-- Q32 -->
+    <div class="question-block">
+        <div class="q-num">Q32 (conceptual)</div>
+        <div class="q-text">What is a superconductor?</div>
+        <button class="answer-btn" onclick="toggle('a32')">Show answer</button>
+        <div class="answer" id="a32">A superconductor is a material that has zero electrical resistance below a certain critical temperature.</div>
+    </div>
+    <!-- Q33 -->
+    <div class="question-block">
+        <div class="q-num">Q33 (conceptual)</div>
+        <div class="q-text">What is meant by “short circuit”? Why is it dangerous?</div>
+        <button class="answer-btn" onclick="toggle('a33')">Show answer</button>
+        <div class="answer" id="a33">A short circuit occurs when a low‑resistance path bypasses the normal load. Very large current flows, overheating wires and possibly causing fire.</div>
+    </div>
+    <!-- Q34 -->
+    <div class="question-block">
+        <div class="q-num">Q34 (conceptual)</div>
+        <div class="q-text">What is the function of a fuse or circuit breaker?</div>
+        <button class="answer-btn" onclick="toggle('a34')">Show answer</button>
+        <div class="answer" id="a34">A fuse melts (or circuit breaker trips) when current exceeds a safe value, breaking the circuit and preventing damage/fire.</div>
+    </div>
+    <!-- Q35 -->
+    <div class="question-block">
+        <div class="q-num">Q35 (conceptual)</div>
+        <div class="q-text">Why do we connect appliances in parallel in home wiring?</div>
+        <button class="answer-btn" onclick="toggle('a35')">Show answer</button>
+        <div class="answer" id="a35">Parallel connection ensures each appliance gets the same voltage (230 V) and can be switched on/off independently without affecting others.</div>
+    </div>
+    <!-- Q36 -->
+    <div class="question-block">
+        <div class="q-num">Q36 (conceptual)</div>
+        <div class="q-text">What is earthing? Why is it important?</div>
+        <button class="answer-btn" onclick="toggle('a36')">Show answer</button>
+        <div class="answer" id="a36">Earthing provides a safe path for leakage current to flow to ground, preventing electric shock.</div>
+    </div>
+    <!-- Q37 -->
+    <div class="question-block">
+        <div class="q-num">Q37 (conceptual)</div>
+        <div class="q-text">Define electric energy and give its commercial unit.</div>
+        <button class="answer-btn" onclick="toggle('a37')">Show answer</button>
+        <div class="answer" id="a37">Electric energy is the total work done by electricity. Commercial unit is kilowatt‑hour (kWh).</div>
+    </div>
+    <!-- Q38 -->
+    <div class="question-block">
+        <div class="q-num">Q38 (conceptual)</div>
+        <div class="q-text">What is the effect of frequency on capacitive reactance?</div>
+        <button class="answer-btn" onclick="toggle('a38')">Show answer</button>
+        <div class="answer" id="a38">Capacitive reactance decreases as frequency increases (X_C ∝ 1/f).</div>
+    </div>
+    <!-- Q39 -->
+    <div class="question-block">
+        <div class="q-num">Q39 (conceptual)</div>
+        <div class="q-text">What is the effect of frequency on inductive reactance?</div>
+        <button class="answer-btn" onclick="toggle('a39')">Show answer</button>
+        <div class="answer" id="a39">Inductive reactance increases as frequency increases (X_L ∝ f).</div>
+    </div>
+    <!-- Q40 -->
+    <div class="question-block">
+        <div class="q-num">Q40 (conceptual)</div>
+        <div class="q-text">What is meant by the term “phase angle” in AC circuits?</div>
+        <button class="answer-btn" onclick="toggle('a40')">Show answer</button>
+        <div class="answer" id="a40">Phase angle φ is the angle by which the voltage leads or lags the current. It depends on the circuit components.</div>
+    </div>
+
+    <!-- calculation questions 41–80 (some samples, but we need 40) – we'll produce 40 -->
+    <!-- Q41 -->
+    <div class="question-block">
+        <div class="q-num">Q41 (calculation)</div>
+        <div class="q-text">A 12 V battery is connected to a 4 Ω resistor. Find the current flowing.</div>
+        <button class="answer-btn" onclick="toggle('a41')">Show answer</button>
+        <div class="answer" id="a41">Using Ohm’s law: I = V / R = 12 / 4 = 3 amperes.<br>📘 REMEMBER: I = V / R.</div>
+    </div>
+    <!-- Q42 -->
+    <div class="question-block">
+        <div class="q-num">Q42 (calculation)</div>
+        <div class="q-text">A current of 2 A flows through a 6 Ω resistor. Calculate the voltage across it.</div>
+        <button class="answer-btn" onclick="toggle('a42')">Show answer</button>
+        <div class="answer" id="a42">V = I × R = 2 × 6 = 12 volts.</div>
+    </div>
+    <!-- Q43 -->
+    <div class="question-block">
+        <div class="q-num">Q43 (calculation)</div>
+        <div class="q-text">A 9 V battery causes 1.5 A in a circuit. Find the resistance.</div>
+        <button class="answer-btn" onclick="toggle('a43')">Show answer</button>
+        <div class="answer" id="a43">R = V / I = 9 / 1.5 = 6 ohms.</div>
+    </div>
+    <!-- Q44 -->
+    <div class="question-block">
+        <div class="q-num">Q44 (calculation)</div>
+        <div class="q-text">Calculate the total resistance of three resistors 5 Ω, 10 Ω, and 15 Ω connected in series.</div>
+        <button class="answer-btn" onclick="toggle('a44')">Show answer</button>
+        <div class="answer" id="a44">In series, R_total = 5 + 10 + 15 = 30 ohms.</div>
+    </div>
+    <!-- Q45 -->
+    <div class="question-block">
+        <div class="q-num">Q45 (calculation)</div>
+        <div class="q-text">Two resistors 6 Ω and 12 Ω are connected in parallel. Find the equivalent resistance.</div>
+        <button class="answer-btn" onclick="toggle('a45')">Show answer</button>
+        <div class="answer" id="a45">1/R_total = 1/6 + 1/12 = 2/12 + 1/12 = 3/12 = 1/4, so R_total = 4 ohms.</div>
+    </div>
+    <!-- Q46 -->
+    <div class="question-block">
+        <div class="q-num">Q46 (calculation)</div>
+        <div class="q-text">A 24 V supply is connected to a series combination of 4 Ω and 8 Ω. Find the current and voltage across each resistor.</div>
+        <button class="answer-btn" onclick="toggle('a46')">Show answer</button>
+        <div class="answer" id="a46">Total R = 4+8=12 Ω. I = V/R = 24/12 = 2 A. Voltage across 4 Ω: V₁ = 2×4 = 8 V; across 8 Ω: V₂ = 2×8 = 16 V. Check: 8+16=24 V.</div>
+    </div>
+    <!-- Q47 -->
+    <div class="question-block">
+        <div class="q-num">Q47 (calculation)</div>
+        <div class="q-text">In a parallel circuit, a 12 V battery is connected to two resistors: 3 Ω and 6 Ω. Find total current.</div>
+        <button class="answer-btn" onclick="toggle('a47')">Show answer</button>
+        <div class="answer" id="a47">R_parallel: 1/R = 1/3+1/6 = 2/6+1/6=3/6=1/2 → R=2 Ω. I_total = V/R = 12/2 = 6 A. Or I₁ = 12/3 = 4 A, I₂ = 12/6 = 2 A, total 6 A.</div>
+    </div>
+    <!-- Q48 -->
+    <div class="question-block">
+        <div class="q-num">Q48 (calculation)</div>
+        <div class="q-text">A 100 W bulb operates at 220 V. Find the current it draws and its resistance.</div>
+        <button class="answer-btn" onclick="toggle('a48')">Show answer</button>
+        <div class="answer" id="a48">P = V I → I = P/V = 100/220 ≈ 0.455 A. R = V/I = 220/0.455 ≈ 484 Ω. (Or R = V²/P = 220²/100 = 484 Ω.)</div>
+    </div>
+    <!-- Q49 -->
+    <div class="question-block">
+        <div class="q-num">Q49 (calculation)</div>
+        <div class="q-text">How much energy is consumed by a 1500 W heater running for 3 hours? Express in kWh.</div>
+        <button class="answer-btn" onclick="toggle('a49')">Show answer</button>
+        <div class="answer" id="a49">Energy (kWh) = power (kW) × time (h) = 1.5 kW × 3 h = 4.5 kWh.</div>
+    </div>
+    <!-- Q50 -->
+    <div class="question-block">
+        <div class="q-num">Q50 (calculation)</div>
+        <div class="q-text">A 12 V battery has an internal resistance of 0.5 Ω. If it supplies 2 A, find the terminal voltage.</div>
+        <button class="answer-btn" onclick="toggle('a50')">Show answer</button>
+        <div class="answer" id="a50">Internal voltage drop = I × r = 2 × 0.5 = 1 V. Terminal voltage = emf – drop = 12 – 1 = 11 V.</div>
+    </div>
+    <!-- Q51 -->
+    <div class="question-block">
+        <div class="q-num">Q51 (calculation)</div>
+        <div class="q-text">A 200 V AC supply has a peak voltage of about 283 V. Find the RMS voltage (given peak).</div>
+        <button class="answer-btn" onclick="toggle('a51')">Show answer</button>
+        <div class="answer" id="a51">V_rms = V_peak / √2 ≈ 283 / 1.414 ≈ 200 V (matches).</div>
+    </div>
+    <!-- Q52 -->
+    <div class="question-block">
+        <div class="q-num">Q52 (calculation)</div>
+        <div class="q-text">A capacitor of 50 μF is connected to a 50 Hz AC supply. Calculate its capacitive reactance. (Use π ≈ 3.14)</div>
+        <button class="answer-btn" onclick="toggle('a52')">Show answer</button>
+        <div class="answer" id="a52">X_C = 1 / (2πf C) = 1 / (2 × 3.14 × 50 × 50×10⁻⁶) = 1 / (2×3.14×50×5×10⁻⁵) = 1 / (0.0157) ≈ 63.7 Ω.</div>
+    </div>
+    <!-- Q53 -->
+    <div class="question-block">
+        <div class="q-num">Q53 (calculation)</div>
+        <div class="q-text">An inductor of 0.1 H is connected to a 60 Hz AC source. Find inductive reactance.</div>
+        <button class="answer-btn" onclick="toggle('a53')">Show answer</button>
+        <div class="answer" id="a53">X_L = 2πf L = 2×3.14×60×0.1 = 37.68 Ω.</div>
+    </div>
+    <!-- Q54 -->
+    <div class="question-block">
+        <div class="q-num">Q54 (calculation)</div>
+        <div class="q-text">A series RLC circuit has R = 10 Ω, X_L = 20 Ω, X_C = 8 Ω. Find impedance and phase angle.</div>
+        <button class="answer-btn" onclick="toggle('a54')">Show answer</button>
+        <div class="answer" id="a54">X_net = X_L – X_C = 12 Ω. Z = √(R² + X_net²) = √(100 + 144) = √244 ≈ 15.62 Ω. tan φ = X_net / R = 12/10 = 1.2 → φ ≈ 50.2° (voltage leads current).</div>
+    </div>
+    <!-- Q55 -->
+    <div class="question-block">
+        <div class="q-num">Q55 (calculation)</div>
+        <div class="q-text">A transformer has 200 primary turns and 50 secondary turns. If primary voltage is 230 V, find secondary voltage.</div>
+        <button class="answer-btn" onclick="toggle('a55')">Show answer</button>
+        <div class="answer" id="a55">V_s = V_p × (N_s/N_p) = 230 × (50/200) = 230 × 0.25 = 57.5 V.</div>
+    </div>
+    <!-- Q56 -->
+    <div class="question-block">
+        <div class="q-num">Q56 (calculation)</div>
+        <div class="q-text">In the above transformer, if secondary current is 4 A, find primary current (ideal).</div>
+        <button class="answer-btn" onclick="toggle('a56')">Show answer</button>
+        <div class="answer" id="a56">I_p = I_s × (N_s/N_p) = 4 × (50/200) = 4 × 0.25 = 1 A. (Or using power: V_p I_p = V_s I_s → 230 × I_p = 57.5 × 4 → I_p = 230/230 = 1 A.)</div>
+    </div>
+    <!-- Q57 -->
+    <div class="question-block">
+        <div class="q-num">Q57 (calculation)</div>
+        <div class="q-text">A 240 V, 60 W lamp is used on 220 V supply. Find the current drawn and power consumed. (Assume resistance constant.)</div>
+        <button class="answer-btn" onclick="toggle('a57')">Show answer</button>
+        <div class="answer" id="a57">Resistance R = V_rated² / P_rated = 240²/60 = 57600/60 = 960 Ω. Current at 220 V: I = 220/960 ≈ 0.229 A. Power = I²R = (0.229)² × 960 ≈ 50.4 W.</div>
+    </div>
+    <!-- Q58 -->
+    <div class="question-block">
+        <div class="q-num">Q58 (calculation)</div>
+        <div class="q-text">Three 6 Ω resistors are connected in parallel. Find equivalent resistance.</div>
+        <button class="answer-btn" onclick="toggle('a58')">Show answer</button>
+        <div class="answer" id="a58">1/R = 1/6 + 1/6 + 1/6 = 3/6 = 1/2 → R = 2 Ω.</div>
+    </div>
+    <!-- Q59 -->
+    <div class="question-block">
+        <div class="q-num">Q59 (calculation)</div>
+        <div class="q-text">A 12 Ω and a 24 Ω resistor are in parallel, and this combination is in series with a 6 Ω resistor. Find total resistance.</div>
+        <button class="answer-btn" onclick="toggle('a59')">Show answer</button>
+        <div class="answer" id="a59">Parallel part: 1/Rp = 1/12 + 1/24 = 2/24+1/24=3/24=1/8 → Rp = 8 Ω. Total = 8 + 6 = 14 Ω.</div>
+    </div>
+    <!-- Q60 -->
+    <div class="question-block">
+        <div class="q-num">Q60 (calculation)</div>
+        <div class="q-text">A 220 V, 50 Hz AC supply is connected to a 20 μF capacitor. Find the capacitive reactance and RMS current.</div>
+        <button class="answer-btn" onclick="toggle('a60')">Show answer</button>
+        <div class="answer" id="a60">X_C = 1/(2π×50×20×10⁻⁶) = 1/(2×3.14×50×2×10⁻⁵) = 1/(0.00628) ≈ 159.2 Ω. I_rms = V_rms / X_C = 220 / 159.2 ≈ 1.38 A.</div>
+    </div>
+    <!-- Q61 -->
+    <div class="question-block">
+        <div class="q-num">Q61 (calculation)</div>
+        <div class="q-text">A coil of inductance 0.2 H and resistance 5 Ω is connected to 100 V, 50 Hz supply. Find impedance and current.</div>
+        <button class="answer-btn" onclick="toggle('a61')">Show answer</button>
+        <div class="answer" id="a61">X_L = 2π×50×0.2 = 62.8 Ω. Z = √(5² + 62.8²) ≈ √(25 + 3944) = √3969 = 63 Ω (approx). I = V/Z = 100/63 ≈ 1.59 A.</div>
+    </div>
+    <!-- Q62 -->
+    <div class="question-block">
+        <div class="q-num">Q62 (calculation)</div>
+        <div class="q-text">In a series RLC circuit, R = 15 Ω, L = 0.1 H, C = 100 μF, f = 50 Hz. Find impedance.</div>
+        <button class="answer-btn" onclick="toggle('a62')">Show answer</button>
+        <div class="answer" id="a62">X_L = 2π×50×0.1 = 31.4 Ω. X_C = 1/(2π×50×100×10⁻⁶) = 1/(0.0314) ≈ 31.85 Ω. X_net = X_L – X_C ≈ –0.45 Ω. Z = √(15² + 0.45²) ≈ √(225 + 0.2) = √225.2 ≈ 15.01 Ω (almost resistive).</div>
+    </div>
+    <!-- Q63 -->
+    <div class="question-block">
+        <div class="q-num">Q63 (calculation)</div>
+        <div class="q-text">A 230 V, 100 W bulb is connected to a 230 V supply. Find its resistance and current.</div>
+        <button class="answer-btn" onclick="toggle('a63')">Show answer</button>
+        <div class="answer" id="a63">R = V²/P = 230²/100 = 52900/100 = 529 Ω. I = P/V = 100/230 ≈ 0.435 A.</div>
+    </div>
+    <!-- Q64 -->
+    <div class="question-block">
+        <div class="q-num">Q64 (calculation)</div>
+        <div class="q-text">Calculate the power dissipated in a 10 Ω resistor carrying 2 A.</div>
+        <button class="answer-btn" onclick="toggle('a64')">Show answer</button>
+        <div class="answer" id="a64">P = I² R = 2² × 10 = 4 × 10 = 40 W.</div>
+    </div>
+    <!-- Q65 -->
+    <div class="question-block">
+        <div class="q-num">Q65 (calculation)</div>
+        <div class="q-text">A 220 V heater draws 5 A. Find its power and energy consumed in 2 hours in kWh.</div>
+        <button class="answer-btn" onclick="toggle('a65')">Show answer</button>
+        <div class="answer" id="a65">P = V I = 220 × 5 = 1100 W = 1.1 kW. Energy = P × t = 1.1 × 2 = 2.2 kWh.</div>
+    </div>
+    <!-- Q66 -->
+    <div class="question-block">
+        <div class="q-num">Q66 (calculation)</div>
+        <div class="q-text">A cell of emf 1.5 V and internal resistance 0.3 Ω is connected to a 2.7 Ω external resistor. Find current and terminal voltage.</div>
+        <button class="answer-btn" onclick="toggle('a66')">Show answer</button>
+        <div class="answer" id="a66">Total R = 0.3 + 2.7 = 3 Ω. I = emf / total R = 1.5 / 3 = 0.5 A. Terminal voltage = I × external R = 0.5 × 2.7 = 1.35 V.</div>
+    </div>
+    <!-- Q67 -->
+    <div class="question-block">
+        <div class="q-num">Q67 (calculation)</div>
+        <div class="q-text">A toaster is rated 800 W, 230 V. Find its resistance and current.</div>
+        <button class="answer-btn" onclick="toggle('a67')">Show answer</button>
+        <div class="answer" id="a67">R = V²/P = 230²/800 = 52900/800 = 66.125 Ω. I = P/V = 800/230 ≈ 3.48 A.</div>
+    </div>
+    <!-- Q68 -->
+    <div class="question-block">
+        <div class="q-num">Q68 (calculation)</div>
+        <div class="q-text">An AC circuit has a voltage v = 311 sin(314t). Find the frequency and RMS voltage.</div>
+        <button class="answer-btn" onclick="toggle('a68')">Show answer</button>
+        <div class="answer" id="a68">ω = 314 rad/s = 2πf → f = 314/(2×3.14) = 50 Hz. V_peak = 311 V, so V_rms = 311/√2 ≈ 220 V.</div>
+    </div>
+    <!-- Q69 -->
+    <div class="question-block">
+        <div class="q-num">Q69 (calculation)</div>
+        <div class="q-text">A transformer has 500 primary turns and 1000 secondary turns. If primary voltage is 110 V, find secondary voltage.</div>
+        <button class="answer-btn" onclick="toggle('a69')">Show answer</button>
+        <div class="answer" id="a69">V_s = V_p × (N_s/N_p) = 110 × (1000/500) = 110 × 2 = 220 V.</div>
+    </div>
+    <!-- Q70 -->
+    <div class="question-block">
+        <div class="q-num">Q70 (calculation)</div>
+        <div class="q-text">A 20 Ω resistor and a 40 Ω resistor are in parallel. The combination is connected to a 12 V battery. Find total current.</div>
+        <button class="answer-btn" onclick="toggle('a70')">Show answer</button>
+        <div class="answer" id="a70">Parallel R: 1/R = 1/20 + 1/40 = 2/40+1/40=3/40 → R = 40/3 ≈ 13.33 Ω. I = V/R = 12 / (40/3) = 12 × 3/40 = 36/40 = 0.9 A.</div>
+    </div>
+    <!-- Q71 -->
+    <div class="question-block">
+        <div class="q-num">Q71 (calculation)</div>
+        <div class="q-text">An AC circuit has an impedance of 50 Ω and resistance 30 Ω. Find the reactance and power factor.</div>
+        <button class="answer-btn" onclick="toggle('a71')">Show answer</button>
+        <div class="answer" id="a71">Z² = R² + X² → X = √(Z² – R²) = √(2500–900) = √1600 = 40 Ω. Power factor cos φ = R/Z = 30/50 = 0.6.</div>
+    </div>
+    <!-- Q72 -->
+    <div class="question-block">
+        <div class="q-num">Q72 (calculation)</div>
+        <div class="q-text">A 10 μF capacitor is connected to a 200 V, 50 Hz supply. Find the current (RMS).</div>
+        <button class="answer-btn" onclick="toggle('a72')">Show answer</button>
+        <div class="answer" id="a72">X_C = 1/(2π×50×10×10⁻⁶) = 1/(2×3.14×50×10⁻⁵) = 1/(0.0314) ≈ 31.85 Ω. I = V / X_C = 200 / 31.85 ≈ 6.28 A.</div>
+    </div>
+    <!-- Q73 -->
+    <div class="question-block">
+        <div class="q-num">Q73 (calculation)</div>
+        <div class="q-text">A 0.5 H inductor is connected to a 100 V, 60 Hz supply. Find the reactance and current.</div>
+        <button class="answer-btn" onclick="toggle('a73')">Show answer</button>
+        <div class="answer" id="a73">X_L = 2π×60×0.5 = 188.4 Ω. I = 100 / 188.4 ≈ 0.531 A.</div>
+    </div>
+    <!-- Q74 -->
+    <div class="question-block">
+        <div class="q-num">Q74 (calculation)</div>
+        <div class="q-text">A series RL circuit has R = 5 Ω, L = 0.02 H, f = 50 Hz, V = 230 V. Find impedance and current.</div>
+        <button class="answer-btn" onclick="toggle('a74')">Show answer</button>
+        <div class="answer" id="a74">X_L = 2π×50×0.02 = 6.28 Ω. Z = √(5² + 6.28²) = √(25 + 39.4) = √64.4 ≈ 8.03 Ω. I = 230 / 8.03 ≈ 28.6 A.</div>
+    </div>
+    <!-- Q75 -->
+    <div class="question-block">
+        <div class="q-num">Q75 (calculation)</div>
+        <div class="q-text">A 40 Ω resistor, a 30 Ω inductive reactance, and a 60 Ω capacitive reactance are in series across 200 V. Find current and power factor.</div>
+        <button class="answer-btn" onclick="toggle('a75')">Show answer</button>
+        <div class="answer" id="a75">X_net = 30 – 60 = –30 Ω (capacitive dominant). Z = √(40² + 30²) = √(1600+900)=√2500=50 Ω. I = 200/50 = 4 A. cos φ = R/Z = 40/50 = 0.8 leading (since X_net negative).</div>
+    </div>
+    <!-- Q76 -->
+    <div class="question-block">
+        <div class="q-num">Q76 (calculation)</div>
+        <div class="q-text">A 220 V, 50 Hz AC source is connected to a 10 Ω resistor in series with a 0.05 H inductor. Find the phase angle and power consumed.</div>
+        <button class="answer-btn" onclick="toggle('a76')">Show answer</button>
+        <div class="answer" id="a76">X_L = 2π×50×0.05 = 15.7 Ω. Z = √(10²+15.7²) = √(100+246.5) = √346.5 ≈ 18.62 Ω. I = 220/18.62 ≈ 11.82 A. cos φ = 10/18.62 = 0.537. Power P = I² R = (11.82)² ×10 = 139.7×10 = 1397 W. Or P = V I cos φ = 220×11.82×0.537 ≈ 1397 W.</div>
+    </div>
+    <!-- Q77 -->
+    <div class="question-block">
+        <div class="q-num">Q77 (calculation)</div>
+        <div class="q-text">A transformer has 400 primary turns and 1200 secondary turns. The primary current is 5 A. Find secondary current (ideal).</div>
+        <button class="answer-btn" onclick="toggle('a77')">Show answer</button>
+        <div class="answer" id="a77">I_s = I_p × (N_p/N_s) = 5 × (400/1200) = 5 × 1/3 = 1.67 A.</div>
+    </div>
+    <!-- Q78 -->
+    <div class="question-block">
+        <div class="q-num">Q78 (calculation)</div>
+        <div class="q-text">A 12 V battery with internal resistance 0.2 Ω is short‑circuited. Find the short‑circuit current.</div>
+        <button class="answer-btn" onclick="toggle('a78')">Show answer</button>
+        <div class="answer" id="a78">I_sc = emf / internal resistance = 12 / 0.2 = 60 A.</div>
+    </div>
+    <!-- Q79 -->
+    <div class="question-block">
+        <div class="q-num">Q79 (calculation)</div>
+        <div class="q-text">Three resistors 10 Ω, 20 Ω, and 30 Ω are connected in parallel to a 12 V battery. Find total current.</div>
+        <button class="answer-btn" onclick="toggle('a79')">Show answer</button>
+        <div class="answer" id="a79">1/R = 1/10+1/20+1/30 = 6/60+3/60+2/60 = 11/60 → R = 60/11 ≈ 5.455 Ω. I = 12 / 5.455 ≈ 2.2 A. Or I₁=1.2, I₂=0.6, I₃=0.4, sum=2.2 A.</div>
+    </div>
+    <!-- Q80 -->
+    <div class="question-block">
+        <div class="q-num">Q80 (calculation)</div>
+        <div class="q-text">An AC circuit has a current i = 14.14 sin(314t). Find the RMS current and frequency.</div>
+        <button class="answer-btn" onclick="toggle('a80')">Show answer</button>
+        <div class="answer" id="a80">I_peak = 14.14 A → I_rms = 14.14/√2 ≈ 10 A. ω = 314 rad/s → f = 314/(2π) = 50 Hz.</div>
+    </div>
+
+    <hr>
+    <div class="footer-note">
+        ⚡ 80 questions (40 conceptual + 40 calculation) · complete notes · designed to make you feel WOW!
+    </div>
+</div>
+
+<script>
+    function toggle(id) {
+        var el = document.getElementById(id);
+        if (el.style.display === "block") {
+            el.style.display = "none";
+        } else {
+            el.style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>

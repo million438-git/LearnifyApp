@@ -1,28 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
-    id 'org.springframework.boot' version '3.3.2'
-    id 'io.spring.dependency-management' version '1.1.6'
-    id 'java'
-    alias(libs.plugins.android.application) apply false
+    id 'com.android.application' version '9.0.1' apply false
+    id 'com.android.library' version '9.0.1' apply false
+    id 'com.chaquo.python' version '17.0.0' apply false
 }
 
-group = 'com.example.testapp'
+// Keep the existing Spring configuration if needed, though it seems unusual for an Android project root
+// id 'org.springframework.boot' version '3.3.2' apply false
+// id 'io.spring.dependency-management' version '1.1.6' apply false
+// id 'java' apply false
+
+group = 'com.million.learnify'
 version = '0.0.1-SNAPSHOT'
-
-java {
-    sourceCompatibility = '17'
-}
-
-// FORCE GRADLE TO USE THE CORRECT MAIN CLASS
-springBoot {
-    mainClass = 'com.example.testapp.studentbackend.StudentBackendApplication'
-}
-
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
-}

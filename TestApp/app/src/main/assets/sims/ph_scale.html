@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #fff1f2; padding: 20px; }
+        .beaker { width: 150px; height: 200px; border: 4px solid #334155; border-top: none; border-radius: 0 0 20px 20px; margin: 20px auto; position: relative; overflow: hidden; background: white; }
+        .liquid { position: absolute; bottom: 0; width: 100%; height: 70%; transition: background 0.5s; }
+        input { width: 80%; margin: 20px 0; }
+        .ph-value { font-size: 24sp; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h3>Chemistry: pH Scale Lab</h3>
+    <div class="beaker">
+        <div id="liquid" class="liquid" style="background: #fbbf24;"></div>
+    </div>
+    <div class="ph-value">pH: <span id="phVal">7.0</span></div>
+    <p id="desc">Neutral (Pure Water)</p>
+    <input type="range" min="0" max="14" step="0.1" value="7" oninput="updatePh(this.value)">
+
+    <script>
+        function updatePh(val) {
+            document.getElementById('phVal').innerText = val;
+            let liquid = document.getElementById('liquid');
+            let desc = document.getElementById('desc');
+
+            // Color interpolation
+            let r, g, b;
+            if(val < 7) { // Acid (Red to Yellow)
+                r = 255; g = Math.floor((val/7)*255); b = 0;
+                desc.innerText = val < 3 ? "Strong Acid (Battery Acid)" : "Weak Acid (Milk/Coffee)";
+            } else if(val == 7) {
+                r = 251; g = 191; b = 36;
+                desc.innerText = "Neutral (Pure Water)";
+            } else { // Base (Green to Purple)
+                r = Math.floor(255 - ((val-7)/7)*255); g = 255; b = Math.floor(((val-7)/7)*255);
+                desc.innerText = val > 11 ? "Strong Base (Bleach)" : "Weak Base (Baking Soda)";
+            }
+            liquid.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+        }
+    </script>
+</body>
+</html>

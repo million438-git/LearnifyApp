@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 12 Physics – Unit 5 · Basics of Electronics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f8fafc;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: #1e293b;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #f97316, #c2410c);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-radius: 40px 40px 20px 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(194,65,12,0.2);
+        }
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.15s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.07);
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #f97316;
+            border-left: 8px solid #f97316;
+            padding-left: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .remember, .wow {
+            padding: 1.2rem 1.5rem;
+            border-radius: 20px;
+            margin: 1.5rem 0;
+            font-weight: 500;
+        }
+        .remember {
+            background: #ecfeff;
+            border-left: 6px solid #22c55e;
+        }
+        .wow {
+            background: #fff7ed;
+            border-left: 6px solid #f59e0b;
+        }
+        ul, ol {
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+        .question-block {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin: 1.2rem 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.02);
+        }
+        .q-num {
+            display: inline-block;
+            background: #f97316;
+            color: white;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+        .q-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .answer-btn {
+            background: #f97316;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem 0;
+            transition: background 0.1s;
+        }
+        .answer-btn:hover {
+            background: #c2410c;
+        }
+        .answer {
+            display: none;
+            background: #ecfeff;
+            padding: 1.2rem;
+            border-radius: 18px;
+            margin-top: 1rem;
+            border-left: 5px solid #f97316;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #cbd5e1, transparent);
+            margin: 2.5rem 0;
+        }
+        .footer-note {
+            text-align: center;
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 50px;
+            border: 1px dashed #64748b;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>🔌 Grade 12 Physics – Unit 5</h1>
+        <p>Basics of Electronics · 60 advanced questions · exam‑ready</p>
+    </header>
+
+    <!-- Unit notes -->
+    <div class="card">
+        <h2>📘 Electronics – key ideas</h2>
+        <p>Electronics studies the control of electrons in solids. Semiconductors (Si, Ge) have conductivity between conductors and insulators. Doping creates n‑type (extra electrons) and p‑type (holes). The p‑n junction forms diodes, which allow current in one direction. Diodes rectify AC, LEDs emit light, Zener diodes regulate voltage. Transistors (NPN, PNP) amplify and switch. Integrated circuits (ICs) pack millions of components. Logic gates (AND, OR, NOT) process binary data, forming the basis of computers.</p>
+        <div class="remember">📌 REMEMBER: Diode forward voltage ≈ 0.7 V (Si). Transistor β = I<sub>C</sub>/I<sub>B</sub>. LED current limiting resistor R = (V<sub>supply</sub> – V<sub>LED</sub>) / I.</div>
+        <div class="wow">✨ WOW: A modern CPU contains billions of transistors – each one is an electronic switch!</div>
+    </div>
+
+    <!-- ========== 60 QUESTIONS ========== -->
+    <!-- Part A: Conceptual (Q1–Q30) -->
+    <div class="question-block"><div class="q-num">Q1 (conceptual)</div><div class="q-text">Explain the difference between conductors, semiconductors, and insulators.</div><button class="answer-btn" onclick="toggle('a1')">Show answer</button><div class="answer" id="a1"><strong>Answer:</strong><br>Conductor: Many free electrons → high conductivity. Insulator: Very few free electrons → negligible conductivity. Semiconductor: Conductivity between conductor and insulator; it increases with doping or temperature.</div></div>
+    <div class="question-block"><div class="q-num">Q2 (conceptual)</div><div class="q-text">Why does intrinsic semiconductor conductivity increase with temperature?</div><button class="answer-btn" onclick="toggle('a2')">Show answer</button><div class="answer" id="a2"><strong>Answer:</strong><br>Thermal energy excites electrons from the valence band to the conduction band, creating more free electrons and holes. More charge carriers → higher conductivity.</div></div>
+    <div class="question-block"><div class="q-num">Q3 (conceptual)</div><div class="q-text">Explain the role of doping in semiconductors.</div><button class="answer-btn" onclick="toggle('a3')">Show answer</button><div class="answer" id="a3"><strong>Answer:</strong><br>Doping adds impurities to increase free carriers. n‑type: donor atoms (group V) provide extra electrons. p‑type: acceptor atoms (group III) create holes. This tailors conductivity for devices.</div></div>
+    <div class="question-block"><div class="q-num">Q4 (conceptual)</div><div class="q-text">Why is a diode considered a one‑way current device?</div><button class="answer-btn" onclick="toggle('a4')">Show answer</button><div class="answer" id="a4"><strong>Answer:</strong><br>A p‑n junction allows current only when forward‑biased (p positive, n negative). In reverse bias, the depletion layer widens and blocks current.</div></div>
+    <div class="question-block"><div class="q-num">Q5 (conceptual)</div><div class="q-text">Explain why LEDs emit light while normal diodes do not.</div><button class="answer-btn" onclick="toggle('a5')">Show answer</button><div class="answer" id="a5"><strong>Answer:</strong><br>In an LED, electron‑hole recombination releases energy as photons. The material is chosen so that the photon energy lies in the visible range. Normal diodes are made of silicon/germanium, where the energy is released as heat (infrared).</div></div>
+    <div class="question-block"><div class="q-num">Q6 (conceptual)</div><div class="q-text">What is the difference between forward bias and reverse bias in a diode?</div><button class="answer-btn" onclick="toggle('a6')">Show answer</button><div class="answer" id="a6"><strong>Answer:</strong><br>Forward bias: p‑side positive, n‑side negative → current flows. Reverse bias: p‑side negative, n‑side positive → current blocked (except small leakage).</div></div>
+    <div class="question-block"><div class="q-num">Q7 (conceptual)</div><div class="q-text">Why is a Zener diode used in voltage regulation?</div><button class="answer-btn" onclick="toggle('a7')">Show answer</button><div class="answer" id="a7"><strong>Answer:</strong><br>In reverse bias, Zener diodes break down at a precise voltage and maintain that voltage across them despite input fluctuations, providing stable output.</div></div>
+    <div class="question-block"><div class="q-num">Q8 (conceptual)</div><div class="q-text">Explain rectification using a diode.</div><button class="answer-btn" onclick="toggle('a8')">Show answer</button><div class="answer" id="a8"><strong>Answer:</strong><br>A diode converts AC to DC by allowing only one half‑cycle to pass. Half‑wave rectification uses one diode; full‑wave uses a bridge of four diodes to utilise both halves.</div></div>
+    <div class="question-block"><div class="q-num">Q9 (conceptual)</div><div class="q-text">Why are capacitors used in rectifier circuits?</div><button class="answer-btn" onclick="toggle('a9')">Show answer</button><div class="answer" id="a9"><strong>Answer:</strong><br>Capacitors smooth the pulsating DC output by storing charge when voltage rises and releasing it when voltage drops, reducing ripple.</div></div>
+    <div class="question-block"><div class="q-num">Q10 (conceptual)</div><div class="q-text">Explain how a transistor acts as an amplifier.</div><button class="answer-btn" onclick="toggle('a10')">Show answer</button><div class="answer" id="a10"><strong>Answer:</strong><br>A small base current controls a much larger collector current (I<sub>C</sub> = β I<sub>B</sub>). Thus a small input signal (varying I<sub>B</sub>) produces a large output signal across the collector resistor.</div></div>
+    <div class="question-block"><div class="q-num">Q11 (conceptual)</div><div class="q-text">Why is a transistor used as a switch in digital circuits?</div><button class="answer-btn" onclick="toggle('a11')">Show answer</button><div class="answer" id="a11"><strong>Answer:</strong><br>In saturation, collector‑emitter path acts as a closed switch (ON). In cutoff, it acts as an open switch (OFF). The base current controls these states.</div></div>
+    <div class="question-block"><div class="q-num">Q12 (conceptual)</div><div class="q-text">Explain the difference between NPN and PNP transistors.</div><button class="answer-btn" onclick="toggle('a12')">Show answer</button><div class="answer" id="a12"><strong>Answer:</strong><br>NPN: current flows from collector to emitter when base is positive relative to emitter. PNP: current flows from emitter to collector when base is negative. Their symbols and biasing voltages differ.</div></div>
+    <div class="question-block"><div class="q-num">Q13 (conceptual)</div><div class="q-text">Why are integrated circuits (ICs) preferred over discrete components?</div><button class="answer-btn" onclick="toggle('a13')">Show answer</button><div class="answer" id="a13"><strong>Answer:</strong><br>ICs are compact, low cost, reliable, and require less wiring. Many transistors, resistors, and capacitors are fabricated on one chip, reducing size and improving speed.</div></div>
+    <div class="question-block"><div class="q-num">Q14 (conceptual)</div><div class="q-text">Explain the logic behind AND, OR, and NOT gates.</div><button class="answer-btn" onclick="toggle('a14')">Show answer</button><div class="answer" id="a14"><strong>Answer:</strong><br>AND: output 1 only if all inputs are 1. OR: output 1 if at least one input is 1. NOT: output is the inverse of the input (1→0, 0→1).</div></div>
+    <div class="question-block"><div class="q-num">Q15 (conceptual)</div><div class="q-text">Why are combinational circuits faster than sequential circuits?</div><button class="answer-btn" onclick="toggle('a15')">Show answer</button><div class="answer" id="a15"><strong>Answer:</strong><br>Combinational circuits depend only on current inputs – no memory elements or feedback. Sequential circuits use previous states, which adds delay due to storage elements.</div></div>
+    <div class="question-block"><div class="q-num">Q16 (conceptual)</div><div class="q-text">Explain how a diode bridge converts AC to DC.</div><button class="answer-btn" onclick="toggle('a16')">Show answer</button><div class="answer" id="a16"><strong>Answer:</strong><br>Four diodes are arranged in a bridge. During the positive half‑cycle, two diodes conduct, passing current through the load in one direction. During the negative half‑cycle, the other two diodes conduct, again sending current through the load in the same direction – producing full‑wave rectification.</div></div>
+    <div class="question-block"><div class="q-num">Q17 (conceptual)</div><div class="q-text">Why is the forward voltage of a silicon diode approximately 0.7 V?</div><button class="answer-btn" onclick="toggle('a17')">Show answer</button><div class="answer" id="a17"><strong>Answer:</strong><br>The built‑in potential barrier of a silicon p‑n junction is about 0.7 V. This voltage must be overcome to allow significant current flow.</div></div>
+    <div class="question-block"><div class="q-num">Q18 (conceptual)</div><div class="q-text">Why does a transistor need biasing in amplifier circuits?</div><button class="answer-btn" onclick="toggle('a18')">Show answer</button><div class="answer" id="a18"><strong>Answer:</strong><br>Biasing sets the operating point (Q‑point) in the active region so that the input signal can be amplified without distortion (cutoff or saturation).</div></div>
+    <div class="question-block"><div class="q-num">Q19 (conceptual)</div><div class="q-text">Explain why a depletion layer forms at a p‑n junction.</div><button class="answer-btn" onclick="toggle('a19')">Show answer</button><div class="answer" id="a19"><strong>Answer:</strong><br>Electrons from n‑side and holes from p‑side diffuse across the junction and recombine, leaving behind ionised donor and acceptor atoms. This region is depleted of free carriers and acts as a barrier.</div></div>
+    <div class="question-block"><div class="q-num">Q20 (conceptual)</div><div class="q-text">Why is reverse saturation current very small in a diode?</div><button class="answer-btn" onclick="toggle('a20')">Show answer</button><div class="answer" id="a20"><strong>Answer:</strong><br>Reverse current is due to minority carriers drifting across the junction. Their concentration is very small, so the current is tiny (μA range) and temperature‑dependent.</div></div>
+    <div class="question-block"><div class="q-num">Q21 (conceptual)</div><div class="q-text">Explain the switching speed of a transistor.</div><button class="answer-btn" onclick="toggle('a21')">Show answer</button><div class="answer" id="a21"><strong>Answer:</strong><br>Switching speed is the time to turn ON and OFF. It depends on charge storage in the base region. Higher frequencies require faster transistors (e.g., RF transistors).</div></div>
+    <div class="question-block"><div class="q-num">Q22 (conceptual)</div><div class="q-text">Why do LEDs require current‑limiting resistors?</div><button class="answer-btn" onclick="toggle('a22')">Show answer</button><div class="answer" id="a22"><strong>Answer:</strong><br>LEDs have a very low resistance when forward‑biased. Without a resistor, the current would be excessive and destroy the LED. The resistor limits current to a safe value (e.g., 20 mA).</div></div>
+    <div class="question-block"><div class="q-num">Q23 (conceptual)</div><div class="q-text">Explain the difference between N‑channel and P‑channel MOSFETs.</div><button class="answer-btn" onclick="toggle('a23')">Show answer</button><div class="answer" id="a23"><strong>Answer:</strong><br>N‑channel MOSFET conducts when a positive voltage is applied to the gate relative to source; electrons form the channel. P‑channel conducts when gate is negative relative to source; holes form the channel.</div></div>
+    <div class="question-block"><div class="q-num">Q24 (conceptual)</div><div class="q-text">Why are logic gates implemented in CMOS technology?</div><button class="answer-btn" onclick="toggle('a24')">Show answer</button><div class="answer" id="a24"><strong>Answer:</strong><br>CMOS uses complementary n‑MOS and p‑MOS transistors, offering low power consumption, high noise immunity, and high speed – ideal for digital integrated circuits.</div></div>
+    <div class="question-block"><div class="q-num">Q25 (conceptual)</div><div class="q-text">Explain the significance of binary logic in electronics.</div><button class="answer-btn" onclick="toggle('a25')">Show answer</button><div class="answer" id="a25"><strong>Answer:</strong><br>Binary (1 and 0) represents ON/OFF states in digital systems. It is the foundation of computers, calculators, and all digital devices because it simplifies circuit design and signal processing.</div></div>
+    <div class="question-block"><div class="q-num">Q26 (conceptual)</div><div class="q-text">Why are diodes used in signal demodulation?</div><button class="answer-btn" onclick="toggle('a26')">Show answer</button><div class="answer" id="a26"><strong>Answer:</strong><br>In amplitude modulation (AM), a diode rectifies the modulated signal, removing one half and allowing a capacitor to extract the original audio (envelope detection).</div></div>
+    <div class="question-block"><div class="q-num">Q27 (conceptual)</div><div class="q-text">Explain why integrated circuits reduce noise.</div><button class="answer-btn" onclick="toggle('a27')">Show answer</button><div class="answer" id="a27"><strong>Answer:</strong><br>Short interconnects reduce parasitic inductance and capacitance. Components are close, so thermal and electromagnetic noise pickup is minimised, leading to more stable operation.</div></div>
+    <div class="question-block"><div class="q-num">Q28 (conceptual)</div><div class="q-text">Why is reverse recovery time important in fast diodes?</div><button class="answer-btn" onclick="toggle('a28')">Show answer</button><div class="answer" id="a28"><strong>Answer:</strong><br>Reverse recovery time is the time a diode takes to stop conducting after bias reversal. In high‑frequency switching circuits, a fast recovery time prevents power loss and overheating.</div></div>
+    <div class="question-block"><div class="q-num">Q29 (conceptual)</div><div class="q-text">Explain why transistor beta (β) is important.</div><button class="answer-btn" onclick="toggle('a29')">Show answer</button><div class="answer" id="a29"><strong>Answer:</strong><br>β = I<sub>C</sub> / I<sub>B</sub> (common‑emitter current gain). It determines the amplification factor of a transistor. A higher β means a smaller base current controls a larger collector current.</div></div>
+    <div class="question-block"><div class="q-num">Q30 (conceptual)</div><div class="q-text">Why are diodes, transistors, and ICs fundamental to modern electronics?</div><button class="answer-btn" onclick="toggle('a30')">Show answer</button><div class="answer" id="a30"><strong>Answer:</strong><br>They are the building blocks for rectification, amplification, switching, signal processing, and logic. Every electronic device – from smartphones to satellites – relies on them.</div></div>
+
+    <!-- Part B: Calculation/Application (Q31–Q60) -->
+    <div class="question-block"><div class="q-num">Q31 (calculation)</div><div class="q-text">A diode has a forward voltage drop of 0.7 V and is in series with a 1 kΩ resistor and a 5 V supply. Find the current.</div><button class="answer-btn" onclick="toggle('a31')">Show answer</button><div class="answer" id="a31"><strong>Step‑by‑step:</strong><br>I = (V – V<sub>d</sub>) / R = (5 – 0.7) / 1000 = 4.3 / 1000 = 4.3×10⁻³ A = 4.3 mA.<br>✅ Answer: 4.3 mA</div></div>
+    <div class="question-block"><div class="q-num">Q32 (calculation)</div><div class="q-text">A bridge rectifier is supplied with 10 V RMS AC. The load resistance is 500 Ω. Find the average DC voltage across the load (assuming ideal diodes).</div><button class="answer-btn" onclick="toggle('a32')">Show answer</button><div class="answer" id="a32"><strong>Step‑by‑step:</strong><br>For a full‑wave rectifier, V<sub>DC</sub> ≈ 0.9 × V<sub>RMS</sub> = 0.9 × 10 = 9 V.<br>✅ Answer: 9 V</div></div>
+    <div class="question-block"><div class="q-num">Q33 (calculation)</div><div class="q-text">An LED requires 2 V and 20 mA. It is powered by a 9 V battery. Find the series resistor value.</div><button class="answer-btn" onclick="toggle('a33')">Show answer</button><div class="answer" id="a33"><strong>Step‑by‑step:</strong><br>R = (V<sub>supply</sub> – V<sub>LED</sub>) / I = (9 – 2) / 0.02 = 7 / 0.02 = 350 Ω.<br>✅ Answer: 350 Ω</div></div>
+    <div class="question-block"><div class="q-num">Q34 (calculation)</div><div class="q-text">A transistor has β = 100 and a base current of 50 μA. Find the collector current.</div><button class="answer-btn" onclick="toggle('a34')">Show answer</button><div class="answer" id="a34"><strong>Step‑by‑step:</strong><br>I<sub>C</sub> = β I<sub>B</sub> = 100 × 50×10⁻⁶ = 5000×10⁻⁶ = 5×10⁻³ A = 5 mA.<br>✅ Answer: 5 mA</div></div>
+    <div class="question-block"><div class="q-num">Q35 (calculation)</div><div class="q-text">A forward‑biased silicon diode (0.7 V) is in series with a 1 kΩ resistor and a 12 V supply. Find the power dissipated in the diode.</div><button class="answer-btn" onclick="toggle('a35')">Show answer</button><div class="answer" id="a35"><strong>Step‑by‑step:</strong><br>I = (12 – 0.7) / 1000 = 11.3 / 1000 = 11.3 mA. P<sub>diode</sub> = V<sub>d</sub> × I = 0.7 × 0.0113 = 7.91×10⁻³ W = 7.91 mW.<br>✅ Answer: 7.9 mW</div></div>
+    <div class="question-block"><div class="q-num">Q36 (calculation)</div><div class="q-text">A full‑wave rectifier has a 50 Ω load and an AC input of 10 V RMS. Find the peak current through the load (ideal diodes).</div><button class="answer-btn" onclick="toggle('a36')">Show answer</button><div class="answer" id="a36"><strong>Step‑by‑step:</strong><br>V<sub>peak</sub> = √2 × V<sub>RMS</sub> = 1.414 × 10 = 14.14 V. I<sub>peak</sub> = V<sub>peak</sub> / R = 14.14 / 50 = 0.2828 A ≈ 283 mA.<br>✅ Answer: 283 mA</div></div>
+    <div class="question-block"><div class="q-num">Q37 (calculation)</div><div class="q-text">A 100 μF capacitor is used to filter the output of a full‑wave rectifier with 50 Ω load and 10 V DC average. Estimate the ripple voltage (assume f = 100 Hz).</div><button class="answer-btn" onclick="toggle('a37')">Show answer</button><div class="answer" id="a37"><strong>Step‑by‑step:</strong><br>I<sub>load</sub> = V<sub>DC</sub> / R = 10 / 50 = 0.2 A. Ripple voltage V<sub>r</sub> ≈ I<sub>load</sub> / (f C) = 0.2 / (100 × 100×10⁻⁶) = 0.2 / (0.01) = 20 V. (Note: This ripple is very high; a larger capacitor would be used to reduce it.)<br>✅ Answer: 20 V (estimation)</div></div>
+    <div class="question-block"><div class="q-num">Q38 (calculation)</div><div class="q-text">A transistor amplifier has an input signal of 10 mV and a voltage gain of 50. Find the output voltage.</div><button class="answer-btn" onclick="toggle('a38')">Show answer</button><div class="answer" id="a38"><strong>Step‑by‑step:</strong><br>V<sub>out</sub> = gain × V<sub>in</sub> = 50 × 10×10⁻³ = 0.5 V.<br>✅ Answer: 0.5 V</div></div>
+    <div class="question-block"><div class="q-num">Q39 (calculation)</div><div class="q-text">An n‑type semiconductor has electron concentration n = 10¹⁶ m⁻³, hole concentration p = 10¹⁰ m⁻³. Electron mobility μ<sub>e</sub> = 0.14 m²/Vs, hole mobility μ<sub>h</sub> = 0.05 m²/Vs, e = 1.6×10⁻¹⁹ C. Find the conductivity.</div><button class="answer-btn" onclick="toggle('a39')">Show answer</button><div class="answer" id="a39"><strong>Step‑by‑step:</strong><br>σ = e (n μ<sub>e</sub> + p μ<sub>h</sub>) = 1.6×10⁻¹⁹ × (10¹⁶×0.14 + 10¹⁰×0.05) = 1.6×10⁻¹⁹ × (1.4×10¹⁵ + 5×10⁸) ≈ 1.6×10⁻¹⁹ × 1.4×10¹⁵ = 2.24×10⁻⁴ S/m. The hole term is negligible.<br>✅ Answer: 2.24×10⁻⁴ S/m</div></div>
+    <div class="question-block"><div class="q-num">Q40 (calculation)</div><div class="q-text">A Zener diode has V<sub>z</sub> = 6 V. It is used with a series resistor of 1 kΩ and a supply of 12 V. Find the current through the Zener.</div><button class="answer-btn" onclick="toggle('a40')">Show answer</button><div class="answer" id="a40"><strong>Step‑by‑step:</strong><br>I = (V<sub>s</sub> – V<sub>z</sub>) / R = (12 – 6) / 1000 = 6 / 1000 = 6 mA.<br>✅ Answer: 6 mA</div></div>
+    <div class="question-block"><div class="q-num">Q41 (calculation)</div><div class="q-text">In a transistor switch, V<sub>CC</sub> = 12 V, R<sub>C</sub> = 1 kΩ, and I<sub>C</sub> = 5 mA. Find the collector voltage.</div><button class="answer-btn" onclick="toggle('a41')">Show answer</button><div class="answer" id="a41"><strong>Step‑by‑step:</strong><br>V<sub>C</sub> = V<sub>CC</sub> – I<sub>C</sub> R<sub>C</sub> = 12 – 0.005 × 1000 = 12 – 5 = 7 V.<br>✅ Answer: 7 V</div></div>
+    <div class="question-block"><div class="q-num">Q42 (calculation)</div><div class="q-text">Two resistors 2 kΩ and 3 kΩ are in series with a diode (0.7 V) and a 12 V supply. Find the current.</div><button class="answer-btn" onclick="toggle('a42')">Show answer</button><div class="answer" id="a42"><strong>Step‑by‑step:</strong><br>R<sub>total</sub> = 2000 + 3000 = 5000 Ω. I = (12 – 0.7) / 5000 = 11.3 / 5000 = 2.26×10⁻³ A = 2.26 mA.<br>✅ Answer: 2.26 mA</div></div>
+    <div class="question-block"><div class="q-num">Q43 (calculation)</div><div class="q-text">An OR gate has inputs 0 and 1. What is the output?</div><button class="answer-btn" onclick="toggle('a43')">Show answer</button><div class="answer" id="a43"><strong>Answer:</strong><br>OR gate output is 1 if at least one input is 1. So 0 OR 1 = 1.<br>✅ Answer: 1</div></div>
+    <div class="question-block"><div class="q-num">Q44 (calculation)</div><div class="q-text">An AND gate has inputs 1 and 0. What is the output?</div><button class="answer-btn" onclick="toggle('a44')">Show answer</button><div class="answer" id="a44"><strong>Answer:</strong><br>AND gate output is 1 only if all inputs are 1. 1 AND 0 = 0.<br>✅ Answer: 0</div></div>
+    <div class="question-block"><div class="q-num">Q45 (calculation)</div><div class="q-text">A NOT gate has input 0. What is the output?</div><button class="answer-btn" onclick="toggle('a45')">Show answer</button><div class="answer" id="a45"><strong>Answer:</strong><br>NOT inverts the input: NOT 0 = 1.<br>✅ Answer: 1</div></div>
+    <div class="question-block"><div class="q-num">Q46 (calculation)</div><div class="q-text">An NPN transistor has a base resistor of 1 kΩ, V<sub>BB</sub> = 5 V, V<sub>BE</sub> = 0.7 V. Find the base current.</div><button class="answer-btn" onclick="toggle('a46')">Show answer</button><div class="answer" id="a46"><strong>Step‑by‑step:</strong><br>I<sub>B</sub> = (V<sub>BB</sub> – V<sub>BE</sub>) / R<sub>B</sub> = (5 – 0.7) / 1000 = 4.3 / 1000 = 4.3 mA.<br>✅ Answer: 4.3 mA</div></div>
+    <div class="question-block"><div class="q-num">Q47 (calculation)</div><div class="q-text">For the same transistor, β = 100. Find the collector current.</div><button class="answer-btn" onclick="toggle('a47')">Show answer</button><div class="answer" id="a47"><strong>Step‑by‑step:</strong><br>I<sub>C</sub> = β I<sub>B</sub> = 100 × 4.3×10⁻³ = 0.43 A = 430 mA.<br>✅ Answer: 430 mA</div></div>
+    <div class="question-block"><div class="q-num">Q48 (calculation)</div><div class="q-text">A diode has a reverse current of 10 μA and a forward current of 20 mA. Find the ratio of forward to reverse current.</div><button class="answer-btn" onclick="toggle('a48')">Show answer</button><div class="answer" id="a48"><strong>Step‑by‑step:</strong><br>Ratio = 20 mA / 10 μA = 20×10⁻³ / 10×10⁻⁶ = 20×10⁻³ × 10⁵ = 2000.<br>✅ Answer: 2000</div></div>
+    <div class="question-block"><div class="q-num">Q49 (calculation)</div><div class="q-text">A full‑wave rectifier with a capacitor filter has AC input 15 V RMS, load resistance 100 Ω, and capacitor 470 μF. Estimate the DC output and ripple voltage (f = 100 Hz).</div><button class="answer-btn" onclick="toggle('a49')">Show answer</button><div class="answer" id="a49"><strong>Step‑by‑step:</strong><br>V<sub>DC</sub> ≈ 0.9 × 15 = 13.5 V. I = V<sub>DC</sub> / R = 13.5 / 100 = 0.135 A. Ripple V<sub>r</sub> ≈ I / (f C) = 0.135 / (100 × 470×10⁻⁶) = 0.135 / 0.047 = 2.87 V.<br>✅ Answer: V<sub>DC</sub> ≈ 13.5 V, ripple ≈ 2.87 V</div></div>
+    <div class="question-block"><div class="q-num">Q50 (calculation)</div><div class="q-text">A diode follows I = I<sub>S</sub> (e<sup>V/V<sub>T</sub></sup> – 1). If I<sub>S</sub> = 10⁻¹² A, V<sub>T</sub> = 0.026 V, and V = 0.7 V, find I (ignore the –1).</div><button class="answer-btn" onclick="toggle('a50')">Show answer</button><div class="answer" id="a50"><strong>Step‑by‑step:</strong><br>I ≈ I<sub>S</sub> e<sup>V/V<sub>T</sub></sup> = 10⁻¹² × e<sup>0.7/0.026</sup> = 10⁻¹² × e<sup>26.923</sup> ≈ 10⁻¹² × 4.96×10¹¹ = 0.496 A = 496 mA.<br>✅ Answer: 496 mA (approx)</div></div>
+    <div class="question-block"><div class="q-num">Q51 (calculation)</div><div class="q-text">An LED requires 2 V, 20 mA. It is powered from a 9 V battery. Find the series resistor.</div><button class="answer-btn" onclick="toggle('a51')">Show answer</button><div class="answer" id="a51"><strong>Step‑by‑step:</strong><br>R = (9 – 2) / 0.02 = 7 / 0.02 = 350 Ω.<br>✅ Answer: 350 Ω</div></div>
+    <div class="question-block"><div class="q-num">Q52 (calculation)</div><div class="q-text">A MOSFET used as a switch has R<sub>DS(on)</sub> = 10 Ω, current I = 0.5 A. Find the power dissipated.</div><button class="answer-btn" onclick="toggle('a52')">Show answer</button><div class="answer" id="a52"><strong>Step‑by‑step:</strong><br>P = I² R = (0.5)² × 10 = 0.25 × 10 = 2.5 W.<br>✅ Answer: 2.5 W</div></div>
+    <div class="question-block"><div class="q-num">Q53 (calculation)</div><div class="q-text">A transistor amplifier has input 5 mV and voltage gain 100. Find output voltage.</div><button class="answer-btn" onclick="toggle('a53')">Show answer</button><div class="answer" id="a53"><strong>Step‑by‑step:</strong><br>V<sub>out</sub> = 5×10⁻³ × 100 = 0.5 V.<br>✅ Answer: 0.5 V</div></div>
+    <div class="question-block"><div class="q-num">Q54 (calculation)</div><div class="q-text">Add the binary numbers 1011 and 1101. Give the result in binary.</div><button class="answer-btn" onclick="toggle('a54')">Show answer</button><div class="answer" id="a54"><strong>Step‑by‑step:</strong><br>1011 + 1101 = (11 in decimal) + (13 in decimal) = 24 decimal = 11000 binary.<br>✅ Answer: 11000</div></div>
+    <div class="question-block"><div class="q-num">Q55 (calculation)</div><div class="q-text">A voltage divider has R₁ = 2 kΩ, R₂ = 3 kΩ, V<sub>in</sub> = 12 V. Find V<sub>out</sub> across R₂.</div><button class="answer-btn" onclick="toggle('a55')">Show answer</button><div class="answer" id="a55"><strong>Step‑by‑step:</strong><br>V<sub>out</sub> = V<sub>in</sub> × R₂ / (R₁ + R₂) = 12 × 3000 / 5000 = 12 × 0.6 = 7.2 V.<br>✅ Answer: 7.2 V</div></div>
+    <div class="question-block"><div class="q-num">Q56 (calculation)</div><div class="q-text">A transistor has β = 150 and base current I<sub>B</sub> = 20 μA. Find I<sub>C</sub>.</div><button class="answer-btn" onclick="toggle('a56')">Show answer</button><div class="answer" id="a56"><strong>Step‑by‑step:</strong><br>I<sub>C</sub> = 150 × 20×10⁻⁶ = 3000×10⁻⁶ = 3×10⁻³ A = 3 mA.<br>✅ Answer: 3 mA</div></div>
+    <div class="question-block"><div class="q-num">Q57 (calculation)</div><div class="q-text">A Zener diode has V<sub>z</sub> = 5.6 V, supply 12 V, series resistor 470 Ω. Find the Zener current.</div><button class="answer-btn" onclick="toggle('a57')">Show answer</button><div class="answer" id="a57"><strong>Step‑by‑step:</strong><br>I = (12 – 5.6) / 470 = 6.4 / 470 = 0.01362 A = 13.62 mA.<br>✅ Answer: 13.6 mA</div></div>
+    <div class="question-block"><div class="q-num">Q58 (calculation)</div><div class="q-text">A resistor carries 5 mA and its value is 1 kΩ. Find the voltage across it.</div><button class="answer-btn" onclick="toggle('a58')">Show answer</button><div class="answer" id="a58"><strong>Step‑by‑step:</strong><br>V = I R = 0.005 × 1000 = 5 V.<br>✅ Answer: 5 V</div></div>
+    <div class="question-block"><div class="q-num">Q59 (calculation)</div><div class="q-text">A diode bridge is supplied with 20 V RMS AC. The load resistance is 200 Ω. Find the peak current through the load (ideal diodes).</div><button class="answer-btn" onclick="toggle('a59')">Show answer</button><div class="answer" id="a59"><strong>Step‑by‑step:</strong><br>V<sub>peak</sub> = √2 × 20 = 28.28 V. I<sub>peak</sub> = 28.28 / 200 = 0.1414 A = 141 mA.<br>✅ Answer: 141 mA</div></div>
+    <div class="question-block"><div class="q-num">Q60 (conceptual)</div><div class="q-text">Explain why electronics knowledge is essential in modern technology.</div><button class="answer-btn" onclick="toggle('a60')">Show answer</button><div class="answer" id="a60"><strong>Answer:</strong><br>Electronics is the foundation of all modern devices: communication (smartphones, radio), computing (CPUs, memory), automation (robotics, industrial control), consumer electronics (TVs, wearables), and medical equipment. Understanding electronics enables design, troubleshooting, and innovation in technology.</div></div>
+
+    <hr>
+    <div class="footer-note">
+        ✅ UNIT 5 COMPLETE · 60 questions · 30 conceptual + 30 applied · exam‑ready · feel the WOW!
+    </div>
+</div>
+
+<script>
+    function toggle(id) {
+        var el = document.getElementById(id);
+        if (el.style.display === "block") {
+            el.style.display = "none";
+        } else {
+            el.style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>

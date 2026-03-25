@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology & Technology · full unit notes + 60 Q&A</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f8fafc;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #0f172a;
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(145deg, #0f766e, #2b5e8c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+        .header p {
+            font-size: 1.2rem;
+            color: #334155;
+            margin-top: 0.5rem;
+        }
+
+        /* note cards */
+        .note-card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.15s;
+        }
+        .note-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.07);
+        }
+        .note-title {
+            font-size: 1.7rem;
+            font-weight: 650;
+            color: #0f766e;
+            border-left: 8px solid #0f766e;
+            padding-left: 1.2rem;
+            margin-bottom: 1.2rem;
+        }
+        .note-content {
+            font-size: 1.05rem;
+            color: #1e293b;
+        }
+        .remember-box, .wow-box {
+            padding: 1.2rem 1.5rem;
+            border-radius: 20px;
+            margin: 1.5rem 0 0.8rem;
+            font-weight: 500;
+        }
+        .remember-box {
+            background: #ecfeff;
+            border-left: 6px solid #22c55e;
+        }
+        .wow-box {
+            background: #fff7ed;
+            border-left: 6px solid #f59e0b;
+        }
+        ul {
+            padding-left: 1.8rem;
+            margin: 0.8rem 0;
+        }
+
+        /* question blocks */
+        .question-block {
+            background: white;
+            border-radius: 28px;
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 12px 25px rgba(0,0,0,0.03);
+            border: 1px solid #e2e8f0;
+            transition: all 0.15s;
+        }
+        .question-block:hover {
+            box-shadow: 0 18px 35px rgba(0,0,0,0.06);
+        }
+        .q-num {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 8px rgba(37,99,235,0.2);
+        }
+        .q-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            color: #0f172a;
+        }
+        .options {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1.2rem;
+        }
+        .options li {
+            background: #f8fafc;
+            margin: 0.7rem 0;
+            padding: 0.8rem 1.2rem;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            font-size: 1.05rem;
+            transition: 0.1s;
+        }
+        .options li:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+        .options li strong {
+            color: #2563eb;
+            margin-right: 0.5rem;
+        }
+        .answer-box {
+            background: #f0f9ff;
+            border-left: 5px solid #22c55e;
+            border-radius: 20px;
+            padding: 1.3rem 1.6rem;
+            margin-top: 1.2rem;
+        }
+        .correct-ans {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #15803d;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .correct-ans::before {
+            content: "✔️";
+            font-size: 1.2rem;
+        }
+        .explanation {
+            color: #1e293b;
+            font-size: 1rem;
+            background: #ffffffd0;
+            padding: 0.8rem 1rem;
+            border-radius: 14px;
+            border: 1px solid #d9f0ff;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #94a3b8, transparent);
+            margin: 2.5rem 0;
+        }
+        .footer-note {
+            text-align: center;
+            font-size: 1.2rem;
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 50px;
+            border: 1px dashed #64748b;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🔬 Biology & Technology</h1>
+        <p>Complete unit notes + 60 exam‑style questions with explanations</p>
+    </div>
+
+    <!-- ========== NOTES SECTION ========== -->
+    <div class="note-card">
+        <div class="note-title">1. Introduction to biotechnology</div>
+        <div class="note-content">
+            <p>Biotechnology is the use of living organisms or their components to develop products and processes that benefit humans. It includes ancient techniques (fermentation, selective breeding) and modern tools (genetic engineering, cell culture).</p>
+            <div class="remember-box">📘 REMEMBER: Biotechnology = biology + technology – applying biological knowledge to solve problems.</div>
+            <div class="wow-box">🌟 WOW: The term “biotechnology” was coined in 1919 by Karl Ereky, but humans have used it for thousands of years (making bread, cheese).</div>
+        </div>
+    </div>
+
+    <div class="note-card">
+        <div class="note-title">2. Genetic engineering</div>
+        <div class="note-content">
+            <p>Genetic engineering directly manipulates an organism’s DNA. Key tools:</p>
+            <ul>
+                <li><strong>Recombinant DNA</strong> – combining DNA from different sources.</li>
+                <li><strong>CRISPR‑Cas9</strong> – precise gene editing.</li>
+                <li><strong>Plasmids and vectors</strong> – deliver genes into host cells.</li>
+            </ul>
+            <p>Applications: insulin production, disease‑resistant crops, gene therapy.</p>
+            <div class="remember-box">📘 REMEMBER: Genetically modified organisms (GMOs) have altered DNA to express desired traits.</div>
+        </div>
+    </div>
+
+    <div class="note-card">
+        <div class="note-title">3. Medical biotechnology</div>
+        <div class="note-content">
+            <ul>
+                <li><strong>Recombinant proteins</strong> – human insulin, growth hormone, clotting factors.</li>
+                <li><strong>Monoclonal antibodies</strong> – diagnostics, targeted therapy (cancer).</li>
+                <li><strong>Gene therapy</strong> – introduce healthy genes to treat disorders.</li>
+                <li><strong>Vaccines</strong> – mRNA vaccines (COVID‑19) are a biotech breakthrough.</li>
+            </ul>
+            <div class="wow-box">💉 WOW: The first recombinant drug (human insulin) was approved in 1982 – produced by bacteria.</div>
+        </div>
+    </div>
+
+    <div class="note-card">
+        <div class="note-title">4. Agricultural biotechnology</div>
+        <div class="note-content">
+            <ul>
+                <li><strong>GM crops</strong> – pest resistant (Bt cotton), herbicide tolerant, enhanced nutrition (Golden Rice).</li>
+                <li><strong>Molecular farming</strong> – growing pharmaceuticals in plants.</li>
+                <li><strong>Marker‑assisted selection</strong> – speeds up traditional breeding.</li>
+            </ul>
+            <div class="remember-box">🌾 REMEMBER: Bt crops produce a protein toxic to specific insects, reducing pesticide use.</div>
+        </div>
+    </div>
+
+    <div class="note-card">
+        <div class="note-title">5. Industrial & environmental biotechnology</div>
+        <div class="note-content">
+            <ul>
+                <li><strong>Fermentation</strong> – produce antibiotics, amino acids, biofuels (ethanol).</li>
+                <li><strong>Enzymes in industry</strong> – laundry detergents, cheese making, leather processing.</li>
+                <li><strong>Bioremediation</strong> – using microbes to clean oil spills, heavy metals.</li>
+                <li><strong>Bioplastics</strong> – biodegradable plastics from bacteria.</li>
+            </ul>
+            <div class="wow-box">🌱 WOW: Some bacteria can digest plastic – a growing field of research!</div>
+        </div>
+    </div>
+
+    <div class="note-card">
+        <div class="note-title">6. Bioinformatics</div>
+        <div class="note-content">
+            <p>Bioinformatics combines biology, computer science, and information technology to analyse biological data (DNA sequences, protein structures).</p>
+            <ul>
+                <li><strong>Genomics</strong> – sequencing entire genomes.</li>
+                <li><strong>Proteomics</strong> – study of all proteins.</li>
+                <li><strong>Drug design</strong> – computer‑aided discovery.</li>
+            </ul>
+            <div class="remember-box">🧬 REMEMBER: The Human Genome Project (completed 2003) was a massive bioinformatics effort.</div>
+        </div>
+    </div>
+
+    <div class="note-card">
+        <div class="note-title">7. Ethical & social issues</div>
+        <div class="note-content">
+            <ul>
+                <li><strong>GMO safety and labelling</strong> – consumer concerns.</li>
+                <li><strong>Gene editing in humans</strong> – germline editing raises ethical questions.</li>
+                <li><strong>Patenting life forms</strong> – who owns a gene?</li>
+                <li><strong>Biopiracy</strong> – exploiting indigenous knowledge without benefit‑sharing.</li>
+            </ul>
+            <div class="wow-box">⚖️ WOW: Many countries have strict regulations on genetic modification – the debate continues.</div>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- ========== 60 QUESTIONS ========== -->
+    <div style="margin-top: 2rem;">
+        <h2 style="font-size: 2rem; font-weight: 600; color: #0f766e; margin-bottom: 1.5rem;">📋 60 practice questions</h2>
+    </div>
+
+    <!-- generated 60 questions (numbered 1..60) with plausible content -->
+    <!-- to keep the answer manageable, we show a representative set – but we need 60. We'll create them systematically -->
+    <!-- For brevity in this response, I'll include a few and then note that the pattern continues. In real scenario we'd generate all 60, but the platform expects full code. I'll produce 60 by using a loop in explanation? But the output must be static HTML. I'll write out 60 compactly but realistically. Since it's long, I'll create a script-like approach but in static. I'll produce 60 with increasing numbers and varied questions. Given constraints, I'll produce the first 10 in full detail and the rest as placeholders? The user expects full 60. I'll generate 60 questions in a reasonable length – maybe each question block is about 6 lines, 60*6=360 lines, plus notes. It's doable. I'll craft them with diversity. -->
+
+    <!-- I'll start Q1 and continue to Q60. Each will have unique text. Since it's a lot, I'll use a consistent pattern but ensure variety. -->
+
+    <div class="question-block"><div class="q-num">Q1</div><div class="q-text">What is biotechnology?</div><ul class="options"><li><strong>A)</strong> Using machines to study biology</li><li><strong>B)</strong> Using living organisms to make products or solve problems</li><li><strong>C)</strong> The study of fossils</li><li><strong>D)</strong> Breeding animals only</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> Biotechnology applies biological systems or organisms to develop useful products. A is too narrow; C is paleontology; D is only a small part.</div></div></div>
+    <div class="question-block"><div class="q-num">Q2</div><div class="q-text">Which of the following is an example of traditional biotechnology?</div><ul class="options"><li><strong>A)</strong> CRISPR gene editing</li><li><strong>B)</strong> Making yogurt with bacteria</li><li><strong>C)</strong> mRNA vaccines</li><li><strong>D)</strong> DNA sequencing</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> Yogurt production uses bacteria (fermentation) – an ancient biotech. A, C, D are modern techniques.</div></div></div>
+    <div class="question-block"><div class="q-num">Q3</div><div class="q-text">Recombinant DNA technology involves:</div><ul class="options"><li><strong>A)</strong> Combining DNA from two different sources</li><li><strong>B)</strong> Separating DNA fragments by size</li><li><strong>C)</strong> Making many copies of DNA</li><li><strong>D)</strong> Cutting DNA with enzymes</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Recombinant DNA means joining DNA from different organisms. B describes gel electrophoresis, C is PCR, D is restriction enzymes (a step in the process, but not the definition).</div></div></div>
+    <div class="question-block"><div class="q-num">Q4</div><div class="q-text">What is the main function of restriction enzymes in genetic engineering?</div><ul class="options"><li><strong>A)</strong> To join DNA fragments</li><li><strong>B)</strong> To cut DNA at specific sequences</li><li><strong>C)</strong> To amplify DNA</li><li><strong>D)</strong> To carry DNA into host cells</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> Restriction enzymes (restriction endonucleases) recognise short DNA sequences and cut them. Ligase joins fragments (A), PCR amplifies (C), plasmids are vectors (D).</div></div></div>
+    <div class="question-block"><div class="q-num">Q5</div><div class="q-text">A plasmid is often used as a:</div><ul class="options"><li><strong>A)</strong> Source of restriction enzymes</li><li><strong>B)</strong> Vector to carry foreign DNA into bacteria</li><li><strong>C)</strong> Method to visualise DNA</li><li><strong>D)</strong> Type of restriction enzyme</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> Plasmids are small circular DNA molecules that can be engineered to carry foreign genes into bacteria – they are cloning vectors.</div></div></div>
+    <div class="question-block"><div class="q-num">Q6</div><div class="q-text">CRISPR‑Cas9 technology allows scientists to:</div><ul class="options"><li><strong>A)</strong> Edit genes precisely</li><li><strong>B)</strong> Only cut DNA randomly</li><li><strong>C)</strong> Increase mutation rate randomly</li><li><strong>D)</strong> Join DNA fragments</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> CRISPR‑Cas9 is a gene‑editing tool that makes targeted cuts in DNA, enabling precise modifications.</div></div></div>
+    <div class="question-block"><div class="q-num">Q7</div><div class="q-text">The first recombinant DNA drug approved for human use was:</div><ul class="options"><li><strong>A)</strong> Human growth hormone</li><li><strong>B)</strong> Insulin</li><li><strong>C)</strong> Erythropoietin</li><li><strong>D)</strong> Interferon</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> Human insulin (Humulin) produced by genetically modified E. coli was approved in 1982 – first recombinant drug.</div></div></div>
+    <div class="question-block"><div class="q-num">Q8</div><div class="q-text">Golden Rice is genetically modified to produce:</div><ul class="options"><li><strong>A)</strong> Vitamin A (beta‑carotene)</li><li><strong>B)</strong> Vitamin C</li><li><strong>C)</strong> Iron</li><li><strong>D)</strong> Protein</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Golden Rice contains genes that produce beta‑carotene, which the body converts to vitamin A, helping prevent deficiency.</div></div></div>
+    <div class="question-block"><div class="q-num">Q9</div><div class="q-text">Bt cotton is resistant to:</div><ul class="options"><li><strong>A)</strong> Herbicides</li><li><strong>B)</strong> Insects</li><li><strong>C)</strong> Fungi</li><li><strong>D)</strong> Viruses</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> Bt cotton produces a protein from Bacillus thuringiensis that is toxic to certain insects (like bollworms).</div></div></div>
+    <div class="question-block"><div class="q-num">Q10</div><div class="q-text">Monoclonal antibodies are used for:</div><ul class="options"><li><strong>A)</strong> Gene therapy</li><li><strong>B)</strong> Cancer treatment and diagnostics</li><li><strong>C)</strong> Creating GMOs</li><li><strong>D)</strong> Increasing crop yield</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> Monoclonal antibodies are lab‑made molecules that bind to specific targets; widely used in cancer therapy (e.g., trastuzumab) and diagnostic tests (pregnancy, COVID‑19).</div></div></div>
+    <div class="question-block"><div class="q-num">Q11</div><div class="q-text">Gene therapy aims to:</div><ul class="options"><li><strong>A)</strong> Replace a faulty gene with a healthy copy</li><li><strong>B)</strong> Remove all genes from a cell</li><li><strong>C)</strong> Increase the number of chromosomes</li><li><strong>D)</strong> Silence all gene expression</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Gene therapy introduces a functional gene to compensate for a defective one, treating genetic disorders.</div></div></div>
+    <div class="question-block"><div class="q-num">Q12</div><div class="q-text">What is a common vector used to deliver genes in gene therapy?</div><ul class="options"><li><strong>A)</strong> Bacteria</li><li><strong>B)</strong> Viruses</li><li><strong>C)</strong> Plasmids</li><li><strong>D)</strong> Liposomes</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> Modified viruses (retroviruses, adenoviruses) are often used because they naturally infect cells and deliver genetic material. Plasmids and liposomes are also used, but viruses are the most common in clinical trials.</div></div></div>
+    <div class="question-block"><div class="q-num">Q13</div><div class="q-text">Polymerase Chain Reaction (PCR) is a technique to:</div><ul class="options"><li><strong>A)</strong> Separate DNA fragments by size</li><li><strong>B)</strong> Make many copies of a specific DNA sequence</li><li><strong>C)</strong> Cut DNA at specific sites</li><li><strong>D)</strong> Join DNA fragments</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> PCR amplifies DNA exponentially, generating millions of copies from a tiny sample – essential in forensics, diagnostics, research.</div></div></div>
+    <div class="question-block"><div class="q-num">Q14</div><div class="q-text">Gel electrophoresis separates DNA fragments based on:</div><ul class="options"><li><strong>A)</strong> Size (length)</li><li><strong>B)</strong> Nucleotide sequence</li><li><strong>C)</strong> Colour</li><li><strong>D)</strong> Electrical charge type</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> DNA fragments are negatively charged and move through a gel toward positive electrode; smaller fragments move faster and farther, so they separate by size.</div></div></div>
+    <div class="question-block"><div class="q-num">Q15</div><div class="q-text">What is the purpose of DNA ligase in genetic engineering?</div><ul class="options"><li><strong>A)</strong> Cutting DNA</li><li><strong>B)</strong> Joining DNA fragments</li><li><strong>C)</strong> Amplifying DNA</li><li><strong>D)</strong> Visualising DNA</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> DNA ligase catalyses the formation of phosphodiester bonds, sealing nicks and joining fragments – essential for creating recombinant DNA.</div></div></div>
+    <div class="question-block"><div class="q-num">Q16</div><div class="q-text">Stem cells are important in biotechnology because they:</div><ul class="options"><li><strong>A)</strong> Can differentiate into various cell types</li><li><strong>B)</strong> Produce antibodies</li><li><strong>C)</strong> Are easy to culture</li><li><strong>D)</strong> Never divide</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Stem cells have the unique ability to develop into many different cell types, offering potential for regenerative medicine.</div></div></div>
+    <div class="question-block"><div class="q-num">Q17</div><div class="q-text">Bioinformatics primarily deals with:</div><ul class="options"><li><strong>A)</strong> Designing mechanical devices</li><li><strong>B)</strong> Analysing biological data using computers</li><li><strong>C)</strong> Breeding organisms</li><li><strong>D)</strong> Studying ecosystems</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> Bioinformatics uses computational tools to store, analyse, and interpret biological data (sequences, structures).</div></div></div>
+    <div class="question-block"><div class="q-num">Q18</div><div class="q-text">What is the main advantage of using microorganisms to produce human proteins (like insulin)?</div><ul class="options"><li><strong>A)</strong> They are easy to grow and multiply rapidly</li><li><strong>B)</strong> They produce the protein exactly as human cells do</li><li><strong>C)</strong> They never make mistakes</li><li><strong>D)</strong> They do not require nutrients</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Bacteria like E. coli can be cultured quickly and in large quantities, making protein production efficient and cost‑effective. However, they may not always produce proteins with correct post‑translational modifications (so sometimes yeast or mammalian cells are used).</div></div></div>
+    <div class="question-block"><div class="q-num">Q19</div><div class="q-text">Which technique is used to detect specific DNA sequences in a sample?</div><ul class="options"><li><strong>A)</strong> PCR</li><li><strong>B)</strong> Southern blot</li><li><strong>C)</strong> Western blot</li><li><strong>D)</strong> ELISA</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> Southern blot detects specific DNA sequences using gel electrophoresis and hybridisation with a labelled probe. PCR amplifies but does not by itself identify; Western blot detects proteins, ELISA detects antibodies/antigens.</div></div></div>
+    <div class="question-block"><div class="q-num">Q20</div><div class="q-text">RNA interference (RNAi) is used to:</div><ul class="options"><li><strong>A)</strong> Increase gene expression</li><li><strong>B)</strong> Silence specific genes</li><li><strong>C)</strong> Edit genes permanently</li><li><strong>D)</strong> Cut DNA</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> RNAi uses small RNA molecules to degrade mRNA or block translation, effectively silencing gene expression.</div></div></div>
+    <div class="question-block"><div class="q-num">Q21</div><div class="q-text">Which of the following is a potential risk of GMOs?</div><ul class="options"><li><strong>A)</strong> Increased use of pesticides</li><li><strong>B)</strong> Gene flow to wild relatives</li><li><strong>C)</strong> Always causes allergies</li><li><strong>D)</strong> Reduced crop yield</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> One environmental concern is that genes from GM crops might transfer to wild relatives, potentially creating herbicide‑resistant weeds. A is not always true (Bt crops reduce pesticide use); C is not always; D is opposite (usually yield increases).</div></div></div>
+    <div class="question-block"><div class="q-num">Q22</div><div class="q-text">Bioremediation uses organisms to:</div><ul class="options"><li><strong>A)</strong> Produce antibiotics</li><li><strong>B)</strong> Clean up pollutants</li><li><strong>C)</strong> Improve crop taste</li><li><strong>D)</strong> Create vaccines</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> Bioremediation employs microbes or plants to degrade or remove environmental contaminants (oil, heavy metals).</div></div></div>
+    <div class="question-block"><div class="q-num">Q23</div><div class="q-text">What is a transgenic organism?</div><ul class="options"><li><strong>A)</strong> An organism that has genes from another species</li><li><strong>B)</strong> An organism with extra chromosomes</li><li><strong>C)</strong> An organism that never mutates</li><li><strong>D)</strong> A cloned organism</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Transgenic means containing a gene or genes from another species introduced using genetic engineering.</div></div></div>
+    <div class="question-block"><div class="q-num">Q24</div><div class="q-text">The enzyme reverse transcriptase is used to:</div><ul class="options"><li><strong>A)</strong> Make DNA from an RNA template</li><li><strong>B)</strong> Make RNA from DNA</li><li><strong>C)</strong> Cut DNA</li><li><strong>D)</strong> Join DNA fragments</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Reverse transcriptase synthesises complementary DNA (cDNA) from RNA – important in studying gene expression and making cDNA libraries.</div></div></div>
+    <div class="question-block"><div class="q-num">Q25</div><div class="q-text">Which of the following is an example of a biorefinery product?</div><ul class="options"><li><strong>A)</strong> Bioethanol from corn</li><li><strong>B)</strong> Plastic from petroleum</li><li><strong>C)</strong> Steel from iron ore</li><li><strong>D)</strong> Concrete</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Biorefineries convert biomass into fuels, chemicals, and materials – bioethanol is a common biofuel produced by fermentation.</div></div></div>
+    <div class="question-block"><div class="q-num">Q26</div><div class="q-text">Monoclonal antibodies are produced by:</div><ul class="options"><li><strong>A)</strong> Hybridoma cells</li><li><strong>B)</strong> Bacteria</li><li><strong>C)</strong> Viruses</li><li><strong>D)</strong> Plant cells</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Hybridoma cells (fused B‑cell and myeloma cell) are engineered to produce identical monoclonal antibodies.</div></div></div>
+    <div class="question-block"><div class="q-num">Q27</div><div class="q-text">What is the main purpose of a DNA microarray?</div><ul class="options"><li><strong>A)</strong> To sequence a whole genome</li><li><strong>B)</strong> To measure expression levels of many genes simultaneously</li><li><strong>C)</strong> To edit genes</li><li><strong>D)</strong> To amplify DNA</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> DNA microarrays (gene chips) allow researchers to monitor expression of thousands of genes at once.</div></div></div>
+    <div class="question-block"><div class="q-num">Q28</div><div class="q-text">Which of the following is a potential benefit of genetically modified crops?</div><ul class="options"><li><strong>A)</strong> Reduced pesticide use</li><li><strong>B)</strong> Always higher nutritional value</li><li><strong>C)</strong> They never fail</li><li><strong>D)</strong> They require more water</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Bt crops can reduce insecticide applications. B is not always; C is false; D is opposite (some are drought‑tolerant).</div></div></div>
+    <div class="question-block"><div class="q-num">Q29</div><div class="q-text">The term “bioethics” refers to:</div><ul class="options"><li><strong>A)</strong> Ethical issues arising from biological research and its applications</li><li><strong>B)</strong> The study of animal behaviour</li><li><strong>C)</strong> The business of biotechnology</li><li><strong>D)</strong> Laboratory safety rules</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Bioethics examines moral dilemmas in medicine, genetics, biotechnology, etc.</div></div></div>
+    <div class="question-block"><div class="q-num">Q30</div><div class="q-text">What is a major ethical concern about human gene editing?</div><ul class="options"><li><strong>A)</strong> It is too expensive</li><li><strong>B)</strong> Changes could be passed to future generations (germline editing)</li><li><strong>C)</strong> It always causes cancer</li><li><strong>D)</strong> It is impossible</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> Editing germline cells (sperm, eggs, embryos) alters genes in all descendants, raising profound ethical and safety questions.</div></div></div>
+    <div class="question-block"><div class="q-num">Q31</div><div class="q-text">Vaccines work by:</div><ul class="options"><li><strong>A)</strong> Introducing antibodies directly</li><li><strong>B)</strong> Stimulating the immune system to produce memory cells</li><li><strong>C)</strong> Killing pathogens instantly</li><li><strong>D)</strong> Blocking pathogen entry</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> Vaccines contain antigens that trigger an immune response, creating memory cells for future protection.</div></div></div>
+    <div class="question-block"><div class="q-num">Q32</div><div class="q-text">mRNA vaccines (like those for COVID‑19) work by:</div><ul class="options"><li><strong>A)</strong> Injecting a weakened virus</li><li><strong>B)</strong> Using mRNA to instruct cells to produce a viral protein, triggering immunity</li><li><strong>C)</strong> Directly neutralising the virus</li><li><strong>D)</strong> Containing antibodies</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> mRNA vaccines deliver genetic code for a viral spike protein; our cells produce the protein and mount an immune response.</div></div></div>
+    <div class="question-block"><div class="q-num">Q33</div><div class="q-text">What is the role of a selectable marker in genetic engineering?</div><ul class="options"><li><strong>A)</strong> To identify cells that have taken up the foreign DNA</li><li><strong>B)</strong> To cut DNA</li><li><strong>C)</strong> To make DNA visible</li><li><strong>D)</strong> To increase mutation rate</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Selectable markers (e.g., antibiotic resistance genes) allow only transformed cells to grow, making selection easy.</div></div></div>
+    <div class="question-block"><div class="q-num">Q34</div><div class="q-text">The first animal to be cloned from an adult somatic cell was:</div><ul class="options"><li><strong>A)</strong> Dolly the sheep</li><li><strong>B)</strong> Copycat (cat)</li><li><strong>C)</strong> Polly the sheep</li><li><strong>D)</strong> Andi the mouse</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Dolly (1996) was cloned from a mammary gland cell – first mammal cloned from an adult cell.</div></div></div>
+    <div class="question-block"><div class="q-num">Q35</div><div class="q-text">What is a genomic library?</div><ul class="options"><li><strong>A)</strong> A collection of all the genes of an organism cloned into vectors</li><li><strong>B)</strong> A list of all proteins in an organism</li><li><strong>C)</strong> A database of mutations</li><li><strong>D)</strong> A physical collection of organisms</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> A genomic library contains fragments of an organism's entire genome inserted into vectors (plasmids, phages).</div></div></div>
+    <div class="question-block"><div class="q-num">Q36</div><div class="q-text">Proteomics is the study of:</div><ul class="options"><li><strong>A)</strong> All proteins in a cell/organism</li><li><strong>B)</strong> All genes</li><li><strong>C)</strong> All metabolites</li><li><strong>D)</strong> All lipids</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Proteomics = large‑scale study of proteins, their structures and functions.</div></div></div>
+    <div class="question-block"><div class="q-num">Q37</div><div class="q-text">Which of the following is NOT a biotechnology product?</div><ul class="options"><li><strong>A)</strong> Penicillin</li><li><strong>B)</strong> Cheese</li><li><strong>C)</strong> Stone</li><li><strong>D)</strong> Insulin</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: C</div><div class="explanation"><strong>Why?</strong> Stone is a geological material; penicillin (fungus), cheese (fermentation), insulin (recombinant) are biotech products.</div></div></div>
+    <div class="question-block"><div class="q-num">Q38</div><div class="q-text">What is a key advantage of using yeast instead of bacteria for producing human proteins?</div><ul class="options"><li><strong>A)</strong> Yeast grows faster</li><li><strong>B)</strong> Yeast can perform eukaryotic post‑translational modifications</li><li><strong>C)</strong> Yeast never mutates</li><li><strong>D)</strong> Yeast is cheaper</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> Yeast (eukaryote) can add sugar chains and fold proteins more like human cells, often producing functional proteins.</div></div></div>
+    <div class="question-block"><div class="q-num">Q39</div><div class="q-text">The CRISPR system was originally discovered as:</div><ul class="options"><li><strong>A)</strong> A bacterial immune defence against viruses</li><li><strong>B)</strong> A method to sequence DNA</li><li><strong>C)</strong> A way to make vaccines</li><li><strong>D)</strong> A type of plasmid</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> CRISPR‑Cas is a natural adaptive immune system in bacteria that cuts viral DNA.</div></div></div>
+    <div class="question-block"><div class="q-num">Q40</div><div class="q-text">What is a “knockout” organism?</div><ul class="options"><li><strong>A)</strong> An organism with a gene permanently inactivated</li><li><strong>B)</strong> An organism with extra genes</li><li><strong>C)</strong> An organism that cannot reproduce</li><li><strong>D)</strong> A sterile organism</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Knockout organisms have a specific gene made non‑functional, used to study gene function.</div></div></div>
+    <div class="question-block"><div class="q-num">Q41</div><div class="q-text">The enzyme Taq polymerase, used in PCR, is obtained from:</div><ul class="options"><li><strong>A)</strong> A thermophilic bacterium (Thermus aquaticus)</li><li><strong>B)</strong> Human cells</li><li><strong>C)</strong> E. coli</li><li><strong>D)</strong> Yeast</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Taq polymerase is heat‑stable, isolated from bacteria living in hot springs.</div></div></div>
+    <div class="question-block"><div class="q-num">Q42</div><div class="q-text">In the context of biotechnology, what is a vector?</div><ul class="options"><li><strong>A)</strong> A DNA molecule used to carry foreign genetic material into a host cell</li><li><strong>B)</strong> An enzyme that cuts DNA</li><li><strong>C)</strong> A type of virus that causes disease</li><li><strong>D)</strong> A machine that sequences DNA</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Vectors (plasmids, viruses) are delivery vehicles for recombinant DNA.</div></div></div>
+    <div class="question-block"><div class="q-num">Q43</div><div class="q-text">Which of the following is a technique used to insert foreign DNA into a plant genome?</div><ul class="options"><li><strong>A)</strong> Agrobacterium‑mediated transformation</li><li><strong>B)</strong> Electroporation</li><li><strong>C)</strong> Gene gun</li><li><strong>D)</strong> All of the above</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: D</div><div class="explanation"><strong>Why?</strong> All three methods are used: Agrobacterium naturally transfers DNA, electroporation uses electric pulses, gene gun shoots DNA‑coated particles.</div></div></div>
+    <div class="question-block"><div class="q-num">Q44</div><div class="q-text">What is a major advantage of using plant cell culture to produce valuable compounds?</div><ul class="options"><li><strong>A)</strong> It can be done independent of climate and season</li><li><strong>B)</strong> Plants grow faster in culture</li><li><strong>C)</strong> It always yields higher amounts</li><li><strong>D)</strong> It is cheaper than field growth</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Cell culture allows year‑round production in controlled conditions, not reliant on weather. B and C are not always true; D can be expensive.</div></div></div>
+    <div class="question-block"><div class="q-num">Q45</div><div class="q-text">Which of the following best describes a “GMO”?</div><ul class="options"><li><strong>A)</strong> An organism whose genetic material has been altered using genetic engineering</li><li><strong>B)</strong> Any organism that has evolved naturally</li><li><strong>C)</strong> An organism that has been selectively bred</li><li><strong>D)</strong> A hybrid organism from cross‑pollination</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> GMO specifically refers to organisms modified by modern genetic engineering techniques, not traditional breeding.</div></div></div>
+    <div class="question-block"><div class="q-num">Q46</div><div class="q-text">What is the main purpose of the polymerase chain reaction (PCR)?</div><ul class="options"><li><strong>A)</strong> To separate DNA fragments by size</li><li><strong>B)</strong> To make many copies of a specific DNA region</li><li><strong>C)</strong> To cut DNA</li><li><strong>D)</strong> To join DNA fragments</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> PCR amplifies a target DNA sequence exponentially, producing millions of copies.</div></div></div>
+    <div class="question-block"><div class="q-num">Q47</div><div class="q-text">In gel electrophoresis, DNA fragments move toward the:</div><ul class="options"><li><strong>A)</strong> Positive electrode because DNA is negatively charged</li><li><strong>B)</strong> Negative electrode because DNA is positively charged</li><li><strong>C)</strong> Neither electrode</li><li><strong>D)</strong> They move randomly</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> DNA’s phosphate backbone gives it a negative charge, so it migrates toward the positive electrode.</div></div></div>
+    <div class="question-block"><div class="q-num">Q48</div><div class="q-text">What is a DNA probe?</div><ul class="options"><li><strong>A)</strong> A labelled DNA fragment used to detect complementary sequences</li><li><strong>B)</strong> An enzyme that cuts DNA</li><li><strong>C)</strong> A machine that sequences DNA</li><li><strong>D)</strong> A type of restriction enzyme</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Probes are labelled (radioactive or fluorescent) and hybridise to target DNA, enabling detection.</div></div></div>
+    <div class="question-block"><div class="q-num">Q49</div><div class="q-text">Which of the following is an example of a bioremediation application?</div><ul class="options"><li><strong>A)</strong> Using bacteria to clean up oil spills</li><li><strong>B)</strong> Growing bacteria to produce insulin</li><li><strong>C)</strong> Using yeast to make bread</li><li><strong>D)</strong> Using fungi to make antibiotics</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Bioremediation specifically refers to using organisms to remove pollutants. B, C, D are other biotech applications.</div></div></div>
+    <div class="question-block"><div class="q-num">Q50</div><div class="q-text">The term “bioinformatics” combines biology with:</div><ul class="options"><li><strong>A)</strong> Computer science and information technology</li><li><strong>B)</strong> Chemistry</li><li><strong>C)</strong> Physics</li><li><strong>D)</strong> Geology</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Bioinformatics uses computational tools to manage and analyse biological data.</div></div></div>
+    <div class="question-block"><div class="q-num">Q51</div><div class="q-text">Which of the following is a potential benefit of synthetic biology?</div><ul class="options"><li><strong>A)</strong> Creating organisms that produce new fuels or medicines</li><li><strong>B)</strong> Increasing the risk of bioterrorism</li><li><strong>C)</strong> Reducing biodiversity</li><li><strong>D)</strong> Making organisms less efficient</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Synthetic biology designs new biological systems for useful purposes (e.g., engineered yeast producing artemisinin). B, C are risks, not benefits.</div></div></div>
+    <div class="question-block"><div class="q-num">Q52</div><div class="q-text">What is the function of an expression vector?</div><ul class="options"><li><strong>A)</strong> To ensure the inserted gene is transcribed and translated in the host</li><li><strong>B)</strong> To cut DNA</li><li><strong>C)</strong> To store DNA fragments</li><li><strong>D)</strong> To visualise DNA</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Expression vectors contain regulatory sequences (promoter, ribosome binding site) to drive gene expression.</div></div></div>
+    <div class="question-block"><div class="q-num">Q53</div><div class="q-text">The CRISPR‑Cas9 system requires what component to target a specific DNA sequence?</div><ul class="options"><li><strong>A)</strong> A guide RNA (gRNA)</li><li><strong>B)</strong> A primer</li><li><strong>C)</strong> A probe</li><li><strong>D)</strong> An antibody</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> The guide RNA is designed to complement the target DNA, directing Cas9 to cut there.</div></div></div>
+    <div class="question-block"><div class="q-num">Q54</div><div class="q-text">Which of the following is a common ethical concern regarding genetic testing?</div><ul class="options"><li><strong>A)</strong> It might lead to genetic discrimination by employers or insurers</li><li><strong>B)</strong> It is always inaccurate</li><li><strong>C)</strong> It cannot detect any diseases</li><li><strong>D)</strong> It is too cheap</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Genetic information could be misused, leading to discrimination. B, C, D are false.</div></div></div>
+    <div class="question-block"><div class="q-num">Q55</div><div class="q-text">What is the purpose of DNA sequencing?</div><ul class="options"><li><strong>A)</strong> To determine the exact order of nucleotides in a DNA molecule</li><li><strong>B)</strong> To cut DNA into fragments</li><li><strong>C)</strong> To join DNA fragments</li><li><strong>D)</strong> To amplify DNA</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Sequencing reads the sequence of bases (A, T, C, G).</div></div></div>
+    <div class="question-block"><div class="q-num">Q56</div><div class="q-text">Which of the following is NOT a potential application of stem cells?</div><ul class="options"><li><strong>A)</strong> Regenerating damaged tissues</li><li><strong>B)</strong> Treating Parkinson’s disease</li><li><strong>C)</strong> Producing insulin‑producing cells for diabetes</li><li><strong>D)</strong> Creating new species instantly</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: D</div><div class="explanation"><strong>Why?</strong> Stem cells can differentiate into various cell types for therapy, but they don't create new species. D is unrealistic.</div></div></div>
+    <div class="question-block"><div class="q-num">Q57</div><div class="q-text">What is a “knock‑in” organism?</div><ul class="options"><li><strong>A)</strong> An organism with a new gene inserted at a specific location</li><li><strong>B)</strong> An organism with a gene removed</li><li><strong>C)</strong> An organism with extra chromosomes</li><li><strong>D)</strong> An organism that cannot reproduce</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Knock‑in adds a gene (often a modified or reporter gene) into a precise locus.</div></div></div>
+    <div class="question-block"><div class="q-num">Q58</div><div class="q-text">The enzyme ligase is important in recombinant DNA technology because it:</div><ul class="options"><li><strong>A)</strong> Cuts DNA at specific sites</li><li><strong>B)</strong> Joins DNA fragments together</li><li><strong>C)</strong> Amplifies DNA</li><li><strong>D)</strong> Copies RNA into DNA</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: B</div><div class="explanation"><strong>Why?</strong> DNA ligase seals the backbone, joining fragments – essential for creating recombinant molecules.</div></div></div>
+    <div class="question-block"><div class="q-num">Q59</div><div class="q-text">What is a main advantage of using microorganisms for producing human therapeutic proteins?</div><ul class="options"><li><strong>A)</strong> They can be grown quickly and in large quantities</li><li><strong>B)</strong> They always produce exactly the human form</li><li><strong>C)</strong> They require no nutrients</li><li><strong>D)</strong> They are never contaminated</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Microbes like bacteria or yeast grow fast, are easy to scale up, and are cost‑effective. B is false (post‑translational differences can occur), C false (need nutrients), D false (contamination risk exists).</div></div></div>
+    <div class="question-block"><div class="q-num">Q60</div><div class="q-text">Which of the following best defines “biotechnology”?</div><ul class="options"><li><strong>A)</strong> Any use of living organisms or their components to make products or modify processes for specific uses</li><li><strong>B)</strong> The study of ecosystems</li><li><strong>C)</strong> The use of robots in biology</li><li><strong>D)</strong> Only genetic engineering</li></ul><div class="answer-box"><div class="correct-ans">Correct answer: A</div><div class="explanation"><strong>Why?</strong> Biotechnology is broad – it includes traditional and modern techniques using organisms to create products or solve problems. D is too narrow; B is ecology; C is automation, not biotech.</div></div></div>
+
+    <hr>
+    <div class="footer-note">
+        ⚡ 60 challenging questions · complete notes · ready to master Biology & Technology
+    </div>
+</div>
+</body>
+</html>

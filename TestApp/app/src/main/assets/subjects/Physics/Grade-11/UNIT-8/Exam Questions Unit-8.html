@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 12 Physics – Unit 7 · Modern Physics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f8fafc;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: #1e293b;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #0f172a, #334155);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-radius: 40px 40px 20px 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(15,23,42,0.3);
+        }
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.15s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.07);
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #0f172a;
+            border-left: 8px solid #0f172a;
+            padding-left: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .remember, .wow {
+            padding: 1.2rem 1.5rem;
+            border-radius: 20px;
+            margin: 1.5rem 0;
+            font-weight: 500;
+        }
+        .remember {
+            background: #ecfeff;
+            border-left: 6px solid #22c55e;
+        }
+        .wow {
+            background: #fff7ed;
+            border-left: 6px solid #f59e0b;
+        }
+        ul, ol {
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+        .question-block {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin: 1.2rem 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.02);
+        }
+        .q-num {
+            display: inline-block;
+            background: #0f172a;
+            color: white;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+        .q-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .answer-btn {
+            background: #0f172a;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem 0;
+            transition: background 0.1s;
+        }
+        .answer-btn:hover {
+            background: #1e293b;
+        }
+        .answer {
+            display: none;
+            background: #ecfeff;
+            padding: 1.2rem;
+            border-radius: 18px;
+            margin-top: 1rem;
+            border-left: 5px solid #0f172a;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #cbd5e1, transparent);
+            margin: 2.5rem 0;
+        }
+        .footer-note {
+            text-align: center;
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 50px;
+            border: 1px dashed #64748b;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>⚛️ Grade 12 Physics – Unit 7</h1>
+        <p>Modern Physics · 60 advanced questions · exam‑ready</p>
+    </header>
+
+    <!-- Unit notes -->
+    <div class="card">
+        <h2>📘 Modern physics – key ideas</h2>
+        <p>Modern physics revolutionised our understanding of the microscopic world. The photoelectric effect proved light’s particle nature (E = hf). Quantum mechanics introduced wave‑particle duality (λ = h/p), uncertainty principle, and discrete atomic levels. Nuclear physics explains radioactivity (α, β, γ), half‑life, fission, fusion, and mass‑energy equivalence (E = mc²). Relativity connects space, time, and gravity. These principles underpin all modern technology: semiconductors, lasers, medical imaging, and nuclear power.</p>
+        <div class="remember">📌 REMEMBER: Photoelectric effect: K_max = hf – φ. de Broglie: λ = h/p. Radioactive decay: N = N₀ e^(–λt), T½ = ln2/λ. Mass defect: ΔE = Δm c².</div>
+        <div class="wow">✨ WOW: The same quantum ideas that explain why the Sun shines also make your smartphone’s transistors possible!</div>
+    </div>
+
+    <!-- ========== 60 QUESTIONS ========== -->
+    <!-- Part A: Conceptual (Q1–Q30) -->
+    <div class="question-block"><div class="q-num">Q1 (conceptual)</div><div class="q-text">Explain why classical physics could not explain the photoelectric effect.</div><button class="answer-btn" onclick="toggle('a1')">Show answer</button><div class="answer" id="a1"><strong>Answer:</strong><br>Classical wave theory predicted that electron energy should depend on light intensity, not frequency. Observations showed that electrons are emitted only above a threshold frequency, and their maximum energy depends on frequency, not intensity – contradicting classical physics.</div></div>
+    <div class="question-block"><div class="q-num">Q2 (conceptual)</div><div class="q-text">Why does increasing light intensity not increase electron energy in the photoelectric effect?</div><button class="answer-btn" onclick="toggle('a2')">Show answer</button><div class="answer" id="a2"><strong>Answer:</strong><br>Photon energy depends on frequency: E = hf. Intensity increases the number of photons, not the energy per photon. Each electron is ejected by absorbing a single photon, so its kinetic energy depends on photon energy, not on how many photons there are.</div></div>
+    <div class="question-block"><div class="q-num">Q3 (conceptual)</div><div class="q-text">Explain the significance of Einstein’s equation for photoelectric effect.</div><button class="answer-btn" onclick="toggle('a3')">Show answer</button><div class="answer" id="a3"><strong>Answer:</strong><br>K_max = hf – φ shows that light behaves as particles (photons) and that the electron’s maximum kinetic energy is the photon energy minus the work function. This was a cornerstone of quantum theory.</div></div>
+    <div class="question-block"><div class="q-num">Q4 (conceptual)</div><div class="q-text">Why is there a stopping potential in photoelectric experiments?</div><button class="answer-btn" onclick="toggle('a4')">Show answer</button><div class="answer" id="a4"><strong>Answer:</strong><br>The stopping potential is the voltage needed to stop the fastest electrons. It measures the maximum kinetic energy of ejected electrons (e V_stop = K_max).</div></div>
+    <div class="question-block"><div class="q-num">Q5 (conceptual)</div><div class="q-text">Why are electrons emitted instantaneously for light above threshold frequency?</div><button class="answer-btn" onclick="toggle('a5')">Show answer</button><div class="answer" id="a5"><strong>Answer:</strong><br>Each photon transfers its energy directly to a single electron in a particle‑like interaction. There is no time lag – emission is immediate, supporting the particle nature of light.</div></div>
+    <div class="question-block"><div class="q-num">Q6 (conceptual)</div><div class="q-text">Explain why low‑frequency light cannot eject electrons regardless of intensity.</div><button class="answer-btn" onclick="toggle('a6')">Show answer</button><div class="answer" id="a6"><strong>Answer:</strong><br>Each photon has energy E = hf. If this energy is less than the work function φ, even a huge number of photons cannot give a single electron enough energy to escape – no emission occurs.</div></div>
+    <div class="question-block"><div class="q-num">Q7 (conceptual)</div><div class="q-text">Why does increasing intensity increase current in photoelectric effect?</div><button class="answer-btn" onclick="toggle('a7')">Show answer</button><div class="answer" id="a7"><strong>Answer:</strong><br>More photons per second mean more electrons ejected per second, so the photoelectric current (number of electrons per second) increases.</div></div>
+    <div class="question-block"><div class="q-num">Q8 (conceptual)</div><div class="q-text">Explain why X‑ray spectra have continuous and characteristic lines.</div><button class="answer-btn" onclick="toggle('a8')">Show answer</button><div class="answer" id="a8"><strong>Answer:</strong><br>The continuous part comes from bremsstrahlung (deceleration of electrons). The characteristic lines are due to electron transitions within atoms of the target, producing photons with specific energies.</div></div>
+    <div class="question-block"><div class="q-num">Q9 (conceptual)</div><div class="q-text">Why is energy quantized in atomic models?</div><button class="answer-btn" onclick="toggle('a9')">Show answer</button><div class="answer" id="a9"><strong>Answer:</strong><br>Electrons in atoms can only occupy certain discrete energy levels. When they jump between levels, they absorb or emit photons with energy equal to the difference, producing line spectra.</div></div>
+    <div class="question-block"><div class="q-num">Q10 (conceptual)</div><div class="q-text">Explain why Bohr model predicts hydrogen spectral lines.</div><button class="answer-btn" onclick="toggle('a10')">Show answer</button><div class="answer" id="a10"><strong>Answer:</strong><br>The Bohr model assumes electrons orbit in quantized angular momentum states. The energy difference between orbits gives the photon energy ΔE = hf, matching the observed hydrogen spectrum.</div></div>
+    <div class="question-block"><div class="q-num">Q11 (conceptual)</div><div class="q-text">Why can heavier elements not strictly follow Bohr’s model?</div><button class="answer-btn" onclick="toggle('a11')">Show answer</button><div class="answer" id="a11"><strong>Answer:</strong><br>Electron‑electron interactions become significant, and energy levels are not simply given by a one‑electron formula. A full quantum mechanical treatment (Schrödinger equation) is needed.</div></div>
+    <div class="question-block"><div class="q-num">Q12 (conceptual)</div><div class="q-text">Explain why Heisenberg uncertainty principle limits precision.</div><button class="answer-btn" onclick="toggle('a12')">Show answer</button><div class="answer" id="a12"><strong>Answer:</strong><br>The uncertainty principle states Δx·Δp ≥ h/4π. It is impossible to know both position and momentum of a particle simultaneously with arbitrary precision – a fundamental limit of quantum mechanics.</div></div>
+    <div class="question-block"><div class="q-num">Q13 (conceptual)</div><div class="q-text">Why does wave‑particle duality matter in modern physics?</div><button class="answer-btn" onclick="toggle('a13')">Show answer</button><div class="answer" id="a13"><strong>Answer:</strong><br>It explains that both light and matter (like electrons) exhibit wave and particle properties. This is the basis for electron diffraction, quantum mechanics, and the behavior of semiconductors.</div></div>
+    <div class="question-block"><div class="q-num">Q14 (conceptual)</div><div class="q-text">Why is de Broglie wavelength important for electrons?</div><button class="answer-btn" onclick="toggle('a14')">Show answer</button><div class="answer" id="a14"><strong>Answer:</strong><br>λ = h/p shows that electrons have a wavelength; this is confirmed by electron diffraction experiments, proving their wave nature.</div></div>
+    <div class="question-block"><div class="q-num">Q15 (conceptual)</div><div class="q-text">Explain why nuclear binding energy per nucleon varies across elements.</div><button class="answer-btn" onclick="toggle('a15')">Show answer</button><div class="answer" id="a15"><strong>Answer:</strong><br>It depends on the balance between strong nuclear force and Coulomb repulsion. Medium‑mass nuclei (like iron) have the highest binding energy per nucleon – they are the most stable.</div></div>
+    <div class="question-block"><div class="q-num">Q16 (conceptual)</div><div class="q-text">Why does radioactivity decrease exponentially over time?</div><button class="answer-btn" onclick="toggle('a16')">Show answer</button><div class="answer" id="a16"><strong>Answer:</strong><br>Each nucleus has a constant probability λ of decaying per unit time. This leads to the exponential law N(t) = N₀ e^(–λt).</div></div>
+    <div class="question-block"><div class="q-num">Q17 (conceptual)</div><div class="q-text">Why do alpha particles have low penetration?</div><button class="answer-btn" onclick="toggle('a17')">Show answer</button><div class="answer" id="a17"><strong>Answer:</strong><br>Alpha particles are heavy and doubly charged, so they lose energy rapidly through collisions with atoms – they are stopped by a sheet of paper or a few cm of air.</div></div>
+    <div class="question-block"><div class="q-num">Q18 (conceptual)</div><div class="q-text">Explain why beta particles are more penetrating than alpha.</div><button class="answer-btn" onclick="toggle('a18')">Show answer</button><div class="answer" id="a18"><strong>Answer:</strong><br>Beta particles are much lighter and faster, so they interact less frequently and can penetrate further (e.g., through a few mm of aluminium).</div></div>
+    <div class="question-block"><div class="q-num">Q19 (conceptual)</div><div class="q-text">Why are gamma rays highly penetrating?</div><button class="answer-btn" onclick="toggle('a19')">Show answer</button><div class="answer" id="a19"><strong>Answer:</strong><br>Gamma rays are electromagnetic radiation with no charge, so they interact weakly with matter. They can penetrate several cm of lead or metres of concrete.</div></div>
+    <div class="question-block"><div class="q-num">Q20 (conceptual)</div><div class="q-text">Explain half‑life concept.</div><button class="answer-btn" onclick="toggle('a20')">Show answer</button><div class="answer" id="a20"><strong>Answer:</strong><br>Half‑life is the time required for half the radioactive nuclei in a sample to decay. It is a statistical property, independent of the initial amount.</div></div>
+    <div class="question-block"><div class="q-num">Q21 (conceptual)</div><div class="q-text">Why is nuclear fission accompanied by huge energy release?</div><button class="answer-btn" onclick="toggle('a21')">Show answer</button><div class="answer" id="a21"><strong>Answer:</strong><br>A heavy nucleus splits into lighter, more stable nuclei. The mass of the products is less than the original mass; the mass defect is converted to energy according to E = Δm c² – a huge amount per reaction.</div></div>
+    <div class="question-block"><div class="q-num">Q22 (conceptual)</div><div class="q-text">Explain why chain reactions require critical mass.</div><button class="answer-btn" onclick="toggle('a22')">Show answer</button><div class="answer" id="a22"><strong>Answer:</strong><br>If the fissile material is below critical mass, too many neutrons escape without causing further fissions. Critical mass ensures enough neutrons are captured to sustain the chain reaction.</div></div>
+    <div class="question-block"><div class="q-num">Q23 (conceptual)</div><div class="q-text">Why does nuclear fusion occur at extremely high temperatures?</div><button class="answer-btn" onclick="toggle('a23')">Show answer</button><div class="answer" id="a23"><strong>Answer:</strong><br>High temperature gives nuclei enough kinetic energy to overcome the strong Coulomb repulsion between positively charged nuclei, allowing them to get close enough for the strong nuclear force to fuse them.</div></div>
+    <div class="question-block"><div class="q-num">Q24 (conceptual)</div><div class="q-text">Why are neutrinos emitted in beta decay?</div><button class="answer-btn" onclick="toggle('a24')">Show answer</button><div class="answer" id="a24"><strong>Answer:</strong><br>Neutrinos are emitted to conserve energy, momentum, and spin. The continuous beta spectrum showed that some energy was missing; the neutrino carries it away.</div></div>
+    <div class="question-block"><div class="q-num">Q25 (conceptual)</div><div class="q-text">Explain why mass of nucleus is less than sum of nucleons.</div><button class="answer-btn" onclick="toggle('a25')">Show answer</button><div class="answer" id="a25"><strong>Answer:</strong><br>The mass defect corresponds to the binding energy that holds the nucleus together. That energy (E = Δm c²) is released when nucleons combine.</div></div>
+    <div class="question-block"><div class="q-num">Q26 (conceptual)</div><div class="q-text">Why is Einstein’s mass‑energy equivalence important in nuclear physics?</div><button class="answer-btn" onclick="toggle('a26')">Show answer</button><div class="answer" id="a26"><strong>Answer:</strong><br>It explains the enormous energy released in fission and fusion, and is the basis for nuclear reactors, weapons, and understanding stellar processes.</div></div>
+    <div class="question-block"><div class="q-num">Q27 (conceptual)</div><div class="q-text">Explain why energy levels in atoms are discrete.</div><button class="answer-btn" onclick="toggle('a27')">Show answer</button><div class="answer" id="a27"><strong>Answer:</strong><br>Quantum mechanics shows that electrons in atoms can only have certain allowed energies. Transitions between these levels produce photons with specific energies – observed as spectral lines.</div></div>
+    <div class="question-block"><div class="q-num">Q28 (conceptual)</div><div class="q-text">Why does pair production require photon energy greater than 1.022 MeV?</div><button class="answer-btn" onclick="toggle('a28')">Show answer</button><div class="answer" id="a28"><strong>Answer:</strong><br>Pair production creates an electron‑positron pair. Their total rest energy is 2 × 0.511 MeV = 1.022 MeV. The photon must supply at least this energy; any excess becomes kinetic energy.</div></div>
+    <div class="question-block"><div class="q-num">Q29 (conceptual)</div><div class="q-text">Why is annihilation of an electron‑positron pair accompanied by gamma rays?</div><button class="answer-btn" onclick="toggle('a29')">Show answer</button><div class="answer" id="a29"><strong>Answer:</strong><br>When matter and antimatter meet, they annihilate. Their total mass is converted to photon energy (E = mc²). Two gamma photons (usually 0.511 MeV each) are emitted to conserve momentum.</div></div>
+    <div class="question-block"><div class="q-num">Q30 (conceptual)</div><div class="q-text">Explain why understanding modern physics is crucial for technology.</div><button class="answer-btn" onclick="toggle('a30')">Show answer</button><div class="answer" id="a30"><strong>Answer:</strong><br>Modern physics is the foundation of semiconductors (transistors, chips), lasers, nuclear power, medical imaging (PET, MRI), and quantum computing. It drives innovation in nearly every high‑tech field.</div></div>
+
+    <!-- Part B: Calculation/Application (Q31–Q60) -->
+    <div class="question-block"><div class="q-num">Q31 (calculation)</div><div class="q-text">A photon of wavelength 500 nm hits a metal with work function 2.5 eV. Find the maximum kinetic energy of ejected electrons. (h = 6.626×10⁻³⁴ J·s, c = 3×10⁸ m/s, 1 eV = 1.6×10⁻¹⁹ J)</div><button class="answer-btn" onclick="toggle('a31')">Show answer</button><div class="answer" id="a31"><strong>Step‑by‑step:</strong><br>Photon energy E = hc/λ = 6.626×10⁻³⁴ × 3×10⁸ / (500×10⁻⁹) = 1.9878×10⁻²⁵ / 5×10⁻⁷ = 3.9756×10⁻¹⁹ J. In eV: 3.9756×10⁻¹⁹ / 1.6×10⁻¹⁹ = 2.48 eV. Work function φ = 2.5 eV. Since 2.48 eV < 2.5 eV, no electrons are ejected. K_max = 0.<br>✅ Answer: 0 eV</div></div>
+    <div class="question-block"><div class="q-num">Q32 (calculation)</div><div class="q-text">A photon of wavelength 400 nm hits a metal with work function 2 eV. Find the maximum kinetic energy of ejected electrons (in eV).</div><button class="answer-btn" onclick="toggle('a32')">Show answer</button><div class="answer" id="a32"><strong>Step‑by‑step:</strong><br>E = hc/λ = 6.626×10⁻³⁴ × 3×10⁸ / (400×10⁻⁹) = 1.9878×10⁻²⁵ / 4×10⁻⁷ = 4.9695×10⁻¹⁹ J. In eV: 4.9695×10⁻¹⁹ / 1.6×10⁻¹⁹ = 3.106 eV. K_max = E – φ = 3.106 – 2 = 1.106 eV.<br>✅ Answer: 1.11 eV</div></div>
+    <div class="question-block"><div class="q-num">Q33 (calculation)</div><div class="q-text">An electron is accelerated through 500 V. Find its speed. (m_e = 9.11×10⁻³¹ kg, e = 1.6×10⁻¹⁹ C)</div><button class="answer-btn" onclick="toggle('a33')">Show answer</button><div class="answer" id="a33"><strong>Step‑by‑step:</strong><br>Kinetic energy K = e V = 500 × 1.6×10⁻¹⁹ = 8.0×10⁻¹⁷ J. v = √(2K/m) = √(2×8.0×10⁻¹⁷ / 9.11×10⁻³¹) = √(1.6×10⁻¹⁶ / 9.11×10⁻³¹) = √(1.756×10¹⁴) ≈ 1.325×10⁷ m/s.<br>✅ Answer: 1.33×10⁷ m/s</div></div>
+    <div class="question-block"><div class="q-num">Q34 (calculation)</div><div class="q-text">A uranium‑235 nucleus releases 200 MeV when it fissions. Convert this energy to joules.</div><button class="answer-btn" onclick="toggle('a34')">Show answer</button><div class="answer" id="a34"><strong>Step‑by‑step:</strong><br>1 eV = 1.6×10⁻¹⁹ J, so 1 MeV = 1.6×10⁻¹³ J. 200 MeV = 200 × 1.6×10⁻¹³ = 3.2×10⁻¹¹ J.<br>✅ Answer: 3.2×10⁻¹¹ J</div></div>
+    <div class="question-block"><div class="q-num">Q35 (calculation)</div><div class="q-text">The half‑life of carbon‑14 is 5730 years. What fraction of a sample remains after 17,190 years?</div><button class="answer-btn" onclick="toggle('a35')">Show answer</button><div class="answer" id="a35"><strong>Step‑by‑step:</strong><br>Number of half‑lives = 17190 / 5730 = 3. Fraction remaining = (1/2)^3 = 1/8 = 0.125.<br>✅ Answer: 1/8 or 0.125</div></div>
+    <div class="question-block"><div class="q-num">Q36 (calculation)</div><div class="q-text">A photon has energy 3 eV. Find its wavelength in nm. (h = 6.626×10⁻³⁴ J·s, c = 3×10⁸ m/s, 1 eV = 1.6×10⁻¹⁹ J)</div><button class="answer-btn" onclick="toggle('a36')">Show answer</button><div class="answer" id="a36"><strong>Step‑by‑step:</strong><br>E = 3 × 1.6×10⁻¹⁹ = 4.8×10⁻¹⁹ J. λ = hc / E = (6.626×10⁻³⁴ × 3×10⁸) / 4.8×10⁻¹⁹ = 1.9878×10⁻²⁵ / 4.8×10⁻¹⁹ = 4.14×10⁻⁷ m = 414 nm.<br>✅ Answer: 414 nm</div></div>
+    <div class="question-block"><div class="q-num">Q37 (calculation)</div><div class="q-text">An electron has a de Broglie wavelength of 0.05 nm. Find its velocity. (m_e = 9.11×10⁻³¹ kg, h = 6.626×10⁻³⁴ J·s)</div><button class="answer-btn" onclick="toggle('a37')">Show answer</button><div class="answer" id="a37"><strong>Step‑by‑step:</strong><br>λ = 0.05×10⁻⁹ = 5×10⁻¹¹ m. p = h/λ = 6.626×10⁻³⁴ / 5×10⁻¹¹ = 1.3252×10⁻²³ kg·m/s. v = p/m = 1.3252×10⁻²³ / 9.11×10⁻³¹ = 1.455×10⁷ m/s.<br>✅ Answer: 1.46×10⁷ m/s</div></div>
+    <div class="question-block"><div class="q-num">Q38 (calculation)</div><div class="q-text">A photon of energy 1 MeV attempts to produce an electron‑positron pair. Is it possible? Explain.</div><button class="answer-btn" onclick="toggle('a38')">Show answer</button><div class="answer" id="a38"><strong>Step‑by‑step:</strong><br>Electron rest energy = 0.511 MeV, positron rest energy = 0.511 MeV, total = 1.022 MeV. The photon has only 1 MeV < 1.022 MeV, so it cannot produce a pair. (It would need at least 1.022 MeV.)<br>✅ Answer: No, impossible.</div></div>
+    <div class="question-block"><div class="q-num">Q39 (calculation)</div><div class="q-text">A radioactive sample decays from 1000 to 125 in 3 half‑lives. Verify the numbers.</div><button class="answer-btn" onclick="toggle('a39')">Show answer</button><div class="answer" id="a39"><strong>Step‑by‑step:</strong><br>After 1 half‑life: 1000/2 = 500. After 2: 500/2 = 250. After 3: 250/2 = 125. Yes, it matches.<br>✅ Answer: Verified.</div></div>
+    <div class="question-block"><div class="q-num">Q40 (calculation)</div><div class="q-text">A nucleus has a mass defect of 0.16 u. Find its binding energy per nucleon if it has 20 nucleons. (1 u = 931.5 MeV/c²)</div><button class="answer-btn" onclick="toggle('a40')">Show answer</button><div class="answer" id="a40"><strong>Step‑by‑step:</strong><br>Total binding energy = 0.16 × 931.5 ≈ 149.0 MeV. Per nucleon = 149.0 / 20 = 7.45 MeV.<br>✅ Answer: 7.45 MeV/nucleon</div></div>
+    <div class="question-block"><div class="q-num">Q41 (calculation)</div><div class="q-text">A photon has wavelength 600 nm. Find its frequency.</div><button class="answer-btn" onclick="toggle('a41')">Show answer</button><div class="answer" id="a41"><strong>Step‑by‑step:</strong><br>f = c / λ = 3×10⁸ / (600×10⁻⁹) = 3×10⁸ / 6×10⁻⁷ = 5×10¹⁴ Hz.<br>✅ Answer: 5×10¹⁴ Hz</div></div>
+    <div class="question-block"><div class="q-num">Q42 (calculation)</div><div class="q-text">A gamma ray has frequency 1×10²⁰ Hz. Find its energy in keV. (h = 6.626×10⁻³⁴ J·s, 1 eV = 1.6×10⁻¹⁹ J)</div><button class="answer-btn" onclick="toggle('a42')">Show answer</button><div class="answer" id="a42"><strong>Step‑by‑step:</strong><br>E = hf = 6.626×10⁻³⁴ × 1×10²⁰ = 6.626×10⁻¹⁴ J. In eV: 6.626×10⁻¹⁴ / 1.6×10⁻¹⁹ = 4.14125×10⁵ eV = 414 keV.<br>✅ Answer: 414 keV</div></div>
+    <div class="question-block"><div class="q-num">Q43 (calculation)</div><div class="q-text">An electron is accelerated through 1000 V. Find its momentum. (m_e = 9.11×10⁻³¹ kg, e = 1.6×10⁻¹⁹ C)</div><button class="answer-btn" onclick="toggle('a43')">Show answer</button><div class="answer" id="a43"><strong>Step‑by‑step:</strong><br>K = e V = 1000 × 1.6×10⁻¹⁹ = 1.6×10⁻¹⁶ J. p = √(2 m K) = √(2 × 9.11×10⁻³¹ × 1.6×10⁻¹⁶) = √(2.9152×10⁻⁴⁶) = 5.40×10⁻²³ kg·m/s.<br>✅ Answer: 5.40×10⁻²³ kg·m/s</div></div>
+    <div class="question-block"><div class="q-num">Q44 (calculation)</div><div class="q-text">The half‑life of a substance is 10 minutes. What fraction remains after 25 minutes?</div><button class="answer-btn" onclick="toggle('a44')">Show answer</button><div class="answer" id="a44"><strong>Step‑by‑step:</strong><br>Number of half‑lives = 25/10 = 2.5. Fraction = (1/2)^2.5 = 0.1768 (since 2^2.5 = 5.6568, so 1/5.6568 = 0.1768).<br>✅ Answer: about 0.177</div></div>
+    <div class="question-block"><div class="q-num">Q45 (calculation)</div><div class="q-text">1 gram of caesium‑137 (half‑life 30 years) decays. Find its activity. (Avogadro number = 6.022×10²³, atomic mass = 137 g/mol)</div><button class="answer-btn" onclick="toggle('a45')">Show answer</button><div class="answer" id="a45"><strong>Step‑by‑step:</strong><br>Number of atoms N = (1/137) × 6.022×10²³ = 4.395×10²¹ atoms. Decay constant λ = ln2 / T½ = 0.693 / (30×365.25×24×3600) = 0.693 / 9.467×10⁸ = 7.32×10⁻¹⁰ s⁻¹. Activity A = λ N = 7.32×10⁻¹⁰ × 4.395×10²¹ = 3.22×10¹² Bq.<br>✅ Answer: 3.22×10¹² Bq</div></div>
+    <div class="question-block"><div class="q-num">Q46 (calculation)</div><div class="q-text">A photon of energy 2 eV hits a metal with work function 1.5 eV. Find the maximum kinetic energy of photoelectrons.</div><button class="answer-btn" onclick="toggle('a46')">Show answer</button><div class="answer" id="a46"><strong>Step‑by‑step:</strong><br>K_max = E – φ = 2 – 1.5 = 0.5 eV.<br>✅ Answer: 0.5 eV</div></div>
+    <div class="question-block"><div class="q-num">Q47 (calculation)</div><div class="q-text">An alpha particle (mass = 4 u) has kinetic energy 5 MeV. Find its speed. (1 u = 1.66×10⁻²⁷ kg, 1 eV = 1.6×10⁻¹⁹ J)</div><button class="answer-btn" onclick="toggle('a47')">Show answer</button><div class="answer" id="a47"><strong>Step‑by‑step:</strong><br>Mass m = 4 × 1.66×10⁻²⁷ = 6.64×10⁻²⁷ kg. K = 5×10⁶ × 1.6×10⁻¹⁹ = 8.0×10⁻¹³ J. v = √(2K/m) = √(2×8.0×10⁻¹³ / 6.64×10⁻²⁷) = √(1.6×10⁻¹² / 6.64×10⁻²⁷) = √(2.41×10¹⁴) = 1.55×10⁷ m/s.<br>✅ Answer: 1.55×10⁷ m/s</div></div>
+    <div class="question-block"><div class="q-num">Q48 (calculation)</div><div class="q-text">An electron moves at 1×10⁶ m/s perpendicular to a 0.01 T magnetic field. Find the radius of its orbit. (m_e = 9.11×10⁻³¹ kg, q = 1.6×10⁻¹⁹ C)</div><button class="answer-btn" onclick="toggle('a48')">Show answer</button><div class="answer" id="a48"><strong>Step‑by‑step:</strong><br>r = m v / (q B) = (9.11×10⁻³¹ × 1×10⁶) / (1.6×10⁻¹⁹ × 0.01) = 9.11×10⁻²⁵ / 1.6×10⁻²¹ = 5.69×10⁻⁴ m = 0.569 mm.<br>✅ Answer: 5.69×10⁻⁴ m</div></div>
+    <div class="question-block"><div class="q-num">Q49 (calculation)</div><div class="q-text">A photon of wavelength 250 nm hits a metal with work function 3 eV. Find the maximum kinetic energy of ejected electrons.</div><button class="answer-btn" onclick="toggle('a49')">Show answer</button><div class="answer" id="a49"><strong>Step‑by‑step:</strong><br>E = hc/λ = 6.626×10⁻³⁴ × 3×10⁸ / (250×10⁻⁹) = 1.9878×10⁻²⁵ / 2.5×10⁻⁷ = 7.9512×10⁻¹⁹ J. In eV: 7.9512×10⁻¹⁹ / 1.6×10⁻¹⁹ = 4.97 eV. K_max = 4.97 – 3 = 1.97 eV.<br>✅ Answer: 1.97 eV</div></div>
+    <div class="question-block"><div class="q-num">Q50 (calculation)</div><div class="q-text">A sample initially has 10¹² atoms with half‑life 8 hours. How many remain after 24 hours?</div><button class="answer-btn" onclick="toggle('a50')">Show answer</button><div class="answer" id="a50"><strong>Step‑by‑step:</strong><br>24 h / 8 h = 3 half‑lives. N = 10¹² × (1/2)³ = 10¹² / 8 = 1.25×10¹¹.<br>✅ Answer: 1.25×10¹¹</div></div>
+    <div class="question-block"><div class="q-num">Q51 (calculation)</div><div class="q-text">In an electron diffraction experiment, the slit spacing is 0.2 nm and the electron wavelength is 0.05 nm. Find the angle of the first maximum.</div><button class="answer-btn" onclick="toggle('a51')">Show answer</button><div class="answer" id="a51"><strong>Step‑by‑step:</strong><br>nλ = d sinθ → for n=1, sinθ = λ/d = 0.05 / 0.2 = 0.25. θ = sin⁻¹(0.25) ≈ 14.5°.<br>✅ Answer: 14.5°</div></div>
+    <div class="question-block"><div class="q-num">Q52 (calculation)</div><div class="q-text">A photon of energy 1 MeV attempts to produce an electron‑positron pair in tungsten. Is it possible? Explain.</div><button class="answer-btn" onclick="toggle('a52')">Show answer</button><div class="answer" id="a52"><strong>Step‑by‑step:</strong><br>Minimum energy needed = 2 × 0.511 MeV = 1.022 MeV. 1 MeV < 1.022 MeV, so it cannot produce a pair (even in a material).<br>✅ Answer: No.</div></div>
+    <div class="question-block"><div class="q-num">Q53 (calculation)</div><div class="q-text">An electron jumps between energy levels with ΔE = 3 eV. Find the wavelength of the emitted photon.</div><button class="answer-btn" onclick="toggle('a53')">Show answer</button><div class="answer" id="a53"><strong>Step‑by‑step:</strong><br>λ = hc / ΔE = (6.626×10⁻³⁴ × 3×10⁸) / (3 × 1.6×10⁻¹⁹) = 1.9878×10⁻²⁵ / 4.8×10⁻¹⁹ = 4.14×10⁻⁷ m = 414 nm.<br>✅ Answer: 414 nm</div></div>
+    <div class="question-block"><div class="q-num">Q54 (calculation)</div><div class="q-text">Activity 1 Ci = 3.7×10¹⁰ Bq. How many nuclei decay per second in a 1 Ci source?</div><button class="answer-btn" onclick="toggle('a54')">Show answer</button><div class="answer" id="a54"><strong>Step‑by‑step:</strong><br>1 Bq = 1 decay/s, so 1 Ci = 3.7×10¹⁰ decays/s.<br>✅ Answer: 3.7×10¹⁰ decays/s</div></div>
+    <div class="question-block"><div class="q-num">Q55 (calculation)</div><div class="q-text">An electron is accelerated through 100 V. Find its momentum. (m_e = 9.11×10⁻³¹ kg, e = 1.6×10⁻¹⁹ C)</div><button class="answer-btn" onclick="toggle('a55')">Show answer</button><div class="answer" id="a55"><strong>Step‑by‑step:</strong><br>K = e V = 100 × 1.6×10⁻¹⁹ = 1.6×10⁻¹⁷ J. p = √(2 m K) = √(2 × 9.11×10⁻³¹ × 1.6×10⁻¹⁷) = √(2.9152×10⁻⁴⁷) = 5.40×10⁻²⁴ kg·m/s.<br>✅ Answer: 5.40×10⁻²⁴ kg·m/s</div></div>
+    <div class="question-block"><div class="q-num">Q56 (calculation)</div><div class="q-text">A photon of energy 5 eV ejects an electron from a metal with work function 2 eV. Find the speed of the electron. (m_e = 9.11×10⁻³¹ kg, 1 eV = 1.6×10⁻¹⁹ J)</div><button class="answer-btn" onclick="toggle('a56')">Show answer</button><div class="answer" id="a56"><strong>Step‑by‑step:</strong><br>K = 5 – 2 = 3 eV = 3 × 1.6×10⁻¹⁹ = 4.8×10⁻¹⁹ J. v = √(2K/m) = √(2×4.8×10⁻¹⁹ / 9.11×10⁻³¹) = √(9.6×10⁻¹⁹ / 9.11×10⁻³¹) = √(1.054×10¹²) = 1.027×10⁶ m/s.<br>✅ Answer: 1.03×10⁶ m/s</div></div>
+    <div class="question-block"><div class="q-num">Q57 (calculation)</div><div class="q-text">A nuclear reaction releases 1.2 MeV. Convert this energy to joules.</div><button class="answer-btn" onclick="toggle('a57')">Show answer</button><div class="answer" id="a57"><strong>Step‑by‑step:</strong><br>1 MeV = 1.6×10⁻¹³ J, so 1.2 MeV = 1.2 × 1.6×10⁻¹³ = 1.92×10⁻¹³ J.<br>✅ Answer: 1.92×10⁻¹³ J</div></div>
+    <div class="question-block"><div class="q-num">Q58 (calculation)</div><div class="q-text">A photon has wavelength 450 nm. Find its frequency.</div><button class="answer-btn" onclick="toggle('a58')">Show answer</button><div class="answer" id="a58"><strong>Step‑by‑step:</strong><br>f = c / λ = 3×10⁸ / (450×10⁻⁹) = 3×10⁸ / 4.5×10⁻⁷ = 6.667×10¹⁴ Hz.<br>✅ Answer: 6.67×10¹⁴ Hz</div></div>
+    <div class="question-block"><div class="q-num">Q59 (calculation)</div><div class="q-text">In an electron diffraction experiment, slit spacing is 0.1 nm and electron wavelength is 0.05 nm. Find the angle of the first minimum.</div><button class="answer-btn" onclick="toggle('a59')">Show answer</button><div class="answer" id="a59"><strong>Step‑by‑step:</strong><br>For a single‑slit minimum, sinθ = λ / d = 0.05 / 0.1 = 0.5 → θ = 30°.<br>✅ Answer: 30°</div></div>
+    <div class="question-block"><div class="q-num">Q60 (conceptual)</div><div class="q-text">Explain why modern physics principles are essential for students and engineers.</div><button class="answer-btn" onclick="toggle('a60')">Show answer</button><div class="answer" id="a60"><strong>Answer:</strong><br>Modern physics provides the foundation for semiconductors, lasers, nuclear energy, medical imaging, and quantum computing. Understanding these principles enables innovation in electronics, energy, medicine, and materials science – the technologies that shape our world.</div></div>
+
+    <hr>
+    <div class="footer-note">
+        ✅ UNIT 7 COMPLETE · 60 questions · 30 conceptual + 30 applied · exam‑ready · feel the WOW!
+    </div>
+</div>
+
+<script>
+    function toggle(id) {
+        var el = document.getElementById(id);
+        if (el.style.display === "block") {
+            el.style.display = "none";
+        } else {
+            el.style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8FAFC">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="Interactive Lab &amp; Diagrams"
+            app:titleTextColor="@android:color/white" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:clipToPadding="false"
+        android:paddingBottom="100dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 1. SUBJECT SLIDE BAR (TOP) -->
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/subjectTabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabMode="scrollable"
+                app:tabGravity="fill"
+                android:background="@android:color/white"
+                app:tabSelectedTextColor="?attr/colorPrimary"
+                app:tabIndicatorColor="?attr/colorPrimary"
+                app:tabIndicatorHeight="3dp"
+                app:tabTextAppearance="@style/TextAppearance.MaterialComponents.Subtitle2">
+                <com.google.android.material.tabs.TabItem android:text="Physics ⚛️" />
+                <com.google.android.material.tabs.TabItem android:text="Chemistry 🧪" />
+                <com.google.android.material.tabs.TabItem android:text="Biology 🧬" />
+                <com.google.android.material.tabs.TabItem android:text="Math 📐" />
+                <com.google.android.material.tabs.TabItem android:text="English 📖" />
+                <com.google.android.material.tabs.TabItem android:text="Around You 🏙️" />
+                <com.google.android.material.tabs.TabItem android:text="What If? 🤔" />
+                <com.google.android.material.tabs.TabItem android:text="Real Data 📊" />
+                <com.google.android.material.tabs.TabItem android:text="Micro-Animations 🎥" />
+                <com.google.android.material.tabs.TabItem android:text="Real-World Errors ⚠️" />
+            </com.google.android.material.tabs.TabLayout>
+
+            <!-- 2. SIMULATION SELECTION SLIDE (HORIZONTAL) -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="16dp"
+                android:clipToPadding="false"
+                android:paddingHorizontal="16dp"
+                android:scrollbars="none"
+                android:background="#F1F5F9"
+                android:overScrollMode="always">
+                <LinearLayout
+                    android:id="@+id/simButtonsContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical" />
+            </HorizontalScrollView>
+
+            <!-- 3. VIEW MODE CHIPS -->
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/viewAngleGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="16dp"
+                android:paddingBottom="12dp"
+                app:singleSelection="true"
+                app:selectionRequired="true"
+                android:background="#F1F5F9">
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipSystem"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="System View ⚙️"
+                    android:checked="true" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipParticle"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Particle View ⚛️" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipEquation"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mathematical 🧮" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipRealLife"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Real-Life App 🏙️" />
+            </com.google.android.material.chip.ChipGroup>
+
+            <!-- 4. ACTIVE LAB VIEWER -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="8dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="8dp"
+                app:strokeWidth="1.5dp"
+                app:strokeColor="#E2E8F0">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvSimTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:text="Select a Simulation"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+                        android:background="#F8FAFC"
+                        android:textColor="#1E293B"
+                        android:drawableStart="@android:drawable/ic_menu_slideshow"
+                        android:drawablePadding="8dp"
+                        android:gravity="center_vertical" />
+
+                    <!-- Increased height for better interaction and full visibility -->
+                    <WebView
+                        android:id="@+id/webViewVisualizer"
+                        android:layout_width="match_parent"
+                        android:layout_height="600dp"
+                        android:background="@android:color/white" />
+
+                    <!-- 🧪 Educational Lab Information -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="24dp"
+                        android:background="#FFFFFF">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🔬 Lab Analysis &amp; Data"
+                            android:textColor="?attr/colorPrimary"
+                            android:textStyle="bold"
+                            android:textSize="20sp" />
+
+                        <TextView
+                            android:id="@+id/tvLabInstructions"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Take control of the simulation above. Interact with the elements to see how variables like force, mass, and energy interact in real-time. Use the 'View Modes' to see the difference between macroscopic systems and microscopic particles."
+                            android:textColor="#334155"
+                            android:lineSpacingExtra="6dp"
+                            android:textSize="16sp" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1.5dp"
+                            android:background="#F1F5F9"
+                            android:layout_marginVertical="24dp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="💡"
+                                android:textSize="24sp" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:text="Smart Student Strategy"
+                                android:textColor="#059669"
+                                android:textStyle="bold"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="To master this topic, try to predict what happens before you move a slider! For example, if you increase 'Pressure', does the 'Volume' decrease? Thinking ahead is what makes a student smart."
+                            android:textColor="#059669"
+                            android:lineSpacingExtra="4dp"
+                            android:textSize="14sp"
+                            android:textStyle="italic" />
+
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Bottom spacing to ensure everything scrolls past the navigation -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="60dp" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

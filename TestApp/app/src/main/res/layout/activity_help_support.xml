@@ -33,40 +33,134 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Section: Help & Resources -->
-            <TextView style="@style/SettingsSectionHeader" android:text="Help &amp; Resources" />
-            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
-
-                    <TextView android:id="@+id/btnHowToUse" style="@style/SettingsItemAction" android:text="📘 How to Use App" />
-
-                    <View style="@style/SettingsDivider" />
-
-                    <TextView android:id="@+id/btnFAQs" style="@style/SettingsItemAction" android:text="❓ FAQs" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Section: Support -->
-            <TextView style="@style/SettingsSectionHeader" android:text="Support" />
-            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
-
-                    <TextView android:id="@+id/btnReportProblem" style="@style/SettingsItemAction" android:text="🛠️ Report a Problem" />
-
-                    <View style="@style/SettingsDivider" />
-
-                    <TextView android:id="@+id/btnContactSupport" style="@style/SettingsItemAction" android:text="💬 Contact Support" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            <!-- Welcome Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Welcome to Help &amp; Support"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorPrimary"
+                android:layout_marginBottom="8dp"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:text="We are here to help you solve problems, understand the app, and get quick assistance."
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- FAQ Section -->
+            <TextView style="@style/SettingsSectionHeader" android:text="Frequently Asked Questions (FAQ)" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+                    <TextView android:id="@+id/btnFaqAccount" style="@style/SettingsItemAction" android:text="👤 Account &amp; Login" />
+                    <View style="@style/SettingsDivider" />
+                    <TextView android:id="@+id/btnFaqContent" style="@style/SettingsItemAction" android:text="📚 Learning &amp; Content" />
+                    <View style="@style/SettingsDivider" />
+                    <TextView android:id="@+id/btnFaqUsage" style="@style/SettingsItemAction" android:text="📱 App Usage" />
+                    <View style="@style/SettingsDivider" />
+                    <TextView android:id="@+id/btnFaqPayment" style="@style/SettingsItemAction" android:text="💰 Payments &amp; Subscription" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Support & Problem Reporting -->
+            <TextView style="@style/SettingsSectionHeader" android:text="Contact &amp; Reporting" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+                    <TextView android:id="@+id/btnContactSupport" style="@style/SettingsItemAction" android:text="💬 Contact Support Team" />
+                    <View style="@style/SettingsDivider" />
+                    <TextView android:id="@+id/btnReportProblem" style="@style/SettingsItemAction" android:text="🛠️ Report a Problem" />
+                    <View style="@style/SettingsDivider" />
+                    <TextView android:id="@+id/btnFeedback" style="@style/SettingsItemAction" android:text="📝 Feedback &amp; Suggestions" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Guides Section -->
+            <TextView style="@style/SettingsSectionHeader" android:text="User Guides" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+                    <TextView android:id="@+id/btnHowToUse" style="@style/SettingsItemAction" android:text="📘 How to Use the App" />
+                    <View style="@style/SettingsDivider" />
+                    <TextView android:id="@+id/btnTroubleshooting" style="@style/SettingsItemAction" android:text="🔧 Troubleshooting Common Issues" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Safety & Accessibility -->
+            <TextView style="@style/SettingsSectionHeader" android:text="Safety &amp; Accessibility" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+                    <TextView android:id="@+id/btnPrivacySafety" style="@style/SettingsItemAction" android:text="🛡️ Privacy &amp; Safety Help" />
+                    <View style="@style/SettingsDivider" />
+                    <TextView android:id="@+id/btnAccessibility" style="@style/SettingsItemAction" android:text="🌐 Language &amp; Accessibility" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Roles Section -->
+            <TextView style="@style/SettingsSectionHeader" android:text="Parents &amp; Teachers" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+                    <TextView android:id="@+id/btnParentTeacherHelp" style="@style/SettingsItemAction" android:text="👨‍👩‍👧‍👦 Help for Parents &amp; Teachers" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Emergency Message -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="#FFF3F3"
+                app:strokeColor="#FFCDD2"
+                app:strokeWidth="1dp"
+                app:cardCornerRadius="8dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:text="🚨 If the app is not working during exams or tests, please contact support immediately."
+                    android:textColor="#D32F2F"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Footer Info -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:gravity="center"
-                android:text="We're here to help you succeed!"
-                android:textColor="#999999"
-                android:textSize="13sp" />
+                android:paddingVertical="32dp">
+                <TextView
+                    android:id="@+id/tvAppVersion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="App Version: 1.0.0"
+                    android:textColor="#999999"
+                    android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/tvLastUpdate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Last Updated: June 2026"
+                    android:textColor="#999999"
+                    android:textSize="12sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="millionteshome439@gmail.com"
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="4dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="© 2026 AceGrade. All rights reserved."
+                    android:textColor="#999999"
+                    android:textSize="11sp"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

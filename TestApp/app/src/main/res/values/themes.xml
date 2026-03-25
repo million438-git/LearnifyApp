@@ -1,28 +1,51 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Base application theme (Modern Material 3) -->
     <style name="Base.Theme.TestApp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- 🔵 Primary Theme: Blue + White + Soft Gray -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
+        <!-- Primary Brand Colors -->
+        <item name="colorPrimary">@color/blue_600</item>
         <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/blue_500</item>
+        <item name="colorOnPrimaryContainer">@color/white</item>
 
-        <!-- Secondary colors -->
-        <item name="colorSecondary">@color/colorAccent</item>
+        <!-- Secondary Colors -->
+        <item name="colorSecondary">@color/slate_700</item>
         <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryContainer">#E0E7FF</item>
+        <item name="colorOnSecondaryContainer">@color/blue_600</item>
 
-        <!-- Background and Surface -->
-        <item name="android:windowBackground">@color/dashboard_bg</item>
-        <item name="colorSurface">@color/card_bg</item>
-        <item name="colorOnSurface">@color/text_primary</item>
+        <!-- Tertiary / Neutral Colors -->
+        <item name="android:windowBackground">@color/slate_50</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/slate_900</item>
+        <item name="colorSurfaceVariant">#F3F4F6</item>
+        <item name="colorOnSurfaceVariant">@color/slate_700</item>
+        <item name="colorOutline">@color/slate_200</item>
+
+        <!-- Standard Text Colors -->
+        <item name="android:textColorPrimary">@color/slate_900</item>
+        <item name="android:textColorSecondary">@color/slate_500</item>
 
         <!-- Status Bar -->
-        <item name="android:statusBarColor">@color/colorPrimary</item>
-        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+        <!-- Fix for BottomNavigationView crash (Missing default colors) -->
+        <item name="itemIconTint">@color/nav_item_colors</item>
+        <item name="itemTextColor">@color/nav_item_colors</item>
     </style>
 
     <style name="Theme.TestApp" parent="Base.Theme.TestApp" />
 
-    <!-- Splash Screen Style -->
+    <!-- High Contrast Theme for Clear Vision -->
+    <style name="Theme.TestApp.HighContrast" parent="Base.Theme.TestApp">
+        <item name="android:windowBackground">@color/white</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/black</item>
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorSecondary">@color/black</item>
+        <item name="colorOutline">@color/black</item>
+    </style>
+
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/white</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_app_logo</item>

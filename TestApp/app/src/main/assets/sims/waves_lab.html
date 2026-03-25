@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #0f172a; color: white; margin: 0; padding: 15px; overflow: hidden; touch-action: none; }
+        .lab-bench { background: #1e293b; border-radius: 20px; padding: 20px; position: relative; height: 250px; margin-bottom: 20px; border: 1px solid #334155; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        canvas { display: block; background: #1e293b; border-radius: 10px; }
+
+        .mode-selector { display: flex; gap: 10px; margin-bottom: 15px; }
+        .mode-btn { flex: 1; padding: 10px; border: 1px solid #3b82f6; border-radius: 8px; background: transparent; color: white; cursor: pointer; font-weight: bold; }
+        .active-mode { background: #3b82f6 !important; }
+
+        .controls { background: #334155; padding: 15px; border-radius: 15px; text-align: left; }
+        label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 8px; }
+        input[type=range] { width: 100%; }
+
+        .exp { font-size: 13px; color: #94a3b8; margin-top: 15px; line-height: 1.4; }
+        b { color: #3b82f6; }
+    </style>
+</head>
+<body>
+    <div class="mode-selector">
+        <button id="btnSound" class="mode-btn active-mode" onclick="setMode('sound')">🔊 SOUND</button>
+        <button id="btnLight" class="mode-btn" onclick="setMode('light')">🔦 LIGHT</button>
+    </div>
+
+    <div class="lab-bench">
+        <canvas id="wavesCanvas"></canvas>
+    </div>
+
+    <div class="controls">
+        <div id="soundControls">
+            <label>Frequency ($f$): <span id="freqVal">50</span> Hz</label>
+            <input type="range" id="freqInput" min="10" max="200" value="50" oninput="updateSim()">
+        </div>
+        <div id="lightControls" style="display:none;">
+            <label>Incident Angle: <span id="angleVal">45</span>°</label>
+            <input type="range" id="angleInput" min="10" max="80" value="45" oninput="updateSim()">
+        </div>
+
+        <div class="exp" id="explanation">
+            <b>Sound:</b> Mechanical wave. Watch the speaker's pressure waves push the paper. Higher frequency = faster vibration.
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('wavesCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 300;
+        canvas.height = 200;
+
+        let mode = 'sound';
+        let freq = 50;
+        let angle = 45;
+        let time = 0;
+
+        function setMode(m) {
+            mode = m;
+            document.getElementById('btnSound').className = m === 'sound' ? 'mode-btn active-mode' : 'mode-btn';
+            document.getElementById('btnLight').className = m === 'light' ? 'mode-btn active-mode' : 'mode-btn';
+            document.getElementById('soundControls').style.display = m === 'sound' ? 'block' : 'none';
+            document.getElementById('lightControls').style.display = m === 'light' ? 'block' : 'none';
+            document.getElementById('explanation').innerHTML = m === 'sound' ?
+                "<b>Sound:</b> Mechanical wave. Watch the speaker's pressure waves push the paper. Higher frequency = faster vibration." :
+                "<b>Reflection:</b> Law of Reflection states $\\theta_i = \\theta_r$. Drag the slider to see 'Angle In = Angle Out'.";
+        }
+
+        function updateSim() {
+            freq = document.getElementById('freqInput').value;
+            angle = document.getElementById('angleInput').value;
+            document.getElementById('freqVal').innerText = freq;
+            document.getElementById('angleVal').innerText = angle;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            time += 0.05;
+
+            if (mode === 'sound') {
+                // Draw Speaker
+                ctx.fillStyle = '#475569';
+                ctx.fillRect(20, 70, 40, 60);
+                ctx.beginPath();
+                ctx.arc(60, 100, 30, -Math.PI/2, Math.PI/2);
+                ctx.fill();
+
+                // Draw Waves
+                ctx.strokeStyle = '#3b82f6';
+                ctx.lineWidth = 2;
+                for(let i=0; i<5; i++) {
+                    let r = (time * (freq/10) + i*40) % 200;
+                    if(r > 0 && r < 180) {
+                        ctx.beginPath();
+                        ctx.arc(60, 100, r, -Math.PI/4, Math.PI/4);
+                        ctx.globalAlpha = 1 - (r/200);
+                        ctx.stroke();
+                    }
+                }
+                ctx.globalAlpha = 1;
+
+                // Draw Paper
+                let vibration = Math.sin(time * (freq/5)) * (freq/20);
+                ctx.fillStyle = '#f8fafc';
+                ctx.fillRect(240 + vibration, 60, 10, 80);
+                ctx.font = '10px Arial';
+                ctx.fillStyle = '#94a3b8';
+                ctx.fillText("PAPER", 235, 155);
+
+            } else {
+                // Draw Mirror
+                ctx.strokeStyle = '#94a3b8';
+                ctx.lineWidth = 6;
+                ctx.beginPath();
+                ctx.moveTo(50, 180);
+                ctx.lineTo(250, 180);
+                ctx.stroke();
+
+                // Mirror surface
+                ctx.strokeStyle = '#38bdf8';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(50, 177);
+                ctx.lineTo(250, 177);
+                ctx.stroke();
+
+                const rad = angle * Math.PI / 180;
+                const midX = 150;
+                const midY = 177;
+
+                // Incident Ray
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(midX - 100 * Math.tan(rad), 77);
+                ctx.lineTo(midX, midY);
+                ctx.stroke();
+
+                // Reflected Ray
+                ctx.setLineDash([]);
+                ctx.strokeStyle = '#fbbf24';
+                ctx.beginPath();
+                ctx.moveTo(midX, midY);
+                ctx.lineTo(midX + 100 * Math.tan(rad), 77);
+                ctx.stroke();
+
+                // Labels
+                ctx.font = '12px Arial';
+                ctx.fillStyle = '#ef4444';
+                ctx.fillText(`i = ${angle}°`, midX - 40, 150);
+                ctx.fillStyle = '#fbbf24';
+                ctx.fillText(`r = ${angle}°`, midX + 15, 150);
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    </script>
+</body>
+</html>

@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 11 Physics – Unit 7 · Nuclear Physics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f8fafc;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: #1e293b;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #6b21a5, #4c1d95);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-radius: 40px 40px 20px 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(76,29,149,0.2);
+        }
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.15s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.07);
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #6b21a5;
+            border-left: 8px solid #6b21a5;
+            padding-left: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .remember, .wow {
+            padding: 1.2rem 1.5rem;
+            border-radius: 20px;
+            margin: 1.5rem 0;
+            font-weight: 500;
+        }
+        .remember {
+            background: #ecfeff;
+            border-left: 6px solid #22c55e;
+        }
+        .wow {
+            background: #fff7ed;
+            border-left: 6px solid #f59e0b;
+        }
+        ul, ol {
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+        .question-block {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin: 1.2rem 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.02);
+        }
+        .q-num {
+            display: inline-block;
+            background: #6b21a5;
+            color: white;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+        .q-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .answer-btn {
+            background: #6b21a5;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem 0;
+            transition: background 0.1s;
+        }
+        .answer-btn:hover {
+            background: #4c1d95;
+        }
+        .answer {
+            display: none;
+            background: #ecfeff;
+            padding: 1.2rem;
+            border-radius: 18px;
+            margin-top: 1rem;
+            border-left: 5px solid #6b21a5;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #cbd5e1, transparent);
+            margin: 2.5rem 0;
+        }
+        .footer-note {
+            text-align: center;
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 50px;
+            border: 1px dashed #64748b;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>☢️ Grade 11 Physics – Unit 7</h1>
+        <p>Nuclear Physics · 60 advanced questions · exam‑ready</p>
+    </header>
+
+    <!-- Unit notes -->
+    <div class="card">
+        <h2>📘 Nuclear physics – key ideas</h2>
+        <p>The nucleus contains protons and neutrons bound by the strong nuclear force. Binding energy determines stability. Radioactive decay (alpha, beta, gamma) transforms nuclei. Half‑life quantifies decay rate. Fission splits heavy nuclei; fusion joins light nuclei – both release enormous energy. Nuclear reactions are used in power, medicine, and dating. Understanding these concepts is essential for modern physics and technology.</p>
+        <div class="remember">📌 REMEMBER: Binding energy per nucleon peaks around iron – most stable element. Energy released = mass defect × c² (E = Δm c²).</div>
+        <div class="wow">✨ WOW: The energy released in nuclear reactions comes from the conversion of a tiny amount of mass into energy – E = m c²!</div>
+    </div>
+
+    <!-- ========== 60 QUESTIONS ========== -->
+    <!-- Part A: Conceptual (Q1–Q30) -->
+    <div class="question-block">
+        <div class="q-num">Q1 (conceptual)</div>
+        <div class="q-text">Explain why nuclear binding energy per nucleon determines the stability of a nucleus.</div>
+        <button class="answer-btn" onclick="toggle('a1')">Show answer</button>
+        <div class="answer" id="a1">
+            <strong>Answer:</strong><br>
+            Higher binding energy per nucleon means nucleons are more strongly bound → more stable. Lower binding energy → weakly bound → nucleus is prone to decay.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q2 (conceptual)</div>
+        <div class="q-text">Why does fusion release more energy per nucleon than fission for light nuclei?</div>
+        <button class="answer-btn" onclick="toggle('a2')">Show answer</button>
+        <div class="answer" id="a2">
+            <strong>Answer:</strong><br>
+            Light nuclei combine to form a nucleus with higher binding energy per nucleon → energy released. Fission of heavy nuclei also releases energy, but the gain per nucleon is smaller than for fusion of very light nuclei like hydrogen.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q3 (conceptual)</div>
+        <div class="q-text">Why is beta decay accompanied by an electron or positron?</div>
+        <button class="answer-btn" onclick="toggle('a3')">Show answer</button>
+        <div class="answer" id="a3">
+            <strong>Answer:</strong><br>
+            In beta minus decay, a neutron turns into a proton, emitting an electron and an antineutrino. In beta plus decay, a proton turns into a neutron, emitting a positron and a neutrino. This conserves charge and lepton number.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q4 (conceptual)</div>
+        <div class="q-text">Explain why alpha particles are highly ionizing but have low penetration.</div>
+        <button class="answer-btn" onclick="toggle('a4')">Show answer</button>
+        <div class="answer" id="a4">
+            <strong>Answer:</strong><br>
+            Alpha particles are massive and doubly charged, so they interact strongly with electrons in atoms → cause intense ionization. Their heavy mass makes them lose energy quickly → very short range (low penetration).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q5 (conceptual)</div>
+        <div class="q-text">Why is gamma radiation highly penetrating but weakly ionizing?</div>
+        <button class="answer-btn" onclick="toggle('a5')">Show answer</button>
+        <div class="answer" id="a5">
+            <strong>Answer:</strong><br>
+            Gamma rays have no mass and no charge, so they interact weakly with matter → low ionization. They can pass through thick materials → high penetration.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q6 (conceptual)</div>
+        <div class="q-text">Why does nuclear fission require a neutron to initiate?</div>
+        <button class="answer-btn" onclick="toggle('a6')">Show answer</button>
+        <div class="answer" id="a6">
+            <strong>Answer:</strong><br>
+            A neutron is uncharged, so it can penetrate the nucleus without being repelled by the positive charge. When absorbed, the nucleus becomes unstable and splits.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q7 (conceptual)</div>
+        <div class="q-text">Why is half‑life a crucial property of radioactive isotopes?</div>
+        <button class="answer-btn" onclick="toggle('a7')">Show answer</button>
+        <div class="answer" id="a7">
+            <strong>Answer:</strong><br>
+            Half‑life determines the rate of decay and allows us to predict how much of a sample remains after any given time. It is independent of the initial amount, making it useful for dating and medical applications.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q8 (conceptual)</div>
+        <div class="q-text">Explain why chain reactions require a critical mass.</div>
+        <button class="answer-btn" onclick="toggle('a8')">Show answer</button>
+        <div class="answer" id="a8">
+            <strong>Answer:</strong><br>
+            Below critical mass, too many neutrons escape without causing further fissions → chain reaction stops. Critical mass ensures that enough neutrons are captured to sustain the reaction.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q9 (conceptual)</div>
+        <div class="q-text">Why do alpha emitters become different elements?</div>
+        <button class="answer-btn" onclick="toggle('a9')">Show answer</button>
+        <div class="answer" id="a9">
+            <strong>Answer:</strong><br>
+            An alpha particle consists of 2 protons and 2 neutrons. When a nucleus emits an alpha, its atomic number decreases by 2 and mass number by 4 – it transforms into a different element.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q10 (conceptual)</div>
+        <div class="q-text">Why is carbon‑14 useful in dating ancient artifacts?</div>
+        <button class="answer-btn" onclick="toggle('a10')">Show answer</button>
+        <div class="answer" id="a10">
+            <strong>Answer:</strong><br>
+            Carbon‑14 is radioactive with a known half‑life (5730 years). While an organism is alive, it maintains a constant ratio of C‑14 to C‑12. After death, C‑14 decays without replenishment. Measuring the remaining C‑14 tells how long ago the organism died.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q11 (conceptual)</div>
+        <div class="q-text">Why are neutrons preferred for nuclear reactions rather than protons?</div>
+        <button class="answer-btn" onclick="toggle('a11')">Show answer</button>
+        <div class="answer" id="a11">
+            <strong>Answer:</strong><br>
+            Neutrons have no charge, so they are not repelled by the positively charged nucleus. Protons would need high energy to overcome Coulomb repulsion.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q12 (conceptual)</div>
+        <div class="q-text">Explain why fission reactors use moderators.</div>
+        <button class="answer-btn" onclick="toggle('a12')">Show answer</button>
+        <div class="answer" id="a12">
+            <strong>Answer:</strong><br>
+            Moderators slow down fast neutrons to thermal speeds. Slow neutrons are more likely to be captured by fissile nuclei like uranium‑235, sustaining the chain reaction.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q13 (conceptual)</div>
+        <div class="q-text">Why is the binding energy curve important in nuclear physics?</div>
+        <button class="answer-btn" onclick="toggle('a13')">Show answer</button>
+        <div class="answer" id="a13">
+            <strong>Answer:</strong><br>
+            The curve shows binding energy per nucleon vs. mass number. It explains why fission of heavy nuclei and fusion of light nuclei release energy – both processes move toward more tightly bound (higher binding energy) nuclei.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q14 (conceptual)</div>
+        <div class="q-text">Explain why radiation dose is measured in sieverts (Sv).</div>
+        <button class="answer-btn" onclick="toggle('a14')">Show answer</button>
+        <div class="answer" id="a14">
+            <strong>Answer:</strong><br>
+            The sievert accounts for the biological effect of different types of radiation, not just the energy absorbed. It weights the absorbed dose by factors that reflect how damaging each radiation type is to living tissue.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q15 (conceptual)</div>
+        <div class="q-text">Why is uranium‑235 preferred for nuclear reactors over uranium‑238?</div>
+        <button class="answer-btn" onclick="toggle('a15')">Show answer</button>
+        <div class="answer" id="a15">
+            <strong>Answer:</strong><br>
+            Uranium‑235 is fissile with thermal (slow) neutrons – it can sustain a chain reaction in a reactor. Uranium‑238 requires fast neutrons and is not easily fissionable by slow neutrons.
+        </div>
+    </div>
+
+    <!-- Part B: Numerical (Q16–Q30) -->
+    <div class="question-block">
+        <div class="q-num">Q16 (numerical)</div>
+        <div class="q-text">A nucleus has a mass defect Δm = 0.002 atomic mass units. Find its binding energy in MeV (1 u = 931 MeV).</div>
+        <button class="answer-btn" onclick="toggle('a16')">Show answer</button>
+        <div class="answer" id="a16">
+            <strong>Step‑by‑step:</strong><br>
+            E = Δm × 931 MeV = 0.002 × 931 = 1.862 MeV.<br>
+            ✅ Answer: about 1.86 MeV
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q17 (numerical)</div>
+        <div class="q-text">Find the energy released when 0.01 kg of uranium‑235 undergoes complete fission. (Each fission releases 200 MeV; 1 u = 1.66×10⁻²⁷ kg; Avogadro = 6.02×10²³)</div>
+        <button class="answer-btn" onclick="toggle('a17')">Show answer</button>
+        <div class="answer" id="a17">
+            <strong>Step‑by‑step:</strong><br>
+            Number of nuclei = mass / (mass per nucleus) = 0.01 / (235 × 1.66×10⁻²⁷) ≈ 2.56×10²² nuclei.<br>
+            Energy in J per fission = 200 × 1.602×10⁻¹³ = 3.204×10⁻¹¹ J.<br>
+            Total energy = 2.56×10²² × 3.204×10⁻¹¹ ≈ 8.2×10¹¹ J.<br>
+            ✅ Answer: about 8.2×10¹¹ J
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q18 (numerical)</div>
+        <div class="q-text">The half‑life of carbon‑14 is 5730 years. How much remains from a 10 g sample after 17,190 years?</div>
+        <button class="answer-btn" onclick="toggle('a18')">Show answer</button>
+        <div class="answer" id="a18">
+            <strong>Step‑by‑step:</strong><br>
+            Number of half‑lives = 17190 / 5730 = 3.<br>
+            Remaining mass = initial × (½)³ = 10 × 1/8 = 1.25 g.<br>
+            ✅ Answer: 1.25 g
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q19 (numerical)</div>
+        <div class="q-text">A sample emits 4000 Bq initially. After one half‑life, what is its activity?</div>
+        <button class="answer-btn" onclick="toggle('a19')">Show answer</button>
+        <div class="answer" id="a19">
+            <strong>Step‑by‑step:</strong><br>
+            Activity = A₀ / 2 = 4000 / 2 = 2000 Bq.<br>
+            ✅ Answer: 2000 Bq
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q20 (numerical)</div>
+        <div class="q-text">An alpha particle (mass 4 u) is emitted with kinetic energy 5 MeV. Find its velocity (1 u = 1.66×10⁻²⁷ kg, 1 eV = 1.6×10⁻¹⁹ J).</div>
+        <button class="answer-btn" onclick="toggle('a20')">Show answer</button>
+        <div class="answer" id="a20">
+            <strong>Step‑by‑step:</strong><br>
+            Energy in J = 5 × 10⁶ × 1.6×10⁻¹⁹ = 8×10⁻¹³ J.<br>
+            Mass = 4 × 1.66×10⁻²⁷ = 6.64×10⁻²⁷ kg.<br>
+            v = √(2E/m) = √(2 × 8×10⁻¹³ / 6.64×10⁻²⁷) = √(16×10⁻¹³ / 6.64×10⁻²⁷) ≈ √(2.41×10¹⁴) ≈ 1.55×10⁷ m/s.<br>
+            ✅ Answer: about 1.55×10⁷ m/s
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q21 (numerical)</div>
+        <div class="q-text">If each fission of uranium‑235 releases 2.5 neutrons on average, how many neutrons are released from 10²³ fissions?</div>
+        <button class="answer-btn" onclick="toggle('a21')">Show answer</button>
+        <div class="answer" id="a21">
+            <strong>Step‑by‑step:</strong><br>
+            Neutrons = number of fissions × neutrons per fission = 10²³ × 2.5 = 2.5×10²³ neutrons.<br>
+            ✅ Answer: 2.5×10²³ neutrons
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q22 (numerical)</div>
+        <div class="q-text">Calculate the energy released per gram of uranium‑235 fission, assuming 200 MeV per fission. (Avogadro = 6.02×10²³, 1 eV = 1.6×10⁻¹⁹ J)</div>
+        <button class="answer-btn" onclick="toggle('a22')">Show answer</button>
+        <div class="answer" id="a22">
+            <strong>Step‑by‑step:</strong><br>
+            Molar mass of U‑235 = 235 g/mol → 1 g = 1/235 mol.<br>
+            Number of nuclei = (1/235) × 6.02×10²³ ≈ 2.56×10²¹.<br>
+            Energy per fission = 200 × 1.6×10⁻¹³ = 3.2×10⁻¹¹ J.<br>
+            Total energy = 2.56×10²¹ × 3.2×10⁻¹¹ ≈ 8.19×10¹⁰ J.<br>
+            ✅ Answer: about 8.2×10¹⁰ J per gram
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q23 (numerical)</div>
+        <div class="q-text">The half‑life of a sample is 10 days. Find its decay constant in day⁻¹.</div>
+        <button class="answer-btn" onclick="toggle('a23')">Show answer</button>
+        <div class="answer" id="a23">
+            <strong>Step‑by‑step:</strong><br>
+            λ = 0.693 / T½ = 0.693 / 10 = 0.0693 day⁻¹.<br>
+            ✅ Answer: 0.0693 day⁻¹
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q24 (numerical)</div>
+        <div class="q-text">A sample of Ra‑226 decays from 16 g to 2 g in 1600 years. Find its half‑life.</div>
+        <button class="answer-btn" onclick="toggle('a24')">Show answer</button>
+        <div class="answer" id="a24">
+            <strong>Step‑by‑step:</strong><br>
+            N / N₀ = (½)^(t / T). Here 2/16 = 1/8 = (½)³, so 3 = t / T → T = t / 3 = 1600 / 3 ≈ 533.3 years.<br>
+            ✅ Answer: about 533 years
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q25 (numerical)</div>
+        <div class="q-text">In a fusion reaction, 4 g of hydrogen convert to helium with a mass defect of 0.03 g. Find the energy released (c = 3×10⁸ m/s).</div>
+        <button class="answer-btn" onclick="toggle('a25')">Show answer</button>
+        <div class="answer" id="a25">
+            <strong>Step‑by‑step:</strong><br>
+            Δm = 0.03 g = 3×10⁻⁵ kg.<br>
+            E = Δm c² = 3×10⁻⁵ × (3×10⁸)² = 3×10⁻⁵ × 9×10¹⁶ = 2.7×10¹² J.<br>
+            ✅ Answer: 2.7×10¹² J
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q26 (numerical)</div>
+        <div class="q-text">An alpha particle is emitted from Po‑210 with Q = 5.3 MeV. Find its momentum (mass of alpha = 4 u, 1 u = 1.66×10⁻²⁷ kg, 1 MeV = 1.602×10⁻¹³ J).</div>
+        <button class="answer-btn" onclick="toggle('a26')">Show answer</button>
+        <div class="answer" id="a26">
+            <strong>Step‑by‑step:</strong><br>
+            Energy in J = 5.3 × 1.602×10⁻¹³ ≈ 8.49×10⁻¹³ J.<br>
+            Mass = 4 × 1.66×10⁻²⁷ = 6.64×10⁻²⁷ kg.<br>
+            p = √(2 m E) = √(2 × 6.64×10⁻²⁷ × 8.49×10⁻¹³) = √(1.128×10⁻³⁸) ≈ 1.06×10⁻¹⁹ kg·m/s.<br>
+            ✅ Answer: about 1.06×10⁻¹⁹ kg·m/s
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q27 (numerical)</div>
+        <div class="q-text">A carbon‑14 sample has an activity of 0.01 Bq. If the number of nuclei is 6.02×10²³, find the decay constant λ.</div>
+        <button class="answer-btn" onclick="toggle('a27')">Show answer</button>
+        <div class="answer" id="a27">
+            <strong>Step‑by‑step:</strong><br>
+            λ = A / N = 0.01 / 6.02×10²³ ≈ 1.66×10⁻²⁶ s⁻¹.<br>
+            ✅ Answer: 1.66×10⁻²⁶ s⁻¹
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q28 (numerical)</div>
+        <div class="q-text">In a chain reaction, each fission releases 3 neutrons. If there are 10²³ fissile nuclei, what is the maximum possible number of neutrons released if all undergo fission?</div>
+        <button class="answer-btn" onclick="toggle('a28')">Show answer</button>
+        <div class="answer" id="a28">
+            <strong>Step‑by‑step:</strong><br>
+            Total neutrons = number of fissions × neutrons per fission = 10²³ × 3 = 3×10²³ neutrons.<br>
+            ✅ Answer: 3×10²³ neutrons
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q29 (numerical)</div>
+        <div class="q-text">The fission of 1 kg of uranium‑235 releases 8×10¹³ J. How many fissions occurred? (Energy per fission = 200 MeV = 3.2×10⁻¹¹ J)</div>
+        <button class="answer-btn" onclick="toggle('a29')">Show answer</button>
+        <div class="answer" id="a29">
+            <strong>Step‑by‑step:</strong><br>
+            Number of fissions = total energy / energy per fission = 8×10¹³ / 3.2×10⁻¹¹ = 2.5×10²⁴ fissions.<br>
+            ✅ Answer: 2.5×10²⁴ fissions
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q30 (conceptual)</div>
+        <div class="q-text">Explain why nuclear energy is both powerful and dangerous.</div>
+        <button class="answer-btn" onclick="toggle('a30')">Show answer</button>
+        <div class="answer" id="a30">
+            <strong>Answer:</strong><br>
+            Nuclear energy has an extremely high energy density – a small mass produces enormous energy (E = m c²). However, it is dangerous because of radiation hazards, the risk of meltdown, long‑lived radioactive waste, and potential for misuse in weapons.
+        </div>
+    </div>
+
+    <!-- ========== NEW 30 QUESTIONS (Q31–Q60) ========== -->
+    <!-- Additional conceptual Q31–Q45 -->
+    <div class="question-block">
+        <div class="q-num">Q31 (conceptual)</div>
+        <div class="q-text">Why do heavy nuclei tend to undergo alpha decay?</div>
+        <button class="answer-btn" onclick="toggle('a31')">Show answer</button>
+        <div class="answer" id="a31">
+            <strong>Answer:</strong><br>
+            Heavy nuclei have many protons, causing strong Coulomb repulsion. Alpha decay reduces both proton and neutron numbers, moving towards a more stable configuration with higher binding energy per nucleon.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q32 (conceptual)</div>
+        <div class="q-text">Explain the difference between nuclear fission and nuclear fusion.</div>
+        <button class="answer-btn" onclick="toggle('a32')">Show answer</button>
+        <div class="answer" id="a32">
+            <strong>Answer:</strong><br>
+            Fission splits a heavy nucleus into lighter ones, releasing energy. Fusion combines very light nuclei into a heavier nucleus, also releasing energy. Both occur because the products have higher binding energy per nucleon than the reactants.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q33 (conceptual)</div>
+        <div class="q-text">Why is a chain reaction possible only with certain isotopes like uranium‑235?</div>
+        <button class="answer-btn" onclick="toggle('a33')">Show answer</button>
+        <div class="answer" id="a33">
+            <strong>Answer:</strong><br>
+            In fission, neutrons are released that can cause further fissions. U‑235 fissions easily with slow neutrons and releases enough neutrons to sustain a chain. U‑238 requires fast neutrons and produces fewer neutrons, making a chain reaction difficult.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q34 (conceptual)</div>
+        <div class="q-text">What is the role of control rods in a nuclear reactor?</div>
+        <button class="answer-btn" onclick="toggle('a34')">Show answer</button>
+        <div class="answer" id="a34">
+            <strong>Answer:</strong><br>
+            Control rods absorb neutrons. By inserting them deeper into the core, they reduce the number of neutrons available for fission, thus controlling the reaction rate and preventing overheating.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q35 (conceptual)</div>
+        <div class="q-text">Explain why the sun produces energy through fusion and not fission.</div>
+        <button class="answer-btn" onclick="toggle('a35')">Show answer</button>
+        <div class="answer" id="a35">
+            <strong>Answer:</strong><br>
+            The sun is composed mostly of hydrogen (light nuclei). Fusion of hydrogen into helium releases energy because the products are more tightly bound. Fission of heavy nuclei is not possible because heavy elements are scarce in the sun.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q36 (conceptual)</div>
+        <div class="q-text">Why does the binding energy per nucleon curve peak at iron‑56?</div>
+        <button class="answer-btn" onclick="toggle('a36')">Show answer</button>
+        <div class="answer" id="a36">
+            <strong>Answer:</strong><br>
+            Iron‑56 has the most stable configuration; nucleons are most tightly bound. For lighter nuclei, fusion increases binding energy; for heavier nuclei, fission increases binding energy. Iron is the end point of both processes.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q37 (conceptual)</div>
+        <div class="q-text">What is meant by ‘mass defect’ and how does it relate to nuclear stability?</div>
+        <button class="answer-btn" onclick="toggle('a37')">Show answer</button>
+        <div class="answer" id="a37">
+            <strong>Answer:</strong><br>
+            Mass defect is the difference between the mass of a nucleus and the sum of its constituent nucleons. This missing mass is converted to binding energy. Larger mass defect per nucleon means greater stability.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q38 (conceptual)</div>
+        <div class="q-text">Explain why gamma rays often accompany alpha and beta decay.</div>
+        <button class="answer-btn" onclick="toggle('a38')">Show answer</button>
+        <div class="answer" id="a38">
+            <strong>Answer:</strong><br>
+            After alpha or beta emission, the daughter nucleus may be left in an excited state. It de‑excites by emitting a gamma photon, carrying away excess energy without changing the number of protons or neutrons.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q39 (conceptual)</div>
+        <div class="q-text">Why are some isotopes radioactive while others are not?</div>
+        <button class="answer-btn" onclick="toggle('a39')">Show answer</button>
+        <div class="answer" id="a39">
+            <strong>Answer:</strong><br>
+            Radioactivity occurs when a nucleus has an unstable combination of protons and neutrons. Stable isotopes have a balance that minimizes energy; unstable ones decay to reach that balance.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q40 (conceptual)</div>
+        <div class="q-text">Explain the concept of ‘neutron moderation’ in nuclear reactors.</div>
+        <button class="answer-btn" onclick="toggle('a40')">Show answer</button>
+        <div class="answer" id="a40">
+            <strong>Answer:</strong><br>
+            Neutrons released from fission are fast‑moving. Moderators (like water or graphite) slow them down to thermal speeds, increasing the probability of inducing further fission in U‑235.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q41 (conceptual)</div>
+        <div class="q-text">Why does nuclear fusion require extremely high temperatures?</div>
+        <button class="answer-btn" onclick="toggle('a41')">Show answer</button>
+        <div class="answer" id="a41">
+            <strong>Answer:</strong><br>
+            Nuclei are positively charged and repel each other. High temperature gives them enough kinetic energy to overcome Coulomb repulsion and get close enough for the strong nuclear force to bind them.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q42 (conceptual)</div>
+        <div class="q-text">What is the significance of the ‘magic numbers’ in nuclear physics?</div>
+        <button class="answer-btn" onclick="toggle('a42')">Show answer</button>
+        <div class="answer" id="a42">
+            <strong>Answer:</strong><br>
+            Magic numbers (2, 8, 20, 28, 50, 82, 126) correspond to completely filled nuclear shells, making nuclei particularly stable (like noble gases in atoms). Such nuclei have higher binding energy.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q43 (conceptual)</div>
+        <div class="q-text">Explain why radioactive decay is a random process but has a predictable half‑life.</div>
+        <button class="answer-btn" onclick="toggle('a43')">Show answer</button>
+        <div class="answer" id="a43">
+            <strong>Answer:</strong><br>
+            Decay of any individual nucleus is random – we cannot predict when it will decay. However, for a large sample, the average behavior follows an exponential decay law, with a constant half‑life characteristic of the isotope.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q44 (conceptual)</div>
+        <div class="q-text">Why are beta particles emitted with a continuous energy spectrum?</div>
+        <button class="answer-btn" onclick="toggle('a44')">Show answer</button>
+        <div class="answer" id="a44">
+            <strong>Answer:</strong><br>
+            In beta decay, the energy released is shared between the beta particle and an antineutrino (or neutrino). Since the neutrino can carry variable amounts of energy, the beta spectrum is continuous.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q45 (conceptual)</div>
+        <div class="q-text">What is meant by ‘radioactive series’ and give an example.</div>
+        <button class="answer-btn" onclick="toggle('a45')">Show answer</button>
+        <div class="answer" id="a45">
+            <strong>Answer:</strong><br>
+            A radioactive series is a sequence of decays from a long‑lived parent nucleus to a stable end product. For example, uranium‑238 decays through many steps to stable lead‑206.
+        </div>
+    </div>
+
+    <!-- Additional numerical Q46–Q60 -->
+    <div class="question-block">
+        <div class="q-num">Q46 (numerical)</div>
+        <div class="q-text">A radioactive sample has a half‑life of 6 hours. How long will it take for 7/8 of the sample to decay?</div>
+        <button class="answer-btn" onclick="toggle('a46')">Show answer</button>
+        <div class="answer" id="a46">
+            <strong>Step‑by‑step:</strong><br>
+            If 7/8 decays, 1/8 remains. (1/2)^n = 1/8 → n = 3 half‑lives. Time = 3 × 6 = 18 hours.<br>
+            ✅ Answer: 18 hours
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q47 (numerical)</div>
+        <div class="q-text">The activity of a sample is 800 Bq. After 12 days, it becomes 100 Bq. Find its half‑life.</div>
+        <button class="answer-btn" onclick="toggle('a47')">Show answer</button>
+        <div class="answer" id="a47">
+            <strong>Step‑by‑step:</strong><br>
+            Activity ratio = 100/800 = 1/8 = (1/2)^n → n = 3 half‑lives. So 3 T½ = 12 days → T½ = 4 days.<br>
+            ✅ Answer: 4 days
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q48 (numerical)</div>
+        <div class="q-text">Calculate the binding energy of helium‑4 nucleus if its mass is 4.002603 u. (Proton mass = 1.007825 u, neutron mass = 1.008665 u, 1 u = 931.5 MeV/c²)</div>
+        <button class="answer-btn" onclick="toggle('a48')">Show answer</button>
+        <div class="answer" id="a48">
+            <strong>Step‑by‑step:</strong><br>
+            Mass of constituents = 2×1.007825 + 2×1.008665 = 2.01565 + 2.01733 = 4.03298 u. Mass defect = 4.03298 – 4.002603 = 0.030377 u. Binding energy = 0.030377 × 931.5 ≈ 28.3 MeV.<br>
+            ✅ Answer: 28.3 MeV
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q49 (numerical)</div>
+        <div class="q-text">A 1 mg sample of polonium‑210 has an activity of 166 GBq. Find its decay constant in s⁻¹. (Avogadro = 6.02×10²³, atomic mass = 210 g/mol)</div>
+        <button class="answer-btn" onclick="toggle('a49')">Show answer</button>
+        <div class="answer" id="a49">
+            <strong>Step‑by‑step:</strong><br>
+            Number of atoms N = (0.001 g / 210 g/mol) × 6.02×10²³ = (1/210000) × 6.02×10²³ ≈ 2.867×10¹⁸. A = 166×10⁹ Bq. λ = A / N = 1.66×10¹¹ / 2.867×10¹⁸ ≈ 5.79×10⁻⁸ s⁻¹.<br>
+            ✅ Answer: 5.79×10⁻⁸ s⁻¹
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q50 (numerical)</div>
+        <div class="q-text">How much energy is released when 1 kg of deuterium undergoes fusion to form helium? (Mass of deuterium = 2.014102 u, mass of helium‑4 = 4.002603 u, 1 u = 931.5 MeV)</div>
+        <button class="answer-btn" onclick="toggle('a50')">Show answer</button>
+        <div class="answer" id="a50">
+            <strong>Step‑by‑step:</strong><br>
+            Reaction: 2²H → ⁴He. Mass of two deuterons = 2×2.014102 = 4.028204 u. Mass defect = 4.028204 – 4.002603 = 0.025601 u per reaction. Energy per reaction = 0.025601 × 931.5 ≈ 23.85 MeV = 3.82×10⁻¹² J. Number of reactions in 1 kg = (1000 g / 2 g/mol) × 6.02×10²³ = 500 × 6.02×10²³ = 3.01×10²⁶. Total energy = 3.01×10²⁶ × 3.82×10⁻¹² ≈ 1.15×10¹⁵ J.<br>
+            ✅ Answer: 1.15×10¹⁵ J
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q51 (numerical)</div>
+        <div class="q-text">A sample contains 10¹⁰ atoms of a radioactive isotope with half‑life 5 minutes. What is its initial activity in Bq?</div>
+        <button class="answer-btn" onclick="toggle('a51')">Show answer</button>
+        <div class="answer" id="a51">
+            <strong>Step‑by‑step:</strong><br>
+            λ = 0.693 / (5×60) = 0.693 / 300 = 0.00231 s⁻¹. A = λ N = 0.00231 × 10¹⁰ = 2.31×10⁷ Bq.<br>
+            ✅ Answer: 2.31×10⁷ Bq
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q52 (numerical)</div>
+        <div class="q-text">A gamma ray has energy 1.2 MeV. Find its wavelength in metres. (h = 6.626×10⁻³⁴ J·s, c = 3×10⁸ m/s, 1 eV = 1.6×10⁻¹⁹ J)</div>
+        <button class="answer-btn" onclick="toggle('a52')">Show answer</button>
+        <div class="answer" id="a52">
+            <strong>Step‑by‑step:</strong><br>
+            E = 1.2×10⁶ × 1.6×10⁻¹⁹ = 1.92×10⁻¹³ J. λ = hc / E = (6.626×10⁻³⁴ × 3×10⁸) / 1.92×10⁻¹³ = 1.9878×10⁻²⁵ / 1.92×10⁻¹³ = 1.035×10⁻¹² m = 1.035 pm.<br>
+            ✅ Answer: 1.04×10⁻¹² m
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q53 (numerical)</div>
+        <div class="q-text">If the decay constant of a radioactive substance is 0.02 s⁻¹, find its half‑life.</div>
+        <button class="answer-btn" onclick="toggle('a53')">Show answer</button>
+        <div class="answer" id="a53">
+            <strong>Step‑by‑step:</strong><br>
+            T½ = 0.693 / λ = 0.693 / 0.02 = 34.65 s.<br>
+            ✅ Answer: 34.7 s
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q54 (numerical)</div>
+        <div class="q-text">A neutron‑induced fission of U‑235 releases 200 MeV. How many fissions are needed to produce 1 kWh of energy? (1 kWh = 3.6×10⁶ J, 1 eV = 1.6×10⁻¹⁹ J)</div>
+        <button class="answer-btn" onclick="toggle('a54')">Show answer</button>
+        <div class="answer" id="a54">
+            <strong>Step‑by‑step:</strong><br>
+            Energy per fission = 200 × 1.6×10⁻¹³ = 3.2×10⁻¹¹ J. Number of fissions = 3.6×10⁶ / 3.2×10⁻¹¹ = 1.125×10¹⁷.<br>
+            ✅ Answer: 1.13×10¹⁷ fissions
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q55 (numerical)</div>
+        <div class="q-text">A sample of iodine‑131 has a half‑life of 8 days. After 24 days, what fraction remains?</div>
+        <button class="answer-btn" onclick="toggle('a55')">Show answer</button>
+        <div class="answer" id="a55">
+            <strong>Step‑by‑step:</strong><br>
+            Number of half‑lives = 24/8 = 3. Fraction remaining = (1/2)³ = 1/8.<br>
+            ✅ Answer: 1/8
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q56 (numerical)</div>
+        <div class="q-text">Find the mass defect of oxygen‑16 if its nuclear mass is 15.994915 u. (Proton = 1.007825 u, neutron = 1.008665 u, O‑16 has 8p + 8n)</div>
+        <button class="answer-btn" onclick="toggle('a56')">Show answer</button>
+        <div class="answer" id="a56">
+            <strong>Step‑by‑step:</strong><br>
+            Mass of constituents = 8×1.007825 + 8×1.008665 = 8.0626 + 8.06932 = 16.13192 u. Mass defect = 16.13192 – 15.994915 = 0.137005 u.<br>
+            ✅ Answer: 0.1370 u
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q57 (numerical)</div>
+        <div class="q-text">A radioactive sample decays from 5000 to 625 in 30 minutes. Find its half‑life.</div>
+        <button class="answer-btn" onclick="toggle('a57')">Show answer</button>
+        <div class="answer" id="a57">
+            <strong>Step‑by‑step:</strong><br>
+            Ratio = 625/5000 = 1/8 = (1/2)³, so 3 half‑lives = 30 min → T½ = 10 min.<br>
+            ✅ Answer: 10 minutes
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q58 (numerical)</div>
+        <div class="q-text">How much energy is equivalent to the mass of an electron (9.11×10⁻³¹ kg)? (c = 3×10⁸ m/s)</div>
+        <button class="answer-btn" onclick="toggle('a58')">Show answer</button>
+        <div class="answer" id="a58">
+            <strong>Step‑by‑step:</strong><br>
+            E = m c² = 9.11×10⁻³¹ × (3×10⁸)² = 9.11×10⁻³¹ × 9×10¹⁶ = 8.199×10⁻¹⁴ J = 0.511 MeV.<br>
+            ✅ Answer: 8.20×10⁻¹⁴ J (0.511 MeV)
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q59 (numerical)</div>
+        <div class="q-text">A sample of 10⁶ atoms has a half‑life of 2 hours. How many atoms remain after 6 hours?</div>
+        <button class="answer-btn" onclick="toggle('a59')">Show answer</button>
+        <div class="answer" id="a59">
+            <strong>Step‑by‑step:</strong><br>
+            Number of half‑lives = 6/2 = 3. Remaining = 10⁶ × (1/2)³ = 10⁶ / 8 = 1.25×10⁵.<br>
+            ✅ Answer: 1.25×10⁵ atoms
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q60 (conceptual)</div>
+        <div class="q-text">Explain how nuclear physics contributes to medical diagnostics and treatment.</div>
+        <button class="answer-btn" onclick="toggle('a60')">Show answer</button>
+        <div class="answer" id="a60">
+            <strong>Answer:</strong><br>
+            Radioisotopes are used in imaging (PET scans, gamma cameras) and radiotherapy (cancer treatment). Tracers like technetium‑99m help diagnose organ function. Controlled radiation destroys tumor cells.
+        </div>
+    </div>
+
+    <hr>
+    <div class="footer-note">
+        ✅ UNIT 7 COMPLETE · 60 questions · 30 conceptual + 30 numerical · exam‑ready · feel the WOW!
+    </div>
+</div>
+
+<script>
+    function toggle(id) {
+        var el = document.getElementById(id);
+        if (el.style.display === "block") {
+            el.style.display = "none";
+        } else {
+            el.style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>

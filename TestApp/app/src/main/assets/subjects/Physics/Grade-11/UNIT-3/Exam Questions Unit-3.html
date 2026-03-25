@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 11 Physics – Unit 3 · Motion in One and Two Dimensions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f8fafc;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: #1e293b;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #2563eb, #1e3a8a);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-radius: 40px 40px 20px 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(30,58,138,0.2);
+        }
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.15s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.07);
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #2563eb;
+            border-left: 8px solid #2563eb;
+            padding-left: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .remember, .wow {
+            padding: 1.2rem 1.5rem;
+            border-radius: 20px;
+            margin: 1.5rem 0;
+            font-weight: 500;
+        }
+        .remember {
+            background: #ecfeff;
+            border-left: 6px solid #22c55e;
+        }
+        .wow {
+            background: #fff7ed;
+            border-left: 6px solid #f59e0b;
+        }
+        ul, ol {
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+        .question-block {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin: 1.2rem 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.02);
+        }
+        .q-num {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+        .q-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .options {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0 1.2rem;
+        }
+        .options li {
+            background: #f8fafc;
+            margin: 0.6rem 0;
+            padding: 0.7rem 1.2rem;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            font-size: 1rem;
+        }
+        .options li strong {
+            color: #2563eb;
+            margin-right: 0.5rem;
+        }
+        .answer-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem 0;
+            transition: background 0.1s;
+        }
+        .answer-btn:hover {
+            background: #1e3a8a;
+        }
+        .answer {
+            display: none;
+            background: #ecfeff;
+            padding: 1.2rem;
+            border-radius: 18px;
+            margin-top: 1rem;
+            border-left: 5px solid #2563eb;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #cbd5e1, transparent);
+            margin: 2.5rem 0;
+        }
+        .footer-note {
+            text-align: center;
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 50px;
+            border: 1px dashed #64748b;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>🏃 Grade 11 Physics – Unit 3</h1>
+        <p>Motion in One and Two Dimensions · 30 challenging questions · exam‑ready</p>
+    </header>
+
+    <!-- Unit notes -->
+    <div class="card">
+        <h2>📘 Motion in 1D and 2D – key ideas</h2>
+        <p>Motion is described by displacement, velocity, and acceleration. In one dimension, direction is given by +/–. In two dimensions, vectors are essential. Projectile motion combines constant horizontal velocity and constant vertical acceleration. Graphs (position–time, velocity–time) help visualise motion. The independence of perpendicular motions is a cornerstone of physics.</p>
+        <div class="remember">📌 REMEMBER: For constant acceleration, use v = u + at, s = ut + ½at², v² = u² + 2as.</div>
+        <div class="wow">✨ WOW: In projectile motion, the only acceleration is gravity (9.8 m/s² downward) – it acts independently on the vertical motion!</div>
+    </div>
+
+    <!-- ========== 30 QUESTIONS ========== -->
+    <!-- Part A: Conceptual (Q1–Q15) -->
+    <div class="question-block">
+        <div class="q-num">Q1 (conceptual)</div>
+        <div class="q-text">A particle moves with constant speed in a circular path. Which statement is correct?</div>
+        <ul class="options">
+            <li><strong>A)</strong> Velocity is constant</li>
+            <li><strong>B)</strong> Acceleration is zero</li>
+            <li><strong>C)</strong> Velocity changes continuously</li>
+            <li><strong>D)</strong> Net force is zero</li>
+        </ul>
+        <button class="answer-btn" onclick="toggle('a1')">Show answer</button>
+        <div class="answer" id="a1">
+            <strong>Correct answer: C</strong><br>
+            Although speed is constant, the direction of velocity changes at every point, so velocity changes continuously. Hence acceleration exists.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q2 (conceptual)</div>
+        <div class="q-text">Which condition guarantees zero acceleration?</div>
+        <ul class="options">
+            <li><strong>A)</strong> Constant speed</li>
+            <li><strong>B)</strong> Constant velocity</li>
+            <li><strong>C)</strong> Zero displacement</li>
+            <li><strong>D)</strong> Uniform circular motion</li>
+        </ul>
+        <button class="answer-btn" onclick="toggle('a2')">Show answer</button>
+        <div class="answer" id="a2">
+            <strong>Correct answer: B</strong><br>
+            Acceleration depends on change in velocity. Constant velocity means no change in magnitude or direction.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q3 (conceptual)</div>
+        <div class="q-text">Why is displacement a vector quantity?</div>
+        <button class="answer-btn" onclick="toggle('a3')">Show answer</button>
+        <div class="answer" id="a3">
+            <strong>Answer:</strong> Because it has both magnitude and direction.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q4 (conceptual)</div>
+        <div class="q-text">Which situation gives zero displacement but non‑zero distance?</div>
+        <ul class="options">
+            <li><strong>A)</strong> Straight‑line motion</li>
+            <li><strong>B)</strong> Motion in a circle returning to start</li>
+            <li><strong>C)</strong> Motion at rest</li>
+            <li><strong>D)</strong> Uniform motion</li>
+        </ul>
+        <button class="answer-btn" onclick="toggle('a4')">Show answer</button>
+        <div class="answer" id="a4">
+            <strong>Correct answer: B</strong><br>
+            If you return to the starting point, displacement is zero but total path length (distance) is positive.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q5 (conceptual)</div>
+        <div class="q-text">Why is average speed always greater than or equal to the magnitude of average velocity?</div>
+        <button class="answer-btn" onclick="toggle('a5')">Show answer</button>
+        <div class="answer" id="a5">
+            <strong>Explanation:</strong> Average speed depends on total distance, while average velocity depends on displacement, which is always less than or equal to distance. They are equal only for straight‑line motion without changing direction.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q6 (conceptual)</div>
+        <div class="q-text">At the highest point of projectile motion, which quantity becomes zero?</div>
+        <ul class="options">
+            <li><strong>A)</strong> Acceleration</li>
+            <li><strong>B)</strong> Horizontal velocity</li>
+            <li><strong>C)</strong> Vertical velocity</li>
+            <li><strong>D)</strong> Resultant velocity</li>
+        </ul>
+        <button class="answer-btn" onclick="toggle('a6')">Show answer</button>
+        <div class="answer" id="a6">
+            <strong>Correct answer: C</strong><br>
+            At the top, the vertical component of velocity becomes zero; horizontal velocity remains constant.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q7 (conceptual)</div>
+        <div class="q-text">Which quantity remains constant throughout projectile motion (neglect air resistance)?</div>
+        <ul class="options">
+            <li><strong>A)</strong> Speed</li>
+            <li><strong>B)</strong> Vertical velocity</li>
+            <li><strong>C)</strong> Acceleration</li>
+            <li><strong>D)</strong> Direction of motion</li>
+        </ul>
+        <button class="answer-btn" onclick="toggle('a7')">Show answer</button>
+        <div class="answer" id="a7">
+            <strong>Correct answer: C</strong><br>
+            The acceleration is gravity (9.8 m/s² downward) and is constant in magnitude and direction.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q8 (conceptual)</div>
+        <div class="q-text">Why does horizontal velocity not affect time of flight?</div>
+        <button class="answer-btn" onclick="toggle('a8')">Show answer</button>
+        <div class="answer" id="a8">
+            <strong>Explanation:</strong> Time of flight depends only on vertical motion, which is independent of horizontal motion (they are perpendicular).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q9 (conceptual)</div>
+        <div class="q-text">Which graph represents uniform acceleration?</div>
+        <ul class="options">
+            <li><strong>A)</strong> Straight‑line velocity–time graph</li>
+            <li><strong>B)</strong> Curved velocity–time graph</li>
+            <li><strong>C)</strong> Horizontal velocity–time graph</li>
+            <li><strong>D)</strong> Vertical distance–time graph</li>
+        </ul>
+        <button class="answer-btn" onclick="toggle('a9')">Show answer</button>
+        <div class="answer" id="a9">
+            <strong>Correct answer: A</strong><br>
+            A straight‑line v–t graph means constant slope, which is constant acceleration.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q10 (conceptual)</div>
+        <div class="q-text">If the slope of a velocity–time graph is negative, what does it indicate?</div>
+        <button class="answer-btn" onclick="toggle('a10')">Show answer</button>
+        <div class="answer" id="a10">
+            <strong>Answer:</strong> Negative acceleration (deceleration) – velocity is decreasing.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q11 (conceptual)</div>
+        <div class="q-text">Why is motion in two dimensions treated as two independent motions?</div>
+        <button class="answer-btn" onclick="toggle('a11')">Show answer</button>
+        <div class="answer" id="a11">
+            <strong>Explanation:</strong> Motion along horizontal and vertical directions do not affect each other; they are perpendicular and independent.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q12 (conceptual)</div>
+        <div class="q-text">Which case gives maximum displacement for a given distance?</div>
+        <ul class="options">
+            <li><strong>A)</strong> Circular motion</li>
+            <li><strong>B)</strong> Zigzag motion</li>
+            <li><strong>C)</strong> Straight‑line motion</li>
+            <li><strong>D)</strong> Back‑and‑forth motion</li>
+        </ul>
+        <button class="answer-btn" onclick="toggle('a12')">Show answer</button>
+        <div class="answer" id="a12">
+            <strong>Correct answer: C</strong><br>
+            In straight‑line motion without reversal, distance equals the magnitude of displacement, so it is the maximum possible.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q13 (conceptual)</div>
+        <div class="q-text">An object moves east, then north, then west. Which quantity must be calculated using vectors?</div>
+        <button class="answer-btn" onclick="toggle('a13')">Show answer</button>
+        <div class="answer" id="a13">
+            <strong>Answer:</strong> Displacement. (Distance is a scalar sum, but displacement requires vector addition.)
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q14 (conceptual)</div>
+        <div class="q-text">Why does acceleration exist even when speed is constant in circular motion?</div>
+        <button class="answer-btn" onclick="toggle('a14')">Show answer</button>
+        <div class="answer" id="a14">
+            <strong>Explanation:</strong> Direction of velocity changes continuously, so there is acceleration (centripetal acceleration).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q15 (conceptual)</div>
+        <div class="q-text">Which physical quantity is represented by the area under a velocity–time graph?</div>
+        <button class="answer-btn" onclick="toggle('a15')">Show answer</button>
+        <div class="answer" id="a15">
+            <strong>Answer:</strong> Displacement.
+        </div>
+    </div>
+
+    <!-- Part B: Numerical (Q16–Q30) -->
+    <div class="question-block">
+        <div class="q-num">Q16 (numerical)</div>
+        <div class="q-text">A car starts from rest and reaches a velocity of 36 m/s in 6 s. Find acceleration.</div>
+        <button class="answer-btn" onclick="toggle('a16')">Show answer</button>
+        <div class="answer" id="a16">
+            <strong>Step‑by‑step:</strong><br>
+            u = 0 m/s, v = 36 m/s, t = 6 s.<br>
+            a = (v – u) / t = 36 / 6 = 6 m/s².<br>
+            ✅ Answer: 6 m/s²
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q17 (numerical)</div>
+        <div class="q-text">A train slows down from 30 m/s to 10 m/s in 10 s. Find acceleration.</div>
+        <button class="answer-btn" onclick="toggle('a17')">Show answer</button>
+        <div class="answer" id="a17">
+            <strong>Step‑by‑step:</strong><br>
+            a = (10 – 30) / 10 = –20 / 10 = –2 m/s².<br>
+            ✅ Answer: –2 m/s² (deceleration)
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q18 (numerical)</div>
+        <div class="q-text">An object moves with velocity 15 m/s for 20 s. Find displacement.</div>
+        <button class="answer-btn" onclick="toggle('a18')">Show answer</button>
+        <div class="answer" id="a18">
+            <strong>Step‑by‑step:</strong><br>
+            s = v × t = 15 × 20 = 300 m.<br>
+            ✅ Answer: 300 m
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q19 (numerical)</div>
+        <div class="q-text">A body accelerates uniformly at 4 m/s² for 5 s starting from rest. Find final velocity.</div>
+        <button class="answer-btn" onclick="toggle('a19')">Show answer</button>
+        <div class="answer" id="a19">
+            <strong>Step‑by‑step:</strong><br>
+            v = u + a t = 0 + 4×5 = 20 m/s.<br>
+            ✅ Answer: 20 m/s
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q20 (numerical)</div>
+        <div class="q-text">A body moving with velocity 10 m/s accelerates at 2 m/s² for 8 s. Find displacement.</div>
+        <button class="answer-btn" onclick="toggle('a20')">Show answer</button>
+        <div class="answer" id="a20">
+            <strong>Step‑by‑step:</strong><br>
+            s = u t + ½ a t² = (10×8) + ½×2×8² = 80 + 64 = 144 m.<br>
+            ✅ Answer: 144 m
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q21 (numerical)</div>
+        <div class="q-text">A stone is dropped from rest. Find velocity after 4 s. Take g = 10 m/s².</div>
+        <button class="answer-btn" onclick="toggle('a21')">Show answer</button>
+        <div class="answer" id="a21">
+            <strong>Step‑by‑step:</strong><br>
+            v = u + g t = 0 + 10×4 = 40 m/s downward.<br>
+            ✅ Answer: 40 m/s downward
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q22 (numerical)</div>
+        <div class="q-text">A car travels 100 m east, then 40 m west. Find displacement.</div>
+        <button class="answer-btn" onclick="toggle('a22')">Show answer</button>
+        <div class="answer" id="a22">
+            <strong>Step‑by‑step:</strong><br>
+            Displacement = 100 – 40 = 60 m east.<br>
+            ✅ Answer: 60 m east
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q23 (numerical)</div>
+        <div class="q-text">A projectile is fired horizontally with speed 20 m/s from a height of 80 m. Find time of flight. Take g = 10 m/s².</div>
+        <button class="answer-btn" onclick="toggle('a23')">Show answer</button>
+        <div class="answer" id="a23">
+            <strong>Step‑by‑step:</strong><br>
+            Vertical motion: s = ½ g t² → 80 = ½ ×10 × t² → 80 = 5 t² → t² = 16 → t = 4 s.<br>
+            ✅ Answer: 4 s
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q24 (numerical)</div>
+        <div class="q-text">Using Q23, find horizontal distance traveled.</div>
+        <button class="answer-btn" onclick="toggle('a24')">Show answer</button>
+        <div class="answer" id="a24">
+            <strong>Step‑by‑step:</strong><br>
+            Range = horizontal velocity × time = 20 × 4 = 80 m.<br>
+            ✅ Answer: 80 m
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q25 (numerical)</div>
+        <div class="q-text">A car covers 400 m in 20 s and then 600 m in 30 s. Find average speed.</div>
+        <button class="answer-btn" onclick="toggle('a25')">Show answer</button>
+        <div class="answer" id="a25">
+            <strong>Step‑by‑step:</strong><br>
+            Total distance = 400 + 600 = 1000 m. Total time = 20 + 30 = 50 s.<br>
+            Average speed = 1000 / 50 = 20 m/s.<br>
+            ✅ Answer: 20 m/s
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q26 (conceptual/numerical)</div>
+        <div class="q-text">For Q25, is average velocity equal to average speed? Explain.</div>
+        <button class="answer-btn" onclick="toggle('a26')">Show answer</button>
+        <div class="answer" id="a26">
+            <strong>Answer:</strong> No, unless motion is in a straight line in one direction. Here we don't know directions, so average velocity could be different.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q27 (numerical)</div>
+        <div class="q-text">A body completes one full circular lap of radius 14 m. Find displacement.</div>
+        <button class="answer-btn" onclick="toggle('a27')">Show answer</button>
+        <div class="answer" id="a27">
+            <strong>Answer:</strong> Displacement = 0 (returns to start).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q28 (numerical)</div>
+        <div class="q-text">A vehicle accelerates uniformly from 5 m/s to 25 m/s in 10 s. Find acceleration.</div>
+        <button class="answer-btn" onclick="toggle('a28')">Show answer</button>
+        <div class="answer" id="a28">
+            <strong>Step‑by‑step:</strong><br>
+            a = (25 – 5) / 10 = 20 / 10 = 2 m/s².<br>
+            ✅ Answer: 2 m/s²
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q29 (conceptual)</div>
+        <div class="q-text">An object moves with increasing speed but constant direction. Does acceleration exist?</div>
+        <button class="answer-btn" onclick="toggle('a29')">Show answer</button>
+        <div class="answer" id="a29">
+            <strong>Answer:</strong> Yes, because the magnitude of velocity is changing (acceleration in the direction of motion).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q30 (conceptual)</div>
+        <div class="q-text">Why is motion analysis essential before studying dynamics?</div>
+        <button class="answer-btn" onclick="toggle('a30')">Show answer</button>
+        <div class="answer" id="a30">
+            <strong>Explanation:</strong> Dynamics explains the causes of motion (forces). To understand causes, we first need to describe motion accurately (kinematics).
+        </div>
+    </div>
+
+    <hr>
+    <div class="footer-note">
+        ✅ UNIT 3 COMPLETE · 30 questions · half conceptual · half numerical · exam‑ready · feel the WOW!
+    </div>
+</div>
+
+<script>
+    function toggle(id) {
+        var el = document.getElementById(id);
+        if (el.style.display === "block") {
+            el.style.display = "none";
+        } else {
+            el.style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>

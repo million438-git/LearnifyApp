@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 12 Physics – Unit 2 · Two‑Dimensional Motion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f8fafc;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: #1e293b;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-radius: 40px 40px 20px 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(30,64,175,0.2);
+        }
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.15s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.07);
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #2563eb;
+            border-left: 8px solid #2563eb;
+            padding-left: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .remember, .wow {
+            padding: 1.2rem 1.5rem;
+            border-radius: 20px;
+            margin: 1.5rem 0;
+            font-weight: 500;
+        }
+        .remember {
+            background: #ecfeff;
+            border-left: 6px solid #22c55e;
+        }
+        .wow {
+            background: #fff7ed;
+            border-left: 6px solid #f59e0b;
+        }
+        ul, ol {
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+        .question-block {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin: 1.2rem 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.02);
+        }
+        .q-num {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+        .q-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .answer-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem 0;
+            transition: background 0.1s;
+        }
+        .answer-btn:hover {
+            background: #1e40af;
+        }
+        .answer {
+            display: none;
+            background: #ecfeff;
+            padding: 1.2rem;
+            border-radius: 18px;
+            margin-top: 1rem;
+            border-left: 5px solid #2563eb;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #cbd5e1, transparent);
+            margin: 2.5rem 0;
+        }
+        .footer-note {
+            text-align: center;
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 50px;
+            border: 1px dashed #64748b;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>📐 Grade 12 Physics – Unit 2</h1>
+        <p>Two‑Dimensional Motion · 30 advanced questions · exam‑ready</p>
+    </header>
+
+    <!-- Unit notes -->
+    <div class="card">
+        <h2>📘 2D motion – key ideas</h2>
+        <p>Two‑dimensional motion combines horizontal and vertical components independently. Projectile motion is the classic example: horizontal velocity constant, vertical acceleration constant (g). Circular motion involves centripetal acceleration toward the center. Understanding vectors, components, and independence is essential for solving real‑world problems like satellite orbits, sports, and vehicle dynamics.</p>
+        <div class="remember">📌 REMEMBER: Horizontal and vertical motions are independent. Use vₓ = v cosθ, vᵧ = v sinθ.</div>
+        <div class="wow">✨ WOW: The same physics that lets you throw a ball also lets you aim a rocket to the Moon!</div>
+    </div>
+
+    <!-- ========== 30 QUESTIONS ========== -->
+    <!-- Part A: Conceptual (Q1–Q15) -->
+    <div class="question-block">
+        <div class="q-num">Q1 (conceptual)</div>
+        <div class="q-text">Explain why projectile motion can be analyzed independently in horizontal and vertical directions.</div>
+        <button class="answer-btn" onclick="toggle('a1')">Show answer</button>
+        <div class="answer" id="a1">
+            <strong>Answer:</strong><br>
+            Horizontal motion has no force (ignoring air resistance) → constant velocity. Vertical motion has constant downward acceleration due to gravity. These two motions are perpendicular and do not influence each other, so they can be solved separately.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q2 (conceptual)</div>
+        <div class="q-text">Why is the trajectory of a projectile parabolic?</div>
+        <button class="answer-btn" onclick="toggle('a2')">Show answer</button>
+        <div class="answer" id="a2">
+            <strong>Answer:</strong><br>
+            Horizontal displacement is linear in time (x = v₀ₓ t). Vertical displacement is quadratic in time (y = v₀ᵧ t – ½ g t²). Eliminating t gives y as a quadratic function of x → a parabola.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q3 (conceptual)</div>
+        <div class="q-text">Explain why maximum range occurs at 45° launch angle (ignoring air resistance).</div>
+        <button class="answer-btn" onclick="toggle('a3')">Show answer</button>
+        <div class="answer" id="a3">
+            <strong>Answer:</strong><br>
+            The range formula is R = (v₀² sin 2θ) / g. sin 2θ reaches its maximum value of 1 when 2θ = 90°, so θ = 45°. Any other angle gives a smaller range.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q4 (conceptual)</div>
+        <div class="q-text">Why does horizontal velocity remain constant in ideal projectile motion?</div>
+        <button class="answer-btn" onclick="toggle('a4')">Show answer</button>
+        <div class="answer" id="a4">
+            <strong>Answer:</strong><br>
+            No horizontal force acts on the projectile (neglecting air resistance). By Newton’s first law, velocity in the horizontal direction remains constant.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q5 (conceptual)</div>
+        <div class="q-text">Explain why vertical velocity changes during projectile motion.</div>
+        <button class="answer-btn" onclick="toggle('a5')">Show answer</button>
+        <div class="answer" id="a5">
+            <strong>Answer:</strong><br>
+            Gravity acts downward, producing a constant acceleration g. This changes the vertical component: upward velocity decreases by g each second, becomes zero at the top, then increases downward.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q6 (conceptual)</div>
+        <div class="q-text">Why is the time of flight the same for symmetric launch and landing heights?</div>
+        <button class="answer-btn" onclick="toggle('a6')">Show answer</button>
+        <div class="answer" id="a6">
+            <strong>Answer:</strong><br>
+            The upward and downward paths are mirror images. Time up equals time down, so total time = 2 × (vertical component / g).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q7 (conceptual)</div>
+        <div class="q-text">Explain why centripetal acceleration is perpendicular to velocity in circular motion.</div>
+        <button class="answer-btn" onclick="toggle('a7')">Show answer</button>
+        <div class="answer" id="a7">
+            <strong>Answer:</strong><br>
+            Centripetal acceleration points toward the center of the circle, always perpendicular to the instantaneous velocity (which is tangent to the circle). This changes the direction of velocity without changing its magnitude.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q8 (conceptual)</div>
+        <div class="q-text">Why does angular velocity remain constant in uniform circular motion?</div>
+        <button class="answer-btn" onclick="toggle('a8')">Show answer</button>
+        <div class="answer" id="a8">
+            <strong>Answer:</strong><br>
+            In uniform circular motion, the speed is constant, so the rate of change of angle (angular velocity = v / r) is constant. Only the direction of linear velocity changes.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q9 (conceptual)</div>
+        <div class="q-text">Explain why banking of roads helps vehicles turn safely.</div>
+        <button class="answer-btn" onclick="toggle('a9')">Show answer</button>
+        <div class="answer" id="a9">
+            <strong>Answer:</strong><br>
+            Banking provides a component of the normal force toward the center of the curve, contributing to the required centripetal force. This reduces reliance on friction and allows higher safe speeds.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q10 (conceptual)</div>
+        <div class="q-text">Why does horizontal range decrease if launch height is above ground?</div>
+        <button class="answer-btn" onclick="toggle('a10')">Show answer</button>
+        <div class="answer" id="a10">
+            <strong>Answer:</strong><br>
+            With a positive launch height, the time of flight increases because the projectile falls farther. However, the optimal angle for maximum range becomes less than 45° because the extra flight time favors a larger horizontal component.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q11 (conceptual)</div>
+        <div class="q-text">Explain the effect of air resistance on 2D motion.</div>
+        <button class="answer-btn" onclick="toggle('a11')">Show answer</button>
+        <div class="answer" id="a11">
+            <strong>Answer:</strong><br>
+            Air resistance opposes motion, reducing both horizontal and vertical velocities. It decreases maximum height, range, and the trajectory becomes non‑parabolic (asymmetric).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q12 (conceptual)</div>
+        <div class="q-text">Why does a satellite in orbit undergo “free‑fall” motion?</div>
+        <button class="answer-btn" onclick="toggle('a12')">Show answer</button>
+        <div class="answer" id="a12">
+            <strong>Answer:</strong><br>
+            A satellite is continuously falling toward Earth due to gravity, but its tangential speed is so high that Earth’s surface curves away at the same rate. It is in constant free fall, hence weightlessness.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q13 (conceptual)</div>
+        <div class="q-text">Why is relative velocity important in projectile motion in moving reference frames?</div>
+        <button class="answer-btn" onclick="toggle('a13')">Show answer</button>
+        <div class="answer" id="a13">
+            <strong>Answer:</strong><br>
+            Observers in different frames see different horizontal velocities. For example, a person on a moving platform sees a different horizontal component, while vertical motion remains the same because gravity is unaffected.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q14 (conceptual)</div>
+        <div class="q-text">Explain why trajectory curvature depends on initial speed and launch angle.</div>
+        <button class="answer-btn" onclick="toggle('a14')">Show answer</button>
+        <div class="answer" id="a14">
+            <strong>Answer:</strong><br>
+            The shape of the parabola is determined by the ratio v₀ᵧ / v₀ₓ. A larger vertical component gives a higher arc; a larger horizontal component stretches the parabola horizontally. Speed scales both components equally, increasing size but preserving shape if angle fixed.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q15 (conceptual)</div>
+        <div class="q-text">Why does centripetal force not do work on an object in circular motion?</div>
+        <button class="answer-btn" onclick="toggle('a15')">Show answer</button>
+        <div class="answer" id="a15">
+            <strong>Answer:</strong><br>
+            Centripetal force is always perpendicular to the displacement (direction of motion). Work = force × displacement × cos φ, and cos 90° = 0, so no work is done; the object’s speed remains constant.
+        </div>
+    </div>
+
+    <!-- Part B: Calculations/Applications (Q16–Q30) -->
+    <div class="question-block">
+        <div class="q-num">Q16 (calculation)</div>
+        <div class="q-text">A projectile is launched at 30 m/s at 60° above horizontal. Find: (a) maximum height, (b) time of flight, (c) horizontal range. (g = 9.8 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a16')">Show answer</button>
+        <div class="answer" id="a16">
+            <strong>Step‑by‑step:</strong><br>
+            v₀ₓ = 30 × cos60° = 30 × 0.5 = 15 m/s.<br>
+            v₀ᵧ = 30 × sin60° = 30 × 0.8660 ≈ 25.98 m/s.<br>
+            (a) H = v₀ᵧ² / (2g) = (25.98)² / (2×9.8) = 675 / 19.6 ≈ 34.4 m.<br>
+            (b) Time of flight T = 2 v₀ᵧ / g = 2 × 25.98 / 9.8 ≈ 5.30 s.<br>
+            (c) Range R = v₀ₓ × T = 15 × 5.30 ≈ 79.5 m.<br>
+            ✅ Answers: 34.4 m, 5.30 s, 79.5 m
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q17 (calculation)</div>
+        <div class="q-text">A ball is thrown horizontally from a height of 20 m with a speed of 10 m/s. Find the time to hit the ground and the horizontal distance traveled. (g = 9.8 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a17')">Show answer</button>
+        <div class="answer" id="a17">
+            <strong>Step‑by‑step:</strong><br>
+            Time to fall: t = √(2h / g) = √(40 / 9.8) ≈ √4.082 ≈ 2.02 s.<br>
+            Horizontal distance: x = vₓ × t = 10 × 2.02 ≈ 20.2 m.<br>
+            ✅ Answers: 2.02 s, 20.2 m
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q18 (calculation)</div>
+        <div class="q-text">A car of mass 1200 kg goes around a curve of radius 50 m at 15 m/s. Find the centripetal acceleration and the centripetal force.</div>
+        <button class="answer-btn" onclick="toggle('a18')">Show answer</button>
+        <div class="answer" id="a18">
+            <strong>Step‑by‑step:</strong><br>
+            a_c = v² / r = 15² / 50 = 225 / 50 = 4.5 m/s².<br>
+            F_c = m a_c = 1200 × 4.5 = 5400 N.<br>
+            ✅ Answers: 4.5 m/s², 5400 N
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q19 (calculation)</div>
+        <div class="q-text">A projectile lands after 5 s and its vertical displacement is zero (launch and landing at same height). Find its initial vertical speed. (g = 9.8 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a19')">Show answer</button>
+        <div class="answer" id="a19">
+            <strong>Step‑by‑step:</strong><br>
+            Time of flight T = 2 v₀ᵧ / g → v₀ᵧ = (g T) / 2 = (9.8 × 5) / 2 = 24.5 m/s.<br>
+            ✅ Answer: 24.5 m/s
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q20 (calculation)</div>
+        <div class="q-text">A satellite orbits Earth at a radius of 7000 km. Earth’s mass M = 5.97×10²⁴ kg, G = 6.67×10⁻¹¹ N·m²/kg². Find its orbital speed.</div>
+        <button class="answer-btn" onclick="toggle('a20')">Show answer</button>
+        <div class="answer" id="a20">
+            <strong>Step‑by‑step:</strong><br>
+            v = √(GM / r) = √(6.67×10⁻¹¹ × 5.97×10²⁴ / 7×10⁶) = √(3.98×10¹⁴ / 7×10⁶) = √(5.686×10⁷) ≈ 7540 m/s = 7.54 km/s.<br>
+            ✅ Answer: about 7.54 km/s
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q21 (calculation)</div>
+        <div class="q-text">A projectile launched at 40 m/s at 30° from the horizontal. Find its velocity components at t = 2 s. (g = 9.8 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a21')">Show answer</button>
+        <div class="answer" id="a21">
+            <strong>Step‑by‑step:</strong><br>
+            v₀ₓ = 40 cos30° = 40 × 0.8660 = 34.64 m/s (constant).<br>
+            v₀ᵧ = 40 sin30° = 40 × 0.5 = 20 m/s.<br>
+            vᵧ(t) = v₀ᵧ – g t = 20 – 9.8×2 = 20 – 19.6 = 0.4 m/s.<br>
+            ✅ Answer: vₓ = 34.64 m/s, vᵧ = 0.4 m/s
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q22 (calculation)</div>
+        <div class="q-text">A ball is thrown with 20 m/s at 45°. Find its speed at half the maximum height. (g = 9.8 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a22')">Show answer</button>
+        <div class="answer" id="a22">
+            <strong>Step‑by‑step:</strong><br>
+            v₀ = 20 m/s, θ = 45° → v₀ₓ = 20 cos45° = 14.14 m/s, v₀ᵧ = 14.14 m/s.<br>
+            Max height H = v₀ᵧ² / (2g) = 200 / 19.6 ≈ 10.2 m.<br>
+            Half height h = H/2 = 5.1 m.<br>
+            vᵧ² = v₀ᵧ² – 2g h = 200 – 2×9.8×5.1 = 200 – 99.96 = 100.04 → vᵧ ≈ 10.0 m/s.<br>
+            Speed = √(vₓ² + vᵧ²) = √(14.14² + 10²) = √(200 + 100) = √300 ≈ 17.32 m/s.<br>
+            ✅ Answer: about 17.3 m/s
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q23 (calculation)</div>
+        <div class="q-text">A stone is thrown across a river 50 m wide with a speed of 10 m/s. What minimum launch angle is needed to just cross the river? (Assume launch and landing at same height, g = 9.8 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a23')">Show answer</button>
+        <div class="answer" id="a23">
+            <strong>Step‑by‑step:</strong><br>
+            Range R = (v₀² sin 2θ) / g = 50 m → sin 2θ = (R g) / v₀² = (50 × 9.8) / 100 = 490 / 100 = 4.9. But sin 2θ cannot exceed 1. Therefore impossible at 10 m/s; need higher speed. Actually for given v₀, maximum range is v₀²/g = 100/9.8 ≈ 10.2 m. So even at 45°, range is only ~10.2 m, far less than 50 m. So with v₀ = 10 m/s, it's impossible. The problem is a trick: minimum angle does not exist because the stone cannot cross. So the answer: Not possible with v₀ = 10 m/s; required v₀ must be at least √(gR) = √(9.8×50) ≈ 22.1 m/s.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q24 (calculation)</div>
+        <div class="q-text">A car takes a banked curve of radius 60 m with banking angle 20°. If friction is negligible, find the maximum safe speed. (g = 9.8 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a24')">Show answer</button>
+        <div class="answer" id="a24">
+            <strong>Step‑by‑step:</strong><br>
+            For a banked curve with no friction, the required speed is v = √(r g tanθ) = √(60 × 9.8 × tan20°). tan20° ≈ 0.3640.<br>
+            v = √(60 × 9.8 × 0.364) = √(60 × 3.5672) = √214.03 ≈ 14.63 m/s.<br>
+            ✅ Answer: about 14.6 m/s
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q25 (calculation)</div>
+        <div class="q-text">A projectile is launched at 25 m/s at 45° onto a slope inclined at 30° upward from the horizontal. Find the distance along the slope from launch point to impact. (g = 9.8 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a25')">Show answer</button>
+        <div class="answer" id="a25">
+            <strong>Step‑by‑step:</strong><br>
+            This is an advanced problem requiring parametric equations and solving for intersection with the slope. Let the slope have equation y = x tan30° = 0.5774 x.<br>
+            Projectile: x = v₀ cosθ t = 25×0.7071 t = 17.678 t; y = v₀ sinθ t – ½ g t² = 17.678 t – 4.9 t².<br>
+            Set y = 0.5774 x → 17.678 t – 4.9 t² = 0.5774 × 17.678 t = 10.207 t.<br>
+            Rearr: 17.678 t – 4.9 t² – 10.207 t = 0 → 7.471 t – 4.9 t² = 0 → t (7.471 – 4.9 t) = 0 → t = 0 (launch) or t = 7.471 / 4.9 ≈ 1.524 s.<br>
+            Then x = 17.678 × 1.524 ≈ 26.94 m. Distance along slope = x / cos30° = 26.94 / 0.8660 ≈ 31.1 m.<br>
+            ✅ Answer: about 31.1 m
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q26 (calculation)</div>
+        <div class="q-text">A particle moves in a circle of radius 2 m with constant angular velocity ω = 5 rad/s. Find its centripetal acceleration.</div>
+        <button class="answer-btn" onclick="toggle('a26')">Show answer</button>
+        <div class="answer" id="a26">
+            <strong>Step‑by‑step:</strong><br>
+            a_c = r ω² = 2 × (5)² = 2 × 25 = 50 m/s².<br>
+            ✅ Answer: 50 m/s²
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q27 (calculation)</div>
+        <div class="q-text">A cannon fires at 100 m/s at 60°. The target is 50 m above the cannon. Find the horizontal distance to the target. (g = 9.8 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a27')">Show answer</button>
+        <div class="answer" id="a27">
+            <strong>Step‑by‑step:</strong><br>
+            v₀ₓ = 100 cos60° = 50 m/s, v₀ᵧ = 100 sin60° = 86.6 m/s.<br>
+            Equation: y = v₀ᵧ t – ½ g t² = 86.6 t – 4.9 t² = 50.<br>
+            Rearr: 4.9 t² – 86.6 t + 50 = 0. Solve quadratic: t = [86.6 ± √(86.6² – 4×4.9×50)] / (9.8).<br>
+            Discriminant: 7500 – 980 = 6520, √6520 ≈ 80.75.<br>
+            t = (86.6 – 80.75)/9.8 ≈ 0.597 s (other root larger).<br>
+            Then x = v₀ₓ t = 50 × 0.597 ≈ 29.85 m.<br>
+            ✅ Answer: about 29.9 m
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q28 (calculation)</div>
+        <div class="q-text">A plane flying horizontally at 60 m/s drops a package from 200 m altitude. Find the impact point horizontally from the release point. (g = 9.8 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a28')">Show answer</button>
+        <div class="answer" id="a28">
+            <strong>Step‑by‑step:</strong><br>
+            Time to fall: t = √(2h/g) = √(400/9.8) ≈ √40.82 ≈ 6.39 s.<br>
+            Horizontal distance: x = vₓ t = 60 × 6.39 ≈ 383.4 m.<br>
+            ✅ Answer: about 383 m
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q29 (calculation)</div>
+        <div class="q-text">A cyclist goes around a turn of radius 30 m at speed 10 m/s. The coefficient of friction between tyres and road is 0.3. Can they safely turn without skidding? (g = 9.8 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a29')">Show answer</button>
+        <div class="answer" id="a29">
+            <strong>Step‑by‑step:</strong><br>
+            Required centripetal force (per kg) = v² / r = 100 / 30 ≈ 3.33 N/kg.<br>
+            Maximum friction per kg = μ g = 0.3 × 9.8 = 2.94 N/kg.<br>
+            Since 3.33 > 2.94, the required force exceeds maximum friction → they will skid. Not safe.<br>
+            ✅ Answer: No, they cannot turn safely.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q30 (conceptual)</div>
+        <div class="q-text">Explain why 2D motion problems require vector decomposition.</div>
+        <button class="answer-btn" onclick="toggle('a30')">Show answer</button>
+        <div class="answer" id="a30">
+            <strong>Answer:</strong><br>
+            In two dimensions, forces and velocities act in different directions. Breaking them into perpendicular components (usually horizontal and vertical) allows us to apply Newton’s laws independently in each direction. This simplifies calculations and enables accurate predictions of motion, especially when forces are not aligned.
+        </div>
+    </div>
+
+    <hr>
+    <div class="footer-note">
+        ✅ UNIT 2 COMPLETE · 30 questions · conceptual + applied · exam‑ready · feel the WOW!
+    </div>
+</div>
+
+<script>
+    function toggle(id) {
+        var el = document.getElementById(id);
+        if (el.style.display === "block") {
+            el.style.display = "none";
+        } else {
+            el.style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>

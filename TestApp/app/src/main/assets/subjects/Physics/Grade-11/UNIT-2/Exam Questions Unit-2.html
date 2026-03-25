@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 11 Physics – Unit 2 · Vector Quantities</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f8fafc;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: #1e293b;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #14b8a6, #0f766e);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-radius: 40px 40px 20px 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(15,118,110,0.2);
+        }
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.15s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.07);
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #0f766e;
+            border-left: 8px solid #0f766e;
+            padding-left: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .remember, .wow {
+            padding: 1.2rem 1.5rem;
+            border-radius: 20px;
+            margin: 1.5rem 0;
+            font-weight: 500;
+        }
+        .remember {
+            background: #ecfeff;
+            border-left: 6px solid #22c55e;
+        }
+        .wow {
+            background: #fff7ed;
+            border-left: 6px solid #f59e0b;
+        }
+        ul, ol {
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+        .question-block {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin: 1.2rem 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.02);
+        }
+        .q-num {
+            display: inline-block;
+            background: #0f766e;
+            color: white;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+        .q-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .options {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0 1.2rem;
+        }
+        .options li {
+            background: #f8fafc;
+            margin: 0.6rem 0;
+            padding: 0.7rem 1.2rem;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            font-size: 1rem;
+        }
+        .options li strong {
+            color: #0f766e;
+            margin-right: 0.5rem;
+        }
+        .answer-btn {
+            background: #0f766e;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem 0;
+            transition: background 0.1s;
+        }
+        .answer-btn:hover {
+            background: #0b5e57;
+        }
+        .answer {
+            display: none;
+            background: #ecfeff;
+            padding: 1.2rem;
+            border-radius: 18px;
+            margin-top: 1rem;
+            border-left: 5px solid #0f766e;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #cbd5e1, transparent);
+            margin: 2.5rem 0;
+        }
+        .footer-note {
+            text-align: center;
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 50px;
+            border: 1px dashed #64748b;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>📐 Grade 11 Physics – Unit 2</h1>
+        <p>Vector Quantities · 30 challenging questions · exam‑ready</p>
+    </header>
+
+    <!-- Brief notes on vectors -->
+    <div class="card">
+        <h2>🧭 Vector basics</h2>
+        <p>A vector has both magnitude and direction (e.g., displacement, velocity, force). Scalars have only magnitude (e.g., distance, speed). Vectors are essential in physics because they allow us to analyze motion and forces in multiple dimensions. Operations include addition, subtraction, resolution into components, and multiplication by scalars.</p>
+        <div class="remember">📌 REMEMBER: Perpendicular vectors are independent – they combine using the Pythagorean theorem.</div>
+        <div class="wow">✨ WOW: The whole concept of navigation, from GPS to flight paths, relies on vector addition!</div>
+    </div>
+
+    <!-- ========== 30 QUESTIONS ========== -->
+    <!-- Q1 -->
+    <div class="question-block">
+        <div class="q-num">Q1</div>
+        <div class="q-text">A particle moves 5 m east, then 12 m north. Which statement is correct about its displacement?</div>
+        <ul class="options">
+            <li><strong>A)</strong> It depends only on path length.</li>
+            <li><strong>B)</strong> It depends on initial and final positions.</li>
+            <li><strong>C)</strong> It is equal to distance traveled.</li>
+            <li><strong>D)</strong> It is twice the distance.</li>
+        </ul>
+        <button class="answer-btn" onclick="toggle('a1')">Show answer</button>
+        <div class="answer" id="a1">
+            <strong>Correct answer: B</strong><br>
+            Displacement is a vector from start to end, not total path. It depends only on initial and final positions.
+        </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question-block">
+        <div class="q-num">Q2</div>
+        <div class="q-text">Two vectors A and B are perpendicular. If the magnitude of A is 3 N and the magnitude of B is 4 N, what is the magnitude of the resultant vector?</div>
+        <button class="answer-btn" onclick="toggle('a2')">Show answer</button>
+        <div class="answer" id="a2">
+            <strong>Step-by-step:</strong><br>
+            For perpendicular vectors, the resultant magnitude is the square root of (3 squared plus 4 squared).<br>
+            Result = square root of (9 + 16) = square root of 25 = 5 N.<br>
+            ✅ Answer: 5 N
+        </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question-block">
+        <div class="q-num">Q3</div>
+        <div class="q-text">Explain why velocity is a vector but speed is a scalar.</div>
+        <button class="answer-btn" onclick="toggle('a3')">Show answer</button>
+        <div class="answer" id="a3">
+            <strong>Explanation:</strong><br>
+            Velocity has both magnitude and direction (e.g., 20 m/s north). Speed has only magnitude (e.g., 20 m/s) without direction. Therefore velocity is a vector, speed is a scalar.
+        </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="question-block">
+        <div class="q-num">Q4</div>
+        <div class="q-text">Two forces act on a particle at an angle of 60°. How does the angle affect the magnitude of the resultant?</div>
+        <button class="answer-btn" onclick="toggle('a4')">Show answer</button>
+        <div class="answer" id="a4">
+            <strong>Explanation:</strong><br>
+            The resultant R is given by the square root of (F1 squared + F2 squared + 2 F1 F2 cosθ). For a given magnitudes, as the angle increases, cosθ decreases, so the resultant becomes smaller. At 0°, resultant is maximum; at 180°, resultant is minimum.
+        </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="question-block">
+        <div class="q-num">Q5</div>
+        <div class="q-text">Why must vector components be resolved along perpendicular axes?</div>
+        <button class="answer-btn" onclick="toggle('a5')">Show answer</button>
+        <div class="answer" id="a5">
+            <strong>Explanation:</strong><br>
+            Perpendicular components are independent; they do not affect each other. This simplifies calculations because we can treat each axis separately (e.g., horizontal and vertical motions are independent).
+        </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="question-block">
+        <div class="q-num">Q6</div>
+        <div class="q-text">If three forces on a particle produce zero net force, what can you conclude?</div>
+        <button class="answer-btn" onclick="toggle('a6')">Show answer</button>
+        <div class="answer" id="a6">
+            <strong>Conclusion:</strong><br>
+            The forces are concurrent (they meet at a point) and their vector sum is zero. They form a closed triangle when placed head‑to‑tail.
+        </div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="question-block">
+        <div class="q-num">Q7</div>
+        <div class="q-text">Why is vector subtraction represented as adding the negative vector?</div>
+        <button class="answer-btn" onclick="toggle('a7')">Show answer</button>
+        <div class="answer" id="a7">
+            <strong>Explanation:</strong><br>
+            Subtracting B from A is defined as A – B = A + (–B). This allows us to use the same rules for vector addition, making calculations consistent and easy.
+        </div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="question-block">
+        <div class="q-num">Q8</div>
+        <div class="q-text">A plane flies 300 km east and then 400 km north. Why is the displacement less than the distance traveled?</div>
+        <button class="answer-btn" onclick="toggle('a8')">Show answer</button>
+        <div class="answer" id="a8">
+            <strong>Step-by-step:</strong><br>
+            Displacement = straight‑line distance = square root of (300² + 400²) = square root of (90000 + 160000) = square root of 250000 = 500 km.<br>
+            Distance traveled = 300 + 400 = 700 km.<br>
+            So displacement is less because it is the direct distance, not the total path.
+        </div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="question-block">
+        <div class="q-num">Q9</div>
+        <div class="q-text">How does the angle between two forces affect the work done along a direction?</div>
+        <button class="answer-btn" onclick="toggle('a9')">Show answer</button>
+        <div class="answer" id="a9">
+            <strong>Explanation:</strong><br>
+            Work = force × displacement × cosθ. The smaller the angle, the larger the component of force along the displacement, so more work is done.
+        </div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="question-block">
+        <div class="q-num">Q10</div>
+        <div class="q-text">Two vectors of equal magnitude act in opposite directions. What is the resultant?</div>
+        <button class="answer-btn" onclick="toggle('a10')">Show answer</button>
+        <div class="answer" id="a10">
+            <strong>Answer:</strong> 0 (they cancel completely).<br>
+            The resultant vector has zero magnitude.
+        </div>
+    </div>
+
+    <!-- Q11 -->
+    <div class="question-block">
+        <div class="q-num">Q11</div>
+        <div class="q-text">Why is vector resolution critical in mechanics?</div>
+        <button class="answer-btn" onclick="toggle('a11')">Show answer</button>
+        <div class="answer" id="a11">
+            <strong>Explanation:</strong><br>
+            It allows us to break forces and motions into independent perpendicular components, making calculations simpler and enabling analysis of complex situations.
+        </div>
+    </div>
+
+    <!-- Q12 -->
+    <div class="question-block">
+        <div class="q-num">Q12</div>
+        <div class="q-text">If a displacement vector is multiplied by the scalar 3, what changes?</div>
+        <button class="answer-btn" onclick="toggle('a12')">Show answer</button>
+        <div class="answer" id="a12">
+            <strong>Answer:</strong><br>
+            The magnitude triples, but the direction stays the same.
+        </div>
+    </div>
+
+    <!-- Q13 -->
+    <div class="question-block">
+        <div class="q-num">Q13</div>
+        <div class="q-text">Why do perpendicular vectors not cancel each other?</div>
+        <button class="answer-btn" onclick="toggle('a13')">Show answer</button>
+        <div class="answer" id="a13">
+            <strong>Explanation:</strong><br>
+            Perpendicular vectors act in independent directions; they do not directly oppose each other. They combine geometrically using the Pythagorean theorem.
+        </div>
+    </div>
+
+    <!-- Q14 -->
+    <div class="question-block">
+        <div class="q-num">Q14</div>
+        <div class="q-text">Two forces act at an angle of 120°. If one of the forces doubles, how does the resultant change?</div>
+        <button class="answer-btn" onclick="toggle('a14')">Show answer</button>
+        <div class="answer" id="a14">
+            <strong>Explanation:</strong><br>
+            The magnitude of the resultant increases, and its direction rotates toward the larger force. The exact change can be found using the law of cosines.
+        </div>
+    </div>
+
+    <!-- Q15 -->
+    <div class="question-block">
+        <div class="q-num">Q15</div>
+        <div class="q-text">Which real‑life situation requires vector subtraction?</div>
+        <button class="answer-btn" onclick="toggle('a15')">Show answer</button>
+        <div class="answer" id="a15">
+            <strong>Examples:</strong><br>
+            Finding net force when forces oppose each other, calculating relative velocity (e.g., wind effect on a plane), or determining the difference between two displacement vectors.
+        </div>
+    </div>
+
+    <!-- Q16 -->
+    <div class="question-block">
+        <div class="q-num">Q16</div>
+        <div class="q-text">A particle moves 30 m east, then 40 m north. Find:<br>a) Resultant displacement<br>b) Direction from east</div>
+        <button class="answer-btn" onclick="toggle('a16')">Show answer</button>
+        <div class="answer" id="a16">
+            <strong>Step-by-step:</strong><br>
+            X total = 30 m, Y total = 40 m.<br>
+            a) R = square root of (30² + 40²) = square root of (900 + 1600) = square root of 2500 = 50 m.<br>
+            b) θ = tan inverse of (40 / 30) ≈ 53.1° north of east.<br>
+            ✅ Answer: 50 m, 53.1° north of east
+        </div>
+    </div>
+
+    <!-- Q17 -->
+    <div class="question-block">
+        <div class="q-num">Q17</div>
+        <div class="q-text">A particle moves 20 m east, then 30 m north, then 40 m northwest (45°). Find the resultant displacement.</div>
+        <button class="answer-btn" onclick="toggle('a17')">Show answer</button>
+        <div class="answer" id="a17">
+            <strong>Step-by-step:</strong><br>
+            Northwest components: X = –40 cos45° ≈ –28.28 m, Y = 40 sin45° ≈ 28.28 m.<br>
+            X total = 20 + 0 – 28.28 = –8.28 m.<br>
+            Y total = 0 + 30 + 28.28 = 58.28 m.<br>
+            R = square root of (–8.28)² + 58.28² ≈ square root of (68.6 + 3396) = square root of 3464.6 ≈ 58.9 m.<br>
+            θ = tan inverse of (58.28 / –8.28) ≈ tan inverse of (–7.04) which gives about 98° from east (since X negative, Y positive).<br>
+            ✅ Answer: about 58.9 m, 98° from east (north of west).
+        </div>
+    </div>
+
+    <!-- Q18 -->
+    <div class="question-block">
+        <div class="q-num">Q18</div>
+        <div class="q-text">Two perpendicular forces 8 N and 15 N act on a particle. Find the magnitude and angle of the resultant.</div>
+        <button class="answer-btn" onclick="toggle('a18')">Show answer</button>
+        <div class="answer" id="a18">
+            <strong>Step-by-step:</strong><br>
+            R = square root of (8² + 15²) = square root of (64 + 225) = square root of 289 = 17 N.<br>
+            θ = tan inverse of (15 / 8) ≈ 61.9° from the 8 N direction.<br>
+            ✅ Answer: 17 N, 61.9° from the 8 N force.
+        </div>
+    </div>
+
+    <!-- Q19 -->
+    <div class="question-block">
+        <div class="q-num">Q19</div>
+        <div class="q-text">A boat travels 100 m north and 100 m east. Then a wind pushes it 50 m west. Find the displacement.</div>
+        <button class="answer-btn" onclick="toggle('a19')">Show answer</button>
+        <div class="answer" id="a19">
+            <strong>Step-by-step:</strong><br>
+            X total = 100 – 50 = 50 m east.<br>
+            Y total = 100 m north.<br>
+            R = square root of (50² + 100²) = square root of (2500 + 10000) = square root of 12500 ≈ 111.8 m.<br>
+            θ = tan inverse of (100 / 50) = tan inverse of 2 ≈ 63.4° north of east.<br>
+            ✅ Answer: 111.8 m, 63.4° north of east.
+        </div>
+    </div>
+
+    <!-- Q20 -->
+    <div class="question-block">
+        <div class="q-num">Q20</div>
+        <div class="q-text">A plane flies 500 km at 30° north of east, then 300 km at 60° south of east. Find the resultant displacement.</div>
+        <button class="answer-btn" onclick="toggle('a20')">Show answer</button>
+        <div class="answer" id="a20">
+            <strong>Step-by-step:</strong><br>
+            First leg: X₁ = 500 cos30° ≈ 500 × 0.8660 = 433 km, Y₁ = 500 sin30° = 250 km north.<br>
+            Second leg: X₂ = 300 cos60° = 300 × 0.5 = 150 km, Y₂ = –300 sin60° = –300 × 0.8660 = –259.8 km (south).<br>
+            X total = 433 + 150 = 583 km.<br>
+            Y total = 250 – 259.8 = –9.8 km (south).<br>
+            R = square root of (583² + 9.8²) ≈ square root of (339889 + 96) = square root of 339985 ≈ 583.1 km.<br>
+            θ = tan inverse of (9.8 / 583) ≈ 0.96° south of east.<br>
+            ✅ Answer: about 583 km, 0.96° south of east.
+        </div>
+    </div>
+
+    <!-- Q21 -->
+    <div class="question-block">
+        <div class="q-num">Q21</div>
+        <div class="q-text">Two forces 12 N and 5 N act at 90°. Find the magnitude and angle of the resultant.</div>
+        <button class="answer-btn" onclick="toggle('a21')">Show answer</button>
+        <div class="answer" id="a21">
+            <strong>Step-by-step:</strong><br>
+            R = square root of (12² + 5²) = square root of (144 + 25) = square root of 169 = 13 N.<br>
+            θ = tan inverse of (5 / 12) ≈ 22.6° from the 12 N force.<br>
+            ✅ Answer: 13 N, 22.6° from the 12 N force.
+        </div>
+    </div>
+
+    <!-- Q22 -->
+    <div class="question-block">
+        <div class="q-num">Q22</div>
+        <div class="q-text">A particle moves in 3D: 3 i + 4 j + 12 k. Find the magnitude.</div>
+        <button class="answer-btn" onclick="toggle('a22')">Show answer</button>
+        <div class="answer" id="a22">
+            <strong>Step-by-step:</strong><br>
+            Magnitude = square root of (3² + 4² + 12²) = square root of (9 + 16 + 144) = square root of 169 = 13 units.<br>
+            ✅ Answer: 13 units.
+        </div>
+    </div>
+
+    <!-- Q23 -->
+    <div class="question-block">
+        <div class="q-num">Q23</div>
+        <div class="q-text">A force of 10 N acts at 30° to the horizontal. Find the horizontal and vertical components.</div>
+        <button class="answer-btn" onclick="toggle('a23')">Show answer</button>
+        <div class="answer" id="a23">
+            <strong>Step-by-step:</strong><br>
+            Horizontal = 10 × cos30° = 10 × 0.8660 = 8.66 N.<br>
+            Vertical = 10 × sin30° = 10 × 0.5 = 5 N.<br>
+            ✅ Answer: Fx = 8.66 N, Fy = 5 N.
+        </div>
+    </div>
+
+    <!-- Q24 -->
+    <div class="question-block">
+        <div class="q-num">Q24</div>
+        <div class="q-text">Two forces 20 N and 15 N act at 120°. Find the magnitude of the resultant.</div>
+        <button class="answer-btn" onclick="toggle('a24')">Show answer</button>
+        <div class="answer" id="a24">
+            <strong>Step-by-step:</strong><br>
+            Using the law of cosines: R = square root of (20² + 15² + 2×20×15×cos120°).<br>
+            cos120° = –0.5.<br>
+            R = square root of (400 + 225 + 2×20×15×(–0.5)) = square root of (625 – 300) = square root of 325 ≈ 18.03 N.<br>
+            ✅ Answer: about 18.0 N.
+        </div>
+    </div>
+
+    <!-- Q25 -->
+    <div class="question-block">
+        <div class="q-num">Q25</div>
+        <div class="q-text">A plane travels 300 km east, then 400 km north, then 500 km northwest. Find the final displacement.</div>
+        <button class="answer-btn" onclick="toggle('a25')">Show answer</button>
+        <div class="answer" id="a25">
+            <strong>Step-by-step:</strong><br>
+            East = 300 km, North = 400 km, Northwest = 500 km at 45° north of west → components: X = –500 cos45° ≈ –353.55 km, Y = 500 sin45° ≈ 353.55 km.<br>
+            X total = 300 + 0 – 353.55 = –53.55 km.<br>
+            Y total = 0 + 400 + 353.55 = 753.55 km.<br>
+            R = square root of (53.55² + 753.55²) = square root of (2868 + 567,800) ≈ square root of 570,668 ≈ 755.4 km.<br>
+            θ = tan inverse of (753.55 / 53.55) ≈ 86° from east, but X negative, Y positive → direction is about 94° from east (north of west).<br>
+            ✅ Answer: about 755 km, 94° from east.
+        </div>
+    </div>
+
+    <!-- Q26 -->
+    <div class="question-block">
+        <div class="q-num">Q26</div>
+        <div class="q-text">Two perpendicular vectors 9 N and 12 N. If the 9 N force doubles, find the new resultant.</div>
+        <button class="answer-btn" onclick="toggle('a26')">Show answer</button>
+        <div class="answer" id="a26">
+            <strong>Step-by-step:</strong><br>
+            New X = 18 N, Y = 12 N.<br>
+            R = square root of (18² + 12²) = square root of (324 + 144) = square root of 468 ≈ 21.63 N.<br>
+            ✅ Answer: about 21.6 N.
+        </div>
+    </div>
+
+    <!-- Q27 -->
+    <div class="question-block">
+        <div class="q-num">Q27</div>
+        <div class="q-text">A force of 15 N acts at 45° north of east. Find its X and Y components.</div>
+        <button class="answer-btn" onclick="toggle('a27')">Show answer</button>
+        <div class="answer" id="a27">
+            <strong>Step-by-step:</strong><br>
+            Fx = 15 × cos45° = 15 × 0.7071 = 10.61 N.<br>
+            Fy = 15 × sin45° = 15 × 0.7071 = 10.61 N.<br>
+            ✅ Answer: Fx = 10.61 N, Fy = 10.61 N.
+        </div>
+    </div>
+
+    <!-- Q28 -->
+    <div class="question-block">
+        <div class="q-num">Q28</div>
+        <div class="q-text">Two vectors 7 N and 24 N act at 90°. Find the magnitude and direction of the resultant.</div>
+        <button class="answer-btn" onclick="toggle('a28')">Show answer</button>
+        <div class="answer" id="a28">
+            <strong>Step-by-step:</strong><br>
+            R = square root of (7² + 24²) = square root of (49 + 576) = square root of 625 = 25 N.<br>
+            θ = tan inverse of (24 / 7) ≈ 73.7° from the 7 N force.<br>
+            ✅ Answer: 25 N, 73.7° from the 7 N force.
+        </div>
+    </div>
+
+    <!-- Q29 -->
+    <div class="question-block">
+        <div class="q-num">Q29</div>
+        <div class="q-text">A body moves 50 m east, then 50 m at 60° north of east. Find the resultant displacement.</div>
+        <button class="answer-btn" onclick="toggle('a29')">Show answer</button>
+        <div class="answer" id="a29">
+            <strong>Step-by-step:</strong><br>
+            First: X₁ = 50 m, Y₁ = 0.<br>
+            Second: X₂ = 50 cos60° = 25 m, Y₂ = 50 sin60° = 43.3 m.<br>
+            X total = 50 + 25 = 75 m.<br>
+            Y total = 0 + 43.3 = 43.3 m.<br>
+            R = square root of (75² + 43.3²) = square root of (5625 + 1875) = square root of 7500 ≈ 86.6 m.<br>
+            θ = tan inverse of (43.3 / 75) ≈ 30° north of east.<br>
+            ✅ Answer: 86.6 m, 30° north of east.
+        </div>
+    </div>
+
+    <!-- Q30 -->
+    <div class="question-block">
+        <div class="q-num">Q30</div>
+        <div class="q-text">Why is vector knowledge essential for advanced mechanics?</div>
+        <button class="answer-btn" onclick="toggle('a30')">Show answer</button>
+        <div class="answer" id="a30">
+            <strong>Explanation:</strong><br>
+            Vectors allow accurate prediction of motion, forces, and fields in multiple dimensions. Without vectors, describing real‑world phenomena (like projectile motion, planetary orbits, or electromagnetic fields) becomes impossible. They are the language of physics.
+        </div>
+    </div>
+
+    <hr>
+    <div class="footer-note">
+        ✅ UNIT 2 COMPLETE · 30 questions · half conceptual · half calculation · exam‑ready · feel the WOW!
+    </div>
+</div>
+
+<script>
+    function toggle(id) {
+        var el = document.getElementById(id);
+        if (el.style.display === "block") {
+            el.style.display = "none";
+        } else {
+            el.style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>

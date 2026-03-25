@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #f8fafc; padding: 15px; margin: 0; }
+        .view-container { min-height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+        /* System View */
+        .transformer-box { width: 300px; height: 200px; border: 4px solid #334155; margin: 20px auto; position: relative; background: white; border-radius: 10px; }
+        .coil-p { position: absolute; left: 20px; top: 20px; width: 40px; height: 160px; border: 2px solid #ef4444; border-radius: 5px; cursor: pointer; }
+        .coil-s { position: absolute; right: 20px; top: 20px; width: 40px; height: 160px; border: 2px solid #3b82f6; border-radius: 5px; cursor: pointer; }
+        .core { position: absolute; left: 60px; top: 50px; width: 180px; height: 100px; background: #cbd5e1; border-radius: 5px; z-index: -1; }
+
+        /* Particle View */
+        .particle-view { display: none; width: 300px; height: 200px; position: relative; background: #0f172a; border-radius: 10px; overflow: hidden; }
+        .flux-line { position: absolute; border: 2px dashed #fbbf24; border-radius: 10px; opacity: 0.5; animation: fluxMove 2s infinite linear; }
+        @keyframes fluxMove { from { stroke-dashoffset: 20; } to { stroke-dashoffset: 0; } }
+        .electron { width: 6px; height: 6px; background: #ef4444; border-radius: 50%; position: absolute; animation: eMove 1s infinite linear; }
+        @keyframes eMove { from { top: 20px; } to { top: 180px; } }
+
+        /* Equation View */
+        .equation-view { display: none; padding: 20px; background: #f1f5f9; border-radius: 10px; font-size: 20px; font-family: serif; }
+        .math { margin: 10px 0; }
+
+        /* Real View */
+        .real-view { display: none; width: 300px; height: 200px; border-radius: 10px; background: #e2e8f0; position: relative; overflow: hidden; }
+        .real-img { width: 100%; height: 100%; object-fit: cover; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Transformer_on_pole.jpg/320px-Transformer_on_pole.jpg'); background-size: cover; }
+
+        .info-panel { background: #1e293b; color: white; padding: 15px; border-radius: 10px; text-align: left; margin-top: 20px; min-height: 80px; }
+        input { width: 80%; margin-top: 15px; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <h3 id="viewHeader">🔬 Transformer: System View</h3>
+
+    <div class="view-container">
+        <!-- SYSTEM VIEW -->
+        <div id="view-system" class="transformer-box">
+            <div id="p-coil" class="coil-p" onclick="show('Primary Coil', 'Connected to the input AC voltage.')"></div>
+            <div id="s-coil" class="coil-s" onclick="show('Secondary Coil', 'Output voltage is induced here.')"></div>
+            <div class="core" onclick="show('Iron Core', 'Channels magnetic flux.')"></div>
+        </div>
+
+        <!-- PARTICLE VIEW -->
+        <div id="view-particle" class="particle-view">
+            <div style="color:white; padding:10px; font-size:12px;">Magnetic Flux & Electron Drift</div>
+            <div class="electron" style="left: 35px; animation-delay: 0s;"></div>
+            <div class="electron" style="left: 35px; animation-delay: 0.5s;"></div>
+            <div class="flux-line" style="width: 140px; height: 60px; left: 80px; top: 70px;"></div>
+        </div>
+
+        <!-- EQUATION VIEW -->
+        <div id="view-equation" class="equation-view">
+            <div class="math">$$\frac{V_p}{V_s} = \frac{N_p}{N_s}$$</div>
+            <div style="font-size: 16px; margin-top:15px;">
+                $V_p = 220V$ | $N_p = 100$<br>
+                <b>$V_s = <span id="eqVs">220</span>V$ | $N_s = <span id="eqNs">100</span>$</b>
+            </div>
+        </div>
+
+        <!-- REAL VIEW -->
+        <div id="view-real" class="real-view">
+            <div class="real-img"></div>
+            <div style="position:absolute; bottom:0; background:rgba(0,0,0,0.6); color:white; width:100%; padding:5px; font-size:10px;">Utility Pole Step-Down Transformer</div>
+        </div>
+    </div>
+
+    <input type="range" min="10" max="500" value="100" oninput="updateTurns(this.value)">
+
+    <div class="info-panel" id="info">
+        Tap components or switch views to explore!
+    </div>
+
+    <script>
+        let currentView = 'system';
+        let turns = 100;
+
+        function switchView(viewType) {
+            document.getElementById('view-system').style.display = 'none';
+            document.getElementById('view-particle').style.display = 'none';
+            document.getElementById('view-equation').style.display = 'none';
+            document.getElementById('view-real').style.display = 'none';
+
+            document.getElementById('view-' + viewType).style.display = viewType === 'equation' ? 'block' : (viewType === 'system' ? 'block' : 'flex');
+            if(viewType === 'system') document.getElementById('view-system').style.display = 'block';
+
+            currentView = viewType;
+            let titles = {system: 'System View ⚙️', particle: 'Particle View ⚛️', equation: 'Equation View 🧮', real: 'Real-Life View 🏙️'};
+            document.getElementById('viewHeader').innerText = "🔬 Transformer: " + titles[viewType];
+
+            updateTurns(turns);
+        }
+
+        function updateTurns(val) {
+            turns = val;
+            document.getElementById('eqNs').innerText = val;
+            let vs = (val / 100) * 220;
+            document.getElementById('eqVs').innerText = vs.toFixed(0);
+
+            // Update System View
+            document.getElementById('s-coil').style.width = (20 + (val/10)) + 'px';
+
+            // Update Info
+            let type = (val/100) > 1 ? "Step-Up" : "Step-Down";
+            if(currentView === 'equation') {
+                document.getElementById('info').innerHTML = `<b>Math Mode:</b> Solving for $V_s$. Since $N_s$ is ${val}, the output voltage is ${vs.toFixed(0)}V.`;
+            } else if(currentView === 'real') {
+                document.getElementById('info').innerHTML = `<b>Real World:</b> The transformers you see on power poles are <b>Step-Down</b> ($N_s < N_p$) to bring high voltage (11kV) down to safe home levels (220V).`;
+            } else if(currentView === 'particle') {
+                document.getElementById('info').innerHTML = `<b>Microscopic:</b> More coils in the secondary means more magnetic flux lines cut through the wire, inducing a higher electromotive force (EMF).`;
+            } else {
+                document.getElementById('info').innerHTML = `<b>System Mode:</b> ${type} transformer. Tap parts to learn more.`;
+            }
+        }
+
+        function show(name, desc) {
+            document.getElementById('info').innerHTML = `<b>${name}</b><br>${desc}`;
+        }
+    </script>
+</body>
+</html>

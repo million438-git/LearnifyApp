@@ -2,280 +2,332 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Physics Grade 11 · Chapter 2 · Vectors (Complete Notes + 30+ Q)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>Physics 11 · Vectors · textbook style</title>
+    <!-- MathJax for beautiful textbook formulas (fixes \frac, \vec, \hat) -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            background: #e9f2fa;
-            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-            padding: 18px 12px;
-            color: #13293D;
+            background: linear-gradient(145deg, #d9e9fa 0%, #f2f9ff 100%);
+            font-family: 'Atkinson Hyperlegible', 'Georgia', 'Times New Roman', 'Segoe UI', serif;
+            padding: 20px 12px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            color: #0a2f44;
         }
-        .master-chapter {
+
+        .master-book {
             max-width: 1200px;
-            margin: 0 auto;
-            background: rgba(255,255,255,0.96);
-            backdrop-filter: blur(3px);
-            border-radius: 52px;
-            box-shadow: 0 30px 50px -15px #103458cc;
-            padding: 35px 30px 45px 30px;
-            border: 2px solid white;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 60px 60px 40px 40px;
+            box-shadow: 0 30px 55px -15px #0b3d5f, 0 0 0 2px rgba(255,255,255,0.8) inset;
+            padding: 32px 24px 45px 24px;
+            border: 1px solid rgba(255,255,255,0.6);
         }
+
         h1 {
-            font-size: 2.8rem;
-            font-weight: 700;
-            background: linear-gradient(145deg, #0b3d5c, #245f8a);
+            font-size: 3.2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #154e70, #0d3550);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 10px;
-            line-height: 1.2;
+            margin: 0 0 5px 15px;
+            line-height: 1.1;
+            text-shadow: 4px 4px 12px rgba(19, 67, 101, 0.2);
         }
-        .chapter-badge {
-            font-size: 1.6rem;
-            color: #1e5a83;
-            border-left: 14px solid #f7b731;
+
+        .chapter-sub {
+            font-size: 1.9rem;
+            margin-left: 25px;
+            color: #1d618b;
+            border-left: 10px solid #f9b81b;
             padding-left: 22px;
-            margin: 5px 0 25px 5px;
             font-weight: 400;
+            font-style: italic;
         }
-        /* tabs for notes vs exam */
-        .section-tabs {
+
+        /* Tab navigation – big friendly buttons */
+        .tab-collection {
             display: flex;
             flex-wrap: wrap;
-            gap: 14px 10px;
-            margin: 30px 0 20px;
+            gap: 16px;
+            margin: 40px 0 30px;
             justify-content: center;
         }
-        .tab-btn {
+        .tab-item {
             background: white;
-            border: 2px solid #abc3df;
-            border-radius: 60px;
-            padding: 14px 32px;
+            border: none;
+            border-radius: 100px;
+            padding: 18px 42px;
             font-weight: 700;
-            font-size: 1.2rem;
-            color: #1b4f79;
+            font-size: 1.6rem;
+            color: #1e4d73;
+            box-shadow: 0 12px 28px -8px #366f9b, 0 4px 0 0 #aac3db;
             cursor: pointer;
             transition: 0.15s;
-            box-shadow: 0 8px 14px #c0d3ec;
-            text-align: center;
+            letter-spacing: 0.5px;
+            border: 2px solid white;
+            flex: 0 1 auto;
+            background: #f6fdff;
         }
-        .tab-btn.active {
-            background: #1a4f78;
+        .tab-item.active {
+            background: #154e70;
             color: white;
-            border-color: #0d3149;
-            box-shadow: 0 12px 22px #1a4f78b0;
+            box-shadow: 0 18px 30px -6px #0a334a, 0 4px 0 0 #f9b81b;
+            border: 2px solid #f9b81b;
+            transform: scale(1.02);
         }
+
         .panel {
             display: none;
-            background: transparent;
+            animation: fade 0.25s;
         }
         .panel.active-panel {
             display: block;
         }
+        @keyframes fade { from { opacity:0.3; } to { opacity:1; } }
 
-        /* ---------- NOTES STYLE ---------- */
-        .section-card {
-            background: #f0f8ff;
-            border-radius: 38px;
-            padding: 28px 28px;
-            margin: 30px 0;
-            border: 2px solid white;
-            box-shadow: 0 15px 25px -10px #b3cae5;
+        /* ========== TEXTBOOK CARD STYLE ========== */
+        .chapter-section {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(4px);
+            border-radius: 48px;
+            padding: 32px 30px;
+            margin: 40px 0;
+            box-shadow: 0 20px 35px -10px #4878a5, 0 0 0 2px white inset;
+            border: 1px solid #f1c40f;
         }
-        .section-card h2 {
-            font-size: 2.2rem;
-            color: #003f66;
+
+        .section-heading {
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #003153;
             border-bottom: 6px solid #f7b731;
             display: inline-block;
-            margin-bottom: 20px;
-        }
-        .concept-block {
-            background: white;
-            border-radius: 28px;
-            padding: 22px 26px;
-            margin: 25px 0;
-            box-shadow: 0 8px 18px #cbddec;
-            border-left: 12px solid #f7b731;
-        }
-        .concept-block h3 {
-            font-size: 1.8rem;
-            color: #0a3f5e;
-            margin-bottom: 12px;
-        }
-        .note-list {
-            list-style: none;
-            margin: 15px 0;
-        }
-        .note-list li {
-            margin: 14px 0;
-            font-size: 1.15rem;
-            padding-left: 30px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="%233080b0"><circle cx="12" cy="12" r="8"/></svg>') left center no-repeat;
-            background-size: 20px;
-        }
-        .highlight-box {
-            background: #fff9e6;
-            border-radius: 24px;
-            padding: 16px 24px;
-            margin: 18px 0;
-            border-left: 10px solid #f7b731;
-            font-size: 1.15rem;
-        }
-        .example-box {
-            background: #e3f0fc;
-            border-radius: 26px;
-            padding: 18px 24px;
-            margin: 25px 0 15px;
-            border-left: 12px solid #1e6f9f;
-            font-size: 1.1rem;
-        }
-        .example-box strong {
-            color: #00345c;
-            font-size: 1.3rem;
-        }
-        .figure-place {
-            background: #d5e7fa;
-            border-radius: 30px;
-            padding: 15px 20px;
-            margin: 20px 0;
-            text-align: center;
-            font-style: italic;
-            color: #1b4f72;
-            border: 2px dashed #1e6f9f;
-        }
-        .badge {
-            background: #123e5a;
-            color: white;
-            border-radius: 50px;
-            padding: 5px 18px;
-            font-weight: 600;
-            display: inline-block;
-            margin: 10px 0;
-            font-size: 1rem;
+            padding-bottom: 10px;
+            margin-bottom: 35px;
         }
 
-        /* ---------- EXAM STYLE ---------- */
-        .exam-paper {
-            background: #f0f8ff;
-            border-radius: 42px;
-            padding: 28px 26px;
-        }
-        .question-card {
+        .concept-card {
             background: white;
-            border-radius: 32px;
-            padding: 24px 28px;
+            border-radius: 36px;
+            padding: 30px 30px;
             margin: 30px 0;
-            border: 2px solid white;
-            box-shadow: 0 15px 25px -10px #b3cae5;
+            box-shadow: 0 12px 25px -10px #8fb7d9, 0 0 0 2px #f9eec1 inset;
+            border-left: 18px solid #f7b731;
+            transition: 0.1s;
         }
-        .q-num {
-            background: #123e5a;
+        .concept-card h3 {
+            font-size: 2.2rem;
+            color: #113e5c;
+            margin-bottom: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .concept-card h3::before {
+            content: "✦";
+            color: #f7b731;
+            font-size: 2.8rem;
+        }
+
+        .note-list {
+            list-style: none;
+        }
+        .note-list li {
+            font-size: 1.4rem;
+            margin: 18px 0;
+            padding-left: 40px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="%233977b5"><circle cx="12" cy="12" r="8"/></svg>') left center no-repeat;
+            background-size: 26px;
+            line-height: 1.45;
+        }
+
+        .example-box {
+            background: #fef7e8;
+            border-radius: 32px;
+            padding: 24px 32px;
+            margin: 25px 0;
+            border-left: 18px solid #1e6f9f;
+            font-size: 1.45rem;
+            box-shadow: 0 10px 16px -8px #b6d4f0;
+        }
+        .example-box strong {
+            color: #003f66;
+            font-size: 1.7rem;
+            font-weight: 700;
+        }
+
+        .figure-placeholder {
+            background: #e5f0fb;
+            border-radius: 40px;
+            padding: 30px;
+            text-align: center;
+            font-style: italic;
+            color: #1e4e79;
+            border: 4px dashed #3f8ab3;
+            margin: 30px 0;
+            font-size: 1.5rem;
+        }
+
+        /* exam cards */
+        .exam-card {
+            background: white;
+            border-radius: 40px;
+            padding: 28px 32px;
+            margin: 35px 0;
+            box-shadow: 0 20px 30px -10px #38658b;
+            border: 2px solid #f9eec1;
+        }
+        .q-badge {
+            background: #154e70;
             color: white;
-            border-radius: 60px;
-            padding: 6px 22px;
-            font-weight: 600;
+            border-radius: 80px;
+            padding: 10px 32px;
+            font-size: 1.5rem;
+            font-weight: 700;
             display: inline-block;
-            font-size: 1.2rem;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
+            border: 3px solid #f9b81b;
         }
         .q-text {
-            font-size: 1.25rem;
-            font-weight: 500;
-            margin: 20px 0;
+            font-size: 1.5rem;
+            margin: 20px 0 18px;
             line-height: 1.5;
         }
-        .btn-reveal {
+        .answer-btn {
             background: #1f6fa5;
             border: none;
             color: white;
-            border-radius: 60px;
-            padding: 12px 28px;
+            border-radius: 80px;
+            padding: 16px 38px;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.4rem;
+            box-shadow: 0 8px 14px #0f3c5c;
             cursor: pointer;
-            box-shadow: 0 6px 14px #0f3c5c;
+            margin: 12px 0 5px;
+            border: 2px solid white;
+            transition: 0.1s;
             width: fit-content;
-            margin: 15px 0 5px;
+        }
+        .answer-btn:active {
+            transform: scale(0.97);
+            background: #0f4b73;
         }
         .explain-hint {
-            background: #fffae7;
-            border-radius: 24px;
-            padding: 16px 24px;
-            margin: 15px 0 5px;
-            font-size: 1.1rem;
-            border-left: 8px solid #f7b731;
+            background: #fefae0;
+            border-radius: 28px;
+            padding: 22px 28px;
+            margin: 20px 0 0;
+            font-size: 1.45rem;
+            border-left: 14px solid #f7b731;
             display: none;
+            box-shadow: inset 0 0 0 2px white;
         }
         .explain-hint.show {
             display: block;
         }
+
+        /* fancy footnotes */
         hr {
-            border: 4px dotted #b0cbe8;
-            margin: 30px 0;
+            border: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #f7b731, transparent);
+            margin: 50px 0 25px;
         }
-        footer {
+        .footer-note {
             text-align: center;
-            color: #38658b;
-            margin: 30px 0 10px;
+            font-size: 1.5rem;
+            color: #1d577c;
+            font-weight: 500;
+            padding: 15px;
         }
-        @media (max-width: 600px) {
-            h1 { font-size: 2.2rem; }
-            .section-card h2 { font-size: 1.9rem; }
-            .tab-btn { padding: 10px 20px; font-size: 1rem; }
+
+        /* responsive fine-tuning */
+        @media (max-width: 700px) {
+            h1 { font-size: 2.6rem; margin-left: 5px; }
+            .chapter-sub { font-size: 1.6rem; margin-left: 10px; }
+            .tab-item { font-size: 1.3rem; padding: 14px 25px; }
+            .section-heading { font-size: 2.2rem; }
+            .concept-card h3 { font-size: 1.9rem; }
+            .note-list li { font-size: 1.25rem; }
+            .example-box { font-size: 1.25rem; padding: 20px; }
+            .q-text { font-size: 1.3rem; }
+            .answer-btn { padding: 14px 28px; font-size: 1.25rem; }
+            .master-book { padding: 20px 16px; }
+        }
+        @media (max-width: 450px) {
+            .tab-item { width: 100%; text-align: center; }
+            .concept-card { padding: 20px 15px; }
+        }
+
+        /* math styling: MathJax adds its own, but we ensure displayed formulas are large */
+        mjx-container {
+            font-size: 1.3em;
+            margin: 0 2px;
+        }
+        .example-box mjx-container, .q-text mjx-container {
+            font-size: 1.2em;
         }
     </style>
 </head>
 <body>
-<div class="master-chapter">
-    <h1>📐 UNIT 2 · VECTORS</h1>
-    <div class="chapter-badge">complete notes + 31 exam questions · grade 11</div>
+<div class="master-book">
+    <h1>📘 VECTORS · Grade 11</h1>
+    <div class="chapter-sub">unit 2 — complete field notes + 31 exam gems</div>
 
-    <!-- tabs: notes vs exam -->
-    <div class="section-tabs">
-        <span class="tab-btn active" data-tab="notesChapter">📘 COMPLETE NOTES</span>
-        <span class="tab-btn" data-tab="examChapter">🎯 31 EXAM QUESTIONS</span>
+    <!-- big tabs -->
+    <div class="tab-collection">
+        <button class="tab-item active" data-tab="notesTab">📖 TEXTBOOK NOTES</button>
+        <button class="tab-item" data-tab="examTab">🎯 31 EXAM QUESTIONS</button>
     </div>
 
-    <!-- ================ NOTES PANEL (FULL CHAPTER 2) ================ -->
-    <div id="notesChapter" class="panel active-panel">
+    <!-- ========== NOTES PANEL ========== -->
+    <div id="notesTab" class="panel active-panel">
 
-        <!-- introduction -->
-        <div class="section-card">
-            <h2>🔭 Introduction</h2>
-            <div class="highlight-box">
-                Many physical quantities have both magnitude and direction – force, velocity, acceleration, displacement. This unit develops ways to describe and operate with vectors in two dimensions.
+        <!-- intro section -->
+        <div class="chapter-section">
+            <div class="section-heading">🔬 introduction</div>
+            <div class="concept-card" style="border-left-color: #2a86c7;">
+                <p style="font-size:1.5rem; line-height:1.4;">Many physical quantities have both magnitude and direction – force, velocity, displacement. This unit develops ways to describe and operate with vectors in two dimensions.</p>
+                <ul class="note-list" style="margin-top:20px;">
+                    <li>familiarize with basic principles of vector operations</li>
+                    <li>interpret phenomena using the vector concept</li>
+                    <li>develop problem‑solving skills with vectors</li>
+                </ul>
             </div>
-            <div class="badge">After this unit, students will be able to:</div>
-            <ul class="note-list">
-                <li>familiarize themselves with basic principles of vector operations</li>
-                <li>interpret physical phenomena using the concept of vector</li>
-                <li>develop skills of using the concept of vector in solving various problems</li>
-            </ul>
         </div>
 
-        <!-- 2.1 Vectors and Types of Vectors -->
-        <div class="section-card">
-            <h2>📌 2.1 Vectors and Types of Vectors</h2>
-            <div class="concept-block">
-                <h3>Scalar vs Vector</h3>
+        <!-- 2.1 Vectors and types -->
+        <div class="chapter-section">
+            <div class="section-heading">📌 2.1 vectors & types</div>
+            <div class="concept-card">
+                <h3>scalar vs vector</h3>
                 <ul class="note-list">
-                    <li><strong>Scalar:</strong> mass, speed, distance, density – only magnitude.</li>
+                    <li><strong>Scalar:</strong> mass, speed, distance – only magnitude.</li>
                     <li><strong>Vector:</strong> force, velocity, acceleration, displacement – magnitude + direction.</li>
                 </ul>
             </div>
-            <div class="concept-block">
-                <h3>Representation of vectors</h3>
+            <div class="concept-card">
+                <h3>representation</h3>
                 <p>Arrow: length = magnitude (scale), tip = direction.</p>
-                <div class="figure-place">[diagram: vector arrow with scale]</div>
+                <div class="figure-placeholder">[diagram: vector arrow with scale]</div>
             </div>
-            <div class="concept-block">
-                <h3>Types of vectors</h3>
+            <div class="concept-card">
+                <h3>types of vectors</h3>
                 <ul class="note-list">
                     <li><strong>Parallel vectors:</strong> same direction.</li>
                     <li><strong>Antiparallel vectors:</strong> opposite directions.</li>
@@ -294,54 +346,54 @@
             </div>
         </div>
 
-        <!-- 2.2 Graphical Method -->
-        <div class="section-card">
-            <h2>✏️ 2.2 Graphical Method of Addition (2‑D)</h2>
-            <div class="concept-block">
-                <h3>Triangle law</h3>
+        <!-- 2.2 Graphical method -->
+        <div class="chapter-section">
+            <div class="section-heading">✏️ 2.2 graphical addition</div>
+            <div class="concept-card">
+                <h3>triangle law</h3>
                 <p>Place vectors head to tail; resultant from tail of first to head of last.</p>
             </div>
-            <div class="concept-block">
-                <h3>Parallelogram law</h3>
+            <div class="concept-card">
+                <h3>parallelogram law</h3>
                 <p>Place vectors tail to tail; diagonal from common tail to opposite corner = resultant.</p>
             </div>
-            <div class="concept-block">
-                <h3>Polygon law</h3>
+            <div class="concept-card">
+                <h3>polygon law</h3>
                 <p>For more than two vectors: chain head‑to‑tail; resultant from start to end.</p>
             </div>
-            <div class="concept-block">
-                <h3>Subtraction of vectors</h3>
+            <div class="concept-card">
+                <h3>subtraction</h3>
                 <p>\(\vec{A} - \vec{B} = \vec{A} + (-\vec{B})\)</p>
             </div>
-            <div class="figure-place">[diagram: triangle law, parallelogram, polygon]</div>
+            <div class="figure-placeholder">[diagram: triangle law, parallelogram, polygon]</div>
         </div>
 
-        <!-- 2.3 Algebraic Method -->
-        <div class="section-card">
-            <h2>🧮 2.3 Algebraic Method (Component Method)</h2>
-            <div class="concept-block">
-                <h3>Adding collinear vectors</h3>
+        <!-- 2.3 Algebraic method -->
+        <div class="chapter-section">
+            <div class="section-heading">🧮 2.3 algebraic (component) method</div>
+            <div class="concept-card">
+                <h3>collinear vectors</h3>
                 <p>Same direction → add magnitudes; opposite → subtract, direction of larger.</p>
             </div>
-            <div class="concept-block">
-                <h3>Perpendicular vectors</h3>
+            <div class="concept-card">
+                <h3>perpendicular vectors</h3>
                 <p>\(R = \sqrt{A^2 + B^2}\) ; direction \(\theta = \tan^{-1}(B/A)\)</p>
             </div>
-            <div class="concept-block">
-                <h3>Components of a vector</h3>
+            <div class="concept-card">
+                <h3>components</h3>
                 <p>\(A_x = A\cos\theta\) , \(A_y = A\sin\theta\) (if \(\theta\) from +x axis).</p>
                 <p>\(\vec{A} = A_x\hat{i} + A_y\hat{j}\)</p>
             </div>
-            <div class="concept-block">
-                <h3>Resultant by components</h3>
+            <div class="concept-card">
+                <h3>resultant by components</h3>
                 <p>\(R_x = \sum A_x\) , \(R_y = \sum A_y\)<br>\(R = \sqrt{R_x^2 + R_y^2}\) , \(\theta = \tan^{-1}\left(\frac{R_y}{R_x}\right)\) (watch quadrant).</p>
             </div>
-            <div class="concept-block">
-                <h3>Unit vectors</h3>
+            <div class="concept-card">
+                <h3>unit vectors</h3>
                 <p>\(\hat{i}\) , \(\hat{j}\) along +x, +y.<br>\(\vec{A} = A_x\hat{i} + A_y\hat{j}\)<br>Unit vector in direction of \(\vec{A}\): \(\hat{u}_A = \frac{\vec{A}}{A}\)</p>
             </div>
             <div class="example-box">
-                <strong>Example 2.5:</strong> Force 35 N at 40° above negative x‑axis → components: F_x = 35cos40° = 26.8 N (negative direction?), careful: angle measured from negative x, so F_x = -35cos40° = -26.8 N, F_y = 35sin40° = +22.5 N.
+                <strong>Example 2.5:</strong> Force 35 N at 40° above negative x‑axis → components: F_x = 35cos40° = 26.8 N (negative direction? careful: angle measured from negative x, so F_x = -35cos40° = -26.8 N, F_y = 35sin40° = +22.5 N.)
             </div>
             <div class="example-box">
                 <strong>Example 2.6:</strong> A = 100 m at 50°, B = 200 m at 150° (from +x). Find R.<br>
@@ -349,17 +401,17 @@
             </div>
         </div>
 
-        <!-- 2.4 Product of Vectors (Dot product) -->
-        <div class="section-card">
-            <h2>⚫ 2.4 Product of Vectors – Dot Product</h2>
-            <div class="concept-block">
-                <h3>Scalar (dot) product</h3>
+        <!-- 2.4 Dot product -->
+        <div class="chapter-section">
+            <div class="section-heading">⚫ 2.4 dot (scalar) product</div>
+            <div class="concept-card">
+                <h3>definition</h3>
                 <p>\(\vec{A}\cdot\vec{B} = AB\cos\theta\) (scalar)</p>
                 <p>Also \(\vec{A}\cdot\vec{B} = A_xB_x + A_yB_y\)</p>
                 <p>Angle between vectors: \(\cos\theta = \frac{\vec{A}\cdot\vec{B}}{AB}\)</p>
             </div>
-            <div class="concept-block">
-                <h3>Applications</h3>
+            <div class="concept-card">
+                <h3>applications</h3>
                 <p>Work \(W = \vec{F}\cdot\vec{s}\) ; Power \(P = \vec{F}\cdot\vec{v}\)</p>
             </div>
             <div class="example-box">
@@ -367,14 +419,14 @@
             </div>
         </div>
 
-        <!-- Review Questions from textbook (summarized) -->
-        <div class="section-card">
-            <h2>📝 End of Unit Questions (selected)</h2>
-            <div class="highlight-box">
-                <ol style="margin-left: 25px;">
+        <!-- Review questions from textbook -->
+        <div class="chapter-section">
+            <div class="section-heading">📝 end‑of‑unit selected</div>
+            <div class="concept-card">
+                <ol style="font-size:1.4rem; margin-left:30px; line-height:1.8;">
                     <li>Two vectors give resultant 8 units when parallel, 2 units when antiparallel. Find the vectors. (Ans: 5 and 3)</li>
                     <li>State condition for vector sum of two vectors to be null.</li>
-                    <li>Girl walks 50 m forward, 10 back, 10 forward, 10 back, 20 forward, 10 back, 40 forward, 10 back. Find total distance and displacement. (Ans: 160 m, 80 m forward?)</li>
+                    <li>Girl walks 50 m forward, 10 back, 10 forward, 10 back, 20 forward, 10 back, 40 forward, 10 back. Find total distance and displacement. (Ans: 160 m, 80 m forward)</li>
                     <li>What vector added to 10 km East gives 15 km East? 15 km West? (Ans: 5 km East, 25 km West)</li>
                     <li>Boat: river south 50 cm/s, boat west 100 cm/s. Find resultant velocity. (Ans: 111.8 cm/s, 26.6° south of west)</li>
                 </ol>
@@ -382,54 +434,54 @@
         </div>
     </div> <!-- end notes panel -->
 
-    <!-- ================ EXAM PANEL (31 questions with answers) ================ -->
-    <div id="examChapter" class="panel">
-        <div class="exam-paper">
-            <h2 style="color:#00345c; margin-bottom:20px;">🎯 31 Advanced Vector Questions</h2>
+    <!-- ========== EXAM PANEL (31 QUESTIONS) ========== -->
+    <div id="examTab" class="panel">
+        <div class="chapter-section" style="background: #fdf8f0;">
+            <div class="section-heading">🎯 31 exam‑style questions</div>
+            <p style="font-size:1.5rem; margin-bottom:20px;">click any answer button to reveal solution.</p>
 
-            <!-- use javascript to generate answer toggle with unique ids -->
-            <div class="question-card"><span class="q-num">Q1</span><div class="q-text">Classify the following as scalar or vector: (a) 35 kg, (b) 20 m/s north, (c) 9.8 m/s² downward, (d) 100 J, (e) 15 N at 30°.</div><button class="btn-reveal" onclick="toggleAnswer(201)">show answer</button><div id="ans201" class="explain-hint"><strong>✅ answer:</strong> (a) scalar, (b) vector, (c) vector, (d) scalar, (e) vector.</div></div>
-            <div class="question-card"><span class="q-num">Q2</span><div class="q-text">Define parallel, antiparallel, and equal vectors. Give an example of each.</div><button class="btn-reveal" onclick="toggleAnswer(202)">show answer</button><div id="ans202" class="explain-hint"><strong>✅ answer:</strong> Parallel: same direction (e.g., two forces east). Antiparallel: opposite directions (e.g., 10 N east and 10 N west). Equal: same magnitude and direction (e.g., two 5 m displacements north).</div></div>
-            <div class="question-card"><span class="q-num">Q3</span><div class="q-text">What is the negative of a vector? If \(\vec{A}=30\) m/s at 60° north of east, find \(-\vec{A}\).</div><button class="btn-reveal" onclick="toggleAnswer(203)">show answer</button><div id="ans203" class="explain-hint"><strong>✅ answer:</strong> Same magnitude, opposite direction. \(-\vec{A}=30\) m/s at 60° south of west (or 240°).</div></div>
-            <div class="question-card"><span class="q-num">Q4</span><div class="q-text">State the triangle law of vector addition. Illustrate with a sketch.</div><button class="btn-reveal" onclick="toggleAnswer(204)">show answer</button><div id="ans204" class="explain-hint"><strong>✅ answer:</strong> If two vectors are represented by two sides of a triangle in sequence (head‑to‑tail), then the third side closing the triangle (from tail of first to head of second) gives the resultant vector.</div></div>
-            <div class="question-card"><span class="q-num">Q5</span><div class="q-text">Two forces 10 N and 15 N act at a point. (a) What is the maximum possible resultant? (b) Minimum? (c) If they are perpendicular, find magnitude and direction of resultant.</div><button class="btn-reveal" onclick="toggleAnswer(205)">show answer</button><div id="ans205" class="explain-hint"><strong>✅ answer:</strong> (a) 25 N (same direction). (b) 5 N (opposite). (c) R = √(10²+15²)=18.03 N, θ = tan⁻¹(15/10)=56.3° from the 10 N force.</div></div>
-            <div class="question-card"><span class="q-num">Q6</span><div class="q-text">A car travels 20 km due east, then 25 km due north. Find the displacement (magnitude and direction).</div><button class="btn-reveal" onclick="toggleAnswer(206)">show answer</button><div id="ans206" class="explain-hint"><strong>✅ answer:</strong> R = √(20²+25²)=32.0 km, θ = tan⁻¹(25/20)=51.3° north of east.</div></div>
-            <div class="question-card"><span class="q-num">Q7</span><div class="q-text">A vector \(\vec{A}\) has components A_x = -5, A_y = 12. Find its magnitude and direction (angle from +x axis).</div><button class="btn-reveal" onclick="toggleAnswer(207)">show answer</button><div id="ans207" class="explain-hint"><strong>✅ answer:</strong> A = √(25+144)=13. θ = tan⁻¹(12/|-5|) = 67.4°; since x negative, y positive → quadrant II, so θ = 180-67.4 = 112.6°.</div></div>
-            <div class="question-card"><span class="q-num">Q8</span><div class="q-text">Resolve a force of 50 N acting at 30° below the positive x‑axis into components.</div><button class="btn-reveal" onclick="toggleAnswer(208)">show answer</button><div id="ans208" class="explain-hint"><strong>✅ answer:</strong> F_x = 50 cos30° = 43.3 N, F_y = -50 sin30° = -25 N.</div></div>
-            <div class="question-card"><span class="q-num">Q9</span><div class="q-text">Given \(\vec{A}=3\hat{i}+4\hat{j}\) and \(\vec{B}=5\hat{i}-2\hat{j}\), find \(\vec{A}+\vec{B}\) and its magnitude.</div><button class="btn-reveal" onclick="toggleAnswer(209)">show answer</button><div id="ans209" class="explain-hint"><strong>✅ answer:</strong> \(\vec{A}+\vec{B}=8\hat{i}+2\hat{j}\); |R| = √(64+4)=√68=8.25 units.</div></div>
-            <div class="question-card"><span class="q-num">Q10</span><div class="q-text">Find the unit vector in the direction of \(\vec{D}=6\hat{i}-8\hat{j}\).</div><button class="btn-reveal" onclick="toggleAnswer(210)">show answer</button><div id="ans210" class="explain-hint"><strong>✅ answer:</strong> |D|=10, so \(\hat{u}=0.6\hat{i}-0.8\hat{j}\).</div></div>
-            <div class="question-card"><span class="q-num">Q11</span><div class="q-text">A vector has magnitude 12 and direction 150° from +x. Write it in unit‑vector notation.</div><button class="btn-reveal" onclick="toggleAnswer(211)">show answer</button><div id="ans211" class="explain-hint"><strong>✅ answer:</strong> 150° → cos150 = -√3/2 ≈ -0.866, sin150 = 0.5. So \(\vec{A}=12(-0.866\hat{i}+0.5\hat{j})=-10.392\hat{i}+6\hat{j}\).</div></div>
-            <div class="question-card"><span class="q-num">Q12</span><div class="q-text">If \(\vec{P}=2\hat{i}+3\hat{j}\) and \(\vec{Q}=4\hat{i}-5\hat{j}\), find \(\vec{P}-\vec{Q}\) and its magnitude.</div><button class="btn-reveal" onclick="toggleAnswer(212)">show answer</button><div id="ans212" class="explain-hint"><strong>✅ answer:</strong> \(\vec{P}-\vec{Q}=(2-4)\hat{i}+(3+5)\hat{j}=-2\hat{i}+8\hat{j}\); |R|=√(4+64)=√68=8.25.</div></div>
-            <div class="question-card"><span class="q-num">Q13</span><div class="q-text">Find the dot product of \(\vec{A}=5\hat{i}-3\hat{j}\) and \(\vec{B}=2\hat{i}+4\hat{j}\).</div><button class="btn-reveal" onclick="toggleAnswer(213)">show answer</button><div id="ans213" class="explain-hint"><strong>✅ answer:</strong> \(\vec{A}\cdot\vec{B}=5·2 + (-3)·4 = 10 -12 = -2\).</div></div>
-            <div class="question-card"><span class="q-num">Q14</span><div class="q-text">Two vectors have magnitudes 6 and 8, and the angle between them is 60°. Find the scalar product.</div><button class="btn-reveal" onclick="toggleAnswer(214)">show answer</button><div id="ans214" class="explain-hint"><strong>✅ answer:</strong> \(\vec{A}\cdot\vec{B}=6·8·\cos60° = 48·0.5 = 24\).</div></div>
-            <div class="question-card"><span class="q-num">Q15</span><div class="q-text">Find the angle between \(\vec{A}=2\hat{i}+2\hat{j}\) and \(\vec{B}=4\hat{i}-3\hat{j}\).</div><button class="btn-reveal" onclick="toggleAnswer(215)">show answer</button><div id="ans215" class="explain-hint"><strong>✅ answer:</strong> dot = 8-6=2; |A|=√8=2.828, |B|=5; cosθ = 2/(2.828·5)=0.1414 → θ ≈ 81.9°.</div></div>
-            <div class="question-card"><span class="q-num">Q16</span><div class="q-text">A force \(\vec{F}=10\hat{i}+5\hat{j}\) N acts on a body that undergoes displacement \(\vec{s}=3\hat{i}+2\hat{j}\) m. Find the work done.</div><button class="btn-reveal" onclick="toggleAnswer(216)">show answer</button><div id="ans216" class="explain-hint"><strong>✅ answer:</strong> W = \(\vec{F}\cdot\vec{s}=10·3+5·2=30+10=40\) J.</div></div>
-            <div class="question-card"><span class="q-num">Q17</span><div class="q-text">Find the angle between \(\vec{P}=3\hat{i}+4\hat{j}\) and the positive x‑axis.</div><button class="btn-reveal" onclick="toggleAnswer(217)">show answer</button><div id="ans217" class="explain-hint"><strong>✅ answer:</strong> tanθ = 4/3 → θ = 53.13°.</div></div>
-            <div class="question-card"><span class="q-num">Q18</span><div class="q-text">A boat heads east at 4 m/s across a river flowing south at 3 m/s. Find the resultant velocity (magnitude and direction).</div><button class="btn-reveal" onclick="toggleAnswer(218)">show answer</button><div id="ans218" class="explain-hint"><strong>✅ answer:</strong> R = √(4²+3²)=5 m/s, θ = tan⁻¹(3/4)=36.9° south of east.</div></div>
-            <div class="question-card"><span class="q-num">Q19</span><div class="q-text">Find a unit vector perpendicular to both \(\vec{A}=2\hat{i}+3\hat{j}\) and \(\vec{B}=4\hat{i}-5\hat{j}\). (Hint: in 2D, perpendicular = swap and change sign)</div><button class="btn-reveal" onclick="toggleAnswer(219)">show answer</button><div id="ans219" class="explain-hint"><strong>✅ answer:</strong> A vector perpendicular in 2D can be obtained by (A_y, -A_x) e.g. \(\vec{n}=3\hat{i}-2\hat{j}\) (not unit). Normalize: |n|=√13, unit = (3/√13)i - (2/√13)j. But there are two directions.</div></div>
-            <div class="question-card"><span class="q-num">Q20</span><div class="q-text">Three forces act on a point: 10 N east, 15 N 30° north of east, and 20 N west. Find the net force (components and magnitude).</div><button class="btn-reveal" onclick="toggleAnswer(220)">show answer</button><div id="ans220" class="explain-hint"><strong>✅ answer:</strong> F1=(10,0); F2=(15cos30=12.99, 15sin30=7.5); F3=(-20,0). Sum: Rx=10+12.99-20=2.99 N; Ry=0+7.5+0=7.5 N; R=√(2.99²+7.5²)=8.09 N, θ=tan⁻¹(7.5/2.99)=68.2° north of east.</div></div>
-            <div class="question-card"><span class="q-num">Q21</span><div class="q-text">If \(\vec{A}=5\hat{i}-12\hat{j}\) and \(\vec{B}=4\hat{i}+3\hat{j}\), find the component of \(\vec{A}\) along \(\vec{B}\).</div><button class="btn-reveal" onclick="toggleAnswer(221)">show answer</button><div id="ans221" class="explain-hint"><strong>✅ answer:</strong> comp = \(\vec{A}\cdot\hat{B}\). \(\hat{B}=(4/5,3/5)\). Dot = 5·0.8 + (-12)·0.6 = 4 - 7.2 = -3.2.</div></div>
-            <div class="question-card"><span class="q-num">Q22</span><div class="q-text">A particle moves from position (2,3) to (5,7) meters. Find the displacement vector and its magnitude.</div><button class="btn-reveal" onclick="toggleAnswer(222)">show answer</button><div id="ans222" class="explain-hint"><strong>✅ answer:</strong> \(\vec{d}= (5-2)\hat{i}+(7-3)\hat{j}=3\hat{i}+4\hat{j}\); magnitude 5 m.</div></div>
-            <div class="question-card"><span class="q-num">Q23</span><div class="q-text">Given \(\vec{C}=2\hat{i}+6\hat{j}\), find a vector of magnitude 10 in the direction of \(\vec{C}\).</div><button class="btn-reveal" onclick="toggleAnswer(223)">show answer</button><div id="ans223" class="explain-hint"><strong>✅ answer:</strong> |C|=√40=6.3249; unit = (0.316i+0.949j); vector = 10×unit = 3.16i+9.49j.</div></div>
-            <div class="question-card"><span class="q-num">Q24</span><div class="q-text">Find the angle between the vectors \(\vec{P}=2\hat{i}-5\hat{j}\) and \(\vec{Q}=3\hat{i}+4\hat{j}\).</div><button class="btn-reveal" onclick="toggleAnswer(224)">show answer</button><div id="ans224" class="explain-hint"><strong>✅ answer:</strong> dot = 6-20 = -14; |P|=√29≈5.385; |Q|=5; cosθ = -14/(5.385·5)= -0.52 → θ ≈ 121.3°.</div></div>
-            <div class="question-card"><span class="q-num">Q25</span><div class="q-text">Under what condition is \(\vec{A}+\vec{B}=\vec{A}-\vec{B}\) ?</div><button class="btn-reveal" onclick="toggleAnswer(225)">show answer</button><div id="ans225" class="explain-hint"><strong>✅ answer:</strong> Only if \(\vec{B}=0\).</div></div>
-            <div class="question-card"><span class="q-num">Q26</span><div class="q-text">Can the magnitude of a vector be zero if one of its components is not zero? Explain.</div><button class="btn-reveal" onclick="toggleAnswer(226)">show answer</button><div id="ans226" class="explain-hint"><strong>✅ answer:</strong> No, if any component ≠0, magnitude =√(sum squares) >0.</div></div>
-            <div class="question-card"><span class="q-num">Q27</span><div class="q-text">Find the work done by a force \(\vec{F}=20\hat{i}-10\hat{j}\) N when displacement is \(\vec{s}=5\hat{i}+2\hat{j}\) m.</div><button class="btn-reveal" onclick="toggleAnswer(227)">show answer</button><div id="ans227" class="explain-hint"><strong>✅ answer:</strong> W = 20·5 + (-10)·2 = 100 -20 = 80 J.</div></div>
-            <div class="question-card"><span class="q-num">Q28</span><div class="q-text">If the dot product of two vectors is zero, what can you conclude?</div><button class="btn-reveal" onclick="toggleAnswer(228)">show answer</button><div id="ans228" class="explain-hint"><strong>✅ answer:</strong> They are perpendicular (orthogonal) or one of them is zero.</div></div>
-            <div class="question-card"><span class="q-num">Q29</span><div class="q-text">Two vectors have magnitudes 5 and 8. Can their dot product be -50? Explain.</div><button class="btn-reveal" onclick="toggleAnswer(229)">show answer</button><div id="ans229" class="explain-hint"><strong>✅ answer:</strong> No, max |dot| = 5·8=40. So -50 is impossible.</div></div>
-            <div class="question-card"><span class="q-num">Q30</span><div class="q-text">A force \(\vec{F}=15\hat{i}+20\hat{j}\) N moves an object from point (2,0) to (8,5) m. Find the work done.</div><button class="btn-reveal" onclick="toggleAnswer(230)">show answer</button><div id="ans230" class="explain-hint"><strong>✅ answer:</strong> displacement = (6,5) m. Work = 15·6 + 20·5 = 90+100 = 190 J.</div></div>
-            <div class="question-card"><span class="q-num">Q31</span><div class="q-text">Find the value of \(\alpha\) so that \(\vec{A}=3\hat{i}+\alpha\hat{j}\) and \(\vec{B}=4\hat{i}-2\hat{j}\) are perpendicular.</div><button class="btn-reveal" onclick="toggleAnswer(231)">show answer</button><div id="ans231" class="explain-hint"><strong>✅ answer:</strong> Dot = 3·4 + α·(-2) = 12 - 2α = 0 → α = 6.</div></div>
-
+            <!-- each question uses unique id for toggle, format ans1 ... ans31 -->
+            <div class="exam-card"><span class="q-badge">Q1</span><div class="q-text">Classify as scalar or vector: (a) 35 kg, (b) 20 m/s north, (c) 9.8 m/s² downward, (d) 100 J, (e) 15 N at 30°.</div><button class="answer-btn" onclick="toggleAnswer('a1')">show answer</button><div id="a1" class="explain-hint"><strong>✅ answer:</strong> (a) scalar, (b) vector, (c) vector, (d) scalar, (e) vector.</div></div>
+            <div class="exam-card"><span class="q-badge">Q2</span><div class="q-text">Define parallel, antiparallel, and equal vectors. Give an example of each.</div><button class="answer-btn" onclick="toggleAnswer('a2')">show answer</button><div id="a2" class="explain-hint"><strong>✅ answer:</strong> Parallel: same direction (e.g., two forces east). Antiparallel: opposite directions (e.g., 10 N east and 10 N west). Equal: same magnitude and direction (e.g., two 5 m displacements north).</div></div>
+            <div class="exam-card"><span class="q-badge">Q3</span><div class="q-text">What is the negative of a vector? If \(\vec{A}=30\) m/s at 60° north of east, find \(-\vec{A}\).</div><button class="answer-btn" onclick="toggleAnswer('a3')">show answer</button><div id="a3" class="explain-hint"><strong>✅ answer:</strong> Same magnitude, opposite direction. \(-\vec{A}=30\) m/s at 60° south of west (or 240°).</div></div>
+            <div class="exam-card"><span class="q-badge">Q4</span><div class="q-text">State the triangle law of vector addition. Illustrate with a sketch.</div><button class="answer-btn" onclick="toggleAnswer('a4')">show answer</button><div id="a4" class="explain-hint"><strong>✅ answer:</strong> If two vectors are represented by two sides of a triangle in sequence (head‑to‑tail), then the third side closing the triangle (from tail of first to head of second) gives the resultant vector.</div></div>
+            <div class="exam-card"><span class="q-badge">Q5</span><div class="q-text">Two forces 10 N and 15 N act at a point. (a) maximum possible resultant? (b) minimum? (c) if perpendicular, find magnitude and direction of resultant.</div><button class="answer-btn" onclick="toggleAnswer('a5')">show answer</button><div id="a5" class="explain-hint"><strong>✅ answer:</strong> (a) 25 N (same direction). (b) 5 N (opposite). (c) R = √(10²+15²)=18.03 N, θ = tan⁻¹(15/10)=56.3° from the 10 N force.</div></div>
+            <div class="exam-card"><span class="q-badge">Q6</span><div class="q-text">A car travels 20 km due east, then 25 km due north. Find displacement (magnitude and direction).</div><button class="answer-btn" onclick="toggleAnswer('a6')">show answer</button><div id="a6" class="explain-hint"><strong>✅ answer:</strong> R = √(20²+25²)=32.0 km, θ = tan⁻¹(25/20)=51.3° north of east.</div></div>
+            <div class="exam-card"><span class="q-badge">Q7</span><div class="q-text">A vector \(\vec{A}\) has components A_x = -5, A_y = 12. Find magnitude and direction (angle from +x axis).</div><button class="answer-btn" onclick="toggleAnswer('a7')">show answer</button><div id="a7" class="explain-hint"><strong>✅ answer:</strong> A = √(25+144)=13. θ = tan⁻¹(12/|-5|) = 67.4°; since x negative, y positive → quadrant II, so θ = 180-67.4 = 112.6°.</div></div>
+            <div class="exam-card"><span class="q-badge">Q8</span><div class="q-text">Resolve a force of 50 N acting at 30° below the positive x‑axis into components.</div><button class="answer-btn" onclick="toggleAnswer('a8')">show answer</button><div id="a8" class="explain-hint"><strong>✅ answer:</strong> F_x = 50 cos30° = 43.3 N, F_y = -50 sin30° = -25 N.</div></div>
+            <div class="exam-card"><span class="q-badge">Q9</span><div class="q-text">Given \(\vec{A}=3\hat{i}+4\hat{j}\) and \(\vec{B}=5\hat{i}-2\hat{j}\), find \(\vec{A}+\vec{B}\) and its magnitude.</div><button class="answer-btn" onclick="toggleAnswer('a9')">show answer</button><div id="a9" class="explain-hint"><strong>✅ answer:</strong> \(\vec{A}+\vec{B}=8\hat{i}+2\hat{j}\); |R| = √(64+4)=√68=8.25 units.</div></div>
+            <div class="exam-card"><span class="q-badge">Q10</span><div class="q-text">Find the unit vector in the direction of \(\vec{D}=6\hat{i}-8\hat{j}\).</div><button class="answer-btn" onclick="toggleAnswer('a10')">show answer</button><div id="a10" class="explain-hint"><strong>✅ answer:</strong> |D|=10, so \(\hat{u}=0.6\hat{i}-0.8\hat{j}\).</div></div>
+            <div class="exam-card"><span class="q-badge">Q11</span><div class="q-text">A vector has magnitude 12 and direction 150° from +x. Write it in unit‑vector notation.</div><button class="answer-btn" onclick="toggleAnswer('a11')">show answer</button><div id="a11" class="explain-hint"><strong>✅ answer:</strong> 150° → cos150 = -√3/2 ≈ -0.866, sin150 = 0.5. So \(\vec{A}=12(-0.866\hat{i}+0.5\hat{j})=-10.392\hat{i}+6\hat{j}\).</div></div>
+            <div class="exam-card"><span class="q-badge">Q12</span><div class="q-text">If \(\vec{P}=2\hat{i}+3\hat{j}\) and \(\vec{Q}=4\hat{i}-5\hat{j}\), find \(\vec{P}-\vec{Q}\) and its magnitude.</div><button class="answer-btn" onclick="toggleAnswer('a12')">show answer</button><div id="a12" class="explain-hint"><strong>✅ answer:</strong> \(\vec{P}-\vec{Q}=(2-4)\hat{i}+(3+5)\hat{j}=-2\hat{i}+8\hat{j}\); |R|=√(4+64)=√68=8.25.</div></div>
+            <div class="exam-card"><span class="q-badge">Q13</span><div class="q-text">Find the dot product of \(\vec{A}=5\hat{i}-3\hat{j}\) and \(\vec{B}=2\hat{i}+4\hat{j}\).</div><button class="answer-btn" onclick="toggleAnswer('a13')">show answer</button><div id="a13" class="explain-hint"><strong>✅ answer:</strong> \(\vec{A}\cdot\vec{B}=5·2 + (-3)·4 = 10 -12 = -2\).</div></div>
+            <div class="exam-card"><span class="q-badge">Q14</span><div class="q-text">Two vectors have magnitudes 6 and 8, angle between them 60°. Find scalar product.</div><button class="answer-btn" onclick="toggleAnswer('a14')">show answer</button><div id="a14" class="explain-hint"><strong>✅ answer:</strong> \(\vec{A}\cdot\vec{B}=6·8·\cos60° = 48·0.5 = 24\).</div></div>
+            <div class="exam-card"><span class="q-badge">Q15</span><div class="q-text">Find angle between \(\vec{A}=2\hat{i}+2\hat{j}\) and \(\vec{B}=4\hat{i}-3\hat{j}\).</div><button class="answer-btn" onclick="toggleAnswer('a15')">show answer</button><div id="a15" class="explain-hint"><strong>✅ answer:</strong> dot = 8-6=2; |A|=√8=2.828, |B|=5; cosθ = 2/(2.828·5)=0.1414 → θ ≈ 81.9°.</div></div>
+            <div class="exam-card"><span class="q-badge">Q16</span><div class="q-text">A force \(\vec{F}=10\hat{i}+5\hat{j}\) N acts on a body that undergoes displacement \(\vec{s}=3\hat{i}+2\hat{j}\) m. Find work done.</div><button class="answer-btn" onclick="toggleAnswer('a16')">show answer</button><div id="a16" class="explain-hint"><strong>✅ answer:</strong> W = \(\vec{F}\cdot\vec{s}=10·3+5·2=30+10=40\) J.</div></div>
+            <div class="exam-card"><span class="q-badge">Q17</span><div class="q-text">Find angle between \(\vec{P}=3\hat{i}+4\hat{j}\) and the positive x‑axis.</div><button class="answer-btn" onclick="toggleAnswer('a17')">show answer</button><div id="a17" class="explain-hint"><strong>✅ answer:</strong> tanθ = 4/3 → θ = 53.13°.</div></div>
+            <div class="exam-card"><span class="q-badge">Q18</span><div class="q-text">Boat heads east at 4 m/s across a river flowing south at 3 m/s. Find resultant velocity (magnitude and direction).</div><button class="answer-btn" onclick="toggleAnswer('a18')">show answer</button><div id="a18" class="explain-hint"><strong>✅ answer:</strong> R = √(4²+3²)=5 m/s, θ = tan⁻¹(3/4)=36.9° south of east.</div></div>
+            <div class="exam-card"><span class="q-badge">Q19</span><div class="q-text">Find a unit vector perpendicular to both \(\vec{A}=2\hat{i}+3\hat{j}\) and \(\vec{B}=4\hat{i}-5\hat{j}\). (Hint: in 2D, perpendicular = swap and change sign)</div><button class="answer-btn" onclick="toggleAnswer('a19')">show answer</button><div id="a19" class="explain-hint"><strong>✅ answer:</strong> A vector perpendicular in 2D can be obtained by (A_y, -A_x) e.g. \(\vec{n}=3\hat{i}-2\hat{j}\) (not unit). Normalize: |n|=√13, unit = (3/√13)i - (2/√13)j. But there are two directions.</div></div>
+            <div class="exam-card"><span class="q-badge">Q20</span><div class="q-text">Three forces act: 10 N east, 15 N 30° north of east, and 20 N west. Find net force (components and magnitude).</div><button class="answer-btn" onclick="toggleAnswer('a20')">show answer</button><div id="a20" class="explain-hint"><strong>✅ answer:</strong> F1=(10,0); F2=(15cos30=12.99, 15sin30=7.5); F3=(-20,0). Sum: Rx=10+12.99-20=2.99 N; Ry=0+7.5+0=7.5 N; R=√(2.99²+7.5²)=8.09 N, θ=tan⁻¹(7.5/2.99)=68.2° north of east.</div></div>
+            <div class="exam-card"><span class="q-badge">Q21</span><div class="q-text">If \(\vec{A}=5\hat{i}-12\hat{j}\) and \(\vec{B}=4\hat{i}+3\hat{j}\), find component of \(\vec{A}\) along \(\vec{B}\).</div><button class="answer-btn" onclick="toggleAnswer('a21')">show answer</button><div id="a21" class="explain-hint"><strong>✅ answer:</strong> comp = \(\vec{A}\cdot\hat{B}\). \(\hat{B}=(4/5,3/5)\). Dot = 5·0.8 + (-12)·0.6 = 4 - 7.2 = -3.2.</div></div>
+            <div class="exam-card"><span class="q-badge">Q22</span><div class="q-text">A particle moves from (2,3) to (5,7) meters. Find displacement vector and magnitude.</div><button class="answer-btn" onclick="toggleAnswer('a22')">show answer</button><div id="a22" class="explain-hint"><strong>✅ answer:</strong> \(\vec{d}= (5-2)\hat{i}+(7-3)\hat{j}=3\hat{i}+4\hat{j}\); magnitude 5 m.</div></div>
+            <div class="exam-card"><span class="q-badge">Q23</span><div class="q-text">Given \(\vec{C}=2\hat{i}+6\hat{j}\), find a vector of magnitude 10 in the direction of \(\vec{C}\).</div><button class="answer-btn" onclick="toggleAnswer('a23')">show answer</button><div id="a23" class="explain-hint"><strong>✅ answer:</strong> |C|=√40=6.3249; unit = (0.316i+0.949j); vector = 10×unit = 3.16i+9.49j.</div></div>
+            <div class="exam-card"><span class="q-badge">Q24</span><div class="q-text">Find angle between \(\vec{P}=2\hat{i}-5\hat{j}\) and \(\vec{Q}=3\hat{i}+4\hat{j}\).</div><button class="answer-btn" onclick="toggleAnswer('a24')">show answer</button><div id="a24" class="explain-hint"><strong>✅ answer:</strong> dot = 6-20 = -14; |P|=√29≈5.385; |Q|=5; cosθ = -14/(5.385·5)= -0.52 → θ ≈ 121.3°.</div></div>
+            <div class="exam-card"><span class="q-badge">Q25</span><div class="q-text">Under what condition is \(\vec{A}+\vec{B}=\vec{A}-\vec{B}\) ?</div><button class="answer-btn" onclick="toggleAnswer('a25')">show answer</button><div id="a25" class="explain-hint"><strong>✅ answer:</strong> Only if \(\vec{B}=0\).</div></div>
+            <div class="exam-card"><span class="q-badge">Q26</span><div class="q-text">Can magnitude of a vector be zero if one of its components is not zero? Explain.</div><button class="answer-btn" onclick="toggleAnswer('a26')">show answer</button><div id="a26" class="explain-hint"><strong>✅ answer:</strong> No, if any component ≠0, magnitude =√(sum squares) >0.</div></div>
+            <div class="exam-card"><span class="q-badge">Q27</span><div class="q-text">Find work done by force \(\vec{F}=20\hat{i}-10\hat{j}\) N when displacement \(\vec{s}=5\hat{i}+2\hat{j}\) m.</div><button class="answer-btn" onclick="toggleAnswer('a27')">show answer</button><div id="a27" class="explain-hint"><strong>✅ answer:</strong> W = 20·5 + (-10)·2 = 100 -20 = 80 J.</div></div>
+            <div class="exam-card"><span class="q-badge">Q28</span><div class="q-text">If dot product of two vectors is zero, what can you conclude?</div><button class="answer-btn" onclick="toggleAnswer('a28')">show answer</button><div id="a28" class="explain-hint"><strong>✅ answer:</strong> They are perpendicular (orthogonal) or one of them is zero.</div></div>
+            <div class="exam-card"><span class="q-badge">Q29</span><div class="q-text">Two vectors have magnitudes 5 and 8. Can their dot product be -50? Explain.</div><button class="answer-btn" onclick="toggleAnswer('a29')">show answer</button><div id="a29" class="explain-hint"><strong>✅ answer:</strong> No, max |dot| = 5·8=40. So -50 is impossible.</div></div>
+            <div class="exam-card"><span class="q-badge">Q30</span><div class="q-text">A force \(\vec{F}=15\hat{i}+20\hat{j}\) N moves an object from (2,0) to (8,5) m. Find work done.</div><button class="answer-btn" onclick="toggleAnswer('a30')">show answer</button><div id="a30" class="explain-hint"><strong>✅ answer:</strong> displacement = (6,5) m. Work = 15·6 + 20·5 = 90+100 = 190 J.</div></div>
+            <div class="exam-card"><span class="q-badge">Q31</span><div class="q-text">Find \(\alpha\) so that \(\vec{A}=3\hat{i}+\alpha\hat{j}\) and \(\vec{B}=4\hat{i}-2\hat{j}\) are perpendicular.</div><button class="answer-btn" onclick="toggleAnswer('a31')">show answer</button><div id="a31" class="explain-hint"><strong>✅ answer:</strong> Dot = 3·4 + α·(-2) = 12 - 2α = 0 → α = 6.</div></div>
         </div>
     </div> <!-- end exam panel -->
 
     <hr>
-    <footer>⚡ Grade 11 Physics · Chapter 2 (Vectors) · complete notes + 31 exam questions · entrance exam ready</footer>
+    <div class="footer-note">⚡ Grade 11 Physics · Chapter 2 (Vectors) · complete notes + 31 exam questions · entrance exam ready</div>
 </div>
 
 <script>
     // tab switching
-    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabBtns = document.querySelectorAll('.tab-item');
     const panels = document.querySelectorAll('.panel');
     tabBtns.forEach(btn => {
         btn.addEventListener('click', function() {
@@ -440,9 +492,9 @@
         });
     });
 
-    // answer reveal (using unique IDs 201..231)
+    // answer reveal function (used by exam buttons)
     function toggleAnswer(id) {
-        var ans = document.getElementById('ans' + id);
+        var ans = document.getElementById(id);
         if (ans) ans.classList.toggle('show');
     }
 </script>

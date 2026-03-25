@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #0f172a; color: white; padding: 20px; overflow: hidden; }
+        .space { width: 100%; height: 250px; background: black; border: 2px solid #334155; border-radius: 15px; position: relative; margin-top: 20px; overflow: hidden; }
+        .ball { width: 30px; height: 30px; background: #fbbf24; border-radius: 50%; position: absolute; left: 50%; top: 0; transform: translateX(-50%); }
+        .controls { margin-top: 20px; background: #1e293b; padding: 15px; border-radius: 10px; }
+        input { width: 80%; }
+        .stats { margin-top: 10px; font-size: 18px; color: #3b82f6; }
+    </style>
+</head>
+<body>
+    <h3>🤔 What If? Gravity Explorer</h3>
+    <p>Change the gravity constant and observe the fall.</p>
+
+    <div class="space">
+        <div id="ball" class="ball"></div>
+    </div>
+
+    <div class="controls">
+        <label>Gravity ($g$): <span id="gVal">9.8</span> m/s²</label><br>
+        <input type="range" min="0" max="50" step="0.1" value="9.8" oninput="updateGravity(this.value)"><br><br>
+        <button onclick="resetDrop()" style="padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 5px;">🎾 Drop Ball</button>
+    </div>
+
+    <div class="stats" id="stats">
+        Time to Hit: -- | Velocity: --
+    </div>
+
+    <script>
+        let g = 9.8;
+        let pos = 0;
+        let vel = 0;
+        let timer = null;
+        let startTime = 0;
+
+        function updateGravity(val) {
+            g = parseFloat(val);
+            document.getElementById('gVal').innerText = val;
+            resetDrop();
+        }
+
+        function resetDrop() {
+            clearInterval(timer);
+            timer = null;
+            pos = 0;
+            vel = 0;
+            document.getElementById('ball').style.top = '0px';
+            document.getElementById('stats').innerText = "Time to Hit: -- | Velocity: --";
+            startDrop();
+        }
+
+        function startDrop() {
+            if(timer) return;
+            startTime = Date.now();
+            timer = setInterval(() => {
+                vel += g * 0.02;
+                pos += vel;
+                if(pos >= 220) {
+                    pos = 220;
+                    clearInterval(timer);
+                    let timeTaken = (Date.now() - startTime) / 1000;
+                    document.getElementById('stats').innerText = `Time to Hit: ${timeTaken.toFixed(2)}s | Final Vel: ${vel.toFixed(1)} m/s`;
+                }
+                document.getElementById('ball').style.top = pos + 'px';
+            }, 20);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 12 Physics – Chapter 4 (master notes + 60 calculations)</title>
+    <style>
+        *{
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+        }
+        :root{
+          --primary: #9333ea;
+          --secondary: #0f172a;
+          --bg: #f8fafc;
+          --card: #ffffff;
+          --accent: #22c55e;
+          --warning: #f59e0b;
+        }
+        body{
+          font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+          background: var(--bg);
+          color: #1e293b;
+          line-height: 1.7;
+        }
+        header{
+          background: linear-gradient(135deg, #a855f7, #7e22ce);
+          color: white;
+          padding: 2rem 1rem;
+          text-align: center;
+          box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+        }
+        header h1{
+          font-size: 2rem;
+          margin-bottom: 0.25rem;
+          letter-spacing: -0.02em;
+        }
+        header p{
+          font-size: 1.2rem;
+          opacity: 0.95;
+        }
+        .container{
+          max-width: 1000px;
+          margin: 0 auto;
+          padding: 1.5rem 1rem;
+        }
+        .card{
+          background: var(--card);
+          border-radius: 28px;
+          padding: 1.8rem;
+          margin-bottom: 2rem;
+          box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+          transition: transform 0.15s;
+        }
+        .card:hover{
+          transform: translateY(-4px);
+        }
+        h2{
+          font-size: 1.8rem;
+          color: var(--primary);
+          border-left: 8px solid var(--primary);
+          padding-left: 1rem;
+          margin-top: 0;
+          margin-bottom: 1.2rem;
+        }
+        h3{
+          font-size: 1.3rem;
+          margin: 1.5rem 0 0.5rem;
+          color: var(--secondary);
+        }
+        .remember, .wow{
+          padding: 1.2rem 1.5rem;
+          border-radius: 20px;
+          margin: 1.5rem 0;
+          font-weight: 500;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+        .remember{
+          background: #ecfeff;
+          border-left: 6px solid var(--accent);
+        }
+        .wow{
+          background: #fff7ed;
+          border-left: 6px solid var(--warning);
+        }
+        ul, ol{
+          padding-left: 2rem;
+          margin: 1rem 0;
+        }
+        li{
+          margin: 0.5rem 0;
+        }
+        .badge{
+          background: var(--primary);
+          color: white;
+          padding: 0.2rem 1rem;
+          border-radius: 30px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          display: inline-block;
+          margin-right: 0.6rem;
+        }
+        .question{
+          background: #f1f5f9;
+          border-radius: 24px;
+          padding: 1.4rem;
+          margin: 1.2rem 0;
+          border: 1px solid #e2e8f0;
+        }
+        .question strong{
+          color: var(--secondary);
+          font-size: 1.1rem;
+        }
+        .answer{
+          display: none;
+          margin-top: 1.2rem;
+          padding: 1.2rem;
+          background: #e6f7ff;
+          border-radius: 18px;
+          border-left: 5px solid #0099ff;
+        }
+        button{
+          background: var(--primary);
+          color: white;
+          border: none;
+          padding: 0.7rem 1.8rem;
+          border-radius: 40px;
+          font-size: 0.95rem;
+          font-weight: 600;
+          cursor: pointer;
+          margin-top: 0.8rem;
+          box-shadow: 0 6px 14px rgba(147,51,234,0.25);
+          transition: background 0.2s;
+        }
+        button:hover{
+          background: #7e22ce;
+        }
+        hr{
+          border: none;
+          height: 2px;
+          background: linear-gradient(to right, transparent, #cbd5e1, transparent);
+          margin: 2.5rem 0;
+        }
+        footer{
+          text-align: center;
+          padding: 2rem;
+          color: #64748b;
+          border-top: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>⚡ Grade 12 Physics – Chapter 4</h1>
+    <p>Electromagnetism · complete notes + 60 calculation‑based challenges</p>
+</header>
+
+<div class="container">
+
+    <!-- ========== 4.1 ELECTRIC FIELD – deep notes ========= -->
+    <div class="card">
+        <h2>4.1 Electric field – the invisible force field</h2>
+        <p>An electric field exists in the space around any electric charge. It exerts a force on other charges placed in it.</p>
+        <ul>
+            <li><strong>Direction:</strong> away from positive charges, toward negative charges.</li>
+            <li><strong>Strength (magnitude):</strong> electric field strength E equals force F divided by the charge q (E = F / q). Unit: newton per coulomb (N/C).</li>
+            <li><strong>Field lines:</strong> start on positive, end on negative; closer lines mean stronger field.</li>
+        </ul>
+        <div class="wow">
+            🌟 WOW: The electric field around a point charge gets weaker with distance – it follows an inverse‑square law (double the distance, one‑quarter the strength).
+        </div>
+        <div class="remember">
+            📘 REMEMBER: Electric field is a vector – it has both magnitude and direction.
+        </div>
+    </div>
+
+    <!-- ========== 4.2 MAGNETIC FIELD ========= -->
+    <div class="card">
+        <h2>4.2 Magnetic field – the region of magnetic influence</h2>
+        <p>A magnetic field is produced by moving charges (currents) or by permanent magnets. It exerts a force on other moving charges or magnetic materials.</p>
+        <ul>
+            <li><strong>Direction:</strong> outside a magnet, from north to south; inside, from south to north.</li>
+            <li><strong>Magnetic field strength B</strong> measured in tesla (T).</li>
+            <li><strong>Magnetic flux</strong> = field strength × area perpendicular to the field (in words: flux equals B times area when field is perpendicular).</li>
+        </ul>
+        <div class="wow">
+            🧲 WOW: Earth’s magnetic field is about 0.00005 tesla – very weak, yet it deflects solar wind and makes compasses work.
+        </div>
+    </div>
+
+    <!-- ========== 4.3 FORCE ON MOVING CHARGE (LORENTZ) ========= -->
+    <div class="card">
+        <h2>4.3 Lorentz force – when charges move through a magnetic field</h2>
+        <p>A charged particle moving in a magnetic field experiences a force perpendicular to both its velocity and the field. The magnitude is given by:</p>
+        <p><strong>force = charge × speed × magnetic field strength × sine of the angle between velocity and field</strong>.</p>
+        <p>If the motion is perpendicular (angle = 90°, sine = 1), the formula becomes force = charge × speed × B.</p>
+        <ul>
+            <li><strong>Right‑hand rule:</strong> fingers = field, thumb = velocity (positive charge), palm = force direction.</li>
+        </ul>
+        <div class="remember">
+            📘 REMEMBER: The Lorentz force does no work – it changes only the direction, not the speed.
+        </div>
+    </div>
+
+    <!-- ========== 4.4 FORCE ON CURRENT‑CARRYING CONDUCTOR ========= -->
+    <div class="card">
+        <h2>4.4 Force on a wire in a magnetic field</h2>
+        <p>A straight wire carrying current in a magnetic field feels a force:</p>
+        <p><strong>force = magnetic field strength × current × length of wire × sine of angle between wire and field</strong>.</p>
+        <p>When the wire is perpendicular (angle 90°): force = B × I × L.</p>
+        <p>This is the principle behind electric motors.</p>
+        <div class="wow">
+            🔄 WOW: The force direction reverses if either current direction or magnetic field direction is reversed – that’s how motors can spin both ways.
+        </div>
+    </div>
+
+    <!-- ========== 4.5 ELECTROMAGNETIC INDUCTION ========= -->
+    <div class="card">
+        <h2>4.5 Faraday’s law – changing flux creates EMF</h2>
+        <p>When the magnetic flux through a loop changes, an electromotive force (EMF) is induced in the loop. The magnitude is:</p>
+        <p><strong>induced EMF = number of turns × rate of change of flux</strong>.</p>
+        <p>Rate of change means (final flux – initial flux) divided by time interval.</p>
+        <p><strong>Lenz’s law:</strong> The induced current always flows in a direction that opposes the change causing it.</p>
+        <div class="remember">
+            📘 REMEMBER: You can induce EMF by moving a magnet, changing the loop area, or rotating the loop in a field.
+        </div>
+    </div>
+
+    <!-- ========== 4.6 GENERATORS AND MOTORS ========= -->
+    <div class="card">
+        <h2>4.6 Motors & generators – two sides of the same coin</h2>
+        <ul>
+            <li><strong>Electric motor:</strong> current in a magnetic field → torque → rotation (electrical → mechanical).</li>
+            <li><strong>Generator:</strong> motion in a magnetic field → induced EMF (mechanical → electrical).</li>
+            <li><strong>Back EMF</strong> in motors: as the coil rotates, it also acts as a generator, inducing an opposing EMF.</li>
+        </ul>
+        <div class="wow">
+            ⚡ WOW: When you switch on a fan, the initial current is high because back EMF hasn’t built up yet – that’s why motors sometimes draw more current at start.
+        </div>
+    </div>
+
+    <!-- ========== 4.7 TRANSFORMERS ========= -->
+    <div class="card">
+        <h2>4.7 Transformers – changing voltage levels</h2>
+        <p>A transformer consists of two coils (primary and secondary) wound on a common iron core. It works only with AC.</p>
+        <p><strong>Voltage ratio = turns ratio:</strong> Vp / Vs = Np / Ns</p>
+        <p><strong>For an ideal transformer:</strong> power in = power out → Vp × Ip = Vs × Is</p>
+        <ul>
+            <li><strong>Step‑up:</strong> more turns in secondary → higher voltage.</li>
+            <li><strong>Step‑down:</strong> fewer turns in secondary → lower voltage.</li>
+        </ul>
+        <div class="remember">
+            📘 REMEMBER: Transformers are why we can transmit electricity at high voltage (low current) to reduce losses, then step it down for home use.
+        </div>
+    </div>
+
+    <!-- ========== 4.8 APPLICATIONS SUMMARY ========= -->
+    <div class="card">
+        <h2>4.8 Where electromagnetism touches your life</h2>
+        <ul>
+            <li>Fans, washing machines, electric cars – motors.</li>
+            <li>Power plants – huge generators.</li>
+            <li>Wireless charging – induction.</li>
+            <li>MRI machines – strong magnetic fields + radio waves.</li>
+            <li>Maglev trains – magnetic levitation.</li>
+        </ul>
+        <div class="wow">
+            🚀 WOW: The entire modern world runs on electromagnetism – without it, no internet, no TV, no lights.
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- ========== 60 CALCULATION‑FOCUSED QUESTIONS ========= -->
+    <div class="card">
+        <h2>📋 60 calculation challenges (with step‑by‑step answers)</h2>
+        <p><em>All answers use plain words – no confusing symbols. Each includes a “remember” or “wow” fact.</em></p>
+
+        <!-- Electric field questions (1-10) -->
+        <div class="question"><strong>1.</strong> A charge of 4 coulombs experiences a force of 20 newtons in an electric field. Find the electric field strength.<br><button onclick="toggle('ans1')">Show answer</button><div class="answer" id="ans1">Electric field strength equals force divided by charge. So 20 divided by 4 = 5 newtons per coulomb. <br>🌟 WOW: This means each coulomb of charge would feel a force of 5 newtons.</div></div>
+        <div class="question"><strong>2.</strong> What force acts on a charge of 3 coulombs placed in an electric field of strength 8 newtons per coulomb?<br><button onclick="toggle('ans2')">Show answer</button><div class="answer" id="ans2">Force = electric field strength × charge = 8 × 3 = 24 newtons. <br>📘 REMEMBER: Direction of force depends on sign of charge – positive charge feels force in field direction.</div></div>
+        <div class="question"><strong>3.</strong> A test charge of 2 coulombs is placed at a point where it feels 10 newtons toward the east. What is the electric field at that point?<br><button onclick="toggle('ans3')">Show answer</button><div class="answer" id="ans3">E = F/q = 10/2 = 5 newtons per coulomb eastward. <br>🌟 WOW: If you placed a negative charge there, it would feel force westward.</div></div>
+        <div class="question"><strong>4.</strong> At a certain point, the electric field is 15 N/C north. What force would a charge of –4 C feel?<br><button onclick="toggle('ans4')">Show answer</button><div class="answer" id="ans4">Magnitude = 15 × 4 = 60 newtons. Direction is opposite to field (since negative) → south. <br>📘 REMEMBER: Negative charges experience force opposite to electric field direction.</div></div>
+        <div class="question"><strong>5.</strong> Two parallel plates create a uniform electric field of 200 N/C. What force acts on an electron (charge –1.6×10⁻¹⁹ C) between them?<br><button onclick="toggle('ans5')">Show answer</button><div class="answer" id="ans5">Force magnitude = 200 × 1.6×10⁻¹⁹ = 3.2×10⁻¹⁷ newtons. Direction opposite the field. <br>🌟 WOW: Even though the force is tiny, electrons accelerate hugely because their mass is tiny.</div></div>
+        <div class="question"><strong>6.</strong> A charge of 5 C is moved in an electric field. The work done against the field is 100 J. What is the potential difference (voltage) between the two points?<br><button onclick="toggle('ans6')">Show answer</button><div class="answer" id="ans6">Voltage = work / charge = 100 / 5 = 20 volts. <br>📘 REMEMBER: Voltage is electric potential energy per unit charge.</div></div>
+        <div class="question"><strong>7.</strong> A 12 V battery is connected across a 4 Ω resistor. How much charge flows through the resistor in 5 seconds?<br><button onclick="toggle('ans7')">Show answer</button><div class="answer" id="ans7">First, current I = V/R = 12/4 = 3 amperes. Charge = current × time = 3 × 5 = 15 coulombs. <br>🌟 WOW: One ampere is one coulomb per second – so 3 A for 5 s = 15 C.</div></div>
+        <div class="question"><strong>8.</strong> A point charge of 2×10⁻⁶ C experiences a force of 0.5 N. Find the electric field strength at that point.<br><button onclick="toggle('ans8')">Show answer</button><div class="answer" id="ans8">E = F/q = 0.5 / (2×10⁻⁶) = 250 000 N/C. <br>📘 REMEMBER: Fields near point charges can be huge.</div></div>
+        <div class="question"><strong>9.</strong> If the electric field strength is 400 N/C, what force will a charge of 0.02 C feel?<br><button onclick="toggle('ans9')">Show answer</button><div class="answer" id="ans9">F = E × q = 400 × 0.02 = 8 newtons. <br>🌟 WOW: That’s about the weight of a small apple – electric forces can be very noticeable.</div></div>
+        <div class="question"><strong>10.</strong> A proton (charge +1.6×10⁻¹⁹ C) is in an electric field of 500 N/C east. Find its acceleration (mass of proton = 1.67×10⁻²⁷ kg).<br><button onclick="toggle('ans10')">Show answer</button><div class="answer" id="ans10">Force = 500 × 1.6×10⁻¹⁹ = 8×10⁻¹⁷ N. Acceleration = F/m = 8×10⁻¹⁷ / 1.67×10⁻²⁷ ≈ 4.79×10¹⁰ m/s² east. <br>📘 REMEMBER: That’s billions of times g – protons accelerate incredibly fast in electric fields.</div></div>
+
+        <!-- Magnetic force on moving charges (11-20) -->
+        <div class="question"><strong>11.</strong> A proton moves at 2×10⁶ m/s perpendicular to a 0.1 T magnetic field. Charge = 1.6×10⁻¹⁹ C. Find the magnetic force.<br><button onclick="toggle('ans11')">Show answer</button><div class="answer" id="ans11">Force = q v B (perpendicular) = 1.6×10⁻¹⁹ × 2×10⁶ × 0.1 = 3.2×10⁻¹⁴ newtons. <br>🌟 WOW: This force makes the proton circle – the radius can be found from centripetal force.</div></div>
+        <div class="question"><strong>12.</strong> An electron (q = –1.6×10⁻¹⁹ C) moves at 5×10⁶ m/s perpendicular to a 0.05 T field. Find force magnitude.<br><button onclick="toggle('ans12')">Show answer</button><div class="answer" id="ans12">Force = q v B = 1.6×10⁻¹⁹ × 5×10⁶ × 0.05 = 4×10⁻¹⁴ N. <br>📘 REMEMBER: The negative sign only affects direction, not magnitude.</div></div>
+        <div class="question"><strong>13.</strong> A charge of 2 μC (2×10⁻⁶ C) moves at 100 m/s at 30° to a 0.2 T field. Find force. (sin30° = 0.5)<br><button onclick="toggle('ans13')">Show answer</button><div class="answer" id="ans13">Force = q v B sinθ = 2×10⁻⁶ × 100 × 0.2 × 0.5 = 2×10⁻⁵ newtons. <br>🌟 WOW: If it were perpendicular, force would be double.</div></div>
+        <div class="question"><strong>14.</strong> A particle with charge 3.2×10⁻¹⁹ C moves at 4×10⁶ m/s perpendicular to a field of 0.25 T. Find force.<br><button onclick="toggle('ans14')">Show answer</button><div class="answer" id="ans14">F = 3.2×10⁻¹⁹ × 4×10⁶ × 0.25 = 3.2×10⁻¹⁹ × 1×10⁶ = 3.2×10⁻¹³ N. <br>📘 REMEMBER: The force is always perpendicular to velocity – so it causes circular motion.</div></div>
+        <div class="question"><strong>15.</strong> A proton circles in a 0.2 T field at speed 1×10⁷ m/s. Find the radius. (m_p = 1.67×10⁻²⁷ kg, q = 1.6×10⁻¹⁹ C)<br><button onclick="toggle('ans15')">Show answer</button><div class="answer" id="ans15">Magnetic force provides centripetal force: q v B = m v² / r → r = m v / (q B) = (1.67×10⁻²⁷ × 1×10⁷) / (1.6×10⁻¹⁹ × 0.2) = (1.67×10⁻²⁰) / (3.2×10⁻²⁰) = 0.522 metres. <br>🌟 WOW: That’s about half a metre – you could see that circle in a bubble chamber!</div></div>
+        <div class="question"><strong>16.</strong> What magnetic field is needed so that a proton moving at 3×10⁶ m/s experiences a force of 4.8×10⁻¹⁴ N? (q = 1.6×10⁻¹⁹ C, perpendicular)<br><button onclick="toggle('ans16')">Show answer</button><div class="answer" id="ans16">F = q v B → B = F/(q v) = 4.8×10⁻¹⁴ / (1.6×10⁻¹⁹ × 3×10⁶) = 4.8×10⁻¹⁴ / (4.8×10⁻¹³) = 0.1 tesla. <br>📘 REMEMBER: That’s a typical strong electromagnet field.</div></div>
+        <div class="question"><strong>17.</strong> An alpha particle (q = 3.2×10⁻¹⁹ C, m = 6.64×10⁻²⁷ kg) moves at 2×10⁶ m/s perpendicular to 0.15 T. Find its acceleration.<br><button onclick="toggle('ans17')">Show answer</button><div class="answer" id="ans17">Force = q v B = 3.2×10⁻¹⁹ × 2×10⁶ × 0.15 = 9.6×10⁻¹⁴ N. a = F/m = 9.6×10⁻¹⁴ / 6.64×10⁻²⁷ = 1.45×10¹³ m/s². <br>🌟 WOW: That’s a trillion times g – it would circle very fast.</div></div>
+        <div class="question"><strong>18.</strong> A 3 μC charge moves at 500 m/s at 60° to a 0.3 T field. Find force (sin60° = 0.866).<br><button onclick="toggle('ans18')">Show answer</button><div class="answer" id="ans18">F = q v B sinθ = 3×10⁻⁶ × 500 × 0.3 × 0.866 = 3×10⁻⁶ × 500 × 0.2598 ≈ 3×10⁻⁶ × 129.9 = 3.9×10⁻⁴ N. <br>📘 REMEMBER: The force is maximum when velocity is perpendicular to field.</div></div>
+        <div class="question"><strong>19.</strong> A proton moves parallel to a magnetic field of 0.5 T at speed 2×10⁶ m/s. What force acts on it?<br><button onclick="toggle('ans19')">Show answer</button><div class="answer" id="ans19">When velocity is parallel, sinθ = 0 → force = 0. <br>🌟 WOW: No magnetic force when moving along field lines – it just goes straight.</div></div>
+        <div class="question"><strong>20.</strong> An electron moves at 1×10⁷ m/s perpendicular to a 0.02 T field. Find the radius of its path (m_e = 9.11×10⁻³¹ kg, q = 1.6×10⁻¹⁹ C).<br><button onclick="toggle('ans20')">Show answer</button><div class="answer" id="ans20">r = m v / (q B) = (9.11×10⁻³¹ × 1×10⁷) / (1.6×10⁻¹⁹ × 0.02) = (9.11×10⁻²⁴) / (3.2×10⁻²¹) = 0.00285 m = 2.85 mm. <br>📘 REMEMBER: Electrons have tiny mass so they circle very tightly.</div></div>
+
+        <!-- Force on current‑carrying wires (21-30) -->
+        <div class="question"><strong>21.</strong> A wire 0.5 m long carries 3 A perpendicular to a 0.2 T field. Find force.<br><button onclick="toggle('ans21')">Show answer</button><div class="answer" id="ans21">F = B I L = 0.2 × 3 × 0.5 = 0.3 newtons. <br>🌟 WOW: That’s about the weight of a small apple – measurable.</div></div>
+        <div class="question"><strong>22.</strong> A wire 2 m long with current 5 A lies at 60° to a 0.1 T field. Find force (sin60°=0.866).<br><button onclick="toggle('ans22')">Show answer</button><div class="answer" id="ans22">F = B I L sinθ = 0.1 × 5 × 2 × 0.866 = 0.866 newtons. <br>📘 REMEMBER: Force is less when wire isn’t perpendicular.</div></div>
+        <div class="question"><strong>23.</strong> What current in a 1.2 m wire perpendicular to 0.3 T gives a force of 1.8 N?<br><button onclick="toggle('ans23')">Show answer</button><div class="answer" id="ans23">I = F / (B L) = 1.8 / (0.3 × 1.2) = 1.8 / 0.36 = 5 amperes. <br>🌟 WOW: That’s a typical current for a power tool.</div></div>
+        <div class="question"><strong>24.</strong> A wire 0.8 m long carries 4 A at 30° to a 0.25 T field. Find force (sin30°=0.5).<br><button onclick="toggle('ans24')">Show answer</button><div class="answer" id="ans24">F = 0.25 × 4 × 0.8 × 0.5 = 0.4 newtons. <br>📘 REMEMBER: Angle matters – if it were perpendicular, force would be 0.8 N.</div></div>
+        <div class="question"><strong>25.</strong> A wire experiences 0.6 N force when 2 A flows in a 0.4 T field perpendicular. Find its length.<br><button onclick="toggle('ans25')">Show answer</button><div class="answer" id="ans25">L = F / (B I) = 0.6 / (0.4 × 2) = 0.6 / 0.8 = 0.75 m. <br>🌟 WOW: So the force depends directly on how long the wire is in the field.</div></div>
+        <div class="question"><strong>26.</strong> A 0.6 m wire carries 2.5 A perpendicular to a field and feels 0.3 N. Find B.<br><button onclick="toggle('ans26')">Show answer</button><div class="answer" id="ans26">B = F / (I L) = 0.3 / (2.5 × 0.6) = 0.3 / 1.5 = 0.2 tesla. <br>📘 REMEMBER: 1 tesla is a pretty strong field – like a large MRI magnet.</div></div>
+        <div class="question"><strong>27.</strong> A wire 1 m long carries 10 A at 45° to 0.05 T. Find force (sin45°≈0.707).<br><button onclick="toggle('ans27')">Show answer</button><div class="answer" id="ans27">F = 0.05 × 10 × 1 × 0.707 = 0.3535 N. <br>🌟 WOW: Even a modest field can create noticeable force with high current.</div></div>
+        <div class="question"><strong>28.</strong> Two parallel wires 0.3 m apart carry currents 5 A and 8 A in same direction. Force per metre? (μ₀/4π = 10⁻⁷) Use formula F/L = (2×10⁻⁷ × I₁ I₂)/d in words: force per metre = 2×10⁻⁷ times product of currents divided by distance. <br><button onclick="toggle('ans28')">Show answer</button><div class="answer" id="ans28">F/L = 2×10⁻⁷ × (5×8) / 0.3 = 2×10⁻⁷ × 40 / 0.3 = 80×10⁻⁷ / 0.3 = (8×10⁻⁶)/0.3 ≈ 2.67×10⁻⁵ N/m. Attractive. <br>📘 REMEMBER: Parallel currents attract, opposite currents repel.</div></div>
+        <div class="question"><strong>29.</strong> The force on a 2 m wire carrying 6 A perpendicular to a field is 2.4 N. Find B.<br><button onclick="toggle('ans29')">Show answer</button><div class="answer" id="ans29">B = F / (I L) = 2.4 / (6 × 2) = 2.4 / 12 = 0.2 T. <br>🌟 WOW: That’s the same field strength as earlier – fields can be uniform.</div></div>
+        <div class="question"><strong>30.</strong> A wire 0.5 m long carries 3 A at 90° to a 0.1 T field. What force?<br><button onclick="toggle('ans30')">Show answer</button><div class="answer" id="ans30">F = 0.1 × 3 × 0.5 = 0.15 N. <br>📘 REMEMBER: The right‑hand rule gives the direction – palm push for positive current.</div></div>
+
+        <!-- Electromagnetic induction (31-40) -->
+        <div class="question"><strong>31.</strong> A coil of 100 turns has a magnetic flux change of 0.4 Wb in 0.2 s. Find average induced EMF.<br><button onclick="toggle('ans31')">Show answer</button><div class="answer" id="ans31">EMF = N × ΔΦ/Δt = 100 × 0.4 / 0.2 = 100 × 2 = 200 volts. <br>🌟 WOW: That’s enough to power a bright light bulb!</div></div>
+        <div class="question"><strong>32.</strong> A loop of wire has flux change from 0.02 Wb to 0.08 Wb in 0.01 s. Number of turns = 1. Find EMF.<br><button onclick="toggle('ans32')">Show answer</button><div class="answer" id="ans32">ΔΦ = 0.08 – 0.02 = 0.06 Wb. EMF = ΔΦ/Δt = 0.06 / 0.01 = 6 volts. <br>📘 REMEMBER: Faster change gives higher EMF.</div></div>
+        <div class="question"><strong>33.</strong> A 50‑turn coil’s flux changes from 0.1 Wb to 0.5 Wb in 0.4 s. Find induced EMF.<br><button onclick="toggle('ans33')">Show answer</button><div class="answer" id="ans33">ΔΦ = 0.4 Wb, Δt = 0.4 s → ΔΦ/Δt = 1 Wb/s. EMF = 50 × 1 = 50 V. <br>🌟 WOW: That’s like a small generator.</div></div>
+        <div class="question"><strong>34.</strong> A magnetic field through a 200‑turn coil changes from 0.2 T to 0.6 T in 0.5 s. The coil area is 0.01 m² and field perpendicular. Find EMF.<br><button onclick="toggle('ans34')">Show answer</button><div class="answer" id="ans34">Flux = B × A. Initial flux = 0.2 × 0.01 = 0.002 Wb; final = 0.6 × 0.01 = 0.006 Wb. ΔΦ = 0.004 Wb. Δt = 0.5 s. EMF = N × ΔΦ/Δt = 200 × 0.004 / 0.5 = 200 × 0.008 = 1.6 volts. <br>📘 REMEMBER: EMF can be small even with many turns if change is slow.</div></div>
+        <div class="question"><strong>35.</strong> A coil of 500 turns has area 0.02 m². The magnetic field perpendicular to it drops from 0.3 T to 0 T in 0.1 s. Find EMF.<br><button onclick="toggle('ans35')">Show answer</button><div class="answer" id="ans35">Initial flux = 0.3 × 0.02 = 0.006 Wb; final = 0. ΔΦ = 0.006 Wb. EMF = 500 × 0.006 / 0.1 = 500 × 0.06 = 30 volts. <br>🌟 WOW: That’s enough to power small electronics.</div></div>
+        <div class="question"><strong>36.</strong> A generator coil rotates in a 0.1 T field. Coil area 0.05 m², 100 turns. It rotates from parallel to perpendicular in 0.2 s (flux change from 0 to B×A). Find average EMF.<br><button onclick="toggle('ans36')">Show answer</button><div class="answer" id="ans36">Flux change = B×A – 0 = 0.1 × 0.05 = 0.005 Wb. EMF = 100 × 0.005 / 0.2 = 100 × 0.025 = 2.5 volts. <br>📘 REMEMBER: This is how AC generators work – rotating coils produce alternating EMF.</div></div>
+        <div class="question"><strong>37.</strong> A 10‑turn loop has area 0.1 m². Magnetic field perpendicular increases from 0 to 0.5 T in 0.01 s. Find EMF.<br><button onclick="toggle('ans37')">Show answer</button><div class="answer" id="ans37">ΔΦ = 0.5 × 0.1 = 0.05 Wb. EMF = 10 × 0.05 / 0.01 = 10 × 5 = 50 volts. <br>🌟 WOW: Fast change gives high voltage spikes.</div></div>
+        <div class="question"><strong>38.</strong> A coil experiences flux change of 0.2 Wb in 0.05 s. If EMF is 40 V, how many turns?<br><button onclick="toggle('ans38')">Show answer</button><div class="answer" id="ans38">EMF = N × ΔΦ/Δt → 40 = N × 0.2 / 0.05 = N × 4 → N = 10 turns. <br>📘 REMEMBER: More turns increase induced EMF.</div></div>
+        <div class="question"><strong>39.</strong> A rod of length 0.5 m moves at 4 m/s perpendicular to a 0.3 T field. Find motional EMF across its ends.<br><button onclick="toggle('ans39')">Show answer</button><div class="answer" id="ans39">Motional EMF = B × L × v = 0.3 × 0.5 × 4 = 0.6 volts. <br>🌟 WOW: This is the principle behind velocity sensors and some generators.</div></div>
+        <div class="question"><strong>40.</strong> An airplane wing of length 30 m moves through Earth’s vertical field component 2×10⁻⁵ T at 200 m/s. Find induced EMF across wingtips (assume perpendicular).<br><button onclick="toggle('ans40')">Show answer</button><div class="answer" id="ans40">EMF = B L v = 2×10⁻⁵ × 30 × 200 = 2×10⁻⁵ × 6000 = 0.12 volts. <br>📘 REMEMBER: Very small, but measurable.</div></div>
+
+        <!-- Transformers (41-50) -->
+        <div class="question"><strong>41.</strong> A transformer has 200 primary turns and 50 secondary turns. Primary voltage 120 V AC. Find secondary voltage.<br><button onclick="toggle('ans41')">Show answer</button><div class="answer" id="ans41">Vp/Vs = Np/Ns → 120/Vs = 200/50 = 4 → Vs = 120/4 = 30 volts. <br>🌟 WOW: That’s a step‑down transformer – used in phone chargers.</div></div>
+        <div class="question"><strong>42.</strong> If secondary voltage is 12 V and primary is 240 V, with secondary turns = 60, find primary turns.<br><button onclick="toggle('ans42')">Show answer</button><div class="answer" id="ans42">Np/Ns = Vp/Vs → Np/60 = 240/12 = 20 → Np = 60 × 20 = 1200 turns. <br>📘 REMEMBER: High voltage side has many turns.</div></div>
+        <div class="question"><strong>43.</strong> A step‑up transformer has 100 primary turns and 400 secondary turns. Primary voltage 25 V. Find secondary voltage.<br><button onclick="toggle('ans43')">Show answer</button><div class="answer" id="ans43">Vs = Vp × (Ns/Np) = 25 × 400/100 = 25 × 4 = 100 V. <br>🌟 WOW: Voltage is stepped up by factor 4.</div></div>
+        <div class="question"><strong>44.</strong> Ideal transformer: primary voltage 220 V, secondary voltage 55 V. If secondary current is 4 A, find primary current.<br><button onclick="toggle('ans44')">Show answer</button><div class="answer" id="ans44">Power in = power out → Vp×Ip = Vs×Is → 220 × Ip = 55 × 4 = 220 → Ip = 220/220 = 1 A. <br>📘 REMEMBER: In a step‑down, primary current is lower than secondary.</div></div>
+        <div class="question"><strong>45.</strong> A transformer with 80% efficiency: primary power 200 W. Find secondary power.<br><button onclick="toggle('ans45')">Show answer</button><div class="answer" id="ans45">Secondary power = efficiency × primary power = 0.8 × 200 = 160 W. <br>🌟 WOW: Losses appear as heat in the core and windings.</div></div>
+        <div class="question"><strong>46.</strong> A transformer steps 240 V down to 12 V. If primary current is 0.5 A (ideal), find secondary current.<br><button onclick="toggle('ans46')">Show answer</button><div class="answer" id="ans46">Vp Ip = Vs Is → 240 × 0.5 = 12 × Is → 120 = 12 Is → Is = 10 A. <br>📘 REMEMBER: Low voltage side carries higher current.</div></div>
+        <div class="question"><strong>47.</strong> A transformer has turns ratio Np:Ns = 5:1. Primary connected to 240 V, secondary to a 6 Ω load. Find secondary current.<br><button onclick="toggle('ans47')">Show answer</button><div class="answer" id="ans47">Vs = Vp × (Ns/Np) = 240 × 1/5 = 48 V. Is = Vs / R = 48 / 6 = 8 A. <br>🌟 WOW: That’s enough to power a small heater.</div></div>
+        <div class="question"><strong>48.</strong> If primary voltage 120 V, primary turns 300, secondary turns 30, find secondary voltage. Also find secondary current if a 15 Ω load is connected (ideal).<br><button onclick="toggle('ans48')">Show answer</button><div class="answer" id="ans48">Vs = 120 × 30/300 = 12 V. Is = 12 / 15 = 0.8 A. <br>📘 REMEMBER: This is typical for a doorbell transformer.</div></div>
+        <div class="question"><strong>49.</strong> An ideal transformer has Np = 400, Ns = 2000, primary voltage 50 V. Find secondary voltage and current if secondary load is 100 Ω.<br><button onclick="toggle('ans49')">Show answer</button><div class="answer" id="ans49">Vs = 50 × 2000/400 = 50 × 5 = 250 V. Is = 250 / 100 = 2.5 A. <br>🌟 WOW: This step‑up transformer raises voltage for transmission.</div></div>
+        <div class="question"><strong>50.</strong> A transformer has primary power 1000 W, secondary voltage 100 V, secondary current 8 A. Find efficiency.<br><button onclick="toggle('ans50')">Show answer</button><div class="answer" id="ans50">Secondary power = Vs × Is = 100 × 8 = 800 W. Efficiency = 800/1000 = 0.8 = 80%. <br>📘 REMEMBER: Losses are due to resistance, eddy currents, and hysteresis.</div></div>
+
+        <!-- Mixed / advanced problems (51-60) -->
+        <div class="question"><strong>51.</strong> A 0.2 m wire carries 5 A perpendicular to a 0.3 T field. Find force.<br><button onclick="toggle('ans51')">Show answer</button><div class="answer" id="ans51">F = 0.3 × 5 × 0.2 = 0.3 newtons. <br>🌟 WOW: That’s about the force to lift a small egg.</div></div>
+        <div class="question"><strong>52.</strong> A charge of 2 C moves at 10 m/s at 90° to a 0.5 T field. Find force.<br><button onclick="toggle('ans52')">Show answer</button><div class="answer" id="ans52">F = 2 × 10 × 0.5 = 10 newtons. <br>📘 REMEMBER: Large charges feel huge forces.</div></div>
+        <div class="question"><strong>53.</strong> A coil of 50 turns, area 0.04 m², is in a perpendicular field of 0.2 T. The field is reversed in 0.1 s. Find average EMF. (Hint: flux change = 2 × B×A)<br><button onclick="toggle('ans53')">Show answer</button><div class="answer" id="ans53">Initial flux = 0.2×0.04 = 0.008 Wb; final flux = –0.008 Wb (reverse). ΔΦ = 0.008 – (–0.008) = 0.016 Wb. EMF = 50 × 0.016 / 0.1 = 50 × 0.16 = 8 volts. <br>🌟 WOW: Reversing field doubles the change – good for generating higher EMF.</div></div>
+        <div class="question"><strong>54.</strong> A proton moves in a circle of radius 0.1 m in a 0.2 T field. Find its speed. (m_p = 1.67×10⁻²⁷ kg, q = 1.6×10⁻¹⁹ C)<br><button onclick="toggle('ans54')">Show answer</button><div class="answer" id="ans54">From r = m v / (q B) → v = r q B / m = 0.1 × 1.6×10⁻¹⁹ × 0.2 / 1.67×10⁻²⁷ = 0.1 × 3.2×10⁻²⁰ / 1.67×10⁻²⁷ = 3.2×10⁻²¹ / 1.67×10⁻²⁷ ≈ 1.92×10⁶ m/s. <br>📘 REMEMBER: This is about 2 million m/s – typical for particles in magnetic fields.</div></div>
+        <div class="question"><strong>55.</strong> A 0.5 m wire carries 4 A at 30° to a 0.25 T field. Find force (sin30°=0.5).<br><button onclick="toggle('ans55')">Show answer</button><div class="answer" id="ans55">F = 0.25 × 4 × 0.5 × 0.5 = 0.25 newtons. <br>🌟 WOW: Force is half of what it would be if perpendicular.</div></div>
+        <div class="question"><strong>56.</strong> A 240 V / 12 V transformer has 600 primary turns. Find secondary turns.<br><button onclick="toggle('ans56')">Show answer</button><div class="answer" id="ans56">Ns = Np × (Vs/Vp) = 600 × 12/240 = 600 × 0.05 = 30 turns. <br>📘 REMEMBER: Secondary has far fewer turns for step‑down.</div></div>
+        <div class="question"><strong>57.</strong> A generator produces 50 Hz AC. If the magnetic field is 0.1 T and coil area 0.02 m² with 100 turns, what is the maximum EMF? (Hint: max EMF = N B A ω, with ω = 2πf = 2×3.14×50 = 314 rad/s)<br><button onclick="toggle('ans57')">Show answer</button><div class="answer" id="ans57">Max EMF = N B A ω = 100 × 0.1 × 0.02 × 314 = 100 × 0.002 × 314 = 0.2 × 314 = 62.8 volts. <br>🌟 WOW: That’s the peak voltage – RMS would be about 44 V.</div></div>
+        <div class="question"><strong>58.</strong> A wire 0.3 m long moves at 5 m/s perpendicular to a 0.4 T field. Find motional EMF.<br><button onclick="toggle('ans58')">Show answer</button><div class="answer" id="ans58">EMF = B L v = 0.4 × 0.3 × 5 = 0.6 volts. <br>📘 REMEMBER: This is like a simple velocity‑sensing device.</div></div>
+        <div class="question"><strong>59.</strong> A 10‑turn coil of area 0.05 m² is in a perpendicular field that changes from 0.1 T to 0.5 T in 0.2 s. Find EMF.<br><button onclick="toggle('ans59')">Show answer</button><div class="answer" id="ans59">ΔB = 0.4 T, ΔΦ = ΔB × A = 0.4 × 0.05 = 0.02 Wb. EMF = 10 × 0.02 / 0.2 = 10 × 0.1 = 1 volt. <br>🌟 WOW: Even a moderate change can produce a volt.</div></div>
+        <div class="question"><strong>60.</strong> A step‑down transformer (95% efficient) has primary voltage 220 V, secondary 55 V. If secondary current is 10 A, find primary current.<br><button onclick="toggle('ans60')">Show answer</button><div class="answer" id="ans60">Secondary power = 55 × 10 = 550 W. Primary power = secondary power / efficiency = 550 / 0.95 ≈ 579 W. Primary current = 579 / 220 ≈ 2.63 A. <br>📘 REMEMBER: Efficiency less than 100% means primary draws slightly more power than secondary delivers.</div></div>
+
+    </div>
+
+    <!-- final motivational card -->
+    <div class="card" style="background:#e6f7ff;">
+        <h2 style="color:#0f172a;">⚡ Electromagnetism – the hidden force</h2>
+        <p style="font-size:1.2rem;">From electric motors to wireless charging, these principles power our world. Master them and you’ll truly understand how modern technology works.</p>
+    </div>
+
+</div>
+
+<footer>
+    ⚡ Grade 12 Physics – Chapter 4 | Ethiopian curriculum friendly | 60 calculation challenges | offline & mobile ready
+</footer>
+
+<script>
+    function toggle(id) {
+      var el = document.getElementById(id);
+      if (el.style.display === "block") {
+        el.style.display = "none";
+      } else {
+        el.style.display = "block";
+      }
+    }
+</script>
+
+</body>
+</html>

@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
+        android:name=".MainApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -25,43 +35,62 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
-
+        <activity android:name="com.million.learnify.MainActivity" android:exported="false" />
         <activity android:name=".StudentLoginActivity" android:exported="false" />
         <activity android:name=".RegisterActivity" android:exported="false" />
         <activity android:name=".ForgotPasswordActivity" android:exported="false" />
-        <activity android:name=".DashboardActivity" android:exported="false" />
+        <activity android:name="com.million.learnify.DashboardActivity" android:exported="false" />
         <activity android:name=".SubjectActivity" android:exported="false" />
         <activity android:name=".ChapterListActivity" android:exported="false" />
         <activity android:name=".TopicListActivity" android:exported="false" />
-        <activity android:name=".NoteDetailActivity" android:exported="false" />
+        <activity android:name="com.million.learnify.NoteDetailActivity" android:exported="false" />
         <activity android:name=".CourseDetailActivity" android:exported="false" />
         <activity android:name=".QuestionActivity" android:exported="false" />
         <activity android:name=".ExamActivity" android:exported="false" />
         <activity android:name=".ProfileActivity" android:exported="false" />
         <activity android:name=".EditProfileActivity" android:exported="false" />
-        <activity android:name=".AboutActivity" android:exported="false" />
+        <activity android:name="com.million.learnify.AboutActivity" android:exported="false" />
         <activity android:name=".HelpSupportActivity" android:exported="false" />
         <activity android:name=".SettingsActivity" android:exported="false" />
+        <activity android:name=".PrivacySecurityActivity" android:exported="false" />
+        <activity android:name=".NotificationPreferencesActivity" android:exported="false" />
         <activity android:name=".AIChatActivity" android:exported="false" />
         <activity android:name=".PaymentActivity" android:exported="false" />
+        <activity android:name=".AttendanceActivity" android:exported="false" />
+        <activity android:name=".AnnouncementsActivity" android:exported="false" />
 
-        <!-- NEW ACTIVITIES FOR FULL FUNCTIONALITY -->
+        <!-- FUNCTIONALITY ACTIVITIES -->
         <activity android:name=".TasksActivity" android:exported="false" />
         <activity android:name=".GpaCalculatorActivity" android:exported="false" />
         <activity android:name=".ClassScheduleActivity" android:exported="false" />
+        <activity android:name=".DailyChallengeActivity" android:exported="false" />
+        <activity android:name=".LeaderboardActivity" android:exported="false" />
+        <activity android:name=".CertificateActivity" android:exported="false" />
+        <activity android:name="com.million.learnify.VisualizerActivity" android:exported="false" />
+        <activity android:name=".CameraLabActivity" android:exported="false" />
+        <activity android:name=".NotificationListActivity" android:exported="false" />
+
+        <!-- Connections Activities -->
+        <activity android:name=".LinkedAccountsActivity" android:exported="false" />
+        <activity android:name=".InviteFriendsActivity" android:exported="false" />
 
         <!-- Admin Activities -->
         <activity android:name=".AdminLoginActivity" android:exported="false" />
         <activity android:name=".AdminRegisterActivity" android:exported="false" />
-        <activity android:name=".AdminDashboardActivity" android:exported="false" />
+        <activity android:name="com.million.learnify.AdminDashboardActivity" android:exported="false" />
         <activity android:name=".AdminUserManagementActivity" android:exported="false" />
         <activity android:name=".AdminContentManagementActivity" android:exported="false" />
         <activity android:name=".AdminReportsActivity" android:exported="false" />
         <activity android:name=".AdminSystemSettingsActivity" android:exported="false" />
         <activity android:name=".AdminPaymentVerificationActivity" android:exported="false" />
+        <activity android:name=".AdminQuestionActivity" android:exported="false" />
+        <activity android:name=".AdminSupportManagementActivity" android:exported="false" />
+
+        <receiver android:name=".NotificationReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="com.million.learnify.STUDY_NOTIFICATION" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

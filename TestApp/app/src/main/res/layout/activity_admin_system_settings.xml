@@ -4,211 +4,102 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_nature_gradient"
+    android:background="#F1F5F9"
     tools:context=".AdminSystemSettingsActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
+        android:layout_height="wrap_content">
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/settingsToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#1A000000"
+            android:background="@color/colorPrimary"
             app:navigationIcon="?attr/homeAsUpIndicator"
-            app:navigationIconTint="@android:color/white"
-            app:title="System Governance"
-            app:titleTextColor="@android:color/white" />
+            app:navigationIconTint="@color/white"
+            app:title="App Customization"
+            app:titleTextColor="@color/white" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="16dp">
 
-            <!-- 1. Maintenance & Access Control -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="ACCESS CONTROL"
-                android:textColor="#E0F2F1"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.1"
-                android:layout_marginStart="12dp"
-                android:layout_marginBottom="8dp" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                app:cardBackgroundColor="#CCFFFFFF"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="4dp">
-
+            <!-- BRANDING & IDENTITY -->
+            <TextView style="@style/SettingsSectionHeader" android:text="BRANDING &amp; IDENTITY" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp">
+                    <com.google.android.material.textfield.TextInputLayout style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="App Display Name">
+                        <com.google.android.material.textfield.TextInputEditText android:id="@+id/etAppName" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="AceGrade" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:paddingHorizontal="16dp"
-                        android:gravity="center_vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Maintenance Mode"
-                            android:textColor="#064E3B"
-                            android:textStyle="bold"
-                            android:textSize="15sp" />
-                        <androidx.appcompat.widget.SwitchCompat
-                            android:id="@+id/switchMaintenance"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true" />
+                    <com.google.android.material.button.MaterialButton android:id="@+id/btnChangeLogo" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Change App Logo" android:layout_marginTop="8dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ACADEMIC RULES -->
+            <TextView style="@style/SettingsSectionHeader" android:text="ACADEMIC RULES" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp">
+                    <com.google.android.material.textfield.TextInputLayout style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Exam Time Limit (minutes)">
+                        <com.google.android.material.textfield.TextInputEditText android:id="@+id/etExamTime" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="30" android:inputType="number" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Passing Score (%)" android:layout_marginTop="12dp">
+                        <com.google.android.material.textfield.TextInputEditText android:id="@+id/etPassingScore" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="50" android:inputType="number" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- MAINTENANCE & FEATURES -->
+            <TextView style="@style/SettingsSectionHeader" android:text="SYSTEM CONTROL" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp">
+                    <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="8dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Maintenance Mode" android:textColor="#334155" android:textStyle="bold" />
+                        <androidx.appcompat.widget.SwitchCompat android:id="@+id/switchMaintenance" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" />
                     </RelativeLayout>
-
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" android:layout_marginHorizontal="16dp" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:paddingHorizontal="16dp"
-                        android:gravity="center_vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="New Registrations"
-                            android:textColor="#064E3B"
-                            android:textStyle="bold"
-                            android:textSize="15sp" />
-                        <androidx.appcompat.widget.SwitchCompat
-                            android:id="@+id/switchRegistration"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:checked="true" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E2E8F0" android:layout_marginVertical="8dp" />
+                    <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="8dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Voice Study Feature" android:textColor="#334155" android:textStyle="bold" />
+                        <androidx.appcompat.widget.SwitchCompat android:id="@+id/switchVoiceFeature" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:checked="true" />
+                    </RelativeLayout>
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E2E8F0" android:layout_marginVertical="8dp" />
+                    <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="8dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="New Registrations" android:textColor="#334155" android:textStyle="bold" />
+                        <androidx.appcompat.widget.SwitchCompat android:id="@+id/switchRegistration" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:checked="true" />
                     </RelativeLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- 2. System Maintenance Settings -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SYSTEM MAINTENANCE"
-                android:textColor="#E0F2F1"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.1"
-                android:layout_marginStart="12dp"
-                android:layout_marginBottom="8dp" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardBackgroundColor="#CCFFFFFF"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="4dp">
-
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp">
-
-                    <TextView
-                        android:id="@+id/btnBackupRestore"
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="16dp"
-                        android:text="Backup &amp; Restore Database"
-                        android:textColor="#064E3B"
-                        android:textStyle="bold"
-                        android:textSize="15sp"
-                        android:background="?attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:focusable="true" />
-
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" android:layout_marginHorizontal="16dp" />
-
-                    <TextView
-                        android:id="@+id/btnImportExport"
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="16dp"
-                        android:text="Data Import / Export"
-                        android:textColor="#064E3B"
-                        android:textStyle="bold"
-                        android:textSize="15sp"
-                        android:background="?attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:focusable="true" />
-
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" android:layout_marginHorizontal="16dp" />
-
-                    <TextView
-                        android:id="@+id/btnSystemLogs"
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="16dp"
-                        android:text="System Activity Logs"
-                        android:textColor="#064E3B"
-                        android:textStyle="bold"
-                        android:textSize="15sp"
-                        android:background="?attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:focusable="true" />
-
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" android:layout_marginHorizontal="16dp" />
-
-                    <TextView
-                        android:id="@+id/btnCacheMgmt"
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="16dp"
-                        android:text="Clear System Cache"
-                        android:textColor="#064E3B"
-                        android:textStyle="bold"
-                        android:textSize="15sp"
-                        android:background="?attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:focusable="true" />
+            <!-- DATABASE TOOLS -->
+            <TextView style="@style/SettingsSectionHeader" android:text="ADVANCED TOOLS" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+                    <TextView android:id="@+id/btnBackupRestore" style="@style/SettingsActionItem" android:text="Backup &amp; Restore Database" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E2E8F0" />
+                    <TextView android:id="@+id/btnImportExport" style="@style/SettingsActionItem" android:text="Export Student Data (CSV)" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E2E8F0" />
+                    <TextView android:id="@+id/btnSystemLogs" style="@style/SettingsActionItem" android:text="View System Logs" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSaveSettings"
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:layout_marginTop="40dp"
-                android:text="APPLY CONFIGURATION"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                app:backgroundTint="#FFFFFF"
-                android:textColor="#064E3B"
-                app:cornerRadius="16dp"
-                app:elevation="4dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
                 android:layout_marginTop="24dp"
-                android:gravity="center"
-                android:text="Million Teshome • Hawassa University"
-                android:textColor="#B2DFDB"
-                android:textSize="11sp"
-                android:alpha="0.7" />
+                android:text="APPLY SYSTEM CHANGES"
+                app:cornerRadius="12dp" />
 
+            <View android:layout_width="match_parent" android:layout_height="40dp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

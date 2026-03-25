@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 12 Physics – Unit 3 · Fluid Mechanics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f8fafc;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            color: #1e293b;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #0891b2, #065666);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-radius: 40px 40px 20px 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(6,86,102,0.2);
+        }
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+            transition: transform 0.15s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.07);
+        }
+        h2 {
+            font-size: 1.8rem;
+            color: #0891b2;
+            border-left: 8px solid #0891b2;
+            padding-left: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .remember, .wow {
+            padding: 1.2rem 1.5rem;
+            border-radius: 20px;
+            margin: 1.5rem 0;
+            font-weight: 500;
+        }
+        .remember {
+            background: #ecfeff;
+            border-left: 6px solid #22c55e;
+        }
+        .wow {
+            background: #fff7ed;
+            border-left: 6px solid #f59e0b;
+        }
+        ul, ol {
+            padding-left: 2rem;
+            margin: 1rem 0;
+        }
+        .question-block {
+            background: white;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin: 1.2rem 0;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.02);
+        }
+        .q-num {
+            display: inline-block;
+            background: #0891b2;
+            color: white;
+            font-weight: 600;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+        .q-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .answer-btn {
+            background: #0891b2;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0.5rem 0;
+            transition: background 0.1s;
+        }
+        .answer-btn:hover {
+            background: #065666;
+        }
+        .answer {
+            display: none;
+            background: #ecfeff;
+            padding: 1.2rem;
+            border-radius: 18px;
+            margin-top: 1rem;
+            border-left: 5px solid #0891b2;
+        }
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #cbd5e1, transparent);
+            margin: 2.5rem 0;
+        }
+        .footer-note {
+            text-align: center;
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 50px;
+            border: 1px dashed #64748b;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>💧 Grade 12 Physics – Unit 3</h1>
+        <p>Fluid Mechanics · 30 advanced questions · exam‑ready</p>
+    </header>
+
+    <!-- Unit notes -->
+    <div class="card">
+        <h2>📘 Fluid mechanics – key ideas</h2>
+        <p>Fluid mechanics studies the behavior of liquids and gases at rest and in motion. Key principles: pressure variation with depth (P = ρ g h), Pascal's principle (pressure transmitted equally), Archimedes' principle (buoyancy), equation of continuity (A₁v₁ = A₂v₂), and Bernoulli's equation (P + ½ρv² + ρgh = constant). These concepts explain why ships float, how hydraulic lifts work, and how airplanes fly.</p>
+        <div class="remember">📌 REMEMBER: Pressure at a point in a static fluid depends only on depth and fluid density – not on the shape of the container.</div>
+        <div class="wow">✨ WOW: The same principle that lets a submarine dive also keeps a hot‑air balloon floating!</div>
+    </div>
+
+    <!-- ========== 30 QUESTIONS ========== -->
+    <!-- Part A: Conceptual (Q1–Q15) -->
+    <div class="question-block">
+        <div class="q-num">Q1 (conceptual)</div>
+        <div class="q-text">Explain why fluid pressure increases with depth.</div>
+        <button class="answer-btn" onclick="toggle('a1')">Show answer</button>
+        <div class="answer" id="a1">
+            <strong>Answer:</strong><br>
+            Pressure P = ρ g h. Greater depth means more fluid above, so the weight per unit area (pressure) is larger.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q2 (conceptual)</div>
+        <div class="q-text">Why is pressure transmitted equally in all directions in a static fluid?</div>
+        <button class="answer-btn" onclick="toggle('a2')">Show answer</button>
+        <div class="answer" id="a2">
+            <strong>Answer:</strong><br>
+            This is Pascal’s principle. Fluid molecules are free to move and push equally in all directions, so pressure is uniform at any point.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q3 (conceptual)</div>
+        <div class="q-text">Explain why buoyant force acts upward on submerged objects.</div>
+        <button class="answer-btn" onclick="toggle('a3')">Show answer</button>
+        <div class="answer" id="a3">
+            <strong>Answer:</strong><br>
+            Archimedes’ principle: the fluid exerts an upward force equal to the weight of the displaced fluid. The net result is a buoyant force upward.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q4 (conceptual)</div>
+        <div class="q-text">Why does a ship float even if made of steel?</div>
+        <button class="answer-btn" onclick="toggle('a4')">Show answer</button>
+        <div class="answer" id="a4">
+            <strong>Answer:</strong><br>
+            The ship’s average density (including air inside) is less than the density of water. The weight of displaced water equals the ship’s weight, so it floats.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q5 (conceptual)</div>
+        <div class="q-text">Explain why pressure at the bottom of a wide tank is independent of tank width.</div>
+        <button class="answer-btn" onclick="toggle('a5')">Show answer</button>
+        <div class="answer" id="a5">
+            <strong>Answer:</strong><br>
+            Pressure depends only on depth and fluid density (P = ρ g h). Lateral dimensions do not affect vertical pressure.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q6 (conceptual)</div>
+        <div class="q-text">Why does atmospheric pressure decrease with altitude?</div>
+        <button class="answer-btn" onclick="toggle('a6')">Show answer</button>
+        <div class="answer" id="a6">
+            <strong>Answer:</strong><br>
+            Less air above means smaller weight per unit area, so pressure decreases.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q7 (conceptual)</div>
+        <div class="q-text">Explain why liquids in connected vessels reach the same height.</div>
+        <button class="answer-btn" onclick="toggle('a7')">Show answer</button>
+        <div class="answer" id="a7">
+            <strong>Answer:</strong><br>
+            Hydrostatic equilibrium: pressure at the same horizontal level must be equal. If heights differed, pressure differences would cause flow until levels equalize.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q8 (conceptual)</div>
+        <div class="q-text">Why is Bernoulli’s principle applied in airplane lift?</div>
+        <button class="answer-btn" onclick="toggle('a8')">Show answer</button>
+        <div class="answer" id="a8">
+            <strong>Answer:</strong><br>
+            Faster air over the curved top of the wing creates lower pressure. The pressure difference between top and bottom generates lift.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q9 (conceptual)</div>
+        <div class="q-text">Why does a venturi meter measure fluid speed?</div>
+        <button class="answer-btn" onclick="toggle('a9')">Show answer</button>
+        <div class="answer" id="a9">
+            <strong>Answer:</strong><br>
+            At a constriction, velocity increases (continuity) and pressure decreases (Bernoulli). Measuring the pressure difference gives the speed.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q10 (conceptual)</div>
+        <div class="q-text">Explain why blood pressure drops in capillaries.</div>
+        <button class="answer-btn" onclick="toggle('a10')">Show answer</button>
+        <div class="answer" id="a10">
+            <strong>Answer:</strong><br>
+            Total cross‑sectional area of capillaries is large, so velocity decreases (continuity). Lower velocity means lower dynamic pressure, enabling nutrient exchange.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q11 (conceptual)</div>
+        <div class="q-text">Why is surface tension stronger in liquids with high intermolecular forces?</div>
+        <button class="answer-btn" onclick="toggle('a11')">Show answer</button>
+        <div class="answer" id="a11">
+            <strong>Answer:</strong><br>
+            High cohesive forces pull molecules inward more strongly, creating a tighter surface “skin” – higher surface tension.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q12 (conceptual)</div>
+        <div class="q-text">Explain why a bubble rises in a liquid.</div>
+        <button class="answer-btn" onclick="toggle('a12')">Show answer</button>
+        <div class="answer" id="a12">
+            <strong>Answer:</strong><br>
+            The bubble’s density is much lower than the liquid’s, so the buoyant force exceeds its weight, causing it to rise.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q13 (conceptual)</div>
+        <div class="q-text">Why does an object sink if its density is greater than the fluid’s density?</div>
+        <button class="answer-btn" onclick="toggle('a13')">Show answer</button>
+        <div class="answer" id="a13">
+            <strong>Answer:</strong><br>
+            Buoyant force equals weight of displaced fluid. If object density > fluid density, the object’s weight exceeds buoyant force, so it sinks.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q14 (conceptual)</div>
+        <div class="q-text">Explain why hydraulic lifts multiply force.</div>
+        <button class="answer-btn" onclick="toggle('a14')">Show answer</button>
+        <div class="answer" id="a14">
+            <strong>Answer:</strong><br>
+            Pascal’s principle: pressure is the same throughout. F₁/A₁ = F₂/A₂, so a small force on a small area produces a large force on a large area.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q15 (conceptual)</div>
+        <div class="q-text">Why is viscosity important in fluid flow?</div>
+        <button class="answer-btn" onclick="toggle('a15')">Show answer</button>
+        <div class="answer" id="a15">
+            <strong>Answer:</strong><br>
+            Viscosity measures internal friction. It determines flow rate, pressure drop, and energy loss – essential in lubrication, pipelines, and blood flow.
+        </div>
+    </div>
+
+    <!-- Part B: Calculation/Application (Q16–Q30) -->
+    <div class="question-block">
+        <div class="q-num">Q16 (calculation)</div>
+        <div class="q-text">Water density 1000 kg/m³, depth 10 m. Find pressure at the bottom (g = 9.8 m/s²).</div>
+        <button class="answer-btn" onclick="toggle('a16')">Show answer</button>
+        <div class="answer" id="a16">
+            <strong>Step‑by‑step:</strong><br>
+            P = ρ g h = 1000 × 9.8 × 10 = 98,000 Pa.<br>
+            ✅ Answer: 98,000 Pa (or 98 kPa)
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q17 (calculation)</div>
+        <div class="q-text">An object of volume 0.02 m³ is submerged in water. Find the buoyant force. (ρ_water = 1000 kg/m³, g = 9.8 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a17')">Show answer</button>
+        <div class="answer" id="a17">
+            <strong>Step‑by‑step:</strong><br>
+            F_b = ρ g V = 1000 × 9.8 × 0.02 = 196 N.<br>
+            ✅ Answer: 196 N
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q18 (calculation)</div>
+        <div class="q-text">A steel block of volume 0.005 m³ and density 7800 kg/m³ is submerged in water. Find the net downward force. (ρ_water = 1000 kg/m³, g = 9.8 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a18')">Show answer</button>
+        <div class="answer" id="a18">
+            <strong>Step‑by‑step:</strong><br>
+            Weight = ρ_block × V × g = 7800 × 0.005 × 9.8 = 382.2 N.<br>
+            Buoyant force = ρ_water × V × g = 1000 × 0.005 × 9.8 = 49 N.<br>
+            Net downward force = 382.2 – 49 = 333.2 N.<br>
+            ✅ Answer: 333.2 N
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q19 (calculation)</div>
+        <div class="q-text">A pipe narrows from cross‑sectional area 0.1 m² to 0.02 m². Water speed in the wide section is 2 m/s. Find the speed in the narrow section.</div>
+        <button class="answer-btn" onclick="toggle('a19')">Show answer</button>
+        <div class="answer" id="a19">
+            <strong>Step‑by‑step:</strong><br>
+            Continuity: A₁ v₁ = A₂ v₂ → v₂ = (A₁ v₁) / A₂ = (0.1 × 2) / 0.02 = 10 m/s.<br>
+            ✅ Answer: 10 m/s
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q20 (calculation)</div>
+        <div class="q-text">For the same pipe, find the pressure difference between wide and narrow sections (use Bernoulli). ρ = 1000 kg/m³.</div>
+        <button class="answer-btn" onclick="toggle('a20')">Show answer</button>
+        <div class="answer" id="a20">
+            <strong>Step‑by‑step:</strong><br>
+            Bernoulli: P₁ + ½ρv₁² = P₂ + ½ρv₂² → ΔP = ½ρ(v₂² – v₁²) = ½×1000×(10² – 2²) = 500 × (100 – 4) = 500 × 96 = 48,000 Pa.<br>
+            ✅ Answer: 48,000 Pa (pressure is lower in the narrow section)
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q21 (calculation)</div>
+        <div class="q-text">A hydraulic lift has small piston area 0.01 m² and large piston area 1 m². An input force of 100 N is applied. Find the output force.</div>
+        <button class="answer-btn" onclick="toggle('a21')">Show answer</button>
+        <div class="answer" id="a21">
+            <strong>Step‑by‑step:</strong><br>
+            F₂ = F₁ × (A₂ / A₁) = 100 × (1 / 0.01) = 100 × 100 = 10,000 N.<br>
+            ✅ Answer: 10,000 N
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q22 (calculation)</div>
+        <div class="q-text">A 50 kg diver jumps into a 5 m deep pool. Find the average upward force exerted by the water if he comes to rest in 2 s after entering. (g = 9.8 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a22')">Show answer</button>
+        <div class="answer" id="a22">
+            <strong>Step‑by‑step:</strong><br>
+            Speed at entry: v = √(2 g h) = √(2 × 9.8 × 5) = √98 ≈ 9.9 m/s.<br>
+            Deceleration: a = Δv / t = 9.9 / 2 ≈ 4.95 m/s² upward.<br>
+            Net upward force = m (g + a) = 50 × (9.8 + 4.95) = 50 × 14.75 = 737.5 N.<br>
+            ✅ Answer: about 738 N
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q23 (calculation)</div>
+        <div class="q-text">A venturi meter has A₁ = 0.05 m², A₂ = 0.02 m², v₁ = 2 m/s, P₁ = 2×10⁵ Pa. Find P₂ (ρ = 1000 kg/m³).</div>
+        <button class="answer-btn" onclick="toggle('a23')">Show answer</button>
+        <div class="answer" id="a23">
+            <strong>Step‑by‑step:</strong><br>
+            v₂ = A₁ v₁ / A₂ = 0.05×2 / 0.02 = 5 m/s.<br>
+            Bernoulli: P₂ = P₁ + ½ρ(v₁² – v₂²) = 2×10⁵ + 500×(4 – 25) = 200,000 – 10,500 = 189,500 Pa.<br>
+            ✅ Answer: 1.895×10⁵ Pa
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q24 (calculation)</div>
+        <div class="q-text">A bubble rises 2 m in a liquid of density 1200 kg/m³. Find the change in pressure it experiences. (g = 9.8 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a24')">Show answer</button>
+        <div class="answer" id="a24">
+            <strong>Step‑by‑step:</strong><br>
+            ΔP = ρ g h = 1200 × 9.8 × 2 = 23,520 Pa.<br>
+            ✅ Answer: 23,520 Pa (decrease as it rises)
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q25 (calculation)</div>
+        <div class="q-text">A cylindrical container has radius 0.5 m and height 1 m. It is filled with a fluid of density 850 kg/m³. Find the force on the bottom. (g = 9.8 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a25')">Show answer</button>
+        <div class="answer" id="a25">
+            <strong>Step‑by‑step:</strong><br>
+            Area A = π r² = 3.1416 × 0.25 ≈ 0.7854 m².<br>
+            Pressure P = ρ g h = 850 × 9.8 × 1 = 8330 Pa.<br>
+            Force F = P × A = 8330 × 0.7854 ≈ 6540 N.<br>
+            ✅ Answer: about 6540 N
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q26 (calculation)</div>
+        <div class="q-text">Oil flows in a pipe of diameter 0.1 m at speed 0.5 m/s. The kinematic viscosity is 1×10⁻⁵ m²/s. Find the Reynolds number and determine if the flow is laminar or turbulent.</div>
+        <button class="answer-btn" onclick="toggle('a26')">Show answer</button>
+        <div class="answer" id="a26">
+            <strong>Step‑by‑step:</strong><br>
+            Re = v D / ν = 0.5 × 0.1 / 1×10⁻⁵ = 0.05 / 10⁻⁵ = 5000.<br>
+            Since Re > 4000, flow is turbulent.<br>
+            ✅ Answer: Re = 5000, turbulent
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q27 (calculation)</div>
+        <div class="q-text">Water flows over a dam of height 2 m. Find the pressure at the base of the dam (ρ = 1000 kg/m³, g = 9.8 m/s²).</div>
+        <button class="answer-btn" onclick="toggle('a27')">Show answer</button>
+        <div class="answer" id="a27">
+            <strong>Step‑by‑step:</strong><br>
+            P = ρ g h = 1000 × 9.8 × 2 = 19,600 Pa.<br>
+            ✅ Answer: 19,600 Pa
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q28 (calculation)</div>
+        <div class="q-text">A ship displaces 2000 m³ of water. Find the buoyant force acting on it. (ρ_water = 1000 kg/m³, g = 9.8 m/s²)</div>
+        <button class="answer-btn" onclick="toggle('a28')">Show answer</button>
+        <div class="answer" id="a28">
+            <strong>Step‑by‑step:</strong><br>
+            F_b = ρ g V = 1000 × 9.8 × 2000 = 19,600,000 N = 1.96×10⁷ N.<br>
+            ✅ Answer: 1.96×10⁷ N
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q29 (calculation)</div>
+        <div class="q-text">Find the speed of efflux from a hole at depth 10 m below the surface of a liquid (Torricelli’s law, g = 9.8 m/s²).</div>
+        <button class="answer-btn" onclick="toggle('a29')">Show answer</button>
+        <div class="answer" id="a29">
+            <strong>Step‑by‑step:</strong><br>
+            v = √(2 g h) = √(2 × 9.8 × 10) = √196 = 14 m/s.<br>
+            ✅ Answer: 14 m/s
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="q-num">Q30 (conceptual)</div>
+        <div class="q-text">Explain why understanding fluid mechanics is essential in engineering and medicine.</div>
+        <button class="answer-btn" onclick="toggle('a30')">Show answer</button>
+        <div class="answer" id="a30">
+            <strong>Answer:</strong><br>
+            Fluid mechanics predicts flow, pressure, and forces in systems like pipelines, pumps, blood circulation, and aerospace. It enables efficient design, safety, and optimization – from artificial hearts to aircraft wings.
+        </div>
+    </div>
+
+    <hr>
+    <div class="footer-note">
+        ✅ UNIT 3 COMPLETE · 30 questions · conceptual + applied · exam‑ready · feel the WOW!
+    </div>
+</div>
+
+<script>
+    function toggle(id) {
+        var el = document.getElementById(id);
+        if (el.style.display === "block") {
+            el.style.display = "none";
+        } else {
+            el.style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>

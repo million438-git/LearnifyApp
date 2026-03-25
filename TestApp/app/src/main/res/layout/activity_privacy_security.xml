@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_off_white"
+    tools:context=".PrivacySecurityActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/surface_white"
+        app:elevation="0dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/privacyToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:navigationIconTint="@color/text_primary_dark"
+            app:title="@string/settings_privacy_security"
+            app:titleCentered="true"
+            app:titleTextColor="@color/text_primary_dark" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="40dp">
+
+            <!-- SECURITY SECTION -->
+            <TextView style="@style/SettingsSectionHeader" android:text="@string/section_security" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+
+                    <LinearLayout android:id="@+id/llChangePassword" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
+                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_lock_idle_lock" />
+                        <TextView style="@style/SettingsItemText" android:text="@string/action_change_password" />
+                        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_media_next" android:alpha="0.3" app:tint="@color/text_secondary_grey" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
+                    <LinearLayout android:id="@+id/llTwoFactor" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
+                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_dialog_dialer" />
+                        <TextView style="@style/SettingsItemText" android:text="@string/action_two_factor" />
+                        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_media_next" android:alpha="0.3" app:tint="@color/text_secondary_grey" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- DATA SECTION -->
+            <TextView style="@style/SettingsSectionHeader" android:text="@string/section_data" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+
+                    <LinearLayout android:id="@+id/llExportData" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
+                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/stat_sys_download" />
+                        <TextView style="@style/SettingsItemText" android:text="@string/action_export_data" />
+                        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_media_next" android:alpha="0.3" app:tint="@color/text_secondary_grey" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- DANGER ZONE -->
+            <TextView style="@style/SettingsSectionHeader" android:text="@string/section_danger_zone" android:textColor="@color/danger_red" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard" app:strokeColor="@color/danger_red">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+
+                    <LinearLayout android:id="@+id/llDeleteAccount" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
+                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_menu_delete" app:tint="@color/danger_red" />
+                        <TextView style="@style/SettingsItemText" android:text="@string/action_delete_account" android:textColor="@color/danger_red" />
+                        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_media_next" android:alpha="0.3" app:tint="@color/danger_red" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
