@@ -5,7 +5,7 @@
     android:id="@+id/adminDrawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_nature_gradient"
+    android:background="#0F172A"
     tools:context="com.million.learnify.AdminDashboardActivity">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -21,7 +21,7 @@
                 android:id="@+id/adminToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="#1A000000"
+                android:background="#1E293B"
                 app:navigationIconTint="@android:color/white"
                 app:title="Admin Command Center"
                 app:titleTextColor="@android:color/white" />
@@ -40,93 +40,71 @@
                 android:orientation="vertical"
                 android:padding="24dp">
 
-                <!-- Header Branding -->
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:layout_marginTop="40dp"
-                    android:src="@drawable/ic_admin_badge"
-                    app:tint="@android:color/white" />
+                    android:layout_marginTop="20dp"
+                    android:src="@android:drawable/ic_dialog_info"
+                    app:tint="#3B82F6" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="System Control"
+                    android:text="Governance &amp; Control"
                     android:textColor="@android:color/white"
-                    android:textSize="28sp"
+                    android:textSize="24sp"
                     android:textStyle="bold" />
 
-                <View
-                    android:layout_width="60dp"
-                    android:layout_height="4dp"
-                    android:layout_marginTop="8dp"
-                    android:background="#80FFFFFF" />
-
-                <!-- Critical Operations Section -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="48dp"
-                    android:text="CRITICAL OPERATIONS"
-                    android:textColor="#E0F2F1"
-                    android:textSize="14sp"
+                    android:text="CORE INFRASTRUCTURE"
+                    android:textColor="#94A3B8"
+                    android:textSize="12sp"
                     android:textStyle="bold"
                     android:letterSpacing="0.1" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnManageUsers"
                     android:layout_width="match_parent"
-                    android:layout_height="64dp"
+                    android:layout_height="60dp"
                     android:layout_marginTop="16dp"
                     android:text="👥 MANAGE USERS"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    app:cornerRadius="16dp"
-                    app:backgroundTint="#FFFFFF"
-                    android:textColor="#064E3B"
-                    app:icon="@android:drawable/ic_menu_myplaces"
-                    app:iconTint="#064E3B"
-                    app:elevation="4dp" />
+                    app:cornerRadius="12dp"
+                    app:backgroundTint="#1E293B"
+                    android:textColor="@android:color/white" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnManageContent"
                     android:layout_width="match_parent"
-                    android:layout_height="64dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="12dp"
                     android:text="📚 MANAGE CONTENT"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    app:cornerRadius="16dp"
-                    app:backgroundTint="#FFFFFF"
-                    android:textColor="#064E3B"
-                    app:icon="@android:drawable/ic_menu_agenda"
-                    app:iconTint="#064E3B"
-                    app:elevation="4dp" />
+                    app:cornerRadius="12dp"
+                    app:backgroundTint="#1E293B"
+                    android:textColor="@android:color/white" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCameraLabAdmin"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="12dp"
+                    android:text="📸 CAMERA LAB GOVERNANCE"
+                    app:cornerRadius="12dp"
+                    app:backgroundTint="#3B82F6"
+                    android:textColor="@android:color/white" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSystemSettings"
                     android:layout_width="match_parent"
-                    android:layout_height="64dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="12dp"
                     android:text="⚙️ SYSTEM SETTINGS"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    app:cornerRadius="16dp"
-                    app:backgroundTint="#065F46"
-                    android:textColor="@android:color/white"
-                    app:strokeColor="@android:color/white"
-                    app:strokeWidth="1dp"
-                    app:elevation="2dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="40dp"
-                    android:text="Million Teshome • Hawassa University"
-                    android:textColor="#B2DFDB"
-                    android:textSize="11sp"
-                    android:alpha="0.7" />
+                    app:cornerRadius="12dp"
+                    app:backgroundTint="#1E293B"
+                    android:textColor="@android:color/white" />
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
@@ -138,10 +116,9 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#064E3B"
+        android:background="#1E293B"
         app:itemIconTint="@android:color/white"
         app:itemTextColor="@android:color/white"
-        app:headerLayout="@layout/nav_header_admin"
         app:menu="@menu/admin_drawer_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

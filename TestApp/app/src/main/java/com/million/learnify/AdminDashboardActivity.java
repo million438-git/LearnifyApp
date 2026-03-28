@@ -55,10 +55,11 @@ public class AdminDashboardActivity extends AppCompatActivity {
             } else if (id == R.id.admin_nav_content) {
                 startActivity(new Intent(this, AdminContentManagementActivity.class));
             } else if (id == R.id.admin_nav_reports) {
-                // FINANCIAL REPORTS -> PAYMENT VERIFICATION
                 startActivity(new Intent(this, AdminPaymentVerificationActivity.class));
             } else if (id == R.id.admin_nav_settings) {
                 startActivity(new Intent(this, AdminSystemSettingsActivity.class));
+            } else if (id == R.id.admin_nav_camera_lab) { // Added for Section 11
+                startActivity(new Intent(this, AdminCameraLabActivity.class));
             } else if (id == R.id.admin_nav_logout) {
                 logout();
             }
@@ -76,16 +77,19 @@ public class AdminDashboardActivity extends AppCompatActivity {
         if (btnContent != null) btnContent.setOnClickListener(v -> 
             startActivity(new Intent(this, AdminContentManagementActivity.class)));
             
-        // 💸 BUTTON 3: VERIFY PAYMENTS (Mapped to System Settings)
-        View btnPayments = findViewById(R.id.btnSystemSettings);
-        if (btnPayments != null) btnPayments.setOnClickListener(v -> 
-            startActivity(new Intent(this, AdminPaymentVerificationActivity.class)));
+        // 💸 BUTTON 3: CAMERA LAB GOVERNANCE
+        View btnCameraLab = findViewById(R.id.btnCameraLabAdmin);
+        if (btnCameraLab != null) btnCameraLab.setOnClickListener(v -> 
+            startActivity(new Intent(this, AdminCameraLabActivity.class)));
+
+        // ⚙️ BUTTON 4: SYSTEM SETTINGS
+        View btnSettings = findViewById(R.id.btnSystemSettings);
+        if (btnSettings != null) btnSettings.setOnClickListener(v -> 
+            startActivity(new Intent(this, AdminSystemSettingsActivity.class)));
     }
 
     private void logout() {
-        // Clear session data
         getSharedPreferences("UserSession", MODE_PRIVATE).edit().clear().apply();
-        
         Toast.makeText(this, "Admin Logged Out", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

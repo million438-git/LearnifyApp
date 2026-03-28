@@ -5,8 +5,11 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
@@ -17,15 +20,17 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 /**
- * AdminContentManagementActivity - Handles uploading diverse educational materials.
- * Refined for perfect dropdown functionality and high-tier nature visuals.
+ * AdminContentManagementActivity - Advanced Hub for Central Asset Management.
+ * Implements Media Library, Course Content, and Broadcast features.
  */
 public class AdminContentManagementActivity extends AppCompatActivity {
 
     private TextInputEditText etMaterialTitle, etMaterialDescription;
+    private TextInputEditText etAnnTitle, etAnnMessage;
     private AutoCompleteTextView actvSubject, actvGrade, actvType, actvDifficulty;
-    private MaterialButton btnSelectFile, btnUploadConfirm;
+    private MaterialButton btnSelectFile, btnUploadConfirm, btnSendAnnouncement;
     private TextView tvSelectedFileName;
+    private LinearLayout llRecentContent;
     private DatabaseHelper dbHelper;
     private String selectedFilePath = "";
 
@@ -39,7 +44,7 @@ public class AdminContentManagementActivity extends AppCompatActivity {
                             getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         } catch (Exception e) { e.printStackTrace(); }
                         selectedFilePath = uri.toString();
-                        tvSelectedFileName.setText("📁 Ready: " + getFileName(uri));
+                        tvSelectedFileName.setText("📁 Media Asset: " + getFileName(uri));
                     }
                 }
             }
@@ -54,18 +59,11 @@ public class AdminContentManagementActivity extends AppCompatActivity {
         initViews();
         setupToolbar();
         setupDropdowns();
-
-        btnSelectFile.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("*/*");
-            filePickerLauncher.launch(intent);
-        });
-
-        btnUploadConfirm.setOnClickListener(v -> handleUpload());
+        refreshRecentContent();
     }
 
     private void initViews() {
+        // Material Fields
         etMaterialTitle = findViewById(R.id.etMaterialTitle);
         etMaterialDescription = findViewById(R.id.etMaterialDescription);
         actvSubject = findViewById(R.id.actvSubject);
@@ -75,33 +73,49 @@ public class AdminContentManagementActivity extends AppCompatActivity {
         btnSelectFile = findViewById(R.id.btnSelectFile);
         btnUploadConfirm = findViewById(R.id.btnUploadConfirm);
         tvSelectedFileName = findViewById(R.id.tvSelectedFileName);
+        llRecentContent = findViewById(R.id.llRecentContent);
+
+        // Announcement Fields
+        etAnnTitle = findViewById(R.id.etAnnTitle);
+        etAnnMessage = findViewById(R.id.etAnnMessage);
+        btnSendAnnouncement = findViewById(R.id.btnSendAnnouncement);
+
+        btnSelectFile.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("*/*");
+            filePickerLauncher.launch(intent);
+        });
+
+        btnUploadConfirm.setOnClickListener(v -> handleUpload());
+        
+        btnSendAnnouncement.setOnClickListener(v -> handleSendAnnouncement());
     }
 
     private void setupToolbar() {
         Toolbar toolbar = findViewById(R.id.contentMgmtToolbar);
         setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("Content Infrastructure");
+        }
         toolbar.setNavigationOnClickListener(v -> finish());
     }
 
     private void setupDropdowns() {
-        // 1. MATERIAL TYPE DROPDOWN
-        String[] types = {"PDF Document", "Video Lesson", "Study Note", "Image Reference"};
+        String[] types = {"PDF Document", "Video Lesson", "Study Note", "Image Reference", "SCORM Package"};
         actvType.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, types));
         actvType.setOnClickListener(v -> actvType.showDropDown());
 
-        // 2. SUBJECT DROPDOWN
-        String[] subjects = {"Mathematics", "English", "Physics", "Biology", "Chemistry", "History", "Geography"};
+        String[] subjects = {"Mathematics", "English", "Physics", "Biology", "Chemistry", "History", "Geography", "ICT"};
         actvSubject.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, subjects));
         actvSubject.setOnClickListener(v -> actvSubject.showDropDown());
 
-        // 3. GRADE DROPDOWN
-        String[] grades = {"9", "10", "11", "12"};
+        String[] grades = {"9", "10", "11", "12", "University"};
         actvGrade.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, grades));
         actvGrade.setOnClickListener(v -> actvGrade.showDropDown());
 
-        // 4. DIFFICULTY DROPDOWN
-        String[] levels = {"Easy", "Medium", "Hard"};
+        String[] levels = {"Beginner", "Intermediate", "Advanced", "Professional"};
         actvDifficulty.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, levels));
         actvDifficulty.setOnClickListener(v -> actvDifficulty.showDropDown());
     }
@@ -114,18 +128,85 @@ public class AdminContentManagementActivity extends AppCompatActivity {
         String type = actvType.getText().toString().trim();
         String difficulty = actvDifficulty.getText().toString().trim();
 
-        if (title.isEmpty() || grade.isEmpty() || selectedFilePath.isEmpty() || type.isEmpty() || difficulty.isEmpty()) {
-            Toast.makeText(this, "Please fill all required fields and attach a file", Toast.LENGTH_SHORT).show();
+        if (title.isEmpty() || grade.isEmpty() || selectedFilePath.isEmpty() || type.isEmpty()) {
+            Toast.makeText(this, "Validation Failed: Required fields missing", Toast.LENGTH_SHORT).show();
             return;
         }
 
         boolean success = dbHelper.insertMaterial(title, desc, type, subject, grade, selectedFilePath, difficulty);
+        
         if (success) {
-            Toast.makeText(this, "🚀 Published Successfully to Students!", Toast.LENGTH_LONG).show();
-            finish();
+            // Automatic System Announcement for Students
+            String announcementMsg = "New " + type + " published: " + title + " (" + subject + " - Grade " + grade + ")";
+            dbHelper.insertAnnouncement("New Content Alert", announcementMsg, "COURSE_UPDATE", grade);
+            
+            // Trigger Notification to Targeted Students (Local Notification Table)
+            dbHelper.addNotification("all", "New Material: " + title, desc, "CONTENT");
+
+            Toast.makeText(this, "🚀 Knowledge Broadcast Successful!", Toast.LENGTH_LONG).show();
+            clearMaterialForm();
+            refreshRecentContent();
         } else {
-            Toast.makeText(this, "Publishing failed. Check data.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Publishing Error: Database integrity fault.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void handleSendAnnouncement() {
+        String title = etAnnTitle.getText().toString().trim();
+        String message = etAnnMessage.getText().toString().trim();
+
+        if (title.isEmpty() || message.isEmpty()) {
+            Toast.makeText(this, "Please fill in title and message", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        boolean success = dbHelper.insertAnnouncement(title, message, "SYSTEM_ALERT", "All");
+        if (success) {
+            dbHelper.addNotification("all", title, message, "ANNOUNCEMENT");
+            Toast.makeText(this, "📢 System Broadcast Dispatched!", Toast.LENGTH_LONG).show();
+            etAnnTitle.setText("");
+            etAnnMessage.setText("");
+        } else {
+            Toast.makeText(this, "Failed to send announcement", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void clearMaterialForm() {
+        etMaterialTitle.setText("");
+        etMaterialDescription.setText("");
+        tvSelectedFileName.setText("No resource attached");
+        selectedFilePath = "";
+        actvSubject.setText("", false);
+        actvGrade.setText("", false);
+        actvType.setText("", false);
+        actvDifficulty.setText("", false);
+    }
+
+    private void refreshRecentContent() {
+        if (llRecentContent == null) return;
+        llRecentContent.removeAllViews();
+        try (Cursor cursor = dbHelper.getAllMaterials()) {
+            int count = 0;
+            while (cursor.moveToNext() && count < 5) {
+                View v = LayoutInflater.from(this).inflate(R.layout.item_material, llRecentContent, false);
+                TextView title = v.findViewById(R.id.tvMaterialTitle);
+                TextView desc = v.findViewById(R.id.tvMaterialDescription);
+                TextView subject = v.findViewById(R.id.tvMaterialSubject);
+                TextView type = v.findViewById(R.id.tvMaterialType);
+                
+                title.setText(cursor.getString(cursor.getColumnIndexOrThrow("title")));
+                desc.setText(cursor.getString(cursor.getColumnIndexOrThrow("content")));
+                subject.setText(cursor.getString(cursor.getColumnIndexOrThrow("subject")));
+                type.setText(cursor.getString(cursor.getColumnIndexOrThrow("type")));
+                
+                // Set text colors for dark background in admin hub
+                title.setTextColor(getResources().getColor(android.R.color.white));
+                desc.setTextColor(getResources().getColor(android.R.color.darker_gray));
+
+                llRecentContent.addView(v);
+                count++;
+            }
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     private String getFileName(Uri uri) {

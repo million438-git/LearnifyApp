@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_admin_content_dark"
+    android:background="#010114"
     tools:context=".AdminContentManagementActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:navigationIconTint="@android:color/white"
-            app:title="System Management Hub"
+            app:title="Content &amp; Media Hub"
             app:titleTextColor="@android:color/white" />
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -33,28 +33,27 @@
             android:orientation="vertical"
             android:padding="20dp">
 
+            <!-- 1 & 2. MATERIAL & COURSE CONTENT -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Publish Knowledge"
+                android:text="Asset &amp; Lesson Management"
                 android:textColor="@android:color/white"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="32dp" />
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="16dp" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@android:color/transparent"
-                app:cardCornerRadius="28dp"
-                app:cardElevation="0dp"
-                app:strokeWidth="0dp">
+                app:cardBackgroundColor="#1E293B"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_admin_card_dark"
                     android:orientation="vertical"
                     android:padding="24dp">
 
@@ -62,41 +61,40 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Material Title"
-                        android:textColorHint="#94A3B8"
-                        app:hintTextColor="#60A5FA"
-                        app:boxStrokeColor="#60A5FA">
+                        android:hint="Resource Title"
+                        android:textColorHint="#FFFFFF"
+                        app:hintTextColor="#FFFFFF"
+                        app:boxStrokeColor="#FFFFFF">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etMaterialTitle"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="@android:color/white"
-                            android:textStyle="bold" />
+                            android:textColor="@android:color/white" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:hint="Instructions for Student"
-                        android:textColorHint="#94A3B8"
-                        app:hintTextColor="#60A5FA"
-                        app:boxStrokeColor="#60A5FA">
+                        android:layout_marginTop="12dp"
+                        android:hint="Content Description / Instructions"
+                        android:textColorHint="#FFFFFF"
+                        app:hintTextColor="#FFFFFF"
+                        app:boxStrokeColor="#FFFFFF">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etMaterialDescription"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="top"
                             android:inputType="textMultiLine"
-                            android:minLines="3"
+                            android:minLines="2"
                             android:textColor="@android:color/white" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="12dp"
                         android:orientation="horizontal">
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -105,9 +103,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:hint="Subject"
-                            android:textColorHint="#94A3B8"
-                            app:hintTextColor="#60A5FA"
-                            app:boxStrokeColor="#60A5FA">
+                            android:textColorHint="@color/background_off_white"
+                            app:boxStrokeColor="#FFFFFF">
                             <AutoCompleteTextView
                                 android:id="@+id/actvSubject"
                                 android:layout_width="match_parent"
@@ -123,10 +120,9 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:hint="Grade"
-                            android:textColorHint="#94A3B8"
-                            app:hintTextColor="#60A5FA"
-                            app:boxStrokeColor="#60A5FA">
+                            android:hint="Target Grade"
+                            android:textColorHint="@color/background_off_white"
+                            app:boxStrokeColor="#FFFFFF">
                             <AutoCompleteTextView
                                 android:id="@+id/actvGrade"
                                 android:layout_width="match_parent"
@@ -136,71 +132,142 @@
                         </com.google.android.material.textfield.TextInputLayout>
                     </LinearLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:hint="Resource Format"
-                        android:textColorHint="#94A3B8"
-                        app:hintTextColor="#60A5FA"
-                        app:boxStrokeColor="#60A5FA">
-                        <AutoCompleteTextView
-                            android:id="@+id/actvType"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="none"
-                            android:textColor="@android:color/white" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
 
-                    <!-- ADDED: DIFFICULTY DROPDOWN -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:hint="Difficulty Level"
-                        android:textColorHint="#94A3B8"
-                        app:hintTextColor="#60A5FA"
-                        app:boxStrokeColor="#60A5FA">
-                        <AutoCompleteTextView
-                            android:id="@+id/actvDifficulty"
-                            android:layout_width="match_parent"
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:inputType="none"
-                            android:textColor="@android:color/white" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_weight="1"
+                            android:hint="Resource Type"
+                            android:textColorHint="@color/background_off_white"
+                            app:boxStrokeColor="#FFFFFF">
+                            <AutoCompleteTextView
+                                android:id="@+id/actvType"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="none"
+                                android:textColor="@android:color/white" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <View android:layout_width="12dp" android:layout_height="0dp" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="Difficulty Level"
+                            android:textColorHint="@color/background_off_white"
+                            app:boxStrokeColor="#FFFFFF">
+                            <AutoCompleteTextView
+                                android:id="@+id/actvDifficulty"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="none"
+                                android:textColor="@android:color/white" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSelectFile"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="16dp"
+                        android:text="📁 ATTACH MEDIA ASSET"
+                        android:textColor="#1567CB"
+                        app:strokeColor="#FFFFFF" />
 
                     <TextView
                         android:id="@+id/tvSelectedFileName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="No resource attached"
-                        android:textColor="#94A3B8"
-                        android:textSize="12sp"
-                        android:textStyle="italic" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnSelectFile"
-                        style="@style/Widget.MaterialComponents.Button.TextButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
                         android:layout_marginTop="8dp"
-                        android:text="📁 ATTACH PDF / VIDEO / IMAGE"
-                        android:textColor="#60A5FA"
-                        android:textStyle="bold" />
+                        android:text="No file selected"
+                        android:textColor="#126AFB"
+                        android:textSize="12sp" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnUploadConfirm"
                         android:layout_width="match_parent"
-                        android:layout_height="64dp"
+                        android:layout_height="60dp"
                         android:layout_marginTop="16dp"
-                        android:text="🚀 BROADCAST TO STUDENTS"
+                        android:text="🚀 PUBLISH TO REPOSITORY"
                         android:textStyle="bold"
-                        app:backgroundTint="#2563EB"
-                        app:cornerRadius="16dp"
-                        app:elevation="4dp" />
+                        app:backgroundTint="#165C3A"
+                        app:cornerRadius="12dp" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 4. ANNOUNCEMENTS -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="System Broadcasts"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="16dp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="#041A3F"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Announcement Title"
+                        android:textColorHint="@color/background_off_white"
+                        app:boxStrokeColor="#F59E0B">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etAnnTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@android:color/white" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="Broadcast Message"
+                        android:textColorHint="@color/background_off_white"
+                        app:boxStrokeColor="#F59E0B">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etAnnMessage"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minLines="3"
+                            android:textColor="@android:color/white" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSendAnnouncement"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_marginTop="16dp"
+                        android:text="📢 SEND SYSTEM-WIDE ALERT"
+                        android:textStyle="bold"
+                        app:backgroundTint="#D97706"
+                        app:cornerRadius="12dp" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -209,19 +276,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:text="System Broadcast History"
+                android:text="Recent Publications"
                 android:textStyle="bold"
-                android:textColor="#94A3B8"
-                android:textSize="14sp"
-                android:textAllCaps="true"
-                android:letterSpacing="0.1" />
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textAllCaps="true" />
 
             <LinearLayout
                 android:id="@+id/llRecentContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:orientation="vertical" />
+                android:orientation="vertical"
+                android:paddingBottom="40dp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

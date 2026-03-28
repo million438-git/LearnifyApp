@@ -33,7 +33,7 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * StudentLoginActivity - Updated with Social Login Functionality.
+ * StudentLoginActivity - Connected to Global Admin Settings.
  */
 public class StudentLoginActivity extends BaseActivity {
 
@@ -54,9 +54,18 @@ public class StudentLoginActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        dbHelper = new DatabaseHelper(this);
+        
+        // 8.9 MAINTENANCE MODE CHECK
+        if (dbHelper.getSetting("maintenance_mode", "0").equals("1")) {
+            setContentView(R.layout.layout_maintenance); // Assuming you have a maintenance layout
+            TextView tvMsg = findViewById(R.id.tvMaintenanceMessage);
+            if (tvMsg != null) tvMsg.setText(dbHelper.getSetting("maintenance_message", "System is currently under scheduled maintenance. Please try again later."));
+            return;
+        }
+
         try {
             setContentView(R.layout.activity_student_login);
-            dbHelper = new DatabaseHelper(this);
             loginPrefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
             initViews();
             loadRememberedData();
@@ -104,7 +113,17 @@ public class StudentLoginActivity extends BaseActivity {
             btnLinkedinLogin.setOnClickListener(v -> handleSocialLogin("LinkedIn"));
         }
 
-        if (tvRegisterRedirect != null) tvRegisterRedirect.setOnClickListener(v -> startActivity(new Intent(this, RegisterActivity.class)));
+        if (tvRegisterRedirect != null) {
+            tvRegisterRedirect.setOnClickListener(v -> {
+                // 8.1 REGISTRATION ENABLED CHECK
+                if (dbHelper.getSetting("allow_registration", "1").equals("1")) {
+                    startActivity(new Intent(this, RegisterActivity.class));
+                } else {
+                    Toast.makeText(this, "New registrations are currently disabled by Admin.", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
         if (tvForgotPassword != null) tvForgotPassword.setOnClickListener(v -> startActivity(new Intent(this, ForgotPasswordActivity.class)));
     }
 

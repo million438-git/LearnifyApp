@@ -12,10 +12,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,21 +27,20 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
-import java.util.List;
-
 /**
- * DashboardActivity - Updated to sync and display user profile image and details.
+ * DashboardActivity - Professional Student Workspace.
+ * Optimized: Removed Grades, Attendance, and dynamic Resources from dashboard.
  */
 public class DashboardActivity extends BaseActivity implements VoiceStudyManager.VoiceCallback {
 
     private static final int MIC_PERMISSION_CODE = 200;
     private DatabaseHelper dbHelper;
     private TextView tvWelcomeTitle, tvNotificationBadgeCount;
-    private LinearLayout llMaterialsContainer;
     private DrawerLayout drawerLayout;
-    private String currentUsername, userGrade;
+    private String currentUsername;
     private VoiceStudyManager voiceStudyManager;
     private View rlNotificationContainer;
+    private boolean isImpersonating = false;
 
     private final BroadcastReceiver notificationUpdateReceiver = new BroadcastReceiver() {
         @Override
@@ -60,7 +57,6 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
             setContentView(R.layout.activity_dashboard);
         } catch (Exception e) {
             Log.e("Dashboard", "Inflation Error", e);
-            Toast.makeText(this, "UI Load Error. Please restart.", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
@@ -68,7 +64,7 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
         dbHelper = new DatabaseHelper(this);
         SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
         currentUsername = pref.getString("username", "");
-        userGrade = pref.getString("grade", "10");
+        isImpersonating = pref.getBoolean("is_impersonating", false);
 
         if (currentUsername.isEmpty()) {
             logout();
@@ -77,17 +73,18 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
 
         try {
             voiceStudyManager = new VoiceStudyManager(this, this);
-        } catch (Exception e) {
-            Log.e("Dashboard", "voice manager init failed", e);
-        }
+        } catch (Exception e) { e.printStackTrace(); }
 
         initViews();
         setupNavigation();
-        loadMaterials();
         updateHeaderAndWelcome();
         
         checkMicrophonePermission();
         updateNotificationUI();
+
+        if (isImpersonating) {
+            showSupportModeWarning();
+        }
 
         try {
             IntentFilter filter = new IntentFilter("com.million.learnify.UPDATE_NOTIFICATION_UI");
@@ -96,23 +93,23 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
             } else {
                 ContextCompat.registerReceiver(this, notificationUpdateReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
             }
-        } catch (Exception e) {
-            Log.e("Dashboard", "Receiver registration failed", e);
-        }
-        
-        sendWelcomeNotification();
-        NotificationHelper.scheduleGenericNotification(this, "motivation", 500, 1);
+        } catch (Exception e) { }
+    }
+
+    private void showSupportModeWarning() {
+        Toast.makeText(this, "⚠️ SUPPORT MODE ACTIVE: Logged in as " + currentUsername, Toast.LENGTH_LONG).show();
     }
 
     private void updateHeaderAndWelcome() {
-        // Update Dashboard Welcome Title
+        SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String fullName = pref.getString("full_name", currentUsername);
+        
         if (tvWelcomeTitle != null) {
-            SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
-            String fullName = pref.getString("full_name", currentUsername);
-            tvWelcomeTitle.setText("Welcome " + fullName + "!");
+            String welcome = "Welcome " + fullName + "!";
+            if (isImpersonating) welcome += "\n(Admin Support Mode)";
+            tvWelcomeTitle.setText(welcome);
         }
 
-        // Update Navigation Drawer Header (Image and Info)
         NavigationView navView = findViewById(R.id.navigationView);
         if (navView != null && navView.getHeaderCount() > 0) {
             View header = navView.getHeaderView(0);
@@ -120,37 +117,29 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
             TextView tvHeaderName = header.findViewById(R.id.tvUserNameHeader);
             TextView tvHeaderEmail = header.findViewById(R.id.tvUserEmailHeader);
 
-            Cursor cursor = dbHelper.getUserDetails(currentUsername);
-            if (cursor != null && cursor.moveToFirst()) {
-                String fullName = cursor.getString(cursor.getColumnIndexOrThrow("full_name"));
-                String email = cursor.getString(cursor.getColumnIndexOrThrow("email"));
-                String imageUriStr = cursor.getString(cursor.getColumnIndexOrThrow("profile_image"));
-
-                if (tvHeaderName != null) tvHeaderName.setText(fullName);
-                if (tvHeaderEmail != null) tvHeaderEmail.setText(email);
-                
-                if (ivHeaderProfile != null && imageUriStr != null && !imageUriStr.isEmpty()) {
-                    try {
-                        ivHeaderProfile.setImageURI(Uri.parse(imageUriStr));
-                    } catch (Exception e) {
-                        Log.e("Dashboard", "Profile Image Load Failed", e);
+            if (isImpersonating) {
+                tvHeaderName.setText(fullName);
+                tvHeaderEmail.setText("Impersonating Account");
+                ivHeaderProfile.setImageResource(android.R.drawable.ic_menu_view);
+                navView.getMenu().findItem(R.id.nav_logout).setTitle("Exit Support Mode");
+            } else {
+                Cursor cursor = dbHelper.getUserDetails(currentUsername);
+                if (cursor != null && cursor.moveToFirst()) {
+                    tvHeaderName.setText(cursor.getString(cursor.getColumnIndexOrThrow("full_name")));
+                    tvHeaderEmail.setText(cursor.getString(cursor.getColumnIndexOrThrow("email")));
+                    String img = cursor.getString(cursor.getColumnIndexOrThrow("profile_image"));
+                    if (ivHeaderProfile != null && img != null && !img.isEmpty()) {
+                        try { ivHeaderProfile.setImageURI(Uri.parse(img)); } catch (Exception e) {}
                     }
+                    cursor.close();
                 }
-                cursor.close();
+                navView.getMenu().findItem(R.id.nav_logout).setTitle("Logout");
             }
         }
     }
 
-    private void sendWelcomeNotification() {
-        Intent welcomeIntent = new Intent(this, NotificationReceiver.class);
-        welcomeIntent.setAction("com.million.learnify.STUDY_NOTIFICATION");
-        welcomeIntent.putExtra("type", "welcome");
-        sendBroadcast(welcomeIntent);
-    }
-
     private void initViews() {
         tvWelcomeTitle = findViewById(R.id.tvWelcomeTitle);
-        llMaterialsContainer = findViewById(R.id.llMaterialsContainer);
         tvNotificationBadgeCount = findViewById(R.id.tvNotificationBadgeCount);
         rlNotificationContainer = findViewById(R.id.rlNotificationContainer);
         
@@ -158,9 +147,7 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
         if (toolbar != null) setSupportActionBar(toolbar);
 
         if (rlNotificationContainer != null) {
-            rlNotificationContainer.setOnClickListener(v -> {
-                startActivity(new Intent(this, NotificationListActivity.class));
-            });
+            rlNotificationContainer.setOnClickListener(v -> startActivity(new Intent(this, NotificationListActivity.class)));
         }
 
         safeSetClick(R.id.cardTimetable, v -> startActivity(new Intent(this, ClassScheduleActivity.class)));
@@ -190,14 +177,8 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
         if (unreadCount > 0) {
             tvNotificationBadgeCount.setText(String.valueOf(unreadCount));
             tvNotificationBadgeCount.setVisibility(View.VISIBLE);
-            if (rlNotificationContainer != null) {
-                rlNotificationContainer.setBackgroundResource(R.drawable.bg_circle_light);
-            }
         } else {
             tvNotificationBadgeCount.setVisibility(View.GONE);
-            if (rlNotificationContainer != null) {
-                rlNotificationContainer.setBackground(null);
-            }
         }
     }
 
@@ -228,22 +209,6 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
         }
     }
 
-    private void loadMaterials() {
-        if (llMaterialsContainer == null) return;
-        llMaterialsContainer.removeAllViews();
-        try {
-            List<MaterialModel> materials = dbHelper.getMaterialsForGrade(userGrade);
-            if (materials != null) {
-                for (MaterialModel m : materials) {
-                    View v = LayoutInflater.from(this).inflate(R.layout.item_material, llMaterialsContainer, false);
-                    TextView title = v.findViewById(R.id.tvMaterialTitle);
-                    if (title != null) title.setText(m.getTitle());
-                    llMaterialsContainer.addView(v);
-                }
-            }
-        } catch (Exception e) { e.printStackTrace(); }
-    }
-
     private void handleNavigation(int id) {
         if (id == R.id.nav_dashboard || id == R.id.menu_home) {
              // Home
@@ -257,20 +222,26 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
             startActivity(new Intent(this, ProfileActivity.class));
         } else if (id == R.id.nav_settings || id == R.id.menu_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
-        } else if (id == R.id.nav_announcements) {
-            startActivity(new Intent(this, AnnouncementsActivity.class));
-        } else if (id == R.id.nav_timetable) {
-            startActivity(new Intent(this, ClassScheduleActivity.class));
         } else if (id == R.id.nav_logout) {
             logout();
         }
     }
 
     private void logout() {
-        getSharedPreferences("UserSession", MODE_PRIVATE).edit().clear().apply();
-        Intent intent = new Intent(this, WelcomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
+        boolean wasImpersonating = pref.getBoolean("is_impersonating", false);
+        pref.edit().clear().apply();
+        
+        if (wasImpersonating) {
+            Toast.makeText(this, "Exited Support Mode", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, AdminDashboardActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(this, WelcomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }
         finish();
     }
 
@@ -280,42 +251,26 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
         }
     }
 
-    @Override public void onCommandRecognized(String text) {
-        Toast.makeText(this, "I heard: " + text, Toast.LENGTH_SHORT).show();
-    }
-
+    @Override public void onCommandRecognized(String text) {}
     @Override public void onActionRequired(String action, String page, String extra) {
         if ("navigate".equals(action)) {
             try {
                 Class<?> targetClass = Class.forName("com.million.learnify." + page);
                 Intent intent = new Intent(this, targetClass);
-                if (extra != null && !extra.isEmpty()) {
-                    intent.putExtra("SUBJECT_NAME", extra);
-                }
+                if (extra != null) intent.putExtra("SUBJECT_NAME", extra);
                 startActivity(intent);
-            } catch (Exception e) {
-                Log.e("Dashboard", "Voice Navigation Error: " + page, e);
-            }
-        } else if ("summarize".equals(action)) {
-            Toast.makeText(this, "Summary action triggered via voice.", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) { }
         }
     }
 
-    @Override
-    protected void onResume() {
+    @Override protected void onResume() {
         super.onResume();
         updateNotificationUI();
         updateHeaderAndWelcome();
     }
 
-    @Override
-    protected void onDestroy() {
+    @Override protected void onDestroy() {
         super.onDestroy();
-        if (voiceStudyManager != null) {
-            voiceStudyManager.shutdown();
-        }
-        try {
-            unregisterReceiver(notificationUpdateReceiver);
-        } catch (Exception e) {}
+        try { unregisterReceiver(notificationUpdateReceiver); } catch (Exception e) {}
     }
 }

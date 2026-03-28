@@ -4,39 +4,103 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F1F5F9"
+    android:background="#F8FAFC"
     tools:context=".AdminUserManagementActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary">
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/userMgmtToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
             app:navigationIcon="?attr/homeAsUpIndicator"
-            app:title="Student Management"
+            app:title="User Administration"
             app:titleTextColor="@color/white" />
 
-        <com.google.android.material.textfield.TextInputLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:background="@color/colorPrimary"
-            app:hintEnabled="false"
-            app:startIconDrawable="@android:drawable/ic_menu_search"
-            app:startIconTint="@color/white">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etSearchUser"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Search by name, ID or email..."
-                android:textColor="@color/white"
-                android:background="@drawable/bg_rounded_dark"
-                android:padding="12dp"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
+                app:hintEnabled="false"
+                app:startIconDrawable="@android:drawable/ic_menu_search"
+                app:startIconTint="@color/white">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etSearchUser"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Search name, ID, or email..."
+                    android:textColor="@color/white"
+                    android:background="@drawable/bg_chat_bubble_user"
+                    android:padding="12dp"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:scrollbars="none">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipGroupStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:singleSelection="true">
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipAll"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="All Status"
+                            android:checked="true" />
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipActive"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Active" />
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chipBlocked"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Blocked" />
+                    </com.google.android.material.chip.ChipGroup>
+
+                    <View android:layout_width="16dp" android:layout_height="1dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipCourseFilter"
+                        style="@style/Widget.MaterialComponents.Chip.Action"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="By Course: All"
+                        app:chipIcon="@android:drawable/ic_menu_agenda" />
+
+                    <View android:layout_width="8dp" android:layout_height="1dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipDateFilter"
+                        style="@style/Widget.MaterialComponents.Chip.Action"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Date: All Time"
+                        app:chipIcon="@android:drawable/ic_menu_today" />
+                </LinearLayout>
+            </HorizontalScrollView>
+        </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -48,32 +112,35 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="12dp">
+            android:padding="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="12dp">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnExportData"
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Export CSV"
-                    app:icon="@android:drawable/ic_menu_save" />
-
-                <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+                android:layout_marginBottom="16dp">
 
                 <TextView
                     android:id="@+id/tvUserCount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Managing STUDENTS: 0"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#1E293B"
+                    android:background="?attr/selectableItemBackground"
+                    android:padding="4dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnExportData"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Total Students: 0"
-                    android:textStyle="bold"
-                    android:textColor="#64748B"/>
+                    android:text="Export"
+                    app:icon="@android:drawable/ic_menu_save"
+                    app:cornerRadius="8dp"/>
             </LinearLayout>
 
             <LinearLayout

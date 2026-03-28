@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F8FAFC">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/adminCameraToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#1E293B"
+            app:title="Camera Lab Governance"
+            app:titleTextColor="@android:color/white" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- 11.1 Global Toggle -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="System Status"
+                        android:textStyle="bold"
+                        android:textColor="#1E293B" />
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchGlobalCamera"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Enable Camera Lab Globally"
+                        android:checked="true" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 11.2 Supported Subjects -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Supported Domains"
+                        android:textStyle="bold" />
+                    <CheckBox android:id="@+id/cbMath" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mathematics (Calculus/Algebra)" android:checked="true"/>
+                    <CheckBox android:id="@+id/cbPhysics" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Physics (Mechanics/Ohm's Law)" android:checked="true"/>
+                    <CheckBox android:id="@+id/cbChemistry" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Chemistry (Stoichiometry)" android:checked="true"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 11.3 Solver Parameters -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Solver Engine Tuning"
+                        android:textStyle="bold" />
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Maximum Solution Steps"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etMaxSteps"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="10"
+                            android:inputType="number" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Default Unit System: SI (Standard)" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 11.4 OCR Training & 11.6 Content Moderation -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Training &amp; Moderation"
+                        android:textStyle="bold" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnUploadOCR"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Upload Improved Language Packs (OCR)" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnFlaggedContent"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="View Flagged Captured Content"
+                        app:strokeColor="#EF4444"
+                        android:textColor="#EF4444" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 11.5 Usage Analytics -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Real-time Analytics"
+                        android:textStyle="bold" />
+                    <TextView android:id="@+id/tvTotalScans" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Total Scans Today: 0" />
+                    <TextView android:id="@+id/tvSuccessRate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Recognition Success Rate: 94%" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 11.7 Processing Mode -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Infrastructure Mode"
+                        android:textStyle="bold" />
+                    <RadioGroup
+                        android:id="@+id/rgProcessMode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <RadioButton android:id="@+id/rbClient" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Client-side only (Offline)" android:checked="true" />
+                        <RadioButton android:id="@+id/rbServer" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Server-side (API)" />
+                        <RadioButton android:id="@+id/rbHybrid" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Hybrid (Optimized)" />
+                    </RadioGroup>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveAdminCamera"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="SYNC GOVERNANCE POLICY"
+                app:cornerRadius="12dp"
+                android:backgroundTint="#1E293B" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

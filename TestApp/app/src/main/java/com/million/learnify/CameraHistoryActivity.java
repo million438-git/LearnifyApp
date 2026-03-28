@@ -1,5 +1,7 @@
 package com.million.learnify;
 
+import android.annotation.SuppressLint;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,15 +12,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import android.content.SharedPreferences;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CameraHistoryActivity extends AppCompatActivity {
 
+    private DatabaseHelper dbHelper;
+    private String currentUsername;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_history);
+
+        dbHelper = new DatabaseHelper(this);
+        SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
+        currentUsername = pref.getString("username", "Guest");
 
         setupToolbar();
         setupRecyclerView();
@@ -29,7 +39,7 @@ public class CameraHistoryActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Scan History");
+            getSupportActionBar().setTitle("Lab History");
         }
         toolbar.setNavigationOnClickListener(v -> finish());
     }
@@ -39,9 +49,17 @@ public class CameraHistoryActivity extends AppCompatActivity {
         rv.setLayoutManager(new LinearLayoutManager(this));
         
         List<ScanItem> items = new ArrayList<>();
-        items.add(new ScanItem("Math", "5x + 10 = 35", "Today, 10:30 AM"));
-        items.add(new ScanItem("Object", "Monstera Deliciosa", "Yesterday, 4:15 PM"));
-        items.add(new ScanItem("Translate", "Bonjour -> Hello", "2 days ago"));
+        Cursor cursor = dbHelper.getLabHistory(currentUsername);
+        
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") String mode = cursor.getString(cursor.getColumnIndex("mode"));
+                @SuppressLint("Range") String problem = cursor.getString(cursor.getColumnIndex("problem"));
+                @SuppressLint("Range") String timestamp = cursor.getString(cursor.getColumnIndex("timestamp"));
+                items.add(new ScanItem(mode, problem, timestamp));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
         
         rv.setAdapter(new HistoryAdapter(items));
     }

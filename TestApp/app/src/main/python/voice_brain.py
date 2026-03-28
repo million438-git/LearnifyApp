@@ -1,3 +1,4 @@
+# noinspection PyInterpreter
 import re
 
 def understand_command(text):

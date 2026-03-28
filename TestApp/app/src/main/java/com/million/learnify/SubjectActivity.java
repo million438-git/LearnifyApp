@@ -16,15 +16,11 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.button.MaterialButton;
 import java.io.IOException;
 
-/**
- * SubjectActivity - Fully Dynamic Academic Library.
- * Fixed: Ensures 100% visibility of all subject content from assets.
- */
 public class SubjectActivity extends AppCompatActivity {
 
     private static final String TAG = "SubjectActivity";
     private DatabaseHelper dbHelper;
-    private String currentUsername;
+    private String currentUsername, userGrade;
     private LinearLayout subjectContainer;
     private SharedPreferences downloadPrefs;
     private static final String PREF_DOWNLOADS = "DownloadedPacks";
@@ -37,6 +33,7 @@ public class SubjectActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
         SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
         currentUsername = pref.getString("username", "");
+        userGrade = pref.getString("grade", "10");
         downloadPrefs = getSharedPreferences(PREF_DOWNLOADS, MODE_PRIVATE);
 
         subjectContainer = findViewById(R.id.subjectContainer);
@@ -61,27 +58,17 @@ public class SubjectActivity extends AppCompatActivity {
         subjectContainer.removeAllViews();
         
         try {
-            // Robust asset scanning
             String[] subjects = getAssets().list("subjects");
-            if (subjects != null && subjects.length > 0) {
+            if (subjects != null) {
                 for (String subjectName : subjects) {
-                    // Ignore system files or hidden folders
-                    if (!subjectName.contains(".")) {
-                        addSubjectCard(subjectName);
-                    }
+                    if (!subjectName.contains(".")) addSubjectCard(subjectName);
                 }
-            } else {
-                Log.e(TAG, "No subjects found in assets/subjects");
-                Toast.makeText(this, "Synchronizing Library... Please wait.", Toast.LENGTH_SHORT).show();
             }
-        } catch (IOException e) {
-            Log.e(TAG, "Error loading catalog", e);
-        }
+        } catch (IOException e) { Log.e(TAG, "Error loading catalog", e); }
     }
 
     private void addSubjectCard(String subjectName) {
         View card = LayoutInflater.from(this).inflate(R.layout.item_subject_card_vertical, subjectContainer, false);
-        
         TextView nameText = card.findViewById(R.id.subjectNameText);
         TextView statusText = card.findViewById(R.id.subjectStatusText);
         TextView emojiText = card.findViewById(R.id.tvSubjectEmoji);
@@ -94,11 +81,7 @@ public class SubjectActivity extends AppCompatActivity {
         boolean isDownloaded = downloadPrefs.getBoolean(subjectName, false);
         if (isDownloaded) {
             statusText.setText("✅ Knowledge Pack Active (Offline)");
-            if (btnDownload != null) {
-                btnDownload.setText("Synced");
-                btnDownload.setEnabled(false);
-                btnDownload.setAlpha(0.6f);
-            }
+            if (btnDownload != null) { btnDownload.setText("Synced"); btnDownload.setEnabled(false); }
         } else {
             statusText.setText("Master " + displayName + " lessons offline");
             if (btnDownload != null) {
@@ -107,12 +90,13 @@ public class SubjectActivity extends AppCompatActivity {
         }
 
         card.setOnClickListener(v -> {
-            if (dbHelper.checkPaymentStatus(currentUsername)) {
+            // Check for access: Verified Payment OR Admin Manual Enrollment
+            if (dbHelper.hasPremiumAccess(currentUsername, userGrade)) {
                 Intent intent = new Intent(SubjectActivity.this, ChapterListActivity.class);
                 intent.putExtra("SUBJECT_NAME", subjectName);
                 startActivity(intent);
             } else {
-                Toast.makeText(this, "🔐 Premium Access Required.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "🔐 Access Restricted. Requires Premium or Admin Enrollment.", Toast.LENGTH_LONG).show();
                 startActivity(new Intent(this, PaymentActivity.class));
             }
         });
@@ -123,21 +107,17 @@ public class SubjectActivity extends AppCompatActivity {
     private void downloadPack(String id, String name, MaterialButton btn, TextView status) {
         ProgressDialog progress = new ProgressDialog(this);
         progress.setTitle("Syncing " + name);
-        progress.setMessage("Optimizing for Offline AI Partner...");
+        progress.setMessage("Optimizing for Offline Access...");
         progress.setCancelable(false);
         progress.show();
 
         new Handler().postDelayed(() -> {
             progress.dismiss();
             downloadPrefs.edit().putBoolean(id, true).apply();
-            if (btn != null) {
-                btn.setText("Synced");
-                btn.setEnabled(false);
-                btn.setAlpha(0.6f);
-            }
+            if (btn != null) { btn.setText("Synced"); btn.setEnabled(false); }
             status.setText("✅ Knowledge Pack Active (Offline)");
             Toast.makeText(this, name + " is now full-functional offline!", Toast.LENGTH_LONG).show();
-        }, 2500);
+        }, 1500);
     }
 
     private String getEmojiForSubject(String name) {
@@ -147,7 +127,6 @@ public class SubjectActivity extends AppCompatActivity {
         if (lowerName.contains("chemistry")) return "🧪";
         if (lowerName.contains("math")) return "📐";
         if (lowerName.contains("english")) return "📚";
-        if (lowerName.contains("aptitude")) return "🧠";
         return "📖";
     }
 }

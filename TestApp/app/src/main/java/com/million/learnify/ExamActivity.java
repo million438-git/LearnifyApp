@@ -1,6 +1,7 @@
 package com.million.learnify;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -32,11 +33,20 @@ public class ExamActivity extends AppCompatActivity {
     private int score = 0;
     private CountDownTimer examTimer;
     private long timeLeftInMillis = 15 * 60 * 1000; 
+    private DatabaseHelper dbHelper;
+    private String currentUsername;
+    private String subjectName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exam);
+
+        dbHelper = new DatabaseHelper(this);
+        SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
+        currentUsername = pref.getString("username", "anonymous");
+        subjectName = getIntent().getStringExtra("SUBJECT_NAME");
+        if (subjectName == null) subjectName = "General Studies";
 
         initViews();
         setupToolbar();
@@ -68,6 +78,7 @@ public class ExamActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle(subjectName + " Exam");
         }
         toolbar.setNavigationOnClickListener(v -> finish());
     }
@@ -175,10 +186,14 @@ public class ExamActivity extends AppCompatActivity {
         if (examTimer != null) examTimer.cancel();
         
         int finalScorePercent = (int) (((float) score / examQuestions.size()) * 100);
+        String finalScoreStr = finalScorePercent + "%";
         
+        // SAVE RESULT TO DATABASE FOR ADMIN TO SEE
+        dbHelper.saveExamResult(currentUsername, subjectName, finalScoreStr, examQuestions.size(), score);
+
         Intent intent = new Intent(this, CertificateActivity.class);
-        intent.putExtra("SUBJECT_NAME", getIntent().getStringExtra("SUBJECT_NAME"));
-        intent.putExtra("EXAM_SCORE", finalScorePercent + "%");
+        intent.putExtra("SUBJECT_NAME", subjectName);
+        intent.putExtra("EXAM_SCORE", finalScoreStr);
         startActivity(intent);
         finish();
     }

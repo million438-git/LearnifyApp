@@ -8,6 +8,8 @@ public class MaterialModel {
     private String subject;
     private String grade;
     private String filePath;
+    private String difficulty;
+    private int usageCount;
 
     public MaterialModel() {}
 
@@ -31,4 +33,10 @@ public class MaterialModel {
 
     public String getFilePath() { return filePath; }
     public void setFilePath(String filePath) { this.filePath = filePath; }
+
+    public String getDifficulty() { return difficulty; }
+    public void setDifficulty(String difficulty) { this.difficulty = difficulty; }
+
+    public int getUsageCount() { return usageCount; }
+    public void setUsageCount(int usageCount) { this.usageCount = usageCount; }
 }
