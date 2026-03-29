@@ -23,7 +23,6 @@
         android:layout_height="match_parent"
         android:fillViewport="true"
         android:clipToPadding="false"
-        android:paddingBottom="100dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -73,44 +72,7 @@
                     android:gravity="center_vertical" />
             </HorizontalScrollView>
 
-            <!-- 3. VIEW MODE CHIPS -->
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/viewAngleGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="16dp"
-                android:paddingBottom="12dp"
-                app:singleSelection="true"
-                app:selectionRequired="true"
-                android:background="#F1F5F9">
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipSystem"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="System View ⚙️"
-                    android:checked="true" />
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipParticle"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Particle View ⚛️" />
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipEquation"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Mathematical 🧮" />
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipRealLife"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Real-Life App 🏙️" />
-            </com.google.android.material.chip.ChipGroup>
-
-            <!-- 4. ACTIVE LAB VIEWER -->
+            <!-- 3. ACTIVE LAB VIEWER -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -148,69 +110,18 @@
                         android:background="@android:color/white"
                         tools:ignore="WebViewLayout" />
 
-                    <!-- 🧪 Educational Lab Information -->
-                    <LinearLayout
+                    <!-- Instructions TextView -->
+                    <TextView
+                        android:id="@+id/tvLabInstructions"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="24dp"
-                        android:background="#FFFFFF">
+                        android:padding="16dp"
+                        android:text="@string/lab_instructions_placeholder"
+                        android:textSize="14sp"
+                        android:background="#F1F5F9"
+                        android:textColor="#475569"
+                        android:lineSpacingExtra="4dp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="🔬 Lab Analysis &amp; Data"
-                            android:textColor="?attr/colorPrimary"
-                            android:textStyle="bold"
-                            android:textSize="20sp" />
-
-                        <TextView
-                            android:id="@+id/tvLabInstructions"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
-                            android:text="Take control of the simulation above. Interact with the elements to see how variables like force, mass, and energy interact in real-time. Use the 'View Modes' to see the difference between macroscopic systems and microscopic particles."
-                            android:textColor="#334155"
-                            android:lineSpacingExtra="6dp"
-                            android:textSize="16sp" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1.5dp"
-                            android:background="#F1F5F9"
-                            android:layout_marginVertical="24dp" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="💡"
-                                android:textSize="24sp" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="12dp"
-                                android:text="Smart Student Strategy"
-                                android:textColor="#059669"
-                                android:textStyle="bold"
-                                android:textSize="16sp" />
-                        </LinearLayout>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="To master this topic, try to predict what happens before you move a slider! For example, if you increase 'Pressure', does the 'Volume' decrease? Thinking ahead is what makes a student smart."
-                            android:textColor="#059669"
-                            android:lineSpacingExtra="4dp"
-                            android:textSize="14sp"
-                            android:textStyle="italic" />
-
-                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

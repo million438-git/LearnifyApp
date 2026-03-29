@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro-Physics: Pendulum Lab</title>
+    <style>
+        :root {
+            --primary: #3b82f6; --secondary: #ef4444; --dark: #0f172a;
+            --surface: #ffffff; --bg: #f8fafc; --accent: #10b981;
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; touch-action: manipulation; }
+        html, body { height: 100%; }
+        body { margin: 0; background: var(--bg); color: var(--dark); display: flex; flex-direction: column; overflow: auto; -webkit-font-smoothing:antialiased; }
+
+        header { background: var(--dark); color: white; padding: 12px; text-align: center; border-bottom: 3px solid var(--primary); }
+        .main-wrapper { display: flex; flex: 1; overflow: hidden; flex-direction: column; }
+
+        /* 1. Simulation Canvas */
+        #sim-container { flex: 1.5 1 360px; position: relative; background: white; border-bottom: 2px solid #e2e8f0; overflow: auto; min-height:260px; }
+        canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+        .splitter { height: 10px; background: linear-gradient(90deg, rgba(0,0,0,0.03), rgba(0,0,0,0.06)); cursor: ns-resize; }
+        .splitter:hover { background: linear-gradient(90deg, rgba(0,0,0,0.05), rgba(0,0,0,0.09)); }
+        /* Side solution panels */
+        .side-panel { position: fixed; top: 70px; width: 320px; bottom: 20px; background: white; box-shadow: 0 6px 18px rgba(2,6,23,0.08); border-left:1px solid #e6eef8; padding:14px; overflow:auto; z-index:40; }
+        .side-panel.left { left: -360px; border-right:1px solid #e6eef8; transition: left 220ms ease; }
+        .side-panel.right { right: -360px; transition: right 220ms ease; }
+        .side-panel.open.left { left: 0; }
+        .side-panel.open.right { right: 0; }
+        /* Mobile: side panels slide in from edges (mobile-friendly) */
+        @media (max-width: 768px) {
+            .side-panel { width: 85%; max-width: 420px; top: 70px; bottom: 20px; height: auto; border-left: none; border-right: none; box-shadow: 0 6px 24px rgba(2,6,23,0.12); }
+            .side-panel.left { left: -90%; transition: left 260ms ease; }
+            .side-panel.right { right: -90%; transition: right 260ms ease; }
+            /* open sets left/right to 0 so panel is visible */
+            .side-panel.open.left { left: 0; }
+            .side-panel.open.right { right: 0; }
+            body.panel-open { overflow: hidden; }
+            /* Reduce simulator height when a side panel is open so pendulum stays visible */
+            body.panel-open #sim-container { flex: 0 0 45vh !important; min-height: 140px; }
+            /* Place toggle buttons at bottom left/right so both are always tappable */
+            .panel-toggle { bottom: 12px; top: auto; left: 12px; right: 12px; justify-content: space-between; display:flex; flex-direction:row; gap:8px; }
+            .panel-toggle button { min-width: 64px; padding: 10px; }
+        }
+        .side-panel h4 { margin-top:0; }
+        .panel-frame { touch-action: none; transform-origin: 0 0; will-change: transform; cursor: grab; }
+        .panel-frame.grabbing { cursor: grabbing; }
+        /* Prevent inner text selection while dragging */
+        .panel-frame * { user-select: none; -webkit-user-select: none; }
+        .panel-toggle { position: fixed; top: 200px; right: 16px; display:flex; flex-direction:column; gap:8px; z-index:60; }
+        .panel-toggle button { padding:8px 10px; min-width:84px; border-radius:8px; border:1px solid rgba(0,0,0,0.06); background:white; cursor:pointer; box-shadow:0 2px 6px rgba(2,6,23,0.06); }
+        @media (max-width: 768px) {
+            .panel-toggle { top: auto; bottom: 14px; right: 12px; flex-direction:row; }
+        }
+
+        /* HUD & Overlays */
+        .hud { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.9); padding: 10px; border-radius: 8px; font-size: 0.8rem; border: 1px solid #ddd; z-index: 10; pointer-events: none; }
+        .energy-bar-container { position: absolute; top: 10px; right: 10px; width: 100px; background: rgba(0,0,0,0.05); padding: 5px; border-radius: 4px; }
+        .energy-bar { height: 10px; margin-bottom: 4px; border-radius: 2px; transition: width 0.1s; }
+
+        /* 2. Controls & Analysis */
+        .ui-panel { flex: 2 1 420px; display: flex; flex-direction: row; background: var(--surface); overflow-y: auto; }
+        .controls { flex: 0 0 360px; padding: 18px; border-right: 1px solid #e2e8f0; min-width: 300px; }
+        .analysis { flex: 1 1 720px; padding: 18px; background: #fcfcfc; min-width:420px; }
+
+        .control-group { margin-bottom: 15px; }
+        label { display: block; font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 5px; }
+        input[type="range"] { width: 100%; accent-color: var(--primary); }
+        .val-display { float: right; color: var(--primary); font-weight: bold; }
+
+        .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        button { padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-play { background: var(--primary); color: white; }
+        .btn-reset { background: #64748b; color: white; }
+
+        .card { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 0.85rem; }
+        .formula { font-family: "Courier New", monospace; color: var(--secondary); font-weight: bold; display: block; margin: 5px 0; }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 768px) {
+            .ui-panel { flex-direction: column; }
+            .controls { border-right: none; border-bottom: 1px solid #eee; }
+            .main-wrapper { flex: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.2rem;">🎡 Pendulum Motion Lab</h2>
+</header>
+
+<div class="main-wrapper">
+    <div id="sim-container">
+        <div class="hud">
+            <b>LIVE METRICS</b><hr>
+            Period (T): <span id="out-t">0.00</span>s<br>
+            Frequency (f): <span id="out-f">0.00</span>Hz<br>
+            θ: <span id="out-ang">0.0</span>°
+        </div>
+
+        <div class="energy-bar-container">
+            <small>KE</small><div id="bar-ke" class="energy-bar" style="background:var(--primary); width: 0%;"></div>
+            <small>PE</small><div id="bar-pe" class="energy-bar" style="background:var(--accent); width: 0%;"></div>
+        </div>
+
+        <canvas id="canvas"></canvas>
+        <div class="panel-toggle">
+            <button id="open-left">Solutions ◀</button>
+            <button id="open-right">Solutions ▶</button>
+        </div>
+    </div>
+
+    <div id="splitter" class="splitter" title="Drag to resize simulation area"></div>
+
+    <div class="ui-panel">
+        <div class="controls">
+            <div class="control-group">
+                <label>String Length (L): <span class="val-display" id="v-l">2.0</span>m</label>
+                <input type="range" id="l" min="0.5" max="5.0" step="0.1" value="2.0">
+            </div>
+            <div class="control-group">
+                <label>Bob Mass (m): <span class="val-display" id="v-m">1.0</span>kg</label>
+                <input type="range" id="m" min="0.1" max="5.0" step="0.1" value="1.0">
+            </div>
+            <div class="control-group">
+                <label>Environment (Gravity)</label>
+                <select id="gravity" style="width:100%; padding:8px; border-radius:4px;">
+                    <option value="9.81">🌍 Earth (9.81 m/s²)</option>
+                    <option value="1.62">🌙 Moon (1.62 m/s²)</option>
+                    <option value="3.71">🪐 Mars (3.71 m/s²)</option>
+                    <option value="0">🛰️ Zero G</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Damping (Air Resistance): <span class="val-display" id="v-d">0.01</span></label>
+                <input type="range" id="d" min="0" max="0.2" step="0.01" value="0.01">
+            </div>
+            <div class="btn-row">
+                <button class="btn-play" id="playBtn" onclick="togglePlay()">PAUSE</button>
+                <button class="btn-reset" onclick="resetSim()">RESET</button>
+            </div>
+        </div>
+
+        <div class="analysis">
+            <div class="card">
+                <div class="tabs" style="display:flex; gap:8px; margin-bottom:8px;">
+                    <button class="tab-btn" data-tab="p-formulas">Formulas</button>
+                    <button class="tab-btn" data-tab="p-quiz">Quiz</button>
+                    <button class="tab-btn" data-tab="p-challenges">Challenges</button>
+                </div>
+
+                <div id="p-formulas" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Core Formulas — Pendulum</h3>
+                    <ul style="font-size:0.95rem; line-height:1.5; margin:0; padding-left:1rem;">
+                        <li><b>Time period:</b> T = 2π√(L/g)</li>
+                        <li><b>Frequency:</b> f = 1 / T</li>
+                        <li><b>Angular frequency:</b> ω = √(g / L)</li>
+                        <li><b>Displacement (SHM):</b> θ(t) = θ₀ cos(ω t)</li>
+                        <li><b>Max velocity:</b> vmax = ω A</li>
+                        <li><b>Energy:</b> PE = m g h, KE = ½ m v²</li>
+                    </ul>
+                    <p style="font-size:0.85rem; color:#475569; margin-top:6px;">Notes: small-angle approximation (θ &lt; ~15°) gives ideal SHM and the simple T expression.</p>
+                </div>
+
+                <div id="p-quiz" class="tab-panel" style="display:none; max-height:380px; overflow:auto; padding-right:6px;">
+                    <h3 style="margin:6px 0 8px 0;">Quiz — Pendulum</h3>
+                    <div style="font-size:0.95rem;">
+                        <b>Basic</b>
+                        <ol>
+                            <li>What type of motion is a pendulum? <label><input type="radio" name="p1" value="A"> Linear</label> <label><input type="radio" name="p1" value="B"> Circular</label> <label><input type="radio" name="p1" value="C"> SHM</label> <span id="p1-res" class="q-res" style="margin-left:8px"></span></li>
+                            <li>What affects time period? <label><input type="radio" name="p2" value="A"> Mass</label> <label><input type="radio" name="p2" value="B"> Length</label> <span id="p2-res" class="q-res" style="margin-left:8px"></span></li>
+                            <li>Gravity acts: <label><input type="radio" name="p3" value="A"> Upward</label> <label><input type="radio" name="p3" value="B"> Downward</label> <span id="p3-res" class="q-res" style="margin-left:8px"></span></li>
+                        </ol>
+                        <b>Intermediate</b>
+                        <ol>
+                            <li>If length increases, T: <label><input type="radio" name="p4" value="A"> Decreases</label> <label><input type="radio" name="p4" value="B"> Increases</label> <span id="p4-res" class="q-res"></span></li>
+                            <li>If gravity increases, T: <label><input type="radio" name="p5" value="A"> Increases</label> <label><input type="radio" name="p5" value="B"> Decreases</label> <span id="p5-res" class="q-res"></span></li>
+                            <li>At maximum displacement, velocity is: <label><input type="radio" name="p6" value="A"> Maximum</label> <label><input type="radio" name="p6" value="B"> Zero</label> <span id="p6-res" class="q-res"></span></li>
+                        </ol>
+                        <b>Advanced</b>
+                        <ol>
+                            <li>Which does NOT affect T? <label><input type="radio" name="p7" value="A"> Length</label> <label><input type="radio" name="p7" value="B"> Gravity</label> <label><input type="radio" name="p7" value="C"> Mass</label> <span id="p7-res" class="q-res"></span></li>
+                            <li>Small-angle approx means: <label><input type="radio" name="p8" value="A"> Large swings</label> <label><input type="radio" name="p8" value="B"> Small swings ≈ SHM</label> <span id="p8-res" class="q-res"></span></li>
+                            <li>At equilibrium: <label><input type="radio" name="p9" value="A"> KE max</label> <label><input type="radio" name="p9" value="B"> PE max</label> <span id="p9-res" class="q-res"></span></li>
+                        </ol>
+                        <button id="p-quiz-check" style="margin-top:8px; padding:8px 10px; font-weight:bold;" onclick="evaluatePQuiz()">Submit Quiz</button>
+                        <div id="p-quiz-result" style="margin-top:8px; font-weight:bold;"></div>
+                    </div>
+                </div>
+
+                <div id="p-challenges" class="tab-panel" style="display:none;">
+                    <h3 style="margin:6px 0 8px 0;">Interactive Challenges</h3>
+                    <div style="display:flex; flex-direction:column; gap:8px; font-size:0.95rem;">
+                        <div>
+                            <b>Challenge 1 — Length Experiment</b><br>
+                            <label>Set Length: <input id="challenge-length" type="number" step="0.1" value="2.0" style="width:80px; margin-left:6px;"></label>
+                            <button onclick="runPChallenge('length')">Apply & Measure</button>
+                        </div>
+                        <div>
+                            <b>Challenge 2 — Gravity Compare</b><br>
+                            <button onclick="runPChallenge('earth')">Earth</button>
+                            <button onclick="runPChallenge('moon')">Moon</button>
+                        </div>
+                        <div>
+                            <b>Challenge 3 — Mass Test</b><br>
+                            <label>Mass: <input id="challenge-mass" type="number" step="0.1" value="1.0" style="width:80px; margin-left:6px;"></label>
+                            <button onclick="runPChallenge('mass')">Apply & Measure</button>
+                        </div>
+                        <div>
+                            <b>Challenge 4 — Angle Effect</b><br>
+                            <label>Angle (deg): <input id="challenge-angle" type="number" step="1" value="10" style="width:80px; margin-left:6px;"></label>
+                            <button onclick="runPChallenge('angle')">Apply & Observe</button>
+                        </div>
+                        <div>
+                            <b>Challenge 6 — Find Time Period</b><br>
+                            <label>Measure for <input id="osc-count" type="number" value="10" min="1" style="width:60px; margin-left:6px;"> oscillations</label>
+                            <button onclick="runPChallenge('measure')">Measure</button>
+                        </div>
+                        <div>
+                            <b>Challenge 7 — Prediction Mode</b><br>
+                            <label>Prediction: <select id="p-predict-select"><option value="increase">Increase</option><option value="decrease">Decrease</option></select></label>
+                            <button onclick="runPChallenge('predict')">Run & Check</button>
+                        </div>
+                        <div id="p-challenge-note" style="color:#0f172a; font-size:0.9rem;"></div>
+                        <div id="p-challenge-result" style="color:#083344; font-weight:600; margin-top:6px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <b>Energy (J):</b> <span id="p-out-e">0.0</span><br>
+                <small>PE = mgh | KE = ½mv²</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Side solution panels -->
+<aside id="left-panel" class="side-panel left" aria-hidden="true">
+    <h4>Live Solutions — Steps</h4>
+    <div id="left-content">
+        <div class="panel-frame" id="left-frame">
+            <p><b>Time period (T)</b></p>
+            <div id="T-step"></div>
+            <hr>
+            <p><b>Frequency (f)</b></p>
+            <div id="f-step"></div>
+            <hr>
+            <p><b>Angular frequency (ω)</b></p>
+            <div id="w-step"></div>
+        </div>
+    </div>
+</aside>
+
+<aside id="right-panel" class="side-panel right" aria-hidden="true">
+    <h4>Live Values — Motion & Energy</h4>
+    <div id="right-content">
+        <div class="panel-frame" id="right-frame">
+            <p><b>Displacement θ(t)</b></p>
+            <div id="theta-step"></div>
+            <hr>
+            <p><b>Max velocity (vmax)</b></p>
+            <div id="vmax-step"></div>
+            <hr>
+            <p><b>Energy</b></p>
+            <div id="energy-step"></div>
+        </div>
+    </div>
+</aside>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // High-DPI backing
+    const dpr = window.devicePixelRatio || 1;
+
+    // Physics State
+    let p = {
+        theta: Math.PI / 6, // 30 degrees default
+        omega: 0,
+        alpha: 0,
+        length: 2.0,
+        mass: 1.0,
+        damping: 0.01,
+        g: 9.81,
+        active: true
+    };
+
+    const dt = 0.02; // Time step
+    const pivot = { x: 0, y: 50 };
+
+    function resize() {
+        const cssW = canvas.clientWidth;
+        const cssH = canvas.clientHeight;
+        canvas.width = Math.max(1, Math.round(cssW * dpr));
+        canvas.height = Math.max(1, Math.round(cssH * dpr));
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        pivot.x = cssW / 2;
+    }
+    window.addEventListener('resize', () => { resize(); });
+    resize();
+
+    // UI Input Handling
+    const inputs = {
+        l: document.getElementById('l'),
+        m: document.getElementById('m'),
+        d: document.getElementById('d'),
+        g: document.getElementById('gravity')
+    };
+
+    inputs.l.oninput = (e) => { p.length = parseFloat(e.target.value); document.getElementById('v-l').innerText = p.length; };
+    inputs.m.oninput = (e) => { p.mass = parseFloat(e.target.value); document.getElementById('v-m').innerText = p.mass; };
+    inputs.d.oninput = (e) => { p.damping = parseFloat(e.target.value); document.getElementById('v-d').innerText = p.damping; };
+    inputs.g.onchange = (e) => { p.g = parseFloat(e.target.value); };
+
+    // Tab switching
+    function switchPTab(name) {
+        document.querySelectorAll('.tab-panel').forEach(pn => pn.style.display = 'none');
+        const el = document.getElementById(name);
+        if (el) el.style.display = 'block';
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => { if (b.dataset.tab === name) b.classList.add('active'); });
+    }
+    document.addEventListener('DOMContentLoaded', () => { const first = document.querySelector('.tab-btn'); if(first) first.click(); });
+    document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', (e) => { switchPTab(b.dataset.tab); }));
+
+    function togglePlay() {
+        p.active = !p.active;
+        document.getElementById('playBtn').innerText = p.active ? "PAUSE" : "RESUME";
+    }
+
+    function resetSim() {
+        p.theta = Math.PI / 4;
+        p.omega = 0;
+        p.active = true;
+        document.getElementById('playBtn').innerText = "PAUSE";
+    }
+
+    // --- Splitter (drag up/down to resize sim vs panels) ---
+    (function(){
+        const sim = document.getElementById('sim-container');
+        const splitter = document.getElementById('splitter');
+        if (!sim || !splitter) return;
+        let dragging = false;
+        let startY = 0;
+        let startHeight = 0;
+        const minH = 160;
+        const maxH = window.innerHeight - 220;
+
+        splitter.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            dragging = true;
+            startY = e.clientY;
+            startHeight = sim.getBoundingClientRect().height;
+            try { splitter.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+
+        window.addEventListener('pointermove', (e) => {
+            if (!dragging) return;
+            const dy = e.clientY - startY;
+            let newH = Math.round(startHeight + dy);
+            newH = Math.max(minH, Math.min(maxH, newH));
+            sim.style.flex = `0 0 ${newH}px`;
+            resize();
+        });
+
+        window.addEventListener('pointerup', (e) => {
+            if (!dragging) return; dragging = false;
+            try { splitter.releasePointerCapture(e.pointerId); } catch (err) {}
+        });
+
+        splitter.addEventListener('dblclick', () => {
+            sim.style.flex = '';
+            resize();
+        });
+    })();
+
+    // Make panels pan/zoom draggable (supports wheel zoom, single-pointer pan, and two-pointer pinch)
+    (function(){
+        function makePanel(frameEl) {
+            if (!frameEl) return;
+            const state = { x: 0, y: 0, s: 1 };
+            const pointers = new Map();
+            let lastPanPos = null;
+            let pinchStart = null;
+
+            function apply() {
+                frameEl.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.s})`;
+            }
+
+            function onPointerDown(e) {
+                frameEl.setPointerCapture?.(e.pointerId);
+                pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+                if (pointers.size === 1) {
+                    lastPanPos = { x: e.clientX, y: e.clientY };
+                    frameEl.classList.add('grabbing');
+                } else if (pointers.size === 2) {
+                    // start pinch
+                    const pts = Array.from(pointers.values());
+                    pinchStart = {
+                        dist: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y),
+                        mid: { x: (pts[0].x + pts[1].x)/2, y: (pts[0].y + pts[1].y)/2 },
+                        s: state.s
+                    };
+                }
+            }
+
+            function onPointerMove(e) {
+                if (!pointers.has(e.pointerId)) return;
+                pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+                if (pointers.size === 1 && lastPanPos) {
+                    const cur = pointers.get(e.pointerId);
+                    const dx = cur.x - lastPanPos.x;
+                    const dy = cur.y - lastPanPos.y;
+                    state.x += dx;
+                    state.y += dy;
+                    lastPanPos = { x: cur.x, y: cur.y };
+                    apply();
+                } else if (pointers.size === 2 && pinchStart) {
+                    const pts = Array.from(pointers.values());
+                    const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+                    const mid = { x: (pts[0].x + pts[1].x)/2, y: (pts[0].y + pts[1].y)/2 };
+                    const scaleFactor = dist / pinchStart.dist;
+                    const newS = Math.min(3, Math.max(0.5, pinchStart.s * scaleFactor));
+                    // zoom about midpoint
+                    const rect = frameEl.getBoundingClientRect();
+                    const localMidX = mid.x - rect.left;
+                    const localMidY = mid.y - rect.top;
+                    const sRatio = newS / state.s;
+                    // adjust translation so midpoint stays under fingers
+                    state.x = (state.x - localMidX) * sRatio + localMidX;
+                    state.y = (state.y - localMidY) * sRatio + localMidY;
+                    state.s = newS;
+                    apply();
+                }
+            }
+
+            function endPointer(e) {
+                pointers.delete(e.pointerId);
+                if (pointers.size === 0) {
+                    lastPanPos = null; pinchStart = null; frameEl.classList.remove('grabbing');
+                } else if (pointers.size === 1) {
+                    // reset lastPanPos to remaining pointer
+                    const pt = pointers.values().next().value; lastPanPos = { x: pt.x, y: pt.y };
+                }
+            }
+
+            function onWheel(e) {
+                e.preventDefault();
+                const delta = e.deltaY;
+                const rect = frameEl.getBoundingClientRect();
+                const cx = e.clientX - rect.left;
+                const cy = e.clientY - rect.top;
+                const oldS = state.s;
+                const factor = Math.exp(-delta * 0.0015);
+                const newS = Math.min(3, Math.max(0.5, oldS * factor));
+                const sRatio = newS / oldS;
+                state.x = (state.x - cx) * sRatio + cx;
+                state.y = (state.y - cy) * sRatio + cy;
+                state.s = newS;
+                apply();
+            }
+
+            function onDblClick(e) {
+                // reset
+                state.x = 0; state.y = 0; state.s = 1; apply();
+            }
+
+            frameEl.addEventListener('pointerdown', onPointerDown);
+            window.addEventListener('pointermove', onPointerMove);
+            window.addEventListener('pointerup', endPointer);
+            window.addEventListener('pointercancel', endPointer);
+            frameEl.addEventListener('wheel', onWheel, { passive: false });
+            frameEl.addEventListener('dblclick', onDblClick);
+        }
+
+        // attach pan/zoom handlers to the full panel element (so the entire slide is draggable/zoomable)
+        makePanel(document.getElementById('left-panel'));
+        makePanel(document.getElementById('right-panel'));
+    })();
+
+    // Panel toggle behavior
+    (function(){
+        const left = document.getElementById('left-panel');
+        const right = document.getElementById('right-panel');
+        const btnL = document.getElementById('open-left');
+        const btnR = document.getElementById('open-right');
+        if (!left || !right || !btnL || !btnR) return;
+        function syncBodyState() {
+            const anyOpen = left.classList.contains('open') || right.classList.contains('open');
+            if (window.innerWidth <= 768) document.body.classList.toggle('panel-open', anyOpen);
+        }
+        btnL.addEventListener('click', () => {
+            // ensure only one panel open at a time
+            if (!left.classList.contains('open')) right.classList.remove('open');
+            left.classList.toggle('open');
+            left.setAttribute('aria-hidden', String(!left.classList.contains('open')));
+            right.setAttribute('aria-hidden', String(!right.classList.contains('open')));
+            syncBodyState();
+        });
+        btnR.addEventListener('click', () => {
+            if (!right.classList.contains('open')) left.classList.remove('open');
+            right.classList.toggle('open');
+            left.setAttribute('aria-hidden', String(!left.classList.contains('open')));
+            right.setAttribute('aria-hidden', String(!right.classList.contains('open')));
+            syncBodyState();
+        });
+        // Close panels if viewport is resized larger than mobile
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                document.body.classList.remove('panel-open');
+            }
+        });
+    })();
+
+    function updatePhysics() {
+        if (!p.active) return;
+
+        // Equation of motion: α = -(g/L) * sin(θ) - (damping * ω)
+        p.alpha = (-p.g / p.length) * Math.sin(p.theta) - (p.damping * p.omega);
+
+        // Verlet-style integration
+        p.omega += p.alpha * dt;
+        p.theta += p.omega * dt;
+
+        updateHUD();
+    }
+
+    function updateHUD() {
+        const period = 2 * Math.PI * Math.sqrt(p.length / (p.g || 0.001));
+        document.getElementById('out-t').innerText = period.toFixed(2);
+        document.getElementById('out-f').innerText = (1 / period).toFixed(2);
+        document.getElementById('out-ang').innerText = (p.theta * 180 / Math.PI).toFixed(1);
+
+        // Energy Calculations
+        const h = p.length * (1 - Math.cos(p.theta));
+        const pe = p.mass * p.g * h;
+        const ke = 0.5 * p.mass * Math.pow(p.length * p.omega, 2);
+        const total = pe + ke || 1;
+
+        document.getElementById('bar-ke').style.width = (ke / total * 100) + "%";
+        document.getElementById('bar-pe').style.width = (pe / total * 100) + "%";
+        document.getElementById('p-out-e').innerText = total.toFixed(2);
+        updateSolutions();
+    }
+
+    function updateSolutions() {
+        // compute core terms
+        const L = Number(p.length);
+        const g = Number(p.g) || 0.0001;
+        const mval = Number(p.mass);
+        const theta = p.theta; // radians
+        const thetaDeg = (theta * 180 / Math.PI).toFixed(2);
+        const T = 2 * Math.PI * Math.sqrt(L / g);
+        const fval = 1 / T;
+        const w = Math.sqrt(g / L);
+        const A = Math.abs(p.theta); // amplitude (rad)
+        const vmax = w * (L * A); // approximate vmax = ω * A * L (linearized)
+
+        // Displacement formula θ(t) show substitution for t=0 and live ω
+        document.getElementById('T-step').innerHTML = `T = 2π√(L/g) = 2π√(${L} / ${g.toFixed(3)}) = <b>${T.toFixed(4)} s</b>`;
+        document.getElementById('f-step').innerHTML = `f = 1 / T = 1 / ${T.toFixed(4)} = <b>${fval.toFixed(4)} Hz</b>`;
+        document.getElementById('w-step').innerHTML = `ω = √(g / L) = √(${g.toFixed(3)} / ${L}) = <b>${w.toFixed(4)} rad/s</b>`;
+
+        const thetaExample = `θ(t) = θ₀ cos(ωt). Using θ₀=${(A).toFixed(4)} rad (${(A*180/Math.PI).toFixed(2)}°) and current ω=${w.toFixed(4)}: θ(t)= ${A.toFixed(4)}·cos(${w.toFixed(4)}·t)`;
+        document.getElementById('theta-step').innerHTML = thetaExample;
+
+        document.getElementById('vmax-step').innerHTML = `vmax = ω·A·L ≈ ${w.toFixed(4)}·${A.toFixed(4)}·${L} = <b>${vmax.toFixed(4)} m/s</b>`;
+
+        const h = L * (1 - Math.cos(theta));
+        const pe = mval * g * h;
+        const ke = 0.5 * mval * Math.pow(L * p.omega, 2);
+        document.getElementById('energy-step').innerHTML = `PE = m·g·h = ${mval}·${g.toFixed(3)}·${h.toFixed(4)} = <b>${pe.toFixed(4)} J</b><br>KE = ½·m·v² = 0.5·${mval}·(${(L*p.omega).toFixed(4)})² = <b>${ke.toFixed(4)} J</b>`;
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const cssW = canvas.width / dpr;
+        const cssH = canvas.height / dpr;
+        const scale = 60; // Pixels per meter (CSS px)
+        const bobX = pivot.x + Math.sin(p.theta) * (p.length * scale);
+        const bobY = pivot.y + Math.cos(p.theta) * (p.length * scale);
+
+        // Draw Pivot Support
+        ctx.fillStyle = "#334155";
+        ctx.fillRect(pivot.x - 20, pivot.y - 5, 40, 5);
+
+        // Draw String
+        ctx.strokeStyle = "#94a3b8";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(pivot.x, pivot.y);
+        ctx.lineTo(bobX, bobY);
+        ctx.stroke();
+
+        // Draw Bob
+        ctx.fillStyle = varColor('--primary');
+        ctx.beginPath();
+        ctx.arc(bobX, bobY, 10 + (p.mass * 2), 0, Math.PI * 2);
+        ctx.fill();
+
+        // Draw Vector (Velocity)
+        if (Math.abs(p.omega) > 0.1) {
+            ctx.strokeStyle = "red";
+            ctx.beginPath();
+            ctx.moveTo(bobX, bobY);
+            ctx.lineTo(bobX + Math.cos(p.theta) * p.omega * 20, bobY - Math.sin(p.theta) * p.omega * 20);
+            ctx.stroke();
+        }
+
+        updatePhysics();
+        requestAnimationFrame(draw);
+    }
+
+    function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name); }
+
+    draw();
+    // --- Pendulum Quiz & Challenges Logic ---
+    function evaluatePQuiz() {
+        const key = { p1:'C', p2:'B', p3:'B', p4:'B', p5:'B', p6:'B', p7:'C', p8:'B', p9:'A' };
+        const explain = {
+            p1:'Pendulum approximates SHM for small angles.',
+            p2:'Time period depends on length L, not mass.',
+            p3:'Gravity acts downward.',
+            p4:'Longer length → longer period.',
+            p5:'Higher g → shorter period (T ∝ 1/√g).',
+            p6:'Velocity is zero at maximum displacement.',
+            p7:'Mass does not affect period in ideal pendulum.',
+            p8:'Small swings behave like SHM.',
+            p9:'At equilibrium KE is maximum.'
+        };
+        let score = 0, total = 9;
+        for (let i=1;i<=9;i++) {
+            const name = 'p'+i;
+            const els = document.getElementsByName(name);
+            let val = null;
+            for (const el of els) if(el.checked) val = el.value;
+            const resEl = document.getElementById(name+'-res');
+            if (val && String(val) === String(key[name])) { score++; if (resEl) { resEl.innerText = 'Correct'; resEl.style.color = 'green'; resEl.title = explain[name]; } }
+            else { if (resEl) { resEl.innerText = `Wrong — Ans: ${key[name]}`; resEl.style.color = 'crimson'; resEl.title = explain[name]; } }
+        }
+        const out = document.getElementById('p-quiz-result');
+        if (out) out.innerText = `Score: ${score}/${total} — ${Math.round(score/total*100)}%`;
+    }
+
+    // Measure period by watching zero-crossings in same direction
+    function measurePeriod(n=10, timeout=20000) {
+        return new Promise((resolve, reject) => {
+            const startAngle = p.theta;
+            let count = 0;
+            let lastTime = performance.now();
+            let firstTime = null;
+            let lastSign = Math.sign(p.theta);
+            const start = performance.now();
+            function step() {
+                const now = performance.now();
+                const sign = Math.sign(p.theta);
+                if (sign === 0) {
+                    // rare exact zero
+                }
+                // detect crossing from negative to positive (same direction)
+                if (lastSign <= 0 && sign > 0) {
+                    // crossing forward
+                    if (firstTime === null) firstTime = now;
+                    else {
+                        count++;
+                        lastTime = now;
+                    }
+                }
+                lastSign = sign;
+                if (count >= n) {
+                    const period = (lastTime - firstTime) / count / 1000; // seconds
+                    resolve(period);
+                    return;
+                }
+                if (now - start > timeout) { reject(new Error('Timeout measuring period')); return; }
+                requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        });
+    }
+
+    async function runPChallenge(id) {
+        const note = document.getElementById('p-challenge-note');
+        const cres = document.getElementById('p-challenge-result');
+        note.innerText = '';
+        cres.innerText = '';
+        if (id === 'length') {
+            const v = parseFloat(document.getElementById('challenge-length').value) || p.length;
+            document.getElementById('l').value = v; document.getElementById('v-l').innerText = v; p.length = v;
+            note.innerText = 'Measuring period for L=' + v + ' m...';
+            // small delay to let system settle
+            await new Promise(r => setTimeout(r,200));
+            try {
+                const T = await measurePeriod(6);
+                cres.innerText = `Measured period ≈ ${T.toFixed(3)} s (L=${v}m)`;
+            } catch (err) { cres.innerText = 'Measurement failed: '+err.message; }
+        } else if (id === 'earth' || id === 'moon') {
+            p.g = id === 'earth' ? 9.81 : 1.62;
+            document.getElementById('gravity').value = p.g;
+            note.innerText = `Gravity set to ${p.g}. Measuring...`;
+            await new Promise(r => setTimeout(r,200));
+            try { const T = await measurePeriod(6); cres.innerText = `T ≈ ${T.toFixed(3)} s (g=${p.g})`; } catch (err) { cres.innerText = err.message; }
+        } else if (id === 'mass') {
+            const v = parseFloat(document.getElementById('challenge-mass').value) || p.mass;
+            document.getElementById('m').value = v; document.getElementById('v-m').innerText = v; p.mass = v;
+            note.innerText = 'Measuring period with changed mass...';
+            await new Promise(r => setTimeout(r,200));
+            try { const T = await measurePeriod(6); cres.innerText = `T ≈ ${T.toFixed(3)} s — mass does not affect T (ideal)`; } catch (err) { cres.innerText = err.message; }
+        } else if (id === 'angle') {
+            const a = parseFloat(document.getElementById('challenge-angle').value) || 10;
+            p.theta = a * Math.PI / 180; document.getElementById('out-ang').innerText = a.toFixed(1);
+            note.innerText = `Set angle to ${a}°. Observe deviation from SHM for large angles.`;
+        } else if (id === 'measure') {
+            const n = parseInt(document.getElementById('osc-count').value) || 10;
+            note.innerText = `Measuring ${n} oscillations...`;
+            try { const T = await measurePeriod(n); cres.innerText = `Average period ≈ ${T.toFixed(4)} s (over ${n} oscillations)`; } catch (err) { cres.innerText = err.message; }
+        } else if (id === 'predict') {
+            const pred = document.getElementById('p-predict-select').value;
+            note.innerText = `Prediction recorded: ${pred}. Measuring base period...`;
+            try {
+                const base = await measurePeriod(6);
+                // apply a change: increase length by 20%
+                const oldL = p.length; p.length = oldL * 1.2; document.getElementById('l').value = p.length; document.getElementById('v-l').innerText = p.length;
+                await new Promise(r => setTimeout(r,200));
+                const after = await measurePeriod(6);
+                const result = after > base ? 'increase' : 'decrease';
+                cres.innerText = `Before: ${base.toFixed(3)}s · After: ${after.toFixed(3)}s → ${result}`;
+                note.innerText = `Prediction was: ${pred}`;
+            } catch (err) { cres.innerText = err.message; }
+        }
+    }
+</script>
+</body>
+</html>

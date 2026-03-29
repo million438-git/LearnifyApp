@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Microbiology: Antibiotic Resistance</title>
+    <style>
+        :root {
+            --petri: #e2e8f0; --bacteria: #10b981; --resistant: #f43f5e;
+            --primary: #6366f1; --dark: #0f172a; --surface: #ffffff;
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        body { margin: 0; background: #1e293b; color: #f8fafc; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        header { background: var(--dark); padding: 12px; text-align: center; border-bottom: 3px solid var(--primary); }
+        .lab-container { display: flex; flex: 1; flex-direction: column; overflow: hidden; }
+
+        /* 1. Petri Dish (The Simulation) */
+        #observation-deck {
+            flex: 1.5; position: relative; background: #000;
+            display: flex; align-items: center; justify-content: center;
+            border-bottom: 2px solid #334155;
+        }
+
+        .petri-dish {
+            width: 300px; height: 300px; background: var(--petri);
+            border-radius: 50%; border: 8px solid #94a3b8;
+            position: relative; overflow: hidden;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.1), 0 0 30px rgba(99,102,241,0.3);
+        }
+
+        .microbe {
+            position: absolute; width: 10px; height: 10px; border-radius: 50%;
+            transition: all 0.3s ease; transform: scale(0);
+        }
+        .normal { background: var(--bacteria); box-shadow: 0 0 5px var(--bacteria); }
+        .resistant { background: var(--resistant); box-shadow: 0 0 10px var(--resistant); border: 1px solid white; }
+
+        /* 2. Control & Data Panel */
+        .panel { flex: 2; display: flex; flex-direction: row; background: var(--surface); color: #1e293b; overflow-y: auto; }
+        .controls { flex: 1; padding: 20px; border-right: 1px solid #e2e8f0; min-width: 320px; }
+        .data-stats { flex: 1.2; padding: 20px; background: #f8fafc; }
+
+        .stat-bar-container { height: 20px; background: #eee; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .stat-bar { height: 100%; transition: width 0.3s ease; }
+
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 10px; color: white; }
+        .btn-dose { background: var(--primary); }
+        .btn-reset { background: #64748b; }
+
+        .card { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 10px; font-size: 0.85rem; }
+
+        @media (max-width: 768px) {
+            .panel { flex-direction: column; }
+            .controls { border-right: none; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">🧫 Lab: Antibiotic Resistance Evolution</h2>
+</header>
+
+<div class="lab-container">
+    <div id="observation-deck">
+        <div class="petri-dish" id="dish"></div>
+    </div>
+
+    <div class="panel">
+        <div class="controls">
+            <label style="font-size:0.7rem; font-weight:bold;">RESISTANCE LEVEL</label>
+            <div class="stat-bar-container">
+                <div id="res-bar" class="stat-bar" style="background:var(--resistant); width: 0%;"></div>
+            </div>
+
+            <button class="btn btn-dose" onclick="applyAntibiotic()">APPLY ANTIBIOTIC DOSE</button>
+            <button class="btn btn-reset" onclick="resetLab()">REPLACE PETRI DISH</button>
+
+            <div class="card">
+                <b>Instructions:</b> Add a dose of antibiotics. Normal bacteria (green) will die, but watch what happens to the rare mutants (red).
+            </div>
+        </div>
+
+        <div class="data-stats">
+            <div class="card">
+                <b>Theory:</b> Natural Selection. Bacteria multiply rapidly. Random <b>Mutations</b> can make a bacterium immune to antibiotics. If we kill the "weak" bacteria, the "strong" ones take over the space.
+            </div>
+
+            <div class="card">
+                <b>Quiz:</b> How do bacteria become resistant?
+                <button class="btn" style="background:#f1f5f9; color:black; font-size:0.7rem; margin-top:5px;" onclick="alert('Correct! Genetic mutations allow them to survive drugs.')">Random Mutation</button>
+                <button class="btn" style="background:#f1f5f9; color:black; font-size:0.7rem; margin-top:5px;" onclick="alert('Incorrect. Bacteria don\'t have brains to decide to change!')">They decide to change</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const dish = document.getElementById('dish');
+    let bacteria = [];
+    const maxPop = 100;
+
+    function spawn(type) {
+        if(bacteria.length >= maxPop) return;
+        const el = document.createElement('div');
+        el.className = `microbe ${type}`;
+        const x = Math.random() * 280;
+        const y = Math.random() * 280;
+        el.style.left = x + 'px';
+        el.style.top = y + 'px';
+        dish.appendChild(el);
+
+        const b = { el, type, x, y };
+        bacteria.push(b);
+        setTimeout(() => el.style.transform = 'scale(1)', 10);
+    }
+
+    function applyAntibiotic() {
+        // Kill 90% of normal, 5% of resistant
+        bacteria = bacteria.filter(b => {
+            const dieChance = b.type === 'normal' ? 0.9 : 0.05;
+            if(Math.random() < dieChance) {
+                dish.removeChild(b.el);
+                return false;
+            }
+            return true;
+        });
+        updateStats();
+    }
+
+    function simLoop() {
+        // Reproduction
+        if(bacteria.length > 0 && bacteria.length < maxPop) {
+            const parent = bacteria[Math.floor(Math.random() * bacteria.length)];
+            // Mutation chance: 5%
+            const type = (Math.random() < 0.05) ? 'resistant' : parent.type;
+            spawn(type);
+        }
+        updateStats();
+    }
+
+    function updateStats() {
+        const resCount = bacteria.filter(b => b.type === 'resistant').length;
+        const percent = bacteria.length > 0 ? (resCount / bacteria.length) * 100 : 0;
+        document.getElementById('res-bar').style.width = percent + '%';
+    }
+
+    function resetLab() {
+        dish.innerHTML = '';
+        bacteria = [];
+        for(let i=0; i<10; i++) spawn('normal');
+    }
+
+    setInterval(simLoop, 400);
+    resetLab();
+</script>
+</body>
+</html>

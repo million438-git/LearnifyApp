@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Evolution Lab: Natural Selection</title>
+    <style>
+        :root {
+            --grass: #166534; --organism: #fbbf24; --food: #ef4444;
+            --primary: #22c55e; --dark: #0f172a; --surface: #ffffff;
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        body { margin: 0; background: #064e3b; color: #f8fafc; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        header { background: var(--dark); padding: 12px; text-align: center; border-bottom: 3px solid var(--primary); }
+        .lab-body { display: flex; flex: 1; flex-direction: column; overflow: hidden; }
+
+        /* 1. Environment (The Ecosystem) */
+        #ecosystem {
+            flex: 1.5; position: relative; background: #14532d;
+            overflow: hidden; border-bottom: 4px solid #064e3b;
+            cursor: crosshair;
+        }
+
+        .creature {
+            position: absolute; border-radius: 50%; background: var(--organism);
+            border: 1px solid #000; transition: transform 0.1s linear;
+        }
+        .food {
+            position: absolute; width: 6px; height: 6px; background: var(--food);
+            border-radius: 50%; box-shadow: 0 0 5px var(--food);
+        }
+
+        /* 2. Dashboard */
+        .panel { flex: 2; display: flex; flex-direction: row; background: var(--surface); color: #1e293b; overflow-y: auto; }
+        .controls { flex: 1; padding: 20px; border-right: 1px solid #e2e8f0; min-width: 300px; }
+        .stats { flex: 1.2; padding: 20px; background: #f8fafc; }
+
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .stat-card { background: #f1f5f9; padding: 10px; border-radius: 8px; text-align: center; }
+        .stat-val { display: block; font-size: 1.2rem; font-weight: 800; color: var(--grass); }
+
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 10px; color: white; }
+        .btn-start { background: var(--primary); }
+        .btn-mut { background: #8b5cf6; }
+        .btn-reset { background: #64748b; }
+
+        input[type="range"] { width: 100%; accent-color: var(--primary); }
+        label { font-size: 0.75rem; font-weight: bold; color: #64748b; }
+
+        @media (max-width: 768px) {
+            .panel { flex-direction: column; }
+            .controls { border-right: none; border-bottom: 1px solid #eee; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">🌿 Evolution Lab: Natural Selection</h2>
+</header>
+
+<div class="lab-body">
+    <div id="ecosystem">
+        <div style="position:absolute; top:10px; left:10px; color:rgba(255,255,255,0.5); font-size:0.7rem; pointer-events:none;">
+            POPULATION SIMULATION ACTIVE
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="controls">
+            <div class="stat-grid">
+                <div class="stat-card">Generation<span class="stat-val" id="gen-count">1</span></div>
+                <div class="stat-card">Population<span class="stat-val" id="pop-count">0</span></div>
+            </div>
+
+            <label>Mutation Rate: <span id="mut-display">10%</span></label>
+            <input type="range" id="mut-slider" min="0" max="100" value="10">
+
+            <label style="margin-top:10px; display:block;">Food Abundance</label>
+            <input type="range" id="food-slider" min="5" max="50" value="25">
+
+            <div style="margin-top:15px;">
+                <button class="btn btn-start" id="run-btn" onclick="toggleSim()">START SIMULATION</button>
+                <button class="btn btn-reset" onclick="location.reload()">RESET ENVIRONMENT</button>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card" style="background:#fff; border:1px solid #e2e8f0; margin-bottom:15px; text-align:left;">
+                <b>Theory:</b> Natural Selection occurs when individuals with favorable traits (higher speed or better sense) survive long enough to reproduce.
+            </div>
+
+            <div class="stat-card" style="background:#fff; border:1px solid #e2e8f0; text-align:left;">
+                <b>Quiz:</b> What drives evolution in this system?
+                <button class="btn" style="background:#f1f5f9; color:black; font-size:0.75rem; margin-top:5px;" onclick="alert('Correct! Differential survival based on traits.')">Selection Pressure</button>
+                <button class="btn" style="background:#f1f5f9; color:black; font-size:0.75rem; margin-top:5px;" onclick="alert('Not quite. Magic doesn\'t pass on DNA!')">Random Magic</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const eco = document.getElementById('ecosystem');
+    let creatures = [];
+    let food = [];
+    let gen = 1;
+    let running = false;
+    let frame;
+
+    class Creature {
+        constructor(dna = { speed: 2, size: 10, sense: 50 }, x, y) {
+            this.dna = dna;
+            this.x = x || Math.random() * eco.clientWidth;
+            this.y = y || Math.random() * eco.clientHeight;
+            this.energy = 100;
+            this.el = document.createElement('div');
+            this.el.className = 'creature';
+            this.updateStyles();
+            eco.appendChild(this.el);
+        }
+
+        updateStyles() {
+            this.el.style.width = this.dna.size + 'px';
+            this.el.style.height = this.dna.size + 'px';
+            this.el.style.left = this.x + 'px';
+            this.el.style.top = this.y + 'px';
+            // Faster creatures are darker
+            const color = 255 - (this.dna.speed * 20);
+            this.el.style.backgroundColor = `rgb(255, ${color}, 0)`;
+        }
+
+        move() {
+            // Find nearest food
+            let closest = null;
+            let minDist = this.dna.sense;
+
+            food.forEach(f => {
+                const d = Math.hypot(this.x - f.x, this.y - f.y);
+                if (d < minDist) {
+                    minDist = d;
+                    closest = f;
+                }
+            });
+
+            if (closest) {
+                const angle = Math.atan2(closest.y - this.y, closest.x - this.x);
+                this.x += Math.cos(angle) * this.dna.speed;
+                this.y += Math.sin(angle) * this.dna.speed;
+
+                if (minDist < 10) {
+                    this.energy += 50;
+                    eatFood(closest);
+                }
+            } else {
+                this.x += (Math.random() - 0.5) * this.dna.speed;
+                this.y += (Math.random() - 0.5) * this.dna.speed;
+            }
+
+            this.energy -= (this.dna.speed * 0.1); // Cost of speed
+            this.updateStyles();
+        }
+    }
+
+    function spawnFood() {
+        if (food.length < document.getElementById('food-slider').value) {
+            const f = { x: Math.random() * eco.clientWidth, y: Math.random() * eco.clientHeight };
+            const el = document.createElement('div');
+            el.className = 'food';
+            el.style.left = f.x + 'px';
+            el.style.top = f.y + 'px';
+            f.el = el;
+            eco.appendChild(el);
+            food.push(f);
+        }
+    }
+
+    function eatFood(f) {
+        eco.removeChild(f.el);
+        food = food.filter(item => item !== f);
+    }
+
+    function toggleSim() {
+        running = !running;
+        document.getElementById('run-btn').innerText = running ? "PAUSE" : "RESUME";
+        if (running) loop();
+    }
+
+    function loop() {
+        if (!running) return;
+
+        spawnFood();
+
+        creatures.forEach((c, index) => {
+            c.move();
+            if (c.energy <= 0) {
+                eco.removeChild(c.el);
+                creatures.splice(index, 1);
+            } else if (c.energy > 200) {
+                // Reproduce
+                c.energy = 100;
+                const mutRate = document.getElementById('mut-slider').value / 100;
+                const newDNA = {
+                    speed: Math.max(0.5, c.dna.speed + (Math.random() - 0.5) * mutRate * 5),
+                    size: 10,
+                    sense: c.dna.sense + (Math.random() - 0.5) * mutRate * 20
+                };
+                creatures.push(new Creature(newDNA, c.x, c.y));
+            }
+        });
+
+        document.getElementById('pop-count').innerText = creatures.length;
+        if (creatures.length === 0 && gen > 1) {
+            alert("Extinction! Reset to try again.");
+            running = false;
+        }
+
+        requestAnimationFrame(loop);
+    }
+
+    // Init
+    for (let i = 0; i < 15; i++) {
+        creatures.push(new Creature());
+    }
+</script>
+</body>
+</html>

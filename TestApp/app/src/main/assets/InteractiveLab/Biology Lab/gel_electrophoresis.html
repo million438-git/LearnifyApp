@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Molecular Lab: Gel Electrophoresis</title>
+    <style>
+        :root {
+            --gel-bg: #e0f2fe; --dna-band: #22d3ee; --tank: #334155;
+            --primary: #0284c7; --negative: #f43f5e; --positive: #10b981;
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        body { margin: 0; background: #f8fafc; color: #1e293b; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        header { background: var(--tank); color: white; padding: 12px; text-align: center; border-bottom: 3px solid var(--primary); }
+        .lab-layout { display: flex; flex: 1; overflow: hidden; flex-direction: column; }
+
+        /* 1. Electrophoresis Tank (Simulation) */
+        #tank-view {
+            flex: 1.2; position: relative; background: #cbd5e1;
+            display: flex; align-items: center; justify-content: center;
+            border-bottom: 4px solid #94a3b8; padding: 20px;
+        }
+
+        .gel-tray {
+            width: 280px; height: 380px; background: var(--gel-bg);
+            border: 2px solid #bae6fd; position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .well {
+            position: absolute; top: 20px; width: 40px; height: 10px;
+            background: #1e293b; border-radius: 2px;
+        }
+
+        .dna-fragment {
+            position: absolute; height: 4px; background: var(--dna-band);
+            box-shadow: 0 0 8px var(--dna-band); transition: top 0.1s linear;
+            border-radius: 1px;
+        }
+
+        /* Electrodes */
+        .electrode { position: absolute; width: 100%; height: 8px; font-weight: 900; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
+        .neg { top: -15px; background: var(--negative); border-radius: 4px 4px 0 0; }
+        .pos { bottom: -15px; background: var(--positive); border-radius: 0 0 4px 4px; }
+
+        /* 2. Control Panel */
+        .panel { flex: 2; display: flex; flex-direction: row; background: white; overflow-y: auto; }
+        .controls { flex: 1; padding: 20px; border-right: 1px solid #e2e8f0; min-width: 320px; }
+        .analysis { flex: 1.2; padding: 20px; background: #fafafa; }
+
+        .knob-group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px; }
+        input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer; }
+
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-bottom: 8px; }
+        .btn-run { background: var(--primary); color: white; }
+        .btn-reset { background: #64748b; color: white; }
+        .btn:disabled { opacity: 0.4; }
+
+        .card { background: white; border: 1px solid #e2e8f0; padding: 15px; border-radius: 10px; margin-bottom: 15px; font-size: 0.85rem; }
+
+        @media (max-width: 768px) {
+            .panel { flex-direction: column; }
+            .controls { border-right: none; border-bottom: 1px solid #eee; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">🧬 Molecular Lab: Gel Electrophoresis</h2>
+</header>
+
+<div class="lab-layout">
+    <div id="tank-view">
+        <div class="gel-tray" id="gel">
+            <div class="electrode neg">- NEGATIVE (CATHODE)</div>
+            <div class="electrode pos">+ POSITIVE (ANODE)</div>
+
+            <div class="well" style="left: 30px;"></div>
+            <div class="well" style="left: 120px;"></div>
+            <div class="well" style="left: 210px;"></div>
+
+            <div id="dna-container"></div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="controls">
+            <div class="knob-group">
+                <label>Voltage (V): <span id="v-val">100</span>V</label>
+                <input type="range" id="voltage" min="50" max="200" value="100">
+            </div>
+
+            <button class="btn btn-run" id="run-btn" onclick="startRun()">POWER ON (RUN GEL)</button>
+            <button class="btn btn-reset" onclick="resetGel()">RESET TANK</button>
+
+            <div class="card" style="margin-top:20px;">
+                <b>Samples Loaded:</b><br>
+                1. DNA Ladder (Standard)<br>
+                2. Suspect A (Crime Scene)<br>
+                3. Suspect B
+            </div>
+        </div>
+
+        <div class="analysis">
+            <div class="card">
+                <b>Theory:</b> DNA is <b>negatively charged</b>. When current is applied, fragments migrate toward the <b>positive</b> electrode. Smaller fragments move faster through the gel matrix.
+            </div>
+
+            <div class="card">
+                <b>Task:</b> Run the gel until the bands are separated. Which suspect matches the DNA Ladder's middle band?
+            </div>
+
+            <div class="card">
+                <b>Quiz:</b> Why do smaller DNA fragments move further than larger ones?
+                <button class="btn" style="background:#f1f5f9; color:black; font-size:0.75rem;" onclick="alert('Correct! The gel is like a mesh; small pieces slip through easier.')">Less resistance from gel pores</button>
+                <button class="btn" style="background:#f1f5f9; color:black; font-size:0.75rem;" onclick="alert('Incorrect. Larger pieces have more charge, but mass/size slows them down more.')">They have more charge</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let isRunning = false;
+    let timer = null;
+    const dnaContainer = document.getElementById('dna-container');
+    const voltageInput = document.getElementById('voltage');
+    const vVal = document.getElementById('v-val');
+
+    // DNA Fragments (Size in Base Pairs)
+    // Smaller bp = faster migration
+    const fragments = [
+        { lane: 0, bp: 1000, top: 30, width: 30, x: 35 },
+        { lane: 0, bp: 500, top: 30, width: 30, x: 35 },
+        { lane: 0, bp: 200, top: 30, width: 30, x: 35 },
+
+        { lane: 1, bp: 500, top: 30, width: 30, x: 125 }, // Match
+
+        { lane: 2, bp: 800, top: 30, width: 30, x: 215 }
+    ];
+
+    function initGel() {
+        dnaContainer.innerHTML = '';
+        fragments.forEach((f, index) => {
+            const div = document.createElement('div');
+            div.className = 'dna-fragment';
+            div.id = `frag-${index}`;
+            div.style.left = f.x + 'px';
+            div.style.top = f.top + 'px';
+            div.style.width = f.width + 'px';
+            dnaContainer.appendChild(div);
+            f.currentTop = 30;
+        });
+    }
+
+    voltageInput.oninput = (e) => vVal.innerText = e.target.value;
+
+    function startRun() {
+        if (isRunning) {
+            clearInterval(timer);
+            document.getElementById('run-btn').innerText = "RESUME RUN";
+            isRunning = false;
+        } else {
+            isRunning = true;
+            document.getElementById('run-btn').innerText = "STOP POWER";
+            const v = parseInt(voltageInput.value) / 100;
+
+            timer = setInterval(() => {
+                fragments.forEach((f, index) => {
+                    // Velocity = V / Size
+                    const speed = (v * 10) / (f.bp / 100);
+                    f.currentTop += speed;
+
+                    const el = document.getElementById(`frag-${index}`);
+                    el.style.top = f.currentTop + 'px';
+
+                    // Stop at end of gel
+                    if (f.currentTop > 360) clearInterval(timer);
+                });
+            }, 100);
+        }
+    }
+
+    function resetGel() {
+        clearInterval(timer);
+        isRunning = false;
+        document.getElementById('run-btn').innerText = "POWER ON (RUN GEL)";
+        initGel();
+    }
+
+    initGel();
+</script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ecology Lab: Population Balance</title>
+    <style>
+        :root {
+            --grass: #22c55e; --rabbit: #f8fafc; --wolf: #475569;
+            --primary: #15803d; --dark: #0f172a; --surface: #ffffff;
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        body { margin: 0; background: #f0fdf4; color: #1e293b; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        header { background: var(--dark); color: white; padding: 12px; text-align: center; border-bottom: 3px solid var(--grass); }
+        .app-container { display: flex; flex: 1; flex-direction: column; overflow: hidden; }
+
+        /* 1. Field View (The Ecosystem) */
+        #field {
+            flex: 1.2; position: relative; background: #dcfce7;
+            overflow: hidden; border-bottom: 4px solid var(--grass);
+            background-image: radial-gradient(#bbf7d0 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .organism {
+            position: absolute; width: 12px; height: 12px; border-radius: 50%;
+            transition: all 0.5s ease;
+        }
+        .type-plant { background: var(--grass); width: 8px; height: 8px; box-shadow: 0 0 5px var(--grass); }
+        .type-herbivore { background: var(--rabbit); border: 1px solid #cbd5e1; }
+        .type-predator { background: var(--wolf); border: 1px solid #000; width: 16px; height: 16px; }
+
+        /* 2. Control & Data */
+        .panel { flex: 2; display: flex; flex-direction: row; background: var(--surface); overflow-y: auto; }
+        .controls { flex: 1; padding: 20px; border-right: 1px solid #e2e8f0; min-width: 320px; }
+        .data-view { flex: 1.2; padding: 20px; background: #fafafa; }
+
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; }
+        .count-badge { padding: 2px 10px; border-radius: 12px; font-size: 0.8rem; color: white; }
+
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 10px; color: white; }
+        .btn-plant { background: var(--grass); }
+        .btn-herb { background: #94a3b8; color: black; border: 1px solid #ddd; }
+        .btn-pred { background: var(--wolf); }
+        .btn-reset { background: #ef4444; }
+
+        .card { background: white; border: 1px solid #e2e8f0; padding: 15px; border-radius: 10px; margin-bottom: 15px; font-size: 0.85rem; }
+
+        @media (max-width: 768px) {
+            .panel { flex-direction: column; }
+            .controls { border-right: none; border-bottom: 1px solid #eee; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">🌳 Ecology Lab: Ecosystem Balance</h2>
+</header>
+
+<div class="app-container">
+    <div id="field"></div>
+
+    <div class="panel">
+        <div class="controls">
+            <div class="card">
+                <div class="stat-row">Plants: <span id="c-plant" class="count-badge" style="background:var(--grass)">0</span></div>
+                <div class="stat-row">Herbivores: <span id="c-herb" class="count-badge" style="background:#64748b">0</span></div>
+                <div class="stat-row">Predators: <span id="c-pred" class="count-badge" style="background:var(--wolf)">0</span></div>
+            </div>
+
+            <label style="font-size:0.7rem; font-weight:800; color:#64748b;">ADD SPECIES</label>
+            <button class="btn btn-plant" onclick="addSpecies('plant', 10)">+10 Plants (Producers)</button>
+            <button class="btn btn-herb" onclick="addSpecies('herbivore', 5)">+5 Rabbits (Consumers)</button>
+            <button class="btn btn-pred" onclick="addSpecies('predator', 1)">+1 Wolf (Apex Predator)</button>
+            <button class="btn btn-reset" onclick="resetField()">RESET ECOSYSTEM</button>
+        </div>
+
+        <div class="data-view">
+            <div class="card">
+                <b>The Food Chain:</b>
+                <p>Energy flows from <b>Producers</b> (Plants) → <b>Primary Consumers</b> (Herbivores) → <b>Secondary Consumers</b> (Predators).</p>
+            </div>
+
+            <div class="card">
+                <b>Quiz:</b> What happens if all the plants are removed?
+                <button class="btn" style="background:#f1f5f9; color:black; font-size:0.75rem;" onclick="alert('Correct! The entire food chain collapses.')">The ecosystem collapses</button>
+                <button class="btn" style="background:#f1f5f9; color:black; font-size:0.75rem;" onclick="alert('Wrong. Animals cannot survive without the energy from producers.')">Animals eat dirt instead</button>
+            </div>
+
+            <div class="card" id="status-msg" style="color:var(--primary); font-weight:bold;">
+                Status: System Stable.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const field = document.getElementById('field');
+    let species = { plant: [], herbivore: [], predator: [] };
+
+    function addSpecies(type, count) {
+        for(let i=0; i<count; i++) {
+            const el = document.createElement('div');
+            el.className = `organism type-${type}`;
+            const x = Math.random() * 95;
+            const y = Math.random() * 95;
+            el.style.left = x + '%';
+            el.style.top = y + '%';
+            field.appendChild(el);
+            species[type].push({ el, x, y, energy: 100 });
+        }
+        updateCounts();
+    }
+
+    function updateCounts() {
+        document.getElementById('c-plant').innerText = species.plant.length;
+        document.getElementById('c-herb').innerText = species.herbivore.length;
+        document.getElementById('c-pred').innerText = species.predator.length;
+    }
+
+    function simLoop() {
+        // Herbivores eat plants
+        species.herbivore.forEach((h, hIdx) => {
+            h.energy -= 2;
+            // Find nearby plant
+            species.plant.forEach((p, pIdx) => {
+                const dist = Math.hypot(h.x - p.x, h.y - p.y);
+                if(dist < 5) {
+                    field.removeChild(p.el);
+                    species.plant.splice(pIdx, 1);
+                    h.energy += 40;
+                }
+            });
+            if(h.energy > 150) { h.energy = 80; addSpecies('herbivore', 1); }
+            if(h.energy <= 0) { field.removeChild(h.el); species.herbivore.splice(hIdx, 1); }
+        });
+
+        // Predators eat herbivores
+        species.predator.forEach((w, wIdx) => {
+            w.energy -= 1;
+            species.herbivore.forEach((h, hIdx) => {
+                const dist = Math.hypot(w.x - h.x, w.y - h.y);
+                if(dist < 8) {
+                    field.removeChild(h.el);
+                    species.herbivore.splice(hIdx, 1);
+                    w.energy += 60;
+                }
+            });
+            if(w.energy > 200) { w.energy = 100; addSpecies('predator', 1); }
+            if(w.energy <= 0) { field.removeChild(w.el); species.predator.splice(wIdx, 1); }
+        });
+
+        // Plants grow back slowly
+        if(Math.random() < 0.1 && species.plant.length < 50) addSpecies('plant', 1);
+
+        updateCounts();
+
+        // Status Messaging
+        const msg = document.getElementById('status-msg');
+        if(species.herbivore.length > 20) msg.innerText = "WARNING: Overgrazing in progress!";
+        else if(species.plant.length === 0) msg.innerText = "CRITICAL: No Producers. Famine imminent.";
+        else msg.innerText = "Status: System Stable.";
+    }
+
+    function resetField() {
+        field.innerHTML = '';
+        species = { plant: [], herbivore: [], predator: [] };
+        updateCounts();
+    }
+
+    setInterval(simLoop, 500);
+</script>
+</body>
+</html>

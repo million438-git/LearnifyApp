@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Biotech Lab: Genetic Engineering</title>
+    <style>
+        :root {
+            --dna-bg: #0f172a; --gene-color: #10b981; --vector-color: #3b82f6;
+            --cut-color: #f43f5e; --surface: #ffffff; --primary: #6366f1;
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { margin: 0; background: #f1f5f9; color: #1e293b; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        header { background: var(--dna-bg); color: white; padding: 12px; text-align: center; border-bottom: 3px solid var(--primary); }
+        .lab-frame { display: flex; flex: 1; overflow: hidden; flex-direction: column; }
+
+        /* 1. Molecular Workbench (Visual Area) */
+        #workbench {
+            flex: 1.2; position: relative; background: var(--dna-bg);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            overflow: hidden; border-bottom: 2px solid #334155;
+        }
+
+        .dna-strand {
+            display: flex; gap: 4px; padding: 20px; border-radius: 10px;
+            transition: all 0.5s ease; position: relative;
+        }
+        .nucleotide {
+            width: 20px; height: 40px; border-radius: 4px;
+            background: #334155; display: flex; align-items: center;
+            justify-content: center; color: white; font-size: 0.7rem; font-weight: bold;
+        }
+        .gene-segment { background: var(--gene-color) !important; box-shadow: 0 0 15px var(--gene-color); }
+        .cut-point { border: 2px dashed var(--cut-color); opacity: 0.5; }
+
+        /* 2. Lab Controls */
+        .panel { flex: 2; display: flex; flex-direction: row; background: var(--surface); overflow-y: auto; }
+        .tools { flex: 1; padding: 20px; border-right: 1px solid #e2e8f0; min-width: 300px; }
+        .status { flex: 1.2; padding: 20px; background: #fafafa; }
+
+        .btn {
+            width: 100%; padding: 12px; margin-bottom: 10px; border: none; border-radius: 8px;
+            font-weight: bold; cursor: pointer; transition: 0.2s; color: white;
+        }
+        .btn-enzyme { background: var(--cut-color); }
+        .btn-ligase { background: var(--primary); }
+        .btn-reset { background: #64748b; }
+        .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .log-box { background: #1e293b; color: #10b981; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 0.8rem; height: 100px; overflow-y: auto; margin-top: 10px; }
+
+        .card { background: white; border: 1px solid #e2e8f0; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+
+        @media (max-width: 768px) {
+            .panel { flex-direction: column; }
+            .tools { border-right: none; border-bottom: 1px solid #eee; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">🧬 Biotech Lab: Recombinant DNA</h2>
+</header>
+
+<div class="lab-frame">
+    <div id="workbench">
+        <div style="color:#94a3b8; margin-bottom:10px; font-size:0.8rem;">TARGET PLASMID (BACTERIAL DNA)</div>
+        <div id="plasmid-dna" class="dna-strand"></div>
+
+        <div id="insertion-zone" style="height: 60px; display: flex; align-items: center; justify-content: center; color: #475569; font-style: italic;">
+            Select Enzyme to identify Restriction Sites
+        </div>
+
+        <div style="color:#94a3b8; margin-top:10px; font-size:0.8rem;">DONOR GENE (DESIRED TRAIT)</div>
+        <div id="donor-gene" class="dna-strand"></div>
+    </div>
+
+    <div class="panel">
+        <div class="tools">
+            <label style="font-size:0.7rem; font-weight:800; color:#64748b;">MOLECULAR TOOLS</label>
+            <select id="enzyme-select" class="btn" style="background:white; color:black; border:1px solid #ddd;">
+                <option value="">Select Restriction Enzyme...</option>
+                <option value="EcoRI">EcoRI (GAATTC)</option>
+                <option value="HindIII">HindIII (AAGCTT)</option>
+            </select>
+
+            <button id="btn-cut" class="btn btn-enzyme" onclick="cutDNA()" disabled>1. APPLY ENZYME (CUT)</button>
+            <button id="btn-insert" class="btn btn-ligase" onclick="insertGene()" disabled>2. APPLY LIGASE (PASTE)</button>
+            <button class="btn btn-reset" onclick="resetLab()">RESET SEQUENCE</button>
+
+            <div class="log-box" id="lab-log"> > System Ready. Select an enzyme to begin sequence...</div>
+        </div>
+
+        <div class="status">
+            <div class="card">
+                <b>Target Organism:</b> <span id="org-name">E. coli Bacteria</span><br>
+                <b>Objective:</b> Insert the <span style="color:var(--gene-color); font-weight:bold;">Bioluminescence Gene</span> to create glowing bacteria.
+            </div>
+
+            <div class="card">
+                <b>Quiz:</b> What acts as the "molecular scissors" in genetic engineering?
+                <button class="btn" style="background:#eee; color:black; padding:5px; margin-top:5px; font-size:0.7rem;" onclick="log('Correct! Restriction enzymes cut DNA at specific sites.')">Restriction Enzymes</button>
+                <button class="btn" style="background:#eee; color:black; padding:5px; margin-top:5px; font-size:0.7rem;" onclick="log('Incorrect. Polymerase builds DNA, enzymes cut it.')">DNA Polymerase</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const plasmidEl = document.getElementById('plasmid-dna');
+    const donorEl = document.getElementById('donor-gene');
+    const logEl = document.getElementById('lab-log');
+
+    let isCut = false;
+    let isModified = false;
+
+    const sequences = {
+        plasmid: ["A", "T", "G", "C", "G", "A", "A", "T", "T", "C", "G", "C"],
+        donor: ["G", "A", "A", "T", "T", "C"] // EcoRI match
+    };
+
+    function initDNA() {
+        plasmidEl.innerHTML = '';
+        donorEl.innerHTML = '';
+        sequences.plasmid.forEach(base => {
+            const div = document.createElement('div');
+            div.className = 'nucleotide';
+            div.innerText = base;
+            plasmidEl.appendChild(div);
+        });
+        sequences.donor.forEach(base => {
+            const div = document.createElement('div');
+            div.className = 'nucleotide gene-segment';
+            div.innerText = base;
+            donorEl.appendChild(div);
+        });
+    }
+
+    document.getElementById('enzyme-select').onchange = (e) => {
+        if(e.target.value === "EcoRI") {
+            log("Enzyme EcoRI selected. Restriction sites detected at GAATTC.");
+            document.getElementById('btn-cut').disabled = false;
+            highlightCut(true);
+        } else {
+            log("Error: Enzyme mismatch. This enzyme does not recognize plasmid sites.");
+            document.getElementById('btn-cut').disabled = true;
+            highlightCut(false);
+        }
+    };
+
+    function highlightCut(active) {
+        const bases = plasmidEl.children;
+        for(let i=5; i<=9; i++) {
+            bases[i].style.borderColor = active ? "var(--cut-color)" : "transparent";
+            bases[i].style.borderWidth = "2px";
+            bases[i].style.borderStyle = "dashed";
+        }
+    }
+
+    function cutDNA() {
+        isCut = true;
+        log("DNA strands cleaved. 'Sticky ends' created.");
+        const bases = plasmidEl.children;
+        for(let i=5; i<=9; i++) {
+            bases[i].style.opacity = "0.2";
+            bases[i].innerText = "-";
+        }
+        document.getElementById('btn-insert').disabled = false;
+        document.getElementById('btn-cut').disabled = true;
+    }
+
+    function insertGene() {
+        isModified = true;
+        log("Ligase applied. Recombinant DNA successfully formed!");
+        const bases = plasmidEl.children;
+        for(let i=5; i<=9; i++) {
+            bases[i].style.opacity = "1";
+            bases[i].className = "nucleotide gene-segment";
+            bases[i].innerText = sequences.donor[i-5] || "G";
+        }
+        document.getElementById('workbench').style.background = "radial-gradient(circle, #064e3b, #0f172a)";
+        document.getElementById('org-name').innerHTML = "<b>GMO: Glowing Bacteria (SUCCESS)</b>";
+        document.getElementById('btn-insert').disabled = true;
+    }
+
+    function log(msg) {
+        logEl.innerHTML += `<br> > ${msg}`;
+        logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function resetLab() {
+        isCut = false; isModified = false;
+        document.getElementById('enzyme-select').value = "";
+        document.getElementById('btn-cut').disabled = true;
+        document.getElementById('btn-insert').disabled = true;
+        document.getElementById('workbench').style.background = "var(--dna-bg)";
+        document.getElementById('org-name').innerText = "E. coli Bacteria";
+        log("System Reset. Patiently awaiting DNA input...");
+        initDNA();
+    }
+
+    initDNA();
+</script>
+</body>
+</html>

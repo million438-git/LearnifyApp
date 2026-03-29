@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <style name="CircleImageView">
         <item name="cornerFamily">rounded</item>
@@ -10,14 +10,232 @@
         <item name="android:scaleType">centerCrop</item>
     </style>
 
-    <!-- Profile Edit Page Styles -->
+    <!-- Admin Sidebar Menu Styles -->
+    <style name="AdminSidebarItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">52dp</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">24dp</item>
+        <item name="android:layout_marginHorizontal">12dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="AdminSidebarIcon">
+        <item name="android:layout_width">22dp</item>
+        <item name="android:layout_height">22dp</item>
+        <item name="android:tint">#94A3B8</item>
+    </style>
+
+    <style name="AdminSidebarText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#94A3B8</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- Cyber Dashboard Stat Card (Vertical Sidebar Style) -->
+    <style name="AdminCyberStatCardSide">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">12dp</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:background">@drawable/bg_cyber_card</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="AdminCyberStatIconBox">
+        <item name="android:layout_width">44dp</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:background">@drawable/bg_admin_menu_item</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="AdminCyberStatLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#94A3B8</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AdminCyberStatValue">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AdminCyberStatSub">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#64748B</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <!-- Content Panel Header -->
+    <style name="AdminPanelHeader">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#00B4D8</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.1</item>
+    </style>
+
+    <!-- Dashboard Main Panels -->
+    <style name="AdminContentCard">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:background">@drawable/bg_cyber_card</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <!-- Enhanced Cyber Button -->
+    <style name="AdminCyberButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">54dp</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="backgroundTint">#1B263B</item>
+        <item name="android:textColor">#00B4D8</item>
+        <item name="strokeColor">#4000B4D8</item>
+        <item name="strokeWidth">1.2dp</item>
+        <item name="cornerRadius">10dp</item>
+        <item name="iconSize">20dp</item>
+        <item name="iconTint">#00B4D8</item>
+        <item name="iconGravity">top</item>
+        <item name="rippleColor">#2000B4D8</item>
+    </style>
+
+    <style name="AdminCyberButton.ActionCyan">
+        <item name="android:textColor">#00B4D8</item>
+        <item name="iconTint">#00B4D8</item>
+        <item name="strokeColor">#00B4D8</item>
+    </style>
+
+    <style name="AdminCyberButton.ActionGreen">
+        <item name="android:textColor">#10B981</item>
+        <item name="iconTint">#10B981</item>
+        <item name="strokeColor">#10B981</item>
+    </style>
+
+    <style name="AdminCyberButton.ActionAmber">
+        <item name="android:textColor">#F59E0B</item>
+        <item name="iconTint">#F59E0B</item>
+        <item name="strokeColor">#F59E0B</item>
+    </style>
+
+    <!-- RESTORED: All missing styles to fix linking errors -->
+    <style name="SettingsSectionHeader">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">28dp</item>
+        <item name="android:layout_marginStart">24dp</item>
+        <item name="android:layout_marginBottom">12dp</item>
+        <item name="android:textColor">#4F46E5</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.1</item>
+    </style>
+
+    <style name="SettingsCard" parent="Widget.MaterialComponents.CardView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_marginBottom">12dp</item>
+        <item name="cardBackgroundColor">#FFFFFF</item>
+        <item name="cardCornerRadius">20dp</item>
+        <item name="cardElevation">2dp</item>
+        <item name="strokeColor">#E5E7EB</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <style name="SettingsItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">20dp</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="SettingsItemIcon">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_marginEnd">20dp</item>
+        <item name="android:tint">#4F46E5</item>
+    </style>
+
+    <style name="SettingsItemText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">#111827</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="SettingsItemDescription">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#6B7280</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_marginTop">2dp</item>
+    </style>
+
+    <style name="SettingsItemValue">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#4F46E5</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="SettingsDivider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">#E5E7EB</item>
+        <item name="android:layout_marginStart">64dp</item>
+        <item name="android:layout_marginEnd">20dp</item>
+    </style>
+
+    <style name="SettingsItemAction">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">18dp</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:textColor">#4F46E5</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="SettingsActionItem" parent="SettingsItemAction" />
+
     <style name="ProfileSectionHeader">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">24dp</item>
         <item name="android:layout_marginStart">24dp</item>
         <item name="android:layout_marginBottom">8dp</item>
-        <item name="android:textColor">@color/text_secondary_grey</item>
+        <item name="android:textColor">#6B7280</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">true</item>
@@ -30,10 +248,10 @@
         <item name="android:layout_marginStart">16dp</item>
         <item name="android:layout_marginEnd">16dp</item>
         <item name="android:layout_marginBottom">12dp</item>
-        <item name="cardBackgroundColor">@color/surface_white</item>
+        <item name="cardBackgroundColor">#FFFFFF</item>
         <item name="cardCornerRadius">20dp</item>
         <item name="cardElevation">0dp</item>
-        <item name="strokeColor">@color/border_light_grey</item>
+        <item name="strokeColor">#E5E7EB</item>
         <item name="strokeWidth">1dp</item>
     </style>
 
@@ -44,9 +262,9 @@
         <item name="android:layout_marginEnd">16dp</item>
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:layout_marginBottom">8dp</item>
-        <item name="boxStrokeColor">@color/border_light_grey</item>
+        <item name="boxStrokeColor">#E5E7EB</item>
         <item name="boxStrokeWidth">1dp</item>
-        <item name="hintTextColor">@color/text_secondary_grey</item>
+        <item name="hintTextColor">#6B7280</item>
         <item name="boxCornerRadiusTopStart">16dp</item>
         <item name="boxCornerRadiusTopEnd">16dp</item>
         <item name="boxCornerRadiusBottomStart">16dp</item>
@@ -66,7 +284,7 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:textColor">@color/text_primary_dark</item>
+        <item name="android:textColor">#111827</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">normal</item>
     </style>
@@ -74,102 +292,10 @@
     <style name="ProfileRowValue">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/primary_indigo</item>
+        <item name="android:textColor">#4F46E5</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">16sp</item>
     </style>
-
-    <!-- Professional Settings Styles -->
-    <style name="SettingsSectionHeader">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">28dp</item>
-        <item name="android:layout_marginStart">24dp</item>
-        <item name="android:layout_marginBottom">12dp</item>
-        <item name="android:textColor">@color/primary_indigo</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:letterSpacing">0.1</item>
-    </style>
-
-    <style name="SettingsCard" parent="Widget.MaterialComponents.CardView">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginStart">16dp</item>
-        <item name="android:layout_marginEnd">16dp</item>
-        <item name="android:layout_marginBottom">12dp</item>
-        <item name="cardBackgroundColor">@color/surface_white</item>
-        <item name="cardCornerRadius">20dp</item>
-        <item name="cardElevation">2dp</item>
-        <item name="strokeColor">@color/border_light_grey</item>
-        <item name="strokeWidth">1dp</item>
-    </style>
-
-    <style name="SettingsItem">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">20dp</item>
-        <item name="android:background">?attr/selectableItemBackground</item>
-        <item name="android:orientation">horizontal</item>
-        <item name="android:gravity">center_vertical</item>
-    </style>
-
-    <style name="SettingsItemIcon">
-        <item name="android:layout_width">24dp</item>
-        <item name="android:layout_height">24dp</item>
-        <item name="android:layout_marginEnd">20dp</item>
-        <item name="android:layout_gravity">center_vertical</item>
-        <item name="android:tint">@color/primary_indigo</item>
-    </style>
-
-    <style name="SettingsItemText">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:textColor">@color/text_primary_dark</item>
-        <item name="android:textSize">17sp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-    </style>
-
-    <style name="SettingsItemDescription">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/text_secondary_grey</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:layout_marginTop">2dp</item>
-        <item name="android:fontFamily">sans-serif</item>
-    </style>
-
-    <style name="SettingsItemValue">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/primary_indigo</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-    </style>
-
-    <style name="SettingsDivider">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">1dp</item>
-        <item name="android:background">@color/border_light_grey</item>
-        <item name="android:layout_marginStart">64dp</item>
-        <item name="android:layout_marginEnd">20dp</item>
-    </style>
-
-    <style name="SettingsItemAction">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">18dp</item>
-        <item name="android:background">?attr/selectableItemBackground</item>
-        <item name="android:textColor">@color/primary_indigo</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:gravity">center_vertical</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-    </style>
-
-    <style name="SettingsActionItem" parent="SettingsItemAction" />
 
     <!-- Exam Activity Styles -->
     <style name="ExamInfoText">
@@ -197,6 +323,32 @@
         <item name="android:padding">16dp</item>
         <item name="android:textColor">#333333</item>
         <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="CyberListTextMain">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#E0E1DD</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CyberListTextSub">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#94A3B8</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <style name="CyberPill">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingHorizontal">8dp</item>
+        <item name="android:paddingVertical">2dp</item>
+        <item name="android:background">@drawable/bg_admin_menu_panel</item>
+        <item name="android:textColor">#00B4D8</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:layout_marginEnd">4dp</item>
     </style>
 
 </resources>

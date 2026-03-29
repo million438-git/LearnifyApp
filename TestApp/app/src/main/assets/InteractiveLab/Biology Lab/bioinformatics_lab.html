@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bioinformatics Lab: DNA Alignment</title>
+    <style>
+        :root {
+            --code-bg: #1e1e1e; --match: #22c55e; --mismatch: #ef4444;
+            --gap: #64748b; --primary: #a855f7; --text: #d4d4d4;
+        }
+
+        * { box-sizing: border-box; font-family: 'Fira Code', 'Courier New', monospace; }
+        body { margin: 0; background: #000; color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        header { background: #111; padding: 12px; text-align: center; border-bottom: 2px solid var(--primary); }
+        .lab-container { display: flex; flex: 1; flex-direction: column; overflow: hidden; }
+
+        /* 1. Sequence Terminal */
+        #terminal {
+            flex: 1.2; background: var(--code-bg); padding: 20px;
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; border-bottom: 1px solid #333; position: relative;
+        }
+
+        .seq-row { display: flex; gap: 4px; margin: 5px 0; font-size: 1.2rem; font-weight: bold; }
+        .base {
+            width: 30px; height: 35px; display: flex; align-items: center;
+            justify-content: center; border-radius: 4px; background: #333;
+            transition: all 0.2s;
+        }
+        .is-match { background: var(--match) !important; color: white; box-shadow: 0 0 10px var(--match); }
+        .is-mismatch { background: var(--mismatch) !important; color: white; }
+        .is-gap { background: var(--gap) !important; color: white; opacity: 0.5; }
+
+        /* 2. Analysis Dashboard */
+        .panel { flex: 2; display: flex; flex-direction: row; background: #111; overflow-y: auto; }
+        .controls { flex: 1; padding: 20px; border-right: 1px solid #333; min-width: 320px; }
+        .results { flex: 1.2; padding: 20px; background: #0a0a0a; }
+
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .stat-card { background: #1a1a1a; padding: 15px; border-radius: 8px; border: 1px solid #333; text-align: center; }
+        .stat-val { display: block; font-size: 1.5rem; color: var(--primary); font-weight: bold; }
+
+        .btn { width: 100%; padding: 12px; border: 1px solid var(--primary); background: transparent; color: var(--primary); font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+        .btn:hover { background: var(--primary); color: white; }
+
+        input { width: 100%; padding: 10px; background: #222; border: 1px solid #444; color: var(--match); margin-bottom: 15px; text-transform: uppercase; }
+
+        .card { background: #1a1a1a; padding: 12px; border-radius: 8px; margin-bottom: 10px; font-size: 0.8rem; border-left: 4px solid var(--primary); }
+
+        @media (max-width: 768px) { .panel { flex-direction: column; } .controls { border-right: none; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <h3 style="margin:0;">🧬 BIOINFORMATICS: SEQUENCE ALIGNMENT TOOL</h3>
+</header>
+
+<div class="lab-container">
+    <div id="terminal">
+        <div id="row-ref" class="seq-row"></div>
+        <div id="row-query" class="seq-row"></div>
+        <div id="alignment-map" style="color: #666; font-size: 0.7rem; margin-top: 10px;">MATCH MAP: | = match, . = mismatch, - = gap</div>
+    </div>
+
+    <div class="panel">
+        <div class="controls">
+            <label style="font-size:0.7rem; color:var(--primary);">REFERENCE STRAND (WILD TYPE)</label>
+            <input type="text" id="input-ref" value="ATGCGATAC" maxlength="12">
+
+            <label style="font-size:0.7rem; color:var(--primary);">QUERY STRAND (PATIENT)</label>
+            <input type="text" id="input-query" value="ATGGGAT-C" maxlength="12">
+
+            <button class="btn" onclick="analyzeDNA()">RUN ALIGNMENT ALGORITHM</button>
+            <button class="btn" style="border-color:#666; color:#666;" onclick="randomMutation()">GENERATE RANDOM MUTATION</button>
+        </div>
+
+        <div class="results">
+            <div class="stat-grid">
+                <div class="stat-card">Match Rate<span id="score-val" class="stat-val">0%</span></div>
+                <div class="stat-card">Mutations<span id="mut-val" class="stat-val">0</span></div>
+            </div>
+
+            <div class="card">
+                <b>Bioinformatics Theory:</b> DNA strands are rarely identical. We use <b>Global Alignment</b> to find the best fit by shifting sequences and introducing "Gaps" (-).
+            </div>
+
+            <div class="card">
+                <b>Quiz:</b> Which nitrogenous base always pairs with Cytosine (C)?
+                <button class="btn" style="padding:4px; font-size:0.7rem; margin-top:5px;" onclick="alert('Correct! C pairs with G.')">Guanine (G)</button>
+                <button class="btn" style="padding:4px; font-size:0.7rem; margin-top:5px;" onclick="alert('Incorrect. A pairs with T.')">Adenine (A)</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function analyzeDNA() {
+        const ref = document.getElementById('input-ref').value.toUpperCase();
+        const query = document.getElementById('input-query').value.toUpperCase();
+
+        const refRow = document.getElementById('row-ref');
+        const queryRow = document.getElementById('row-query');
+
+        refRow.innerHTML = '';
+        queryRow.innerHTML = '';
+
+        let matches = 0;
+        let mutations = 0;
+        const len = Math.max(ref.length, query.length);
+
+        for(let i=0; i < len; i++) {
+            const b1 = ref[i] || '-';
+            const b2 = query[i] || '-';
+
+            const div1 = document.createElement('div');
+            const div2 = document.createElement('div');
+            div1.className = 'base';
+            div2.className = 'base';
+            div1.innerText = b1;
+            div2.innerText = b2;
+
+            if(b1 === b2 && b1 !== '-') {
+                div1.classList.add('is-match');
+                div2.classList.add('is-match');
+                matches++;
+            } else if (b1 === '-' || b2 === '-') {
+                div1.classList.add('is-gap');
+                div2.classList.add('is-gap');
+            } else {
+                div1.classList.add('is-mismatch');
+                div2.classList.add('is-mismatch');
+                mutations++;
+            }
+
+            refRow.appendChild(div1);
+            queryRow.appendChild(div2);
+        }
+
+        const score = Math.round((matches / len) * 100);
+        document.getElementById('score-val').innerText = score + '%';
+        document.getElementById('mut-val').innerText = mutations;
+    }
+
+    function randomMutation() {
+        const bases = ['A', 'T', 'G', 'C'];
+        let str = "";
+        for(let i=0; i<9; i++) str += bases[Math.floor(Math.random() * 4)];
+        document.getElementById('input-query').value = str;
+        analyzeDNA();
+    }
+
+    // Initial run
+    analyzeDNA();
+</script>
+</body>
+</html>

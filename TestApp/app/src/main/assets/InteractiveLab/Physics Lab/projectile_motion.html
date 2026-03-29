@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Physics: Projectile Lab</title>
+    <style>
+        :root {
+            --primary: #6366f1; --secondary: #f43f5e; --dark: #0f172a;
+            --surface: #ffffff; --bg: #f1f5f9; --glass: rgba(255,255,255,0.9);
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        html, body { height: 100%; }
+        body { margin: 0; background: var(--bg); color: var(--dark); display: flex; flex-direction: column; overflow: auto; -webkit-font-smoothing:antialiased; }
+
+        /* Layout Sections */
+        header { background: var(--dark); color: white; padding: 10px; text-align: center; border-bottom: 3px solid var(--primary); }
+        .lab-container { display: flex; flex: 1; overflow: auto; flex-direction: column; }
+
+        /* 1. Simulation Area */
+        #sim-area { flex: 2 1 420px; position: relative; background: white; border-bottom: 2px solid #e2e8f0; overflow: auto; cursor: crosshair; min-height:320px; }
+        canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+        .splitter { height: 10px; background: linear-gradient(90deg, rgba(0,0,0,0.03), rgba(0,0,0,0.06)); cursor: ns-resize; display:block; }
+        .splitter:hover { background: linear-gradient(90deg, rgba(0,0,0,0.05), rgba(0,0,0,0.09)); }
+
+        /* 2. Controls & Results Panel */
+        .bottom-panel { flex: 3; display: flex; flex-direction: row; background: var(--surface); overflow-y: auto; }
+        .controls { flex: 0 0 360px; padding: 18px; border-right: 1px solid #e2e8f0; min-width: 300px; }
+        .analysis { flex: 1 1 720px; padding: 18px; background: #fafafa; min-width: 420px; }
+
+        /* UI Elements */
+        .card { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        h4 { margin: 0 0 10px 0; font-size: 0.8rem; color: #64748b; text-transform: uppercase; }
+        .input-row { margin-bottom: 12px; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; }
+        input[type="range"] { width: 100%; accent-color: var(--primary); }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        button { padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-fire { background: var(--primary); color: white; }
+        .btn-reset { background: #64748b; color: white; }
+
+        /* Overlay HUD */
+        .hud { position: absolute; top: 10px; left: 10px; background: var(--glass); padding: 8px; border-radius: 8px; font-size: 0.75rem; border: 1px solid #ddd; z-index: 20; }
+        .hud * { pointer-events: auto; }
+        .hud .metrics { pointer-events: none; }
+        .zoom-controls { display:flex; gap:6px; margin-top:6px; }
+        .zoom-controls button { padding:6px 8px; border-radius:6px; border:1px solid rgba(0,0,0,0.06); background:white; cursor:pointer; }
+        .vector-legend { position: absolute; bottom: 10px; left: 10px; font-size: 0.65rem; background: var(--glass); padding: 5px; }
+
+        /* Graphing Placeholder */
+        .graph-box { width: 100%; height: 120px; background: #eee; border: 1px solid #ccc; margin-top: 5px; position: relative; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .bottom-panel { flex-direction: column; }
+            .controls { border-right: none; border-bottom: 1px solid #eee; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">🎯 Projectile Motion Interactive Lab</h2>
+    <small>Explore 2D Kinematics, Gravity & Air Resistance</small>
+</header>
+
+<div class="lab-container">
+    <div id="sim-area">
+        <div class="hud">
+            <b>LIVE METRICS</b><br>
+            Time: <span id="out-t">0.00</span>s | Max H: <span id="out-h">0.0</span>m<br>
+            Range: <span id="out-r">0.0</span>m | Velocity: <span id="out-v">0.0</span>m/s
+            <div style="margin-top:6px; font-size:0.75rem;">
+                <label style="display:inline-flex;align-items:center;gap:6px;"><input id="full-scroll-toggle" type="checkbox"> Enable Full Page Scrolling</label>
+            </div>
+        </div>
+        <div class="vector-legend">
+            <span style="color:red">→ Velocity Vector</span> | <span style="color:blue">→ Acceleration (g)</span>
+        </div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div id="splitter" class="splitter" title="Drag to resize simulation area"></div>
+
+    <div class="bottom-panel">
+        <div class="controls">
+            <h4>🧪 Lab Settings</h4>
+            <div class="input-row">
+                <label>Angle (θ): <span id="v-ang">45</span>°</label>
+                <input type="range" id="ang" min="0" max="90" value="45">
+            </div>
+            <div class="input-row">
+                <label>Velocity (v₀): <span id="v-u">50</span> m/s</label>
+                <input type="range" id="u" min="10" max="120" value="50">
+            </div>
+            <div class="input-row">
+                <label>Environment (Gravity)</label>
+                <select id="preset-g" style="width:100%; padding:5px;">
+                    <option value="9.81">Earth (9.81 m/s²)</option>
+                    <option value="1.62">Moon (1.62 m/s²)</option>
+                    <option value="3.71">Mars (3.71 m/s²)</option>
+                    <option value="24.79">Jupiter (24.79 m/s²)</option>
+                </select>
+            </div>
+            <div class="input-row">
+                <label>Physics Mode</label>
+                <input type="checkbox" id="drag-toggle"> Air Resistance (Drag)
+            </div>
+            <div class="btn-grid">
+                <button class="btn-fire" onclick="fire()">LAUNCH</button>
+                <button class="btn-reset" onclick="resetLab()">RESET ALL</button>
+            </div>
+        </div>
+
+        <div class="analysis">
+            <h4>📊 Learn & Practice</h4>
+            <div class="card">
+                <div class="tabs" style="display:flex; gap:8px; margin-bottom:8px;">
+                    <button class="tab-btn" data-tab="formulas">Formulas</button>
+                    <button class="tab-btn" data-tab="quiz">Quiz</button>
+                    <button class="tab-btn" data-tab="challenges">Challenges</button>
+                </div>
+
+                <div id="formulas" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Core Formulas — Projectile Motion</h3>
+                    <ul style="font-size:0.9rem; line-height:1.5; padding-left:1rem; margin:0;">
+                        <li><b>Trajectory:</b> y = x·tan(θ) − (g·x²) / (2·v₀²·cos²θ)</li>
+                        <li><b>Time of flight:</b> T = 2·v₀·sin(θ) / g</li>
+                        <li><b>Maximum height:</b> H = v₀²·sin²(θ) / (2·g)</li>
+                        <li><b>Range:</b> R = v₀²·sin(2θ) / g</li>
+                        <li><b>Horizontal:</b> x = v₀·cos(θ)·t</li>
+                        <li><b>Vertical:</b> y = v₀·sin(θ)·t − ½·g·t²</li>
+                        <li><b>Velocity components:</b> vₓ = v₀·cos(θ), v_y = v₀·sin(θ) − g·t</li>
+                    </ul>
+                    <p style="font-size:0.8rem; margin-top:8px; color:#475569;">Quick tips: 45° gives max range (no drag). Doubling v₀ → range ×4.</p>
+                </div>
+
+                <div id="quiz" class="tab-panel" style="display:none; max-height:360px; overflow:auto; padding-right:6px;">
+                    <h3 style="margin:6px 0 8px 0;">Quiz — Levels</h3>
+                    <div style="font-size:0.9rem;">
+                        <b>Basic</b>
+                        <ol>
+                            <li>Shape of motion: <label><input type="radio" name="q1" value="A"> Circle</label> <label><input type="radio" name="q1" value="B"> Line</label> <label><input type="radio" name="q1" value="C"> Parabola</label> <span id="q1-res" class="q-res" style="margin-left:8px"></span></li>
+                            <li>Which remains constant? <label><input type="radio" name="q2" value="A"> Vertical velocity</label> <label><input type="radio" name="q2" value="B"> Horizontal velocity</label> <span id="q2-res" class="q-res" style="margin-left:8px"></span></li>
+                            <li>Acceleration acting? <label><input type="radio" name="q3" value="A"> Zero</label> <label><input type="radio" name="q3" value="B"> Gravity downward</label> <span id="q3-res" class="q-res" style="margin-left:8px"></span></li>
+                        </ol>
+                        <b>Intermediate</b>
+                        <ol>
+                            <li>Angle for max range: <label><input type="radio" name="q4" value="30">30°</label> <label><input type="radio" name="q4" value="45">45°</label> <span id="q4-res" class="q-res" style="margin-left:8px"></span></li>
+                            <li>If v doubles, range: <label><input type="radio" name="q5" value="A">Doubles</label> <label><input type="radio" name="q5" value="C">4×</label> <span id="q5-res" class="q-res" style="margin-left:8px"></span></li>
+                            <li>Vertical velocity at max height: <label><input type="radio" name="q6" value="A">Maximum</label> <label><input type="radio" name="q6" value="B">Zero</label> <span id="q6-res" class="q-res" style="margin-left:8px"></span></li>
+                        </ol>
+                        <b>Advanced</b>
+                        <ol>
+                            <li>30° vs 60° range: <label><input type="radio" name="q7" value="A">Increases</label> <label><input type="radio" name="q7" value="C">Same</label> <span id="q7-res" class="q-res" style="margin-left:8px"></span></li>
+                            <li>Launched vertically, range: <label><input type="radio" name="q8" value="A">Maximum</label> <label><input type="radio" name="q8" value="B">Zero</label> <span id="q8-res" class="q-res" style="margin-left:8px"></span></li>
+                            <li>Which does NOT affect time of flight: <label><input type="radio" name="q9" value="A">Initial velocity</label> <label><input type="radio" name="q9" value="C">Mass</label> <span id="q9-res" class="q-res" style="margin-left:8px"></span></li>
+                        </ol>
+                        <button id="quiz-check" style="margin-top:8px; padding:8px 10px; font-weight:bold;" onclick="evaluateQuiz()">Submit Quiz</button>
+                        <div id="quiz-result" style="margin-top:8px; font-weight:bold;"></div>
+                    </div>
+                </div>
+
+                <div id="challenges" class="tab-panel" style="display:none;">
+                    <h3 style="margin:6px 0 8px 0;">Interactive Challenges</h3>
+                    <div style="display:flex; flex-direction:column; gap:8px; font-size:0.9rem;">
+                        <div>
+                            <b>Challenge 1 — Max Range</b><br>
+                            <button onclick="applyChallenge('maxRange')">Set 45° and Run</button>
+                        </div>
+                        <div>
+                            <b>Challenge 2 — Gravity Compare</b><br>
+                            <button onclick="applyChallenge('earth')">Earth</button>
+                            <button onclick="applyChallenge('moon')">Moon</button>
+                        </div>
+                        <div>
+                            <b>Challenge 3 — Velocity Effect</b><br>
+                            <button onclick="applyChallenge('doubleV')">Double Velocity & Run</button>
+                        </div>
+                        <div>
+                            <b>Challenge 4 — Angle Comparison</b><br>
+                            <button onclick="applyChallenge('compareAngles')">Compare 30°,45°,60°</button>
+                        </div>
+                        <div>
+                            <b>Challenge 6 — Predict Before Run</b><br>
+                            <label>Prediction: <select id="predict-select"><option value="increase">Range will increase</option><option value="decrease">Range will decrease</option></select></label>
+                            <button onclick="applyChallenge('predict')">Run & Check</button>
+                        </div>
+                        <div id="challenge-note" style="color:#0f172a; font-size:0.85rem;"></div>
+                        <div id="challenge-result" style="color:#083344; font-weight:600; margin-top:6px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <b>Energy (J):</b> <span id="out-e">0.0</span><br>
+                <small>KE = ½mv² | PE = mgh</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // High-DPI support and view transform
+    const dpr = window.devicePixelRatio || 1;
+    let view = { x: 0, y: 0, scale: 1 };
+
+    // State Management
+    let ball = { x: 0, y: 0, vx: 0, vy: 0, path: [], active: false, time: 0, maxH: 0 };
+    let trails = []; // For multiple shots
+    const physicsScale = 4; // pixels per meter-ish mapping used by physics
+    const dt = 0.03;
+
+    function resizeCanvas() {
+        // CSS size
+        const cssW = canvas.clientWidth;
+        const cssH = canvas.clientHeight;
+        // backing store size
+        canvas.width = Math.max(1, Math.round(cssW * dpr));
+        canvas.height = Math.max(1, Math.round(cssH * dpr));
+        // Normalize so drawing units are CSS pixels
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function init() {
+        resizeCanvas();
+        // initial view: fit so origin at (0,0)
+        view = { x: 0, y: 0, scale: 1 };
+        render();
+    }
+    window.addEventListener('resize', () => { resizeCanvas(); render(); });
+    init();
+
+    // Input Listeners
+    document.getElementById('ang').oninput = (e) => document.getElementById('v-ang').innerText = e.target.value;
+    document.getElementById('u').oninput = (e) => document.getElementById('v-u').innerText = e.target.value;
+
+    // Drawing helpers use CSS pixel sizes
+    function cssWidth() { return canvas.width / dpr; }
+    function cssHeight() { return canvas.height / dpr; }
+
+    function drawEnvironment() {
+        // clear in CSS pixels
+        ctx.clearRect(0, 0, cssWidth(), cssHeight());
+
+        ctx.save();
+        ctx.translate(view.x, view.y);
+        ctx.scale(view.scale, view.scale);
+
+        // Ground (in CSS px coordinates)
+        ctx.fillStyle = "#475569";
+        ctx.fillRect(0, cssHeight() - 40, cssWidth(), 40);
+
+        // X-Y Axes
+        ctx.strokeStyle = "#e2e8f0";
+        ctx.beginPath();
+        ctx.moveTo(40, 0); ctx.lineTo(40, cssHeight());
+        ctx.moveTo(0, cssHeight() - 40); ctx.lineTo(cssWidth(), cssHeight() - 40);
+        ctx.stroke();
+
+        ctx.restore();
+    }
+
+    function fire() {
+        if (ball.active) { trails.push([...ball.path]); } // Save previous trial
+
+        const u = parseFloat(document.getElementById('u').value);
+        const theta = parseFloat(document.getElementById('ang').value) * Math.PI / 180;
+
+        ball = {
+            x: 40, y: cssHeight() - 40,
+            vx: u * Math.cos(theta),
+            vy: -u * Math.sin(theta),
+            path: [], active: true, time: 0, maxH: 0
+        };
+        update();
+    }
+
+    function update() {
+        if (!ball.active) return;
+
+        const g = parseFloat(document.getElementById('preset-g').value);
+        const dragOn = document.getElementById('drag-toggle').checked;
+        const b = dragOn ? 0.08 : 0; // Drag coefficient
+
+        // Physics (world coords are CSS px)
+        let ax = -b * ball.vx;
+        let ay = g - b * ball.vy;
+
+        ball.vx += ax * dt;
+        ball.vy += ay * dt;
+        ball.x += ball.vx * dt * physicsScale;
+        ball.y += ball.vy * dt * physicsScale;
+        ball.time += dt;
+
+        let currentH = (cssHeight() - 40 - ball.y) / physicsScale;
+        if (currentH > ball.maxH) ball.maxH = currentH;
+
+        ball.path.push({x: ball.x, y: ball.y});
+
+        render();
+        updateHUD();
+
+        if (ball.y >= cssHeight() - 40) {
+            ball.y = cssHeight() - 40;
+            ball.active = false;
+        } else {
+            requestAnimationFrame(update);
+        }
+    }
+
+    function updateHUD() {
+        document.getElementById('out-t').innerText = ball.time.toFixed(2);
+        document.getElementById('out-h').innerText = ball.maxH.toFixed(1);
+        document.getElementById('out-r').innerText = ((ball.x - 40) / physicsScale).toFixed(1);
+        const speed = Math.sqrt(ball.vx**2 + ball.vy**2);
+        document.getElementById('out-v').innerText = speed.toFixed(1);
+        document.getElementById('out-e').innerText = (0.5 * 1 * speed**2).toFixed(0);
+    }
+
+    function render() {
+        drawEnvironment();
+
+        ctx.save();
+        ctx.translate(view.x, view.y);
+        ctx.scale(view.scale, view.scale);
+
+        // Draw Old Trials
+        trails.forEach(t => {
+            if (!t.length) return;
+            ctx.beginPath(); ctx.strokeStyle = "#cbd5e1"; ctx.setLineDash([5,5]);
+            ctx.moveTo(t[0].x, t[0].y);
+            t.forEach(p => ctx.lineTo(p.x, p.y));
+            ctx.stroke(); ctx.setLineDash([]);
+        });
+
+        // Current Path
+        ctx.beginPath(); ctx.strokeStyle = varColor('--primary'); ctx.lineWidth = 3 / Math.max(1, view.scale);
+        if(ball.path.length > 0) {
+            ctx.moveTo(ball.path[0].x, ball.path[0].y);
+            ball.path.forEach(p => ctx.lineTo(p.x, p.y));
+        }
+        ctx.stroke();
+
+        // Ball & Vectors
+        ctx.fillStyle = varColor('--dark');
+        ctx.beginPath(); ctx.arc(ball.x, ball.y, 8, 0, Math.PI*2); ctx.fill();
+
+        // Velocity Vector (Red)
+        ctx.beginPath(); ctx.strokeStyle = "red"; ctx.lineWidth = 2 / Math.max(1, view.scale);
+        ctx.moveTo(ball.x, ball.y);
+        ctx.lineTo(ball.x + ball.vx, ball.y + ball.vy);
+        ctx.stroke();
+
+        // Gravity Vector (Blue)
+        ctx.beginPath(); ctx.strokeStyle = "blue";
+        ctx.moveTo(ball.x, ball.y);
+        ctx.lineTo(ball.x, ball.y + 30);
+        ctx.stroke();
+
+        ctx.restore();
+    }
+
+    function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name); }
+
+    function resetLab() {
+        ball.active = false; ball.path = []; trails = [];
+        updateHUD(); render();
+    }
+
+    function checkQuiz() {
+        const ang = document.getElementById('ang').value;
+        if(ang == 45) alert("Correct! 45 degrees maximizes the range in a vacuum.");
+        else alert("Hint: Look for symmetry in the path. Try 45°!");
+    }
+
+    // --- Zoom & Pan Handlers ---
+    // Wheel zoom centered on cursor
+    let fullScrollEnabled = false;
+    const fullScrollToggle = document.getElementById('full-scroll-toggle');
+    if (fullScrollToggle) {
+        fullScrollToggle.addEventListener('change', (e) => {
+            fullScrollEnabled = !!e.target.checked;
+            // when full scroll is enabled, let the browser handle touch/wheel scroll
+            canvas.style.touchAction = fullScrollEnabled ? 'auto' : 'none';
+            // clear any active pointers so behavior is consistent
+            pointers.clear(); pinch = null;
+        });
+    }
+
+    canvas.addEventListener('wheel', (e) => {
+        // If full page scrolling enabled, do not intercept wheel — let browser scroll
+        if (fullScrollEnabled) return;
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const cx = e.clientX - rect.left;
+        const cy = e.clientY - rect.top;
+        const worldX = (cx - view.x) / view.scale;
+        const worldY = (cy - view.y) / view.scale;
+        const factor = Math.exp(-e.deltaY * 0.0015);
+        view.scale = Math.max(0.2, Math.min(8, view.scale * factor));
+        view.x = cx - worldX * view.scale;
+        view.y = cy - worldY * view.scale;
+        render();
+    }, { passive: false });
+
+    // Pointer-based pan + pinch
+    const pointers = new Map();
+    let pinch = null; // {dist, center, scale}
+
+    function getPointerPos(e) {
+        const r = canvas.getBoundingClientRect();
+        return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+
+    canvas.addEventListener('pointerdown', (e) => {
+        if (fullScrollEnabled) return; // allow browser to handle scroll/pan
+        canvas.setPointerCapture(e.pointerId);
+        pointers.set(e.pointerId, getPointerPos(e));
+        if (pointers.size === 2) {
+            const pts = Array.from(pointers.values());
+            const dx = pts[0].x - pts[1].x; const dy = pts[0].y - pts[1].y;
+            const center = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 };
+            pinch = { dist: Math.hypot(dx, dy), center, startScale: view.scale, startView: { ...view } };
+        } else {
+            pinch = null;
+        }
+    });
+
+    canvas.addEventListener('pointermove', (e) => {
+        if (fullScrollEnabled) return; // ignore pointer moves when full scroll enabled
+        if (!pointers.has(e.pointerId)) return;
+        const prev = pointers.get(e.pointerId);
+        const pos = getPointerPos(e);
+        pointers.set(e.pointerId, pos);
+
+        if (pointers.size === 1 && !pinch) {
+            // single pointer => pan
+            const dx = pos.x - prev.x; const dy = pos.y - prev.y;
+            view.x += dx; view.y += dy;
+            render();
+        } else if (pointers.size === 2 && pinch) {
+            const pts = Array.from(pointers.values());
+            const dx = pts[0].x - pts[1].x; const dy = pts[0].y - pts[1].y;
+            const newDist = Math.hypot(dx, dy);
+            const factor = newDist / pinch.dist;
+            view.scale = Math.max(0.2, Math.min(8, pinch.startScale * factor));
+            // maintain center
+            const newCenter = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 };
+            const worldCenterX = (newCenter.x - pinch.startView.x) / pinch.startView.scale;
+            const worldCenterY = (newCenter.y - pinch.startView.y) / pinch.startView.scale;
+            view.x = newCenter.x - worldCenterX * view.scale;
+            view.y = newCenter.y - worldCenterY * view.scale;
+            render();
+        }
+    });
+
+    canvas.addEventListener('pointerup', (e) => {
+        if (fullScrollEnabled) return;
+        pointers.delete(e.pointerId);
+        try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
+        if (pointers.size < 2) pinch = null;
+    });
+    canvas.addEventListener('pointercancel', (e) => { pointers.delete(e.pointerId); pinch = null; });
+    canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+    // UI Zoom Controls
+    const hud = document.querySelector('.hud');
+    if (hud) {
+        const zdiv = document.createElement('div'); zdiv.className = 'zoom-controls';
+        zdiv.innerHTML = '<button id="zoom-out">−</button><button id="zoom-reset">Reset</button><button id="zoom-in">+</button>';
+        hud.appendChild(zdiv);
+        document.getElementById('zoom-in').addEventListener('click', () => { zoomBy(1.25); });
+        document.getElementById('zoom-out').addEventListener('click', () => { zoomBy(1/1.25); });
+        document.getElementById('zoom-reset').addEventListener('click', () => { resetView(); });
+    }
+
+    function zoomBy(factor) {
+        // zoom to center
+        const cx = cssWidth() / 2, cy = cssHeight() / 2;
+        const worldX = (cx - view.x) / view.scale;
+        const worldY = (cy - view.y) / view.scale;
+        view.scale = Math.max(0.2, Math.min(8, view.scale * factor));
+        view.x = cx - worldX * view.scale;
+        view.y = cy - worldY * view.scale;
+        render();
+    }
+
+    function resetView() {
+        view = { x: 0, y: 0, scale: 1 };
+        render();
+    }
+
+    // --- Splitter (drag up/down to resize sim vs panels) ---
+    (function(){
+        const sim = document.getElementById('sim-area');
+        const splitter = document.getElementById('splitter');
+        if (!sim || !splitter) return;
+        let dragging = false;
+        let startY = 0;
+        let startHeight = 0;
+        const minH = 160;
+        const maxH = window.innerHeight - 220;
+
+        splitter.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            dragging = true;
+            startY = e.clientY;
+            startHeight = sim.getBoundingClientRect().height;
+            try { splitter.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+
+        window.addEventListener('pointermove', (e) => {
+            if (!dragging) return;
+            const dy = e.clientY - startY;
+            let newH = Math.round(startHeight + dy);
+            newH = Math.max(minH, Math.min(maxH, newH));
+            // set sim-area to a fixed height by overriding flex
+            sim.style.flex = `0 0 ${newH}px`;
+            // ensure canvas updated
+            resizeCanvas(); render();
+        });
+
+        window.addEventListener('pointerup', (e) => {
+            if (!dragging) return; dragging = false;
+            try { splitter.releasePointerCapture(e.pointerId); } catch (err) {}
+        });
+
+        splitter.addEventListener('dblclick', () => {
+            // reset to original flexible layout
+            sim.style.flex = '';
+            resizeCanvas(); render();
+        });
+    })();
+
+    // --- Quiz & Challenge Logic ---
+    function switchTab(name) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+        document.getElementById(name).style.display = 'block';
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => { if (b.dataset.tab === name) b.classList.add('active'); });
+    }
+    // activate default tab
+    document.addEventListener('DOMContentLoaded', () => { const first = document.querySelector('.tab-btn'); if(first) first.click(); });
+    document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', (e) => { switchTab(b.dataset.tab); }));
+
+    function evaluateQuiz() {
+        // answers based on prepared key and explanations
+        const key = { q1:'C', q2:'B', q3:'B', q4:'45', q5:'C', q6:'B', q7:'C', q8:'B', q9:'C' };
+        const explain = {
+            q1: 'Projectile motion is a parabola under uniform gravity.',
+            q2: 'Horizontal velocity is constant (no horizontal acceleration).',
+            q3: 'Gravity acts downward (g).',
+            q4: '45° gives maximum range in vacuum.',
+            q5: 'Range ∝ v₀², so doubling v₀ → 4× range.',
+            q6: 'Vertical velocity is zero at maximum height.',
+            q7: '30° and 60° give the same range for symmetric angles.',
+            q8: 'Vertical launch has zero horizontal range.',
+            q9: 'Mass does not affect time of flight (in absence of drag).'
+        };
+        let score = 0, total = 9;
+        for (let i=1;i<=9;i++) {
+            const name = 'q'+i;
+            const els = document.getElementsByName(name);
+            let val = null;
+            for (const el of els) if(el.checked) val = el.value;
+            const resEl = document.getElementById(name+'-res');
+            if (val && String(val) === String(key[name])) { score++; if (resEl) { resEl.innerText = 'Correct'; resEl.style.color = 'green'; resEl.title = explain[name]; } }
+            else { if (resEl) { resEl.innerText = `Wrong — Ans: ${key[name]}`; resEl.style.color = 'crimson'; resEl.title = explain[name]; } }
+        }
+        const out = document.getElementById('quiz-result');
+        if (out) out.innerText = `Score: ${score}/${total} — ${Math.round(score/total*100)}%`;
+    }
+
+    function applyChallenge(id) {
+        const note = document.getElementById('challenge-note');
+        note.innerText = '';
+        const cres = document.getElementById('challenge-result');
+        if (cres) cres.innerText = '';
+        if (id === 'maxRange') {
+            document.getElementById('ang').value = 45; document.getElementById('v-ang').innerText = 45;
+            note.innerText = 'Angle set to 45°. Running simulation...';
+            fire(); runAndReport().then(r => { note.innerText = 'Completed: max range test.'; if (cres) cres.innerText = `Range: ${r.range} m · Time: ${r.time}s · MaxH: ${r.maxH}m`; });
+        } else if (id === 'earth') {
+            document.getElementById('preset-g').value = '9.81'; note.innerText = 'Gravity set to Earth (9.81 m/s²).';
+            fire(); runAndReport().then(r => { if (cres) cres.innerText = `Range: ${r.range} m · Time: ${r.time}s`; });
+        } else if (id === 'moon') {
+            document.getElementById('preset-g').value = '1.62'; note.innerText = 'Gravity set to Moon (1.62 m/s²). Time and range will increase.';
+            fire(); runAndReport().then(r => { if (cres) cres.innerText = `Range: ${r.range} m · Time: ${r.time}s`; });
+        } else if (id === 'doubleV') {
+            const uEl = document.getElementById('u'); uEl.value = Math.min(240, Number(uEl.value)*2); document.getElementById('v-u').innerText = uEl.value;
+            note.innerText = 'Velocity doubled. Running simulation...';
+            fire(); runAndReport().then(r => { if (cres) cres.innerText = `Range: ${r.range} m · Time: ${r.time}s`; });
+        } else if (id === 'compareAngles') {
+            note.innerText = 'Running 30°, 45°, 60° sequence...';
+            runAngleSequence([30,45,60]).then(results => {
+                const text = results.map(rt => `${rt.angle}° → R=${rt.range}m, T=${rt.time}s`).join('  |  ');
+                if (cres) cres.innerText = text; note.innerText = 'Sequence complete.';
+            });
+        } else if (id === 'predict') {
+            const pred = document.getElementById('predict-select').value;
+            // run a short simulation: we'll launch and after stop we compare range to original baseline
+            const baselineU = Number(document.getElementById('u').value);
+            const baselineAng = Number(document.getElementById('ang').value);
+            // simple heuristic: increasing v or lowering g increases range
+            note.innerText = `Prediction recorded: ${pred}. Running to check...`;
+            fire(); runAndReport().then(r => { if (cres) cres.innerText = `Result: Range=${r.range}m · Time=${r.time}s`; });
+        }
+    }
+
+    function runAndReport() {
+        return new Promise(resolve => {
+            const check = () => {
+                if (!ball.active) {
+                    const range = ((ball.x - 40) / physicsScale).toFixed(2);
+                    const time = ball.time.toFixed(2);
+                    const maxH = ball.maxH.toFixed(2);
+                    resolve({ range, time, maxH });
+                } else requestAnimationFrame(check);
+            };
+            requestAnimationFrame(check);
+        });
+    }
+
+    async function runAngleSequence(angles) {
+        const results = [];
+        const originalU = Number(document.getElementById('u').value);
+        for (const a of angles) {
+            document.getElementById('ang').value = a; document.getElementById('v-ang').innerText = a;
+            fire();
+            // eslint-disable-next-line no-await-in-loop
+            const r = await runAndReport();
+            results.push({ angle: a, range: r.range, time: r.time });
+            // small pause
+            await new Promise(res => setTimeout(res, 300));
+        }
+        document.getElementById('u').value = originalU; document.getElementById('v-u').innerText = originalU;
+        return results;
+    }
+</script>
+</body>
+</html>

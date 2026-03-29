@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Respiratory Lab: Lung Capacity</title>
+    <style>
+        :root {
+            --lung: #fda4af; --trachea: #e2e8f0; --bg: #0f172a;
+            --primary: #38bdf8; --surface: #ffffff;
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        body { margin: 0; background: var(--bg); color: #f8fafc; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        header { background: #1e293b; padding: 12px; text-align: center; border-bottom: 2px solid var(--primary); }
+        .lab-view { display: flex; flex: 1; flex-direction: column; overflow: hidden; }
+
+        /* 1. Respiratory Simulation */
+        #anatomy-view {
+            flex: 1.5; position: relative; background: radial-gradient(circle, #334155, #0f172a);
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
+        }
+
+        .lung-container { display: flex; gap: 20px; align-items: flex-end; }
+        .lung {
+            width: 80px; height: 120px; background: var(--lung);
+            border-radius: 40% 40% 20% 20%; transition: all 0.5s ease-out;
+            border: 3px solid #f43f5e; box-shadow: 0 0 30px rgba(244, 63, 94, 0.3);
+        }
+
+        .diaphragm {
+            position: absolute; bottom: 20%; width: 200px; height: 20px;
+            background: #475569; border-radius: 50% 50% 0 0; transition: all 0.5s ease;
+        }
+
+        /* 2. Controls & Spirometry */
+        .panel { flex: 2; display: flex; flex-direction: row; background: var(--surface); color: #1e293b; overflow-y: auto; }
+        .controls { flex: 1; padding: 20px; border-right: 1px solid #e2e8f0; min-width: 300px; }
+        .stats { flex: 1.2; padding: 20px; background: #f8fafc; }
+
+        .meter { height: 20px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .fill { height: 100%; width: 0%; background: var(--primary); transition: width 0.3s ease; }
+
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 8px; color: white; }
+        .btn-inhale { background: var(--primary); }
+        .btn-exhale { background: #64748b; }
+
+        .card { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 10px; font-size: 0.85rem; }
+        .stat-val { font-size: 1.2rem; font-weight: bold; color: #0284c7; }
+
+        @media (max-width: 768px) { .panel { flex-direction: column; } .controls { border-right: none; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <h3 style="margin:0;">🫁 Lab: Pulmonary Function & Vital Capacity</h3>
+</header>
+
+<div class="lab-view">
+    <div id="anatomy-view">
+        <div class="lung-container">
+            <div id="lung-l" class="lung"></div>
+            <div id="lung-r" class="lung"></div>
+        </div>
+        <div id="diaphragm" class="diaphragm"></div>
+    </div>
+
+    <div class="panel">
+        <div class="controls">
+            <label style="font-size:0.7rem; font-weight:bold;">OXYGEN SATURATION</label>
+            <div class="meter"><div id="ox-fill" class="fill" style="width: 95%;"></div></div>
+
+            <button class="btn btn-inhale" onmousedown="startInhale()" onmouseup="stopInhale()" ontouchstart="startInhale()" ontouchend="stopInhale()">HOLD TO INHALE</button>
+            <button class="btn btn-exhale" onclick="exhaleFull()">FORCED EXHALE</button>
+
+            <div class="card">
+                <b>Air Volume:</b> <span id="vol-val" class="stat-val">500</span> mL<br>
+                <small id="vol-type">Pattern: Tidal Volume</small>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="card">
+                <b>Theory:</b> Breathing is driven by the <b>Diaphragm</b>. When it contracts (moves down), thoracic pressure drops, and air rushes in.
+            </div>
+
+            <div class="card">
+                <b>Quiz:</b> What is the volume of air moved during a normal, quiet breath?
+                <button class="btn" style="background:#f1f5f9; color:black; font-size:0.7rem; margin-top:5px;" onclick="alert('Correct! Tidal volume is usually around 500mL.')">Tidal Volume</button>
+                <button class="btn" style="background:#f1f5f9; color:black; font-size:0.7rem; margin-top:5px;" onclick="alert('Incorrect. Vital capacity is the MAXIMUM air you can move.')">Vital Capacity</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let volume = 500;
+    let inhaleInterval;
+    const lungs = [document.getElementById('lung-l'), document.getElementById('lung-r')];
+    const diaphragm = document.getElementById('diaphragm');
+    const volVal = document.getElementById('vol-val');
+
+    function startInhale() {
+        inhaleInterval = setInterval(() => {
+            if(volume < 4800) {
+                volume += 50;
+                updateLungs();
+            }
+        }, 50);
+    }
+
+    function stopInhale() {
+        clearInterval(inhaleInterval);
+        if(volume > 3000) {
+            document.getElementById('vol-type').innerText = "Pattern: Inspiratory Reserve";
+        }
+    }
+
+    function exhaleFull() {
+        volume = 1200; // Residual Volume
+        updateLungs();
+        document.getElementById('vol-type').innerText = "Pattern: Expiratory Reserve";
+        setTimeout(() => {
+            volume = 500;
+            updateLungs();
+            document.getElementById('vol-type').innerText = "Pattern: Tidal Volume";
+        }, 1500);
+    }
+
+    function updateLungs() {
+        const scale = 0.5 + (volume / 5000);
+        const dPos = 20 - (volume / 200);
+
+        lungs.forEach(l => {
+            l.style.transform = `scale(${scale})`;
+        });
+        diaphragm.style.bottom = dPos + '%';
+        volVal.innerText = volume;
+
+        // Oxygen logic
+        const ox = Math.min(90 + (volume / 500), 100);
+        document.getElementById('ox-fill').style.width = ox + '%';
+    }
+
+    updateLungs();
+</script>
+</body>
+</html>

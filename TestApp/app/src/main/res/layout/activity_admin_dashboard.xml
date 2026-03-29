@@ -5,120 +5,446 @@
     android:id="@+id/adminDrawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0F172A"
-    tools:context="com.million.learnify.AdminDashboardActivity">
+    android:background="#050A14"
+    tools:context=".AdminDashboardActivity">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <!-- MAIN CONTENT WRAPPER -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <com.google.android.material.appbar.AppBarLayout
+        <!-- HEADER / TOOLBAR -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/adminToolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            app:elevation="0dp">
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/adminToolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="#1E293B"
-                app:navigationIconTint="@android:color/white"
-                app:title="Admin Command Center"
-                app:titleTextColor="@android:color/white" />
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <androidx.core.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:layout_height="64dp"
+            android:background="#0D1B2A"
+            app:contentInsetStartWithNavigation="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:padding="24dp">
-
-                <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_marginTop="20dp"
-                    android:src="@android:drawable/ic_dialog_info"
-                    app:tint="#3B82F6" />
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingEnd="20dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Governance &amp; Control"
-                    android:textColor="@android:color/white"
-                    android:textSize="24sp"
+                    android:text="LEARNIFY ADMIN DASHBOARD: REAL STUDENT INTELLIGENCE PLATFORM"
+                    android:textColor="#00B4D8"
+                    android:textSize="17sp"
                     android:textStyle="bold" />
 
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/adminProfileImg"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="#1B263B"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_user_person"
+                    app:shapeAppearanceOverlay="@style/CircleImage"
+                    app:tint="#00B4D8" />
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+
+            <!-- LEFT: VERTICAL STATS SIDEBAR (Exact Match to Image) -->
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="240dp"
+                android:layout_height="match_parent"
+                android:background="#0D1B2A"
+                android:padding="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Stat 1: Total Students -->
+                    <LinearLayout style="@style/AdminCyberStatCardSide">
+                        <LinearLayout style="@style/AdminCyberStatIconBox">
+                            <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:src="@drawable/ic_student_badge" app:tint="#00B4D8" />
+                        </LinearLayout>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
+                            <TextView style="@style/AdminCyberStatLabel" android:text="Total Students" />
+                            <TextView style="@style/AdminCyberStatValue" android:text="2,450+" />
+                            <TextView style="@style/AdminCyberStatSub" android:text="+12% this month" android:textColor="#10B981" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Stat 2: Active Students -->
+                    <LinearLayout style="@style/AdminCyberStatCardSide" android:background="@drawable/bg_cyber_card_blue">
+                        <LinearLayout style="@style/AdminCyberStatIconBox">
+                            <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:src="@drawable/ic_user_person" app:tint="#00B4D8" />
+                        </LinearLayout>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
+                            <TextView style="@style/AdminCyberStatLabel" android:text="Active Students" />
+                            <TextView style="@style/AdminCyberStatValue" android:text="1,980" />
+                            <TextView style="@style/AdminCyberStatSub" android:text="Online Now" android:textColor="#00B4D8" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Stat 3: Teachers -->
+                    <LinearLayout style="@style/AdminCyberStatCardSide">
+                        <LinearLayout style="@style/AdminCyberStatIconBox">
+                            <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:src="@drawable/ic_tasks" app:tint="#00B4D8" />
+                        </LinearLayout>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
+                            <TextView style="@style/AdminCyberStatLabel" android:text="Teachers / Instructors" />
+                            <TextView style="@style/AdminCyberStatValue" android:text="85" />
+                            <TextView style="@style/AdminCyberStatSub" android:text="Staff Members" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Stat 4: Total Labs -->
+                    <LinearLayout style="@style/AdminCyberStatCardSide">
+                        <LinearLayout style="@style/AdminCyberStatIconBox">
+                            <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:src="@drawable/ic_lab" app:tint="#00B4D8" />
+                        </LinearLayout>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
+                            <TextView style="@style/AdminCyberStatLabel" android:text="Total Labs Created" />
+                            <TextView style="@style/AdminCyberStatValue" android:text="120" />
+                            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+                                <TextView style="@style/CyberPill" android:text="Physics" />
+                                <TextView style="@style/CyberPill" android:text="Bio" />
+                                <TextView style="@style/CyberPill" android:text="Chem" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Stat 5: Completed Labs -->
+                    <LinearLayout style="@style/AdminCyberStatCardSide">
+                        <LinearLayout style="@style/AdminCyberStatIconBox">
+                            <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:src="@android:drawable/checkbox_on_background" app:tint="#00B4D8" />
+                        </LinearLayout>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
+                            <TextView style="@style/AdminCyberStatLabel" android:text="Completed Labs" />
+                            <TextView style="@style/AdminCyberStatValue" android:text="9,340" />
+                            <TextView style="@style/AdminCyberStatSub" android:text="Completions" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Stat 6: Pending Labs -->
+                    <LinearLayout style="@style/AdminCyberStatCardSide" android:background="@drawable/bg_cyber_card_orange">
+                        <LinearLayout style="@style/AdminCyberStatIconBox">
+                            <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:src="@android:drawable/ic_popup_reminder" app:tint="#F59E0B" />
+                        </LinearLayout>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
+                            <TextView style="@style/AdminCyberStatLabel" android:text="Pending Labs" />
+                            <TextView style="@style/AdminCyberStatValue" android:text="320" />
+                            <TextView style="@style/AdminCyberStatSub" android:text="Tasks Waiting" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Stat 7: System Health -->
+                    <LinearLayout style="@style/AdminCyberStatCardSide" android:background="@drawable/bg_cyber_card_blue">
+                        <LinearLayout style="@style/AdminCyberStatIconBox">
+                            <ImageView android:layout_width="match_parent" android:layout_height="match_parent" android:src="@drawable/ic_lock" app:tint="#10B981" />
+                        </LinearLayout>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
+                            <TextView style="@style/AdminCyberStatLabel" android:text="System Health Status" />
+                            <TextView style="@style/AdminCyberStatValue" android:text="OPERATIONAL" android:textColor="#10B981" android:textSize="14sp" />
+                            <TextView style="@style/AdminCyberStatSub" android:text="Uptime 99.98%" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+
+            <!-- RIGHT: DASHBOARD CONTENT AREA (Stacked Vertically) -->
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <!-- Panel 1: Intelligence -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="400dp"
+                        android:background="@drawable/bg_cyber_card"
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:layout_marginBottom="16dp">
+                        <TextView style="@style/AdminPanelHeader" android:text="INTERACTIVE STUDENT INTELLIGENCE PANEL" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="189dp"
+                            android:layout_marginTop="12dp"
+                            android:orientation="horizontal">
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginEnd="12dp"
+                                android:layout_weight="1"
+                                android:background="#0D1B2A" />
+
+                            <LinearLayout
+                                android:layout_width="180dp"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    style="@style/CyberListTextSub"
+                                    android:layout_marginBottom="8dp"
+                                    android:text="Most active students today" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="8dp"
+                                    android:gravity="center_vertical">
+
+                                    <com.google.android.material.imageview.ShapeableImageView
+                                        android:layout_width="24dp"
+                                        android:layout_height="24dp"
+                                        android:src="@drawable/ic_user_person"
+                                        app:shapeAppearanceOverlay="@style/CircleImage"
+                                        app:tint="#00B4D8" />
+
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="8dp"
+                                        android:layout_weight="1"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            style="@style/CyberListTextMain"
+                                            android:text="Amina" />
+
+                                        <TextView
+                                            style="@style/CyberListTextSub"
+                                            android:text="Time online" />
+                                    </LinearLayout>
+
+                                    <TextView
+                                        style="@style/CyberListTextMain"
+                                        android:text="2hr"
+                                        android:textColor="#10B981" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="8dp"
+                                    android:gravity="center_vertical">
+
+                                    <com.google.android.material.imageview.ShapeableImageView
+                                        android:layout_width="24dp"
+                                        android:layout_height="24dp"
+                                        android:src="@drawable/ic_user_person"
+                                        app:shapeAppearanceOverlay="@style/CircleImage"
+                                        app:tint="#00B4D8" />
+
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="8dp"
+                                        android:layout_weight="1"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            style="@style/CyberListTextMain"
+                                            android:text="John" />
+
+                                        <TextView
+                                            style="@style/CyberListTextSub"
+                                            android:text="Time online" />
+                                    </LinearLayout>
+
+                                    <TextView
+                                        style="@style/CyberListTextMain"
+                                        android:text="5h"
+                                        android:textColor="#10B981" />
+                                </LinearLayout>
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="1" />
+
+                                <TextView
+                                    style="@style/CyberListTextSub"
+                                    android:layout_marginBottom="4dp"
+                                    android:text="Top performers leaderboard" />
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="#4000B4D8" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Panel 2: Lab Activity Control -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="350dp"
+                        android:background="@drawable/bg_cyber_card"
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:layout_marginBottom="16dp">
+                        <TextView style="@style/AdminPanelHeader" android:text="LAB ACTIVITY CONTROL PANEL" />
+                        <View android:layout_width="match_parent" android:layout_height="match_parent" android:layout_marginTop="12dp" android:background="#0D1B2A" />
+                    </LinearLayout>
+
+                    <!-- Panel 3: Real-Time Activity Feed -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_cyber_card"
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:layout_marginBottom="16dp">
+                        <TextView style="@style/AdminPanelHeader" android:text="REAL-TIME ACTIVITY FEED" />
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:layout_marginTop="12dp">
+                            <com.google.android.material.imageview.ShapeableImageView android:layout_width="28dp" android:layout_height="28dp" android:src="@drawable/ic_user_person" app:shapeAppearanceOverlay="@style/CircleImage" app:tint="#00B4D8" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Amina completed Microscope Lab" android:textColor="#E0E1DD" android:textSize="11sp" android:layout_marginStart="8dp" />
+                        </LinearLayout>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:layout_marginTop="10dp">
+                            <com.google.android.material.imageview.ShapeableImageView android:layout_width="28dp" android:layout_height="28dp" android:src="@drawable/ic_user_person" app:shapeAppearanceOverlay="@style/CircleImage" app:tint="#00B4D8" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="John started DNA Simulation" android:textColor="#E0E1DD" android:textSize="11sp" android:layout_marginStart="8dp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Panel 4: Quick Action Panel -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_cyber_card"
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:layout_marginBottom="16dp">
+                        <TextView style="@style/AdminPanelHeader" android:text="QUICK ACTION PANEL" />
+                        <GridLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:columnCount="2"
+                            android:layout_marginTop="8dp">
+                            <Button style="@style/AdminCyberButton.ActionCyan" android:text="Create Lab" app:icon="@drawable/ic_lab" />
+                            <Button style="@style/AdminCyberButton.ActionCyan" android:text="Add User" app:icon="@drawable/ic_user_person" />
+                            <Button style="@style/AdminCyberButton.ActionGreen" android:text="Upload" app:icon="@android:drawable/ic_menu_upload" />
+                            <Button style="@style/AdminCyberButton.ActionGreen" android:text="Simulate" app:icon="@android:drawable/ic_media_play" />
+                            <Button style="@style/AdminCyberButton.ActionAmber" android:text="Reports" app:icon="@android:drawable/ic_menu_sort_by_size" />
+                            <Button style="@style/AdminCyberButton.ActionAmber" android:text="Settings" app:icon="@drawable/ic_settings" />
+                        </GridLayout>
+                    </LinearLayout>
+
+                    <!-- Panel 5: AI Insights -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="140dp"
+                        android:background="@drawable/bg_cyber_card_blue"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="16dp"
+                        android:layout_marginBottom="24dp">
+                        <ImageView android:layout_width="60dp" android:layout_height="60dp" android:src="@drawable/ic_ai_hexagon" app:tint="#00B4D8" />
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="20dp" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SMART INSIGHTS BOX (AI STYLE)" android:textColor="#00B4D8" android:textStyle="bold" android:textSize="16sp" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Students struggle most in Enzyme Kinetics. Best performing lab: Cell Observation. Recommendation: Increase microscopy tutorials." android:textColor="#E0E1DD" android:layout_marginTop="6dp" android:textSize="14sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- NAVIGATION DRAWER (Slide out from left) -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/adminNavView"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#0D1B2A">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:background="@drawable/bg_admin_menu_panel"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_marginBottom="24dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="48dp"
-                    android:text="CORE INFRASTRUCTURE"
-                    android:textColor="#94A3B8"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.1" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnManageUsers"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="16dp"
-                    android:text="👥 MANAGE USERS"
-                    app:cornerRadius="12dp"
-                    app:backgroundTint="#1E293B"
-                    android:textColor="@android:color/white" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnManageContent"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="12dp"
-                    android:text="📚 MANAGE CONTENT"
-                    app:cornerRadius="12dp"
-                    app:backgroundTint="#1E293B"
-                    android:textColor="@android:color/white" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnCameraLabAdmin"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="12dp"
-                    android:text="📸 CAMERA LAB GOVERNANCE"
-                    app:cornerRadius="12dp"
-                    app:backgroundTint="#3B82F6"
-                    android:textColor="@android:color/white" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnSystemSettings"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="12dp"
-                    android:text="⚙️ SYSTEM SETTINGS"
-                    app:cornerRadius="12dp"
-                    app:backgroundTint="#1E293B"
-                    android:textColor="@android:color/white" />
-
+                    android:text="ADMIN MENU"
+                    android:textColor="#00B4D8"
+                    android:textSize="20sp"
+                    android:textStyle="bold" android:letterSpacing="0.2" />
+                <View android:layout_width="100dp" android:layout_height="1dp" android:background="#00B4D8" android:layout_marginTop="4dp" />
             </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+                    <!-- Dashboard -->
+                    <LinearLayout android:id="@+id/sideDashboard" android:layout_width="match_parent" android:layout_height="56dp" android:background="@drawable/bg_admin_menu_item" android:gravity="center_vertical" android:paddingHorizontal="16dp" android:layout_marginBottom="10dp" android:clickable="true" android:focusable="true">
+                        <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_home" app:tint="#00B4D8" />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="DASHBOARD" android:textColor="#E0E1DD" android:textSize="14sp" android:textStyle="bold" android:layout_marginStart="12dp" />
+                        <ImageView android:layout_width="14dp" android:layout_height="14dp" android:src="@drawable/ic_arrow_drop_down" android:rotation="-90" app:tint="#00B4D8" />
+                    </LinearLayout>
+                    <!-- User Management -->
+                    <LinearLayout android:id="@+id/sideUsers" android:layout_width="match_parent" android:layout_height="56dp" android:background="@drawable/bg_admin_menu_item" android:gravity="center_vertical" android:paddingHorizontal="16dp" android:layout_marginBottom="10dp" android:clickable="true" android:focusable="true">
+                        <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_user_person" app:tint="#00B4D8" />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="USER MANAGEMENT" android:textColor="#E0E1DD" android:textSize="14sp" android:textStyle="bold" android:layout_marginStart="12dp" />
+                        <ImageView android:layout_width="14dp" android:layout_height="14dp" android:src="@drawable/ic_arrow_drop_down" android:rotation="-90" app:tint="#00B4D8" />
+                    </LinearLayout>
+                    <!-- Content Control -->
+                    <LinearLayout android:id="@+id/sideContent" android:layout_width="match_parent" android:layout_height="56dp" android:background="@drawable/bg_admin_menu_item" android:gravity="center_vertical" android:paddingHorizontal="16dp" android:layout_marginBottom="10dp" android:clickable="true" android:focusable="true">
+                        <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_courses" app:tint="#00B4D8" />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="CONTENT CONTROL" android:textColor="#E0E1DD" android:textSize="14sp" android:textStyle="bold" android:layout_marginStart="12dp" />
+                        <ImageView android:layout_width="14dp" android:layout_height="14dp" android:src="@drawable/ic_arrow_drop_down" android:rotation="-90" app:tint="#00B4D8" />
+                    </LinearLayout>
+                    <!-- Reports -->
+                    <LinearLayout android:id="@+id/sideReports" android:layout_width="match_parent" android:layout_height="56dp" android:background="@drawable/bg_admin_menu_item" android:gravity="center_vertical" android:paddingHorizontal="16dp" android:layout_marginBottom="10dp" android:clickable="true" android:focusable="true">
+                        <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@android:drawable/ic_menu_sort_by_size" app:tint="#00B4D8" />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="REPORTS &amp; ANALYTICS" android:textColor="#E0E1DD" android:textSize="14sp" android:textStyle="bold" android:layout_marginStart="12dp" />
+                        <ImageView android:layout_width="14dp" android:layout_height="14dp" android:src="@drawable/ic_arrow_drop_down" android:rotation="-90" app:tint="#00B4D8" />
+                    </LinearLayout>
+                    <!-- System Settings -->
+                    <LinearLayout android:id="@+id/sideSettings" android:layout_width="match_parent" android:layout_height="56dp" android:background="@drawable/bg_admin_menu_item" android:gravity="center_vertical" android:paddingHorizontal="16dp" android:layout_marginBottom="10dp" android:clickable="true" android:focusable="true">
+                        <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_settings" app:tint="#00B4D8" />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="SYSTEM SETTINGS" android:textColor="#E0E1DD" android:textSize="14sp" android:textStyle="bold" android:layout_marginStart="12dp" />
+                        <ImageView android:layout_width="14dp" android:layout_height="14dp" android:src="@drawable/ic_arrow_drop_down" android:rotation="-90" app:tint="#00B4D8" />
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/adminNavigationView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="#1E293B"
-        app:itemIconTint="@android:color/white"
-        app:itemTextColor="@android:color/white"
-        app:menu="@menu/admin_drawer_menu" />
+            <LinearLayout android:id="@+id/btnLogout" android:layout_width="match_parent" android:layout_height="56dp" android:background="@drawable/bg_admin_menu_panel" android:gravity="center" android:layout_marginTop="16dp" android:clickable="true" android:focusable="true">
+                <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@android:drawable/ic_lock_power_off" app:tint="#EF4444" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="LOGOUT" android:textColor="#EF4444" android:textSize="16sp" android:textStyle="bold" android:layout_marginStart="10dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

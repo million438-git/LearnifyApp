@@ -50,6 +50,44 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- 11. CAMERA LAB GOVERNANCE -->
+            <TextView style="@style/SettingsSectionHeader" android:text="11. CAMERA LAB GOVERNANCE" android:textColor="#4F46E5" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard" app:strokeColor="#4F46E5" app:strokeWidth="1dp">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+
+                    <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Enable Global Camera Lab" android:textColor="#1E293B" android:textStyle="bold" />
+                        <androidx.appcompat.widget.SwitchCompat android:id="@+id/switchCameraLab" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" />
+                    </RelativeLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E2E8F0" android:layout_marginVertical="12dp" />
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Subject Control" android:textColor="#64748B" android:textSize="12sp" android:textStyle="bold" android:layout_marginBottom="8dp" />
+
+                    <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Allow Math Solving" android:textColor="#334155" />
+                        <androidx.appcompat.widget.SwitchCompat android:id="@+id/switchLabMath" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" />
+                    </RelativeLayout>
+
+                    <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Allow Physics Solving" android:textColor="#334155" />
+                        <androidx.appcompat.widget.SwitchCompat android:id="@+id/switchLabPhysics" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" />
+                    </RelativeLayout>
+
+                    <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Allow Chemistry Solving" android:textColor="#334155" />
+                        <androidx.appcompat.widget.SwitchCompat android:id="@+id/switchLabChem" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" />
+                    </RelativeLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E2E8F0" android:layout_marginVertical="12dp" />
+
+                    <com.google.android.material.textfield.TextInputLayout style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Max Solver Steps (e.g. 10)">
+                        <com.google.android.material.textfield.TextInputEditText android:id="@+id/etLabMaxSteps" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- 8.2 LOCALIZATION -->
             <TextView style="@style/SettingsSectionHeader" android:text="8.2 LOCALIZATION &amp; I18N" />
             <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">

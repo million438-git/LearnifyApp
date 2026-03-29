@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Physics Lab: Spring-Mass System</title>
+    <style>
+        :root {
+            --primary: #8b5cf6; --secondary: #ec4899; --dark: #0f172a;
+            --bg: #f8fafc; --surface: #ffffff; --accent: #10b981;
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        body { margin: 0; background: var(--bg); color: var(--dark); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        /* Layout Structure */
+        header { background: var(--dark); color: white; padding: 12px; text-align: center; border-bottom: 3px solid var(--primary); z-index: 100; }
+        .app-body { display: flex; flex: 1; overflow: hidden; flex-direction: column; }
+
+        /* 1. Simulation Canvas */
+        #sim-viewport { flex: 1.2; position: relative; background: white; border-bottom: 2px solid #e2e8f0; overflow: hidden; touch-action: none; }
+        canvas { width: 100%; height: 100%; display: block; }
+
+        /* HUD & Energy Overlay */
+        .hud { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.9); padding: 10px; border-radius: 8px; font-size: 0.75rem; border: 1px solid #ddd; pointer-events: none; line-height: 1.4; }
+        .energy-overlay { position: absolute; top: 10px; right: 10px; width: 120px; background: rgba(255,255,255,0.9); padding: 8px; border-radius: 8px; border: 1px solid #ddd; }
+        .bar-label { font-size: 0.65rem; font-weight: bold; margin-bottom: 2px; display: block; }
+        .bar-bg { width: 100%; height: 8px; background: #eee; border-radius: 4px; margin-bottom: 6px; overflow: hidden; }
+        .bar-fill { height: 100%; transition: width 0.05s linear; }
+
+        /* 2. Interactive Panel */
+        .panel { flex: 2; display: flex; flex-direction: row; background: var(--surface); overflow-y: auto; }
+        .controls { flex: 1; padding: 20px; border-right: 1px solid #e2e8f0; min-width: 320px; }
+        .analysis { flex: 1.2; padding: 20px; background: #fafafa; }
+
+        /* Control UI */
+        .control-group { margin-bottom: 18px; }
+        label { display: block; font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 6px; }
+        input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer; }
+        .val-badge { float: right; background: var(--primary); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; }
+
+        .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        button { padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-main { background: var(--primary); color: white; }
+        .btn-sec { background: #64748b; color: white; }
+
+        /* Content Cards */
+        .card { background: white; border: 1px solid #e2e8f0; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+        .math { font-family: "serif"; font-style: italic; font-size: 1.1rem; color: var(--secondary); font-weight: bold; }
+        .quiz-option { display: block; width: 100%; text-align: left; padding: 8px; margin: 4px 0; border: 1px solid #ddd; border-radius: 6px; background: white; cursor: pointer; font-size: 0.85rem; }
+        .quiz-option:hover { background: #f1f5f9; }
+
+        /* Desktop Mode */
+        @media (min-width: 768px) {
+            .app-body { flex-direction: row; }
+            .panel { flex-direction: row; width: 100%; }
+            #sim-viewport { flex: 1.5; }
+        }
+
+        /* Mobile Mode */
+        @media (max-width: 767px) {
+            .panel { flex-direction: column; }
+            .controls { border-right: none; border-bottom: 1px solid #eee; }
+        }
+        /* Side solution panels (slide from edges) */
+        .side-panel { position: fixed; top: 70px; width: 320px; bottom: 20px; background: #fff; box-shadow: 0 6px 18px rgba(2,6,23,0.08); padding:14px; overflow:auto; z-index:1200; touch-action: none; transform-origin: center center; will-change: transform; cursor: grab; }
+        .side-panel.left { left: -360px; border-right:1px solid #e6eef8; transition: left 240ms ease; }
+        .side-panel.right { right: -360px; transition: right 240ms ease; }
+        .side-panel.open.left { left: 0; }
+        .side-panel.open.right { right: 0; }
+        .panel-toggle { position: absolute; top: 12px; right: 12px; display:flex; flex-direction:column; gap:8px; z-index:1100; }
+        .panel-toggle button { padding:8px 10px; border-radius:8px; border:1px solid rgba(0,0,0,0.06); background:#fff; }
+        .side-panel button { z-index:1300; pointer-events:auto }
+        .panel-frame { touch-action: none; transform-origin: 0 0; will-change: transform; cursor:grab }
+        .panel-frame.grabbing { cursor:grabbing }
+        .panel-frame * { user-select:none; -webkit-user-select:none }
+        /* full-screen mode */
+        .side-panel.full { top:0; left:0; right:0; bottom:0; width:100%; height:100%; padding:18px; border-radius:0; }
+        /* Panel-toggle responsive placement */
+        @media (max-width: 767px) {
+            .panel-toggle { bottom: 12px; top: auto; left: 50%; right: auto; transform: translateX(-50%); flex-direction: row; gap:6px; }
+            .panel-toggle button { padding:6px 8px; font-size:0.85rem }
+            .side-panel { width: 88%; left: 6%; right: 6%; top: 80px; bottom: 12px; }
+            .side-panel.left { left: -100%; }
+            .side-panel.right { right: -100%; }
+            /* when opened on mobile, position slightly inset so header isn't overlapped */
+            .side-panel.open.left { left: 6%; }
+            .side-panel.open.right { right: 6%; }
+            .side-panel button { padding:10px 12px; }
+        }
+        /* hide toggle when a panel is open to avoid overlap */
+        body.panel-open .panel-toggle { display: none; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">🧪 Spring-Mass System Lab</h2>
+</header>
+
+<div class="app-body">
+    <div id="sim-viewport">
+        <div class="hud">
+            <b>INSTRUMENTATION</b><hr>
+            Period (T): <span id="out-t">0.00</span>s<br>
+            Freq (f): <span id="out-f">0.00</span>Hz<br>
+            Disp (x): <span id="out-x">0.00</span>m
+        </div>
+
+        <div class="energy-overlay">
+            <span class="bar-label">Kinetic (KE)</span>
+            <div class="bar-bg"><div id="bar-ke" class="bar-fill" style="background:var(--primary); width: 0%;"></div></div>
+            <span class="bar-label">Potential (PE)</span>
+            <div class="bar-bg"><div id="bar-pe" class="bar-fill" style="background:var(--accent); width: 0%;"></div></div>
+        </div>
+
+        <canvas id="canvas"></canvas>
+        <div class="panel-toggle" aria-hidden="false">
+            <button id="open-left">Open Solutions ◀</button>
+            <button id="open-right">Open Values ▶</button>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="controls">
+            <div class="control-group">
+                <label>Mass (m): <span class="val-badge" id="v-m">1.0</span> kg</label>
+                <input type="range" id="m" min="0.5" max="10.0" step="0.1" value="1.0">
+            </div>
+            <div class="control-group">
+                <label>Spring Constant (k): <span class="val-badge" id="v-k">50</span> N/m</label>
+                <input type="range" id="k" min="10" max="200" step="5" value="50">
+            </div>
+            <div class="control-group">
+                <label>Damping (b): <span class="val-badge" id="v-b">0.10</span></label>
+                <input type="range" id="b" min="0" max="2.0" step="0.05" value="0.10">
+            </div>
+            <div class="btn-row">
+                <button class="btn-main" onclick="togglePlay()" id="playBtn">PAUSE</button>
+                <button class="btn-sec" onclick="resetSim()">RESET</button>
+            </div>
+            <br>
+            <div class="card">
+                <b>Task:</b> Does increasing <b>k</b> make the oscillation faster or slower? Try it and watch the Frequency (f).
+            </div>
+        </div>
+
+        <div class="analysis">
+            <div class="card">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="s-formulas">Formulas</button>
+                    <button class="tab-btn" data-tab="s-quiz">Quiz</button>
+                    <button class="tab-btn" data-tab="s-challenges">Challenges</button>
+                </div>
+
+                <div id="s-formulas" class="tab-panel" style="display:block">
+                    <h3>FULL FORMULAS — Spring–Mass System</h3>
+                    <ol style="line-height:1.5; margin:0; padding-left:1rem; font-size:0.95rem;">
+                        <li><b>Hooke’s Law (Restoring Force):</b> <span class="math">F = -k x</span><br><small>Force always pulls back to equilibrium.</small></li>
+                        <li><b>Equation of Motion:</b> <span class="math">m d²x/dt² + k x = 0</span><br><small>Governs simple harmonic oscillation.</small></li>
+                        <li><b>Angular frequency:</b> <span class="math">ω = √(k / m)</span></li>
+                        <li><b>Time period:</b> <span class="math">T = 2π √(m / k)</span></li>
+                        <li><b>Frequency:</b> <span class="math">f = 1 / T</span></li>
+                        <li><b>Displacement:</b> <span class="math">x(t) = A cos(ω t + φ)</span></li>
+                        <li><b>Velocity:</b> <span class="math">v(t) = −A ω sin(ω t + φ)</span></li>
+                        <li><b>Acceleration:</b> <span class="math">a(t) = −ω² x</span></li>
+                        <li><b>Maximum velocity:</b> <span class="math">v_max = A ω</span></li>
+                        <li><b>Maximum acceleration:</b> <span class="math">a_max = A ω²</span></li>
+                        <li><b>Elastic potential energy:</b> <span class="math">PE = 1/2 k x²</span></li>
+                        <li><b>Kinetic energy:</b> <span class="math">KE = 1/2 m v²</span></li>
+                        <li><b>Total energy (ideal):</b> <span class="math">E = 1/2 k A²</span></li>
+                        <li><b>Damped motion (advanced):</b> <span class="math">x(t) = A e^{-b t} cos(ω t)</span><br><small>Motion amplitude decays over time when damping present.</small></li>
+                        <li><b>Newton:</b> <span class="math">F = m a</span></li>
+                    </ol>
+                </div>
+
+                <div id="s-quiz" class="tab-panel" style="display:none; max-height:420px; overflow:auto; padding-right:6px;">
+                    <h3>FULL QUIZ — All Levels</h3>
+                    <div style="font-size:0.95rem;">
+                        <b>Basic</b>
+                        <ol>
+                            <li>What type of motion is a spring system? <label><input type="radio" name="sq1" value="A"> Linear</label> <label><input type="radio" name="sq1" value="B"> Circular</label> <label><input type="radio" name="sq1" value="C"> Simple Harmonic Motion</label> <span id="sq1-res" class="q-res"></span></li>
+                            <li>Hooke's law states: <label><input type="radio" name="sq2" value="A"> F = kx</label> <label><input type="radio" name="sq2" value="B"> F = -kx</label> <span id="sq2-res" class="q-res"></span></li>
+                            <li>The restoring force acts: <label><input type="radio" name="sq3" value="A"> Away from center</label> <label><input type="radio" name="sq3" value="B"> Toward equilibrium</label> <span id="sq3-res" class="q-res"></span></li>
+                        </ol>
+                        <b>Intermediate</b>
+                        <ol>
+                            <li>If mass increases, period: <label><input type="radio" name="sq4" value="A"> Decreases</label> <label><input type="radio" name="sq4" value="B"> Increases</label> <span id="sq4-res" class="q-res"></span></li>
+                            <li>If spring constant increases: <label><input type="radio" name="sq5" value="A"> Motion slower</label> <label><input type="radio" name="sq5" value="B"> Motion faster</label> <span id="sq5-res" class="q-res"></span></li>
+                            <li>At maximum displacement: <label><input type="radio" name="sq6" value="A"> KE max</label> <label><input type="radio" name="sq6" value="B"> PE max</label> <span id="sq6-res" class="q-res"></span></li>
+                        </ol>
+                        <b>Advanced</b>
+                        <ol>
+                            <li>Total energy in ideal SHM is: <label><input type="radio" name="sq7" value="A"> Increasing</label> <label><input type="radio" name="sq7" value="B"> Decreasing</label> <label><input type="radio" name="sq7" value="C"> Constant</label> <span id="sq7-res" class="q-res"></span></li>
+                            <li>Acceleration is proportional to: <label><input type="radio" name="sq8" value="A"> Velocity</label> <label><input type="radio" name="sq8" value="B"> Displacement</label> <span id="sq8-res" class="q-res"></span></li>
+                            <li>Damping causes: <label><input type="radio" name="sq9" value="A"> Energy increase</label> <label><input type="radio" name="sq9" value="B"> Motion stops over time</label> <span id="sq9-res" class="q-res"></span></li>
+                            <li>If mass is doubled, period becomes: <label><input type="radio" name="sq10" value="A"> Same</label> <label><input type="radio" name="sq10" value="B"> √2 times larger</label> <label><input type="radio" name="sq10" value="C"> Half</label> <label><input type="radio" name="sq10" value="D"> Double</label> <span id="sq10-res" class="q-res"></span></li>
+                            <li>If k is doubled: <label><input type="radio" name="sq11" value="A"> Period increases</label> <label><input type="radio" name="sq11" value="B"> Period decreases</label> <label><input type="radio" name="sq11" value="C"> Same</label> <label><input type="radio" name="sq11" value="D"> Stops</label> <span id="sq11-res" class="q-res"></span></li>
+                        </ol>
+                        <div style="margin-top:8px;">
+                            <button id="s-quiz-check" style="padding:8px 10px;font-weight:bold;">Submit Quiz</button>
+                        </div>
+                        <div id="s-quiz-result" style="margin-top:8px;font-weight:bold"></div>
+                    </div>
+                </div>
+
+                <div id="s-challenges" class="tab-panel" style="display:none">
+                    <h3>FULL CHALLENGES</h3>
+                    <div style="display:flex;flex-direction:column;gap:8px;font-size:0.95rem;">
+                        <div>
+                            <b>Challenge 1 — Mass Effect</b><br>
+                            <label>Set Mass: <input id="challenge-m" type="number" step="0.1" value="1.0" style="width:80px;margin-left:6px"></label>
+                            <button onclick="runSChallenge('mass')">Apply & Measure</button>
+                        </div>
+                        <div>
+                            <b>Challenge 2 — Spring Stiffness</b><br>
+                            <label>Set k: <input id="challenge-k" type="number" step="1" value="50" style="width:80px;margin-left:6px"></label>
+                            <button onclick="runSChallenge('k')">Apply & Measure</button>
+                        </div>
+                        <div>
+                            <b>Challenge 3 — Amplitude Test</b><br>
+                            <label>Amplitude: <input id="challenge-A" type="number" step="0.01" value="0.8" style="width:80px;margin-left:6px"></label>
+                            <button onclick="runSChallenge('amp')">Apply & Observe</button>
+                        </div>
+                        <div>
+                            <b>Challenge 4 — Find Period</b><br>
+                            <label>Measure for <input id="osc-count" type="number" value="10" min="1" style="width:60px;margin-left:6px"> oscillations</label>
+                            <button onclick="runSChallenge('measure')">Measure</button>
+                        </div>
+                        <hr>
+                        <div>
+                            <b>Challenge 5 — Graph Matching</b><br>
+                            <small>Match displacement / velocity graphs by observing the simulation. (Visual task)</small>
+                            <button onclick="runSChallenge('graph')">Start Graph Task</button>
+                        </div>
+                        <div>
+                            <b>Challenge 6 — Energy Tracking</b><br>
+                            <small>Identify where KE and PE are maximum during oscillation.</small>
+                            <button onclick="runSChallenge('energy')">Start Energy Tracker</button>
+                        </div>
+                        <hr>
+                        <div>
+                            <b>Challenge 7 — Damping Control</b><br>
+                            <label>Set Damping b: <input id="challenge-b" type="number" step="0.01" value="0.10" style="width:80px;margin-left:6px"></label>
+                            <button onclick="runSChallenge('damping')">Apply Damping</button>
+                        </div>
+                        <div>
+                            <b>Challenge 8 — System Comparison</b><br>
+                            <small>Compare heavy vs light mass and stiff vs soft spring.</small>
+                            <button onclick="runSChallenge('compare')">Run Comparison</button>
+                        </div>
+                        <div>
+                            <b>Challenge 9 — Phase Shift</b><br>
+                            <label>Start x: <input id="challenge-phase" type="number" step="0.01" value="0.8" style="width:80px;margin-left:6px"></label>
+                            <button onclick="runSChallenge('phase')">Apply & Observe</button>
+                        </div>
+                        <hr>
+                        <div>
+                            <b>Challenge 10 — Car Suspension Model</b><br>
+                            <small>Adjust damping and stiffness to reduce vibration.</small>
+                            <button onclick="runSChallenge('car')">Simulate Suspension</button>
+                        </div>
+                        <div>
+                            <b>Challenge 11 — Building Stability</b><br>
+                            <small>Adjust damping to prevent long oscillations.</small>
+                            <button onclick="runSChallenge('building')">Test Stability</button>
+                        </div>
+                        <div>
+                            <b>Challenge 12 — Energy Optimization</b><br>
+                            <small>Find parameters to maximize retained energy (low damping).</small>
+                            <button onclick="runSChallenge('optimize')">Start Optimization</button>
+                        </div>
+                        <hr>
+                        <div>
+                            <b>Challenge 13 — Prediction Mode</b><br>
+                            <small>Try: “What happens if k doubles?”</small>
+                            <button onclick="runSChallenge('predict')">Predict & Simulate</button>
+                        </div>
+                        <div>
+                            <b>Challenge 14 — Target Matching</b><br>
+                            <label>Target period T: <input id="target-T" type="number" step="0.01" value="1.00" style="width:80px;margin-left:6px"></label>
+                            <button onclick="runSChallenge('target')">Match Target</button>
+                        </div>
+                        <div id="s-challenge-note" style="color:#0f172a;font-size:0.9rem"></div>
+                        <div id="s-challenge-result" style="color:#083344;font-weight:700;margin-top:6px"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <b>Total Energy</b>: <span id="s-out-e">0.00</span> J
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Side Panels: left = full derivation, right = numeric steps -->
+<aside class="side-panel left" id="left-panel" aria-hidden="true">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <strong>Solution — Full Steps</strong>
+        <div>
+            <button id="left-full">Full</button>
+            <button id="left-close">Close</button>
+        </div>
+    </div>
+    <div class="panel-frame" id="left-frame">
+        <div id="F-step" class="card"></div>
+        <div id="eq-step" class="card"></div>
+        <div id="w-step" class="card"></div>
+        <div id="T-step" class="card"></div>
+        <div id="amax-step" class="card"></div>
+        <div id="x-step" class="card"></div>
+        <div id="v-step" class="card"></div>
+        <div id="energy-step" class="card"></div>
+        <div id="other-step" class="card"></div>
+    </div>
+</aside>
+
+<aside class="side-panel right" id="right-panel" aria-hidden="true">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <strong>Live Values</strong>
+        <div>
+            <button id="right-full">Full</button>
+            <button id="right-close">Close</button>
+        </div>
+    </div>
+    <div class="panel-frame" id="right-frame">
+        <div class="card"><b>ω (rad/s):</b> <span id="w-val"></span></div>
+        <div class="card"><b>T (s):</b> <span id="T-val"></span></div>
+        <div class="card"><b>f (Hz):</b> <span id="f-val"></span></div>
+        <div class="card"><b>x(t) (m):</b> <span id="x-val"></span></div>
+        <div class="card"><b>v (m/s):</b> <span id="v-val"></span></div>
+        <div class="card"><b>KE (J):</b> <span id="ke-val"></span></div>
+        <div class="card"><b>PE (J):</b> <span id="pe-val"></span></div>
+        <div class="card"><b>Total E (J):</b> <span id="E-val"></span></div>
+    </div>
+</aside>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Physics State
+    let sys = {
+        m: 1.0, k: 50, b: 0.1,
+        x: 0.8, v: 0, a: 0,
+        y_eq: 150, // Equilibrium visual height
+        dt: 0.016, active: true
+    };
+
+    function init() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        sys.y_eq = 100;
+    }
+    window.addEventListener('resize', init);
+    init();
+
+    // Inputs
+    const UI = {
+        m: document.getElementById('m'), k: document.getElementById('k'), b: document.getElementById('b'),
+        vm: document.getElementById('v-m'), vk: document.getElementById('v-k'), vb: document.getElementById('v-b'),
+        outT: document.getElementById('out-t'), outF: document.getElementById('out-f'), outX: document.getElementById('out-x'),
+        bKE: document.getElementById('bar-ke'), bPE: document.getElementById('bar-pe')
+    };
+
+    UI.m.oninput = (e) => { sys.m = parseFloat(e.target.value); UI.vm.innerText = sys.m; };
+    UI.k.oninput = (e) => { sys.k = parseFloat(e.target.value); UI.vk.innerText = sys.k; };
+    UI.b.oninput = (e) => { sys.b = parseFloat(e.target.value); UI.vb.innerText = sys.b; };
+
+    function togglePlay() {
+        sys.active = !sys.active;
+        document.getElementById('playBtn').innerText = sys.active ? "PAUSE" : "RESUME";
+    }
+
+    function resetSim() { sys.x = 0.8; sys.v = 0; sys.active = true; }
+
+    function updatePhysics() {
+        if (!sys.active) return;
+
+        // F = -kx - bv
+        const force_spring = -sys.k * sys.x;
+        const force_damping = -sys.b * sys.v;
+        sys.a = (force_spring + force_damping) / sys.m;
+
+        // Integration
+        sys.v += sys.a * sys.dt;
+        sys.x += sys.v * sys.dt;
+
+        // Metrics
+        const T = 2 * Math.PI * Math.sqrt(sys.m / sys.k);
+        UI.outT.innerText = T.toFixed(2);
+        UI.outF.innerText = (1/T).toFixed(2);
+        UI.outX.innerText = sys.x.toFixed(2);
+
+        // Energy
+        const pe = 0.5 * sys.k * Math.pow(sys.x, 2);
+        const ke = 0.5 * sys.m * Math.pow(sys.v, 2);
+        const total = Math.max(pe + ke, 1);
+        UI.bKE.style.width = (ke / total * 100) + "%";
+        UI.bPE.style.width = (pe / total * 100) + "%";
+        // update total energy display (if present)
+        const sOutE = document.getElementById('s-out-e'); if (sOutE) sOutE.innerText = (pe+ke).toFixed(4);
+        // update side-panel live solutions
+        try { updateSolutions(); } catch (e) { /* ignore if not yet bound */ }
+    }
+
+    // --- Quiz & Challenges JS ---
+    function evaluateSQuiz() {
+        const key = { sq1: 'C', sq2: 'B', sq3: 'B', sq4: 'B', sq5: 'B', sq6: 'B', sq7: 'C', sq8: 'B', sq9: 'B', sq10: 'B', sq11: 'B' };
+        let score = 0, total = Object.keys(key).length;
+        for (let i = 1; i <= total; i++) {
+            const name = 'sq' + i;
+            const els = Array.from(document.getElementsByName(name));
+            const resEl = document.getElementById(name + '-res');
+
+            // reset styles
+            els.forEach(el=>{ const lab = el.parentElement; if(lab){ lab.style.background=''; lab.style.border=''; lab.style.padding=''; } });
+
+            let val = null;
+            for (const el of els) if (el.checked) val = el.value;
+            const correct = key[name];
+
+            // highlight correct option and mark wrong selection
+            let correctLabelText = correct;
+            for (const el of els) {
+                const lab = el.parentElement;
+                if (!lab) continue;
+                const text = lab.textContent.replace(/\s+/g,' ').trim();
+                if (String(el.value) === String(correct)) {
+                    correctLabelText = text;
+                    lab.style.background = '#d1fae5'; lab.style.border = '1px solid #34d399'; lab.style.padding = '6px';
+                }
+                if (el.checked && String(el.value) !== String(correct)) {
+                    lab.style.background = '#fee2e2'; lab.style.border = '1px solid #f87171'; lab.style.padding = '6px';
+                }
+            }
+
+            if (val && String(val) === String(correct)) {
+                score++;
+                if (resEl) { resEl.innerText = 'Correct'; resEl.style.color = 'green'; }
+            } else {
+                if (resEl) { resEl.innerHTML = `Wrong — Correct: <strong>${correctLabelText}</strong>`; resEl.style.color = 'crimson'; }
+            }
+        }
+        const out = document.getElementById('s-quiz-result'); if (out) out.innerText = `Score: ${score}/${total} — ${Math.round(score/total*100)}%`;
+    }
+
+    document.getElementById('s-quiz-check').addEventListener('click', evaluateSQuiz);
+
+    // measure period by zero-crossings of displacement
+    function measurePeriodS(n = 10, timeout = 20000) {
+        return new Promise((resolve, reject) => {
+            let count = 0; let first = null; let last = null; let lastSign = Math.sign(sys.x);
+            const start = performance.now();
+            function step() {
+                const now = performance.now();
+                const sign = Math.sign(sys.x);
+                if (lastSign <= 0 && sign > 0) {
+                    if (first === null) first = now; else { count++; last = now; }
+                }
+                lastSign = sign;
+                if (count >= n) { const period = (last - first) / count / 1000; resolve(period); return; }
+                if (now - start > timeout) { reject(new Error('Timeout measuring period')); return; }
+                requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        });
+    }
+
+    async function runSChallenge(id) {
+        const note = document.getElementById('s-challenge-note'); const cres = document.getElementById('s-challenge-result');
+        note.innerText = ''; cres.innerText = '';
+        if (id === 'measure') {
+            note.innerText = 'Measuring...';
+            try { const T = await measurePeriodS(parseInt(document.getElementById('osc-count').value || 10)); cres.innerText = `Average period ≈ ${T.toFixed(4)} s`; }
+            catch (err) { cres.innerText = 'Measurement failed: ' + err.message; }
+        } else if (id === 'mass') {
+            const v = parseFloat(document.getElementById('challenge-m').value) || sys.m; document.getElementById('m').value = v; UI.vm.innerText = v; sys.m = v; note.innerText = `Mass set to ${v}`; await new Promise(r => setTimeout(r, 200)); try { const T = await measurePeriodS(6); cres.innerText = `T ≈ ${T.toFixed(4)} s (m=${v})`; } catch (err) { cres.innerText = err.message; }
+        } else if (id === 'k') {
+            const v = parseFloat(document.getElementById('challenge-k').value) || sys.k; document.getElementById('k').value = v; UI.vk.innerText = v; sys.k = v; note.innerText = `k set to ${v}`; await new Promise(r => setTimeout(r,200)); try { const T = await measurePeriodS(6); cres.innerText = `T ≈ ${T.toFixed(4)} s (k=${v})`; } catch (err) { cres.innerText = err.message; }
+        } else if (id === 'amp') {
+            const v = parseFloat(document.getElementById('challenge-A').value) || 0.5; sys.x = v; note.innerText = `Amplitude set to ${v}. Observe period unchanged for ideal SHM.`; }
+        else if (id === 'graph') {
+            note.innerText = 'Graph Matching: observe the displacement and velocity traces on the HUD and try to match shapes.';
+            cres.innerText = 'Visual task — compare plots by eye.';
+        } else if (id === 'energy') {
+            note.innerText = 'Energy Tracking: highlights show KE/PE in the energy overlay. Watch when each peaks.';
+            cres.innerText = 'KE peaks near equilibrium; PE peaks at max displacement.';
+        } else if (id === 'damping') {
+            const v = parseFloat(document.getElementById('challenge-b').value) || sys.b; document.getElementById('b').value = v; UI.vb.innerText = v; sys.b = v; note.innerText = `Damping set to ${v}`; cres.innerText = 'Observe amplitude decay.';
+        } else if (id === 'compare') {
+            // quick compare: show two presets and measure periods
+            note.innerText = 'Comparing heavy (m=5) vs light (m=0.5) — measuring...';
+            const prevM = sys.m;
+            try {
+                document.getElementById('m').value = 5; UI.vm.innerText = 5; sys.m = 5; await new Promise(r=>setTimeout(r,120)); const T1 = await measurePeriodS(4);
+                document.getElementById('m').value = 0.5; UI.vm.innerText = 0.5; sys.m = 0.5; await new Promise(r=>setTimeout(r,120)); const T2 = await measurePeriodS(4);
+                cres.innerText = `Heavy m=5 → T≈${T1.toFixed(4)} s; Light m=0.5 → T≈${T2.toFixed(4)} s`;
+            } catch(err){ cres.innerText = 'Comparison failed: '+err.message; }
+            document.getElementById('m').value = prevM; UI.vm.innerText = prevM; sys.m = prevM;
+        } else if (id === 'phase') {
+            const v = parseFloat(document.getElementById('challenge-phase').value) || sys.x; sys.x = v; note.innerText = `Start position set to ${v}`; cres.innerText = 'Observe phase shift compared to default.';
+        } else if (id === 'car') {
+            note.innerText = 'Car Suspension: increase damping to reduce oscillation. Try b around 1.0.'; cres.innerText = 'Apply in Damping Control.';
+        } else if (id === 'building') {
+            note.innerText = 'Building Stability: increase damping and stiffness to reduce resonant motion.'; cres.innerText = 'Try damping b > 0.5 and larger k.';
+        } else if (id === 'optimize') {
+            note.innerText = 'Energy Optimization: set damping to near zero and observe energy conservation.'; cres.innerText = 'Reduce b to 0 to approximate ideal SHM.';
+        } else if (id === 'predict') {
+            note.innerText = 'Predict: doubling k — simulating';
+            try {
+                const prevK = sys.k; document.getElementById('k').value = prevK * 2; UI.vk.innerText = prevK*2; sys.k = prevK*2; await new Promise(r=>setTimeout(r,150)); const T = await measurePeriodS(6); cres.innerText = `After k doubled: T ≈ ${T.toFixed(4)} s (was ${ (2*Math.PI*Math.sqrt(prevK/sys.m)).toFixed(4) } s)`; document.getElementById('k').value = prevK; UI.vk.innerText = prevK; sys.k = prevK; }
+            catch(err){ cres.innerText = 'Prediction failed: '+err.message; }
+        } else if (id === 'target') {
+            const target = parseFloat(document.getElementById('target-T').value) || 1.0;
+            // solve for m keeping k constant: m = k*(T/(2π))^2
+            const kcur = sys.k; const needed = kcur * Math.pow(target/(2*Math.PI),2);
+            document.getElementById('m').value = needed.toFixed(3); UI.vm.innerText = Number(needed.toFixed(3)); sys.m = Number(needed.toFixed(3)); note.innerText = `Set m=${needed.toFixed(3)} to achieve T≈${target.toFixed(3)}s (approx).`;
+            cres.innerText = 'Applied new mass to match target period.';
+        }
+    }
+
+    // Tab switching for analysis panels
+    (function(){
+        function switchTab(name){ document.querySelectorAll('.tab-panel').forEach(p=>p.style.display='none'); const el=document.getElementById(name); if(el) el.style.display='block'; document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); document.querySelectorAll('.tab-btn').forEach(b=>{ if(b.dataset.tab===name) b.classList.add('active'); }); }
+        document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click', ()=>switchTab(b.dataset.tab)));
+        // default
+        const first = document.querySelector('.tab-btn'); if(first) first.click();
+    })();
+
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const centerX = canvas.width / 2;
+        const scale = 100; // Meters to Pixels
+        const visualY = sys.y_eq + (sys.x * scale);
+
+        // Draw Support
+        ctx.fillStyle = "#334155";
+        ctx.fillRect(centerX - 40, 0, 80, 10);
+
+        // Draw Spring (Zig-zag)
+        ctx.strokeStyle = "#94a3b8";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(centerX, 10);
+        const coils = 15;
+        const step = (visualY - 10) / coils;
+        for(let i=1; i<=coils; i++) {
+            const xOff = (i % 2 === 0) ? 15 : -15;
+            ctx.lineTo(centerX + xOff, 10 + (i * step) - (step/2));
+            ctx.lineTo(centerX, 10 + (i * step));
+        }
+        ctx.stroke();
+
+        // Draw Equilibrium Line
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = "#cbd5e1";
+        ctx.beginPath();
+        ctx.moveTo(centerX - 60, sys.y_eq);
+        ctx.lineTo(centerX + 60, sys.y_eq);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Draw Mass
+        ctx.fillStyle = varColor('--primary');
+        const size = 30 + (sys.m * 3);
+        ctx.fillRect(centerX - size/2, visualY, size, size);
+        ctx.strokeStyle = "white";
+        ctx.strokeRect(centerX - size/2, visualY, size, size);
+
+        // Vector: Velocity
+        if(Math.abs(sys.v) > 0.1) {
+            ctx.beginPath();
+            ctx.strokeStyle = varColor('--secondary');
+            ctx.lineWidth = 4;
+            ctx.moveTo(centerX + size/2 + 10, visualY + size/2);
+            ctx.lineTo(centerX + size/2 + 10, visualY + size/2 + (sys.v * 30));
+            ctx.stroke();
+        }
+
+        updatePhysics();
+        requestAnimationFrame(draw);
+    }
+
+    // --- Live solution updates and panel behavior ---
+    function updateSolutions(){
+        // compute derived values
+        const omega = Math.sqrt(sys.k / sys.m);
+        const T = 2 * Math.PI * Math.sqrt(sys.m / sys.k);
+        const f = 1 / T;
+        const x = sys.x;
+        const v = sys.v;
+        const pe = 0.5 * sys.k * x * x;
+        const ke = 0.5 * sys.m * v * v;
+        const E = pe + ke;
+
+        // write into right panel
+        const byId = id => document.getElementById(id);
+        if (byId('w-val')) byId('w-val').innerText = omega.toFixed(4);
+        if (byId('T-val')) byId('T-val').innerText = T.toFixed(4);
+        if (byId('f-val')) byId('f-val').innerText = f.toFixed(4);
+        if (byId('x-val')) byId('x-val').innerText = x.toFixed(4);
+        if (byId('v-val')) byId('v-val').innerText = v.toFixed(4);
+        if (byId('ke-val')) byId('ke-val').innerText = ke.toFixed(5);
+        if (byId('pe-val')) byId('pe-val').innerText = pe.toFixed(5);
+        if (byId('E-val')) byId('E-val').innerText = E.toFixed(5);
+
+        // left panel: show substitutions and steps
+        if (byId('F-step')) byId('F-step').innerHTML = `<b>Hooke's Law:</b> F = -k x = -(${sys.k.toFixed(2)}) * (${x.toFixed(4)}) = ${( -sys.k * x ).toFixed(4)} N`;
+        if (byId('eq-step')) byId('eq-step').innerHTML = `<b>Equation:</b> m d²x/dt² + k x = 0 → ω = √(k/m) = √(${sys.k}/${sys.m}) = ${omega.toFixed(4)} rad/s`;
+        if (byId('w-step')) byId('w-step').innerHTML = `<b>Angular freq:</b> ω = ${omega.toFixed(6)} rad/s`;
+        if (byId('T-step')) byId('T-step').innerHTML = `<b>Period:</b> T = 2π √(m/k) = 2π √(${sys.m}/${sys.k}) = ${T.toFixed(5)} s`;
+        if (byId('amax-step')) byId('amax-step').innerHTML = `<b>Max acc (approx):</b> a_max ≈ ω² A. Using current |x| as A → ${ (omega*omega*Math.abs(x)).toFixed(5)} m/s²`;
+        if (byId('x-step')) byId('x-step').innerHTML = `<b>Displacement now:</b> x(t) = ${x.toFixed(5)} m`;
+        if (byId('v-step')) byId('v-step').innerHTML = `<b>Velocity now:</b> v(t) = ${v.toFixed(5)} m/s`;
+        if (byId('energy-step')) byId('energy-step').innerHTML = `<b>KE:</b> ${ke.toFixed(6)} J &nbsp; <b>PE:</b> ${pe.toFixed(6)} J &nbsp; <b>Total:</b> ${E.toFixed(6)} J`;
+        if (byId('other-step')) byId('other-step').innerHTML = `<small>ω = ${omega.toFixed(4)}, T = ${T.toFixed(4)}, f = ${f.toFixed(4)}</small>`;
+    }
+
+    // Panel open/close & full toggles + simple pan/zoom for .panel-frame
+    function panelSetup(){
+        const left = document.getElementById('left-panel');
+        const right = document.getElementById('right-panel');
+        const openLeft = document.getElementById('open-left');
+        const openRight = document.getElementById('open-right');
+        const leftFull = document.getElementById('left-full');
+        const leftClose = document.getElementById('left-close');
+        const rightFull = document.getElementById('right-full');
+        const rightClose = document.getElementById('right-close');
+
+        if (openLeft) openLeft.addEventListener('click', ()=>{ left.classList.add('open'); left.setAttribute('aria-hidden','false'); document.body.classList.add('panel-open'); });
+        if (openRight) openRight.addEventListener('click', ()=>{ right.classList.add('open'); right.setAttribute('aria-hidden','false'); document.body.classList.add('panel-open'); });
+        if (leftClose) leftClose.addEventListener('click', ()=>{ left.classList.remove('open'); left.setAttribute('aria-hidden','true'); resetTransform('left-panel'); if(!right.classList.contains('open')) document.body.classList.remove('panel-open'); });
+        if (rightClose) rightClose.addEventListener('click', ()=>{ right.classList.remove('open'); right.setAttribute('aria-hidden','true'); resetTransform('right-panel'); if(!left.classList.contains('open')) document.body.classList.remove('panel-open'); });
+        if (leftFull) leftFull.addEventListener('click', ()=>{ left.classList.toggle('full'); if (left.classList.contains('full')) left.classList.add('open'); else resetTransform('left-panel'); });
+        if (rightFull) rightFull.addEventListener('click', ()=>{ right.classList.toggle('full'); if (right.classList.contains('full')) right.classList.add('open'); else resetTransform('right-panel'); });
+
+        // keep inner frame pan/zoom but also enable dragging + zooming of the entire panel
+        attachPanZoom('left-frame');
+        attachPanZoom('right-frame');
+        attachPanelDragZoom('left-panel');
+        attachPanelDragZoom('right-panel');
+    }
+
+    function resetFrame(id){ const f = document.getElementById(id); if(!f) return; f.style.transform = 'translate(0px,0px) scale(1)'; f._tx=0; f._ty=0; f._s=1; }
+
+    function attachPanZoom(id){
+        const el = document.getElementById(id); if(!el) return; el._tx = 0; el._ty = 0; el._s = 1; let active=false, sx=0, sy=0;
+        el.addEventListener('pointerdown', (ev)=>{ active=true; el.setPointerCapture(ev.pointerId); el.classList.add('grabbing'); sx = ev.clientX; sy = ev.clientY; el._pid = ev.pointerId; });
+        el.addEventListener('pointermove', (ev)=>{ if(!active || ev.pointerId!==el._pid) return; const dx = ev.clientX - sx, dy = ev.clientY - sy; sx = ev.clientX; sy = ev.clientY; el._tx += dx; el._ty += dy; clampAndApply(el); });
+        el.addEventListener('pointerup', (ev)=>{ active=false; try{ el.releasePointerCapture(ev.pointerId);}catch(e){} el.classList.remove('grabbing'); delete el._pid; });
+        el.addEventListener('wheel', (ev)=>{ ev.preventDefault(); const delta = ev.deltaY; const scaleF = delta > 0 ? 0.95 : 1.05; el._s = Math.max(0.5, Math.min(3, el._s * scaleF)); clampAndApply(el); }, { passive:false });
+        function clampAndApply(e){ const max = Math.max(window.innerWidth, window.innerHeight); e._tx = Math.max(-max, Math.min(max, e._tx)); e._ty = Math.max(-max, Math.min(max, e._ty)); e.style.transform = `translate(${e._tx}px, ${e._ty}px) scale(${e._s})`; }
+    }
+
+    // attach pan/zoom (drag + wheel + pinch) to the entire side panel element
+    function attachPanelDragZoom(id){
+        const el = document.getElementById(id); if(!el) return; el._tx = el._tx||0; el._ty = el._ty||0; el._s = el._s||1;
+        let pointers = {};
+        function getCenter() {
+            const keys = Object.keys(pointers); if (keys.length === 0) return null;
+            let cx=0, cy=0; for (const k of keys) { cx += pointers[k].x; cy += pointers[k].y; } return { x: cx/keys.length, y: cy/keys.length };
+        }
+
+        el.addEventListener('pointerdown', (ev)=>{
+            // if starting interaction on a control, do not start panel drag (so buttons and inputs remain clickable)
+            if (ev.target && ev.target.closest && ev.target.closest('button, input, select, textarea, label, a')) return;
+            pointers[ev.pointerId] = { x: ev.clientX, y: ev.clientY };
+            el.setPointerCapture(ev.pointerId);
+            el.classList.add('grabbing');
+            if (Object.keys(pointers).length === 1) { el._dragging = true; el._lastX = ev.clientX; el._lastY = ev.clientY; }
+        });
+
+        el.addEventListener('pointermove', (ev)=>{
+            if (!pointers[ev.pointerId]) return;
+            pointers[ev.pointerId].x = ev.clientX; pointers[ev.pointerId].y = ev.clientY;
+            const keys = Object.keys(pointers);
+            if (keys.length === 1 && el._dragging) {
+                const dx = ev.clientX - el._lastX, dy = ev.clientY - el._lastY;
+                el._lastX = ev.clientX; el._lastY = ev.clientY;
+                el._tx += dx; el._ty += dy; clampPanel(el); applyPanelTransform(el);
+            } else if (keys.length === 2) {
+                // pinch zoom
+                const a = pointers[keys[0]]; const b = pointers[keys[1]];
+                const dx = b.x - a.x, dy = b.y - a.y; const dist = Math.hypot(dx,dy);
+                if (!el._lastDist) { el._lastDist = dist; return; }
+                const scaleF = dist / el._lastDist; el._lastDist = dist;
+                el._s = Math.max(0.5, Math.min(4, el._s * scaleF)); clampPanel(el); applyPanelTransform(el);
+            }
+        });
+
+        el.addEventListener('pointerup', (ev)=>{
+            delete pointers[ev.pointerId]; try{ el.releasePointerCapture(ev.pointerId);}catch(e){} el.classList.remove('grabbing'); el._dragging = false; el._lastDist = null;
+        });
+
+        el.addEventListener('pointercancel', (ev)=>{ delete pointers[ev.pointerId]; el.classList.remove('grabbing'); el._dragging = false; el._lastDist = null; });
+
+        el.addEventListener('wheel', (ev)=>{ ev.preventDefault(); const scaleF = ev.deltaY > 0 ? 0.95 : 1.05; el._s = Math.max(0.5, Math.min(4, el._s * scaleF)); clampPanel(el); applyPanelTransform(el); }, { passive:false });
+
+        function applyPanelTransform(e){ e.style.transform = `translate(${e._tx}px, ${e._ty}px) scale(${e._s})`; }
+
+        function clampPanel(e){
+            // clamp so panel remains at least partly visible
+            const rect = e.getBoundingClientRect(); const vw = window.innerWidth, vh = window.innerHeight;
+            const w = rect.width * e._s, h = rect.height * e._s;
+            // allow some movement but keep center within window bounds
+            const minX = - (rect.left + w) ; const maxX = vw - rect.left;
+            e._tx = Math.max(-vw, Math.min(vw, e._tx));
+            e._ty = Math.max(-vh, Math.min(vh, e._ty));
+        }
+
+        // expose reset
+        el.resetTransform = ()=>{ el._tx = 0; el._ty = 0; el._s = 1; applyPanelTransform(el); };
+    }
+
+    function resetTransform(id){ const el = document.getElementById(id); if(!el) return; if (el.resetTransform) el.resetTransform(); else { el.style.transform='translate(0px,0px) scale(1)'; } }
+
+    // initialize panels after DOM ready
+    window.addEventListener('load', ()=>{ panelSetup(); updateSolutions(); });
+    function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name); }
+
+    draw();
+</script>
+</body>
+</html>

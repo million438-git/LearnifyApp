@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Endocrine Lab: Hormone Action</title>
+    <style>
+        :root {
+            --blood: #fee2e2; --hormone: #f59e0b; --receptor: #3b82f6;
+            --primary: #dc2626; --dark: #450a0a; --surface: #ffffff;
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        body { margin: 0; background: var(--dark); color: #f8fafc; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        header { background: #000; padding: 12px; text-align: center; border-bottom: 2px solid var(--primary); }
+        .lab-frame { display: flex; flex: 1; flex-direction: column; overflow: hidden; }
+
+        /* 1. The Body System (Simulation) */
+        #body-scan {
+            flex: 1.5; position: relative; background: radial-gradient(circle, #7f1d1d, #450a0a);
+            overflow: hidden; border-bottom: 2px solid #000;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .organ {
+            width: 80px; height: 80px; border: 3px dashed rgba(255,255,255,0.3);
+            border-radius: 15px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; font-size: 0.7rem;
+            position: absolute; transition: all 0.3s ease;
+        }
+
+        #organ-heart { top: 20%; left: 50%; transform: translateX(-50%); }
+        #organ-liver { top: 55%; left: 30%; }
+        #organ-muscle { top: 55%; right: 30%; }
+
+        .hormone-particle {
+            position: absolute; width: 8px; height: 8px; background: var(--hormone);
+            border-radius: 50%; box-shadow: 0 0 8px var(--hormone);
+            transition: all 2s ease-in-out; pointer-events: none;
+        }
+
+        /* 2. Control Panel */
+        .panel { flex: 2; display: flex; flex-direction: row; background: var(--surface); color: #1e293b; overflow-y: auto; }
+        .glands { flex: 1; padding: 20px; border-right: 1px solid #e2e8f0; min-width: 300px; }
+        .feedback { flex: 1.2; padding: 20px; background: #f8fafc; }
+
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 8px; color: white; }
+        .btn-insulin { background: #10b981; }
+        .btn-adrenaline { background: #f59e0b; }
+        .btn-reset { background: #64748b; }
+
+        .monitor-val { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+        .card { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 10px; font-size: 0.85rem; }
+
+        @media (max-width: 768px) {
+            .panel { flex-direction: column; }
+            .glands { border-right: none; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">🩸 Lab: Hormone Action & Homeostasis</h2>
+</header>
+
+<div class="lab-frame">
+    <div id="body-scan">
+        <div id="organ-heart" class="organ">🫀 HEART</div>
+        <div id="organ-liver" class="organ">🍱 LIVER</div>
+        <div id="organ-muscle" class="organ">💪 MUSCLE</div>
+        <div style="position:absolute; bottom:10px; width:100%; text-align:center; color:rgba(255,255,255,0.4); font-size:0.6rem;">BLOODSTREAM TRANSPORT ACTIVE</div>
+    </div>
+
+    <div class="panel">
+        <div class="glands">
+            <label style="font-size:0.7rem; font-weight:bold; color:#64748b;">GLANDS (STIMULATORS)</label>
+            <button class="btn btn-adrenaline" onclick="releaseHormone('adrenaline')">Adrenal Gland (Adrenaline)</button>
+            <button class="btn btn-insulin" onclick="releaseHormone('insulin')">Pancreas (Insulin)</button>
+            <button class="btn btn-reset" onclick="resetSystem()">STABILIZE SYSTEM</button>
+
+            <div class="card" style="margin-top:15px;">
+                <b>Vitals Monitor:</b><br>
+                Heart Rate: <span id="hr-val" class="monitor-val">70</span> bpm<br>
+                Blood Sugar: <span id="bg-val" class="monitor-val">100</span> mg/dL
+            </div>
+        </div>
+
+        <div class="feedback">
+            <div class="card">
+                <b>Theory:</b> Hormones are chemical messengers secreted by <b>Glands</b> into the <b>Bloodstream</b>. They only work on organs with specific <b>Receptors</b>.
+            </div>
+
+            <div class="card">
+                <b>Task:</b> Lower the blood sugar to 80 mg/dL by releasing the correct hormone.
+            </div>
+
+            <div class="card">
+                <b>Quiz:</b> How do hormones reach their target organs?
+                <button class="btn" style="background:#eee; color:black; padding:5px; margin-top:5px; font-size:0.7rem;" onclick="alert('Correct! They travel globally through blood.')">Circulating in Blood</button>
+                <button class="btn" style="background:#eee; color:black; padding:5px; margin-top:5px; font-size:0.7rem;" onclick="alert('Incorrect. Nerves send electrical signals, not hormones.')">Direct Nerve Connections</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let hr = 70;
+    let bg = 100;
+    const body = document.getElementById('body-scan');
+
+    function releaseHormone(type) {
+        for(let i=0; i<10; i++) {
+            const h = document.createElement('div');
+            h.className = 'hormone-particle';
+            h.style.left = '10%';
+            h.style.top = '50%';
+            body.appendChild(h);
+
+            // Target Logic
+            let target = (type === 'adrenaline') ? document.getElementById('organ-heart') : document.getElementById('organ-liver');
+
+            setTimeout(() => {
+                h.style.left = target.offsetLeft + 40 + 'px';
+                h.style.top = target.offsetTop + 40 + 'px';
+            }, 100);
+
+            setTimeout(() => {
+                body.removeChild(h);
+                applyEffect(type);
+            }, 2100);
+        }
+    }
+
+    function applyEffect(type) {
+        if(type === 'adrenaline') {
+            hr = Math.min(hr + 5, 180);
+            document.getElementById('organ-heart').style.borderColor = 'var(--primary)';
+        } else {
+            bg = Math.max(bg - 5, 60);
+            document.getElementById('organ-liver').style.borderColor = '#10b981';
+        }
+        updateVitals();
+    }
+
+    function updateVitals() {
+        document.getElementById('hr-val').innerText = hr;
+        document.getElementById('bg-val').innerText = bg;
+
+        // Return to normal (Homeostasis)
+        if(hr > 70) hr--;
+        if(bg < 100) bg++;
+    }
+
+    function resetSystem() {
+        hr = 70; bg = 100;
+        document.querySelectorAll('.organ').forEach(o => o.style.borderColor = 'rgba(255,255,255,0.3)');
+        updateVitals();
+    }
+
+    setInterval(updateVitals, 1000);
+</script>
+</body>
+</html>

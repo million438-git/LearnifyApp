@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Immunology Lab: Body Defense</title>
+    <style>
+        :root {
+            --blood: #7f1d1d; --pathogen: #10b981; --leukocyte: #f8fafc;
+            --antibody: #facc15; --primary: #ef4444; --surface: #ffffff;
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { margin: 0; background: #450a0a; color: #f8fafc; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        header { background: #000; padding: 12px; text-align: center; border-bottom: 2px solid var(--primary); }
+        .lab-container { display: flex; flex: 1; flex-direction: column; overflow: hidden; }
+
+        /* 1. Microscopic View (Simulation) */
+        #micro-view {
+            flex: 1.5; position: relative; background: radial-gradient(circle, #991b1b, #450a0a);
+            overflow: hidden; border-bottom: 2px solid #000;
+        }
+
+        .cell { position: absolute; border-radius: 50%; transition: all 0.5s linear; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.6rem; }
+        .pathogen { width: 15px; height: 15px; background: var(--pathogen); border: 2px solid #064e3b; box-shadow: 0 0 10px var(--pathogen); }
+        .white-cell { width: 40px; height: 40px; background: var(--leukocyte); border: 2px solid #cbd5e1; color: #1e293b; box-shadow: 0 0 15px #fff; }
+        .antibody { width: 8px; height: 8px; background: var(--antibody); border-radius: 2px; position: absolute; }
+
+        /* 2. Command Center */
+        .panel { flex: 2; display: flex; flex-direction: row; background: var(--surface); color: #1e293b; overflow-y: auto; }
+        .controls { flex: 1; padding: 20px; border-right: 1px solid #e2e8f0; min-width: 320px; }
+        .stats { flex: 1.2; padding: 20px; background: #f1f5f9; }
+
+        .meter-box { margin-bottom: 15px; }
+        .meter-bar { width: 100%; height: 12px; background: #ddd; border-radius: 6px; overflow: hidden; margin-top: 5px; }
+        .fill { height: 100%; transition: width 0.3s ease; }
+
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 10px; color: white; }
+        .btn-infect { background: var(--primary); }
+        .btn-vax { background: #0284c7; }
+        .btn-reset { background: #64748b; }
+
+        .card { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 10px; font-size: 0.85rem; }
+
+        @media (max-width: 768px) {
+            .panel { flex-direction: column; }
+            .controls { border-right: none; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">🛡️ Immunology Lab: Immune Response</h2>
+</header>
+
+<div class="lab-container">
+    <div id="micro-view">
+        <div style="position:absolute; top:10px; left:10px; font-family:monospace; color:rgba(255,255,255,0.5); font-size:0.7rem;">
+            SCANNING BLOODSTREAM...
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="controls">
+            <div class="meter-box">
+                <label style="font-size:0.7rem; font-weight:bold;">INFECTION SEVERITY</label>
+                <div class="meter-bar"><div id="inf-fill" class="fill" style="background:var(--primary); width: 0%;"></div></div>
+            </div>
+
+            <div class="meter-box">
+                <label style="font-size:0.7rem; font-weight:bold;">ANTIBODY COUNT</label>
+                <div class="meter-bar"><div id="anti-fill" class="fill" style="background:var(--antibody); width: 0%;"></div></div>
+            </div>
+
+            <button class="btn btn-infect" onclick="infect()">INTRODUCE PATHOGEN (ANTIGEN)</button>
+            <button class="btn btn-vax" onclick="vaccinate()">ADMINISTER VACCINE</button>
+            <button class="btn btn-reset" onclick="resetLab()">CLEANSE SYSTEM</button>
+
+            <div class="card">
+                <b>Task:</b> Can the immune system fight off a 100% infection <i>without</i> a vaccine? Try it and observe the results.
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="card">
+                <b>Immunology Theory:</b>
+                <p>When an <b>Antigen</b> (Pathogen) enters the body, <b>B-Cells</b> produce specific <b>Antibodies</b> that "tag" them for destruction by <b>Phagocytes</b>.</p>
+            </div>
+
+            <div class="card">
+                <b>Quiz:</b> What part of the immune system "remembers" a pathogen?
+                <button class="btn" style="background:#eee; color:black; padding:5px; margin-top:5px; font-size:0.7rem;" onclick="alert('Correct! Memory B and T cells provide long-term immunity.')">Memory Cells</button>
+                <button class="btn" style="background:#eee; color:black; padding:5px; margin-top:5px; font-size:0.7rem;" onclick="alert('Wrong. Antigens are the invaders, not the memory!')">Antigens</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const micro = document.getElementById('micro-view');
+    let pathogens = [];
+    let whiteCells = [];
+    let vaxLevel = 0;
+    let loop;
+
+    function createCell(type) {
+        const div = document.createElement('div');
+        div.className = `cell ${type}`;
+        div.style.left = Math.random() * 90 + '%';
+        div.style.top = Math.random() * 80 + '%';
+        if(type === 'white-cell') div.innerText = "WBC";
+        micro.appendChild(div);
+        return { el: div, x: Math.random() * 100, y: Math.random() * 100 };
+    }
+
+    function infect() {
+        for(let i=0; i<15; i++) pathogens.push(createCell('pathogen'));
+        updateMeters();
+    }
+
+    function vaccinate() {
+        vaxLevel = 100;
+        document.getElementById('anti-fill').style.width = '100%';
+        alert("Vaccine introduced. Memory cells activated. Antibody production increasing.");
+    }
+
+    function updateMeters() {
+        const pCount = pathogens.length;
+        document.getElementById('inf-fill').style.width = Math.min(pCount * 5, 100) + '%';
+    }
+
+    function runSim() {
+        whiteCells.forEach(w => {
+            w.el.style.left = (Math.random() * 90) + '%';
+            w.el.style.top = (Math.random() * 80) + '%';
+        });
+
+        if(pathogens.length > 0) {
+            // Chance of immune system killing pathogen
+            let killChance = vaxLevel > 0 ? 0.3 : 0.05;
+            if(Math.random() < killChance) {
+                const removed = pathogens.pop();
+                if(removed) micro.removeChild(removed.el);
+            }
+
+            // Pathogens multiply if not vaccinated
+            if(vaxLevel === 0 && Math.random() < 0.1 && pathogens.length < 50) {
+                pathogens.push(createCell('pathogen'));
+            }
+        }
+        updateMeters();
+    }
+
+    function resetLab() {
+        micro.innerHTML = '';
+        pathogens = [];
+        vaxLevel = 0;
+        document.getElementById('anti-fill').style.width = '0%';
+        init();
+    }
+
+    function init() {
+        whiteCells = [];
+        for(let i=0; i<5; i++) whiteCells.push(createCell('white-cell'));
+    }
+
+    init();
+    setInterval(runSim, 1000);
+</script>
+</body>
+</html>
