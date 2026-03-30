@@ -1,11 +1,13 @@
 package com.million.learnify;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.material.button.MaterialButton;
@@ -15,6 +17,7 @@ import com.google.android.material.textfield.TextInputEditText;
 /**
  * AdminLoginActivity - With normal system transitions.
  * Extends BaseActivity for consistent appearance and global settings.
+ * Now loads the last known admin profile image.
  */
 public class AdminLoginActivity extends BaseActivity {
 
@@ -24,6 +27,7 @@ public class AdminLoginActivity extends BaseActivity {
     private CircularProgressIndicator adminLoginProgress;
     private TextView tvAdminRegisterLink;
     private DatabaseHelper dbHelper;
+    private ImageView ivAdminLoginProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +37,7 @@ public class AdminLoginActivity extends BaseActivity {
             setContentView(R.layout.activity_admin_login);
             dbHelper = new DatabaseHelper(this);
             initViews();
+            loadAdminProfileImage();
         } catch (Exception e) {
             Log.e(TAG, "Error in onCreate", e);
             Toast.makeText(this, "UI Load Error", Toast.LENGTH_LONG).show();
@@ -46,6 +51,7 @@ public class AdminLoginActivity extends BaseActivity {
         btnAdminLogin = findViewById(R.id.btnAdminLogin);
         adminLoginProgress = findViewById(R.id.adminLoginProgress);
         tvAdminRegisterLink = findViewById(R.id.tvAdminRegisterLink);
+        ivAdminLoginProfile = findViewById(R.id.ivAdminLoginProfile);
 
         if (btnAdminLogin != null) {
             btnAdminLogin.setOnClickListener(v -> {
@@ -57,6 +63,21 @@ public class AdminLoginActivity extends BaseActivity {
             tvAdminRegisterLink.setOnClickListener(v -> {
                 startActivity(new Intent(this, AdminRegisterActivity.class));
             });
+        }
+    }
+
+    private void loadAdminProfileImage() {
+        if (ivAdminLoginProfile != null) {
+            // By default, attempt to load the profile of 'admin' user
+            String imageUriStr = dbHelper.getUserProfileImage("admin");
+            if (imageUriStr != null && !imageUriStr.isEmpty()) {
+                try {
+                    ivAdminLoginProfile.setImageURI(Uri.parse(imageUriStr));
+                    ivAdminLoginProfile.setPadding(0, 0, 0, 0);
+                } catch (Exception e) {
+                    ivAdminLoginProfile.setImageResource(R.drawable.ic_app_logo);
+                }
+            }
         }
     }
 

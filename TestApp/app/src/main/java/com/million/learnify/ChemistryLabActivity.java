@@ -1,6 +1,7 @@
 package com.million.learnify;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -8,12 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.appbar.AppBarLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -28,7 +32,7 @@ public class ChemistryLabActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_physics_lab); // Reusing the high-vision layout
+        setContentView(R.layout.activity_physics_lab);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -37,6 +41,17 @@ public class ChemistryLabActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("Virtual Chemistry Lab");
         }
         toolbar.setNavigationOnClickListener(v -> finish());
+
+        // Set Subject Specific Colors and Logo
+        AppBarLayout appBarLayout = findViewById(R.id.appBarLayout);
+        LinearLayout headerContainer = findViewById(R.id.llHeaderContainer);
+        ImageView ivLogo = findViewById(R.id.ivSubjectLogo);
+        
+        int chemistryColor = Color.parseColor("#9333EA"); // Purple 600
+        appBarLayout.setBackgroundColor(chemistryColor);
+        headerContainer.setBackgroundColor(chemistryColor);
+        ivLogo.setImageResource(R.drawable.ic_lab);
+        ivLogo.setColorFilter(chemistryColor);
 
         etSearch = findViewById(R.id.etSearch);
         rvExperiments = findViewById(R.id.rvExperiments);

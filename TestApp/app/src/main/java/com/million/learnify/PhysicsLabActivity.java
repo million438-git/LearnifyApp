@@ -1,6 +1,7 @@
 package com.million.learnify;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -8,12 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.appbar.AppBarLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -37,6 +41,17 @@ public class PhysicsLabActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("Virtual Physics Lab");
         }
         toolbar.setNavigationOnClickListener(v -> finish());
+
+        // Set Subject Specific Colors and Logo
+        AppBarLayout appBarLayout = findViewById(R.id.appBarLayout);
+        LinearLayout headerContainer = findViewById(R.id.llHeaderContainer);
+        ImageView ivLogo = findViewById(R.id.ivSubjectLogo);
+        
+        int physicsColor = Color.parseColor("#0284C7"); // Blue 600
+        appBarLayout.setBackgroundColor(physicsColor);
+        headerContainer.setBackgroundColor(physicsColor);
+        ivLogo.setImageResource(R.drawable.ic_lab);
+        ivLogo.setColorFilter(physicsColor);
 
         etSearch = findViewById(R.id.etSearch);
         rvExperiments = findViewById(R.id.rvExperiments);

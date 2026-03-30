@@ -1,6 +1,7 @@
 package com.million.learnify;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -8,12 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.appbar.AppBarLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -34,9 +38,20 @@ public class BiologyLabActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Interactive Biology Lab");
+            getSupportActionBar().setTitle("Virtual Biology Lab");
         }
         toolbar.setNavigationOnClickListener(v -> finish());
+
+        // Set Subject Specific Colors and Logo
+        AppBarLayout appBarLayout = findViewById(R.id.appBarLayout);
+        LinearLayout headerContainer = findViewById(R.id.llHeaderContainer);
+        ImageView ivLogo = findViewById(R.id.ivSubjectLogo);
+        
+        int biologyColor = Color.parseColor("#16A34A"); // Green 600
+        appBarLayout.setBackgroundColor(biologyColor);
+        headerContainer.setBackgroundColor(biologyColor);
+        ivLogo.setImageResource(R.drawable.ic_lab);
+        ivLogo.setColorFilter(biologyColor);
 
         etSearch = findViewById(R.id.etSearch);
         rvExperiments = findViewById(R.id.rvExperiments);

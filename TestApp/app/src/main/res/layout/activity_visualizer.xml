@@ -2,6 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/visualizerRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F8FAFC">
@@ -19,6 +20,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
@@ -37,7 +39,7 @@
                 android:layout_height="wrap_content"
                 app:tabMode="scrollable"
                 app:tabGravity="fill"
-                android:background="@android:color/white"
+                android:background="#80FFFFFF"
                 app:tabSelectedTextColor="?attr/colorPrimary"
                 app:tabIndicatorColor="?attr/colorPrimary"
                 app:tabIndicatorHeight="3dp"
@@ -62,7 +64,7 @@
                 android:clipToPadding="false"
                 android:paddingHorizontal="16dp"
                 android:scrollbars="none"
-                android:background="#F1F5F9"
+                android:background="#40FFFFFF"
                 android:overScrollMode="always">
                 <LinearLayout
                     android:id="@+id/simButtonsContainer"
@@ -74,14 +76,16 @@
 
             <!-- 3. ACTIVE LAB VIEWER -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/labCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginVertical="8dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="8dp"
-                app:strokeWidth="1.5dp"
-                app:strokeColor="#E2E8F0">
+                app:cardBackgroundColor="#80FFFFFF"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#40FFFFFF">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -96,18 +100,34 @@
                         android:text="Select a Simulation"
                         android:textStyle="bold"
                         android:textSize="18sp"
-                        android:background="#F8FAFC"
+                        android:background="#40FFFFFF"
                         android:textColor="#1E293B"
                         android:drawableStart="@android:drawable/ic_menu_slideshow"
                         android:drawablePadding="8dp"
                         android:gravity="center_vertical" />
 
-                    <!-- Increased height for better interaction and full visibility -->
+                    <!-- SUBJECT LOGO AREA -->
+                    <FrameLayout
+                        android:id="@+id/flSubjectLogoContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="400dp">
+
+                        <TextView
+                            android:id="@+id/tvSubjectLogoEmoji"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:textSize="120sp"
+                            android:alpha="0.8"
+                            android:text="⚛️" />
+                    </FrameLayout>
+
                     <WebView
                         android:id="@+id/webViewVisualizer"
                         android:layout_width="match_parent"
                         android:layout_height="600dp"
-                        android:background="@android:color/white"
+                        android:background="@android:color/transparent"
+                        android:visibility="gone"
                         tools:ignore="WebViewLayout" />
 
                     <!-- Instructions TextView -->
@@ -116,9 +136,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
-                        android:text="@string/lab_instructions_placeholder"
+                        android:text="Choose a simulation to begin."
                         android:textSize="14sp"
-                        android:background="#F1F5F9"
+                        android:background="#40FFFFFF"
                         android:textColor="#475569"
                         android:lineSpacingExtra="4dp" />
 
