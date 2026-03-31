@@ -12,7 +12,7 @@ import java.util.List;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "AceGradeProfessional.db";
-    private static final int DATABASE_VERSION = 42; // Incremented for Assignment Helper and Stats
+    private static final int DATABASE_VERSION = 44; // Updated for Full Professional Certificate Schema
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -63,6 +63,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "total_questions INTEGER, " +
                 "correct_answers INTEGER, " +
                 "date DATETIME DEFAULT CURRENT_TIMESTAMP)");
+
+        // Table for fully editable professional certificates (Twin of the requested image)
+        db.execSQL("CREATE TABLE IF NOT EXISTS custom_certificates (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "username TEXT, " +
+                "cert_title TEXT, " +
+                "presentation_text TEXT, " +
+                "student_name TEXT, " +
+                "body_text TEXT, " +
+                "course_name TEXT, " +
+                "issue_date TEXT, " +
+                "student_id TEXT, " +
+                "certificate_id TEXT, " +
+                "director_name TEXT, " +
+                "director_role TEXT, " +
+                "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS materials (" +
                 "mat_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -140,7 +156,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "details TEXT, " +
                 "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
 
-        // 6.2 & 6.3: Camera Lab Integration Tables
         db.execSQL("CREATE TABLE IF NOT EXISTS lab_history (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "username TEXT, " +
@@ -189,7 +204,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return value;
     }
 
-    // --- CAMERA LAB INTEGRATION (6.1, 6.2, 6.3) ---
     public void saveLabResult(String user, String mode, String prob, String sol, boolean isAssignment, String course) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -200,8 +214,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put("is_assignment_help", isAssignment ? 1 : 0);
         cv.put("course_context", course);
         db.insert("lab_history", null, cv);
-
-        // Update Progress Tracking
         updateLabProgress(user, mode);
     }
 
@@ -229,7 +241,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return getSetting("camera_lab_enabled", "1").equals("1");
     }
 
-    // --- USER & AUTH ---
     public boolean checkUser(String input, String password, String type) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM users WHERE (username=? OR email=?) AND password=? AND user_type=?", new String[]{input, input, password, type});
@@ -307,7 +318,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return this.getReadableDatabase().rawQuery("SELECT username, total_score FROM challenge_stats ORDER BY total_score DESC LIMIT 50", null);
     }
 
-    // --- MATERIALS & CONTENT ---
     public boolean insertMaterial(String title, String content, String type, String subject, String grade, String filePath, String difficulty) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -325,7 +335,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return this.getReadableDatabase().rawQuery("SELECT * FROM materials ORDER BY timestamp DESC", null);
     }
 
-    // --- ANNOUNCEMENTS ---
+    public boolean addAnnouncement(String title, String message, String type) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("title", title);
+        cv.put("message", message);
+        cv.put("type", type);
+        cv.put("target_audience", "All");
+        return db.insert("announcements", null, cv) != -1;
+    }
+
     public boolean insertAnnouncement(String title, String message, String type, String audience) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -355,7 +374,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return list;
     }
 
-    // --- NOTIFICATIONS ---
     public boolean addNotification(String username, String title, String message, String type) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -394,7 +412,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete("user_notifications", "id=?", new String[]{String.valueOf(id)});
     }
 
-    // --- PAYMENTS ---
     public boolean submitPayment(String username, String txId, String amount, String screenshot) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -437,7 +454,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return details;
     }
 
-    // --- SUPPORT TICKETS ---
     public Cursor getAllSupportTickets() {
         return this.getReadableDatabase().rawQuery("SELECT * FROM support_tickets ORDER BY created_at DESC", null);
     }
@@ -450,7 +466,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.update("support_tickets", cv, "id=?", new String[]{String.valueOf(id)});
     }
 
-    // --- ADMIN LOGS ---
     public void logAdminAction(String admin, String action, String details) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -460,7 +475,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert("admin_logs", null, cv);
     }
 
-    // --- ENROLLMENTS ---
     public Cursor getStudentEnrollments(String username) {
         return this.getReadableDatabase().rawQuery("SELECT * FROM enrollments WHERE username=?", new String[]{username});
     }
@@ -478,7 +492,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete("enrollments", "username=? AND course_name=?", new String[]{username, course});
     }
 
-    // --- EXAMS ---
     public Cursor getStudentExamResults(String username) {
         return this.getReadableDatabase().rawQuery("SELECT * FROM exam_results WHERE username=?", new String[]{username});
     }
@@ -494,7 +507,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert("exam_results", null, cv);
     }
 
-    // --- DAILY QUESTIONS & CHALLENGES ---
+    public boolean saveFullCertificate(String user, String title, String presentation, String studName, String body, String course, String date, String studId, String certId, String director, String role) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("username", user);
+        cv.put("cert_title", title);
+        cv.put("presentation_text", presentation);
+        cv.put("student_name", studName);
+        cv.put("body_text", body);
+        cv.put("course_name", course);
+        cv.put("issue_date", date);
+        cv.put("student_id", studId);
+        cv.put("certificate_id", certId);
+        cv.put("director_name", director);
+        cv.put("director_role", role);
+        return db.insert("custom_certificates", null, cv) != -1;
+    }
+
+    public Cursor getCustomCertificate(String username) {
+        return this.getReadableDatabase().rawQuery("SELECT * FROM custom_certificates WHERE username=? ORDER BY timestamp DESC LIMIT 1", new String[]{username});
+    }
+
     public boolean insertDailyQuestion(String q, String a, String b, String c, String d, String ans, String grade, String sub, String diff, String expl) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -515,7 +548,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO challenge_stats (username, total_score, current_streak, last_challenge_date) VALUES (?, ?, ?, ?) ON CONFLICT(username) DO UPDATE SET total_score = ?, current_streak = ?, last_challenge_date = ?", new Object[]{username, score, streak, date, score, streak, date});
     }
 
-    // --- SCHEDULE ---
     public void insertClassCustom(String sub, String teacher, String room, String time, String dur, String day, String grade) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -543,7 +575,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return list;
     }
 
-    // --- TASKS ---
+    public boolean insertDailyQuestionFull(String q, String a, String b, String c, String d, String ans, String grade, String sub, String diff, String expl) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("question", q); cv.put("opt_a", a); cv.put("opt_b", b); cv.put("opt_c", c); cv.put("opt_d", d); cv.put("answer", ans); cv.put("grade", grade); cv.put("subject", sub); cv.put("difficulty", diff); cv.put("explanation", expl);
+        return db.insert("daily_questions", null, cv) != -1;
+    }
+
     public boolean insertTask(String title, String desc, String sub, String grade, String date, String time, String priority) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -586,7 +624,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.delete("tasks", "task_id=?", new String[]{String.valueOf(id)});
     }
 
-    // --- STUDY NOTES ---
     public Cursor getStudyNote(String user, String sub, String chapter, String topic) {
         return this.getReadableDatabase().rawQuery("SELECT * FROM study_notes WHERE username=? AND subject=? AND chapter=? AND topic=?", new String[]{user, sub, chapter, topic});
     }
@@ -600,9 +637,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion < 42) {
-            db.execSQL("DROP TABLE IF EXISTS lab_history");
-            db.execSQL("DROP TABLE IF EXISTS lab_progress");
+        if (oldVersion < 44) {
+            db.execSQL("DROP TABLE IF EXISTS custom_certificates");
             createTables(db);
         }
     }

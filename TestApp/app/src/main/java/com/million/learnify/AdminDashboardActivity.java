@@ -130,7 +130,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
     private void handleNavigation(int id) {
         if (id == R.id.admin_nav_dashboard) {
-            Toast.makeText(this, "Admin Dashboard Refreshing...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.admin_toast_refreshing), Toast.LENGTH_SHORT).show();
         } else if (id == R.id.admin_nav_users) {
             startActivity(new Intent(this, AdminUserManagementActivity.class));
         } else if (id == R.id.admin_nav_content) {
@@ -141,6 +141,8 @@ public class AdminDashboardActivity extends AppCompatActivity {
             startActivity(new Intent(this, AdminReportsActivity.class));
         } else if (id == R.id.admin_nav_settings) {
             startActivity(new Intent(this, AdminSystemSettingsActivity.class));
+        } else if (id == R.id.admin_nav_add_question) {
+            startActivity(new Intent(this, AdminQuestionActivity.class));
         } else if (id == R.id.admin_nav_logout) {
             onLogoutClick(null);
         }
@@ -155,7 +157,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
             startActivity(new Intent(this, DashboardActivity.class)));
             
         findViewById(R.id.cardTeachers).setOnClickListener(v ->
-            Toast.makeText(this, "Opening Staff Directory...", Toast.LENGTH_SHORT).show());
+            Toast.makeText(this, getString(R.string.admin_toast_staff_directory), Toast.LENGTH_SHORT).show());
 
         findViewById(R.id.cardTotalLabs).setOnClickListener(v -> 
             startActivity(new Intent(this, AdminContentManagementActivity.class)));
@@ -184,8 +186,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
     // Command Center Job Implementations
     public void onCreateLabClick(View v) {
-        Toast.makeText(this, "Initializing Virtual Lab Portal...", Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(this, ChemistryLabActivity.class));
+        startActivity(new Intent(this, AdminQuestionActivity.class));
     }
 
     public void onAddUserClick(View v) {
@@ -197,7 +198,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
     }
 
     public void onSimulateClick(View v) {
-        Toast.makeText(this, "Running Global System Simulation...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.admin_toast_running_simulation), Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, PhysicsSimulationActivity.class));
     }
 

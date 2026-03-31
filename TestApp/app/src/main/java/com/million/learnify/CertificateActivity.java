@@ -2,6 +2,7 @@ package com.million.learnify;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.net.Uri;
@@ -23,13 +24,19 @@ import java.util.Locale;
 
 public class CertificateActivity extends AppCompatActivity {
 
-    private TextView tvStudentName, tvSubjectMastered, tvCertificateScore, tvCertificateDate;
+    private TextView tvStudentName, tvSubjectMastered, tvCertificateDate, tvStudentID, tvCertificateID;
+    private TextView tvCertTitle, tvPresentationText, tvBodyText, tvDirectorName, tvDirectorRole;
     private View certificateView;
+    private DatabaseHelper dbHelper;
+    private String currentUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_certificate);
+
+        dbHelper = new DatabaseHelper(this);
+        currentUsername = getSharedPreferences("UserSession", MODE_PRIVATE).getString("username", "");
 
         initViews();
         setupToolbar();
@@ -39,10 +46,16 @@ public class CertificateActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        tvCertTitle = findViewById(R.id.tvCertTitle);
+        tvPresentationText = findViewById(R.id.tvPresentationText);
         tvStudentName = findViewById(R.id.tvStudentName);
+        tvBodyText = findViewById(R.id.tvBodyText);
         tvSubjectMastered = findViewById(R.id.tvSubjectMastered);
-        tvCertificateScore = findViewById(R.id.tvCertificateScore);
         tvCertificateDate = findViewById(R.id.tvCertificateDate);
+        tvStudentID = findViewById(R.id.tvStudentID);
+        tvCertificateID = findViewById(R.id.tvCertificateID);
+        tvDirectorName = findViewById(R.id.tvDirectorName);
+        tvDirectorRole = findViewById(R.id.tvDirectorRole);
         certificateView = findViewById(R.id.certificateView);
     }
 
@@ -56,22 +69,38 @@ public class CertificateActivity extends AppCompatActivity {
     }
 
     private void loadCertificateData() {
-        String studentName = getSharedPreferences("UserSession", MODE_PRIVATE).getString("full_name", "Student");
-        String subject = getIntent().getStringExtra("SUBJECT_NAME");
-        String score = getIntent().getStringExtra("EXAM_SCORE");
-        String date = new SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(new Date());
+        // First, check if there is a FULLY CUSTOM certificate for this user
+        Cursor cursor = dbHelper.getCustomCertificate(currentUsername);
+        if (cursor != null && cursor.moveToFirst()) {
+            tvCertTitle.setText(cursor.getString(cursor.getColumnIndexOrThrow("cert_title")));
+            tvPresentationText.setText(cursor.getString(cursor.getColumnIndexOrThrow("presentation_text")));
+            tvStudentName.setText(cursor.getString(cursor.getColumnIndexOrThrow("student_name")));
+            tvBodyText.setText(cursor.getString(cursor.getColumnIndexOrThrow("body_text")));
+            tvSubjectMastered.setText(cursor.getString(cursor.getColumnIndexOrThrow("course_name")));
+            tvCertificateDate.setText(cursor.getString(cursor.getColumnIndexOrThrow("issue_date")));
+            tvStudentID.setText(cursor.getString(cursor.getColumnIndexOrThrow("student_id")));
+            tvCertificateID.setText(cursor.getString(cursor.getColumnIndexOrThrow("certificate_id")));
+            tvDirectorName.setText(cursor.getString(cursor.getColumnIndexOrThrow("director_name")));
+            tvDirectorRole.setText(cursor.getString(cursor.getColumnIndexOrThrow("director_role")));
+            cursor.close();
+            return;
+        }
 
-        tvStudentName.setText(studentName);
-        tvSubjectMastered.setText(subject != null ? subject.toUpperCase() : "GENERAL STUDIES");
-        tvCertificateScore.setText(score != null ? score : "100%");
-        tvCertificateDate.setText(date);
+        // Fallback to standard data if no custom certificate issued yet
+        String studentFullName = getSharedPreferences("UserSession", MODE_PRIVATE).getString("full_name", "MILLION TESHOME");
+        tvStudentName.setText(studentFullName.toUpperCase());
+        tvStudentID.setText("ID-" + (int)(Math.random() * 90000 + 10000));
+        tvCertificateID.setText("LNYF-" + java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+        tvCertificateDate.setText(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date()));
     }
 
     private void shareCertificate() {
-        Bitmap bitmap = createBitmapFromView(certificateView);
-        if (bitmap != null) {
-            saveAndShare(bitmap);
-        }
+        certificateView.post(() -> {
+            Bitmap bitmap = createBitmapFromView(certificateView);
+            if (bitmap != null) {
+                saveAndShare(bitmap);
+            }
+        });
     }
 
     private Bitmap createBitmapFromView(View view) {
@@ -82,7 +111,7 @@ public class CertificateActivity extends AppCompatActivity {
     }
 
     private void saveAndShare(Bitmap bitmap) {
-        String fileName = "AceGrade_Certificate_" + System.currentTimeMillis() + ".png";
+        String fileName = "Learnify_Official_Certificate_" + System.currentTimeMillis() + ".png";
         OutputStream fos;
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -91,15 +120,17 @@ public class CertificateActivity extends AppCompatActivity {
                 contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
                 contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES);
                 Uri imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-                fos = getContentResolver().openOutputStream(imageUri);
-                
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                if (fos != null) fos.close();
+                if (imageUri != null) {
+                    fos = getContentResolver().openOutputStream(imageUri);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                    if (fos != null) fos.close();
 
-                Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                shareIntent.setType("image/png");
-                shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
-                startActivity(Intent.createChooser(shareIntent, "Share Certificate"));
+                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                    shareIntent.setType("image/png");
+                    shareIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                    shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    startActivity(Intent.createChooser(shareIntent, "Share Professional Certificate"));
+                }
             } else {
                 String imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
                 java.io.File image = new java.io.File(imagesDir, fileName);
@@ -111,11 +142,10 @@ public class CertificateActivity extends AppCompatActivity {
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("image/png");
                 shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-                startActivity(Intent.createChooser(shareIntent, "Share Certificate"));
+                startActivity(Intent.createChooser(shareIntent, "Share Professional Certificate"));
             }
         } catch (Exception e) {
-            Toast.makeText(this, "Error sharing certificate", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
+            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 }

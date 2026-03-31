@@ -124,7 +124,8 @@ public class DailyChallengeActivity extends AppCompatActivity {
                 cursor.getString(cursor.getColumnIndexOrThrow("opt_b")),
                 cursor.getString(cursor.getColumnIndexOrThrow("opt_c")),
                 cursor.getString(cursor.getColumnIndexOrThrow("opt_d")),
-                cursor.getString(cursor.getColumnIndexOrThrow("answer"))
+                cursor.getString(cursor.getColumnIndexOrThrow("answer")),
+                cursor.getString(cursor.getColumnIndexOrThrow("explanation"))
             ));
         }
         cursor.close();
@@ -140,11 +141,8 @@ public class DailyChallengeActivity extends AppCompatActivity {
     }
 
     private void addDummyQuestions() {
-        questionList.add(new DailyQuestion("What is the powerhouse of the cell?", "Nucleus", "Ribosome", "Mitochondria", "Vacuole", "Mitochondria"));
-        questionList.add(new DailyQuestion("Which planet is known as the Red Planet?", "Venus", "Mars", "Jupiter", "Saturn", "Mars"));
-        questionList.add(new DailyQuestion("What is the chemical symbol for Gold?", "Ag", "Fe", "Au", "Pb", "Au"));
-        questionList.add(new DailyQuestion("Who wrote 'Romeo and Juliet'?", "Charles Dickens", "William Shakespeare", "Mark Twain", "Jane Austen", "William Shakespeare"));
-        questionList.add(new DailyQuestion("What is the largest ocean on Earth?", "Atlantic", "Indian", "Arctic", "Pacific", "Pacific"));
+        questionList.add(new DailyQuestion("What is the powerhouse of the cell?", "Nucleus", "Ribosome", "Mitochondria", "Vacuole", "Mitochondria", "Mitochondria are known as the powerhouses of the cell because they generate most of the cell's supply of ATP."));
+        questionList.add(new DailyQuestion("Which planet is known as the Red Planet?", "Venus", "Mars", "Jupiter", "Saturn", "Mars", "Mars is called the Red Planet because of iron oxide on its surface."));
     }
 
     private void setupStepMap() {
@@ -226,12 +224,12 @@ public class DailyChallengeActivity extends AppCompatActivity {
             params.setMargins(dpToPx(8), dpToPx(8), dpToPx(8), dpToPx(8));
             card.setLayoutParams(params);
             
-            card.setOnClickListener(v -> handleAnswerSelection(card, opt, q.answer));
+            card.setOnClickListener(v -> handleAnswerSelection(card, opt, q.answer, q.explanation));
             optionsGrid.addView(card);
         }
     }
 
-    private void handleAnswerSelection(MaterialCardView selectedCard, String selectedText, String correctText) {
+    private void handleAnswerSelection(MaterialCardView selectedCard, String selectedText, String correctText, String explanation) {
         stopTimer();
         boolean isCorrect = selectedText.equals(correctText);
         questionResults[currentQuestionIndex] = isCorrect;
@@ -275,7 +273,7 @@ public class DailyChallengeActivity extends AppCompatActivity {
             shake.start();
             
             // Show correct answer explanation
-            showFeedback(correctText);
+            showFeedback(correctText, explanation);
             
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 if (currentQuestionIndex < questionList.size() - 1) {
@@ -287,11 +285,16 @@ public class DailyChallengeActivity extends AppCompatActivity {
         }
     }
 
-    private void showFeedback(String correctText) {
+    private void showFeedback(String correctText, String explanation) {
         feedbackCard.setVisibility(View.VISIBLE);
         tvFeedbackTitle.setText("Not quite!");
         tvFeedbackTitle.setTextColor(Color.parseColor("#EF4444"));
-        tvExplanation.setText("The correct answer is: " + correctText);
+        
+        String feedback = "The correct answer is: " + correctText;
+        if (explanation != null && !explanation.isEmpty()) {
+            feedback += "\n\n" + explanation;
+        }
+        tvExplanation.setText(feedback);
         feedbackCard.setStrokeColor(Color.parseColor("#EF4444"));
     }
 
@@ -322,7 +325,7 @@ public class DailyChallengeActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                handleAnswerSelection(new MaterialCardView(DailyChallengeActivity.this), "", questionList.get(currentQuestionIndex).answer);
+                handleAnswerSelection(new MaterialCardView(DailyChallengeActivity.this), "", questionList.get(currentQuestionIndex).answer, questionList.get(currentQuestionIndex).explanation);
             }
         }.start();
     }
@@ -365,9 +368,9 @@ public class DailyChallengeActivity extends AppCompatActivity {
     }
 
     private static class DailyQuestion {
-        String question, optA, optB, optC, optD, answer;
-        DailyQuestion(String q, String a, String b, String c, String d, String ans) {
-            question = q; optA = a; optB = b; optC = c; optD = d; answer = ans;
+        String question, optA, optB, optC, optD, answer, explanation;
+        DailyQuestion(String q, String a, String b, String c, String d, String ans, String expl) {
+            question = q; optA = a; optB = b; optC = c; optD = d; answer = ans; explanation = expl;
         }
     }
 

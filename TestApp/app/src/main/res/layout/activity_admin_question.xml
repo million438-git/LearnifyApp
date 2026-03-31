@@ -1,175 +1,480 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/adminQuestionDrawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8FAFC">
+    android:background="#FFFFFF">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/questionToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
-            app:title="Add Exam Question"
-            app:titleTextColor="@color/white"
-            app:navigationIcon="?attr/homeAsUpIndicator"
-            app:navigationIconTint="@color/white" />
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.core.widget.NestedScrollView
+    <!-- MAIN CONTENT AREA -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:background="#F1F5F9"
+        android:orientation="vertical">
+
+        <!-- HEADER -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            app:cardElevation="2dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="16dp"
+                android:paddingEnd="24dp">
+
+                <ImageView
+                    android:id="@+id/ivMenu"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_menu"
+                    android:padding="4dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:tint="#1E293B" />
+
+                <LinearLayout
+                    android:layout_width="350dp"
+                    android:layout_height="36dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/ivMenu"
+                    android:layout_marginStart="16dp"
+                    android:background="@drawable/bg_search_input"
+                    android:gravity="center_vertical"
+                    android:paddingStart="12dp">
+                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@android:drawable/ic_menu_search" app:tint="#64748B" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Search" android:textColor="#94A3B8" android:layout_marginStart="12dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical">
+                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/ic_popup_reminder" app:tint="#64748B" android:layout_marginEnd="20dp" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="end"
+                        android:layout_marginEnd="12dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Jane Doe" android:textColor="#1E293B" android:textStyle="bold" android:textSize="14sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Admin" android:textColor="#64748B" android:textSize="12sp" />
+                    </LinearLayout>
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:src="@drawable/ic_user_person"
+                        app:shapeAppearanceOverlay="@style/CircleImageView"
+                        app:strokeColor="#E2E8F0"
+                        app:strokeWidth="1dp" />
+                </LinearLayout>
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- FORM AREA -->
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="32dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Create New Exam Question"
+                    android:textColor="#1E293B"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Manage questions for exams in the database."
+                    android:textColor="#64748B"
+                    android:layout_marginTop="4dp" />
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="0dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="24dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <!-- Question Type -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Question Type *" android:textColor="#1E293B" android:textStyle="bold" android:textSize="13sp" />
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    app:boxBackgroundColor="#FFFFFF"
+                                    app:boxStrokeColor="#E2E8F0">
+                                    <AutoCompleteTextView
+                                        android:id="@+id/actvType"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:inputType="none"
+                                        android:text="Multiple Choice"
+                                        android:textSize="14sp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+                            </LinearLayout>
+                            <View android:layout_width="24dp" android:layout_height="0dp" />
+                            <!-- Difficulty -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Difficulty Level *" android:textColor="#1E293B" android:textStyle="bold" android:textSize="13sp" />
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    app:boxBackgroundColor="#FFFFFF"
+                                    app:boxStrokeColor="#E2E8F0">
+                                    <AutoCompleteTextView
+                                        android:id="@+id/actvDifficulty"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:inputType="none"
+                                        android:text="Intermediate"
+                                        android:textSize="14sp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <!-- Question Title -->
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Question Title *" android:textColor="#1E293B" android:textStyle="bold" android:textSize="13sp" android:layout_marginTop="20dp" />
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            app:boxStrokeColor="#E2E8F0">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etQuestionTitle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Midterm Math - Calculus 1"
+                                android:textSize="14sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <!-- Question Text -->
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Question Text *" android:textColor="#1E293B" android:textStyle="bold" android:textSize="13sp" android:layout_marginTop="20dp" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/bg_editor_container"
+                            android:padding="1dp">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="40dp"
+                                android:gravity="center_vertical"
+                                android:paddingStart="8dp"
+                                android:background="#F8FAFC">
+                                <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_menu_edit" android:layout_marginEnd="12dp" app:tint="#64748B" />
+                                <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_menu_info_details" android:layout_marginEnd="12dp" app:tint="#64748B" />
+                                <View android:layout_width="1dp" android:layout_height="24dp" android:background="#E2E8F0" android:layout_marginEnd="12dp" />
+                                <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_menu_gallery" app:tint="#64748B" />
+                            </LinearLayout>
+                            <EditText
+                                android:id="@+id/etQuestion"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                android:padding="12dp"
+                                android:hint="Calculate the derivative of f(x) = 3x² + 5x - 7 at x=2. Use clear steps."
+                                android:textSize="14sp"
+                                android:minLines="3"
+                                android:gravity="top" />
+                        </LinearLayout>
+
+                        <!-- Attachments -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="16dp"
+                            android:gravity="center_vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Attachments" android:textColor="#1E293B" android:textStyle="bold" android:textSize="13sp" />
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnUploadFile"
+                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="36dp"
+                                android:layout_marginStart="12dp"
+                                android:text="Upload Image/File"
+                                android:textSize="12sp"
+                                android:textAllCaps="false"
+                                app:strokeColor="#CBD5E1" />
+                        </LinearLayout>
+
+                        <!-- Options Grid -->
+                        <GridLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            android:columnCount="2"
+                            android:alignmentMode="alignMargins">
+
+                            <!-- Option A -->
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginEnd="12dp">
+                                <RadioButton android:id="@+id/rbA" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="A" android:textStyle="bold" android:layout_marginEnd="8dp" />
+                                <EditText android:id="@+id/etOptA" android:layout_width="match_parent" android:layout_height="44dp" android:background="@drawable/bg_search_input" android:paddingStart="12dp" android:text="6" android:textSize="14sp" />
+                            </LinearLayout>
+
+                            <!-- Option B -->
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="horizontal" android:gravity="center_vertical">
+                                <RadioButton android:id="@+id/rbB" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="B" android:textStyle="bold" android:layout_marginEnd="8dp" />
+                                <EditText android:id="@+id/etOptB" android:layout_width="match_parent" android:layout_height="44dp" android:background="@drawable/bg_search_input" android:paddingStart="12dp" android:text="11" android:textSize="14sp" />
+                            </LinearLayout>
+
+                            <!-- Option C -->
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginTop="12dp" android:layout_marginEnd="12dp">
+                                <RadioButton android:id="@+id/rbC" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" />
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="C" android:textStyle="bold" android:layout_marginEnd="8dp" />
+                                <EditText android:id="@+id/etOptC" android:layout_width="match_parent" android:layout_height="44dp" android:background="@drawable/bg_search_input" android:paddingStart="12dp" android:text="17" android:textSize="14sp" android:backgroundTint="#D1FAE5" />
+                            </LinearLayout>
+
+                            <!-- Option D -->
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginTop="12dp">
+                                <RadioButton android:id="@+id/rbD" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="D" android:textStyle="bold" android:layout_marginEnd="8dp" />
+                                <EditText android:id="@+id/etOptD" android:layout_width="match_parent" android:layout_height="44dp" android:background="@drawable/bg_search_input" android:paddingStart="12dp" android:text="21" android:textSize="14sp" />
+                            </LinearLayout>
+                        </GridLayout>
+
+                        <!-- Tags and Category -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="24dp">
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Tags" android:textColor="#1E293B" android:textStyle="bold" android:textSize="13sp" />
+                                <LinearLayout android:layout_width="match_parent" android:layout_height="44dp" android:layout_marginTop="8dp" android:background="@drawable/bg_search_input" android:gravity="center_vertical" android:paddingStart="8dp">
+                                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Calculus" android:background="#E2E8F0" android:padding="4dp" android:textSize="11sp" android:layout_marginEnd="4dp" />
+                                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Derivative" android:background="#E2E8F0" android:padding="4dp" android:textSize="11sp" android:layout_marginEnd="4dp" />
+                                    <EditText android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:background="@android:color/transparent" android:textSize="13sp" />
+                                </LinearLayout>
+                            </LinearLayout>
+                            <View android:layout_width="24dp" android:layout_height="0dp" />
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Category *" android:textColor="#1E293B" android:textStyle="bold" android:textSize="13sp" />
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    app:boxBackgroundColor="#FFFFFF"
+                                    app:boxStrokeColor="#E2E8F0">
+                                    <AutoCompleteTextView
+                                        android:id="@+id/actvCategory"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:inputType="none"
+                                        android:text="Mathematics 101"
+                                        android:textSize="14sp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <!-- Solution Notes -->
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Solution Notes/Feedback" android:textColor="#1E293B" android:textStyle="bold" android:textSize="13sp" android:layout_marginTop="20dp" />
+                        <EditText
+                            android:id="@+id/etExplanation_new"
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/bg_search_input"
+                            android:paddingStart="12dp"
+                            android:textSize="14sp" />
+
+                        <!-- Bottom Buttons -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="32dp">
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnCancel"
+                                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="48dp"
+                                android:text="Cancel"
+                                android:textColor="#64748B"
+                                android:backgroundTint="#E2E8F0"
+                                android:textAllCaps="false" />
+                            <View android:layout_width="12dp" android:layout_height="0dp" />
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnPublishQuestion"
+                                android:layout_width="wrap_content"
+                                android:layout_height="48dp"
+                                android:text="Save Question"
+                                android:backgroundTint="#2563EB"
+                                android:textAllCaps="false" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <View android:layout_width="match_parent" android:layout_height="60dp" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+    </LinearLayout>
+
+    <!-- SIDEBAR (Navigation Drawer) -->
+    <LinearLayout
+        android:layout_width="260dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#1E293B"
+        android:orientation="vertical"
+        android:paddingTop="24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_marginBottom="32dp">
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_app_logo"
+                app:tint="#FFFFFF" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="EduLearn"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Student Portal"
+                    android:textColor="#94A3B8"
+                    android:textSize="11sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Navigation Items -->
+        <LinearLayout
+            android:id="@+id/drawerNavDashboard"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+            <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_menu_today" app:tint="#94A3B8" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Dashboard" android:textColor="#94A3B8" android:layout_marginStart="16dp" android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/drawerNavCourses"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+            <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_menu_agenda" app:tint="#94A3B8" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Courses" android:textColor="#94A3B8" android:layout_marginStart="16dp" android:textSize="14sp" />
+            <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+            <ImageView android:layout_width="16dp" android:layout_height="16dp" android:src="@android:drawable/arrow_down_float" android:layout_marginEnd="16dp" app:tint="#94A3B8" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="The Question">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etQuestion"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minLines="3"
-                    android:gravity="top" />
-            </com.google.android.material.textfield.TextInputLayout>
-
+            android:background="#2D3748">
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="horizontal">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Subject">
-                    <AutoCompleteTextView
-                        android:id="@+id/actvSubject"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="none" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <View android:layout_width="12dp" android:layout_height="0dp" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Grade">
-                    <AutoCompleteTextView
-                        android:id="@+id/actvGrade"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="none" />
-                </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="48dp"
+                android:gravity="center_vertical"
+                android:paddingStart="20dp">
+                <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_menu_edit" app:tint="#FFFFFF" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Exams" android:textColor="#FFFFFF" android:layout_marginStart="16dp" android:textSize="14sp" />
+                <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+                <ImageView android:layout_width="16dp" android:layout_height="16dp" android:src="@android:drawable/arrow_up_float" android:layout_marginEnd="16dp" app:tint="#FFFFFF" />
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Options"
-                android:textStyle="bold"
-                android:textColor="#1E293B" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:hint="Option A">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etOptA"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:hint="Option B">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etOptB"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:hint="Option C">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etOptC"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:hint="Option D">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etOptD"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:hint="Correct Answer">
-                <AutoCompleteTextView
-                    android:id="@+id/actvAnswer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="none" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:hint="Explanation / Step-by-step Solution">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etExplanation"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minLines="2" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnPublishQuestion"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="32dp"
-                android:text="PUBLISH TO STUDENTS"
-                android:textStyle="bold"
-                app:cornerRadius="12dp" />
-
-            <View android:layout_width="match_parent" android:layout_height="40dp" />
+            <TextView android:id="@+id/drawerNavAddQuestion" android:layout_width="match_parent" android:layout_height="40dp" android:gravity="center_vertical" android:paddingStart="52dp" android:text="Add Question" android:textColor="#FFFFFF" android:background="#3B82F6" android:textSize="13sp" android:clickable="true" android:focusable="true" />
+            <TextView android:id="@+id/drawerNavViewQuestions" android:layout_width="match_parent" android:layout_height="40dp" android:gravity="center_vertical" android:paddingStart="52dp" android:text="View Questions" android:textColor="#94A3B8" android:textSize="13sp" android:clickable="true" android:focusable="true" />
+            <TextView android:id="@+id/drawerNavCreateExam" android:layout_width="match_parent" android:layout_height="40dp" android:gravity="center_vertical" android:paddingStart="52dp" android:text="Create Exam" android:textColor="#94A3B8" android:textSize="13sp" android:clickable="true" android:focusable="true" />
+            <TextView android:id="@+id/drawerNavSchedule" android:layout_width="match_parent" android:layout_height="40dp" android:gravity="center_vertical" android:paddingStart="52dp" android:text="Schedule" android:textColor="#94A3B8" android:textSize="13sp" android:clickable="true" android:focusable="true" />
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <LinearLayout
+            android:id="@+id/drawerNavStudents"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+            <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_menu_myplaces" app:tint="#94A3B8" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Students" android:textColor="#94A3B8" android:layout_marginStart="16dp" android:textSize="14sp" />
+            <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+            <ImageView android:layout_width="16dp" android:layout_height="16dp" android:src="@android:drawable/arrow_down_float" android:layout_marginEnd="16dp" app:tint="#94A3B8" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/drawerNavStaff"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+            <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_menu_manage" app:tint="#94A3B8" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Staff" android:textColor="#94A3B8" android:layout_marginStart="16dp" android:textSize="14sp" />
+            <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+            <ImageView android:layout_width="16dp" android:layout_height="16dp" android:src="@android:drawable/arrow_down_float" android:layout_marginEnd="16dp" app:tint="#94A3B8" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.drawerlayout.widget.DrawerLayout>

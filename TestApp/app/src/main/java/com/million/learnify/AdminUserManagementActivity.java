@@ -284,6 +284,8 @@ public class AdminUserManagementActivity extends AppCompatActivity {
         actionsList.add(u.status.equalsIgnoreCase("Active") ? "Suspend Account" : "Activate Account");
         
         if (currentUserTypeFilter.equals("STUDENT")) {
+            actionsList.add("Issue Individual Certificate");
+            actionsList.add("Send Personal Info/File");
             actionsList.add("Manual Enrollment");
             actionsList.add("Unenroll from Course");
         }
@@ -299,11 +301,37 @@ public class AdminUserManagementActivity extends AppCompatActivity {
             .setItems(actions, (dialog, which) -> {
                 String action = actions[which];
                 if (action.contains("Suspend") || action.contains("Activate")) toggleUserStatus(u);
+                else if (action.contains("Issue Individual Certificate")) openCertificateIssuer(u);
+                else if (action.contains("Send Personal Info/File")) sendPersonalInfo(u);
                 else if (action.contains("Manual Enrollment")) showEnrollDialog(u);
                 else if (action.contains("Unenroll")) showUnenrollDialog(u);
                 else if (action.contains("Reset Password")) resetPassword(u);
                 else if (action.contains("Impersonate")) impersonateUser(u);
                 else if (action.contains("Delete")) deleteUser(u);
+            })
+            .show();
+    }
+
+    private void openCertificateIssuer(User u) {
+        Intent intent = new Intent(this, AdminIssueCertificateActivity.class);
+        intent.putExtra("TARGET_USERNAME", u.username);
+        intent.putExtra("TARGET_NAME", u.name);
+        startActivity(intent);
+    }
+
+    private void sendPersonalInfo(User u) {
+        // Individualized data sending logic
+        new MaterialAlertDialogBuilder(this)
+            .setTitle("Send Info to " + u.name)
+            .setMessage("Select file or enter information to broadcast to this specific student port.")
+            .setPositiveButton("SELECT FILE", (d, w) -> {
+                Toast.makeText(this, "Opening Secure File Manager for " + u.name, Toast.LENGTH_SHORT).show();
+                // Logic to upload a specific file for this user
+                dbHelper.addNotification(u.username, "New File Received", "Admin has sent you a private document. Check your downloads.", "FILE");
+            })
+            .setNeutralButton("SEND MESSAGE", (d, w) -> {
+                Toast.makeText(this, "Message sent to " + u.name, Toast.LENGTH_SHORT).show();
+                dbHelper.addNotification(u.username, "Message from Admin", "Important update regarding your account status.", "INFO");
             })
             .show();
     }
