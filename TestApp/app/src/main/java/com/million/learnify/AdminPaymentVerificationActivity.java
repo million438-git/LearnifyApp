@@ -10,24 +10,26 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 /**
  * AdminPaymentVerificationActivity - Professional tool to verify student ETB transactions.
- * Includes Screenshot Proof verification for high security.
+ * Refactored to use DataRepository for Client-Server readiness.
+ * Inherits from BaseActivity for Role-Based Access Control (RBAC).
  */
-public class AdminPaymentVerificationActivity extends AppCompatActivity {
+public class AdminPaymentVerificationActivity extends BaseActivity {
 
     private LinearLayout paymentListContainer;
-    private DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // SECURITY: Only allow Admin users to enter this portal.
+        enforceRole("ADMIN");
+        
         setContentView(R.layout.activity_admin_payment_verification);
 
-        dbHelper = new DatabaseHelper(this);
         setupToolbar();
         paymentListContainer = findViewById(R.id.paymentListContainer);
         loadPendingPayments();
@@ -45,7 +47,8 @@ public class AdminPaymentVerificationActivity extends AppCompatActivity {
 
     private void loadPendingPayments() {
         paymentListContainer.removeAllViews();
-        Cursor cursor = dbHelper.getAllPayments();
+        // Fetch via Repository
+        Cursor cursor = repository.getAllPayments();
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -53,7 +56,7 @@ public class AdminPaymentVerificationActivity extends AppCompatActivity {
                 String user = cursor.getString(1);
                 String txId = cursor.getString(2);
                 String amount = cursor.getString(3);
-                String screenshotUri = cursor.getString(4); // Fetched from new column
+                String screenshotUri = cursor.getString(4);
                 String status = cursor.getString(5);
 
                 addPaymentRow(id, user, txId, amount, screenshotUri, status);
@@ -83,7 +86,6 @@ public class AdminPaymentVerificationActivity extends AppCompatActivity {
     private void showVerificationDialog(int id, String user, String txId, String amount, String screenshotUri) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         
-        // Customizing dialog view for payment proof
         TextView title = new TextView(this);
         title.setText("Verify Payment Proof");
         title.setPadding(40, 40, 40, 20);
@@ -116,13 +118,16 @@ public class AdminPaymentVerificationActivity extends AppCompatActivity {
         builder.setView(layout);
 
         builder.setPositiveButton("APPROVE ✅", (dialog, which) -> {
-            dbHelper.updatePaymentStatus(id, "Approved");
+            // Update via Repository
+            repository.adminUpdatePayment(id, "Approved");
+            repository.logSystemAction("Admin", "PAYMENT_APPROVED", "Approved payment ID: " + id + " for user: " + user);
             Toast.makeText(this, "Student " + user + " unlocked!", Toast.LENGTH_SHORT).show();
             loadPendingPayments();
         });
 
         builder.setNegativeButton("REJECT ❌", (dialog, which) -> {
-            dbHelper.updatePaymentStatus(id, "Rejected");
+            repository.adminUpdatePayment(id, "Rejected");
+            repository.logSystemAction("Admin", "PAYMENT_REJECTED", "Rejected payment ID: " + id + " for user: " + user);
             loadPendingPayments();
         });
 

@@ -8,21 +8,26 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.card.MaterialCardView;
 
-public class AdminSupportManagementActivity extends AppCompatActivity {
+/**
+ * AdminSupportManagementActivity - Student support and ticket resolution center.
+ * Inherits from BaseActivity for Role-Based Access Control (RBAC).
+ */
+public class AdminSupportManagementActivity extends BaseActivity {
 
     private LinearLayout ticketListContainer;
-    private DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // SECURITY: Only allow Admin users to enter this portal.
+        enforceRole("ADMIN");
+        
         setContentView(R.layout.activity_admin_support_management);
 
-        dbHelper = new DatabaseHelper(this);
         setupToolbar();
         ticketListContainer = findViewById(R.id.ticketListContainer);
         loadTickets();
@@ -37,7 +42,7 @@ public class AdminSupportManagementActivity extends AppCompatActivity {
 
     private void loadTickets() {
         ticketListContainer.removeAllViews();
-        Cursor cursor = dbHelper.getAllSupportTickets();
+        Cursor cursor = repository.getLocalDb().getAllSupportTickets();
 
         if (cursor.moveToFirst()) {
             do {
@@ -119,7 +124,7 @@ public class AdminSupportManagementActivity extends AppCompatActivity {
         builder.setPositiveButton("SEND REPLY", (dialog, which) -> {
             String replyText = input.getText().toString();
             if (!replyText.isEmpty()) {
-                dbHelper.updateTicketReply(id, replyText);
+                repository.getLocalDb().updateTicketReply(id, replyText);
                 Toast.makeText(this, "Reply sent to " + user, Toast.LENGTH_SHORT).show();
                 loadTickets();
             }

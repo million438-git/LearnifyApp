@@ -14,16 +14,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 /**
  * AdminContentManagementActivity - Advanced Hub for Central Asset Management.
- * Implements Media Library, Course Content, and Broadcast features.
+ * Refactored to use DataRepository for Client-Server readiness.
+ * Inherits from BaseActivity for Role-Based Access Control (RBAC).
  */
-public class AdminContentManagementActivity extends AppCompatActivity {
+public class AdminContentManagementActivity extends BaseActivity {
 
     private TextInputEditText etMaterialTitle, etMaterialDescription;
     private TextInputEditText etAnnTitle, etAnnMessage;
@@ -31,7 +31,6 @@ public class AdminContentManagementActivity extends AppCompatActivity {
     private MaterialButton btnSelectFile, btnUploadConfirm, btnSendAnnouncement;
     private TextView tvSelectedFileName;
     private LinearLayout llRecentContent;
-    private DatabaseHelper dbHelper;
     private String selectedFilePath = "";
 
     private final ActivityResultLauncher<Intent> filePickerLauncher = registerForActivityResult(
@@ -53,9 +52,12 @@ public class AdminContentManagementActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // SECURITY: Only allow Admin users to enter this portal.
+        enforceRole("ADMIN");
+        
         setContentView(R.layout.activity_admin_content_management);
 
-        dbHelper = new DatabaseHelper(this);
         initViews();
         setupToolbar();
         setupDropdowns();
@@ -63,7 +65,6 @@ public class AdminContentManagementActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        // Material Fields
         etMaterialTitle = findViewById(R.id.etMaterialTitle);
         etMaterialDescription = findViewById(R.id.etMaterialDescription);
         actvSubject = findViewById(R.id.actvSubject);
@@ -75,7 +76,6 @@ public class AdminContentManagementActivity extends AppCompatActivity {
         tvSelectedFileName = findViewById(R.id.tvSelectedFileName);
         llRecentContent = findViewById(R.id.llRecentContent);
 
-        // Announcement Fields
         etAnnTitle = findViewById(R.id.etAnnTitle);
         etAnnMessage = findViewById(R.id.etAnnMessage);
         btnSendAnnouncement = findViewById(R.id.btnSendAnnouncement);
@@ -88,7 +88,6 @@ public class AdminContentManagementActivity extends AppCompatActivity {
         });
 
         btnUploadConfirm.setOnClickListener(v -> handleUpload());
-        
         btnSendAnnouncement.setOnClickListener(v -> handleSendAnnouncement());
     }
 
@@ -133,15 +132,13 @@ public class AdminContentManagementActivity extends AppCompatActivity {
             return;
         }
 
-        boolean success = dbHelper.insertMaterial(title, desc, type, subject, grade, selectedFilePath, difficulty);
+        // Use repository for insertion
+        boolean success = repository.insertMaterial(title, desc, type, subject, grade, selectedFilePath, difficulty);
         
         if (success) {
-            // Automatic System Announcement for Students
             String announcementMsg = "New " + type + " published: " + title + " (" + subject + " - Grade " + grade + ")";
-            dbHelper.insertAnnouncement("New Content Alert", announcementMsg, "COURSE_UPDATE", grade);
-            
-            // Trigger Notification to Targeted Students (Local Notification Table)
-            dbHelper.addNotification("all", "New Material: " + title, desc, "CONTENT");
+            repository.adminPostAnnouncement("New Content Alert", announcementMsg, "COURSE_UPDATE", grade);
+            repository.addNotification("all", "New Material: " + title, desc, "CONTENT");
 
             Toast.makeText(this, "🚀 Knowledge Broadcast Successful!", Toast.LENGTH_LONG).show();
             clearMaterialForm();
@@ -160,15 +157,13 @@ public class AdminContentManagementActivity extends AppCompatActivity {
             return;
         }
 
-        boolean success = dbHelper.insertAnnouncement(title, message, "SYSTEM_ALERT", "All");
-        if (success) {
-            dbHelper.addNotification("all", title, message, "ANNOUNCEMENT");
-            Toast.makeText(this, "📢 System Broadcast Dispatched!", Toast.LENGTH_LONG).show();
-            etAnnTitle.setText("");
-            etAnnMessage.setText("");
-        } else {
-            Toast.makeText(this, "Failed to send announcement", Toast.LENGTH_SHORT).show();
-        }
+        // Use repository for announcement broadcast
+        repository.adminPostAnnouncement(title, message, "SYSTEM_ALERT", "All");
+        repository.addNotification("all", title, message, "ANNOUNCEMENT");
+        
+        Toast.makeText(this, "📢 System Broadcast Dispatched!", Toast.LENGTH_LONG).show();
+        etAnnTitle.setText("");
+        etAnnMessage.setText("");
     }
 
     private void clearMaterialForm() {
@@ -185,7 +180,7 @@ public class AdminContentManagementActivity extends AppCompatActivity {
     private void refreshRecentContent() {
         if (llRecentContent == null) return;
         llRecentContent.removeAllViews();
-        try (Cursor cursor = dbHelper.getAllMaterials()) {
+        try (Cursor cursor = repository.getAllMaterials()) {
             int count = 0;
             while (cursor.moveToNext() && count < 5) {
                 View v = LayoutInflater.from(this).inflate(R.layout.item_material, llRecentContent, false);
@@ -199,7 +194,6 @@ public class AdminContentManagementActivity extends AppCompatActivity {
                 subject.setText(cursor.getString(cursor.getColumnIndexOrThrow("subject")));
                 type.setText(cursor.getString(cursor.getColumnIndexOrThrow("type")));
                 
-                // Set text colors for dark background in admin hub
                 title.setTextColor(getResources().getColor(android.R.color.white));
                 desc.setTextColor(getResources().getColor(android.R.color.darker_gray));
 

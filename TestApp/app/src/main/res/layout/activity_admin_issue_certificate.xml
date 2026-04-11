@@ -57,12 +57,28 @@
                         android:textColor="#64748B"
                         android:textSize="12sp" />
 
+                    <!-- Student Selection (Visible if not coming from User Profile) -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilSelectStudent"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:hint="Select Student Account"
+                        android:visibility="visible">
+                        <AutoCompleteTextView
+                            android:id="@+id/actvSelectStudent"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
                     <!-- Certificate Title -->
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="16dp"
                         android:hint="Certificate Header (Title)">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etCertTitle"
@@ -85,13 +101,13 @@
                             android:text="Presented with distinction to:" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Student Name -->
+                    <!-- Student Name (Display Name on Cert) -->
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:hint="Student Full Name">
+                        android:hint="Student Full Name (As printed)">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etStudentName"
                             android:layout_width="match_parent"
@@ -186,7 +202,7 @@
                                 android:id="@+id/etDirectorName"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Dr. Sarah J. Thompson" />
+                                android:text="Dr. Million Teshome" />
                         </com.google.android.material.textfield.TextInputLayout>
                         <View android:layout_width="12dp" android:layout_height="0dp" />
                         <com.google.android.material.textfield.TextInputLayout

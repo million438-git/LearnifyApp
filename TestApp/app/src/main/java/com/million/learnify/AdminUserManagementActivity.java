@@ -2,7 +2,6 @@ package com.million.learnify;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -13,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
@@ -27,10 +25,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class AdminUserManagementActivity extends AppCompatActivity {
+/**
+ * AdminUserManagementActivity - Central hub for student and staff administration.
+ * Updated with standardized portal toolbar.
+ */
+public class AdminUserManagementActivity extends BaseActivity {
 
     private LinearLayout userListContainer;
-    private DatabaseHelper dbHelper;
     private TextInputEditText etSearchUser;
     private TextView tvUserCount;
     private ChipGroup chipGroupStatus;
@@ -45,22 +46,17 @@ public class AdminUserManagementActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // SECURITY: Only allow Admin users to enter this portal.
+        enforceRole("ADMIN");
+        
         setContentView(R.layout.activity_admin_user_management);
 
-        dbHelper = new DatabaseHelper(this);
-        setupToolbar();
+        Toolbar toolbar = findViewById(R.id.userMgmtToolbar);
+        setupPortalToolbar(toolbar, "User Administration");
+
         initViews();
         loadAllUsers();
-    }
-
-    private void setupToolbar() {
-        Toolbar toolbar = findViewById(R.id.userMgmtToolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("User Administration");
-        }
-        toolbar.setNavigationOnClickListener(v -> finish());
     }
 
     private void initViews() {
@@ -114,8 +110,7 @@ public class AdminUserManagementActivity extends AppCompatActivity {
     private void showCourseFilterDialog() {
         Set<String> courses = new HashSet<>();
         courses.add("All");
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT DISTINCT course_name FROM enrollments", null);
+        Cursor c = repository.getDistinctEnrolledCourses();
         while (c.moveToNext()) courses.add(c.getString(0));
         c.close();
 
@@ -132,9 +127,8 @@ public class AdminUserManagementActivity extends AppCompatActivity {
     private void loadAllUsers() {
         allUsers.clear();
         userEnrollments.clear();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
         
-        Cursor cursor = db.rawQuery("SELECT full_name, unique_id, grade_or_role, email, profile_image, status, username, created_at FROM users WHERE user_type=?", new String[]{currentUserTypeFilter});
+        Cursor cursor = repository.getAllUsersByType(currentUserTypeFilter);
         if (cursor.moveToFirst()) {
             do {
                 allUsers.add(new User(
@@ -147,7 +141,7 @@ public class AdminUserManagementActivity extends AppCompatActivity {
         cursor.close();
 
         if (currentUserTypeFilter.equals("STUDENT")) {
-            Cursor enrCursor = db.rawQuery("SELECT username, course_name FROM enrollments", null);
+            Cursor enrCursor = repository.getAllEnrollments();
             while (enrCursor.moveToNext()) {
                 String uname = enrCursor.getString(0);
                 String cname = enrCursor.getString(1);
@@ -227,8 +221,7 @@ public class AdminUserManagementActivity extends AppCompatActivity {
         tvName.setText(u.name);
         tvDetails.setText("Email: " + u.email + "\nUsername: " + u.username + "\nJoined: " + u.createdAt);
 
-        // Enrollments
-        Cursor enc = dbHelper.getStudentEnrollments(u.username);
+        Cursor enc = repository.getStudentEnrollments(u.username);
         while (enc.moveToNext()) {
             TextView tv = new TextView(this);
             tv.setText("📖 " + enc.getString(enc.getColumnIndexOrThrow("course_name")));
@@ -239,8 +232,7 @@ public class AdminUserManagementActivity extends AppCompatActivity {
         if (enrollmentsContainer.getChildCount() == 0) enrollmentsContainer.addView(createEmptyView("No course enrollments."));
         enc.close();
 
-        // Exams/Progress (Showing Certificates)
-        Cursor examc = dbHelper.getStudentExamResults(u.username);
+        Cursor examc = repository.getStudentExamResults(u.username);
         while (examc.moveToNext()) {
             TextView tv = new TextView(this);
             String sub = examc.getString(examc.getColumnIndexOrThrow("subject"));
@@ -253,8 +245,7 @@ public class AdminUserManagementActivity extends AppCompatActivity {
         if (examsContainer.getChildCount() == 0) examsContainer.addView(createEmptyView("No exam/progress records."));
         examc.close();
 
-        // Payments
-        Cursor payc = dbHelper.getStudentPayments(u.username);
+        Cursor payc = repository.getStudentPayments(u.username);
         while (payc.moveToNext()) {
             TextView tv = new TextView(this);
             tv.setText("💰 " + payc.getString(payc.getColumnIndexOrThrow("amount")) + " ETB [" + payc.getString(payc.getColumnIndexOrThrow("status")) + "]");
@@ -300,14 +291,17 @@ public class AdminUserManagementActivity extends AppCompatActivity {
             .setTitle("Admin Control Panel: " + u.name)
             .setItems(actions, (dialog, which) -> {
                 String action = actions[which];
-                if (action.contains("Suspend") || action.contains("Activate")) toggleUserStatus(u);
+                if (action.contains("Suspend")) repository.adminBlockUser(u.username);
+                else if (action.contains("Activate")) repository.adminUnblockUser(u.username);
                 else if (action.contains("Issue Individual Certificate")) openCertificateIssuer(u);
                 else if (action.contains("Send Personal Info/File")) sendPersonalInfo(u);
                 else if (action.contains("Manual Enrollment")) showEnrollDialog(u);
                 else if (action.contains("Unenroll")) showUnenrollDialog(u);
-                else if (action.contains("Reset Password")) resetPassword(u);
+                else if (action.contains("Reset Password")) repository.updatePassword(u.username, "123456");
                 else if (action.contains("Impersonate")) impersonateUser(u);
                 else if (action.contains("Delete")) deleteUser(u);
+                
+                if (action.contains("Suspend") || action.contains("Activate")) loadAllUsers();
             })
             .show();
     }
@@ -320,27 +314,18 @@ public class AdminUserManagementActivity extends AppCompatActivity {
     }
 
     private void sendPersonalInfo(User u) {
-        // Individualized data sending logic
         new MaterialAlertDialogBuilder(this)
             .setTitle("Send Info to " + u.name)
             .setMessage("Select file or enter information to broadcast to this specific student port.")
             .setPositiveButton("SELECT FILE", (d, w) -> {
                 Toast.makeText(this, "Opening Secure File Manager for " + u.name, Toast.LENGTH_SHORT).show();
-                // Logic to upload a specific file for this user
-                dbHelper.addNotification(u.username, "New File Received", "Admin has sent you a private document. Check your downloads.", "FILE");
+                repository.addNotification(u.username, "New File Received", "Admin has sent you a private document. Check your downloads.", "FILE");
             })
             .setNeutralButton("SEND MESSAGE", (d, w) -> {
                 Toast.makeText(this, "Message sent to " + u.name, Toast.LENGTH_SHORT).show();
-                dbHelper.addNotification(u.username, "Message from Admin", "Important update regarding your account status.", "INFO");
+                repository.addNotification(u.username, "Message from Admin", "Important update regarding your account status.", "INFO");
             })
             .show();
-    }
-
-    private void toggleUserStatus(User u) {
-        String newStatus = u.status.equalsIgnoreCase("Active") ? "Blocked" : "Active";
-        dbHelper.updateUserStatus(u.username, newStatus);
-        loadAllUsers();
-        Toast.makeText(this, "Status updated to " + newStatus, Toast.LENGTH_SHORT).show();
     }
 
     private void showEnrollDialog(User u) {
@@ -348,7 +333,7 @@ public class AdminUserManagementActivity extends AppCompatActivity {
         new MaterialAlertDialogBuilder(this)
             .setTitle("Enroll " + u.name)
             .setItems(courses, (d, w) -> {
-                dbHelper.enrollStudent(u.username, courses[w]);
+                repository.enrollStudent(u.username, courses[w]);
                 Toast.makeText(this, "Success: Student enrolled.", Toast.LENGTH_SHORT).show();
                 loadAllUsers();
             }).show();
@@ -356,7 +341,7 @@ public class AdminUserManagementActivity extends AppCompatActivity {
 
     private void showUnenrollDialog(User u) {
         List<String> userCourses = new ArrayList<>();
-        Cursor c = dbHelper.getStudentEnrollments(u.username);
+        Cursor c = repository.getStudentEnrollments(u.username);
         while (c.moveToNext()) userCourses.add(c.getString(c.getColumnIndexOrThrow("course_name")));
         c.close();
         
@@ -369,15 +354,10 @@ public class AdminUserManagementActivity extends AppCompatActivity {
         new MaterialAlertDialogBuilder(this)
             .setTitle("Unenroll Student")
             .setItems(courseArray, (d, w) -> {
-                dbHelper.unenrollStudent(u.username, courseArray[w]);
+                repository.unenrollStudent(u.username, courseArray[w]);
                 Toast.makeText(this, "Enrollment removed successfully.", Toast.LENGTH_SHORT).show();
                 loadAllUsers();
             }).show();
-    }
-
-    private void resetPassword(User u) {
-        dbHelper.updatePassword(u.username, "123456");
-        Toast.makeText(this, "Password reset to default (123456)", Toast.LENGTH_SHORT).show();
     }
 
     private void impersonateUser(User u) {
@@ -400,7 +380,7 @@ public class AdminUserManagementActivity extends AppCompatActivity {
             .setTitle("Confirm Deletion")
             .setMessage("Are you sure? This will wipe all " + u.name + "\'s records.")
             .setPositiveButton("DELETE", (d, w) -> {
-                dbHelper.getWritableDatabase().delete("users", "username=?", new String[]{u.username});
+                repository.deleteUserPermanently(u.username);
                 loadAllUsers();
                 Toast.makeText(this, "User deleted.", Toast.LENGTH_SHORT).show();
             })

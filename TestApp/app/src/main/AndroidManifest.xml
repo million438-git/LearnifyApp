@@ -18,6 +18,11 @@
         <intent>
             <action android:name="android.media.action.IMAGE_CAPTURE" />
         </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+        </intent>
     </queries>
 
     <application
@@ -52,7 +57,38 @@
         </activity>
 
         <activity android:name="com.million.learnify.MainActivity" android:exported="false" />
-        <activity android:name=".StudentLoginActivity" android:exported="false" />
+
+        <activity
+            android:name=".StudentLoginActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+
+            <!-- Intent Filter for LinkedIn OAuth Callback -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="learnify"
+                    android:host="linkedin-callback" />
+            </intent-filter>
+        </activity>
+
+        <!-- Email Verification Activity with Deep Link Support -->
+        <activity
+            android:name=".EmailVerificationActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter android:label="Verify Email">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="learnify"
+                    android:host="verify-email" />
+            </intent-filter>
+        </activity>
+
         <activity android:name=".RegisterActivity" android:exported="false" />
         <activity android:name=".ForgotPasswordActivity" android:exported="false" />
         <activity android:name="com.million.learnify.DashboardActivity" android:exported="false" />
@@ -108,6 +144,7 @@
         <activity android:name=".AdminSupportManagementActivity" android:exported="false" />
         <activity android:name=".AdminCameraLabActivity" android:exported="false" />
         <activity android:name=".AdminProfileActivity" android:exported="false" />
+        <activity android:name=".AdminIssueCertificateActivity" android:exported="false" />
 
         <receiver android:name=".NotificationReceiver" android:exported="false">
             <intent-filter>

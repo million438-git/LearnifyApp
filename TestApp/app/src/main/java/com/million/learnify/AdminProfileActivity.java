@@ -5,25 +5,22 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.imageview.ShapeableImageView;
 
 /**
  * AdminProfileActivity - High-fidelity Administrative Console.
- * Now includes Phone Number display and Edit Profile navigation.
+ * Inherits from BaseActivity for Role-Based Access Control (RBAC).
  */
-public class AdminProfileActivity extends AppCompatActivity {
+public class AdminProfileActivity extends BaseActivity {
 
     private static final int PICK_IMAGE_REQUEST = 101;
-    private DatabaseHelper dbHelper;
     private String currentUsername;
     private ShapeableImageView ivAdminPhoto, ivToolbarProfile;
     private TextView tvAdminFullName, tvAdminEmail, tvAdminPhone;
@@ -32,9 +29,12 @@ public class AdminProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // SECURITY: Only allow Admin users to enter this portal.
+        enforceRole("ADMIN");
+        
         setContentView(R.layout.activity_admin_profile);
 
-        dbHelper = new DatabaseHelper(this);
         SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
         currentUsername = pref.getString("username", "admin");
 
@@ -53,17 +53,15 @@ public class AdminProfileActivity extends AppCompatActivity {
         
         ivAdminPhoto.setOnClickListener(v -> openGallery());
 
-        // Edit Profile Button Logic
         findViewById(R.id.btnEditProfileAdmin).setOnClickListener(v -> {
             startActivity(new Intent(this, EditProfileActivity.class));
         });
 
-        // Toolbar Interaction
         findViewById(R.id.ivToolbarChat).setOnClickListener(v -> startActivity(new Intent(this, AIChatActivity.class)));
     }
 
     private void loadAdminData() {
-        Cursor cursor = dbHelper.getUserDetails(currentUsername);
+        Cursor cursor = repository.getLocalDb().getUserDetails(currentUsername);
         if (cursor != null && cursor.moveToFirst()) {
             String fullName = cursor.getString(cursor.getColumnIndexOrThrow("full_name"));
             String email = cursor.getString(cursor.getColumnIndexOrThrow("email"));
@@ -119,6 +117,6 @@ public class AdminProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadAdminData(); // Refresh data when returning from Edit Profile
+        loadAdminData();
     }
 }

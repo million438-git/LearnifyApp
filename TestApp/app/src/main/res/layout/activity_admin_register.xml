@@ -106,22 +106,38 @@
                 android:textColor="#9CA3AF"
                 android:textSize="14sp" />
 
-            <EditText
-                android:id="@+id/etAdminRegUsername"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/bg_input_field"
-                android:hint="admin_user"
-                android:inputType="text"
-                android:paddingHorizontal="16dp"
-                android:textColor="@android:color/white"
-                android:textColorHint="#4B5563" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/etAdminRegUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_input_field"
+                    android:hint="admin_user"
+                    android:inputType="text"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="#4B5563" />
+
+                <TextView
+                    android:id="@+id/tvAdminUsernameFeedback"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="2dp"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    android:text="Checking..."/>
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:text="Admin ID"
                 android:textColor="#9CA3AF"
                 android:textSize="14sp" />

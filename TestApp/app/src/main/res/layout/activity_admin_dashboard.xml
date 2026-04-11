@@ -5,8 +5,8 @@
     android:id="@+id/adminDrawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8FAFC"
-    tools:context=".AdminDashboardActivity">
+    android:background="#0F172A"
+    tools:context="com.million.learnify.AdminDashboardActivity">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -22,36 +22,77 @@
                 android:id="@+id/adminToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:contentInsetStart="16dp">
+                app:contentInsetStart="0dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <TextView
+                    <!-- Custom Back Arrow [ ← Dashboard ] -->
+                    <LinearLayout
+                        android:id="@+id/llToolbarBack"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:text="@string/admin_dashboard_title"
-                        android:textColor="#FFFFFF"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/adminProfileImg"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="8dp"
-                        android:background="#1E293B"
+                        android:layout_height="match_parent"
+                        android:background="?attr/selectableItemBackground"
                         android:clickable="true"
                         android:focusable="true"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ic_user_person"
-                        app:shapeAppearanceOverlay="@style/CircleImageView"
-                        app:strokeColor="#FFFFFF"
-                        app:strokeWidth="2dp" />
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="16dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_back_white"
+                            app:tint="#FFFFFF" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="Dashboard"
+                            android:textColor="#FFFFFF"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Right-aligned Elements [ 🔔  👤 ] -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentEnd="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingEnd="16dp">
+
+                        <ImageView
+                            android:id="@+id/ivAdminNotification"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_marginEnd="16dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:padding="2dp"
+                            android:src="@android:drawable/ic_popup_reminder"
+                            app:tint="#FFFFFF"
+                            android:contentDescription="Notifications" />
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/adminProfileImg"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:background="#1E293B"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_user_person"
+                            app:shapeAppearanceOverlay="@style/CircleImageView"
+                            app:strokeColor="#3B82F6"
+                            app:strokeWidth="2dp"
+                            android:contentDescription="Admin Profile" />
+                    </LinearLayout>
                 </RelativeLayout>
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
@@ -66,216 +107,235 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
+                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/admin_command_center"
-                    android:textSize="26sp"
-                    android:textStyle="bold"
-                    android:textColor="#0F172A" />
+                <!-- [ ☰ ] Small, left side under header -->
+                <ImageButton
+                    android:id="@+id/btnOpenDrawer"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/bg_admin_menu_panel"
+                    android:src="@drawable/ic_menu"
+                    app:tint="#3B82F6"
+                    android:padding="8dp"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="Open Sidebar" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/admin_system_overview"
-                    android:layout_marginTop="4dp"
-                    android:textColor="#64748B"
-                    android:letterSpacing="0.02"/>
-
-                <!-- 1. TOTAL STUDENTS -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardTotalStudents"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="28dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp"
-                    app:cardBackgroundColor="#F0FDFA">
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_student_badge" app:tint="#0D9488" />
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_total_students" android:textSize="16sp" android:textStyle="bold" android:textColor="#0D9488" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_total_students_desc" android:textSize="12sp" android:textColor="#0F766E" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- 2. ACTIVE STUDENTS -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardActiveStudents"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp"
-                    app:cardBackgroundColor="#EFF6FF">
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_user_person" app:tint="#1D4ED8" />
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_active_students" android:textSize="16sp" android:textStyle="bold" android:textColor="#1D4ED8" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_active_students_desc" android:textSize="12sp" android:textColor="#1E40AF" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- 3. TEACHERS -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardTeachers"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp"
-                    app:cardBackgroundColor="#FFF7ED">
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_tasks" app:tint="#C2410C" />
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_teachers_staff" android:textSize="16sp" android:textStyle="bold" android:textColor="#C2410C" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_teachers_staff_desc" android:textColor="#9A3412" android:textSize="12sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- 4. TOTAL LABS -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardTotalLabs"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp"
-                    app:cardBackgroundColor="#FFFBEB">
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_lab" app:tint="#B45309" />
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_total_labs" android:textSize="16sp" android:textStyle="bold" android:textColor="#B45309" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_total_labs_desc" android:textSize="12sp" android:textColor="#92400E" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- 5. COMPLETED LABS -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardCompletedLabs"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp"
-                    app:cardBackgroundColor="#F5F3FF">
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@android:drawable/checkbox_on_background" app:tint="#6D28D9" />
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_completed_labs" android:textSize="16sp" android:textStyle="bold" android:textColor="#6D28D9" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_completed_labs_desc" android:textSize="12sp" android:textColor="#5B21B6" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- 6. PENDING LABS -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardPendingLabs"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp"
-                    app:cardBackgroundColor="#FDF2F8">
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@android:drawable/ic_popup_reminder" app:tint="#9D174D" />
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_pending_tasks" android:textSize="16sp" android:textStyle="bold" android:textColor="#9D174D" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_pending_tasks_desc" android:textSize="12sp" android:textColor="#831843" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- 7. SYSTEM HEALTH -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardSystemHealth"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp"
-                    app:cardBackgroundColor="#E0F2F1">
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_lock" app:tint="#00695C" />
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_system_status" android:textColor="#00695C" android:textSize="16sp" android:textStyle="bold" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_system_status_desc" android:textSize="12sp" android:textColor="#004D40" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- COMMAND CENTER BUTTONS (VERTICAL) -->
                 <LinearLayout
-                    android:id="@+id/panelCommandCenter"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_marginTop="36dp">
+                    android:paddingHorizontal="20dp"
+                    android:paddingBottom="20dp">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/admin_command_center"
+                        android:textSize="26sp"
+                        android:textStyle="bold"
+                        android:textColor="#FFFFFF" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/admin_system_overview"
+                        android:layout_marginTop="4dp"
+                        android:textColor="#94A3B8"
+                        android:letterSpacing="0.02"/>
+
+                    <!-- 1. TOTAL STUDENTS -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardTotalStudents"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="28dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#334155"
+                        app:cardBackgroundColor="#1E293B">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
+                            <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_student_badge" app:tint="#3B82F6" />
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_total_students" android:textSize="16sp" android:textStyle="bold" android:textColor="#FFFFFF" />
+                                <TextView android:id="@+id/tvTotalStudents" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0 Active Records" android:textSize="12sp" android:textColor="#94A3B8" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- 2. ISSUE CERTIFICATE -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardIssueCert"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#334155"
+                        app:cardBackgroundColor="#1E293B">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
+                            <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_certificate" app:tint="#10B981" />
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ISSUE CERTIFICATES" android:textSize="16sp" android:textStyle="bold" android:textColor="#FFFFFF" />
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Generate student credentials" android:textSize="12sp" android:textColor="#94A3B8" />
+                            </LinearLayout>
+                            <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_menu_send" app:tint="#10B981" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- 3. ACTIVE STUDENTS -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardActiveStudents"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#334155"
+                        app:cardBackgroundColor="#1E293B">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
+                            <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_user_person" app:tint="#3B82F6" />
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_active_students" android:textSize="16sp" android:textStyle="bold" android:textColor="#FFFFFF" />
+                                <TextView android:id="@+id/tvActiveStudents" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0 Online Now" android:textSize="12sp" android:textColor="#94A3B8" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- 4. TEACHERS / STAFF -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardTeachers"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#334155"
+                        app:cardBackgroundColor="#1E293B">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
+                            <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_user_person" app:tint="#F59E0B" />
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_teachers_staff" android:textSize="16sp" android:textStyle="bold" android:textColor="#FFFFFF" />
+                                <TextView android:id="@+id/tvTotalTeachers" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0 Staff Members" android:textSize="12sp" android:textColor="#94A3B8" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- 5. TOTAL LABS -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardTotalLabs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#334155"
+                        app:cardBackgroundColor="#1E293B">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
+                            <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_lab" app:tint="#8B5CF6" />
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_total_labs" android:textSize="16sp" android:textStyle="bold" android:textColor="#FFFFFF" />
+                                <TextView android:id="@+id/tvTotalLabs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0 Virtual Labs" android:textSize="12sp" android:textColor="#94A3B8" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- 6. COMPLETED LABS -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardCompletedLabs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#334155"
+                        app:cardBackgroundColor="#1E293B">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
+                            <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@android:drawable/checkbox_on_background" app:tint="#10B981" />
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_completed_labs" android:textSize="16sp" android:textStyle="bold" android:textColor="#FFFFFF" />
+                                <TextView android:id="@+id/tvCompletedLabs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0 Submissions" android:textSize="12sp" android:textColor="#94A3B8" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- 7. PENDING LABS -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardPendingLabs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#334155"
+                        app:cardBackgroundColor="#1E293B">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
+                            <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@android:drawable/ic_menu_recent_history" app:tint="#F59E0B" />
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_pending_tasks" android:textSize="16sp" android:textStyle="bold" android:textColor="#FFFFFF" />
+                                <TextView android:id="@+id/tvPendingLabs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0 Action Required" android:textSize="12sp" android:textColor="#94A3B8" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- 8. SYSTEM HEALTH -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardSystemHealth"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#334155"
+                        app:cardBackgroundColor="#1E293B">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
+                            <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_settings" app:tint="#3B82F6" />
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_system_status" android:textSize="16sp" android:textStyle="bold" android:textColor="#FFFFFF" />
+                                <TextView android:id="@+id/tvSystemHealth" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="System Initializing..." android:textSize="12sp" android:textColor="#10B981" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- QUICK ACTIONS -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/admin_quick_actions"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:textColor="#0F172A"
+                        android:textColor="#FFFFFF"
+                        android:layout_marginTop="36dp"
                         android:layout_marginBottom="20dp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
-
-                        <Button android:id="@+id/btnCreateLab" style="@style/AdminCyberButton.ActionCyan" android:text="@string/admin_btn_create_lab" app:icon="@drawable/ic_lab" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="12dp" app:iconGravity="textStart" app:iconPadding="16dp" />
-                        <Button android:id="@+id/btnAddUser" style="@style/AdminCyberButton.ActionCyan" android:text="@string/admin_btn_add_user" app:icon="@drawable/ic_user_person" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="12dp" app:iconGravity="textStart" app:iconPadding="16dp" />
-                        <Button android:id="@+id/btnUpload" style="@style/AdminCyberButton.ActionGreen" android:text="@string/admin_btn_upload" app:icon="@android:drawable/ic_menu_upload" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="12dp" app:iconGravity="textStart" app:iconPadding="16dp" />
-                        <Button android:id="@+id/btnSimulate" style="@style/AdminCyberButton.ActionGreen" android:text="@string/admin_btn_simulate" app:icon="@android:drawable/ic_media_play" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="12dp" app:iconGravity="textStart" app:iconPadding="16dp" />
-                        <Button android:id="@+id/btnReports" style="@style/AdminCyberButton.ActionAmber" android:text="@string/admin_btn_reports" app:icon="@android:drawable/ic_menu_sort_by_size" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="12dp" app:iconGravity="textStart" app:iconPadding="16dp" />
-                        <Button android:id="@+id/btnSettings" style="@style/AdminCyberButton.ActionAmber" android:text="@string/admin_btn_settings" app:icon="@drawable/ic_settings" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="12dp" app:iconGravity="textStart" app:iconPadding="16dp" />
-
+                        <Button android:id="@+id/btnIssueCertificate" style="@style/AdminCyberButton.ActionCyan" android:text="Issue Certificate" app:icon="@drawable/ic_certificate" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="12dp" app:iconGravity="textStart" app:iconPadding="16dp" android:backgroundTint="#1E293B" android:textColor="#FFFFFF" app:strokeColor="#334155"/>
+                        <Button android:id="@+id/btnCreateLab" style="@style/AdminCyberButton.ActionCyan" android:text="@string/admin_btn_create_lab" app:icon="@drawable/ic_lab" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="12dp" app:iconGravity="textStart" app:iconPadding="16dp" android:backgroundTint="#1E293B" android:textColor="#FFFFFF" app:strokeColor="#334155"/>
+                        <Button android:id="@+id/btnAddUser" style="@style/AdminCyberButton.ActionCyan" android:text="@string/admin_btn_add_user" app:icon="@drawable/ic_user_person" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="12dp" app:iconGravity="textStart" app:iconPadding="16dp" android:backgroundTint="#1E293B" android:textColor="#FFFFFF" app:strokeColor="#334155"/>
+                        <Button android:id="@+id/btnUpload" style="@style/AdminCyberButton.ActionCyan" android:text="@string/admin_btn_upload" app:icon="@android:drawable/ic_menu_upload" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="12dp" app:iconGravity="textStart" app:iconPadding="16dp" android:backgroundTint="#1E293B" android:textColor="#FFFFFF" app:strokeColor="#334155"/>
+                        <Button android:id="@+id/btnSimulate" style="@style/AdminCyberButton.ActionCyan" android:text="@string/admin_btn_simulate" app:icon="@drawable/ic_lab" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="12dp" app:iconGravity="textStart" app:iconPadding="16dp" android:backgroundTint="#1E293B" android:textColor="#FFFFFF" app:strokeColor="#334155"/>
+                        <Button android:id="@+id/btnReports" style="@style/AdminCyberButton.ActionCyan" android:text="@string/admin_btn_reports" app:icon="@android:drawable/ic_menu_sort_by_size" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="12dp" app:iconGravity="textStart" app:iconPadding="16dp" android:backgroundTint="#1E293B" android:textColor="#FFFFFF" app:strokeColor="#334155"/>
+                        <Button android:id="@+id/btnSettings" style="@style/AdminCyberButton.ActionAmber" android:text="@string/admin_btn_settings" app:icon="@drawable/ic_settings" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="12dp" app:iconGravity="textStart" app:iconPadding="16dp" android:backgroundTint="#1E293B" android:textColor="#FFFFFF" app:strokeColor="#334155"/>
                     </LinearLayout>
                 </LinearLayout>
-
-                <!-- BOTTOM SECTION: AI INSIGHTS -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/panelIntelligence"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="36dp"
-                    android:layout_marginBottom="40dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="4dp"
-                    app:strokeWidth="0dp"
-                    app:cardBackgroundColor="#1E1B4B">
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="24dp" android:gravity="center_vertical">
-                        <ImageView android:layout_width="48dp" android:layout_height="48dp" android:src="@drawable/ic_ai_hexagon" app:tint="#818CF8" />
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="20dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_ai_insights_ready" android:textColor="#FFFFFF" android:textSize="18sp" android:textStyle="bold" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_ai_insights_desc" android:textColor="#A5B4FC" android:textSize="13sp" android:layout_marginTop="2dp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <!-- Navigation View -->
+    <!-- Navigation View (SIDEBAR) -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/adminNavView"
         android:layout_width="wrap_content"
@@ -283,10 +343,10 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header_admin"
         app:menu="@menu/admin_drawer_menu"
-        android:background="#FFFFFF"
-        app:itemIconTint="#64748B"
-        app:itemTextColor="#1E293B"
-        app:itemShapeFillColor="#F1F5F9"
+        android:background="#0F172A"
+        app:itemIconTint="#94A3B8"
+        app:itemTextColor="#FFFFFF"
+        app:itemShapeFillColor="#1E293B"
         app:itemShapeAppearanceOverlay="@style/RoundedImageView" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

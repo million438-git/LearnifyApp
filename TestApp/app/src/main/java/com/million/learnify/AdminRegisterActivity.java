@@ -1,67 +1,56 @@
 package com.million.learnify;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.button.MaterialButton;
+
+import java.util.Random;
 
 /**
  * AdminRegisterActivity handles the administrator registration process.
- * Updated to support profile image selection from gallery.
+ * Refactored to use DataRepository for Client-Server readiness and Security.
+ * Inherits from BaseActivity for unified theme and repository access.
  */
-public class AdminRegisterActivity extends AppCompatActivity {
+public class AdminRegisterActivity extends BaseActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
 
     private EditText etFullName, etUniqueId, etEmail, etPassword, etConfirmPassword, etRole, etUsername;
+    private TextView tvUsernameFeedback;
     private ImageView adminProfileImage;
     private MaterialButton btnRegister;
-    private DatabaseHelper dbHelper;
+    private boolean isUsernameAvailable = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // SECURITY: Only allow Admin users to register other Admins.
+        // If this is the first run, ensure 'admin' exists in DatabaseHelper seed.
+        enforceRole("ADMIN");
+        
         setContentView(R.layout.activity_admin_register);
 
-        dbHelper = new DatabaseHelper(this);
         initViews();
-
-        btnRegister.setOnClickListener(v -> {
-            if (validateInputs()) {
-                String name = etFullName.getText().toString().trim();
-                String uid = etUniqueId.getText().toString().trim();
-                String email = etEmail.getText().toString().trim();
-                String user = etUsername.getText().toString().trim();
-                String pass = etPassword.getText().toString().trim();
-                String role = etRole.getText().toString().trim();
-                String imageUri = adminProfileImage.getTag() != null ? adminProfileImage.getTag().toString() : "";
-
-                // Reverting to the 8-parameter signature to match the current DatabaseHelper.registerUser method
-                if (dbHelper.registerUser(name, uid, role, user, email, pass, imageUri, "ADMIN")) {
-                    Toast.makeText(this, "Admin Registration Successful!", Toast.LENGTH_LONG).show();
-                    finish();
-                } else {
-                    Toast.makeText(this, "Registration failed. Try again.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        setupListeners();
     }
 
     private void initViews() {
-        // Back Button
         findViewById(R.id.btnAdminBack).setOnClickListener(v -> finish());
-
-        // Profile Image Selection
         adminProfileImage = findViewById(R.id.adminProfileImage);
         findViewById(R.id.btnAdminCamera).setOnClickListener(v -> openGallery());
 
-        // Input Mappings
         etFullName = findViewById(R.id.etAdminFullName);
         etUniqueId = findViewById(R.id.etAdminUniqueId);
         etEmail = findViewById(R.id.etAdminRegEmail);
@@ -70,10 +59,72 @@ public class AdminRegisterActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etAdminRegPassword);
         etConfirmPassword = findViewById(R.id.etAdminConfirmPassword);
         btnRegister = findViewById(R.id.btnAdminRegister);
+        tvUsernameFeedback = findViewById(R.id.tvAdminUsernameFeedback);
         
         etRole.setOnClickListener(v -> {
             Toast.makeText(this, "Default Role: Normal Admin selected.", Toast.LENGTH_SHORT).show();
         });
+
+        btnRegister.setOnClickListener(v -> handleRegistration());
+    }
+
+    private void setupListeners() {
+        etUsername.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                checkUsernameUniqueness(s.toString().trim());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        etFullName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (etUsername.getText().toString().isEmpty() && s.length() > 3) {
+                    suggestUsername(s.toString().trim());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+    }
+
+    private void checkUsernameUniqueness(String username) {
+        if (username.isEmpty()) {
+            tvUsernameFeedback.setVisibility(View.GONE);
+            isUsernameAvailable = false;
+            return;
+        }
+
+        tvUsernameFeedback.setVisibility(View.VISIBLE);
+        if (repository.isUsernameTaken(username)) {
+            tvUsernameFeedback.setText("Username already exists");
+            tvUsernameFeedback.setTextColor(Color.parseColor("#FF5252"));
+            isUsernameAvailable = false;
+        } else {
+            tvUsernameFeedback.setText("Username is available");
+            tvUsernameFeedback.setTextColor(Color.parseColor("#4CAF50"));
+            isUsernameAvailable = true;
+        }
+    }
+
+    private void suggestUsername(String fullName) {
+        String base = fullName.toLowerCase().replaceAll("\\s+", "");
+        if (base.isEmpty()) return;
+        
+        String suggestion = base + "_admin" + (new Random().nextInt(90) + 10);
+        if (!repository.isUsernameTaken(suggestion)) {
+            etUsername.setText(suggestion);
+        }
     }
 
     private void openGallery() {
@@ -91,6 +142,26 @@ public class AdminRegisterActivity extends AppCompatActivity {
         }
     }
 
+    private void handleRegistration() {
+        if (validateInputs()) {
+            String name = etFullName.getText().toString().trim();
+            String uid = etUniqueId.getText().toString().trim();
+            String email = etEmail.getText().toString().trim();
+            String user = etUsername.getText().toString().trim();
+            String pass = etPassword.getText().toString().trim();
+            String role = etRole.getText().toString().trim();
+            String imageUri = adminProfileImage.getTag() != null ? adminProfileImage.getTag().toString() : "";
+
+            if (repository.register(name, uid, role, user, email, pass, imageUri, "ADMIN")) {
+                repository.logSystemAction("Admin", "REGISTER_NEW_ADMIN", "Registered new admin: " + user);
+                Toast.makeText(this, "Admin Registration Successful!", Toast.LENGTH_LONG).show();
+                finish();
+            } else {
+                Toast.makeText(this, "Registration failed. Try again.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     private boolean validateInputs() {
         String fullName = etFullName.getText().toString().trim();
         String uniqueId = etUniqueId.getText().toString().trim();
@@ -99,8 +170,15 @@ public class AdminRegisterActivity extends AppCompatActivity {
         String pass = etPassword.getText().toString().trim();
         String confirm = etConfirmPassword.getText().toString().trim();
 
-        if (fullName.isEmpty() || uniqueId.isEmpty() || email.isEmpty() || user.isEmpty() || pass.isEmpty()) {
-            Toast.makeText(this, "All security fields are mandatory", Toast.LENGTH_SHORT).show();
+        if (fullName.isEmpty()) { etFullName.setError("Full name required"); return false; }
+        if (user.isEmpty()) { etUsername.setError("Username required"); return false; }
+        if (uniqueId.isEmpty()) { etUniqueId.setError("Admin ID required"); return false; }
+        if (email.isEmpty()) { etEmail.setError("Email required"); return false; }
+        if (pass.isEmpty()) { etPassword.setError("Password required"); return false; }
+
+        if (!isUsernameAvailable) {
+            Toast.makeText(this, "Please use a unique username", Toast.LENGTH_SHORT).show();
+            etUsername.requestFocus();
             return false;
         }
 
@@ -110,12 +188,12 @@ public class AdminRegisterActivity extends AppCompatActivity {
         }
 
         if (!pass.equals(confirm)) {
-            Toast.makeText(this, "Security Passwords do not match", Toast.LENGTH_SHORT).show();
+            etConfirmPassword.setError("Passwords do not match");
             return false;
         }
 
         if (pass.length() < 8) {
-            Toast.makeText(this, "Password too weak for Admin Access", Toast.LENGTH_SHORT).show();
+            etPassword.setError("Password too weak (min 8 chars)");
             return false;
         }
 

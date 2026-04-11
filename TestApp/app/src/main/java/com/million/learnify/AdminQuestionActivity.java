@@ -13,26 +13,31 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.button.MaterialButton;
 
-public class AdminQuestionActivity extends AppCompatActivity {
+/**
+ * AdminQuestionActivity - Professional assessment creation engine.
+ * Inherits from BaseActivity for Role-Based Access Control (RBAC).
+ */
+public class AdminQuestionActivity extends BaseActivity {
 
     private EditText etQuestionTitle, etQuestion, etOptA, etOptB, etOptC, etOptD, etExplanation;
     private AutoCompleteTextView actvType, actvDifficulty, actvCategory;
     private RadioButton rbA, rbB, rbC, rbD;
-    private DatabaseHelper dbHelper;
     private String currentUsername;
     private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // SECURITY: Only allow Admin users to enter this portal.
+        enforceRole("ADMIN");
+        
         setContentView(R.layout.activity_admin_question);
 
-        dbHelper = new DatabaseHelper(this);
         SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
         currentUsername = pref.getString("username", "admin");
 
@@ -60,7 +65,6 @@ public class AdminQuestionActivity extends AppCompatActivity {
         rbC = findViewById(R.id.rbC);
         rbD = findViewById(R.id.rbD);
 
-        // Hamburger Menu Icon
         ImageView ivMenu = findViewById(R.id.ivMenu);
         if (ivMenu != null) {
             ivMenu.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
@@ -74,7 +78,6 @@ public class AdminQuestionActivity extends AppCompatActivity {
         findViewById(R.id.btnUploadFile).setOnClickListener(v -> 
             Toast.makeText(this, "Opening File Gallery...", Toast.LENGTH_SHORT).show());
 
-        // Radio group logic
         View.OnClickListener rbListener = v -> {
             rbA.setChecked(v.getId() == R.id.rbA);
             rbB.setChecked(v.getId() == R.id.rbB);
@@ -88,48 +91,40 @@ public class AdminQuestionActivity extends AppCompatActivity {
     }
 
     private void setupDrawerNavigation() {
-        // Dashboard
         findViewById(R.id.drawerNavDashboard).setOnClickListener(v -> {
             startActivity(new Intent(this, AdminDashboardActivity.class));
             finish();
         });
 
-        // Courses / Content
         findViewById(R.id.drawerNavCourses).setOnClickListener(v -> {
             startActivity(new Intent(this, AdminContentManagementActivity.class));
             drawerLayout.closeDrawer(GravityCompat.START);
         });
 
-        // Add Question (Current Page)
         findViewById(R.id.drawerNavAddQuestion).setOnClickListener(v -> {
             drawerLayout.closeDrawer(GravityCompat.START);
         });
 
-        // View Questions
         findViewById(R.id.drawerNavViewQuestions).setOnClickListener(v -> {
             startActivity(new Intent(this, AdminContentManagementActivity.class));
             drawerLayout.closeDrawer(GravityCompat.START);
         });
 
-        // Create Exam
         findViewById(R.id.drawerNavCreateExam).setOnClickListener(v -> {
             Toast.makeText(this, "Exam Builder Module Loading...", Toast.LENGTH_SHORT).show();
             drawerLayout.closeDrawer(GravityCompat.START);
         });
 
-        // Schedule
         findViewById(R.id.drawerNavSchedule).setOnClickListener(v -> {
             Toast.makeText(this, "Opening Exam Scheduler...", Toast.LENGTH_SHORT).show();
             drawerLayout.closeDrawer(GravityCompat.START);
         });
 
-        // Students
         findViewById(R.id.drawerNavStudents).setOnClickListener(v -> {
             startActivity(new Intent(this, AdminUserManagementActivity.class));
             drawerLayout.closeDrawer(GravityCompat.START);
         });
 
-        // Staff
         findViewById(R.id.drawerNavStaff).setOnClickListener(v -> {
             Toast.makeText(this, "Accessing Staff Directory...", Toast.LENGTH_SHORT).show();
             drawerLayout.closeDrawer(GravityCompat.START);
@@ -174,11 +169,10 @@ public class AdminQuestionActivity extends AppCompatActivity {
             return;
         }
 
-        // Send to Database
-        boolean success = dbHelper.insertDailyQuestionFull(question, a, b, c, d, correctAns, "12", cat, diff, expl);
+        boolean success = repository.getLocalDb().insertDailyQuestionFull(question, a, b, c, d, correctAns, "12", cat, diff, expl);
         
         if (success) {
-            dbHelper.addAnnouncement("New Exam Question Added: " + title, "Question on " + cat, "EXAM");
+            repository.getLocalDb().addAnnouncement("New Exam Question Added: " + title, "Question on " + cat, "EXAM");
             Toast.makeText(this, "✅ Question Saved and Published!", Toast.LENGTH_LONG).show();
             finish();
         } else {
@@ -188,7 +182,7 @@ public class AdminQuestionActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+        if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();

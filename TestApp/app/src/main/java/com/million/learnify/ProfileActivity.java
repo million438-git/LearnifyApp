@@ -9,18 +9,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.material.button.MaterialButton;
 
 /**
  * ProfileActivity - Updated to display student profile identity and active academic stats.
- * Connected to Edit Profile for a seamless flow.
+ * Refactored to use DataRepository for Client-Server readiness.
+ * Inherits from BaseActivity for Role-Based Access Control (RBAC).
  */
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends BaseActivity {
 
-    private DatabaseHelper dbHelper;
     private String currentUsername;
     private ImageView ivProfilePic;
     private TextView tvName, tvEmail;
@@ -28,9 +27,12 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // SECURITY: Only allow Student users to enter this portal.
+        enforceRole("STUDENT");
+        
         setContentView(R.layout.activity_profile);
 
-        dbHelper = new DatabaseHelper(this);
         SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
         currentUsername = pref.getString("username", "Student");
 
@@ -70,7 +72,8 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void displayUserData() {
-        Cursor cursor = dbHelper.getUserDetails(currentUsername);
+        // Fetch details via Repository (Abstraction Layer)
+        Cursor cursor = repository.getUserDetails(currentUsername);
         if (cursor != null && cursor.moveToFirst()) {
             String fullName = cursor.getString(cursor.getColumnIndexOrThrow("full_name"));
             String email = cursor.getString(cursor.getColumnIndexOrThrow("email"));

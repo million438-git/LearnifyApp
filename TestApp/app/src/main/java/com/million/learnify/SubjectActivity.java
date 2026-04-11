@@ -11,15 +11,17 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.button.MaterialButton;
 import java.io.IOException;
 
-public class SubjectActivity extends AppCompatActivity {
+/**
+ * SubjectActivity - Student academic library portal.
+ * Inherits from BaseActivity for Role-Based Access Control (RBAC).
+ */
+public class SubjectActivity extends BaseActivity {
 
     private static final String TAG = "SubjectActivity";
-    private DatabaseHelper dbHelper;
     private String currentUsername, userGrade;
     private LinearLayout subjectContainer;
     private SharedPreferences downloadPrefs;
@@ -28,9 +30,12 @@ public class SubjectActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // SECURITY: Only allow Student users to enter this portal.
+        enforceRole("STUDENT");
+        
         setContentView(R.layout.activity_subject);
 
-        dbHelper = new DatabaseHelper(this);
         SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
         currentUsername = pref.getString("username", "");
         userGrade = pref.getString("grade", "10");
@@ -90,8 +95,7 @@ public class SubjectActivity extends AppCompatActivity {
         }
 
         card.setOnClickListener(v -> {
-            // Check for access: Verified Payment OR Admin Manual Enrollment
-            if (dbHelper.hasPremiumAccess(currentUsername, userGrade)) {
+            if (repository.getLocalDb().hasPremiumAccess(currentUsername, userGrade)) {
                 Intent intent = new Intent(SubjectActivity.this, ChapterListActivity.class);
                 intent.putExtra("SUBJECT_NAME", subjectName);
                 startActivity(intent);

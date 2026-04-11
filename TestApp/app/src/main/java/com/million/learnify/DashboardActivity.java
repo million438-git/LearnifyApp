@@ -17,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -27,14 +26,15 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.Calendar;
+
 /**
  * DashboardActivity - Professional Student Workspace.
- * Optimized: Removed Grades, Attendance, and dynamic Resources from dashboard.
+ * Features automated Daily Challenge reminders and brainstorm prompts.
  */
 public class DashboardActivity extends BaseActivity implements VoiceStudyManager.VoiceCallback {
 
     private static final int MIC_PERMISSION_CODE = 200;
-    private DatabaseHelper dbHelper;
     private TextView tvWelcomeTitle, tvNotificationBadgeCount;
     private DrawerLayout drawerLayout;
     private String currentUsername;
@@ -53,6 +53,8 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        enforceRole("STUDENT");
+        
         try {
             setContentView(R.layout.activity_dashboard);
         } catch (Exception e) {
@@ -61,7 +63,6 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
             return;
         }
 
-        dbHelper = new DatabaseHelper(this);
         SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
         currentUsername = pref.getString("username", "");
         isImpersonating = pref.getBoolean("is_impersonating", false);
@@ -71,6 +72,10 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
             return;
         }
 
+        setupPortalToolbar(findViewById(R.id.toolbar), "Student Dashboard");
+        drawerLayout = findViewById(R.id.drawerLayout);
+        setupDrawerButton(drawerLayout);
+
         try {
             voiceStudyManager = new VoiceStudyManager(this, this);
         } catch (Exception e) { e.printStackTrace(); }
@@ -78,13 +83,10 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
         initViews();
         setupNavigation();
         updateHeaderAndWelcome();
+        checkDailyBrainstorm();
         
         checkMicrophonePermission();
         updateNotificationUI();
-
-        if (isImpersonating) {
-            showSupportModeWarning();
-        }
 
         try {
             IntentFilter filter = new IntentFilter("com.million.learnify.UPDATE_NOTIFICATION_UI");
@@ -96,8 +98,23 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
         } catch (Exception e) { }
     }
 
-    private void showSupportModeWarning() {
-        Toast.makeText(this, "⚠️ SUPPORT MODE ACTIVE: Logged in as " + currentUsername, Toast.LENGTH_LONG).show();
+    private void checkDailyBrainstorm() {
+        // Automatically check if challenge was done today, if not, prompt.
+        Calendar cal = Calendar.getInstance();
+        String today = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(cal.getTime());
+        
+        Cursor cursor = repository.getLocalDb().getChallengeStats(currentUsername);
+        boolean doneToday = false;
+        if (cursor.moveToFirst()) {
+            String lastDate = cursor.getString(cursor.getColumnIndexOrThrow("last_completion_date"));
+            if (today.equals(lastDate)) doneToday = true;
+        }
+        cursor.close();
+
+        if (!doneToday) {
+            DailyChallengeService.sendDailyReminder(this);
+            Toast.makeText(this, "🧠 Brainstorm: Your Daily Challenge is waiting!", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void updateHeaderAndWelcome() {
@@ -123,7 +140,7 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
                 ivHeaderProfile.setImageResource(android.R.drawable.ic_menu_view);
                 navView.getMenu().findItem(R.id.nav_logout).setTitle("Exit Support Mode");
             } else {
-                Cursor cursor = dbHelper.getUserDetails(currentUsername);
+                Cursor cursor = repository.getUserDetails(currentUsername);
                 if (cursor != null && cursor.moveToFirst()) {
                     tvHeaderName.setText(cursor.getString(cursor.getColumnIndexOrThrow("full_name")));
                     tvHeaderEmail.setText(cursor.getString(cursor.getColumnIndexOrThrow("email")));
@@ -142,9 +159,6 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
         tvWelcomeTitle = findViewById(R.id.tvWelcomeTitle);
         tvNotificationBadgeCount = findViewById(R.id.tvNotificationBadgeCount);
         rlNotificationContainer = findViewById(R.id.rlNotificationContainer);
-        
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        if (toolbar != null) setSupportActionBar(toolbar);
 
         if (rlNotificationContainer != null) {
             rlNotificationContainer.setOnClickListener(v -> startActivity(new Intent(this, NotificationListActivity.class)));
@@ -173,7 +187,7 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
 
     private void updateNotificationUI() {
         if (tvNotificationBadgeCount == null) return;
-        int unreadCount = dbHelper.getUnreadNotificationCount(currentUsername);
+        int unreadCount = repository.getUnreadNotificationCount(currentUsername);
         if (unreadCount > 0) {
             tvNotificationBadgeCount.setText(String.valueOf(unreadCount));
             tvNotificationBadgeCount.setVisibility(View.VISIBLE);
@@ -183,15 +197,7 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
     }
 
     private void setupNavigation() {
-        drawerLayout = findViewById(R.id.drawerLayout);
         NavigationView navigationView = findViewById(R.id.navigationView);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        if (drawerLayout != null && toolbar != null) {
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-            drawerLayout.addDrawerListener(toggle);
-            toggle.syncState();
-        }
-
         if (navigationView != null) {
             navigationView.setNavigationItemSelectedListener(item -> {
                 handleNavigation(item.getItemId());
@@ -211,17 +217,22 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
 
     private void handleNavigation(int id) {
         if (id == R.id.nav_dashboard || id == R.id.menu_home) {
-             // Home
         } else if (id == R.id.nav_visualizer || id == R.id.menu_visualizer) {
             startActivity(new Intent(this, VisualizerActivity.class));
         } else if (id == R.id.nav_courses || id == R.id.menu_courses) {
             startActivity(new Intent(this, SubjectActivity.class));
+        } else if (id == R.id.nav_certificate) {
+            startActivity(new Intent(this, CertificateActivity.class));
         } else if (id == R.id.nav_assignments || id == R.id.menu_assignments) {
             startActivity(new Intent(this, TasksActivity.class));
         } else if (id == R.id.nav_profile) {
             startActivity(new Intent(this, ProfileActivity.class));
         } else if (id == R.id.nav_settings || id == R.id.menu_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
+        } else if (id == R.id.nav_timetable) {
+            startActivity(new Intent(this, ClassScheduleActivity.class));
+        } else if (id == R.id.nav_announcements) {
+            startActivity(new Intent(this, AnnouncementsActivity.class));
         } else if (id == R.id.nav_logout) {
             logout();
         }
@@ -231,9 +242,9 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
         SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
         boolean wasImpersonating = pref.getBoolean("is_impersonating", false);
         pref.edit().clear().apply();
+        securePrefs.clearSession();
         
         if (wasImpersonating) {
-            Toast.makeText(this, "Exited Support Mode", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, AdminDashboardActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
@@ -267,10 +278,12 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
         super.onResume();
         updateNotificationUI();
         updateHeaderAndWelcome();
+        checkDailyBrainstorm();
     }
 
     @Override protected void onDestroy() {
         super.onDestroy();
         try { unregisterReceiver(notificationUpdateReceiver); } catch (Exception e) {}
+        if (voiceStudyManager != null) voiceStudyManager.shutdown();
     }
 }

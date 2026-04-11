@@ -10,7 +10,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,10 +25,9 @@ import retrofit2.http.POST;
 
 /**
  * EduAI - PROFESSIONAL STUDENT ASSISTANT
- * Fully integrated with ViewModel for data preservation and OpenAI for intelligence.
- * Includes advanced error reporting for API stability.
+ * Inherits from BaseActivity for Role-Based Access Control (RBAC).
  */
-public class AIChatActivity extends AppCompatActivity {
+public class AIChatActivity extends BaseActivity {
 
     private RecyclerView rvChat;
     private ChatAdapter chatAdapter;
@@ -42,6 +40,10 @@ public class AIChatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // SECURITY: Only allow Student users to enter this portal.
+        enforceRole("STUDENT");
+        
         setContentView(R.layout.activity_ai_chat);
 
         // Initialize ViewModel (The Brain)
@@ -105,7 +107,6 @@ public class AIChatActivity extends AppCompatActivity {
     }
 
     private void observeViewModel() {
-        // Observe messages and update UI
         viewModel.messages.observe(this, messages -> {
             if (!messages.isEmpty()) {
                 emptyStateView.setVisibility(View.GONE);
@@ -117,7 +118,6 @@ public class AIChatActivity extends AppCompatActivity {
             }
         });
 
-        // Observe loading state
         viewModel.isLoading.observe(this, loading -> {
             btnSendMessage.setEnabled(!loading);
             btnSendMessage.setAlpha(loading ? 0.5f : 1.0f);
@@ -125,7 +125,6 @@ public class AIChatActivity extends AppCompatActivity {
             else updateAIStatus(true, "EduAI Online");
         });
 
-        // Observe errors
         viewModel.error.observe(this, errorMsg -> {
             if (errorMsg != null) {
                 Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
@@ -140,8 +139,6 @@ public class AIChatActivity extends AppCompatActivity {
         dot.setColor(online ? Color.parseColor("#10B981") : Color.RED);
         viewStatusDot.setBackground(dot);
     }
-
-    // --- API INTERFACE & MODELS ---
 
     public interface OpenAIService {
         @POST("v1/chat/completions")

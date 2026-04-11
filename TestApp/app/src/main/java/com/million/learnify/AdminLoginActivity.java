@@ -15,9 +15,8 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
 
 /**
- * AdminLoginActivity - With normal system transitions.
- * Extends BaseActivity for consistent appearance and global settings.
- * Now loads the last known admin profile image.
+ * AdminLoginActivity - Professional Portal with Secure Persistence.
+ * Refactored to use DataRepository for centralized security.
  */
 public class AdminLoginActivity extends BaseActivity {
 
@@ -26,7 +25,6 @@ public class AdminLoginActivity extends BaseActivity {
     private MaterialButton btnAdminLogin;
     private CircularProgressIndicator adminLoginProgress;
     private TextView tvAdminRegisterLink;
-    private DatabaseHelper dbHelper;
     private ImageView ivAdminLoginProfile;
 
     @Override
@@ -35,7 +33,6 @@ public class AdminLoginActivity extends BaseActivity {
         
         try {
             setContentView(R.layout.activity_admin_login);
-            dbHelper = new DatabaseHelper(this);
             initViews();
             loadAdminProfileImage();
         } catch (Exception e) {
@@ -54,22 +51,17 @@ public class AdminLoginActivity extends BaseActivity {
         ivAdminLoginProfile = findViewById(R.id.ivAdminLoginProfile);
 
         if (btnAdminLogin != null) {
-            btnAdminLogin.setOnClickListener(v -> {
-                handleLogin();
-            });
+            btnAdminLogin.setOnClickListener(v -> handleLogin());
         }
 
         if (tvAdminRegisterLink != null) {
-            tvAdminRegisterLink.setOnClickListener(v -> {
-                startActivity(new Intent(this, AdminRegisterActivity.class));
-            });
+            tvAdminRegisterLink.setOnClickListener(v -> startActivity(new Intent(this, AdminRegisterActivity.class)));
         }
     }
 
     private void loadAdminProfileImage() {
         if (ivAdminLoginProfile != null) {
-            // By default, attempt to load the profile of 'admin' user
-            String imageUriStr = dbHelper.getUserProfileImage("admin");
+            String imageUriStr = repository.getUserProfileImage("admin");
             if (imageUriStr != null && !imageUriStr.isEmpty()) {
                 try {
                     ivAdminLoginProfile.setImageURI(Uri.parse(imageUriStr));
@@ -82,8 +74,8 @@ public class AdminLoginActivity extends BaseActivity {
     }
 
     private void handleLogin() {
-        String user = etAdminUser != null ? etAdminUser.getText().toString().trim() : "";
-        String pass = etAdminPassword != null ? etAdminPassword.getText().toString().trim() : "";
+        String user = etAdminUser.getText().toString().trim();
+        String pass = etAdminPassword.getText().toString().trim();
 
         if (user.isEmpty() || pass.isEmpty()) {
             Toast.makeText(this, "Please enter admin credentials", Toast.LENGTH_SHORT).show();
@@ -93,11 +85,12 @@ public class AdminLoginActivity extends BaseActivity {
         setLoading(true);
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            if (dbHelper.checkUser(user, pass, "ADMIN")) {
+            if (repository.login(user, pass, "ADMIN")) {
                 onLoginSuccess(user);
             } else {
                 setLoading(false);
-                Toast.makeText(this, "Unauthorized admin access attempt blocked.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Unauthorized access attempt blocked.", Toast.LENGTH_SHORT).show();
+                repository.logSystemAction(user, "FAILED_LOGIN_ADMIN", "Failed login attempt from: " + user);
             }
         }, 800);
     }
@@ -113,6 +106,11 @@ public class AdminLoginActivity extends BaseActivity {
     }
 
     private void onLoginSuccess(String user) {
+        securePrefs.saveString("username", user);
+        securePrefs.saveString("full_name", "Administrator");
+        securePrefs.saveString("user_type", "ADMIN");
+        securePrefs.saveBoolean("isLoggedIn", true);
+
         getSharedPreferences("UserSession", MODE_PRIVATE).edit()
             .putString("username", user)
             .putString("full_name", "Administrator")
@@ -120,11 +118,10 @@ public class AdminLoginActivity extends BaseActivity {
             .putBoolean("isLoggedIn", true)
             .apply();
 
-        Toast.makeText(this, "Admin access granted. Welcome!", Toast.LENGTH_SHORT).show();
-        
-        Intent intent = new Intent(this, AdminDashboardActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        repository.logSystemAction(user, "LOGIN_SUCCESS_ADMIN", "Admin logged in successfully");
+
+        Toast.makeText(this, "Admin access granted.", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this, AdminDashboardActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         finish();
     }
 }

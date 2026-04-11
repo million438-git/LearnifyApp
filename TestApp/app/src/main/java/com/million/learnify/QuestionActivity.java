@@ -4,15 +4,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.widget.TextView;
 
 /**
  * QuestionActivity - Dynamic HTML Practice Engine.
- * Automatically loads interactive questions from the assets folder.
+ * Inherits from BaseActivity for Role-Based Access Control (RBAC).
  */
-public class QuestionActivity extends AppCompatActivity {
+public class QuestionActivity extends BaseActivity {
 
     private WebView wvQuestionContent;
     private View scrollLegacyQuestions;
@@ -21,6 +20,10 @@ public class QuestionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // SECURITY: Only allow Student users to enter this portal.
+        enforceRole("STUDENT");
+        
         setContentView(R.layout.activity_question);
 
         initViews();
@@ -34,7 +37,6 @@ public class QuestionActivity extends AppCompatActivity {
         tvSubjectHeader = findViewById(R.id.tvSubjectHeader);
         tvProgress = findViewById(R.id.tvProgress);
         
-        // Hide legacy UI components as we are now 100% HTML-based
         if (scrollLegacyQuestions != null) {
             scrollLegacyQuestions.setVisibility(View.GONE);
         }
@@ -55,23 +57,19 @@ public class QuestionActivity extends AppCompatActivity {
         String chapterName = getIntent().getStringExtra("CHAPTER_NAME");
         String topicName = getIntent().getStringExtra("TOPIC_NAME");
 
-        tvSubjectHeader.setText(subjectName);
-        tvProgress.setText("Practice: " + chapterName);
+        if (tvSubjectHeader != null) tvSubjectHeader.setText(subjectName);
+        if (tvProgress != null) tvProgress.setText("Practice: " + chapterName);
 
-        // 1. Try to find a question file specific to the topic
         String url = StudyContentProvider.getHtmlUrl(this, subjectName, chapterName, topicName + "_questions");
         
-        // 2. Fallback: Try to find a general question file in the unit folder
         if (url == null) {
-            // Updated to check for both 'questions' and subject-specific names
             url = StudyContentProvider.getHtmlUrl(this, subjectName, chapterName, "questions");
-            if (url == null && subjectName.equalsIgnoreCase("Physics")) {
+            if (url == null && "Physics".equalsIgnoreCase(subjectName)) {
                 url = StudyContentProvider.getHtmlUrl(this, subjectName, chapterName, "Physics And Human Society");
             }
         }
         
-        // 3. Fallback: Check if the topic itself was meant to be the question file
-        if (url == null && topicName.toLowerCase().contains("question")) {
+        if (url == null && topicName != null && topicName.toLowerCase().contains("question")) {
             url = StudyContentProvider.getHtmlUrl(this, subjectName, chapterName, topicName);
         }
 

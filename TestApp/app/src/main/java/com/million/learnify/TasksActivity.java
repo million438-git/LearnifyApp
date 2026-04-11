@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,29 +26,32 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import okhttp3.OkHttpClient;
-
-public class TasksActivity extends AppCompatActivity {
+/**
+ * TasksActivity - Student assignment and personal task manager.
+ * Refactored to use DataRepository for Client-Server readiness.
+ * Inherits from BaseActivity for Role-Based Access Control (RBAC).
+ */
+public class TasksActivity extends BaseActivity {
 
     private RecyclerView rvTasks;
-    private DatabaseHelper dbHelper;
     private String currentUsername, userGrade;
     private TextView tvTotalCount, tvCompletedCount, tvPendingCount, tvOverdueCount;
     private MaterialCardView cardAddTaskForm;
     private TextInputEditText etTaskTitle, etTaskDesc, etTaskDate, etTaskTime;
     private AutoCompleteTextView actvTaskSubject, actvTaskPriority;
-    
-    private final OkHttpClient client = new OkHttpClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // SECURITY: Only allow Student users to enter this portal.
+        enforceRole("STUDENT");
+        
         setContentView(R.layout.activity_tasks);
 
-        dbHelper = new DatabaseHelper(this);
         SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
         currentUsername = pref.getString("username", "Student");
-        userGrade = dbHelper.getUserGrade(currentUsername);
+        userGrade = pref.getString("grade", "10");
 
         setupToolbar();
         initViews();
@@ -128,15 +130,13 @@ public class TasksActivity extends AppCompatActivity {
             return;
         }
 
-        boolean success = dbHelper.insertTask(title, desc, subject, userGrade, date, time, priority);
+        // Using Repository for insertion (future-proof)
+        boolean success = repository.getLocalDb().insertTask(title, desc, subject, userGrade, date, time, priority);
         if (success) {
             Toast.makeText(this, "📌 Task Saved!", Toast.LENGTH_SHORT).show();
             
-            // AUTOMATIC ALERT SCHEDULING
             SettingsService settings = new SettingsService(this);
             if (settings.loadSettings().isHomeworkAlerts()) {
-                // Schedule alert for this specific task
-                // In a real app, we'd get the inserted ID from dbHelper
                 NotificationHelper.scheduleTaskNotification(this, (int)System.currentTimeMillis(), title, date, time);
             }
 
@@ -156,7 +156,8 @@ public class TasksActivity extends AppCompatActivity {
     }
 
     private void loadTasks() {
-        List<TaskModel> tasks = dbHelper.getTasksForGrade(userGrade);
+        // Fetch via Repository (Abstraction Layer)
+        List<TaskModel> tasks = repository.getStudentTasks(userGrade);
         int total = tasks.size();
         int done = 0, pending = 0, overdue = 0;
         for (TaskModel t : tasks) {
@@ -207,12 +208,13 @@ public class TasksActivity extends AppCompatActivity {
             }
 
             holder.btnMarkDone.setOnClickListener(v -> {
-                dbHelper.updateTaskStatus(task.getId(), "Completed");
+                // Update via Repository
+                repository.updateTaskStatus(task.getId(), "Completed");
                 loadTasks();
             });
 
             holder.btnDelete.setOnClickListener(v -> {
-                dbHelper.deleteTask(task.getId());
+                repository.getLocalDb().deleteTask(task.getId());
                 loadTasks();
             });
         }

@@ -1,9 +1,7 @@
 package com.million.learnify;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.button.MaterialButton;
@@ -12,8 +10,9 @@ import com.google.android.material.textfield.TextInputEditText;
 /**
  * AdminSystemSettingsActivity - The Central Nervous System of the Application.
  * Manages 10 core infrastructure domains from 8.1 to 8.10.
+ * Inherits from BaseActivity for Role-Based Access Control (RBAC).
  */
-public class AdminSystemSettingsActivity extends AppCompatActivity {
+public class AdminSystemSettingsActivity extends BaseActivity {
 
     private DatabaseHelper dbHelper;
     private String adminUsername = "admin";
@@ -34,9 +33,13 @@ public class AdminSystemSettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // SECURITY: Only allow Admin users to enter this portal.
+        enforceRole("ADMIN");
+        
         setContentView(R.layout.activity_admin_system_settings);
 
-        dbHelper = new DatabaseHelper(this);
+        dbHelper = repository.getLocalDb();
         setupToolbar();
         initViews();
         loadAllConfigurations();
@@ -102,86 +105,66 @@ public class AdminSystemSettingsActivity extends AppCompatActivity {
     }
 
     private void loadAllConfigurations() {
-        // 8.1
         etAppName.setText(dbHelper.getSetting("site_name", "Learnify Pro"));
         etTagline.setText(dbHelper.getSetting("site_tagline", "Smart Study Hub"));
         etContactEmail.setText(dbHelper.getSetting("contact_email", "admin@learnify.com"));
         etSupportEmail.setText(dbHelper.getSetting("support_email", "support@learnify.com"));
 
-        // 8.2
         etCurrency.setText(dbHelper.getSetting("default_currency", "USD"));
         switchRTL.setChecked(dbHelper.getSetting("enable_rtl", "0").equals("1"));
 
-        // 8.3
         etSmtpHost.setText(dbHelper.getSetting("smtp_host", "smtp.learnify.com"));
         etFcmKey.setText(dbHelper.getSetting("fcm_server_key", ""));
 
-        // 8.4
         switch2FA.setChecked(dbHelper.getSetting("enforce_2fa", "0").equals("1"));
         switchLockout.setChecked(dbHelper.getSetting("login_protection", "1").equals("1"));
 
-        // 8.5
         switchCookie.setChecked(dbHelper.getSetting("cookie_consent", "1").equals("1"));
 
-        // 8.6
         etZoomKey.setText(dbHelper.getSetting("zoom_api_key", ""));
         etS3Bucket.setText(dbHelper.getSetting("aws_s3_bucket", "learnify-assets"));
 
-        // 8.7
         etPrimaryColor.setText(dbHelper.getSetting("primary_color", "#4F46E5"));
 
-        // 8.8
         switchCache.setChecked(dbHelper.getSetting("enable_caching", "1").equals("1"));
 
-        // 8.9
         switchMaintenance.setChecked(dbHelper.getSetting("maintenance_mode", "0").equals("1"));
         switchRegistration.setChecked(dbHelper.getSetting("allow_registration", "1").equals("1"));
         switchVoiceFeature.setChecked(dbHelper.getSetting("voice_study", "1").equals("1"));
         
-        // 8.10
         if (etExamTime != null) etExamTime.setText(dbHelper.getSetting("exam_time", "30"));
         if (etPassingScore != null) etPassingScore.setText(dbHelper.getSetting("passing_score", "50"));
     }
 
     private void saveAllConfigurations() {
         try {
-            // 8.1
             dbHelper.saveSetting("site_name", etAppName.getText().toString());
             dbHelper.saveSetting("site_tagline", etTagline.getText().toString());
             dbHelper.saveSetting("contact_email", etContactEmail.getText().toString());
             dbHelper.saveSetting("support_email", etSupportEmail.getText().toString());
 
-            // 8.2
             dbHelper.saveSetting("default_currency", etCurrency.getText().toString());
             dbHelper.saveSetting("enable_rtl", switchRTL.isChecked() ? "1" : "0");
 
-            // 8.3
             dbHelper.saveSetting("smtp_host", etSmtpHost.getText().toString());
             dbHelper.saveSetting("fcm_server_key", etFcmKey.getText().toString());
 
-            // 8.4
             dbHelper.saveSetting("enforce_2fa", switch2FA.isChecked() ? "1" : "0");
             dbHelper.saveSetting("login_protection", switchLockout.isChecked() ? "1" : "0");
 
-            // 8.5
             dbHelper.saveSetting("cookie_consent", switchCookie.isChecked() ? "1" : "0");
 
-            // 8.6
             dbHelper.saveSetting("zoom_api_key", etZoomKey.getText().toString());
             dbHelper.saveSetting("aws_s3_bucket", etS3Bucket.getText().toString());
 
-            // 8.7
             dbHelper.saveSetting("primary_color", etPrimaryColor.getText().toString());
 
-            // 8.8
             dbHelper.saveSetting("enable_caching", switchCache.isChecked() ? "1" : "0");
 
-            // 8.9
             dbHelper.saveSetting("maintenance_mode", switchMaintenance.isChecked() ? "1" : "0");
             dbHelper.saveSetting("allow_registration", switchRegistration.isChecked() ? "1" : "0");
             dbHelper.saveSetting("voice_study", switchVoiceFeature.isChecked() ? "1" : "0");
 
-            // 8.10
             if (etExamTime != null) dbHelper.saveSetting("exam_time", etExamTime.getText().toString());
             if (etPassingScore != null) dbHelper.saveSetting("passing_score", etPassingScore.getText().toString());
 

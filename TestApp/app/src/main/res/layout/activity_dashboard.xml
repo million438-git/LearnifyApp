@@ -20,7 +20,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:title="Learnify"
+                app:title="Dashboard"
                 app:titleTextColor="@android:color/white">
 
                 <LinearLayout
@@ -29,8 +29,7 @@
                     android:layout_gravity="end"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:paddingEnd="8dp"
-                    android:paddingStart="0dp">
+                    android:paddingEnd="8dp">
 
                     <RelativeLayout
                         android:id="@+id/rlNotificationContainer"
@@ -46,8 +45,7 @@
                             android:layout_height="28dp"
                             android:layout_centerInParent="true"
                             android:src="@android:drawable/ic_popup_reminder"
-                            app:tint="@android:color/white"
-                            android:contentDescription="@string/dashboard_notif_bell_desc" />
+                            app:tint="@android:color/white" />
 
                         <TextView
                             android:id="@+id/tvNotificationBadgeCount"
@@ -59,7 +57,7 @@
                             android:layout_marginEnd="-4dp"
                             android:background="@android:color/holo_red_dark"
                             android:gravity="center"
-                            android:text="@string/dashboard_notif_count_zero"
+                            android:text="0"
                             android:textColor="@android:color/white"
                             android:textSize="11sp"
                             android:textStyle="bold"
@@ -74,8 +72,7 @@
                         app:tint="@android:color/white"
                         android:clickable="true"
                         android:focusable="true"
-                        android:padding="10dp"
-                        android:contentDescription="@string/dashboard_voice_assistant_desc" />
+                        android:padding="10dp" />
                 </LinearLayout>
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
@@ -90,180 +87,195 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tvWelcomeTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/dashboard_welcome"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:textColor="#1E293B" />
+                <!-- [ ☰ ] Small, left side under header -->
+                <ImageButton
+                    android:id="@+id/btnOpenDrawer"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_margin="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_menu"
+                    app:tint="@color/primary_indigo" />
 
-                <TextView
-                    android:id="@+id/tvNotificationBadge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/dashboard_path_active"
-                    android:layout_marginTop="4dp"
-                    android:textColor="#64748B" />
-
-                <!-- Feature Cards -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardTimetable"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp"
-                    app:cardBackgroundColor="#F0FDFA">
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_icon_timetable" android:textSize="28sp" />
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_title_timetable" android:textSize="16sp" android:textStyle="bold" android:textColor="#0D9488" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_desc_timetable" android:textSize="12sp" android:textColor="#0F766E" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardCourses"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp"
-                    app:cardBackgroundColor="#EFF6FF">
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_icon_courses" android:textSize="28sp" />
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_title_courses" android:textSize="16sp" android:textStyle="bold" android:textColor="#1D4ED8" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_desc_courses" android:textSize="12sp" android:textColor="#1E40AF" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    <TextView
+                        android:id="@+id/tvWelcomeTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/dashboard_welcome"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:textColor="#1E293B" />
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardAssignments"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp"
-                    app:cardBackgroundColor="#FFF7ED">
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_icon_assignments" android:textSize="28sp" />
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_title_assignments" android:textSize="16sp" android:textStyle="bold" android:textColor="#C2410C" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_desc_assignments" android:textColor="#9A3412" android:textSize="12sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/dashboard_path_active"
+                        android:layout_marginTop="4dp"
+                        android:textColor="#64748B" />
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardDailyChallenge"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp"
-                    app:cardBackgroundColor="#FFFBEB">
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_icon_daily_challenge" android:textSize="28sp" />
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_title_daily_challenge" android:textSize="16sp" android:textStyle="bold" android:textColor="#B45309" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_desc_daily_challenge" android:textSize="12sp" android:textColor="#92400E" />
+                    <!-- Feature Cards (Remaining same layout structure) -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardTimetable"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="4dp"
+                        app:cardBackgroundColor="#F0FDFA">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_icon_timetable" android:textSize="28sp" />
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_title_timetable" android:textSize="16sp" android:textStyle="bold" android:textColor="#0D9488" />
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_desc_timetable" android:textSize="12sp" android:textColor="#0F766E" />
+                            </LinearLayout>
                         </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    </com.google.android.material.card.MaterialCardView>
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardCameraLab"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp"
-                    app:cardBackgroundColor="#F5F3FF">
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_icon_camera_lab" android:textSize="28sp" />
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_title_camera_lab" android:textSize="16sp" android:textStyle="bold" android:textColor="#6D28D9" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_desc_camera_lab" android:textSize="12sp" android:textColor="#5B21B6" />
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardCourses"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="4dp"
+                        app:cardBackgroundColor="#EFF6FF">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_icon_courses" android:textSize="28sp" />
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_title_courses" android:textSize="16sp" android:textStyle="bold" android:textColor="#1D4ED8" />
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_desc_courses" android:textSize="12sp" android:textColor="#1E40AF" />
+                            </LinearLayout>
                         </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    </com.google.android.material.card.MaterialCardView>
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardVisualizers"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp"
-                    app:cardBackgroundColor="#E0F2F1">
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_icon_visualizers" android:textSize="28sp" />
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_title_visualizers" android:textColor="#00695C" android:textSize="16sp" android:textStyle="bold" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_desc_visualizers" android:textSize="12sp" android:textColor="#004D40" />
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardAssignments"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="4dp"
+                        app:cardBackgroundColor="#FFF7ED">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_icon_assignments" android:textSize="28sp" />
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_title_assignments" android:textSize="16sp" android:textStyle="bold" android:textColor="#C2410C" />
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_desc_assignments" android:textColor="#9A3412" android:textSize="12sp" />
+                            </LinearLayout>
                         </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    </com.google.android.material.card.MaterialCardView>
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardAI"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp"
-                    app:cardBackgroundColor="#EEF2FF">
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_icon_ai" android:textSize="28sp" />
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_title_ai" android:textSize="16sp" android:textStyle="bold" android:textColor="#4338CA" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_desc_ai" android:textSize="12sp" android:textColor="#3730A3" />
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardDailyChallenge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="4dp"
+                        app:cardBackgroundColor="#FFFBEB">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_icon_daily_challenge" android:textSize="28sp" />
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_title_daily_challenge" android:textSize="16sp" android:textStyle="bold" android:textColor="#B45309" />
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_desc_daily_challenge" android:textSize="12sp" android:textColor="#92400E" />
+                            </LinearLayout>
                         </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    </com.google.android.material.card.MaterialCardView>
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardAnnouncements"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp"
-                    app:cardBackgroundColor="#FDF2F8">
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_icon_announcements" android:textSize="28sp" />
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_title_announcements" android:textSize="16sp" android:textStyle="bold" android:textColor="#9D174D" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_desc_announcements" android:textSize="12sp" android:textColor="#831843" />
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardCameraLab"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="4dp"
+                        app:cardBackgroundColor="#F5F3FF">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_icon_camera_lab" android:textSize="28sp" />
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_title_camera_lab" android:textSize="16sp" android:textStyle="bold" android:textColor="#6D28D9" />
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_desc_camera_lab" android:textSize="12sp" android:textColor="#5B21B6" />
+                            </LinearLayout>
                         </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    </com.google.android.material.card.MaterialCardView>
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardPremium"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="6dp"
-                    app:cardBackgroundColor="#0B2099">
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_icon_premium" android:textSize="28sp" />
-                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_title_premium" android:textSize="16sp" android:textStyle="bold" android:textColor="@android:color/white" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_desc_premium" android:textSize="12sp" android:textColor="#BFDBFE" />
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardVisualizers"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="4dp"
+                        app:cardBackgroundColor="#E0F2F1">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_icon_visualizers" android:textSize="28sp" />
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_title_visualizers" android:textColor="#00695C" android:textSize="16sp" android:textStyle="bold" />
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_desc_visualizers" android:textSize="12sp" android:textColor="#004D40" />
+                            </LinearLayout>
                         </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    </com.google.android.material.card.MaterialCardView>
 
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardAI"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="4dp"
+                        app:cardBackgroundColor="#EEF2FF">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_icon_ai" android:textSize="28sp" />
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_title_ai" android:textSize="16sp" android:textStyle="bold" android:textColor="#4338CA" />
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_desc_ai" android:textSize="12sp" android:textColor="#3730A3" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardAnnouncements"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="4dp"
+                        app:cardBackgroundColor="#FDF2F8">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_icon_announcements" android:textSize="28sp" />
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_title_announcements" android:textSize="16sp" android:textStyle="bold" android:textColor="#9D174D" />
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_desc_announcements" android:textSize="12sp" android:textColor="#831843" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardPremium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="6dp"
+                        app:cardBackgroundColor="#0B2099">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_icon_premium" android:textSize="28sp" />
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_title_premium" android:textSize="16sp" android:textStyle="bold" android:textColor="@android:color/white" />
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/dashboard_desc_premium" android:textSize="12sp" android:textColor="#BFDBFE" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 

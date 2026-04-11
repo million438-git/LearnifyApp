@@ -6,15 +6,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import java.util.List;
 
-public class ChapterListActivity extends AppCompatActivity {
+/**
+ * ChapterListActivity - Displays units/chapters for a specific subject.
+ * Inherits from BaseActivity for Role-Based Access Control (RBAC).
+ */
+public class ChapterListActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // SECURITY: Only allow Student users to enter this portal.
+        enforceRole("STUDENT");
+        
         setContentView(R.layout.activity_chapter_list);
 
         String subject = getIntent().getStringExtra("SUBJECT_NAME");
@@ -36,6 +43,7 @@ public class ChapterListActivity extends AppCompatActivity {
 
     private void loadChapters(String subject) {
         LinearLayout container = findViewById(R.id.chapterContainer);
+        if (container == null) return;
         container.removeAllViews();
         
         List<String> chapters = StudyContentProvider.getChapters(this, subject);
@@ -43,7 +51,7 @@ public class ChapterListActivity extends AppCompatActivity {
         for (String chapter : chapters) {
             View itemView = LayoutInflater.from(this).inflate(R.layout.item_chapter, container, false);
             TextView tvName = itemView.findViewById(R.id.tvChapterName);
-            tvName.setText(chapter);
+            if (tvName != null) tvName.setText(chapter);
             
             itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(this, TopicListActivity.class);

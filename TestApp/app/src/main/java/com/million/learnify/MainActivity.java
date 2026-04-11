@@ -5,34 +5,31 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.card.MaterialCardView;
 import java.util.Locale;
 
 /**
- * MainActivity - Portal Selection with Normal Transition Styles.
+ * MainActivity - Professional Portal.
+ * Hides Admin Access behind a Developer Secret Trigger on the Welcome Title.
  */
 public class MainActivity extends AppCompatActivity {
+
+    private int adminTriggerCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Apply saved locale
         SettingsService settingsService = new SettingsService(this);
         applyLocale(settingsService.loadSettings().getLanguage());
 
         setContentView(R.layout.activity_main);
         
-        // Entrance animation for the root layout (fade)
-        View root = findViewById(android.R.id.content);
-        root.setAlpha(0f);
-        root.animate().alpha(1f).setDuration(400).start();
-        
         initPortalSelection();
+        setupSecretAdminTrigger();
     }
 
     private void applyLocale(String langCode) {
@@ -46,53 +43,38 @@ public class MainActivity extends AppCompatActivity {
 
     private void initPortalSelection() {
         MaterialCardView cardStudent = findViewById(R.id.cardStudentPortal);
-        MaterialCardView cardAdmin = findViewById(R.id.cardAdminPortal);
+        // We HIDE the Admin Card from the UI completely for production
+        View cardAdmin = findViewById(R.id.cardAdminPortal);
+        if (cardAdmin != null) cardAdmin.setVisibility(View.GONE);
 
-        // Staggered animation for cards
         if (cardStudent != null) {
-            cardStudent.setVisibility(View.INVISIBLE);
-            cardStudent.postDelayed(() -> {
-                cardStudent.setVisibility(View.VISIBLE);
-                Animation anim = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
-                cardStudent.startAnimation(anim);
-            }, 100);
-            
-            cardStudent.setOnClickListener(v -> {
-                navigateToStudentLogin();
-            });
+            cardStudent.setOnClickListener(v -> navigateToStudentLogin());
         }
+    }
 
-        if (cardAdmin != null) {
-            cardAdmin.setVisibility(View.INVISIBLE);
-            cardAdmin.postDelayed(() -> {
-                cardAdmin.setVisibility(View.VISIBLE);
-                Animation anim = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
-                cardAdmin.startAnimation(anim);
-            }, 200);
-
-            cardAdmin.setOnClickListener(v -> {
-                navigateToAdminLogin();
+    /**
+     * SECRET TRIGGER: Tap the "EduPortal" title 7 times 
+     * to unlock the Admin Login. Only you (the developer) knows this.
+     */
+    private void setupSecretAdminTrigger() {
+        TextView tvTitle = findViewById(R.id.welcomeTitle);
+        if (tvTitle != null) {
+            tvTitle.setOnClickListener(v -> {
+                adminTriggerCount++;
+                if (adminTriggerCount == 7) {
+                    Toast.makeText(this, "Developer Mode: Admin Portal Unlocked", Toast.LENGTH_SHORT).show();
+                    navigateToAdminLogin();
+                    adminTriggerCount = 0;
+                }
             });
         }
     }
 
     private void navigateToStudentLogin() {
-        try {
-            Intent intent = new Intent(MainActivity.this, StudentLoginActivity.class);
-            startActivity(intent);
-            // Using system default "normal" transition
-        } catch (Exception e) {
-            Toast.makeText(this, "Error opening Student Portal", Toast.LENGTH_SHORT).show();
-        }
+        startActivity(new Intent(this, StudentLoginActivity.class));
     }
 
     private void navigateToAdminLogin() {
-        try {
-            Intent intent = new Intent(MainActivity.this, AdminLoginActivity.class);
-            startActivity(intent);
-            // Using system default "normal" transition
-        } catch (Exception e) {
-            Toast.makeText(this, "Error opening Admin Portal", Toast.LENGTH_SHORT).show();
-        }
+        startActivity(new Intent(this, AdminLoginActivity.class));
     }
 }

@@ -1,25 +1,38 @@
 package com.million.learnify;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class HelpSupportActivity extends AppCompatActivity {
+/**
+ * HelpSupportActivity - Professional Student Support Portal.
+ * Integrated with Admin Support Management for real-time ticket tracking.
+ */
+public class HelpSupportActivity extends BaseActivity {
 
     private static final String DEVELOPER_EMAIL = "millionteshome439@gmail.com";
+    private String currentUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // SECURITY: Role-based access handled by BaseActivity
+        enforceRole("STUDENT");
+        
         setContentView(R.layout.activity_help_support);
+
+        SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
+        currentUsername = pref.getString("username", "student");
 
         setupToolbar();
         initSupportFeatures();
@@ -27,12 +40,7 @@ public class HelpSupportActivity extends AppCompatActivity {
 
     private void setupToolbar() {
         Toolbar toolbar = findViewById(R.id.helpToolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Help & Support");
-        }
-        toolbar.setNavigationOnClickListener(v -> finish());
+        setupPortalToolbar(toolbar, "Help & Support");
     }
 
     private void initSupportFeatures() {
@@ -149,7 +157,22 @@ public class HelpSupportActivity extends AppCompatActivity {
 
         builder.setView(layout);
         builder.setPositiveButton("SUBMIT", (dialog, which) -> {
-            Toast.makeText(this, "Problem Reported to Developer! We will fix it soon.", Toast.LENGTH_LONG).show();
+            String title = etTitle.getText().toString().trim();
+            String cat = spinner.getSelectedItem().toString();
+            String desc = etDesc.getText().toString().trim();
+            
+            if (title.isEmpty() || desc.isEmpty()) {
+                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Real-time Database Link: Admin will see this in Support Management
+            boolean success = repository.getLocalDb().insertSupportTicket(currentUsername, title, cat, desc);
+            if (success) {
+                Toast.makeText(this, "✅ Problem Reported! Admins are reviewing your ticket.", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Database Error. Please try again.", Toast.LENGTH_SHORT).show();
+            }
         });
         builder.setNegativeButton("CANCEL", null);
         builder.show();
@@ -163,7 +186,11 @@ public class HelpSupportActivity extends AppCompatActivity {
         input.setPadding(50, 40, 50, 10);
         builder.setView(input);
         builder.setPositiveButton("SEND", (dialog, which) -> {
-            Toast.makeText(this, "Thank you for your suggestion!", Toast.LENGTH_SHORT).show();
+            String feedback = input.getText().toString().trim();
+            if (!feedback.isEmpty()) {
+                repository.getLocalDb().insertSupportTicket(currentUsername, "User Feedback", "General", feedback);
+                Toast.makeText(this, "Thank you! Your feedback has been sent to the team.", Toast.LENGTH_SHORT).show();
+            }
         });
         builder.setNegativeButton("CANCEL", null);
         builder.show();

@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -28,28 +29,29 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class DailyChallengeActivity extends AppCompatActivity {
+/**
+ * DailyChallengeActivity - 5 Questions per Day curated for students.
+ * Logic: Questions are selected based on the current date to ensure 
+ * all students see the same 5 questions each day.
+ */
+public class DailyChallengeActivity extends BaseActivity {
 
     private DatabaseHelper dbHelper;
     private String currentUsername, userGrade;
     
-    // UI Elements - Top Bar
+    // UI Elements
     private TextView tvTotalXP, tvStreakVal, tvTimerText;
     private CircularProgressIndicator timerProgress;
-    
-    // UI Elements - Content
     private LinearLayout stepMapContainer;
     private TextView tvQuestionNum, tvQuestionContent, tvExplanation, tvFeedbackTitle;
     private GridLayout optionsGrid;
     private MaterialCardView feedbackCard;
-    
-    // UI Elements - Bottom Strip
     private TextView tvHintCount, tvCombo, tvBonusTracker;
-    private CardView bottomUtilityStrip;
 
     private List<DailyQuestion> questionList = new ArrayList<>();
     private int currentQuestionIndex = 0;
@@ -57,14 +59,16 @@ public class DailyChallengeActivity extends AppCompatActivity {
     private int currentStreak = 0;
     private int comboCount = 0;
     private int hintsRemaining = 3;
-    private boolean[] questionResults; // null = unvisited, true = correct, false = incorrect
+    private boolean[] questionResults;
     
     private CountDownTimer questionTimer;
-    private static final long QUESTION_TIME_LIMIT = 30000; // 30 seconds
+    private static final long QUESTION_TIME_LIMIT = 30000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        enforceRole("STUDENT");
         setContentView(R.layout.activity_daily_challenge);
 
         dbHelper = new DatabaseHelper(this);
@@ -74,18 +78,16 @@ public class DailyChallengeActivity extends AppCompatActivity {
 
         initViews();
         loadInitialStats();
-        loadQuestions();
+        loadDailyQuestions();
     }
 
     private void initViews() {
-        // Top Bar
         tvTotalXP = findViewById(R.id.tvTotalXP);
         tvStreakVal = findViewById(R.id.tvStreakVal);
         tvTimerText = findViewById(R.id.tvTimerText);
         timerProgress = findViewById(R.id.timerProgress);
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
         
-        // Content
         stepMapContainer = findViewById(R.id.stepMapContainer);
         tvQuestionNum = findViewById(R.id.tvQuestionNum);
         tvQuestionContent = findViewById(R.id.tvQuestionContent);
@@ -94,55 +96,75 @@ public class DailyChallengeActivity extends AppCompatActivity {
         tvExplanation = findViewById(R.id.tvExplanation);
         tvFeedbackTitle = findViewById(R.id.tvFeedbackTitle);
         
-        // Bottom
         tvHintCount = findViewById(R.id.tvHintCount);
         tvCombo = findViewById(R.id.tvCombo);
         tvBonusTracker = findViewById(R.id.tvBonusTracker);
-        bottomUtilityStrip = findViewById(R.id.bottomUtilityStrip);
         
         findViewById(R.id.btnHint).setOnClickListener(v -> useHint());
-        findViewById(R.id.btnAvatar).setOnClickListener(v -> Toast.makeText(this, "Profile Quick Menu", Toast.LENGTH_SHORT).show());
     }
 
     private void loadInitialStats() {
         Cursor cursor = dbHelper.getChallengeStats(currentUsername);
         if (cursor.moveToFirst()) {
-            currentStreak = cursor.getInt(cursor.getColumnIndexOrThrow("current_streak"));
-            totalXP = cursor.getInt(cursor.getColumnIndexOrThrow("total_score"));
+            currentStreak = cursor.getInt(cursor.getColumnIndexOrThrow("streak"));
+            totalXP = cursor.getInt(cursor.getColumnIndexOrThrow("total_xp"));
             tvStreakVal.setText("🔥 " + currentStreak);
             tvTotalXP.setText(String.valueOf(totalXP));
         }
         cursor.close();
     }
 
-    private void loadQuestions() {
-        Cursor cursor = dbHelper.getDailyQuestions(userGrade);
+    private void loadDailyQuestions() {
+        // Logic: Get current day of year to offset selection
+        Calendar cal = Calendar.getInstance();
+        int dayOfYear = cal.get(Calendar.DAY_OF_YEAR);
+        int offset = (dayOfYear - 1) * 5; // 5 questions per day
+
+        questionList.clear();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        
+        // Fetch 5 questions starting from the offset
+        Cursor cursor = db.rawQuery("SELECT * FROM daily_questions LIMIT 5 OFFSET ?", new String[]{String.valueOf(offset)});
+        
         while (cursor.moveToNext()) {
             questionList.add(new DailyQuestion(
                 cursor.getString(cursor.getColumnIndexOrThrow("question")),
-                cursor.getString(cursor.getColumnIndexOrThrow("opt_a")),
-                cursor.getString(cursor.getColumnIndexOrThrow("opt_b")),
-                cursor.getString(cursor.getColumnIndexOrThrow("opt_c")),
-                cursor.getString(cursor.getColumnIndexOrThrow("opt_d")),
-                cursor.getString(cursor.getColumnIndexOrThrow("answer")),
+                cursor.getString(cursor.getColumnIndexOrThrow("option_a")),
+                cursor.getString(cursor.getColumnIndexOrThrow("option_b")),
+                cursor.getString(cursor.getColumnIndexOrThrow("option_c")),
+                cursor.getString(cursor.getColumnIndexOrThrow("option_d")),
+                cursor.getString(cursor.getColumnIndexOrThrow("correct_option")),
                 cursor.getString(cursor.getColumnIndexOrThrow("explanation"))
             ));
         }
         cursor.close();
 
         if (questionList.isEmpty()) {
-            // Fallback questions if DB is empty
-            addDummyQuestions();
+            // If offset too large, loop back to start
+            cursor = db.rawQuery("SELECT * FROM daily_questions LIMIT 5", null);
+            while (cursor.moveToNext()) {
+                questionList.add(new DailyQuestion(
+                    cursor.getString(cursor.getColumnIndexOrThrow("question")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("option_a")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("option_b")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("option_c")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("option_d")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("correct_option")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("explanation"))
+                ));
+            }
+            cursor.close();
         }
         
+        if (questionList.isEmpty()) {
+            Toast.makeText(this, "Daily Challenge questions are being updated...", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
         questionResults = new boolean[questionList.size()];
         setupStepMap();
         displayQuestion(0);
-    }
-
-    private void addDummyQuestions() {
-        questionList.add(new DailyQuestion("What is the powerhouse of the cell?", "Nucleus", "Ribosome", "Mitochondria", "Vacuole", "Mitochondria", "Mitochondria are known as the powerhouses of the cell because they generate most of the cell's supply of ATP."));
-        questionList.add(new DailyQuestion("Which planet is known as the Red Planet?", "Venus", "Mars", "Jupiter", "Saturn", "Mars", "Mars is called the Red Planet because of iron oxide on its surface."));
     }
 
     private void setupStepMap() {
@@ -154,14 +176,6 @@ public class DailyChallengeActivity extends AppCompatActivity {
             stepIcon.setLayoutParams(params);
             stepIcon.setPadding(dpToPx(4), dpToPx(4), dpToPx(4), dpToPx(4));
             stepIcon.setImageResource(R.drawable.step_circle_default);
-            
-            final int index = i;
-            stepIcon.setOnClickListener(v -> {
-                if (index < currentQuestionIndex || (index == currentQuestionIndex && questionResults[index])) {
-                    jumpToQuestion(index);
-                }
-            });
-            
             stepMapContainer.addView(stepIcon);
         }
         updateStepMapUI();
@@ -172,23 +186,10 @@ public class DailyChallengeActivity extends AppCompatActivity {
             ImageView icon = (ImageView) stepMapContainer.getChildAt(i);
             if (i == currentQuestionIndex) {
                 icon.setImageResource(R.drawable.step_circle_active);
-                // Pulse animation for current
-                ObjectAnimator scaleX = ObjectAnimator.ofFloat(icon, "scaleX", 1.0f, 1.2f, 1.0f);
-                ObjectAnimator scaleY = ObjectAnimator.ofFloat(icon, "scaleY", 1.0f, 1.2f, 1.0f);
-                scaleX.setDuration(1000);
-                scaleY.setDuration(1000);
-                scaleX.setRepeatCount(ValueAnimator.INFINITE);
-                scaleY.setRepeatCount(ValueAnimator.INFINITE);
-                scaleX.start();
-                scaleY.start();
             } else if (i < currentQuestionIndex) {
                 icon.setImageResource(questionResults[i] ? R.drawable.step_circle_correct : R.drawable.step_circle_incorrect);
-                icon.clearAnimation();
-                icon.setScaleX(1.0f);
-                icon.setScaleY(1.0f);
             } else {
                 icon.setImageResource(R.drawable.step_circle_default);
-                icon.clearAnimation();
             }
         }
     }
@@ -205,17 +206,21 @@ public class DailyChallengeActivity extends AppCompatActivity {
         updateStepMapUI();
         startTimer();
         
-        tvBonusTracker.setText("Next question -> +50 XP");
+        tvBonusTracker.setText("Success -> +50 XP");
     }
 
     private void setupOptions(DailyQuestion q) {
         optionsGrid.removeAllViews();
-        String[] options = {q.optA, q.optB, q.optC, q.optD};
+        String[] opts = {q.optA, q.optB, q.optC, q.optD};
+        String[] letters = {"A", "B", "C", "D"};
         
-        for (String opt : options) {
+        for (int i=0; i<4; i++) {
+            final String textValue = opts[i];
+            final String letter = letters[i];
+            
             MaterialCardView card = (MaterialCardView) LayoutInflater.from(this).inflate(R.layout.item_challenge_option, optionsGrid, false);
             TextView text = card.findViewById(R.id.tvOptionText);
-            text.setText(opt);
+            text.setText(letter + ") " + textValue);
             
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             params.width = 0;
@@ -224,14 +229,14 @@ public class DailyChallengeActivity extends AppCompatActivity {
             params.setMargins(dpToPx(8), dpToPx(8), dpToPx(8), dpToPx(8));
             card.setLayoutParams(params);
             
-            card.setOnClickListener(v -> handleAnswerSelection(card, opt, q.answer, q.explanation));
+            card.setOnClickListener(v -> handleAnswerSelection(card, letter, q.answer, q.explanation));
             optionsGrid.addView(card);
         }
     }
 
-    private void handleAnswerSelection(MaterialCardView selectedCard, String selectedText, String correctText, String explanation) {
+    private void handleAnswerSelection(MaterialCardView selectedCard, String selectedLetter, String correctLetter, String explanation) {
         stopTimer();
-        boolean isCorrect = selectedText.equals(correctText);
+        boolean isCorrect = selectedLetter.equalsIgnoreCase(correctLetter);
         questionResults[currentQuestionIndex] = isCorrect;
         
         disableAllOptions();
@@ -241,131 +246,72 @@ public class DailyChallengeActivity extends AppCompatActivity {
             int xpGained = 50 + (comboCount * 10);
             totalXP += xpGained;
             tvTotalXP.setText(String.valueOf(totalXP));
-            
-            selectedCard.setCardBackgroundColor(Color.parseColor("#065F46")); // Emerald 900
-            selectedCard.setStrokeColor(Color.parseColor("#10B981")); // Emerald 500
-            
-            // Celebration
-            if (comboCount >= 2) {
-                tvCombo.setVisibility(View.VISIBLE);
-                tvCombo.setText(comboCount + "x combo!");
-            }
+            selectedCard.setCardBackgroundColor(Color.parseColor("#065F46"));
             
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                if (currentQuestionIndex < questionList.size() - 1) {
-                    displayQuestion(currentQuestionIndex + 1);
-                } else {
-                    finishChallenge();
-                }
-            }, 1200);
+                if (currentQuestionIndex < questionList.size() - 1) displayQuestion(currentQuestionIndex + 1);
+                else finishChallenge();
+            }, 1000);
             
         } else {
             comboCount = 0;
-            tvCombo.setVisibility(View.INVISIBLE);
-            
-            selectedCard.setCardBackgroundColor(Color.parseColor("#7F1D1D")); // Red 900
-            selectedCard.setStrokeColor(Color.parseColor("#EF4444")); // Red 500
-            
-            // Shake animation
-            ObjectAnimator shake = ObjectAnimator.ofFloat(selectedCard, "translationX", 0, 10, -10, 10, -10, 5, -5, 0);
-            shake.setDuration(500);
-            shake.setInterpolator(new CycleInterpolator(1));
-            shake.start();
-            
-            // Show correct answer explanation
-            showFeedback(correctText, explanation);
+            selectedCard.setCardBackgroundColor(Color.parseColor("#7F1D1D"));
+            showFeedback(correctLetter, explanation);
             
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                if (currentQuestionIndex < questionList.size() - 1) {
-                    displayQuestion(currentQuestionIndex + 1);
-                } else {
-                    finishChallenge();
-                }
-            }, 3000);
+                if (currentQuestionIndex < questionList.size() - 1) displayQuestion(currentQuestionIndex + 1);
+                else finishChallenge();
+            }, 4000);
         }
     }
 
-    private void showFeedback(String correctText, String explanation) {
+    private void showFeedback(String correctLetter, String explanation) {
         feedbackCard.setVisibility(View.VISIBLE);
-        tvFeedbackTitle.setText("Not quite!");
-        tvFeedbackTitle.setTextColor(Color.parseColor("#EF4444"));
-        
-        String feedback = "The correct answer is: " + correctText;
-        if (explanation != null && !explanation.isEmpty()) {
-            feedback += "\n\n" + explanation;
-        }
-        tvExplanation.setText(feedback);
-        feedbackCard.setStrokeColor(Color.parseColor("#EF4444"));
+        tvFeedbackTitle.setText("Review Required");
+        tvExplanation.setText("Correct Answer: " + correctLetter + "\n\n" + explanation);
     }
 
     private void disableAllOptions() {
-        for (int i = 0; i < optionsGrid.getChildCount(); i++) {
-            optionsGrid.getChildAt(i).setEnabled(false);
-        }
+        for (int i = 0; i < optionsGrid.getChildCount(); i++) optionsGrid.getChildAt(i).setEnabled(false);
     }
 
     private void startTimer() {
         if (questionTimer != null) questionTimer.cancel();
-        
-        timerProgress.setIndicatorColor(Color.parseColor("#10B981"));
         questionTimer = new CountDownTimer(QUESTION_TIME_LIMIT, 100) {
             @Override
-            public void onTick(long millisUntilFinished) {
-                int progress = (int) (millisUntilFinished * 100 / QUESTION_TIME_LIMIT);
-                timerProgress.setProgress(progress);
-                tvTimerText.setText(String.valueOf(millisUntilFinished / 1000));
-                
-                if (progress < 25) {
-                    timerProgress.setIndicatorColor(Color.parseColor("#EF4444"));
-                    tvTimerText.setTextColor(Color.parseColor("#EF4444"));
-                } else {
-                    tvTimerText.setTextColor(Color.WHITE);
-                }
+            public void onTick(long ms) {
+                int p = (int) (ms * 100 / QUESTION_TIME_LIMIT);
+                timerProgress.setProgress(p);
+                tvTimerText.setText(String.valueOf(ms / 1000));
             }
-
             @Override
             public void onFinish() {
-                handleAnswerSelection(new MaterialCardView(DailyChallengeActivity.this), "", questionList.get(currentQuestionIndex).answer, questionList.get(currentQuestionIndex).explanation);
+                handleAnswerSelection(new MaterialCardView(DailyChallengeActivity.this), "NONE", questionList.get(currentQuestionIndex).answer, questionList.get(currentQuestionIndex).explanation);
             }
         }.start();
     }
 
-    private void stopTimer() {
-        if (questionTimer != null) questionTimer.cancel();
-    }
+    private void stopTimer() { if (questionTimer != null) questionTimer.cancel(); }
 
     private void useHint() {
         if (hintsRemaining > 0) {
             hintsRemaining--;
             tvHintCount.setText("Hints: " + hintsRemaining);
-            Toast.makeText(this, "Hint: Look for the most logical answer!", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "No hints left!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Focus on the core concept!", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void jumpToQuestion(int index) {
-        displayQuestion(index);
     }
 
     private void finishChallenge() {
         String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        int finalStreak = currentStreak + 1;
-        
-        dbHelper.updateChallengeStats(currentUsername, totalXP, finalStreak, today);
-
+        dbHelper.updateChallengeStats(currentUsername, totalXP, currentStreak + 1, today);
         new AlertDialog.Builder(this)
-                .setTitle("Challenge Complete! 🏆")
-                .setMessage("Final Score: " + totalXP + " XP\nStreak: " + finalStreak + " Days!")
-                .setPositiveButton("Awesome", (dialog, which) -> finish())
-                .setCancelable(false)
-                .show();
+                .setTitle("Daily Goal Achieved! 🏆")
+                .setMessage("Total XP: " + totalXP + "\nStreak: " + (currentStreak + 1) + " Days")
+                .setPositiveButton("Finish", (d, w) -> finish())
+                .setCancelable(false).show();
     }
 
-    private int dpToPx(int dp) {
-        float density = getResources().getDisplayMetrics().density;
-        return Math.round((float) dp * density);
-    }
+    private int dpToPx(int dp) { return Math.round(dp * getResources().getDisplayMetrics().density); }
 
     private static class DailyQuestion {
         String question, optA, optB, optC, optD, answer, explanation;
@@ -375,8 +321,5 @@ public class DailyChallengeActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        stopTimer();
-    }
+    protected void onDestroy() { super.onDestroy(); stopTimer(); }
 }

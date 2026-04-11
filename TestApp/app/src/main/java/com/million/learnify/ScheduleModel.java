@@ -3,9 +3,9 @@ package com.million.learnify;
 public class ScheduleModel {
     private int id;
     private String subject;
-    private String teacher;
-    private String room;
-    private String time;
+    private String instructor;
+    private String location;
+    private String startTime;
     private String duration;
 
     public ScheduleModel() {}
@@ -16,14 +16,20 @@ public class ScheduleModel {
     public String getSubject() { return subject; }
     public void setSubject(String subject) { this.subject = subject; }
 
-    public String getTeacher() { return teacher; }
-    public void setTeacher(String teacher) { this.teacher = teacher; }
+    public String getInstructor() { return instructor; }
+    public void setInstructor(String instructor) { this.instructor = instructor; }
+    public String getTeacher() { return instructor; }
+    public void setTeacher(String teacher) { this.instructor = teacher; }
 
-    public String getRoom() { return room; }
-    public void setRoom(String room) { this.room = room; }
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+    public String getRoom() { return location; }
+    public void setRoom(String room) { this.location = room; }
 
-    public String getTime() { return time; }
-    public void setTime(String time) { this.time = time; }
+    public String getStartTime() { return startTime; }
+    public void setStartTime(String startTime) { this.startTime = startTime; }
+    public String getTime() { return startTime; }
+    public void setTime(String time) { this.startTime = time; }
 
     public String getDuration() { return duration; }
     public void setDuration(String duration) { this.duration = duration; }

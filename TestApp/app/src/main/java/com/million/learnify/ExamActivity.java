@@ -12,14 +12,17 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class ExamActivity extends AppCompatActivity {
+/**
+ * ExamActivity - Professional examination and assessment engine.
+ * Inherits from BaseActivity for Role-Based Access Control (RBAC).
+ */
+public class ExamActivity extends BaseActivity {
 
     private View layoutInfo, layoutExam;
     private TextView tvTimer, tvQuestionNumber, tvQuestionText, tvExplanation;
@@ -33,16 +36,18 @@ public class ExamActivity extends AppCompatActivity {
     private int score = 0;
     private CountDownTimer examTimer;
     private long timeLeftInMillis = 15 * 60 * 1000; 
-    private DatabaseHelper dbHelper;
     private String currentUsername;
     private String subjectName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // SECURITY: Only allow Student users to enter this portal.
+        enforceRole("STUDENT");
+        
         setContentView(R.layout.activity_exam);
 
-        dbHelper = new DatabaseHelper(this);
         SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
         currentUsername = pref.getString("username", "anonymous");
         subjectName = getIntent().getStringExtra("SUBJECT_NAME");
@@ -188,8 +193,7 @@ public class ExamActivity extends AppCompatActivity {
         int finalScorePercent = (int) (((float) score / examQuestions.size()) * 100);
         String finalScoreStr = finalScorePercent + "%";
         
-        // SAVE RESULT TO DATABASE FOR ADMIN TO SEE
-        dbHelper.saveExamResult(currentUsername, subjectName, finalScoreStr, examQuestions.size(), score);
+        repository.getLocalDb().saveExamResult(currentUsername, subjectName, finalScoreStr, examQuestions.size(), score);
 
         Intent intent = new Intent(this, CertificateActivity.class);
         intent.putExtra("SUBJECT_NAME", subjectName);

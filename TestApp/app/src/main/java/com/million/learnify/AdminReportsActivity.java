@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import java.text.SimpleDateFormat;
@@ -19,8 +18,9 @@ import java.util.Locale;
 /**
  * AdminReportsActivity - High-performance system diagnostic and reporting suite.
  * Fully synchronized with the professional multi-card layout.
+ * Inherits from BaseActivity for Role-Based Access Control (RBAC).
  */
-public class AdminReportsActivity extends AppCompatActivity {
+public class AdminReportsActivity extends BaseActivity {
 
     private DatabaseHelper dbHelper;
     private LinearLayout logsContainer;
@@ -30,9 +30,13 @@ public class AdminReportsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // SECURITY: Only allow Admin users to enter this portal.
+        enforceRole("ADMIN");
+        
         setContentView(R.layout.activity_admin_reports);
 
-        dbHelper = new DatabaseHelper(this);
+        dbHelper = repository.getLocalDb();
         logsContainer = findViewById(R.id.logsContainer);
         tvAdminNameHeader = findViewById(R.id.tvAdminNameHeader);
         ivAdminProfileHeader = findViewById(R.id.ivAdminProfileHeader);
@@ -48,11 +52,10 @@ public class AdminReportsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(""); // Title is custom in Toolbar XML
+            getSupportActionBar().setTitle(""); 
         }
         toolbar.setNavigationOnClickListener(v -> finish());
         
-        // Dynamic Admin Name (Preserving identity)
         tvAdminNameHeader.setText("System Admin");
     }
 
@@ -81,7 +84,7 @@ public class AdminReportsActivity extends AppCompatActivity {
         String totalSubjects = "0";
         if (subjectCursor.moveToFirst()) totalSubjects = String.valueOf(subjectCursor.getInt(0));
         subjectCursor.close();
-        if (totalSubjects.equals("0")) totalSubjects = "12"; // Default seed
+        if (totalSubjects.equals("0")) totalSubjects = "12";
         setupWidget(R.id.widgetTotalSubjects, totalSubjects, "Total Subjects", android.R.drawable.ic_menu_agenda, "#10B981");
 
         // 5. AI Questions (Dynamic Placeholder)

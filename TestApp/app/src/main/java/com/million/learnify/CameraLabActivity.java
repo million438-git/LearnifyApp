@@ -434,7 +434,13 @@ public class CameraLabActivity extends AppCompatActivity {
 
     private void takePhoto() {
         if (imageCapture == null) return;
-        File file = new File(getExternalCacheDir(), System.currentTimeMillis() + ".jpg");
+        
+        // PROFESSIONAL FIX: Save to getFilesDir() instead of getExternalCacheDir() 
+        // to ensure photos survive "Clear Cache" and are included in backups.
+        File storageDir = new File(getFilesDir(), "lab_captures");
+        if (!storageDir.exists()) storageDir.mkdirs();
+        File file = new File(storageDir, "LAB_" + System.currentTimeMillis() + ".jpg");
+
         imageCapture.takePicture(new ImageCapture.OutputFileOptions.Builder(file).build(), ContextCompat.getMainExecutor(this), new ImageCapture.OnImageSavedCallback() {
             @Override public void onImageSaved(@NonNull ImageCapture.OutputFileResults res) { showReview(Uri.fromFile(file)); }
             @Override public void onError(@NonNull ImageCaptureException e) { Toast.makeText(CameraLabActivity.this, "Capture Error", Toast.LENGTH_SHORT).show(); }

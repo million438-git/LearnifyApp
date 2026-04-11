@@ -5,38 +5,46 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "AceGradeProfessional.db";
-    private static final int DATABASE_VERSION = 44; // Updated for Full Professional Certificate Schema
+    private static final int DATABASE_VERSION = 56; 
+    private final Context context;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         createTables(db);
         seedAllData(db);
+        seedDailyQuestionsFromCSV(db);
     }
 
     private void createTables(SQLiteDatabase db) {
-        // Core Tables
         db.execSQL("CREATE TABLE IF NOT EXISTS users (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "full_name TEXT, " +
                 "unique_id TEXT, " + 
                 "grade_or_role TEXT, " + 
-                "username TEXT, " +
+                "username TEXT UNIQUE, " +
                 "email TEXT, " +
                 "password TEXT, " +
                 "profile_image TEXT, " +
                 "user_type TEXT, " + 
                 "status TEXT DEFAULT 'Active', " +
+                "is_verified INTEGER DEFAULT 0, " +
+                "verification_token TEXT, " +
                 "phone TEXT, " +
                 "university TEXT, " +
                 "year TEXT, " +
@@ -48,133 +56,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "email_notifications INTEGER DEFAULT 1, " +
                 "created_at DATETIME DEFAULT CURRENT_TIMESTAMP)");
 
-        db.execSQL("CREATE TABLE IF NOT EXISTS enrollments (" +
+        db.execSQL("CREATE TABLE IF NOT EXISTS daily_questions (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "username TEXT, " +
-                "course_name TEXT, " +
-                "enrolled_date DATETIME DEFAULT CURRENT_TIMESTAMP, " +
-                "status TEXT DEFAULT 'Active')");
-
-        db.execSQL("CREATE TABLE IF NOT EXISTS exam_results (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "username TEXT, " +
-                "subject TEXT, " +
-                "score TEXT, " +
-                "total_questions INTEGER, " +
-                "correct_answers INTEGER, " +
-                "date DATETIME DEFAULT CURRENT_TIMESTAMP)");
-
-        // Table for fully editable professional certificates (Twin of the requested image)
-        db.execSQL("CREATE TABLE IF NOT EXISTS custom_certificates (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "username TEXT, " +
-                "cert_title TEXT, " +
-                "presentation_text TEXT, " +
-                "student_name TEXT, " +
-                "body_text TEXT, " +
-                "course_name TEXT, " +
-                "issue_date TEXT, " +
-                "student_id TEXT, " +
-                "certificate_id TEXT, " +
-                "director_name TEXT, " +
-                "director_role TEXT, " +
-                "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
-
-        db.execSQL("CREATE TABLE IF NOT EXISTS materials (" +
-                "mat_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "title TEXT, " +
-                "content TEXT, " +
-                "type TEXT, " +
-                "subject TEXT, " +
+                "question TEXT, " +
+                "option_a TEXT, " +
+                "option_b TEXT, " +
+                "option_c TEXT, " +
+                "option_d TEXT, " +
+                "correct_option TEXT, " +
                 "grade TEXT, " +
-                "file_path TEXT, " +
-                "difficulty TEXT DEFAULT 'Medium', " +
-                "usage_count INTEGER DEFAULT 0, " +
-                "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
-
-        db.execSQL("CREATE TABLE IF NOT EXISTS lessons (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "course_id INTEGER, " +
-                "section_name TEXT, " +
-                "title TEXT, " +
-                "lesson_type TEXT, " +
-                "content_body TEXT, " +
-                "file_attachment TEXT, " +
-                "duration TEXT, " +
-                "is_drip INTEGER DEFAULT 0, " +
-                "order_index INTEGER)");
-
-        db.execSQL("CREATE TABLE IF NOT EXISTS tasks (task_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, subject TEXT, grade TEXT, due_date TEXT, due_time TEXT, priority TEXT, status TEXT DEFAULT 'Pending')");
-        db.execSQL("CREATE TABLE IF NOT EXISTS schedule (id INTEGER PRIMARY KEY AUTOINCREMENT, subject TEXT, teacher TEXT, room TEXT, time TEXT, duration TEXT, day TEXT, grade TEXT)");
-        
-        db.execSQL("CREATE TABLE IF NOT EXISTS announcements (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "title TEXT, " +
-                "message TEXT, " +
-                "date DATETIME DEFAULT CURRENT_TIMESTAMP, " +
-                "type TEXT, " +
-                "target_audience TEXT DEFAULT 'All')");
-        
-        db.execSQL("CREATE TABLE IF NOT EXISTS payments (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "username TEXT, " +
-                "transaction_id TEXT, " +
-                "amount TEXT, " +
-                "screenshot_uri TEXT, " + 
-                "status TEXT DEFAULT 'Pending', " +
-                "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
-
-        db.execSQL("CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT)");
-        
-        db.execSQL("CREATE TABLE IF NOT EXISTS daily_questions (id INTEGER PRIMARY KEY AUTOINCREMENT, question TEXT, opt_a TEXT, opt_b TEXT, opt_c TEXT, opt_d TEXT, answer TEXT, grade TEXT, subject TEXT, difficulty TEXT DEFAULT 'Medium', explanation TEXT)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS challenge_stats (username TEXT PRIMARY KEY, total_score INTEGER DEFAULT 0, current_streak INTEGER DEFAULT 0, max_streak INTEGER DEFAULT 0, last_challenge_date TEXT)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS study_notes (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, subject TEXT, chapter TEXT, topic TEXT, personal_note TEXT, highlight_data TEXT, is_bookmarked INTEGER DEFAULT 0, is_important INTEGER DEFAULT 0, UNIQUE(username, subject, chapter, topic))");
-
-        db.execSQL("CREATE TABLE IF NOT EXISTS support_tickets (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "username TEXT, " +
-                "title TEXT, " +
                 "category TEXT, " +
-                "description TEXT, " +
-                "status TEXT DEFAULT 'Open', " +
-                "admin_reply TEXT, " +
-                "created_at DATETIME DEFAULT CURRENT_TIMESTAMP)");
+                "difficulty TEXT, " +
+                "explanation TEXT)");
 
-        db.execSQL("CREATE TABLE IF NOT EXISTS user_notifications (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "username TEXT, " +
-                "title TEXT, " +
-                "message TEXT, " +
-                "type TEXT, " +
-                "is_read INTEGER DEFAULT 0, " +
-                "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS challenge_stats (" +
+                "username TEXT PRIMARY KEY, " +
+                "total_xp INTEGER DEFAULT 0, " +
+                "streak INTEGER DEFAULT 0, " +
+                "last_completion_date TEXT)");
 
-        db.execSQL("CREATE TABLE IF NOT EXISTS admin_logs (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "admin_username TEXT, " +
-                "action TEXT, " +
-                "details TEXT, " +
-                "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
-
-        db.execSQL("CREATE TABLE IF NOT EXISTS lab_history (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "username TEXT, " +
-                "mode TEXT, " +
-                "problem TEXT, " +
-                "solution TEXT, " +
-                "is_assignment_help INTEGER DEFAULT 0, " +
-                "course_context TEXT, " +
-                "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
-
-        db.execSQL("CREATE TABLE IF NOT EXISTS lab_progress (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "username TEXT, " +
-                "problem_type TEXT, " +
-                "attempt_count INTEGER DEFAULT 1, " +
-                "last_attempt DATETIME DEFAULT CURRENT_TIMESTAMP, " +
-                "UNIQUE(username, problem_type))");
+        db.execSQL("CREATE TABLE IF NOT EXISTS support_tickets (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, title TEXT, category TEXT, description TEXT, status TEXT DEFAULT 'Open', reply TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS user_notifications (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, title TEXT, message TEXT, type TEXT, is_read INTEGER DEFAULT 0, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS lab_results (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, problem_type TEXT, problem_text TEXT, solution_text TEXT, is_assignment INTEGER, course_context TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS materials (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, type TEXT, subject TEXT, grade TEXT, file_path TEXT, difficulty TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS announcements (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, message TEXT, type TEXT, target_grade TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS admin_logs (id INTEGER PRIMARY KEY AUTOINCREMENT, admin_username TEXT, action TEXT, details TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
         
-        db.execSQL("CREATE TABLE IF NOT EXISTS system_settings (id INTEGER PRIMARY KEY, account_details TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS enrollments (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, course_name TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS payments (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, transaction_id TEXT, amount TEXT, image_path TEXT, status TEXT DEFAULT 'Pending', timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS exam_results (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, subject TEXT, score_text TEXT, total_questions INTEGER, correct_answers INTEGER, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS certificates (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, title TEXT, presentation TEXT, student_name TEXT, body TEXT, course TEXT, date TEXT, student_id TEXT, certificate_id TEXT, director TEXT, role TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS study_notes (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, subject TEXT, chapter TEXT, topic TEXT, content TEXT, highlights TEXT, is_bookmarked INTEGER, is_important INTEGER, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, subject TEXT, grade TEXT, date TEXT, time TEXT, priority TEXT, status TEXT DEFAULT 'Pending', timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS class_schedule (id INTEGER PRIMARY KEY AUTOINCREMENT, subject TEXT, instructor TEXT, location TEXT, time TEXT, duration TEXT, day TEXT, grade TEXT)");
     }
 
     private void seedAllData(SQLiteDatabase db) {
@@ -183,429 +98,184 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         v.put("username", "admin");
         v.put("password", "admin123");
         v.put("user_type", "ADMIN");
-        v.put("grade_or_role", "Super Admin");
+        v.put("is_verified", 1);
         db.insertWithOnConflict("users", null, v, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
-    public void saveSetting(String key, String value) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("key", key);
-        cv.put("value", value);
-        db.insertWithOnConflict("settings", null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+    private void seedDailyQuestionsFromCSV(SQLiteDatabase db) {
+        db.beginTransaction();
+        try {
+            InputStream is = context.getAssets().open("daily_questions.csv");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (line.startsWith("addQ(")) {
+                    int start = line.indexOf("(") + 1;
+                    int end = line.lastIndexOf(")");
+                    if (start <= 0 || end <= start) continue;
+                    String params = line.substring(start, end);
+                    String[] parts = params.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                    if (parts.length >= 11) {
+                        ContentValues v = new ContentValues();
+                        v.put("question", stripQuotes(parts[1]));
+                        v.put("option_a", stripQuotes(parts[2]));
+                        v.put("option_b", stripQuotes(parts[3]));
+                        v.put("option_c", stripQuotes(parts[4]));
+                        v.put("option_d", stripQuotes(parts[5]));
+                        v.put("correct_option", stripQuotes(parts[6]));
+                        v.put("grade", stripQuotes(parts[7]));
+                        v.put("category", stripQuotes(parts[8]));
+                        v.put("difficulty", stripQuotes(parts[9]));
+                        v.put("explanation", stripQuotes(parts[10]));
+                        db.insert("daily_questions", null, v);
+                    }
+                }
+            }
+            db.setTransactionSuccessful();
+            Log.d("DB_SEED", "Seeded 1000 questions from CSV successfully.");
+        } catch (Exception e) {
+            Log.e("DB_SEED", "Critical error seeding questions: " + e.getMessage());
+        } finally {
+            db.endTransaction();
+        }
     }
 
-    public String getSetting(String key, String defaultValue) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT value FROM settings WHERE key=?", new String[]{key});
-        String value = defaultValue;
-        if (c.moveToFirst()) value = c.getString(0);
-        c.close();
-        return value;
+    private String stripQuotes(String s) {
+        if (s == null) return "";
+        s = s.trim();
+        if (s.startsWith("\"") && s.endsWith("\"")) {
+            s = s.substring(1, s.length() - 1);
+        }
+        return s.replace("\\\"", "\"");
     }
 
-    public void saveLabResult(String user, String mode, String prob, String sol, boolean isAssignment, String course) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("username", user);
-        cv.put("mode", mode);
-        cv.put("problem", prob);
-        cv.put("solution", sol);
-        cv.put("is_assignment_help", isAssignment ? 1 : 0);
-        cv.put("course_context", course);
-        db.insert("lab_history", null, cv);
-        updateLabProgress(user, mode);
-    }
+    // --- Core User Methods ---
 
-    private void updateLabProgress(String user, String type) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("INSERT INTO lab_progress (username, problem_type, attempt_count) " +
-                "VALUES (?, ?, 1) " +
-                "ON CONFLICT(username, problem_type) DO UPDATE SET " +
-                "attempt_count = attempt_count + 1, last_attempt = CURRENT_TIMESTAMP", new Object[]{user, type});
-    }
-
-    public Cursor getLabHistory(String user) {
-        return this.getReadableDatabase().rawQuery("SELECT * FROM lab_history WHERE username=? ORDER BY timestamp DESC", new String[]{user});
-    }
-
-    public Cursor getLabStats(String user) {
-        return this.getReadableDatabase().rawQuery("SELECT * FROM lab_progress WHERE username=? ORDER BY attempt_count DESC", new String[]{user});
-    }
-
-    public Cursor getLabUsageAnalytics() {
-        return this.getReadableDatabase().rawQuery("SELECT mode, COUNT(*) as count FROM lab_history GROUP BY mode", null);
-    }
-
-    public boolean isCameraLabEnabled() {
-        return getSetting("camera_lab_enabled", "1").equals("1");
-    }
-
-    public boolean checkUser(String input, String password, String type) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM users WHERE (username=? OR email=?) AND password=? AND user_type=?", new String[]{input, input, password, type});
-        boolean exists = cursor.getCount() > 0;
-        cursor.close();
-        return exists;
-    }
-
-    public boolean registerUser(String name, String uid, String role, String user, String email, String pass, String img, String type) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues v = new ContentValues();
-        v.put("full_name", name); v.put("unique_id", uid); v.put("grade_or_role", role); v.put("username", user); v.put("email", email); v.put("password", pass); v.put("profile_image", img); v.put("user_type", type);
-        return db.insert("users", null, v) != -1;
-    }
-
-    public Cursor getUserDetails(String username) {
-        return this.getReadableDatabase().rawQuery("SELECT * FROM users WHERE username=?", new String[]{username});
-    }
-
-    public String getUserGrade(String username) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT grade_or_role FROM users WHERE username=?", new String[]{username});
-        String grade = "10";
-        if (c.moveToFirst()) grade = c.getString(0);
-        c.close();
-        return grade;
-    }
-
-    public String getUserProfileImage(String username) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT profile_image FROM users WHERE username=?", new String[]{username});
-        String img = "";
-        if (c.moveToFirst()) img = c.getString(0);
-        c.close();
-        return img;
-    }
-
-    public boolean updateUserProfileFull(String username, String name, String email, String phone, String uni, String year, String major, int xp, String subjects, String visibility, int leaderboard, int notify, String img) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("full_name", name); cv.put("email", email); cv.put("phone", phone); cv.put("university", uni); cv.put("year", year); cv.put("major", major); cv.put("xp_goal", xp); cv.put("subjects", subjects); cv.put("visibility", visibility); cv.put("show_leaderboard", leaderboard); cv.put("email_notifications", notify); cv.put("profile_image", img);
-        return db.update("users", cv, "username=?", new String[]{username}) > 0;
-    }
-
-    public void updateUserStatus(String username, String status) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("status", status);
-        db.update("users", cv, "username=?", new String[]{username});
-    }
-
-    public void updatePassword(String username, String pass) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("password", pass);
-        db.update("users", cv, "username=?", new String[]{username});
-    }
-
-    public boolean isEmailRegistered(String email) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM users WHERE email=?", new String[]{email});
+    public boolean checkUser(String user, String pass, String type) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM users WHERE (username=? OR email=?) AND password=? AND user_type=?", new String[]{user, user, pass, type});
         boolean exists = c.getCount() > 0;
         c.close();
         return exists;
     }
 
-    public boolean updatePasswordByEmail(String email, String pass) {
-        SQLiteDatabase db = this.getWritableDatabase();
+    public boolean registerUser(String name, String uid, String role, String user, String email, String pass, String img, String type) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("full_name", name); v.put("unique_id", uid); v.put("grade_or_role", role);
+        v.put("username", user); v.put("email", email); v.put("password", pass);
+        v.put("profile_image", img); v.put("user_type", type);
+        return db.insert("users", null, v) != -1;
+    }
+
+    public boolean isUsernameTaken(String username) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT id FROM users WHERE username=?", new String[]{username});
+        boolean taken = c.getCount() > 0;
+        c.close();
+        return taken;
+    }
+
+    public Cursor getUserDetails(String identifier) {
+        return getReadableDatabase().rawQuery("SELECT * FROM users WHERE username=? OR email=?", new String[]{identifier, identifier});
+    }
+
+    public String getUserProfileImage(String identifier) {
+        Cursor c = getUserDetails(identifier);
+        String img = null;
+        if (c.moveToFirst()) img = c.getString(c.getColumnIndexOrThrow("profile_image"));
+        c.close();
+        return img;
+    }
+
+    public boolean isUserVerified(String identifier) {
+        Cursor c = getUserDetails(identifier);
+        boolean verified = false;
+        if (c.moveToFirst()) verified = c.getInt(c.getColumnIndexOrThrow("is_verified")) == 1;
+        c.close();
+        return verified;
+    }
+
+    public void setVerified(String identifier, boolean verified) {
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put("password", pass);
+        cv.put("is_verified", verified ? 1 : 0);
+        db.update("users", cv, "username=? OR email=?", new String[]{identifier, identifier});
+    }
+
+    public boolean updateUserProfileFull(String username, String name, String email, String phone, String uni, String year, String major, int xp, String subjects, String vis, int showLead, int notify, String img) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("full_name", name); cv.put("email", email); cv.put("phone", phone);
+        cv.put("university", uni); cv.put("year", year); cv.put("major", major);
+        cv.put("xp_goal", xp); cv.put("subjects", subjects); cv.put("visibility", vis);
+        cv.put("show_leaderboard", showLead); cv.put("email_notifications", notify);
+        cv.put("profile_image", img);
+        return db.update("users", cv, "username=?", new String[]{username}) > 0;
+    }
+
+    public void updatePassword(String identifier, String newPassword) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("password", newPassword);
+        db.update("users", cv, "username=? OR email=?", new String[]{identifier, identifier});
+    }
+
+    public boolean isEmailRegistered(String email) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT id FROM users WHERE email=?", new String[]{email});
+        boolean exists = c.getCount() > 0;
+        c.close();
+        return exists;
+    }
+
+    public boolean updatePasswordByEmail(String email, String newPass) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("password", newPass);
         return db.update("users", cv, "email=?", new String[]{email}) > 0;
     }
 
-    public Cursor getLeaderboard() {
-        return this.getReadableDatabase().rawQuery("SELECT username, total_score FROM challenge_stats ORDER BY total_score DESC LIMIT 50", null);
-    }
-
-    public boolean insertMaterial(String title, String content, String type, String subject, String grade, String filePath, String difficulty) {
-        SQLiteDatabase db = this.getWritableDatabase();
+    public void updateVerificationToken(String username, String token) {
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put("title", title);
-        cv.put("content", content);
-        cv.put("type", type);
-        cv.put("subject", subject);
-        cv.put("grade", grade);
-        cv.put("file_path", filePath);
-        cv.put("difficulty", difficulty);
-        return db.insert("materials", null, cv) != -1;
+        cv.put("verification_token", token);
+        db.update("users", cv, "username=?", new String[]{username});
     }
 
-    public Cursor getAllMaterials() {
-        return this.getReadableDatabase().rawQuery("SELECT * FROM materials ORDER BY timestamp DESC", null);
-    }
-
-    public boolean addAnnouncement(String title, String message, String type) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("title", title);
-        cv.put("message", message);
-        cv.put("type", type);
-        cv.put("target_audience", "All");
-        return db.insert("announcements", null, cv) != -1;
-    }
-
-    public boolean insertAnnouncement(String title, String message, String type, String audience) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("title", title);
-        cv.put("message", message);
-        cv.put("type", type);
-        cv.put("target_audience", audience);
-        return db.insert("announcements", null, cv) != -1;
-    }
-
-    public List<AnnouncementModel> getAnnouncements() {
-        List<AnnouncementModel> list = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM announcements ORDER BY date DESC", null);
-        if (c.moveToFirst()) {
-            do {
-                AnnouncementModel m = new AnnouncementModel();
-                m.setId(c.getInt(0));
-                m.setTitle(c.getString(1));
-                m.setMessage(c.getString(2));
-                m.setDate(c.getString(3));
-                m.setType(c.getString(4));
-                list.add(m);
-            } while (c.moveToNext());
-        }
+    public boolean verifyToken(String token) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT id FROM users WHERE verification_token=?", new String[]{token});
+        boolean valid = c.getCount() > 0;
         c.close();
-        return list;
+        return valid;
     }
 
-    public boolean addNotification(String username, String title, String message, String type) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("username", username);
-        cv.put("title", title);
-        cv.put("message", message);
-        cv.put("type", type);
-        return db.insert("user_notifications", null, cv) != -1;
-    }
-
-    public int getUnreadNotificationCount(String username) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT COUNT(*) FROM user_notifications WHERE username=? AND is_read=0", new String[]{username});
-        int count = 0;
-        if (c.moveToFirst()) count = c.getInt(0);
-        c.close();
-        return count;
-    }
-
-    public Cursor getUserNotifications(String username) {
-        return this.getReadableDatabase().rawQuery("SELECT * FROM user_notifications WHERE username=? OR username='all' ORDER BY timestamp DESC", new String[]{username});
-    }
-
-    public void markNotificationsAsRead(String username) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("UPDATE user_notifications SET is_read=1 WHERE username=? OR username='all'", new String[]{username});
-    }
-
-    public void clearAllNotifications(String username) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete("user_notifications", "username=? OR username='all'", new String[]{username});
-    }
-
-    public void deleteNotification(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete("user_notifications", "id=?", new String[]{String.valueOf(id)});
-    }
-
-    public boolean submitPayment(String username, String txId, String amount, String screenshot) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("username", username);
-        cv.put("transaction_id", txId);
-        cv.put("amount", amount);
-        cv.put("screenshot_uri", screenshot);
-        return db.insert("payments", null, cv) != -1;
-    }
-
-    public Cursor getAllPayments() {
-        return this.getReadableDatabase().rawQuery("SELECT * FROM payments ORDER BY timestamp DESC", null);
-    }
-
-    public void updatePaymentStatus(int id, String status) {
-        SQLiteDatabase db = this.getWritableDatabase();
+    public void updateUserStatus(String username, String status) {
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("status", status);
-        db.update("payments", cv, "id=?", new String[]{String.valueOf(id)});
+        db.update("users", cv, "username=?", new String[]{username});
     }
 
-    public Cursor getStudentPayments(String username) {
-        return this.getReadableDatabase().rawQuery("SELECT * FROM payments WHERE username=?", new String[]{username});
-    }
-
-    public boolean hasPremiumAccess(String username, String grade) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM payments WHERE username=? AND status='Approved'", new String[]{username});
-        boolean has = c.getCount() > 0;
-        c.close();
-        return has;
-    }
-
-    public String getAdminAccountDetails() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT account_details FROM system_settings WHERE id=1", null);
-        String details = "CBE: 1000123456789 (Learnify Pro)";
-        if (c.moveToFirst()) details = c.getString(0);
-        c.close();
-        return details;
-    }
-
-    public Cursor getAllSupportTickets() {
-        return this.getReadableDatabase().rawQuery("SELECT * FROM support_tickets ORDER BY created_at DESC", null);
-    }
-
-    public void updateTicketReply(int id, String reply) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("admin_reply", reply);
-        cv.put("status", "Answered");
-        db.update("support_tickets", cv, "id=?", new String[]{String.valueOf(id)});
-    }
-
-    public void logAdminAction(String admin, String action, String details) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("admin_username", admin);
-        cv.put("action", action);
-        cv.put("details", details);
-        db.insert("admin_logs", null, cv);
-    }
-
-    public Cursor getStudentEnrollments(String username) {
-        return this.getReadableDatabase().rawQuery("SELECT * FROM enrollments WHERE username=?", new String[]{username});
-    }
-
-    public void enrollStudent(String username, String course) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("username", username);
-        cv.put("course_name", course);
-        db.insert("enrollments", null, cv);
-    }
-
-    public void unenrollStudent(String username, String course) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete("enrollments", "username=? AND course_name=?", new String[]{username, course});
-    }
-
-    public Cursor getStudentExamResults(String username) {
-        return this.getReadableDatabase().rawQuery("SELECT * FROM exam_results WHERE username=?", new String[]{username});
-    }
-
-    public void saveExamResult(String username, String subject, String score, int total, int correct) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("username", username);
-        cv.put("subject", subject);
-        cv.put("score", score);
-        cv.put("total_questions", total);
-        cv.put("correct_answers", correct);
-        db.insert("exam_results", null, cv);
-    }
-
-    public boolean saveFullCertificate(String user, String title, String presentation, String studName, String body, String course, String date, String studId, String certId, String director, String role) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("username", user);
-        cv.put("cert_title", title);
-        cv.put("presentation_text", presentation);
-        cv.put("student_name", studName);
-        cv.put("body_text", body);
-        cv.put("course_name", course);
-        cv.put("issue_date", date);
-        cv.put("student_id", studId);
-        cv.put("certificate_id", certId);
-        cv.put("director_name", director);
-        cv.put("director_role", role);
-        return db.insert("custom_certificates", null, cv) != -1;
-    }
-
-    public Cursor getCustomCertificate(String username) {
-        return this.getReadableDatabase().rawQuery("SELECT * FROM custom_certificates WHERE username=? ORDER BY timestamp DESC LIMIT 1", new String[]{username});
-    }
-
-    public boolean insertDailyQuestion(String q, String a, String b, String c, String d, String ans, String grade, String sub, String diff, String expl) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("question", q); cv.put("opt_a", a); cv.put("opt_b", b); cv.put("opt_c", c); cv.put("opt_d", d); cv.put("answer", ans); cv.put("grade", grade); cv.put("subject", sub); cv.put("difficulty", diff); cv.put("explanation", expl);
-        return db.insert("daily_questions", null, cv) != -1;
-    }
-
-    public Cursor getDailyQuestions(String grade) {
-        return this.getReadableDatabase().rawQuery("SELECT * FROM daily_questions WHERE grade=? ORDER BY RANDOM() LIMIT 5", new String[]{grade});
-    }
-
-    public Cursor getChallengeStats(String username) {
-        return this.getReadableDatabase().rawQuery("SELECT * FROM challenge_stats WHERE username=?", new String[]{username});
-    }
-
-    public void updateChallengeStats(String username, int score, int streak, String date) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("INSERT INTO challenge_stats (username, total_score, current_streak, last_challenge_date) VALUES (?, ?, ?, ?) ON CONFLICT(username) DO UPDATE SET total_score = ?, current_streak = ?, last_challenge_date = ?", new Object[]{username, score, streak, date, score, streak, date});
-    }
-
-    public void insertClassCustom(String sub, String teacher, String room, String time, String dur, String day, String grade) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("subject", sub); cv.put("teacher", teacher); cv.put("room", room); cv.put("time", time); cv.put("duration", dur); cv.put("day", day); cv.put("grade", grade);
-        db.insert("schedule", null, cv);
-    }
-
-    public List<ScheduleModel> getScheduleForGrade(String grade, String day) {
-        List<ScheduleModel> list = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM schedule WHERE grade=? AND day=?", new String[]{grade, day});
-        if (c.moveToFirst()) {
-            do {
-                ScheduleModel m = new ScheduleModel();
-                m.setId(c.getInt(0));
-                m.setSubject(c.getString(1));
-                m.setTeacher(c.getString(2));
-                m.setRoom(c.getString(3));
-                m.setTime(c.getString(4));
-                m.setDuration(c.getString(5));
-                list.add(m);
-            } while (c.moveToNext());
-        }
-        c.close();
-        return list;
-    }
-
-    public boolean insertDailyQuestionFull(String q, String a, String b, String c, String d, String ans, String grade, String sub, String diff, String expl) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("question", q); cv.put("opt_a", a); cv.put("opt_b", b); cv.put("opt_c", c); cv.put("opt_d", d); cv.put("answer", ans); cv.put("grade", grade); cv.put("subject", sub); cv.put("difficulty", diff); cv.put("explanation", expl);
-        return db.insert("daily_questions", null, cv) != -1;
-    }
-
-    public boolean insertTask(String title, String desc, String sub, String grade, String date, String time, String priority) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("title", title); cv.put("description", desc); cv.put("subject", sub); cv.put("grade", grade); cv.put("due_date", date); cv.put("due_time", time); cv.put("priority", priority);
-        return db.insert("tasks", null, cv) != -1;
-    }
+    // --- Task Methods ---
 
     public List<TaskModel> getTasksForGrade(String grade) {
         List<TaskModel> list = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM tasks WHERE grade=?", new String[]{grade});
+        Cursor c = getReadableDatabase().rawQuery("SELECT * FROM tasks WHERE grade=? ORDER BY id DESC", new String[]{grade});
         if (c.moveToFirst()) {
             do {
-                TaskModel m = new TaskModel();
-                m.setId(c.getInt(0));
-                m.setTitle(c.getString(1));
-                m.setDescription(c.getString(2));
-                m.setSubject(c.getString(3));
-                m.setGrade(c.getString(4));
-                m.setDueDate(c.getString(5));
-                m.setDueTime(c.getString(6));
-                m.setPriority(c.getString(7));
-                m.setStatus(c.getString(8));
-                list.add(m);
+                TaskModel task = new TaskModel();
+                task.setId(c.getInt(c.getColumnIndexOrThrow("id")));
+                task.setTitle(c.getString(c.getColumnIndexOrThrow("title")));
+                task.setDescription(c.getString(c.getColumnIndexOrThrow("description")));
+                task.setSubject(c.getString(c.getColumnIndexOrThrow("subject")));
+                task.setDueDate(c.getString(c.getColumnIndexOrThrow("date")));
+                task.setDueTime(c.getString(c.getColumnIndexOrThrow("time")));
+                task.setPriority(c.getString(c.getColumnIndexOrThrow("priority")));
+                task.setStatus(c.getString(c.getColumnIndexOrThrow("status")));
+                list.add(task);
             } while (c.moveToNext());
         }
         c.close();
@@ -613,33 +283,331 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void updateTaskStatus(int id, String status) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("status", status);
-        db.update("tasks", cv, "task_id=?", new String[]{String.valueOf(id)});
+        db.update("tasks", cv, "id=?", new String[]{String.valueOf(id)});
+    }
+
+    public boolean insertTask(String title, String desc, String subject, String grade, String date, String time, String priority) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("title", title); v.put("description", desc); v.put("subject", subject);
+        v.put("grade", grade); v.put("date", date); v.put("time", time); v.put("priority", priority);
+        return db.insert("tasks", null, v) != -1;
     }
 
     public void deleteTask(int id) {
+        getWritableDatabase().delete("tasks", "id=?", new String[]{String.valueOf(id)});
+    }
+
+    // --- Announcement Methods ---
+
+    public List<AnnouncementModel> getAnnouncements() {
+        List<AnnouncementModel> list = new ArrayList<>();
+        Cursor c = getReadableDatabase().rawQuery("SELECT * FROM announcements ORDER BY timestamp DESC", null);
+        if (c.moveToFirst()) {
+            do {
+                AnnouncementModel ann = new AnnouncementModel();
+                ann.setId(c.getInt(c.getColumnIndexOrThrow("id")));
+                ann.setTitle(c.getString(c.getColumnIndexOrThrow("title")));
+                ann.setMessage(c.getString(c.getColumnIndexOrThrow("message")));
+                ann.setType(c.getString(c.getColumnIndexOrThrow("type")));
+                ann.setDate(c.getString(c.getColumnIndexOrThrow("timestamp")));
+                list.add(ann);
+            } while (c.moveToNext());
+        }
+        c.close();
+        return list;
+    }
+
+    public void insertAnnouncement(String title, String msg, String type, String target) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("title", title); v.put("message", msg); v.put("type", type); v.put("target_grade", target);
+        db.insert("announcements", null, v);
+    }
+
+    public void addAnnouncement(String title, String msg, String type) {
+        insertAnnouncement(title, msg, type, "All");
+    }
+
+    // --- Notification Methods ---
+
+    public Cursor getUserNotifications(String username) {
+        return getReadableDatabase().rawQuery("SELECT * FROM user_notifications WHERE username=? ORDER BY timestamp DESC", new String[]{username});
+    }
+
+    public int getUnreadNotificationCount(String username) {
+        return getTableCount("user_notifications", "username=? AND is_read=0", new String[]{username});
+    }
+
+    public void markNotificationsAsRead(String username) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("is_read", 1);
+        db.update("user_notifications", cv, "username=?", new String[]{username});
+    }
+
+    public void addNotification(String username, String title, String message, String type) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("username", username); v.put("title", title); v.put("message", message); v.put("type", type);
+        db.insert("user_notifications", null, v);
+    }
+
+    public void clearAllNotifications(String username) {
+        getWritableDatabase().delete("user_notifications", "username=?", new String[]{username});
+    }
+
+    public void deleteNotification(int id) {
+        getWritableDatabase().delete("user_notifications", "id=?", new String[]{String.valueOf(id)});
+    }
+
+    // --- Analytics & Settings ---
+
+    public String getSetting(String key, String defaultValue) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.query("settings", new String[]{"value"}, "key=?", new String[]{key}, null, null, null);
+        String val = defaultValue;
+        if (c != null && c.moveToFirst()) {
+            val = c.getString(0);
+            c.close();
+        }
+        return val;
+    }
+
+    public void saveSetting(String key, String value) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("key", key); cv.put("value", value);
+        db.insertWithOnConflict("settings", null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    public boolean isCameraLabEnabled() {
+        return getSetting("camera_lab_enabled", "1").equals("1");
+    }
+
+    public void logAdminAction(String admin, String action, String details) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("admin_username", admin); cv.put("action", action); cv.put("details", details);
+        db.insert("admin_logs", null, cv);
+    }
+
+    public Cursor getLabUsageAnalytics() {
+        return getReadableDatabase().rawQuery("SELECT problem_type, COUNT(*) FROM lab_results GROUP BY problem_type", null);
+    }
+
+    // --- Additional Methods for Build Support ---
+
+    public Cursor getLeaderboard() {
+        return getReadableDatabase().rawQuery("SELECT username, total_xp, streak FROM challenge_stats ORDER BY total_xp DESC LIMIT 50", null);
+    }
+
+    public Cursor getStudentEnrollments(String username) {
+        return getReadableDatabase().rawQuery("SELECT * FROM enrollments WHERE username=?", new String[]{username});
+    }
+
+    public void enrollStudent(String username, String course) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("username", username); v.put("course_name", course);
+        db.insert("enrollments", null, v);
+    }
+
+    public void unenrollStudent(String username, String course) {
+        getWritableDatabase().delete("enrollments", "username=? AND course_name=?", new String[]{username, course});
+    }
+
+    public Cursor getStudentExamResults(String username) {
+        return getReadableDatabase().rawQuery("SELECT * FROM exam_results WHERE username=?", new String[]{username});
+    }
+
+    public void saveExamResult(String username, String subject, String scoreText, int total, int correct) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("username", username); v.put("subject", subject); v.put("score_text", scoreText);
+        v.put("total_questions", total); v.put("correct_answers", correct);
+        db.insert("exam_results", null, v);
+    }
+
+    public Cursor getStudentPayments(String username) {
+        return getReadableDatabase().rawQuery("SELECT * FROM payments WHERE username=?", new String[]{username});
+    }
+
+    public Cursor getAllPayments() {
+        return getReadableDatabase().rawQuery("SELECT * FROM payments ORDER BY timestamp DESC", null);
+    }
+
+    public void updatePaymentStatus(int id, String status) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("status", status);
+        db.update("payments", cv, "id=?", new String[]{String.valueOf(id)});
+    }
+
+    public boolean submitPayment(String username, String txId, String amount, String img) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("username", username); v.put("transaction_id", txId); v.put("amount", amount); v.put("image_path", img);
+        return db.insert("payments", null, v) != -1;
+    }
+
+    public String getAdminAccountDetails() {
+        return "Bank: AceBank\nAccount Name: Learnify Inc.\nAccount No: 1234567890\nRef: [Username]";
+    }
+
+    public boolean insertMaterial(String title, String content, String type, String subject, String grade, String filePath, String difficulty) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("title", title); v.put("content", content); v.put("type", type);
+        v.put("subject", subject); v.put("grade", grade); v.put("file_path", filePath); v.put("difficulty", difficulty);
+        return db.insert("materials", null, v) != -1;
+    }
+
+    public Cursor getAllMaterials() {
+        return getReadableDatabase().rawQuery("SELECT * FROM materials ORDER BY timestamp DESC", null);
+    }
+
+    public boolean saveFullCertificate(String user, String title, String pres, String sName, String body, String course, String date, String sId, String cId, String dir, String role) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("username", user); v.put("title", title); v.put("presentation", pres);
+        v.put("student_name", sName); v.put("body", body); v.put("course", course);
+        v.put("date", date); v.put("student_id", sId); v.put("certificate_id", cId);
+        v.put("director", dir); v.put("role", role);
+        return db.insert("certificates", null, v) != -1;
+    }
+
+    public Cursor getCustomCertificate(String username) {
+        return getReadableDatabase().rawQuery("SELECT * FROM certificates WHERE username=? ORDER BY timestamp DESC LIMIT 1", new String[]{username});
+    }
+
+    public boolean insertDailyQuestionFull(String q, String a, String b, String c, String d, String ans, String g, String cat, String diff, String expl) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("question", q); v.put("option_a", a); v.put("option_b", b); v.put("option_c", c); v.put("option_d", d);
+        v.put("correct_option", ans); v.put("grade", g); v.put("category", cat); v.put("difficulty", diff); v.put("explanation", expl);
+        return db.insert("daily_questions", null, v) != -1;
+    }
+
+    public void saveLabResult(String user, String type, String text, String sol, boolean isAsgn, String ctx) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("username", user); v.put("problem_type", type); v.put("problem_text", text);
+        v.put("solution_text", sol); v.put("is_assignment", isAsgn ? 1 : 0); v.put("course_context", ctx);
+        db.insert("lab_results", null, v);
+    }
+
+    public Cursor getLabHistory(String username) {
+        return getReadableDatabase().rawQuery("SELECT * FROM lab_results WHERE username=? ORDER BY timestamp DESC", new String[]{username});
+    }
+
+    public Cursor getLabStats(String username) {
+        return getReadableDatabase().rawQuery("SELECT problem_type, COUNT(*) FROM lab_results WHERE username=? GROUP BY problem_type", new String[]{username});
+    }
+
+    public void insertClassCustom(String sub, String ins, String loc, String time, String dur, String day, String grade) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("subject", sub); v.put("instructor", ins); v.put("location", loc);
+        v.put("time", time); v.put("duration", dur); v.put("day", day); v.put("grade", grade);
+        db.insert("class_schedule", null, v);
+    }
+
+    public List<ScheduleModel> getScheduleForGrade(String grade, String day) {
+        List<ScheduleModel> list = new ArrayList<>();
+        Cursor c = getReadableDatabase().rawQuery("SELECT * FROM class_schedule WHERE grade=? AND day=?", new String[]{grade, day});
+        if (c.moveToFirst()) {
+            do {
+                ScheduleModel sm = new ScheduleModel();
+                sm.setSubject(c.getString(c.getColumnIndexOrThrow("subject")));
+                sm.setInstructor(c.getString(c.getColumnIndexOrThrow("instructor")));
+                sm.setStartTime(c.getString(c.getColumnIndexOrThrow("time")));
+                sm.setDuration(c.getString(c.getColumnIndexOrThrow("duration")));
+                sm.setLocation(c.getString(c.getColumnIndexOrThrow("location")));
+                list.add(sm);
+            } while (c.moveToNext());
+        }
+        c.close();
+        return list;
+    }
+
+    public Cursor getStudyNote(String user, String sub, String chap, String top) {
+        return getReadableDatabase().rawQuery("SELECT * FROM study_notes WHERE username=? AND subject=? AND chapter=? AND topic=?", new String[]{user, sub, chap, top});
+    }
+
+    public void saveStudyNote(String user, String sub, String chap, String top, String content, String highlights, int bookmarked, int important) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("username", user); v.put("subject", sub); v.put("chapter", chap); v.put("topic", top);
+        v.put("content", content); v.put("highlights", highlights);
+        v.put("is_bookmarked", bookmarked); v.put("is_important", important);
+        db.insertWithOnConflict("study_notes", null, v, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    public boolean hasPremiumAccess(String user, String grade) {
+        // Simple logic: if user has any active payment, they have premium
+        Cursor c = getReadableDatabase().rawQuery("SELECT id FROM payments WHERE username=? AND status='Approved'", new String[]{user});
+        boolean premium = c.getCount() > 0;
+        c.close();
+        return premium;
+    }
+
+    public int getTableCount(String table, String where, String[] args) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT COUNT(*) FROM " + table;
+        if (where != null) query += " WHERE " + where;
+        Cursor c = db.rawQuery(query, args);
+        int count = 0; if (c.moveToFirst()) count = c.getInt(0);
+        c.close(); return count;
+    }
+
+    public boolean insertSupportTicket(String user, String title, String cat, String desc) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete("tasks", "task_id=?", new String[]{String.valueOf(id)});
+        ContentValues v = new ContentValues();
+        v.put("username", user); v.put("title", title); v.put("category", cat); v.put("description", desc);
+        return db.insert("support_tickets", null, v) != -1;
     }
 
-    public Cursor getStudyNote(String user, String sub, String chapter, String topic) {
-        return this.getReadableDatabase().rawQuery("SELECT * FROM study_notes WHERE username=? AND subject=? AND chapter=? AND topic=?", new String[]{user, sub, chapter, topic});
+    public Cursor getAllSupportTickets() {
+        return getReadableDatabase().rawQuery("SELECT * FROM support_tickets ORDER BY timestamp DESC", null);
     }
 
-    public void saveStudyNote(String user, String sub, String chapter, String topic, String note, String highlight, int bookmark, int important) {
+    public void updateTicketReply(int id, String reply) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put("username", user); cv.put("subject", sub); cv.put("chapter", chapter); cv.put("topic", topic); cv.put("personal_note", note); cv.put("highlight_data", highlight); cv.put("is_bookmarked", bookmark); cv.put("is_important", important);
-        db.insertWithOnConflict("study_notes", null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+        cv.put("reply", reply); cv.put("status", "Closed");
+        db.update("support_tickets", cv, "id=?", new String[]{String.valueOf(id)});
+    }
+
+    public Cursor getChallengeStats(String username) {
+        return getReadableDatabase().rawQuery("SELECT * FROM challenge_stats WHERE username=?", new String[]{username});
+    }
+
+    public void updateChallengeStats(String user, int xp, int streak, String date) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("username", user); cv.put("total_xp", xp); cv.put("streak", streak); cv.put("last_completion_date", date);
+        db.insertWithOnConflict("challenge_stats", null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    public String getUserGrade(String identifier) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT grade_or_role FROM users WHERE username=? OR email=?", new String[]{identifier, identifier});
+        String grade = "12"; if (c.moveToFirst()) grade = c.getString(0);
+        c.close(); return grade;
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion < 44) {
-            db.execSQL("DROP TABLE IF EXISTS custom_certificates");
+        if (oldVersion < 56) {
             createTables(db);
+        } else {
+            db.execSQL("DROP TABLE IF EXISTS daily_questions");
+            createTables(db);
+            seedDailyQuestionsFromCSV(db);
         }
     }
 }

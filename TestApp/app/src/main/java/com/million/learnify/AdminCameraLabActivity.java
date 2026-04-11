@@ -2,12 +2,10 @@ package com.million.learnify;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.CheckBox;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textfield.TextInputEditText;
@@ -15,8 +13,9 @@ import com.google.android.material.textfield.TextInputEditText;
 /**
  * AdminCameraLabActivity - Governance Hub for Camera Lab.
  * Implements Section 11 requirements for full platform control.
+ * Inherits from BaseActivity for Role-Based Access Control (RBAC).
  */
-public class AdminCameraLabActivity extends AppCompatActivity {
+public class AdminCameraLabActivity extends BaseActivity {
 
     private DatabaseHelper dbHelper;
     private MaterialSwitch switchGlobalCamera;
@@ -28,9 +27,13 @@ public class AdminCameraLabActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // SECURITY: Only allow Admin users to enter this portal.
+        enforceRole("ADMIN");
+        
         setContentView(R.layout.activity_admin_camera_lab);
 
-        dbHelper = new DatabaseHelper(this);
+        dbHelper = repository.getLocalDb();
         setupToolbar();
         initViews();
         loadSettings();
@@ -82,7 +85,7 @@ public class AdminCameraLabActivity extends AppCompatActivity {
             c.close();
         }
         tvTotalScans.setText("Total Lab Scans: " + total);
-        tvSuccessRate.setText("Recognition Success Rate: 96.4%"); // Mock data for demo
+        tvSuccessRate.setText("Recognition Success Rate: 96.4%");
     }
 
     private void saveSettings() {

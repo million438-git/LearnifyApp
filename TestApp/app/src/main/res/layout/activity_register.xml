@@ -93,21 +93,37 @@
                 android:drawableStart="@drawable/ic_user_person"
                 android:drawablePadding="12dp"/>
 
-            <!-- Username -->
-            <EditText
-                android:id="@+id/regUsername"
+            <!-- Username with unique detection feedback -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:background="@drawable/bg_input_field_v2"
-                android:hint="Username"
-                android:textColorHint="#CCFFFFFF"
-                android:textColor="@android:color/white"
-                android:paddingHorizontal="16dp"
-                android:inputType="text"
-                android:layout_marginBottom="12dp"
-                android:textSize="15sp"
-                android:drawableStart="@drawable/ic_user_person"
-                android:drawablePadding="12dp"/>
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="12dp">
+
+                <EditText
+                    android:id="@+id/regUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:background="@drawable/bg_input_field_v2"
+                    android:hint="Username"
+                    android:textColorHint="#CCFFFFFF"
+                    android:textColor="@android:color/white"
+                    android:paddingHorizontal="16dp"
+                    android:inputType="text"
+                    android:textSize="15sp"
+                    android:drawableStart="@drawable/ic_user_person"
+                    android:drawablePadding="12dp"/>
+
+                <TextView
+                    android:id="@+id/tvUsernameFeedback"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="2dp"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    android:text="Checking username..."/>
+            </LinearLayout>
 
             <!-- Email -->
             <EditText
