@@ -49,7 +49,8 @@
 
         <activity
             android:name=".WelcomeActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.App.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -62,8 +63,6 @@
             android:name=".StudentLoginActivity"
             android:exported="true"
             android:launchMode="singleTask">
-
-            <!-- Intent Filter for LinkedIn OAuth Callback -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -74,7 +73,6 @@
             </intent-filter>
         </activity>
 
-        <!-- Email Verification Activity with Deep Link Support -->
         <activity
             android:name=".EmailVerificationActivity"
             android:exported="true"
@@ -110,7 +108,6 @@
         <activity android:name=".PaymentActivity" android:exported="false" />
         <activity android:name=".AnnouncementsActivity" android:exported="false" />
 
-        <!-- FUNCTIONALITY ACTIVITIES -->
         <activity android:name=".TasksActivity" android:exported="false" />
         <activity android:name=".ClassScheduleActivity" android:exported="false" />
         <activity android:name=".DailyChallengeActivity" android:exported="false" />
@@ -127,12 +124,23 @@
         <activity android:name=".ChemistrySimulationActivity" android:exported="false" />
         <activity android:name=".VoiceAssistantActivity" android:exported="false" />
 
-        <!-- Connections Activities -->
         <activity android:name=".LinkedAccountsActivity" android:exported="false" />
         <activity android:name=".InviteFriendsActivity" android:exported="false" />
 
-        <!-- Admin Activities -->
-        <activity android:name=".AdminLoginActivity" android:exported="false" />
+        <activity
+            android:name=".AdminLoginActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="learnify"
+                    android:host="admin-linkedin-callback" />
+            </intent-filter>
+        </activity>
+
         <activity android:name=".AdminRegisterActivity" android:exported="false" />
         <activity android:name="com.million.learnify.AdminDashboardActivity" android:exported="false" />
         <activity android:name=".AdminUserManagementActivity" android:exported="false" />
@@ -146,9 +154,17 @@
         <activity android:name=".AdminProfileActivity" android:exported="false" />
         <activity android:name=".AdminIssueCertificateActivity" android:exported="false" />
 
+        <!-- Notification Components -->
         <receiver android:name=".NotificationReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="com.million.learnify.STUDY_NOTIFICATION" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".BootReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
 

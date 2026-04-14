@@ -16,7 +16,7 @@ import java.util.List;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "AceGradeProfessional.db";
-    private static final int DATABASE_VERSION = 56; 
+    private static final int DATABASE_VERSION = 57; 
     private final Context context;
 
     public DatabaseHelper(Context context) {
@@ -90,6 +90,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS study_notes (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, subject TEXT, chapter TEXT, topic TEXT, content TEXT, highlights TEXT, is_bookmarked INTEGER, is_important INTEGER, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
         db.execSQL("CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, subject TEXT, grade TEXT, date TEXT, time TEXT, priority TEXT, status TEXT DEFAULT 'Pending', timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
         db.execSQL("CREATE TABLE IF NOT EXISTS class_schedule (id INTEGER PRIMARY KEY AUTOINCREMENT, subject TEXT, instructor TEXT, location TEXT, time TEXT, duration TEXT, day TEXT, grade TEXT)");
+
+        // NEW: Flashcards for Spaced Repetition
+        db.execSQL("CREATE TABLE IF NOT EXISTS flashcards (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "username TEXT, " +
+                "question TEXT, " +
+                "answer TEXT, " +
+                "subject TEXT, " +
+                "interval INTEGER DEFAULT 0, " +
+                "repetitions INTEGER DEFAULT 0, " +
+                "ease_factor REAL DEFAULT 2.5, " +
+                "next_review_date TEXT)");
+
+        // NEW: Mood Tracking
+        db.execSQL("CREATE TABLE IF NOT EXISTS mood_logs (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "username TEXT, " +
+                "mood TEXT, " +
+                "note TEXT, " +
+                "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
     }
 
     private void seedAllData(SQLiteDatabase db) {
@@ -133,7 +153,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 }
             }
             db.setTransactionSuccessful();
-            Log.d("DB_SEED", "Seeded 1000 questions from CSV successfully.");
+            Log.d("DB_SEED", "Seeded questions from CSV successfully.");
         } catch (Exception e) {
             Log.e("DB_SEED", "Critical error seeding questions: " + e.getMessage());
         } finally {
@@ -241,12 +261,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("verification_token", token);
-        db.update("users", cv, "username=?", new String[]{username});
+        db.update("users", cv, "username=? OR email=?", new String[]{username, username});
     }
 
-    public boolean verifyToken(String token) {
+    public boolean verifyToken(String identifier, String token) {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT id FROM users WHERE verification_token=?", new String[]{token});
+        Cursor c = db.rawQuery("SELECT id FROM users WHERE (username=? OR email=?) AND verification_token=?", new String[]{identifier, identifier, token});
         boolean valid = c.getCount() > 0;
         c.close();
         return valid;
@@ -548,7 +568,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean hasPremiumAccess(String user, String grade) {
-        // Simple logic: if user has any active payment, they have premium
         Cursor c = getReadableDatabase().rawQuery("SELECT id FROM payments WHERE username=? AND status='Approved'", new String[]{user});
         boolean premium = c.getCount() > 0;
         c.close();
@@ -600,9 +619,43 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         c.close(); return grade;
     }
 
+    // --- Flashcard Methods (SM-2 Algorithm) ---
+
+    public boolean insertFlashcard(String user, String q, String a, String sub) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues v = new ContentValues();
+        v.put("username", user); v.put("question", q); v.put("answer", a); v.put("subject", sub);
+        v.put("next_review_date", String.valueOf(System.currentTimeMillis()));
+        return db.insert("flashcards", null, v) != -1;
+    }
+
+    public Cursor getFlashcardsForReview(String user) {
+        String now = String.valueOf(System.currentTimeMillis());
+        return getReadableDatabase().rawQuery("SELECT * FROM flashcards WHERE username=? AND next_review_date <= ? ORDER BY id ASC", new String[]{user, now});
+    }
+
+    public void updateFlashcardSM2(int id, int interval, int repetitions, float easeFactor, long nextReview) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("interval", interval);
+        cv.put("repetitions", repetitions);
+        cv.put("ease_factor", easeFactor);
+        cv.put("next_review_date", String.valueOf(nextReview));
+        db.update("flashcards", cv, "id=?", new String[]{String.valueOf(id)});
+    }
+
+    // --- Mood Log Methods ---
+
+    public void logMood(String user, String mood, String note) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("username", user); cv.put("mood", mood); cv.put("note", note);
+        db.insert("mood_logs", null, cv);
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion < 56) {
+        if (oldVersion < 57) {
             createTables(db);
         } else {
             db.execSQL("DROP TABLE IF EXISTS daily_questions");

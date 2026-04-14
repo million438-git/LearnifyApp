@@ -3,6 +3,7 @@ package com.myapp.studentbackend.controller;
 import com.myapp.studentbackend.dto.AskRequest;
 import com.myapp.studentbackend.dto.AskResponse;
 import com.myapp.studentbackend.service.OllamaService;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController

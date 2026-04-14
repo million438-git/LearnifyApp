@@ -9,11 +9,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import androidx.core.app.NotificationCompat;
-import java.util.Random;
 
 /**
  * NotificationReceiver - Professional Security & Alert Engine.
  * Handles high-priority system alerts and simulates real-world email arrival.
+ * Integrated with deep-linking for instant one-tap account verification.
  */
 public class NotificationReceiver extends BroadcastReceiver {
     private static final String CHANNEL_ID = "LEARNIFY_SECURITY_CHANNEL";
@@ -25,49 +25,56 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         String taskTitle = intent.getStringExtra("taskTitle");
         String extraData = intent.getStringExtra("extraData"); 
+        String email = intent.getStringExtra("email");
         
-        dispatchProfessionalNotification(context, type, taskTitle, extraData);
+        dispatchProfessionalNotification(context, type, taskTitle, extraData, email);
     }
 
-    private void dispatchProfessionalNotification(Context context, String type, String titleExtra, String extraData) {
+    private void dispatchProfessionalNotification(Context context, String type, String titleExtra, String extraData, String email) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager == null) return;
 
+        // 1. Setup High-Priority Security Channel for Android O+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Learnify Security", NotificationManager.IMPORTANCE_HIGH);
-            channel.setDescription("Account security and verification alerts");
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Learnify Alerts", NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription("Critical security, motivation, and system alerts");
             channel.setShowBadge(true);
             notificationManager.createNotificationChannel(channel);
         }
 
-        String title = "Learnify Alert";
-        String message = "Security update available for your account.";
+        String title = "Learnify Update";
+        String message = "A new update is available for your account.";
         Intent targetIntent = new Intent(context, DashboardActivity.class);
         
-        // Notification Actions for Professionalism
         NotificationCompat.Action action = null;
 
+        // 2. Specialized Flow: Various Notification Types
         if ("email_verification".equals(type)) {
-            title = "📧 Confirm Your Learnify Registration";
-            message = "Welcome! Tap 'Verify Now' to activate your student dashboard and start learning.";
-            
-            // Professional Deep Link for 1-click verification
-            Uri verifyUri = Uri.parse("learnify://verify-email?token=" + extraData);
+            title = "📧 Verification Code: " + extraData;
+            message = "Confirm registration for " + email + ". Tap to verify.";
+            Uri verifyUri = Uri.parse("learnify://verify-email?token=" + extraData + "&email=" + email);
             targetIntent = new Intent(Intent.ACTION_VIEW, verifyUri);
-            
-            PendingIntent actionPendingIntent = PendingIntent.getActivity(context, 1002, targetIntent, 
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-            
-            action = new NotificationCompat.Action.Builder(
-                    android.R.drawable.ic_menu_send, "VERIFY NOW", actionPendingIntent).build();
-            
+            targetIntent.setPackage(context.getPackageName());
         } else if ("welcome".equals(type)) {
-            title = "🎓 Account Created Successfully";
-            message = "Your identifier has been secured. Please complete the email verification process sent to your inbox.";
-            targetIntent = new Intent(context, EmailVerificationActivity.class);
+            title = "🎓 Welcome to Learnify!";
+            message = "We're glad to have you. Explore your dashboard to start learning.";
+            targetIntent = new Intent(context, DashboardActivity.class);
+        } else if ("motivation".equals(type)) {
+            title = "🌅 Good Morning Student!";
+            message = "Believe in yourself and all that you are. Today is a great day to learn something new!";
+            targetIntent = new Intent(context, DashboardActivity.class);
+        } else if ("login_reminder".equals(type)) {
+            title = "🔔 We miss you!";
+            message = "It's been 24 hours since your last session. Keep your streak alive and study now!";
+            targetIntent = new Intent(context, DashboardActivity.class);
         } else if ("homework".equals(type)) {
             title = "📝 Study Task Reminder";
-            message = titleExtra != null ? "Upcoming: " + titleExtra : "You have pending tasks to complete.";
+            message = titleExtra != null ? "Upcoming Deadline: " + titleExtra : "You have pending academic tasks.";
+            targetIntent = new Intent(context, TasksActivity.class);
+        } else if ("ANNOUNCEMENT".equals(type) || "CONTENT".equals(type)) {
+            title = titleExtra != null ? titleExtra : "New Announcement";
+            message = extraData != null ? extraData : "Check the bulletin board for new updates.";
+            targetIntent = new Intent(context, AnnouncementsActivity.class);
         }
 
         targetIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -75,26 +82,26 @@ public class NotificationReceiver extends BroadcastReceiver {
         PendingIntent mainPendingIntent = PendingIntent.getActivity(context, (int)System.currentTimeMillis(), targetIntent, 
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
+        // 3. Build the Professional Notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.ic_dialog_email)
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .setAutoCancel(true)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setContentIntent(mainPendingIntent)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
-                .setColor(context.getResources().getColor(R.color.primary_indigo));
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(message));
 
-        if (action != null) {
-            builder.addAction(action);
-        }
+        // Use fixed ID for specific types, or timestamp for unique ones
+        int notifyId = (int)System.currentTimeMillis();
+        if ("motivation".equals(type)) notifyId = 5001;
+        if ("login_reminder".equals(type)) notifyId = 6001;
 
-        // Notify with a fixed ID for verification to avoid multiple alerts
-        int notifyId = "email_verification".equals(type) ? 1001 : (int)System.currentTimeMillis();
         notificationManager.notify(notifyId, builder.build());
         
-        // Broadcast to update in-app UI badges
+        // 4. Update internal UI state
         Intent updateIntent = new Intent("com.million.learnify.UPDATE_NOTIFICATION_UI");
         updateIntent.setPackage(context.getPackageName());
         context.sendBroadcast(updateIntent);

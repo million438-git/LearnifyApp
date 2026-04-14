@@ -140,6 +140,9 @@ public class AdminContentManagementActivity extends BaseActivity {
             repository.adminPostAnnouncement("New Content Alert", announcementMsg, "COURSE_UPDATE", grade);
             repository.addNotification("all", "New Material: " + title, desc, "CONTENT");
 
+            // Trigger real-time system notification
+            NotificationHelper.showInstantNotification(this, "CONTENT", "New Material: " + title, desc);
+
             Toast.makeText(this, "🚀 Knowledge Broadcast Successful!", Toast.LENGTH_LONG).show();
             clearMaterialForm();
             refreshRecentContent();
@@ -161,6 +164,9 @@ public class AdminContentManagementActivity extends BaseActivity {
         repository.adminPostAnnouncement(title, message, "SYSTEM_ALERT", "All");
         repository.addNotification("all", title, message, "ANNOUNCEMENT");
         
+        // Trigger real-time system notification
+        NotificationHelper.showInstantNotification(this, "ANNOUNCEMENT", title, message);
+
         Toast.makeText(this, "📢 System Broadcast Dispatched!", Toast.LENGTH_LONG).show();
         etAnnTitle.setText("");
         etAnnMessage.setText("");

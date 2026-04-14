@@ -1,4 +1,4 @@
-package com.example.testapp.studentbackend;
+package com.million.learnify.studentbackend;
 
 /**
  * DEPRECATED: This file has been moved to the 'controller' package.

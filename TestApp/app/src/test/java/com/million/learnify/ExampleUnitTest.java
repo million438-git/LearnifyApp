@@ -1,4 +1,4 @@
-package com.example.testapp;
+package com.million.learnify;
 
 import org.junit.Test;
 

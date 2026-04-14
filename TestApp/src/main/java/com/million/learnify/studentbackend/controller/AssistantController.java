@@ -1,8 +1,9 @@
-package com.example.testapp.studentbackend.controller;
+package com.million.learnify.studentbackend.controller;
 
-import com.example.testapp.studentbackend.dto.AskRequest;
-import com.example.testapp.studentbackend.dto.AskResponse;
-import com.example.testapp.studentbackend.service.OllamaService;
+import com.million.learnify.studentbackend.dto.AskRequest;
+import com.million.learnify.studentbackend.dto.AskResponse;
+import com.million.learnify.studentbackend.service.OllamaService;
+
 import org.springframework.web.bind.annotation.*;
 
 /**

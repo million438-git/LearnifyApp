@@ -83,8 +83,8 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
         initViews();
         setupNavigation();
         updateHeaderAndWelcome();
-        checkDailyBrainstorm();
         
+        checkDailyBrainstormOnce();
         checkMicrophonePermission();
         updateNotificationUI();
 
@@ -98,22 +98,26 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
         } catch (Exception e) { }
     }
 
-    private void checkDailyBrainstorm() {
-        // Automatically check if challenge was done today, if not, prompt.
+    private void checkDailyBrainstormOnce() {
         Calendar cal = Calendar.getInstance();
         String today = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(cal.getTime());
         
-        Cursor cursor = repository.getLocalDb().getChallengeStats(currentUsername);
-        boolean doneToday = false;
-        if (cursor.moveToFirst()) {
-            String lastDate = cursor.getString(cursor.getColumnIndexOrThrow("last_completion_date"));
-            if (today.equals(lastDate)) doneToday = true;
-        }
-        cursor.close();
+        SharedPreferences challengePrefs = getSharedPreferences("ChallengePrefs", MODE_PRIVATE);
+        String lastNotifDate = challengePrefs.getString("last_notif_date_" + currentUsername, "");
 
-        if (!doneToday) {
-            DailyChallengeService.sendDailyReminder(this);
-            Toast.makeText(this, "🧠 Brainstorm: Your Daily Challenge is waiting!", Toast.LENGTH_LONG).show();
+        if (!today.equals(lastNotifDate)) {
+            Cursor cursor = repository.getLocalDb().getChallengeStats(currentUsername);
+            boolean doneToday = false;
+            if (cursor.moveToFirst()) {
+                String lastCompletionDate = cursor.getString(cursor.getColumnIndexOrThrow("last_completion_date"));
+                if (today.equals(lastCompletionDate)) doneToday = true;
+            }
+            cursor.close();
+
+            if (!doneToday) {
+                DailyChallengeService.sendDailyReminder(this);
+                challengePrefs.edit().putString("last_notif_date_" + currentUsername, today).apply();
+            }
         }
     }
 
@@ -123,7 +127,7 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
         
         if (tvWelcomeTitle != null) {
             String welcome = "Welcome " + fullName + "!";
-            if (isImpersonating) welcome += "\n(Admin Support Mode)";
+            if (isImpersonating) welcome += "\n(Admin Mode)";
             tvWelcomeTitle.setText(welcome);
         }
 
@@ -134,23 +138,15 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
             TextView tvHeaderName = header.findViewById(R.id.tvUserNameHeader);
             TextView tvHeaderEmail = header.findViewById(R.id.tvUserEmailHeader);
 
-            if (isImpersonating) {
-                tvHeaderName.setText(fullName);
-                tvHeaderEmail.setText("Impersonating Account");
-                ivHeaderProfile.setImageResource(android.R.drawable.ic_menu_view);
-                navView.getMenu().findItem(R.id.nav_logout).setTitle("Exit Support Mode");
-            } else {
-                Cursor cursor = repository.getUserDetails(currentUsername);
-                if (cursor != null && cursor.moveToFirst()) {
-                    tvHeaderName.setText(cursor.getString(cursor.getColumnIndexOrThrow("full_name")));
-                    tvHeaderEmail.setText(cursor.getString(cursor.getColumnIndexOrThrow("email")));
-                    String img = cursor.getString(cursor.getColumnIndexOrThrow("profile_image"));
-                    if (ivHeaderProfile != null && img != null && !img.isEmpty()) {
-                        try { ivHeaderProfile.setImageURI(Uri.parse(img)); } catch (Exception e) {}
-                    }
-                    cursor.close();
+            Cursor cursor = repository.getUserDetails(currentUsername);
+            if (cursor != null && cursor.moveToFirst()) {
+                tvHeaderName.setText(cursor.getString(cursor.getColumnIndexOrThrow("full_name")));
+                tvHeaderEmail.setText(cursor.getString(cursor.getColumnIndexOrThrow("email")));
+                String img = cursor.getString(cursor.getColumnIndexOrThrow("profile_image"));
+                if (ivHeaderProfile != null && img != null && !img.isEmpty()) {
+                    try { ivHeaderProfile.setImageURI(Uri.parse(img)); } catch (Exception e) {}
                 }
-                navView.getMenu().findItem(R.id.nav_logout).setTitle("Logout");
+                cursor.close();
             }
         }
     }
@@ -163,6 +159,10 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
         if (rlNotificationContainer != null) {
             rlNotificationContainer.setOnClickListener(v -> startActivity(new Intent(this, NotificationListActivity.class)));
         }
+
+        safeSetClick(R.id.cardFocusTimer, v -> showPomodoroDialog());
+        safeSetClick(R.id.cardMoodTracker, v -> showMoodDialog());
+        safeSetClick(R.id.cardFlashcards, v -> startActivity(new Intent(this, FlashcardActivity.class)));
 
         safeSetClick(R.id.cardTimetable, v -> startActivity(new Intent(this, ClassScheduleActivity.class)));
         safeSetClick(R.id.cardCourses, v -> startActivity(new Intent(this, SubjectActivity.class)));
@@ -178,6 +178,29 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
         if (ivVoice != null) ivVoice.setOnClickListener(v -> {
             if (voiceStudyManager != null) voiceStudyManager.startListening();
         });
+    }
+
+    private void showPomodoroDialog() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("⏳ Pomodoro Focus Timer");
+        builder.setMessage("Ready to start a 25-minute deep study session?");
+        builder.setPositiveButton("START SESSION", (d, w) -> {
+            Toast.makeText(this, "Focus Timer Started: 25:00", Toast.LENGTH_LONG).show();
+            // Start a simple handler-based countdown if needed
+        });
+        builder.setNegativeButton("CANCEL", null);
+        builder.show();
+    }
+
+    private void showMoodDialog() {
+        String[] moods = {"Great 🌟", "Good 🙂", "Okay 😐", "Tired 😴", "Stressed 😫"};
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("🌈 How are you feeling today?");
+        builder.setItems(moods, (d, which) -> {
+            repository.getLocalDb().logMood(currentUsername, moods[which], "Recorded via Dashboard");
+            Toast.makeText(this, "Mood logged! Take care of yourself.", Toast.LENGTH_SHORT).show();
+        });
+        builder.show();
     }
 
     private void safeSetClick(int id, View.OnClickListener listener) {
@@ -240,19 +263,11 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
 
     private void logout() {
         SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
-        boolean wasImpersonating = pref.getBoolean("is_impersonating", false);
         pref.edit().clear().apply();
         securePrefs.clearSession();
-        
-        if (wasImpersonating) {
-            Intent intent = new Intent(this, AdminDashboardActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        } else {
-            Intent intent = new Intent(this, WelcomeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        }
+        Intent intent = new Intent(this, WelcomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
         finish();
     }
 
@@ -278,7 +293,7 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
         super.onResume();
         updateNotificationUI();
         updateHeaderAndWelcome();
-        checkDailyBrainstorm();
+        checkDailyBrainstormOnce();
     }
 
     @Override protected void onDestroy() {

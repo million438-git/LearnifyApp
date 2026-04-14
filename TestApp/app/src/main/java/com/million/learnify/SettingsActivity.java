@@ -159,7 +159,9 @@ public class SettingsActivity extends BaseActivity {
     }
 
     private String getLanguageName(String code) {
-        if ("am".equals(code)) return "Amharic";
+        if ("am".equals(code)) return "Amharic (አማርኛ)";
+        if ("om".equals(code)) return "Oromo (Afaan Oromoo)";
+        if ("ti".equals(code)) return "Tigrinya (ትግርኛ)";
         return "English";
     }
 
@@ -180,6 +182,7 @@ public class SettingsActivity extends BaseActivity {
     private void setupListeners() {
         if (btnSaveSettings != null) btnSaveSettings.setOnClickListener(v -> {
             settingsService.saveSettings(currentSettings);
+            NotificationHelper.scheduleStudyReminder(this, currentSettings.getReminderTime());
             Toast.makeText(this, "Settings saved successfully", Toast.LENGTH_SHORT).show();
         });
 
@@ -209,6 +212,7 @@ public class SettingsActivity extends BaseActivity {
                 currentSettings.setReminderTime(selectedTime24);
                 tvReminderTime.setText("⏰ " + formatTo12Hour(selectedTime24));
                 settingsService.saveSettings(currentSettings);
+                NotificationHelper.scheduleStudyReminder(this, selectedTime24);
             }, hour, minute, false).show();
         });
 
@@ -243,12 +247,18 @@ public class SettingsActivity extends BaseActivity {
         });
 
         if (llLanguageView != null) llLanguageView.setOnClickListener(v -> {
-            String[] langs = {"English", "Amharic (አማርኛ)"};
+            String[] langs = {"English", "Amharic (አማርኛ)", "Oromo (Afaan Oromoo)", "Tigrinya (ትግርኛ)"};
+            String[] codes = {"en", "am", "om", "ti"};
             new MaterialAlertDialogBuilder(this).setTitle("Select App Language").setItems(langs, (dialog, which) -> {
-                currentSettings.setLanguage(which == 0 ? "en" : "am");
+                currentSettings.setLanguage(codes[which]);
                 tvLanguage.setText(langs[which] + " ▼");
                 settingsService.saveSettings(currentSettings);
-                Toast.makeText(this, "Language updated. Restart app to apply fully.", Toast.LENGTH_SHORT).show();
+                
+                // Restart to apply language change
+                Intent intent = new Intent(this, WelcomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
             }).show();
         });
         

@@ -2,9 +2,10 @@
     <!-- Base application theme for Dark Mode. -->
     <style name="Base.Theme.TestApp" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- 🌑 Dark Mode Palette: Deep Slate & Cyan -->
-        <item name="colorPrimary">#0F172A</item>
-        <item name="colorPrimaryVariant">#000000</item>
-        <item name="colorOnPrimary">#38BDF8</item>
+        <item name="colorPrimary">#3B82F6</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">#1E293B</item>
+        <item name="colorOnPrimaryContainer">#F8FAFC</item>
 
         <!-- Secondary colors -->
         <item name="colorSecondary">#38BDF8</item>
@@ -14,6 +15,9 @@
         <item name="android:windowBackground">#0F172A</item>
         <item name="colorSurface">#1E293B</item>
         <item name="colorOnSurface">#F8FAFC</item>
+        <item name="colorSurfaceVariant">#334155</item>
+        <item name="colorOnSurfaceVariant">#F1F5F9</item>
+        <item name="colorOutline">#475569</item>
 
         <!-- Status Bar -->
         <item name="android:statusBarColor">#0F172A</item>
@@ -22,5 +26,11 @@
         <!-- Text Colors -->
         <item name="android:textColorPrimary">#F8FAFC</item>
         <item name="android:textColorSecondary">#94A3B8</item>
+
+        <!-- Fix for BottomNavigationView crash (Missing default colors) -->
+        <item name="itemIconTint">@color/nav_item_colors</item>
+        <item name="itemTextColor">@color/nav_item_colors</item>
     </style>
+
+    <style name="Theme.TestApp" parent="Base.Theme.TestApp" />
 </resources>

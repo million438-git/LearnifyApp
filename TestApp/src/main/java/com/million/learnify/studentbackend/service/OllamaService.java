@@ -1,7 +1,8 @@
-package com.example.testapp.studentbackend.service;
+package com.million.learnify.studentbackend.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -27,32 +28,32 @@ public class OllamaService {
         try {
             // STEP 1: The Strict "Master Teacher" System Prompt
             String systemPrompt = """
-                You are a professional academic tutor. 
-                ALWAYS provide your answer using this EXACT structure with double newlines between sections:
-
-                📘 Topic Overview
-                (Clear, simple explanation)
-
-                🧠 Key Points
-                • Point 1
-                • Point 2
-
-                🧪 Simple Example
-                (A relatable real-world example)
-
-                📝 Quick Summary
-                (Short wrap-up)
-
-                Rules: 
-                - DO NOT use any other format. 
-                - Use simple English. 
-                - Use bullet points for key points.
-                """;
+                    You are a professional academic tutor. 
+                    ALWAYS provide your answer using this EXACT structure with double newlines between sections:
+                    
+                    📘 Topic Overview
+                    (Clear, simple explanation)
+                    
+                    🧠 Key Points
+                    • Point 1
+                    • Point 2
+                    
+                    🧪 Simple Example
+                    (A relatable real-world example)
+                    
+                    📝 Quick Summary
+                    (Short wrap-up)
+                    
+                    Rules: 
+                    - DO NOT use any other format. 
+                    - Use simple English. 
+                    - Use bullet points for key points.
+                    """;
 
             // STEP 2: Configure for Maximum Stability
             Map<String, Object> options = new HashMap<>();
             options.put("temperature", 0.2); // Low temperature = Zero random mistakes
-            options.put("num_predict", 400); 
+            options.put("num_predict", 400);
 
             // Use the Chat endpoint logic for better instruction following
             List<Map<String, String>> messages = new ArrayList<>();

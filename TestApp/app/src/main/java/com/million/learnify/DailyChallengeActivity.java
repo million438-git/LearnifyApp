@@ -76,9 +76,27 @@ public class DailyChallengeActivity extends BaseActivity {
         currentUsername = pref.getString("username", "Student");
         userGrade = dbHelper.getUserGrade(currentUsername);
 
+        if (isChallengeAlreadyDone()) {
+            Toast.makeText(this, "You have already completed today's challenge! Come back tomorrow.", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
         initViews();
         loadInitialStats();
         loadDailyQuestions();
+    }
+
+    private boolean isChallengeAlreadyDone() {
+        String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        Cursor cursor = dbHelper.getChallengeStats(currentUsername);
+        boolean done = false;
+        if (cursor.moveToFirst()) {
+            String lastDate = cursor.getString(cursor.getColumnIndexOrThrow("last_completion_date"));
+            if (today.equals(lastDate)) done = true;
+        }
+        cursor.close();
+        return done;
     }
 
     private void initViews() {
@@ -118,10 +136,28 @@ public class DailyChallengeActivity extends BaseActivity {
         // Logic: Get current day of year to offset selection
         Calendar cal = Calendar.getInstance();
         int dayOfYear = cal.get(Calendar.DAY_OF_YEAR);
-        int offset = (dayOfYear - 1) * 5; // 5 questions per day
+        
+        // Use the day of the year as a seed to pick 5 questions from the database.
+        // This ensures the questions change every 24 hours (day to day).
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        
+        // Count total questions available
+        Cursor countCursor = db.rawQuery("SELECT COUNT(*) FROM daily_questions", null);
+        int totalQuestions = 0;
+        if (countCursor.moveToFirst()) totalQuestions = countCursor.getInt(0);
+        countCursor.close();
+
+        if (totalQuestions < 5) {
+            Toast.makeText(this, "Daily Challenge questions are being updated...", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
+        // Calculate offset based on day of year
+        int offset = (dayOfYear * 5) % totalQuestions;
+        if (offset + 5 > totalQuestions) offset = 0;
 
         questionList.clear();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
         
         // Fetch 5 questions starting from the offset
         Cursor cursor = db.rawQuery("SELECT * FROM daily_questions LIMIT 5 OFFSET ?", new String[]{String.valueOf(offset)});
@@ -138,26 +174,9 @@ public class DailyChallengeActivity extends BaseActivity {
             ));
         }
         cursor.close();
-
-        if (questionList.isEmpty()) {
-            // If offset too large, loop back to start
-            cursor = db.rawQuery("SELECT * FROM daily_questions LIMIT 5", null);
-            while (cursor.moveToNext()) {
-                questionList.add(new DailyQuestion(
-                    cursor.getString(cursor.getColumnIndexOrThrow("question")),
-                    cursor.getString(cursor.getColumnIndexOrThrow("option_a")),
-                    cursor.getString(cursor.getColumnIndexOrThrow("option_b")),
-                    cursor.getString(cursor.getColumnIndexOrThrow("option_c")),
-                    cursor.getString(cursor.getColumnIndexOrThrow("option_d")),
-                    cursor.getString(cursor.getColumnIndexOrThrow("correct_option")),
-                    cursor.getString(cursor.getColumnIndexOrThrow("explanation"))
-                ));
-            }
-            cursor.close();
-        }
         
         if (questionList.isEmpty()) {
-            Toast.makeText(this, "Daily Challenge questions are being updated...", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "No questions found for today. Please try again later.", Toast.LENGTH_LONG).show();
             finish();
             return;
         }

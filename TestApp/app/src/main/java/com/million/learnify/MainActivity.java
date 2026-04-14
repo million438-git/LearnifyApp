@@ -1,80 +1,104 @@
 package com.million.learnify;
 
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
-import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.card.MaterialCardView;
-import java.util.Locale;
 
 /**
- * MainActivity - Professional Portal.
- * Hides Admin Access behind a Developer Secret Trigger on the Welcome Title.
+ * MainActivity - Fully Active Portal Selection Page.
+ * This acts as the central hub for users to navigate between Student and Admin areas.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
-    private int adminTriggerCount = 0;
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SettingsService settingsService = new SettingsService(this);
-        applyLocale(settingsService.loadSettings().getLanguage());
-
-        setContentView(R.layout.activity_main);
-        
-        initPortalSelection();
-        setupSecretAdminTrigger();
+        try {
+            setContentView(R.layout.activity_main);
+            
+            // 1. Initialize Portal Components
+            setupPortals();
+            
+            // 2. Apply "Active" entrance animations
+            runEntranceAnimations();
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Main Page Activation Failed", e);
+            // Emergency Fallback to Student Login
+            startActivity(new Intent(this, StudentLoginActivity.class));
+            finish();
+        }
     }
 
-    private void applyLocale(String langCode) {
-        Locale locale = new Locale(langCode);
-        Locale.setDefault(locale);
-        Resources resources = getResources();
-        Configuration config = resources.getConfiguration();
-        config.setLocale(locale);
-        resources.updateConfiguration(config, resources.getDisplayMetrics());
-    }
-
-    private void initPortalSelection() {
+    private void setupPortals() {
         MaterialCardView cardStudent = findViewById(R.id.cardStudentPortal);
-        // We HIDE the Admin Card from the UI completely for production
+        MaterialCardView cardAdmin = findViewById(R.id.cardAdminPortal);
+
+        // Make both portals fully active and visible
+        if (cardStudent != null) {
+            cardStudent.setVisibility(View.VISIBLE);
+            cardStudent.setOnClickListener(v -> animateAndNavigate(v, StudentLoginActivity.class));
+        }
+
+        if (cardAdmin != null) {
+            cardAdmin.setVisibility(View.VISIBLE);
+            cardAdmin.setOnClickListener(v -> animateAndNavigate(v, AdminLoginActivity.class));
+        }
+    }
+
+    private void animateAndNavigate(View v, Class<?> destination) {
+        // Active feedback animation: Scale down then navigate
+        v.animate()
+            .scaleX(0.92f)
+            .scaleY(0.92f)
+            .setDuration(150)
+            .withEndAction(() -> {
+                v.animate().scaleX(1f).scaleY(1f).setDuration(150).start();
+                try {
+                    Intent intent = new Intent(MainActivity.this, destination);
+                    startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                } catch (Exception e) {
+                    Log.e(TAG, "Navigation failed", e);
+                }
+            }).start();
+    }
+
+    private void runEntranceAnimations() {
+        View header = findViewById(R.id.headerLayout);
+        View cardStudent = findViewById(R.id.cardStudentPortal);
         View cardAdmin = findViewById(R.id.cardAdminPortal);
-        if (cardAdmin != null) cardAdmin.setVisibility(View.GONE);
+        View footer = findViewById(R.id.footerText);
+
+        // Synchronized staggered entrance
+        if (header != null) {
+            header.setAlpha(0f);
+            header.setTranslationY(-40f);
+            header.animate().alpha(1f).translationY(0f).setDuration(700).start();
+        }
 
         if (cardStudent != null) {
-            cardStudent.setOnClickListener(v -> navigateToStudentLogin());
+            cardStudent.setAlpha(0f);
+            cardStudent.setTranslationY(60f);
+            cardStudent.animate().alpha(1f).translationY(0f).setDuration(700).setStartDelay(200).start();
         }
-    }
 
-    /**
-     * SECRET TRIGGER: Tap the "EduPortal" title 7 times 
-     * to unlock the Admin Login. Only you (the developer) knows this.
-     */
-    private void setupSecretAdminTrigger() {
-        TextView tvTitle = findViewById(R.id.welcomeTitle);
-        if (tvTitle != null) {
-            tvTitle.setOnClickListener(v -> {
-                adminTriggerCount++;
-                if (adminTriggerCount == 7) {
-                    Toast.makeText(this, "Developer Mode: Admin Portal Unlocked", Toast.LENGTH_SHORT).show();
-                    navigateToAdminLogin();
-                    adminTriggerCount = 0;
-                }
-            });
+        if (cardAdmin != null) {
+            cardAdmin.setAlpha(0f);
+            cardAdmin.setTranslationY(60f);
+            cardAdmin.animate().alpha(1f).translationY(0f).setDuration(700).setStartDelay(400).start();
         }
-    }
 
-    private void navigateToStudentLogin() {
-        startActivity(new Intent(this, StudentLoginActivity.class));
-    }
-
-    private void navigateToAdminLogin() {
-        startActivity(new Intent(this, AdminLoginActivity.class));
+        if (footer != null) {
+            footer.setAlpha(0f);
+            footer.animate().alpha(1f).setDuration(1000).setStartDelay(800).start();
+        }
     }
 }

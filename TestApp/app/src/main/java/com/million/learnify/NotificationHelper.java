@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class NotificationHelper {
 
@@ -70,6 +71,62 @@ public class NotificationHelper {
         } catch (Exception e) {
             Log.e(TAG, "Error scheduling study reminder", e);
         }
+    }
+
+    /**
+     * Schedules daily motivation at 2:00 AM Ethiopian Time (GMT+3).
+     */
+    public static void scheduleDailyMotivation(Context context) {
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+3"));
+        calendar.set(Calendar.HOUR_OF_DAY, 2);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+
+        if (calendar.before(Calendar.getInstance())) {
+            calendar.add(Calendar.DATE, 1);
+        }
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, NotificationReceiver.class);
+        intent.setAction("com.million.learnify.STUDY_NOTIFICATION");
+        intent.putExtra("type", "motivation");
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 500, intent, 
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        if (alarmManager != null) {
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 
+                    AlarmManager.INTERVAL_DAY, pendingIntent);
+            Log.d(TAG, "Daily motivation scheduled for 2:00 AM Ethiopian Time");
+        }
+    }
+
+    /**
+     * Schedules a login reminder for 24 hours from now.
+     */
+    public static void scheduleLoginReminder(Context context) {
+        long triggerAt = System.currentTimeMillis() + (24 * 3600 * 1000L);
+        
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, NotificationReceiver.class);
+        intent.setAction("com.million.learnify.STUDY_NOTIFICATION");
+        intent.putExtra("type", "login_reminder");
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 600, intent, 
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        if (alarmManager != null) {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent);
+        }
+    }
+
+    public static void showInstantNotification(Context context, String type, String title, String message) {
+        Intent intent = new Intent(context, NotificationReceiver.class);
+        intent.setAction("com.million.learnify.STUDY_NOTIFICATION");
+        intent.putExtra("type", type);
+        intent.putExtra("taskTitle", title);
+        intent.putExtra("extraData", message);
+        context.sendBroadcast(intent);
     }
 
     public static void cancelStudyReminder(Context context) {

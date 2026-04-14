@@ -1,4 +1,4 @@
-package com.example.testapp.studentbackend.dto;
+package com.million.learnify.studentbackend.dto;
 
 public class AskRequest {
     private String question;

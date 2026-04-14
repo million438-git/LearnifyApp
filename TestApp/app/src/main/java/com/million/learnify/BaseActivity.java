@@ -1,5 +1,6 @@
 package com.million.learnify;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -19,7 +20,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 /**
  * BaseActivity - Professional Foundation for all Activities.
- * Features: Role-Based Access Control (RBAC), Theme Management, and Session Recovery.
+ * Features: Mandatory Email Verification Enforcement, Role-Based Access Control (RBAC), 
+ * Theme Management, and Session Recovery.
  */
 public abstract class BaseActivity extends AppCompatActivity {
 
@@ -27,6 +29,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected SecurePreferencesHelper securePrefs;
     protected StudentSettings currentSettings;
     protected DataRepository repository;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        SettingsService settingsService = new SettingsService(newBase);
+        String lang = settingsService.loadSettings().getLanguage();
+        super.attachBaseContext(LocaleHelper.setLocale(newBase, lang));
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,7 +47,11 @@ public abstract class BaseActivity extends AppCompatActivity {
             // 2. Load and Apply Global Settings
             SettingsService settingsService = new SettingsService(this);
             currentSettings = settingsService.loadSettings();
-            applyTheme(currentSettings.getThemeMode());
+            
+            // Apply theme BEFORE super.onCreate to prevent flickering/crashes
+            if (currentSettings != null) {
+                applyTheme(currentSettings.getThemeMode());
+            }
         } catch (Exception e) {
             Log.e(TAG, "Failed to initialize base components", e);
         }
@@ -57,15 +70,18 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void setupPortalToolbar(Toolbar toolbar, String title) {
         if (toolbar == null) return;
         
-        // Set the title explicitly on the toolbar BEFORE setting it as support action bar
         toolbar.setTitle(title);
         toolbar.setTitleTextColor(Color.WHITE);
         
-        // Set the navigation icon directly on the toolbar
-        Drawable backArrow = ContextCompat.getDrawable(this, R.drawable.ic_back_white);
-        if (backArrow != null) {
-            backArrow.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
-            toolbar.setNavigationIcon(backArrow);
+        // Safety check for drawable resource
+        try {
+            Drawable backArrow = ContextCompat.getDrawable(this, android.R.drawable.ic_menu_revert);
+            if (backArrow != null) {
+                backArrow.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+                toolbar.setNavigationIcon(backArrow);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Navigation icon failed", e);
         }
         
         setSupportActionBar(toolbar);
@@ -77,28 +93,69 @@ public abstract class BaseActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
     }
 
-    /**
-     * Sets up the small hamburger menu button [ ☰ ] below the header.
-     */
     protected void setupDrawerButton(final DrawerLayout drawerLayout) {
         View btnOpenDrawer = findViewById(R.id.btnOpenDrawer);
         if (btnOpenDrawer != null && drawerLayout != null) {
-            btnOpenDrawer.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+            btnOpenDrawer.setOnClickListener(v -> {
+                try {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                } catch (Exception e) {
+                    Log.e(TAG, "Drawer open failed", e);
+                }
+            });
         }
     }
 
+    /**
+     * STRICT SECURITY: Enforces both Role and Email Verification.
+     * Any activity calling this will automatically block unverified students.
+     */
     protected void enforceRole(String requiredRole) {
         SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
         String currentRole = session.getString("user_type", "");
+        String username = session.getString("username", "");
         
+        // 1. Check Role Authorization
         if (!currentRole.equals(requiredRole)) {
             Log.w(TAG, "Access Denied: Required " + requiredRole + " but found " + currentRole);
             Toast.makeText(this, "⚠️ Access Denied: Unauthorized Portal.", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(this, WelcomeActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
+            kickToWelcome();
+            return;
         }
+
+        // 2. Check Mandatory Email Verification for Students
+        if ("STUDENT".equals(currentRole)) {
+            if (username.isEmpty() || !repository.isUserVerified(username)) {
+                Log.w(TAG, "Security Protocol: Verification Wall triggered for " + username);
+                
+                // If username is empty, we can't verify, so log out
+                if (username.isEmpty()) {
+                    logoutInternal();
+                    return;
+                }
+
+                // Redirect to Verification Activity
+                Intent intent = new Intent(this, EmailVerificationActivity.class);
+                intent.putExtra("USERNAME", username);
+                intent.putExtra("EMAIL", username);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
+        }
+    }
+
+    private void kickToWelcome() {
+        Intent intent = new Intent(this, WelcomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    private void logoutInternal() {
+        getSharedPreferences("UserSession", MODE_PRIVATE).edit().clear().apply();
+        if (securePrefs != null) securePrefs.clearSession();
+        kickToWelcome();
     }
 
     private void applyTheme(String theme) {

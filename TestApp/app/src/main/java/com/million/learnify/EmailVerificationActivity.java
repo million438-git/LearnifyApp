@@ -12,7 +12,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 /**
  * EmailVerificationActivity - Professional Verification Center.
- * Inherits from BaseActivity for repository access.
+ * Handles both manual OTP entry and secure Deep Link activation.
  */
 public class EmailVerificationActivity extends BaseActivity {
 
@@ -28,9 +28,11 @@ public class EmailVerificationActivity extends BaseActivity {
 
         initViews();
         
+        // Retrieve identifiers from registration/resend flow
         targetEmail = getIntent().getStringExtra("EMAIL");
         targetUsername = getIntent().getStringExtra("USERNAME");
         
+        // Support for incoming deep links (from "Email Inbox")
         handleIntent(getIntent());
         
         if (targetEmail != null) {
@@ -50,8 +52,12 @@ public class EmailVerificationActivity extends BaseActivity {
         Uri data = intent.getData();
         if (data != null && "learnify".equals(data.getScheme()) && "verify-email".equals(data.getHost())) {
             String token = data.getQueryParameter("token");
-            if (token != null) {
-                verifyToken(token);
+            String email = data.getQueryParameter("email");
+            if (token != null && email != null) {
+                this.targetEmail = email;
+                this.targetUsername = email; // In this system, email can act as identifier
+                etOtpCode.setText(token);
+                verifyToken(email, token);
             }
         }
     }
@@ -64,24 +70,33 @@ public class EmailVerificationActivity extends BaseActivity {
 
         btnVerifyOtp.setOnClickListener(v -> {
             String code = etOtpCode.getText().toString().trim();
+            String identifier = (targetUsername != null) ? targetUsername : targetEmail;
+            
+            if (identifier == null) {
+                Toast.makeText(this, "Session expired. Please register again.", Toast.LENGTH_LONG).show();
+                return;
+            }
+
             if (code.length() == 6) {
-                verifyToken(code);
+                verifyToken(identifier, code);
             } else {
                 Toast.makeText(this, R.string.enter_6_digit, Toast.LENGTH_SHORT).show();
             }
         });
 
         tvResendCode.setOnClickListener(v -> {
-            if (targetEmail != null && targetUsername != null) {
-                new MailService(this).sendVerificationEmail(targetEmail, targetUsername);
+            if (targetEmail != null && (targetUsername != null || targetEmail != null)) {
+                String identifier = (targetUsername != null) ? targetUsername : targetEmail;
+                new MailService(this).sendVerificationEmail(targetEmail, identifier);
                 Toast.makeText(this, R.string.verification_resent, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void verifyToken(String token) {
-        Log.d(TAG, "Securing Activation with Token: " + token);
-        if (repository.getLocalDb().verifyToken(token)) {
+    private void verifyToken(String identifier, String token) {
+        Log.d(TAG, "Security Protocol: Validating token for " + identifier);
+        
+        if (repository.getLocalDb().verifyToken(identifier, token)) {
             showSuccessDialog();
         } else {
             Toast.makeText(this, R.string.verification_invalid, Toast.LENGTH_LONG).show();
@@ -90,23 +105,26 @@ public class EmailVerificationActivity extends BaseActivity {
 
     private void showSuccessDialog() {
         new MaterialAlertDialogBuilder(this)
-                .setTitle("Verification Successful")
-                .setMessage("Your email has been confirmed. Welcome to the Learnify community!")
-                .setPositiveButton("ENTER DASHBOARD", (dialog, which) -> completeVerification())
+                .setTitle("Identity Verified ✅")
+                .setMessage("Your account has been successfully activated. You now have full access to the student dashboard.")
+                .setPositiveButton("GET STARTED", (dialog, which) -> completeVerification())
                 .setCancelable(false)
                 .show();
     }
 
     private void completeVerification() {
-        if (targetUsername != null) {
-            repository.getLocalDb().setVerified(targetUsername, true);
+        String identifier = (targetUsername != null) ? targetUsername : targetEmail;
+        if (identifier != null) {
+            repository.getLocalDb().setVerified(identifier, true);
         }
         
+        // Persist session locally
         securePrefs.saveBoolean("isLoggedIn", true);
         getSharedPreferences("UserSession", MODE_PRIVATE).edit()
                 .putBoolean("isLoggedIn", true)
                 .apply();
 
+        // Navigate to Dashboard and clear backstack
         Intent intent = new Intent(this, DashboardActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

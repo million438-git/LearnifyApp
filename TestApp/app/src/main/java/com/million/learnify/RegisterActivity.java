@@ -1,8 +1,11 @@
 package com.million.learnify;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -17,7 +20,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.util.Random;
 
@@ -28,6 +34,7 @@ import java.util.Random;
 public class RegisterActivity extends BaseActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
+    private static final int PERMISSION_REQUEST_CODE = 100;
 
     private EditText fullNameEditText, emailEditText, studentIdEditText, usernameEditText, passwordEditText;
     private AutoCompleteTextView gradeDropdown, countryCodeDropdown;
@@ -46,6 +53,15 @@ public class RegisterActivity extends BaseActivity {
         initViews();
         setupDropdowns();
         setupListeners();
+        checkPermissions();
+    }
+
+    private void checkPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, PERMISSION_REQUEST_CODE);
+            }
+        }
     }
 
     private void initViews() {
@@ -156,9 +172,13 @@ public class RegisterActivity extends BaseActivity {
         boolean registered = repository.register(name, studentId, grade, user, email, pass, img, "STUDENT");
 
         if (registered) {
+            // First send the verification email simulation
             mailService.sendVerificationEmail(email, user);
             
-            Toast.makeText(this, "Success! Please check your email for the verification link.", Toast.LENGTH_LONG).show();
+            // Trigger first-time welcome notification
+            NotificationHelper.showInstantNotification(this, "welcome", "Welcome to Learnify", "Glad to have you! Please verify your email to start.");
+            
+            Toast.makeText(this, "Success! Please check your notifications for the verification code.", Toast.LENGTH_LONG).show();
             
             Intent intent = new Intent(this, EmailVerificationActivity.class);
             intent.putExtra("EMAIL", email);
@@ -172,5 +192,15 @@ public class RegisterActivity extends BaseActivity {
 
     private String getText(EditText et) {
         return et.getText() != null ? et.getText().toString().trim() : "";
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Notifications enabled for verification codes", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

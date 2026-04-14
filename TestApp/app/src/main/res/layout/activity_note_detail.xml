@@ -47,7 +47,6 @@
                     android:ellipsize="end" />
             </LinearLayout>
 
-            <!-- VOICE ASSISTANT ICON -->
             <ImageView
                 android:id="@+id/ivVoiceAssistant"
                 android:layout_width="36dp"
@@ -55,7 +54,25 @@
                 android:padding="8dp"
                 android:src="@android:drawable/ic_btn_speak_now"
                 android:contentDescription="Voice Assistant"
-                app:tint="@color/neon_magenta" />
+                app:tint="@android:color/white" />
+
+            <ImageView
+                android:id="@+id/ivRecordAudio"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:padding="8dp"
+                android:src="@android:drawable/ic_btn_speak_now"
+                android:contentDescription="Record Audio"
+                app:tint="@android:color/white" />
+
+            <ImageView
+                android:id="@+id/ivHandwrite"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:padding="8dp"
+                android:src="@android:drawable/ic_menu_edit"
+                android:contentDescription="Handwrite"
+                app:tint="@android:color/white" />
 
             <ImageView
                 android:id="@+id/ivHighlight"
@@ -111,40 +128,51 @@
             app:trackColor="#4CAF50" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <android.webkit.WebView
-        android:id="@+id/wvNoteContent"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/scrollTextContent"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
+        <android.webkit.WebView
+            android:id="@+id/wvNoteContent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:layout_height="match_parent" />
 
-            <com.google.android.material.card.MaterialCardView
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollTextContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp">
-                <TextView
-                    android:id="@+id/tvNoteContent"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="20dp"
-                    android:textColor="#333333"
-                    android:textSize="16sp" />
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp">
+                    <TextView
+                        android:id="@+id/tvNoteContent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="20dp"
+                        android:textColor="#333333"
+                        android:textSize="16sp" />
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <com.million.learnify.DrawingView
+            android:id="@+id/drawingView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+    </FrameLayout>
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"
