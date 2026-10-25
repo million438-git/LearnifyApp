@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.media.MediaPlayer;
@@ -16,20 +17,15 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.chaquo.python.PyObject;
-import com.chaquo.python.Python;
 import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
@@ -38,29 +34,37 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
- * NoteDetailActivity - World-Class Professional Study Interface.
- * Enhanced with: Inclusive Learning Mode, Accessible Audio Lesson Reader,
- * Note-taking (Text, Audio, Handwriting), and AI Interaction.
+ * NoteDetailActivity - World-Class Educational Study & Interactive Reader.
+ * Features:
+ * - Responsive HTML curriculum rendering with custom typography and CSS styling.
+ * - Live lesson completion toggle linked to DatabaseHelper.
+ * - Quick action links to Practice Quizzes and Virtual STEM Labs.
+ * - Previous and Next lesson sequential navigation.
+ * - Docked Accessible Audio Lesson Reader with speed controls.
+ * - Personal study note taking, bookmarking, and AI voice assistance.
  */
 public class NoteDetailActivity extends BaseActivity implements VoiceStudyManager.VoiceCallback {
 
     private static final String TAG = "NoteDetailActivity";
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
-    
+
     private TextView tvNoteTitle, tvTopicSubtitle, tvNoteContent;
     private WebView wvNoteContent;
     private View scrollTextContent;
-    private ImageView ivBookmark, ivFullscreen, ivImportant, ivHighlight, ivMyNotes, ivVoiceAssistant, ivRecordAudio, ivHandwrite;
+    private ImageView ivBookmark, ivFullscreen, ivMyNotes, ivVoiceAssistant;
+    private ImageView ivImportant, ivHighlight, ivRecordAudio, ivHandwrite;
     private DrawingView drawingView;
-    private MaterialButton btnReadAloud, btnPractice;
+    private MaterialButton btnReadAloud, btnPractice, btnMarkComplete, btnInteractiveLab;
+    private MaterialButton btnPrevLesson, btnNextLesson;
     private FloatingActionButton fabExitFullscreen;
     private AppBarLayout appBarLayout;
-    private BottomAppBar bottomAppBar;
+    private View bottomDockCard;
     private LinearProgressIndicator noteProgressBar;
-    
-    // Inclusive Audio Reading Bar
+
+    // Accessible Audio Reading Bar
     private View readingBarView;
     private AccessibleReadingController readingController;
     private String lessonSpeechContent = "";
@@ -72,17 +76,18 @@ public class NoteDetailActivity extends BaseActivity implements VoiceStudyManage
 
     private DatabaseHelper dbHelper;
     private OfflineAiEngine offlineAiEngine;
-    private String currentUsername, subject, chapter, topic;
+    private String currentUsername, subject, chapter, topic, grade;
     private boolean isBookmarked = false;
     private boolean isImportant = false;
+    private boolean isCompleted = false;
     private String personalNote = "";
-    private String highlightData = ""; 
+    private String highlightData = "";
 
     private ArrayList<String> topicList;
     private int currentTopicIndex = -1;
     private final Gson gson = new Gson();
 
-    // Audio Recording
+    // Audio Reflection
     private MediaRecorder recorder = null;
     private MediaPlayer player = null;
     private boolean isRecording = false;
@@ -91,28 +96,44 @@ public class NoteDetailActivity extends BaseActivity implements VoiceStudyManage
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Security check
+        enforceRole("STUDENT");
+
         setContentView(R.layout.activity_note_detail);
 
-        dbHelper = new DatabaseHelper(this);
+        dbHelper = repository.getLocalDb();
         offlineAiEngine = new OfflineAiEngine(this);
         voiceStudyManager = new VoiceStudyManager(this, this);
-        
+
         SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
         currentUsername = pref.getString("username", "Student");
 
         subject = getIntent().getStringExtra("SUBJECT_NAME");
+        if (subject == null || subject.trim().isEmpty()) subject = "Mathematics";
+
         chapter = getIntent().getStringExtra("CHAPTER_NAME");
+        if (chapter == null || chapter.trim().isEmpty()) chapter = "UNIT-1";
+
         topic = getIntent().getStringExtra("TOPIC_NAME");
+        if (topic == null || topic.trim().isEmpty()) topic = "Overview";
+
+        grade = getIntent().getStringExtra("GRADE");
+        if (grade == null || grade.trim().isEmpty()) {
+            grade = pref.getString("grade", "10");
+        }
+        grade = grade.replace("Grade-", "").replace("Grade", "").replace("-", "").trim();
+
         topicList = getIntent().getStringArrayListExtra("TOPIC_LIST");
         currentTopicIndex = getIntent().getIntExtra("TOPIC_INDEX", -1);
 
         File cacheDir = getExternalCacheDir();
         String cachePath = cacheDir != null ? cacheDir.getAbsolutePath() : getCacheDir().getAbsolutePath();
-        audioFileName = cachePath + "/note_audio_" + (topic != null ? topic.hashCode() : 0) + ".3gp";
+        audioFileName = cachePath + "/note_audio_" + topic.hashCode() + ".3gp";
 
         initViews();
         setupToolbar();
-        loadNoteData();
+        loadLessonContent();
         loadUserPersonalization();
         setupActions();
         enableZoom();
@@ -125,25 +146,30 @@ public class NoteDetailActivity extends BaseActivity implements VoiceStudyManage
         wvNoteContent = findViewById(R.id.wvNoteContent);
         scrollTextContent = findViewById(R.id.scrollTextContent);
         drawingView = findViewById(R.id.drawingView);
-        
-        ivHighlight = findViewById(R.id.ivHighlight);
-        ivMyNotes = findViewById(R.id.ivMyNotes);
-        ivImportant = findViewById(R.id.ivImportant);
-        ivFullscreen = findViewById(R.id.ivFullscreen);
+
         ivBookmark = findViewById(R.id.ivBookmark);
+        ivMyNotes = findViewById(R.id.ivMyNotes);
         ivVoiceAssistant = findViewById(R.id.ivVoiceAssistant);
+        ivFullscreen = findViewById(R.id.ivFullscreen);
+
+        // Compatibility views
+        ivImportant = findViewById(R.id.ivImportant);
+        ivHighlight = findViewById(R.id.ivHighlight);
         ivRecordAudio = findViewById(R.id.ivRecordAudio);
         ivHandwrite = findViewById(R.id.ivHandwrite);
-        
+
         btnReadAloud = findViewById(R.id.btnReadAloud);
         btnPractice = findViewById(R.id.btnPractice);
-        
+        btnMarkComplete = findViewById(R.id.btnMarkComplete);
+        btnInteractiveLab = findViewById(R.id.btnInteractiveLab);
+        btnPrevLesson = findViewById(R.id.btnPrevLesson);
+        btnNextLesson = findViewById(R.id.btnNextLesson);
+
         fabExitFullscreen = findViewById(R.id.fabExitFullscreen);
         appBarLayout = findViewById(R.id.appBarLayout);
-        bottomAppBar = findViewById(R.id.bottomAppBar);
+        bottomDockCard = findViewById(R.id.bottomDockCard);
         noteProgressBar = findViewById(R.id.noteProgressBar);
 
-        // Accessible Reading Bar
         readingBarView = findViewById(R.id.accessibleReadingBar);
         if (readingBarView != null) {
             readingController = new AccessibleReadingController(this, readingBarView, getAccessibilitySpeaker());
@@ -152,52 +178,61 @@ public class NoteDetailActivity extends BaseActivity implements VoiceStudyManage
 
     private void setupToolbar() {
         Toolbar toolbar = findViewById(R.id.noteToolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setDisplayShowTitleEnabled(false);
+            }
+            toolbar.setNavigationOnClickListener(v -> finish());
         }
-        toolbar.setNavigationOnClickListener(v -> finish());
 
-        // Semantic heading and accessibility roles
         AccessibilityUtils.setAsHeading(tvNoteTitle);
-        AccessibilityUtils.setAccessibilityLabel(ivVoiceAssistant, "Open Voice Assistant", "Button");
-        AccessibilityUtils.setAccessibilityLabel(ivRecordAudio, "Record Audio Reflection", "Button");
-        AccessibilityUtils.setAccessibilityLabel(ivHandwrite, "Toggle Handwriting Canvas", "Button");
-        AccessibilityUtils.setAccessibilityLabel(ivHighlight, "Highlight Selected Text", "Button");
+        AccessibilityUtils.setAccessibilityLabel(ivVoiceAssistant, "Open AI Voice Study Assistant", "Button");
         AccessibilityUtils.setAccessibilityLabel(ivMyNotes, "Open Personal Study Notes", "Button");
-        AccessibilityUtils.setAccessibilityLabel(ivFullscreen, "Toggle Fullscreen", "Button");
-        AccessibilityUtils.setAccessibilityLabel(btnReadAloud, "Read Lesson Aloud", "Button");
-        AccessibilityUtils.setAccessibilityLabel(btnPractice, "Start Practice Quiz", "Button");
+        AccessibilityUtils.setAccessibilityLabel(ivBookmark, "Save Lesson to Library", "Button");
+        AccessibilityUtils.setAccessibilityLabel(ivFullscreen, "Toggle Fullscreen Reader", "Button");
+        AccessibilityUtils.setAccessibilityLabel(btnReadAloud, "Read Lesson Aloud with Accessible Speaker", "Button");
+        AccessibilityUtils.setAccessibilityLabel(btnPractice, "Start Practice Quiz for this lesson", "Button");
+        AccessibilityUtils.setAccessibilityLabel(btnMarkComplete, "Toggle Lesson Completed Status", "Button");
     }
 
-    private void loadNoteData() {
-        if (subject == null) subject = "Mathematics";
-        if (chapter == null) chapter = "Module";
-        if (topic == null) topic = "Overview";
+    private void loadLessonContent() {
+        tvNoteTitle.setText(cleanTopicName(topic));
+        tvTopicSubtitle.setText(subject + " • Grade " + grade + " • " + formatUnitName(chapter));
 
-        tvNoteTitle.setText(chapter);
-        tvTopicSubtitle.setText(cleanTopicName(topic));
+        // Load HTML file from assets
+        String htmlUrl = StudyContentProvider.getHtmlUrl(this, subject, chapter, topic, grade);
 
-        String htmlUrl = StudyContentProvider.getHtmlUrl(this, subject, chapter, topic);
         if (htmlUrl != null) {
             wvNoteContent.setVisibility(View.VISIBLE);
             scrollTextContent.setVisibility(View.GONE);
-            wvNoteContent.getSettings().setJavaScriptEnabled(true);
-            wvNoteContent.getSettings().setDomStorageEnabled(true);
-            wvNoteContent.getSettings().setAllowFileAccess(true);
+
+            WebSettings settings = wvNoteContent.getSettings();
+            settings.setJavaScriptEnabled(true);
+            settings.setDomStorageEnabled(true);
+            settings.setAllowFileAccess(true);
+
             wvNoteContent.setWebViewClient(new WebViewClient() {
-                @Override public void onPageFinished(WebView view, String url) { applyHighlights(); }
+                @Override
+                public void onPageFinished(WebView view, String url) {
+                    injectCustomReaderStyles(view);
+                }
             });
+
             wvNoteContent.loadUrl(htmlUrl);
 
-            // Fetch raw HTML for accessible speech extraction
-            String rawHtml = StudyContentProvider.getHtmlContent(this, subject, chapter, topic);
-            lessonSpeechContent = (rawHtml != null && !rawHtml.trim().isEmpty()) ? rawHtml : chapter + ". " + cleanTopicName(topic);
+            // Fetch raw HTML for TTS
+            String rawHtml = StudyContentProvider.getHtmlContent(this, subject, chapter, topic, grade);
+            if (rawHtml != null && !rawHtml.trim().isEmpty()) {
+                lessonSpeechContent = cleanHtmlForSpeech(rawHtml);
+            } else {
+                lessonSpeechContent = cleanTopicName(topic) + ". In " + subject + " " + formatUnitName(chapter);
+            }
         } else {
             wvNoteContent.setVisibility(View.GONE);
             scrollTextContent.setVisibility(View.VISIBLE);
-            String placeholder = "Academic content for " + cleanTopicName(topic) + " in " + chapter + ".";
+            String placeholder = "Academic lesson notes for " + cleanTopicName(topic) + " in " + subject + ".";
             tvNoteContent.setText(placeholder);
             lessonSpeechContent = placeholder;
         }
@@ -206,9 +241,21 @@ public class NoteDetailActivity extends BaseActivity implements VoiceStudyManage
             readingController.setContent(lessonSpeechContent);
         }
 
-        noteProgressBar.setProgress(100);
+        if (noteProgressBar != null) {
+            noteProgressBar.setProgress(100);
+        }
 
-        // Auto-read if student enabled auto-read or navigated with auto-voice
+        // Configure STEM Virtual Lab button
+        configureLabButton();
+
+        // Update Prev / Next button states
+        updateNavigationButtons();
+
+        // Check if lesson was already completed
+        isCompleted = dbHelper.isLessonCompleted(currentUsername, subject, grade, chapter, topic);
+        updateCompletedButtonUI();
+
+        // Auto-read if student requested it
         boolean autoStart = getIntent().getBooleanExtra("AUTO_START_VOICE", false)
                 || getInclusiveModeManager().isAutoReadContentEnabled();
         if (autoStart) {
@@ -216,10 +263,182 @@ public class NoteDetailActivity extends BaseActivity implements VoiceStudyManage
         }
     }
 
-    private String cleanTopicName(String name) {
-        if (name == null) return "";
-        if (name.contains("/")) return name.substring(name.lastIndexOf("/") + 1);
-        return name;
+    private void injectCustomReaderStyles(WebView view) {
+        String css = "javascript:(function() {" +
+                "var style = document.createElement('style');" +
+                "style.type = 'text/css';" +
+                "style.innerHTML = '" +
+                "body { font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif !important; " +
+                "line-height: 1.65 !important; font-size: 16px !important; color: #14243A !important; " +
+                "padding: 16px 16px 80px 16px !important; margin: 0 auto !important; max-width: 720px !important; } " +
+                "h1, h2, h3 { color: #071B38 !important; font-weight: 700 !important; } " +
+                "img { max-width: 100% !important; height: auto !important; border-radius: 12px !important; margin: 12px 0 !important; } " +
+                "table { width: 100% !important; border-collapse: collapse !important; margin: 16px 0 !important; } " +
+                "th, td { border: 1px solid #E2EAF5 !important; padding: 10px !important; } " +
+                "th { background-color: #E7F0FF !important; color: #071B38 !important; } " +
+                "pre, code { background: #F1F5F9 !important; border-radius: 6px !important; padding: 4px 8px !important; font-size: 14px !important; } " +
+                "blockquote { border-left: 4px solid #1769FF !important; margin: 12px 0 !important; padding-left: 14px !important; color: #64748B !important; } " +
+                "';" +
+                "document.getElementsByTagName('head')[0].appendChild(style);" +
+                "})()";
+        view.loadUrl(css);
+    }
+
+    private String cleanHtmlForSpeech(String html) {
+        if (html == null) return "";
+        // Strip HTML tags and entities
+        String text = html.replaceAll("(?s)<style.*?</style>", " ")
+                          .replaceAll("(?s)<script.*?</script>", " ")
+                          .replaceAll("<[^>]*>", " ")
+                          .replaceAll("&nbsp;", " ")
+                          .replaceAll("&amp;", " and ")
+                          .replaceAll("&lt;", " less than ")
+                          .replaceAll("&gt;", " greater than ")
+                          .replaceAll("\\s+", " ")
+                          .trim();
+        return text;
+    }
+
+    private void configureLabButton() {
+        if (btnInteractiveLab == null) return;
+        String lower = subject.toLowerCase(Locale.US);
+        if (lower.contains("physics")) {
+            btnInteractiveLab.setVisibility(View.VISIBLE);
+            btnInteractiveLab.setText("Physics Lab");
+            btnInteractiveLab.setOnClickListener(v -> startActivity(new Intent(this, PhysicsLabActivity.class)));
+        } else if (lower.contains("chemistry")) {
+            btnInteractiveLab.setVisibility(View.VISIBLE);
+            btnInteractiveLab.setText("Chemistry Lab");
+            btnInteractiveLab.setOnClickListener(v -> startActivity(new Intent(this, ChemistryLabActivity.class)));
+        } else if (lower.contains("biology")) {
+            btnInteractiveLab.setVisibility(View.VISIBLE);
+            btnInteractiveLab.setText("Biology Lab");
+            btnInteractiveLab.setOnClickListener(v -> startActivity(new Intent(this, BiologyLabActivity.class)));
+        } else {
+            btnInteractiveLab.setVisibility(View.GONE);
+        }
+    }
+
+    private void updateNavigationButtons() {
+        if (topicList == null || topicList.isEmpty()) {
+            if (btnPrevLesson != null) btnPrevLesson.setEnabled(false);
+            if (btnNextLesson != null) btnNextLesson.setEnabled(false);
+            return;
+        }
+
+        if (btnPrevLesson != null) {
+            boolean hasPrev = currentTopicIndex > 0;
+            btnPrevLesson.setEnabled(hasPrev);
+            btnPrevLesson.setAlpha(hasPrev ? 1.0f : 0.4f);
+        }
+
+        if (btnNextLesson != null) {
+            boolean hasNext = currentTopicIndex >= 0 && currentTopicIndex < topicList.size() - 1;
+            btnNextLesson.setEnabled(hasNext);
+            btnNextLesson.setAlpha(hasNext ? 1.0f : 0.4f);
+        }
+    }
+
+    private void updateCompletedButtonUI() {
+        if (btnMarkComplete == null) return;
+        if (isCompleted) {
+            btnMarkComplete.setText("Completed");
+            btnMarkComplete.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.course_success)));
+            btnMarkComplete.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_verified_check));
+        } else {
+            btnMarkComplete.setText("Mark Complete");
+            btnMarkComplete.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.course_blue)));
+            btnMarkComplete.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_verified_check));
+        }
+    }
+
+    private void setupActions() {
+        if (btnMarkComplete != null) {
+            btnMarkComplete.setOnClickListener(v -> {
+                isCompleted = !isCompleted;
+                dbHelper.markLessonCompleted(currentUsername, subject, grade, chapter, topic, isCompleted);
+                updateCompletedButtonUI();
+                String message = isCompleted ? "Lesson marked as completed!" : "Lesson marked as incomplete";
+                AccessibilityUtils.announceForAccessibility(btnMarkComplete, message);
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            });
+        }
+
+        if (btnPractice != null) {
+            btnPractice.setOnClickListener(v -> openPracticeQuiz());
+        }
+
+        if (btnPrevLesson != null) {
+            btnPrevLesson.setOnClickListener(v -> navigateToLesson(currentTopicIndex - 1));
+        }
+
+        if (btnNextLesson != null) {
+            btnNextLesson.setOnClickListener(v -> navigateToLesson(currentTopicIndex + 1));
+        }
+
+        if (btnReadAloud != null) {
+            btnReadAloud.setOnClickListener(v -> triggerReadAloud());
+        }
+
+        if (ivBookmark != null) {
+            ivBookmark.setOnClickListener(v -> {
+                isBookmarked = !isBookmarked;
+                updatePersonalizationUI();
+                savePersonalization();
+                String msg = isBookmarked ? "Lesson saved to library" : "Removed from library";
+                AccessibilityUtils.announceForAccessibility(v, msg);
+                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+            });
+        }
+
+        if (ivMyNotes != null) {
+            ivMyNotes.setOnClickListener(v -> showPersonalNotesDialog());
+        }
+
+        if (ivVoiceAssistant != null) {
+            ivVoiceAssistant.setOnClickListener(v -> voiceStudyManager.startListening());
+        }
+
+        if (ivFullscreen != null) {
+            ivFullscreen.setOnClickListener(v -> toggleFullscreen(true));
+        }
+
+        if (fabExitFullscreen != null) {
+            fabExitFullscreen.setOnClickListener(v -> toggleFullscreen(false));
+        }
+    }
+
+    private void navigateToLesson(int newIndex) {
+        if (topicList == null || newIndex < 0 || newIndex >= topicList.size()) return;
+        currentTopicIndex = newIndex;
+        topic = topicList.get(currentTopicIndex);
+
+        loadLessonContent();
+        loadUserPersonalization();
+
+        AccessibilityUtils.announceForAccessibility(tvNoteTitle, "Loaded lesson: " + cleanTopicName(topic));
+    }
+
+    private void openPracticeQuiz() {
+        Intent intent = new Intent(this, QuestionActivity.class);
+        intent.putExtra("SUBJECT_NAME", subject);
+        intent.putExtra("GRADE", grade);
+        intent.putExtra("CHAPTER_NAME", chapter);
+        intent.putExtra("TOPIC_NAME", topic);
+        startActivity(intent);
+    }
+
+    private void toggleFullscreen(boolean fullscreen) {
+        isFullscreen = fullscreen;
+        if (appBarLayout != null) {
+            appBarLayout.setVisibility(fullscreen ? View.GONE : View.VISIBLE);
+        }
+        if (bottomDockCard != null) {
+            bottomDockCard.setVisibility(fullscreen ? View.GONE : View.VISIBLE);
+        }
+        if (fabExitFullscreen != null) {
+            fabExitFullscreen.setVisibility(fullscreen ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void enableZoom() {
@@ -227,7 +446,7 @@ public class NoteDetailActivity extends BaseActivity implements VoiceStudyManage
             WebSettings settings = wvNoteContent.getSettings();
             settings.setSupportZoom(true);
             settings.setBuiltInZoomControls(true);
-            settings.setDisplayZoomControls(false); 
+            settings.setDisplayZoomControls(false);
         }
     }
 
@@ -245,14 +464,8 @@ public class NoteDetailActivity extends BaseActivity implements VoiceStudyManage
 
     private void updatePersonalizationUI() {
         if (ivBookmark != null) {
-            ivBookmark.setImageResource(isBookmarked ? android.R.drawable.btn_star_big_on : android.R.drawable.ic_menu_save);
+            ivBookmark.setImageResource(isBookmarked ? android.R.drawable.btn_star_big_on : R.drawable.ic_certificate);
             AccessibilityUtils.setAccessibilityLabel(ivBookmark, isBookmarked ? "Lesson Saved in Library" : "Bookmark Lesson", "Button");
-        }
-        if (ivImportant != null) {
-            ivImportant.setImageResource(isImportant ? android.R.drawable.btn_star_big_on : android.R.drawable.btn_star_big_off);
-            if (isImportant) ivImportant.setColorFilter(Color.parseColor("#F59E0B")); 
-            else ivImportant.clearColorFilter();
-            AccessibilityUtils.setAccessibilityLabel(ivImportant, isImportant ? "Marked as Essential Priority" : "Mark as Important", "Button");
         }
     }
 
@@ -260,130 +473,19 @@ public class NoteDetailActivity extends BaseActivity implements VoiceStudyManage
         dbHelper.saveStudyNote(currentUsername, subject, chapter, topic, personalNote, highlightData, isBookmarked ? 1 : 0, isImportant ? 1 : 0);
     }
 
-    private void setupActions() {
-        if (ivHighlight != null) ivHighlight.setOnClickListener(v -> performHighlight());
-        if (ivMyNotes != null) ivMyNotes.setOnClickListener(v -> showPersonalNotesDialog());
-        if (ivRecordAudio != null) ivRecordAudio.setOnClickListener(v -> handleAudioRecording());
-        if (ivHandwrite != null) ivHandwrite.setOnClickListener(v -> toggleHandwriting());
-        
-        if (ivImportant != null) ivImportant.setOnClickListener(v -> {
-            isImportant = !isImportant;
-            updatePersonalizationUI();
-            savePersonalization();
-            String msg = isImportant ? "Priority: Essential" : "Priority Cleared";
-            AccessibilityUtils.announceForAccessibility(v, msg);
-            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-        });
-        
-        if (ivBookmark != null) ivBookmark.setOnClickListener(v -> {
-            isBookmarked = !isBookmarked;
-            updatePersonalizationUI();
-            savePersonalization();
-            String msg = isBookmarked ? "Lesson Saved" : "Removed from Library";
-            AccessibilityUtils.announceForAccessibility(v, msg);
-            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-        });
-
-        if (btnReadAloud != null) btnReadAloud.setOnClickListener(v -> triggerReadAloud());
-        if (ivVoiceAssistant != null) ivVoiceAssistant.setOnClickListener(v -> voiceStudyManager.startListening());
-    }
-
-    private void toggleHandwriting() {
-        isHandwritingMode = !isHandwritingMode;
-        drawingView.setVisibility(isHandwritingMode ? View.VISIBLE : View.GONE);
-        ivHandwrite.setColorFilter(isHandwritingMode ? Color.CYAN : Color.WHITE);
-        if (isHandwritingMode) {
-            AccessibilityUtils.announceForAccessibility(drawingView, "Handwriting Mode Active. Draw directly on screen.");
-            Toast.makeText(this, "Handwriting Mode Active. Draw on screen!", Toast.LENGTH_SHORT).show();
-        } else {
-            new AlertDialog.Builder(this)
-                .setTitle("Save Handwriting?")
-                .setMessage("Keep your handwritten notes?")
-                .setPositiveButton("Keep", null)
-                .setNegativeButton("Clear", (d, w) -> drawingView.clearCanvas())
-                .show();
-        }
-    }
-
-    private void handleAudioRecording() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_RECORD_AUDIO_PERMISSION);
-            return;
-        }
-
-        if (!isRecording) {
-            startRecording();
-            ivRecordAudio.setColorFilter(Color.RED);
-            AccessibilityUtils.announceForAccessibility(ivRecordAudio, "Recording audio reflection started");
-            Toast.makeText(this, "Recording audio reflection...", Toast.LENGTH_SHORT).show();
-        } else {
-            stopRecording();
-            ivRecordAudio.clearColorFilter();
-            AccessibilityUtils.announceForAccessibility(ivRecordAudio, "Reflection saved. Tap again to play.");
-            Toast.makeText(this, "Reflection saved! Tap again to play.", Toast.LENGTH_SHORT).show();
-            playAudio();
-        }
-        isRecording = !isRecording;
-    }
-
-    private void startRecording() {
-        recorder = new MediaRecorder();
-        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        recorder.setOutputFile(audioFileName);
-        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        try { recorder.prepare(); recorder.start(); } catch (IOException e) { Log.e(TAG, "prepare() failed", e); }
-    }
-
-    private void stopRecording() {
-        if (recorder != null) {
-            try {
-                recorder.stop();
-            } catch (Exception ignored) {}
-            recorder.release();
-            recorder = null;
-        }
-    }
-
-    private void playAudio() {
-        player = new MediaPlayer();
-        try {
-            player.setDataSource(audioFileName);
-            player.prepare();
-            player.start();
-        } catch (IOException e) {
-            Log.e(TAG, "playAudio() failed", e);
-        }
-    }
-
-    private void performHighlight() {
-        if (wvNoteContent.getVisibility() == View.VISIBLE) {
-            wvNoteContent.evaluateJavascript("(function(){return window.getSelection().toString();})();", value -> {
-                String text = gson.fromJson(value, String.class);
-                if (text != null && text.length() > 2) {
-                    highlightData += text + "||";
-                    savePersonalization();
-                    AccessibilityUtils.announceForAccessibility(wvNoteContent, "Highlighted: " + text);
-                    Toast.makeText(this, "Highlighted: " + text, Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
-
-    private void applyHighlights() {}
-
     private void showPersonalNotesDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Personal Study Notes");
         final EditText input = new EditText(this);
         input.setText(personalNote);
+        input.setHint("Write key takeaways, questions, or formulas here...");
         input.setContentDescription("Personal study note input field");
         builder.setView(input);
         builder.setPositiveButton("SAVE", (dialog, which) -> {
             personalNote = input.getText().toString();
             savePersonalization();
             AccessibilityUtils.announceForAccessibility(this.getWindow().getDecorView(), "Study notes updated");
-            Toast.makeText(this, "Notes updated!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Notes saved!", Toast.LENGTH_SHORT).show();
         });
         builder.setNegativeButton("CANCEL", null);
         builder.show();
@@ -394,9 +496,9 @@ public class NoteDetailActivity extends BaseActivity implements VoiceStudyManage
             readingBarView.setVisibility(View.VISIBLE);
             if (readingController != null) {
                 if (lessonSpeechContent == null || lessonSpeechContent.isEmpty()) {
-                    lessonSpeechContent = tvNoteContent.getText().toString();
-                    readingController.setContent(lessonSpeechContent);
+                    lessonSpeechContent = cleanTopicName(topic);
                 }
+                readingController.setContent(lessonSpeechContent);
                 getAccessibilitySpeaker().speakContent(lessonSpeechContent);
                 AccessibilityUtils.announceForAccessibility(readingBarView, "Starting lesson reading");
             }
@@ -405,11 +507,32 @@ public class NoteDetailActivity extends BaseActivity implements VoiceStudyManage
         }
     }
 
-    @Override public void onCommandRecognized(String text) { Toast.makeText(this, "Heard: " + text, Toast.LENGTH_SHORT).show(); }
+    private String cleanTopicName(String name) {
+        if (name == null) return "Lesson";
+        String clean = name;
+        if (clean.contains("/")) clean = clean.substring(clean.lastIndexOf('/') + 1);
+        if (clean.toLowerCase(Locale.US).endsWith(".html")) {
+            clean = clean.substring(0, clean.length() - 5);
+        }
+        clean = clean.replace("-", " ").replace("_", " ").trim();
+        return clean;
+    }
+
+    private String formatUnitName(String unit) {
+        if (unit == null) return "Unit";
+        String clean = unit.replace("_", " ").replace("-", " ").trim();
+        if (clean.toUpperCase(Locale.US).startsWith("UNIT")) {
+            return "Unit " + clean.substring(4).trim();
+        }
+        return clean;
+    }
+
+    @Override public void onCommandRecognized(String text) { Toast.makeText(this, "Voice heard: " + text, Toast.LENGTH_SHORT).show(); }
     @Override public void onActionRequired(String action, String page, String extra) {}
     @Override public void onSpeechFinished() { isSpeaking = false; }
 
-    @Override protected void onDestroy() {
+    @Override
+    protected void onDestroy() {
         if (recorder != null) recorder.release();
         if (player != null) player.release();
         if (readingController != null) {

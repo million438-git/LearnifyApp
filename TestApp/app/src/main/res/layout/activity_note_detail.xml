@@ -2,143 +2,145 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA"
+    android:background="@color/course_background"
     tools:context="com.million.learnify.NoteDetailActivity">
 
+    <!-- Top App Bar -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:background="@color/course_navy"
         app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/noteToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:navigationIcon="?attr/homeAsUpIndicator">
+            android:background="@color/course_navy"
+            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:navigationIconTint="@color/white">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
-                <TextView
-                    android:id="@+id/tvNoteTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Chapter"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:singleLine="true"
-                    android:ellipsize="end" />
+
                 <TextView
                     android:id="@+id/tvTopicSubtitle"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Topic"
-                    android:textColor="#E0E0E0"
-                    android:textSize="11sp"
+                    android:ellipsize="end"
                     android:singleLine="true"
-                    android:ellipsize="end" />
+                    android:text="Unit 1 • Physics"
+                    android:textColor="#B0C4DE"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/tvNoteTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="Lesson Title"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <ImageView
-                android:id="@+id/ivVoiceAssistant"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:padding="8dp"
-                android:src="@android:drawable/ic_btn_speak_now"
-                android:contentDescription="Voice Assistant"
-                app:tint="@android:color/white" />
-
-            <ImageView
-                android:id="@+id/ivRecordAudio"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:padding="8dp"
-                android:src="@android:drawable/ic_btn_speak_now"
-                android:contentDescription="Record Audio Reflection"
-                app:tint="@android:color/white" />
-
-            <ImageView
-                android:id="@+id/ivHandwrite"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:padding="8dp"
-                android:src="@android:drawable/ic_menu_edit"
-                android:contentDescription="Handwriting Canvas"
-                app:tint="@android:color/white" />
-
-            <ImageView
-                android:id="@+id/ivHighlight"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:padding="8dp"
-                android:src="@android:drawable/ic_menu_edit"
-                android:contentDescription="Highlight Selected Text"
-                app:tint="@android:color/white" />
+                android:id="@+id/ivBookmark"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Bookmark Lesson"
+                android:padding="9dp"
+                android:src="@drawable/ic_certificate"
+                app:tint="@color/white" />
 
             <ImageView
                 android:id="@+id/ivMyNotes"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:padding="8dp"
-                android:src="@android:drawable/ic_menu_agenda"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Study Notes"
-                app:tint="@android:color/white" />
+                android:padding="9dp"
+                android:src="@drawable/ic_edit"
+                app:tint="@color/white" />
 
             <ImageView
-                android:id="@+id/ivImportant"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:padding="8dp"
-                android:src="@android:drawable/btn_star_big_off"
-                android:contentDescription="Mark as Important"
-                app:tint="@android:color/white" />
+                android:id="@+id/ivVoiceAssistant"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Voice Assistant"
+                android:padding="9dp"
+                android:src="@drawable/ic_mic"
+                app:tint="@color/white" />
 
             <ImageView
                 android:id="@+id/ivFullscreen"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:padding="8dp"
-                android:src="@android:drawable/ic_menu_zoom"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Toggle Fullscreen"
-                app:tint="@android:color/white" />
+                android:padding="9dp"
+                android:src="@android:drawable/ic_menu_zoom"
+                app:tint="@color/white" />
+
+            <!-- Hidden for overflow access -->
+            <ImageView
+                android:id="@+id/ivImportant"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
 
             <ImageView
-                android:id="@+id/ivBookmark"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:padding="8dp"
-                android:src="@android:drawable/ic_menu_save"
-                android:contentDescription="Bookmark Lesson"
-                app:tint="@android:color/white" />
+                android:id="@+id/ivHighlight"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/ivRecordAudio"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/ivHandwrite"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone" />
+
         </androidx.appcompat.widget.Toolbar>
 
+        <!-- Progress Indicator across the lesson -->
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/noteProgressBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:progress="100"
-            app:indicatorColor="#FFEB3B"
-            app:trackColor="#4CAF50" />
+            app:indicatorColor="@color/course_blue_bright"
+            app:trackColor="@color/course_navy_secondary" />
     </com.google.android.material.appbar.AppBarLayout>
 
+    <!-- Reading Viewport -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="56dp"
+        android:paddingBottom="128dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.webkit.WebView
             android:id="@+id/wvNoteContent"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="@color/course_background" />
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/scrollTextContent"
@@ -155,14 +157,19 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp">
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="1dp"
+                    app:strokeColor="@color/course_card_stroke"
+                    app:strokeWidth="1dp">
+
                     <TextView
                         android:id="@+id/tvNoteContent"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="20dp"
-                        android:textColor="#333333"
+                        android:lineSpacingMultiplier="1.5"
+                        android:padding="22dp"
+                        android:textColor="@color/course_text_primary"
                         android:textSize="16sp" />
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
@@ -186,42 +193,157 @@
 
     </FrameLayout>
 
-    <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bottomAppBar"
+    <!-- Bottom Study Action Dock -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/bottomDockCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:backgroundTint="@android:color/white">
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="12dp"
+        app:strokeColor="@color/course_card_stroke"
+        app:strokeWidth="1dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="14dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="12dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnReadAloud"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="0dp"
+            <!-- Primary Actions Row: Mark Complete, Practice Quiz, Virtual Lab -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Read Aloud"
-                android:contentDescription="Read lesson aloud with Inclusive Audio Reader"
-                app:icon="@drawable/ic_volume_up" />
+                android:orientation="horizontal">
 
-            <View android:layout_width="1dp" android:layout_height="24dp" android:background="#17BD5C" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnMarkComplete"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:minHeight="0dp"
+                    android:text="Complete"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/course_blue"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/ic_verified_check"
+                    app:iconPadding="4dp"
+                    app:iconSize="16dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnPractice"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="0dp"
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPractice"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1"
+                    android:minHeight="0dp"
+                    android:text="Quiz"
+                    android:textAllCaps="false"
+                    android:textColor="@color/course_blue"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/ic_trophy"
+                    app:iconPadding="4dp"
+                    app:iconSize="16dp"
+                    app:iconTint="@color/course_blue"
+                    app:strokeColor="@color/course_blue" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnInteractiveLab"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:minHeight="0dp"
+                    android:text="Lab"
+                    android:textAllCaps="false"
+                    android:textColor="@color/course_physics_accent"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/ic_lab"
+                    app:iconPadding="4dp"
+                    app:iconSize="16dp"
+                    app:iconTint="@color/course_physics_accent"
+                    app:strokeColor="@color/course_physics_accent" />
+            </LinearLayout>
+
+            <!-- Navigation and Audio Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Practice Quiz"
-                android:contentDescription="Open Practice Quiz for this topic"
-                app:icon="@android:drawable/ic_input_add" />
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPrevLesson"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_weight="1"
+                    android:minHeight="0dp"
+                    android:text="Previous"
+                    android:textAllCaps="false"
+                    android:textColor="@color/course_text_secondary"
+                    android:textSize="12sp"
+                    app:icon="@drawable/ic_chevron_right"
+                    app:iconGravity="textStart"
+                    app:iconPadding="2dp"
+                    app:iconSize="14dp"
+                    app:iconTint="@color/course_text_secondary" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnReadAloud"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_weight="1.2"
+                    android:minHeight="0dp"
+                    android:text="Read Aloud"
+                    android:textAllCaps="false"
+                    android:textColor="@color/course_blue"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:icon="@drawable/ic_volume_up"
+                    app:iconPadding="4dp"
+                    app:iconSize="16dp"
+                    app:iconTint="@color/course_blue" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnNextLesson"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_weight="1"
+                    android:minHeight="0dp"
+                    android:text="Next"
+                    android:textAllCaps="false"
+                    android:textColor="@color/course_text_secondary"
+                    android:textSize="12sp"
+                    app:icon="@drawable/ic_chevron_right"
+                    app:iconGravity="textEnd"
+                    app:iconPadding="2dp"
+                    app:iconSize="14dp"
+                    app:iconTint="@color/course_text_secondary" />
+            </LinearLayout>
+
         </LinearLayout>
-    </com.google.android.material.bottomappbar.BottomAppBar>
+    </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabExitFullscreen"
@@ -229,10 +351,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
+        android:contentDescription="Exit Fullscreen Mode"
         android:src="@android:drawable/ic_menu_revert"
         android:visibility="gone"
+        app:backgroundTint="@color/course_blue"
         app:fabSize="mini"
-        app:tint="@android:color/white"
-        android:contentDescription="Exit Fullscreen Mode" />
+        app:tint="@color/white" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

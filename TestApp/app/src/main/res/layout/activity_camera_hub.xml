@@ -4,41 +4,65 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F7FC">
+    android:background="@color/science_bg_main">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
+        android:background="@color/science_bg_secondary"
+        app:elevation="2dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbarHub"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#FFFFFF"
+            android:background="@color/science_bg_secondary"
             app:navigationIcon="?attr/homeAsUpIndicator"
-            app:navigationIconTint="#202A3B"
-            app:title="Camera &amp; Science Lab"
-            app:titleCentered="true"
-            app:titleTextColor="#202A3B">
+            app:navigationIconTint="@color/science_text_primary"
+            app:title="Learnify AI Science Studio"
+            app:titleTextColor="@color/science_text_primary"
+            app:subtitle="Discover. Experiment. Understand."
+            app:subtitleTextColor="@color/science_text_secondary">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingEnd="12dp">
+
+                <ImageView
+                    android:id="@+id/btnHubAudioGuide"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Voice Audio Guide"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_science_speaker"
+                    app:tint="@color/science_cyan_accent" />
+
+                <ImageView
+                    android:id="@+id/btnHubNotebook"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Student Lab Notebook"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_lab_notebook"
+                    app:tint="@color/science_cyan_accent" />
 
                 <ImageView
                     android:id="@+id/btnHubHistory"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
+                    android:layout_marginStart="4dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="Scan History"
                     android:padding="8dp"
                     android:src="@drawable/ic_history"
-                    app:tint="#243B80" />
+                    app:tint="@color/science_text_secondary" />
 
                 <ImageView
                     android:id="@+id/btnHubSettings"
@@ -49,7 +73,7 @@
                     android:contentDescription="Camera Settings"
                     android:padding="8dp"
                     android:src="@android:drawable/ic_menu_preferences"
-                    app:tint="#243B80" />
+                    app:tint="@color/science_text_secondary" />
             </LinearLayout>
 
         </com.google.android.material.appbar.MaterialToolbar>
@@ -71,16 +95,18 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:cardBackgroundColor="@android:color/transparent"
                 app:cardCornerRadius="20dp"
-                app:cardElevation="2dp"
-                app:strokeWidth="0dp">
+                app:cardElevation="4dp"
+                app:strokeColor="@color/science_card_stroke"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_admin_hero_banner"
+                    android:background="@drawable/bg_science_hero"
                     android:orientation="vertical"
-                    android:padding="22dp">
+                    android:padding="20dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -89,23 +115,147 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Camera AI Solver"
-                            android:textColor="@android:color/white"
-                            android:textSize="20sp"
+                            android:background="@drawable/bg_science_pill"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"
+                            android:text="OFFLINE AI + 117 LABS READY"
+                            android:textColor="@color/science_cyan_accent"
+                            android:textSize="11sp"
                             android:textStyle="bold" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/ic_science_leaf"
+                            app:tint="@color/science_cyan_accent" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Explore the science around you."
+                        android:textColor="@color/science_text_primary"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:lineSpacingExtra="3dp"
+                        android:text="Investigate real-world specimens with Camera AI, conduct 117 virtual lab simulations, and record scientific observations in your personal notebook."
+                        android:textColor="@color/science_text_secondary"
+                        android:textSize="13sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="18dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnOpenScanner"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_science_cyan_button"
+                            android:text="Camera Scanner"
+                            android:textColor="@color/science_bg_main"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            app:backgroundTint="@null"
+                            app:icon="@drawable/ic_camera_white"
+                            app:iconGravity="textStart"
+                            app:iconTint="@color/science_bg_main" />
+
+                        <View
+                            android:layout_width="10dp"
+                            android:layout_height="0dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnExploreExperiments"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_science_outline_button"
+                            android:text="Virtual Labs"
+                            android:textColor="@color/science_cyan_accent"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            app:backgroundTint="@null"
+                            app:icon="@drawable/ic_lab"
+                            app:iconGravity="textStart"
+                            app:iconTint="@color/science_cyan_accent" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- FEATURED GUIDED INVESTIGATION CARD (GRADE 9 LEAF INVESTIGATION) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="10dp"
+                android:text="FEATURED GUIDED INVESTIGATION"
+                android:textColor="@color/science_cyan_accent"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardLeafInvestigation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardBackgroundColor="@color/science_card_bg"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="3dp"
+                app:strokeColor="@color/science_cyan_accent"
+                app:strokeWidth="1.5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/bg_badge_active"
-                            android:paddingHorizontal="10dp"
-                            android:paddingVertical="4dp"
-                            android:text="OFFLINE READY"
-                            android:textColor="#10B981"
+                            android:text="GRADE 9 BIOLOGY • MODULE 1"
+                            android:textColor="@color/science_cyan_accent"
                             android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_science_pill"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="2dp"
+                            android:text="7 STAGES"
+                            android:textColor="#34D399"
+                            android:textSize="10sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
@@ -113,165 +263,135 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:lineSpacingExtra="3dp"
-                        android:text="Point at textbook equations, science formulas, or handwritten questions to generate instant step-by-step explanations."
-                        android:textColor="#E0E7FF"
-                        android:textSize="13sp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                        android:text="Plant Leaf Investigation: Structure &amp; Photosynthesis"
+                        android:textColor="@color/science_text_primary"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
 
-            <!-- PRIMARY ACTIONS (SCAN & IMPORT) -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp"
-                android:text="CAPTURE &amp; ANALYZE"
-                android:textColor="#64748B"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <!-- Scan Page Card -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardScanPage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="1dp"
-                app:strokeColor="#E2E8F0"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
-
-                    <FrameLayout
-                        android:layout_width="52dp"
-                        android:layout_height="52dp"
-                        android:background="@drawable/bg_icon_container_sapphire">
-
-                        <ImageView
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_real_camera"
-                            app:tint="#4169E1" />
-                    </FrameLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <TextView
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="14dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:layout_marginTop="6dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="Examine real leaf specimens, identify internal anatomy (cuticle, epidermis, stomata, chloroplasts), run transpiration &amp; photosynthesis rate simulations, and record findings in your notebook."
+                        android:textColor="@color/science_text_secondary"
+                        android:textSize="12sp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Scan a Problem"
-                            android:textColor="#202A3B"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="Live CameraX viewfinder with touch-to-focus and zoom"
-                            android:textColor="#64748B"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_chevron_right"
-                        app:tint="#94A3B8" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Import Photo Card -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardImportPhoto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="1dp"
-                app:strokeColor="#E2E8F0"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
-
-                    <FrameLayout
-                        android:layout_width="52dp"
-                        android:layout_height="52dp"
-                        android:background="@drawable/bg_icon_container_teal">
-
-                        <ImageView
-                            android:layout_width="26dp"
-                            android:layout_height="26dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_download"
-                            app:tint="#0D9488" />
-                    </FrameLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <!-- STAGE SEQUENCE PILL ROW -->
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="14dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:layout_marginTop="14dp"
+                        android:scrollbars="none">
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Import from Gallery"
-                            android:textColor="#202A3B"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
+                            android:orientation="horizontal">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="Pick saved photos, screenshots, or document scans"
-                            android:textColor="#64748B"
-                            android:textSize="12sp" />
-                    </LinearLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_science_pill"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="3dp"
+                                android:text="1. Prepare"
+                                android:textColor="@color/science_text_secondary"
+                                android:textSize="11sp" />
 
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_chevron_right"
-                        app:tint="#94A3B8" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:background="@drawable/bg_science_pill"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="3dp"
+                                android:text="2. Predict"
+                                android:textColor="@color/science_text_secondary"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:background="@drawable/bg_science_pill"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="3dp"
+                                android:text="3. Observe"
+                                android:textColor="@color/science_text_secondary"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:background="@drawable/bg_science_pill"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="3dp"
+                                android:text="4. Explore"
+                                android:textColor="@color/science_text_secondary"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:background="@drawable/bg_science_pill"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="3dp"
+                                android:text="5. Investigate"
+                                android:textColor="@color/science_text_secondary"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:background="@drawable/bg_science_pill"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="3dp"
+                                android:text="6. Review"
+                                android:textColor="@color/science_text_secondary"
+                                android:textSize="11sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:background="@drawable/bg_science_pill"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="3dp"
+                                android:text="7. Reflect"
+                                android:textColor="@color/science_text_secondary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+                    </HorizontalScrollView>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnStartLeafInvestigation"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/bg_science_cyan_button"
+                        android:text="Launch Guided Leaf Investigation →"
+                        android:textColor="@color/science_bg_main"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="@null"
+                        app:icon="@drawable/ic_science_leaf"
+                        app:iconGravity="textStart"
+                        app:iconTint="@color/science_bg_main" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- SCIENCE EXPLORER -->
+            <!-- INTERACTIVE SCIENCE LABS -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="10dp"
-                android:text="SCIENCE EXPLORER"
-                android:textColor="#64748B"
+                android:text="DISCOVERY LABORATORIES (117 EXPERIMENTS)"
+                android:textColor="@color/science_cyan_accent"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -281,9 +401,9 @@
                 app:columnCount="2"
                 app:rowCount="2">
 
-                <!-- Math Card -->
+                <!-- Biology Card -->
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardSubjectMath"
+                    android:id="@+id/cardSubjectBiology"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="6dp"
@@ -291,11 +411,11 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackground"
-                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardBackgroundColor="@color/science_card_bg"
                     app:cardCornerRadius="14dp"
-                    app:cardElevation="1dp"
+                    app:cardElevation="2dp"
                     app:layout_columnWeight="1"
-                    app:strokeColor="#E2E8F0"
+                    app:strokeColor="@color/science_card_stroke"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -307,17 +427,17 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="MTH"
-                            android:textColor="#3B82F6"
-                            android:textStyle="bold"
-                            android:textSize="20sp" />
+                            android:text="🔬 BIO"
+                            android:textColor="#10B981"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Mathematics"
-                            android:textColor="#202A3B"
+                            android:layout_marginTop="6dp"
+                            android:text="Biology Lab"
+                            android:textColor="@color/science_text_primary"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
@@ -325,8 +445,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="Algebra &amp; Calculus"
-                            android:textColor="#64748B"
+                            android:text="37 Simulations\nCells, Osmosis, DNA"
+                            android:textColor="@color/science_text_secondary"
                             android:textSize="11sp" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -341,11 +461,11 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackground"
-                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardBackgroundColor="@color/science_card_bg"
                     app:cardCornerRadius="14dp"
-                    app:cardElevation="1dp"
+                    app:cardElevation="2dp"
                     app:layout_columnWeight="1"
-                    app:strokeColor="#E2E8F0"
+                    app:strokeColor="@color/science_card_stroke"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -357,17 +477,17 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="PHY"
-                            android:textColor="#8B5CF6"
-                            android:textStyle="bold"
-                            android:textSize="20sp" />
+                            android:text="⚡ PHY"
+                            android:textColor="#38BDF8"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Physics"
-                            android:textColor="#202A3B"
+                            android:layout_marginTop="6dp"
+                            android:text="Physics Lab"
+                            android:textColor="@color/science_text_primary"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
@@ -375,8 +495,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="Motion &amp; Ohm's Law"
-                            android:textColor="#64748B"
+                            android:text="40 Simulations\nCircuits, Optics, Waves"
+                            android:textColor="@color/science_text_secondary"
                             android:textSize="11sp" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -390,11 +510,11 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackground"
-                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardBackgroundColor="@color/science_card_bg"
                     app:cardCornerRadius="14dp"
-                    app:cardElevation="1dp"
+                    app:cardElevation="2dp"
                     app:layout_columnWeight="1"
-                    app:strokeColor="#E2E8F0"
+                    app:strokeColor="@color/science_card_stroke"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -406,17 +526,17 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="CHM"
-                            android:textColor="#10B981"
-                            android:textStyle="bold"
-                            android:textSize="20sp" />
+                            android:text="🧪 CHM"
+                            android:textColor="#C084FC"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Chemistry"
-                            android:textColor="#202A3B"
+                            android:layout_marginTop="6dp"
+                            android:text="Chemistry Lab"
+                            android:textColor="@color/science_text_primary"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
@@ -424,26 +544,26 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="Molar Mass &amp; Atoms"
-                            android:textColor="#64748B"
+                            android:text="40 Simulations\nTitration, Elements"
+                            android:textColor="@color/science_text_secondary"
                             android:textSize="11sp" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Simulations / Visualizer Card -->
+                <!-- Catalogue Card -->
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardInteractiveLabs"
+                    android:id="@+id/cardAllSimulations"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackground"
-                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardBackgroundColor="@color/science_card_bg"
                     app:cardCornerRadius="14dp"
-                    app:cardElevation="1dp"
+                    app:cardElevation="2dp"
                     app:layout_columnWeight="1"
-                    app:strokeColor="#E2E8F0"
+                    app:strokeColor="@color/science_card_stroke"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -455,17 +575,17 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="LAB"
-                            android:textColor="#F59E0B"
-                            android:textStyle="bold"
-                            android:textSize="20sp" />
+                            android:text="📚 ALL"
+                            android:textColor="#FBBF24"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="3D Science Labs"
-                            android:textColor="#202A3B"
+                            android:layout_marginTop="6dp"
+                            android:text="Lab Catalogue"
+                            android:textColor="@color/science_text_primary"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
@@ -473,13 +593,239 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="Interactive Models"
-                            android:textColor="#64748B"
+                            android:text="Explore All 117\nGrade 9–12 Filter"
+                            android:textColor="@color/science_text_secondary"
                             android:textSize="11sp" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
             </androidx.gridlayout.widget.GridLayout>
+
+            <!-- CAMERA AI TOOLS SECTION -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="10dp"
+                android:text="CAMERA AI SCANNER &amp; SOLVER"
+                android:textColor="@color/science_cyan_accent"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <!-- Scan Page Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardScanPage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardBackgroundColor="@color/science_card_bg"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeColor="@color/science_card_stroke"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <FrameLayout
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:background="@drawable/bg_science_pill">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_camera_white"
+                            app:tint="@color/science_cyan_accent" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Scan Specimen or Formula"
+                            android:textColor="@color/science_text_primary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="CameraX scanner with instant OCR, vision analysis, &amp; lab linkage"
+                            android:textColor="@color/science_text_secondary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="@color/science_cyan_accent" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Import Photo Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardImportPhoto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardBackgroundColor="@color/science_card_bg"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeColor="@color/science_card_stroke"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <FrameLayout
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:background="@drawable/bg_science_pill">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_download"
+                            app:tint="@color/science_cyan_accent" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Import Specimen from Gallery"
+                            android:textColor="@color/science_text_primary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Analyze saved specimen photos, textbook figures, or lab sheets"
+                            android:textColor="@color/science_text_secondary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="@color/science_cyan_accent" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- STUDENT LAB NOTEBOOK SECTION -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="26dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="MY LAB NOTEBOOK"
+                    android:textColor="@color/science_cyan_accent"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/btnViewAllNotebook"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp"
+                    android:text="OPEN NOTEBOOK →"
+                    android:textColor="@color/science_cyan_accent"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Dynamic Notebook Container -->
+            <LinearLayout
+                android:id="@+id/llNotebookContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <!-- Empty State Card for Notebook -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardEmptyNotebook"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/science_card_bg"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/science_card_stroke"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_lab_notebook"
+                        app:tint="@color/science_cyan_accent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="No Lab Reports Saved Yet"
+                        android:textColor="@color/science_text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:gravity="center"
+                        android:text="Launch the Grade 9 Leaf Investigation or save camera analyses to start building your permanent scientific notebook."
+                        android:textColor="@color/science_text_secondary"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- RECENT SCANS SECTION -->
             <LinearLayout
@@ -495,7 +841,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="RECENT SCANS &amp; SOLUTIONS"
-                    android:textColor="#64748B"
+                    android:textColor="@color/science_text_secondary"
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
@@ -507,7 +853,7 @@
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="4dp"
                     android:text="VIEW ALL"
-                    android:textColor="#4169E1"
+                    android:textColor="@color/science_blue_primary"
                     android:textSize="13sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -524,10 +870,10 @@
                 android:id="@+id/cardEmptyScans"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="#FFFFFF"
+                app:cardBackgroundColor="@color/science_card_bg"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#E2E8F0"
+                app:strokeColor="@color/science_card_stroke"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -535,29 +881,29 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="24dp">
+                    android:padding="20dp">
 
                     <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/ic_real_camera"
-                        app:tint="#94A3B8" />
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_camera_white"
+                        app:tint="@color/science_text_muted" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="8dp"
                         android:text="No Scans Yet"
-                        android:textColor="#202A3B"
-                        android:textSize="15sp"
+                        android:textColor="@color/science_text_primary"
+                        android:textSize="14sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="2dp"
                         android:text="Your solved problems and formulas will appear here."
-                        android:textColor="#64748B"
+                        android:textColor="@color/science_text_muted"
                         android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -568,9 +914,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="#EFF6FF"
+                app:cardBackgroundColor="@color/science_card_bg"
                 app:cardCornerRadius="14dp"
-                app:strokeColor="#BFDBFE"
+                app:strokeColor="@color/science_card_stroke"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -581,18 +927,19 @@
                     android:padding="14dp">
 
                     <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:src="@drawable/ic_verified_check"
-                        app:tint="#243B80" />
+                        app:tint="@color/science_cyan_accent" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_weight="1"
-                        android:text="100% On-Device &amp; Private — Text recognition and symbolic math engine execute locally on your device."
-                        android:textColor="#243B80"
+                        android:lineSpacingExtra="2dp"
+                        android:text="100% On-Device &amp; Private — Text recognition, computer vision, and simulation physics execute locally on your device without tracking."
+                        android:textColor="@color/science_text_secondary"
                         android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -601,4 +948,3 @@
     </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
-

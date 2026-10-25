@@ -1,45 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardTopicRoot"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
+    android:layout_marginBottom="10dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
-    app:cardCornerRadius="8dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="16dp"
     app:cardElevation="1dp"
-    app:cardUseCompatPadding="false">
+    app:strokeColor="@color/course_card_stroke"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:gravity="center_vertical"
+        android:minHeight="72dp"
         android:orientation="horizontal"
-        android:paddingHorizontal="16dp">
-
-        <ImageView
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:src="@android:drawable/ic_menu_edit"
-            app:tint="#555555" />
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp">
 
         <TextView
-            android:id="@+id/tvTopicName"
+            android:id="@+id/tvTopicOrder"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:background="@drawable/bg_unit_pill"
+            android:gravity="center"
+            android:importantForAccessibility="no"
+            android:text="01"
+            android:textColor="@color/course_blue"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="10dp"
             android:layout_weight="1"
-            android:layout_marginStart="16dp"
-            android:text="Topic Name"
-            android:textColor="#333333"
-            android:textSize="15sp" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvTopicName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Branches and Applications of Physics"
+                android:textColor="@color/course_text_primary"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvTopicMeta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="Reading • 8 min read"
+                android:textColor="@color/course_text_secondary"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- Completion Checkmark Icon -->
+        <ImageView
+            android:id="@+id/ivTopicCompletedCheck"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="Lesson completed"
+            android:src="@drawable/ic_verified_check"
+            android:visibility="gone"
+            app:tint="@color/course_success" />
 
         <ImageView
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:src="@android:drawable/ic_menu_more"
-            android:rotation="270"
-            app:tint="#BDBDBD" />
+            android:id="@+id/ivTopicChevron"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_chevron_right"
+            app:tint="@color/course_text_secondary" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

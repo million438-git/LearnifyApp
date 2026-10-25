@@ -1,0 +1,1554 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/science_bg_main">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/science_bg_secondary"
+        app:elevation="2dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbarLeaf"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/science_bg_secondary"
+            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:navigationIconTint="@color/science_text_primary"
+            app:title="Grade 9 Leaf Investigation"
+            app:titleTextColor="@color/science_text_primary"
+            app:subtitle="Structure &amp; Photosynthesis Lab"
+            app:subtitleTextColor="@color/science_text_secondary">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingEnd="12dp">
+
+                <ImageView
+                    android:id="@+id/btnLeafVoiceGuide"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Stage Audio Guide"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_science_speaker"
+                    app:tint="@color/science_cyan_accent" />
+
+                <ImageView
+                    android:id="@+id/btnLeafNotebook"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Open Notebook"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_lab_notebook"
+                    app:tint="@color/science_cyan_accent" />
+            </LinearLayout>
+
+        </com.google.android.material.appbar.MaterialToolbar>
+
+        <!-- HORIZONTAL 7-STAGE PROGRESS SELECTOR -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/science_bg_secondary"
+            android:paddingHorizontal="12dp"
+            android:paddingBottom="10dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/llStageSelector"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tabStage1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:background="@drawable/bg_science_stage_active"
+                    android:gravity="center"
+                    android:paddingHorizontal="12dp"
+                    android:text="1. Prepare"
+                    android:textColor="@color/science_bg_main"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tabStage2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_science_stage_inactive"
+                    android:gravity="center"
+                    android:paddingHorizontal="12dp"
+                    android:text="2. Predict"
+                    android:textColor="@color/science_text_secondary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tabStage3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_science_stage_inactive"
+                    android:gravity="center"
+                    android:paddingHorizontal="12dp"
+                    android:text="3. Observe"
+                    android:textColor="@color/science_text_secondary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tabStage4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_science_stage_inactive"
+                    android:gravity="center"
+                    android:paddingHorizontal="12dp"
+                    android:text="4. Explore"
+                    android:textColor="@color/science_text_secondary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tabStage5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_science_stage_inactive"
+                    android:gravity="center"
+                    android:paddingHorizontal="12dp"
+                    android:text="5. Investigate"
+                    android:textColor="@color/science_text_secondary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tabStage6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_science_stage_inactive"
+                    android:gravity="center"
+                    android:paddingHorizontal="12dp"
+                    android:text="6. Review"
+                    android:textColor="@color/science_text_secondary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tabStage7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_science_stage_inactive"
+                    android:gravity="center"
+                    android:paddingHorizontal="12dp"
+                    android:text="7. Reflect"
+                    android:textColor="@color/science_text_secondary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- STAGE 1: PREPARE -->
+            <LinearLayout
+                android:id="@+id/layoutStage1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/science_card_bg"
+                    app:cardCornerRadius="16dp"
+                    app:strokeColor="@color/science_card_stroke"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_science_pill"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="3dp"
+                            android:text="STAGE 1 OF 7 • PREPARE"
+                            android:textColor="@color/science_cyan_accent"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Inquiry Question &amp; Lab Context"
+                            android:textColor="@color/science_text_primary"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:lineSpacingExtra="3dp"
+                            android:text="Leaves are specialized biological solar panels. How do their microscopic surface structures (cuticle, epidermis, stomata) and internal tissues (mesophyll, vascular bundles) balance the competing demands of absorbing sunlight and carbon dioxide while minimizing fatal water loss through transpiration?"
+                            android:textColor="@color/science_text_secondary"
+                            android:textSize="13sp" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginVertical="16dp"
+                            android:background="@color/science_card_stroke" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="INVESTIGATION APPARATUS &amp; CHECKLIST"
+                            android:textColor="@color/science_cyan_accent"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <CheckBox
+                            android:id="@+id/chkLeafSpecimen"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:checked="true"
+                            android:text="Fresh dicot or monocot leaf specimen (or digital specimen)"
+                            android:textColor="@color/science_text_primary" />
+
+                        <CheckBox
+                            android:id="@+id/chkMagnifier"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="Optical magnifier / Camera lens for surface venation inspection"
+                            android:textColor="@color/science_text_primary" />
+
+                        <CheckBox
+                            android:id="@+id/chkLightSource"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="Calibrated illumination / light intensity environment"
+                            android:textColor="@color/science_text_primary" />
+
+                        <CheckBox
+                            android:id="@+id/chkSafety"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="Lab safety: Wash hands after plant sap handling; handle slides carefully"
+                            android:textColor="@color/science_text_primary" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnProceedToPredict"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_science_cyan_button"
+                    android:text="Proceed to Stage 2: Formulate Hypothesis →"
+                    android:textColor="@color/science_bg_main"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@null" />
+            </LinearLayout>
+
+            <!-- STAGE 2: PREDICT -->
+            <LinearLayout
+                android:id="@+id/layoutStage2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/science_card_bg"
+                    app:cardCornerRadius="16dp"
+                    app:strokeColor="@color/science_card_stroke"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_science_pill"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="3dp"
+                            android:text="STAGE 2 OF 7 • PREDICT"
+                            android:textColor="@color/science_cyan_accent"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="State Your Scientific Hypothesis"
+                            android:textColor="@color/science_text_primary"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:lineSpacingExtra="3dp"
+                            android:text="Before examining the tissues and running the simulation, record your hypothesis regarding leaf stomata distribution and photosynthesis rates under changing light."
+                            android:textColor="@color/science_text_secondary"
+                            android:textSize="13sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="QUICK TEMPLATES (TAP TO APPLY):"
+                            android:textColor="@color/science_cyan_accent"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnHypoTemplate1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/bg_science_stage_inactive"
+                            android:gravity="start|center_vertical"
+                            android:padding="12dp"
+                            android:text="A. Stomata density is significantly higher on the lower epidermis to reduce solar evaporation while allowing sufficient CO2 intake."
+                            android:textAllCaps="false"
+                            android:textColor="@color/science_text_primary"
+                            android:textSize="12sp"
+                            app:backgroundTint="@null" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnHypoTemplate2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/bg_science_stage_inactive"
+                            android:gravity="start|center_vertical"
+                            android:padding="12dp"
+                            android:text="B. Photosynthesis rate will increase linearly with light intensity until carbon dioxide availability becomes the limiting factor."
+                            android:textAllCaps="false"
+                            android:textColor="@color/science_text_primary"
+                            android:textSize="12sp"
+                            app:backgroundTint="@null" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="YOUR SCIENTIFIC HYPOTHESIS:"
+                            android:textColor="@color/science_cyan_accent"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/etHypothesis"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/bg_science_stage_inactive"
+                            android:gravity="top|start"
+                            android:hint="Type your formal hypothesis here..."
+                            android:lines="3"
+                            android:padding="12dp"
+                            android:textColor="@color/science_text_primary"
+                            android:textColorHint="@color/science_text_muted"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnBackToPrepare"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_science_outline_button"
+                        android:text="← Back"
+                        android:textColor="@color/science_cyan_accent"
+                        android:textSize="13sp"
+                        app:backgroundTint="@null" />
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="0dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnProceedToObserve"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1.5"
+                        android:background="@drawable/bg_science_cyan_button"
+                        android:text="Stage 3: Observe →"
+                        android:textColor="@color/science_bg_main"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="@null" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- STAGE 3: OBSERVE -->
+            <LinearLayout
+                android:id="@+id/layoutStage3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/science_card_bg"
+                    app:cardCornerRadius="16dp"
+                    app:strokeColor="@color/science_card_stroke"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_science_pill"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="3dp"
+                            android:text="STAGE 3 OF 7 • OBSERVE"
+                            android:textColor="@color/science_cyan_accent"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Specimen Morphological Observations"
+                            android:textColor="@color/science_text_primary"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:lineSpacingExtra="3dp"
+                            android:text="Use your camera or the interactive specimen tools to examine the leaf's external macro-structure."
+                            android:textColor="@color/science_text_secondary"
+                            android:textSize="13sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnObserveCamera"
+                                android:layout_width="0dp"
+                                android:layout_height="44dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/bg_science_outline_button"
+                                android:text="Scan with Camera"
+                                android:textColor="@color/science_cyan_accent"
+                                android:textSize="12sp"
+                                app:backgroundTint="@null"
+                                app:icon="@drawable/ic_camera_white"
+                                app:iconTint="@color/science_cyan_accent" />
+
+                            <View
+                                android:layout_width="8dp"
+                                android:layout_height="0dp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnObserveGallery"
+                                android:layout_width="0dp"
+                                android:layout_height="44dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/bg_science_outline_button"
+                                android:text="Import Photo"
+                                android:textColor="@color/science_cyan_accent"
+                                android:textSize="12sp"
+                                app:backgroundTint="@null"
+                                app:icon="@drawable/ic_download"
+                                app:iconTint="@color/science_cyan_accent" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/ivSpecimenPreview"
+                            android:layout_width="match_parent"
+                            android:layout_height="140dp"
+                            android:layout_marginTop="12dp"
+                            android:background="@drawable/bg_science_stage_inactive"
+                            android:contentDescription="Leaf Specimen Diagram"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_science_leaf"
+                            app:tint="@color/science_cyan_accent" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:text="RECORD OBSERVED TRAITS:"
+                            android:textColor="@color/science_cyan_accent"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <CheckBox
+                            android:id="@+id/chkTraitBlade"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:checked="true"
+                            android:text="Broad, flattened leaf blade (lamina) for maximum light intercept"
+                            android:textColor="@color/science_text_primary" />
+
+                        <CheckBox
+                            android:id="@+id/chkTraitVenation"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="Reticulate (netted) venation with primary midrib and secondary veins"
+                            android:textColor="@color/science_text_primary" />
+
+                        <CheckBox
+                            android:id="@+id/chkTraitCuticle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="Glossy, hydrophobic waxy cuticle on upper adaxial surface"
+                            android:textColor="@color/science_text_primary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="DETAILED QUALITATIVE OBSERVATIONS:"
+                            android:textColor="@color/science_cyan_accent"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/etObservations"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:background="@drawable/bg_science_stage_inactive"
+                            android:gravity="top|start"
+                            android:hint="Note color, venation symmetry, leaf texture, and stomata distribution..."
+                            android:lines="3"
+                            android:padding="12dp"
+                            android:textColor="@color/science_text_primary"
+                            android:textColorHint="@color/science_text_muted"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnBackToPredict"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_science_outline_button"
+                        android:text="← Back"
+                        android:textColor="@color/science_cyan_accent"
+                        android:textSize="13sp"
+                        app:backgroundTint="@null" />
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="0dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnProceedToExplore"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1.5"
+                        android:background="@drawable/bg_science_cyan_button"
+                        android:text="Stage 4: Explore Anatomy →"
+                        android:textColor="@color/science_bg_main"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="@null" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- STAGE 4: EXPLORE ANATOMY -->
+            <LinearLayout
+                android:id="@+id/layoutStage4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/science_card_bg"
+                    app:cardCornerRadius="16dp"
+                    app:strokeColor="@color/science_card_stroke"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_science_pill"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="3dp"
+                            android:text="STAGE 4 OF 7 • EXPLORE ANATOMY"
+                            android:textColor="@color/science_cyan_accent"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Leaf Cross-Section Microscopic Anatomy"
+                            android:textColor="@color/science_text_primary"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="Tap any layer below to reveal its cellular structure and scientific role."
+                            android:textColor="@color/science_text_secondary"
+                            android:textSize="13sp" />
+
+                        <!-- TISSUE LAYER BUTTONS -->
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:scrollbars="none">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/btnLayerCuticle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36dp"
+                                    android:background="@drawable/bg_science_stage_active"
+                                    android:gravity="center"
+                                    android:paddingHorizontal="12dp"
+                                    android:text="1. Cuticle &amp; Epidermis"
+                                    android:textColor="@color/science_bg_main"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/btnLayerPalisade"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36dp"
+                                    android:layout_marginStart="6dp"
+                                    android:background="@drawable/bg_science_stage_inactive"
+                                    android:gravity="center"
+                                    android:paddingHorizontal="12dp"
+                                    android:text="2. Palisade Mesophyll"
+                                    android:textColor="@color/science_text_secondary"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/btnLayerSpongy"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36dp"
+                                    android:layout_marginStart="6dp"
+                                    android:background="@drawable/bg_science_stage_inactive"
+                                    android:gravity="center"
+                                    android:paddingHorizontal="12dp"
+                                    android:text="3. Spongy Mesophyll"
+                                    android:textColor="@color/science_text_secondary"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/btnLayerVein"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36dp"
+                                    android:layout_marginStart="6dp"
+                                    android:background="@drawable/bg_science_stage_inactive"
+                                    android:gravity="center"
+                                    android:paddingHorizontal="12dp"
+                                    android:text="4. Vascular Bundle (Vein)"
+                                    android:textColor="@color/science_text_secondary"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/btnLayerStomata"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36dp"
+                                    android:layout_marginStart="6dp"
+                                    android:background="@drawable/bg_science_stage_inactive"
+                                    android:gravity="center"
+                                    android:paddingHorizontal="12dp"
+                                    android:text="5. Stomata &amp; Guard Cells"
+                                    android:textColor="@color/science_text_secondary"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </HorizontalScrollView>
+
+                        <!-- DETAIL CARD FOR SELECTED TISSUE -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            app:cardBackgroundColor="@color/science_bg_secondary"
+                            app:cardCornerRadius="12dp"
+                            app:strokeColor="@color/science_cyan_accent"
+                            app:strokeWidth="1dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <TextView
+                                    android:id="@+id/tvTissueName"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Upper Cuticle &amp; Upper Epidermis"
+                                    android:textColor="@color/science_cyan_accent"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvTissueRole"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:text="PRIMARY ROLE: Protection &amp; Desiccation Barrier"
+                                    android:textColor="#34D399"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvTissueDescription"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp"
+                                    android:lineSpacingExtra="3dp"
+                                    android:text="A single layer of transparent cells coated by an extracellular lipid/wax polymer layer called cutin. It prevents desiccation (unregulated water loss) while remaining optically transparent to allow photosynthetic wavelengths to reach the palisade cells beneath."
+                                    android:textColor="@color/science_text_primary"
+                                    android:textSize="13sp" />
+
+                                <TextView
+                                    android:id="@+id/tvTissueSignificance"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:text="Adaptation: Desert plants (xerophytes) feature an exceptionally thick waxy cuticle layer."
+                                    android:textColor="@color/science_text_secondary"
+                                    android:textSize="12sp"
+                                    android:textStyle="italic" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnBackToObserve"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_science_outline_button"
+                        android:text="← Back"
+                        android:textColor="@color/science_cyan_accent"
+                        android:textSize="13sp"
+                        app:backgroundTint="@null" />
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="0dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnProceedToInvestigate"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1.5"
+                        android:background="@drawable/bg_science_cyan_button"
+                        android:text="Stage 5: Simulation →"
+                        android:textColor="@color/science_bg_main"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="@null" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- STAGE 5: INVESTIGATE (SIMULATION) -->
+            <LinearLayout
+                android:id="@+id/layoutStage5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/science_card_bg"
+                    app:cardCornerRadius="16dp"
+                    app:strokeColor="@color/science_card_stroke"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_science_pill"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="3dp"
+                            android:text="STAGE 5 OF 7 • INVESTIGATE"
+                            android:textColor="@color/science_cyan_accent"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Photosynthesis &amp; Transpiration Simulator"
+                            android:textColor="@color/science_text_primary"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:lineSpacingExtra="2dp"
+                            android:text="Manipulate environmental variables to observe real-time photosynthetic rate (O2 bubble production) and transpiration water loss."
+                            android:textColor="@color/science_text_secondary"
+                            android:textSize="13sp" />
+
+                        <!-- CONTROLS -->
+                        <!-- Light Intensity Slider -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Light Intensity"
+                                android:textColor="@color/science_text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvLightVal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="50 %"
+                                android:textColor="@color/science_cyan_accent"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <com.google.android.material.slider.Slider
+                            android:id="@+id/sliderLight"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:value="50.0"
+                            android:valueFrom="0.0"
+                            android:valueTo="100.0"
+                            app:thumbColor="@color/science_cyan_accent"
+                            app:trackColorActive="@color/science_cyan_accent"
+                            app:trackColorInactive="@color/science_card_stroke" />
+
+                        <!-- CO2 Concentration Slider -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="CO2 Concentration"
+                                android:textColor="@color/science_text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvCo2Val"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="400 ppm"
+                                android:textColor="@color/science_cyan_accent"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <com.google.android.material.slider.Slider
+                            android:id="@+id/sliderCo2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:value="400.0"
+                            android:valueFrom="100.0"
+                            android:valueTo="1000.0"
+                            app:thumbColor="@color/science_cyan_accent"
+                            app:trackColorActive="@color/science_cyan_accent"
+                            app:trackColorInactive="@color/science_card_stroke" />
+
+                        <!-- Temperature Slider -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Temperature"
+                                android:textColor="@color/science_text_primary"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvTempVal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="25 °C"
+                                android:textColor="@color/science_cyan_accent"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <com.google.android.material.slider.Slider
+                            android:id="@+id/sliderTemp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:value="25.0"
+                            android:valueFrom="10.0"
+                            android:valueTo="45.0"
+                            app:thumbColor="@color/science_cyan_accent"
+                            app:trackColorActive="@color/science_cyan_accent"
+                            app:trackColorInactive="@color/science_card_stroke" />
+
+                        <!-- LIVE OUTPUT GAUGES -->
+                        <GridLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:columnCount="2"
+                            android:rowCount="2">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="6dp"
+                                android:layout_marginBottom="10dp"
+                                android:layout_columnWeight="1"
+                                android:background="@drawable/bg_science_stage_inactive"
+                                android:orientation="vertical"
+                                android:padding="12dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Photosynthesis Rate"
+                                    android:textColor="@color/science_text_secondary"
+                                    android:textSize="11sp" />
+
+                                <TextView
+                                    android:id="@+id/tvRatePhoto"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:text="68 %"
+                                    android:textColor="#34D399"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:layout_marginBottom="10dp"
+                                android:layout_columnWeight="1"
+                                android:background="@drawable/bg_science_stage_inactive"
+                                android:orientation="vertical"
+                                android:padding="12dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Transpiration Loss"
+                                    android:textColor="@color/science_text_secondary"
+                                    android:textSize="11sp" />
+
+                                <TextView
+                                    android:id="@+id/tvRateTranspiration"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:text="4.2 mL/h"
+                                    android:textColor="@color/science_cyan_accent"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="6dp"
+                                android:layout_columnWeight="1"
+                                android:background="@drawable/bg_science_stage_inactive"
+                                android:orientation="vertical"
+                                android:padding="12dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="O2 Bubble Output"
+                                    android:textColor="@color/science_text_secondary"
+                                    android:textSize="11sp" />
+
+                                <TextView
+                                    android:id="@+id/tvRateBubbles"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:text="34 bpm"
+                                    android:textColor="#38BDF8"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:layout_columnWeight="1"
+                                android:background="@drawable/bg_science_stage_inactive"
+                                android:orientation="vertical"
+                                android:padding="12dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Limiting Factor"
+                                    android:textColor="@color/science_text_secondary"
+                                    android:textSize="11sp" />
+
+                                <TextView
+                                    android:id="@+id/tvLimitingFactor"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:text="Light (Lux)"
+                                    android:textColor="#FBBF24"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </GridLayout>
+
+                        <!-- BRIDGE TO FULLSCREEN SIMULATION -->
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnLaunchInteractiveSim"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:layout_marginTop="16dp"
+                            android:background="@drawable/bg_science_outline_button"
+                            android:text="Launch Fullscreen Biology Lab Simulation (205) ⤢"
+                            android:textColor="@color/science_cyan_accent"
+                            android:textSize="12sp"
+                            app:backgroundTint="@null" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnBackToExplore"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_science_outline_button"
+                        android:text="← Back"
+                        android:textColor="@color/science_cyan_accent"
+                        android:textSize="13sp"
+                        app:backgroundTint="@null" />
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="0dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnProceedToReview"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1.5"
+                        android:background="@drawable/bg_science_cyan_button"
+                        android:text="Stage 6: Review Quiz →"
+                        android:textColor="@color/science_bg_main"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="@null" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- STAGE 6: REVIEW (QUIZ) -->
+            <LinearLayout
+                android:id="@+id/layoutStage6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/science_card_bg"
+                    app:cardCornerRadius="16dp"
+                    app:strokeColor="@color/science_card_stroke"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_science_pill"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="3dp"
+                            android:text="STAGE 6 OF 7 • REVIEW"
+                            android:textColor="@color/science_cyan_accent"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Scientific Concept Mastery Assessment"
+                            android:textColor="@color/science_text_primary"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="Verify your understanding of leaf anatomy and photosynthetic rate dynamics."
+                            android:textColor="@color/science_text_secondary"
+                            android:textSize="13sp" />
+
+                        <!-- QUESTION 1 -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="1. Which tissue layer contains the highest density of chloroplasts for light absorption?"
+                            android:textColor="@color/science_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <RadioGroup
+                            android:id="@+id/rgQ1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp">
+
+                            <RadioButton
+                                android:id="@+id/rbQ1A"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Spongy mesophyll"
+                                android:textColor="@color/science_text_secondary" />
+
+                            <RadioButton
+                                android:id="@+id/rbQ1B"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Palisade mesophyll"
+                                android:textColor="@color/science_text_secondary" />
+
+                            <RadioButton
+                                android:id="@+id/rbQ1C"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Upper cuticle"
+                                android:textColor="@color/science_text_secondary" />
+                        </RadioGroup>
+
+                        <!-- QUESTION 2 -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:text="2. What is the primary evolutionary advantage of having stomata mostly on the lower epidermis?"
+                            android:textColor="@color/science_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <RadioGroup
+                            android:id="@+id/rgQ2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp">
+
+                            <RadioButton
+                                android:id="@+id/rbQ2A"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Minimizes water evaporation caused by direct solar heat"
+                                android:textColor="@color/science_text_secondary" />
+
+                            <RadioButton
+                                android:id="@+id/rbQ2B"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Absorbs minerals from rainwater dripping off leaves"
+                                android:textColor="@color/science_text_secondary" />
+
+                            <RadioButton
+                                android:id="@+id/rbQ2C"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Prevents oxygen from entering the mesophyll"
+                                android:textColor="@color/science_text_secondary" />
+                        </RadioGroup>
+
+                        <!-- QUESTION 3 -->
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:text="3. Which vascular tissue transports water and minerals from the roots into the leaf?"
+                            android:textColor="@color/science_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <RadioGroup
+                            android:id="@+id/rgQ3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp">
+
+                            <RadioButton
+                                android:id="@+id/rbQ3A"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Phloem"
+                                android:textColor="@color/science_text_secondary" />
+
+                            <RadioButton
+                                android:id="@+id/rbQ3B"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Xylem"
+                                android:textColor="@color/science_text_secondary" />
+
+                            <RadioButton
+                                android:id="@+id/rbQ3C"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Cutin"
+                                android:textColor="@color/science_text_secondary" />
+                        </RadioGroup>
+
+                        <!-- QUIZ SCORE & FEEDBACK CARD -->
+                        <LinearLayout
+                            android:id="@+id/llQuizFeedback"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:background="@drawable/bg_science_stage_inactive"
+                            android:orientation="vertical"
+                            android:padding="12dp"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:id="@+id/tvQuizScoreDisplay"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Score: 100% (3/3 Correct)"
+                                android:textColor="@color/science_cyan_accent"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvQuizFeedbackExplanation"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:lineSpacingExtra="2dp"
+                                android:text="Excellent! You mastered the key concepts of palisade mesophyll chloroplast density, stomatal transpiration control, and xylem water transport."
+                                android:textColor="@color/science_text_secondary"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnBackToInvestigate"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_science_outline_button"
+                        android:text="← Back"
+                        android:textColor="@color/science_cyan_accent"
+                        android:textSize="13sp"
+                        app:backgroundTint="@null" />
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="0dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnProceedToReflect"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1.5"
+                        android:background="@drawable/bg_science_cyan_button"
+                        android:text="Stage 7: Reflect &amp; Save →"
+                        android:textColor="@color/science_bg_main"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        app:backgroundTint="@null" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- STAGE 7: REFLECT & SAVE -->
+            <LinearLayout
+                android:id="@+id/layoutStage7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/science_card_bg"
+                    app:cardCornerRadius="16dp"
+                    app:strokeColor="@color/science_card_stroke"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_science_pill"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="3dp"
+                            android:text="STAGE 7 OF 7 • REFLECT &amp; SUBMIT"
+                            android:textColor="@color/science_cyan_accent"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Lab Report &amp; Scientific Conclusion"
+                            android:textColor="@color/science_text_primary"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:lineSpacingExtra="2dp"
+                            android:text="Synthesize your predictions, specimen observations, and simulation data to formulate your final scientific conclusion."
+                            android:textColor="@color/science_text_secondary"
+                            android:textSize="13sp" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginVertical="14dp"
+                            android:background="@color/science_card_stroke" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="SCIENTIFIC TAKEAWAY &amp; SYNTHESIS:"
+                            android:textColor="@color/science_cyan_accent"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:background="@drawable/bg_science_stage_inactive"
+                            android:lineSpacingExtra="2dp"
+                            android:padding="12dp"
+                            android:text="1. Leaf anatomy is optimized for directional light capture: palisade cells receive direct photons while spongy cells permit CO2 gas exchange.\n2. Stomatal pores are concentrated on the shaded lower surface to minimize thermal evaporation.\n3. Photosynthesis rates saturate when carbon dioxide or temperature becomes the limiting factor."
+                            android:textColor="@color/science_text_primary"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="YOUR FINAL LAB CONCLUSION:"
+                            android:textColor="@color/science_cyan_accent"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <EditText
+                            android:id="@+id/etConclusion"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:background="@drawable/bg_science_stage_inactive"
+                            android:gravity="top|start"
+                            android:hint="Did the evidence support your hypothesis? State your final conclusion..."
+                            android:lines="4"
+                            android:padding="12dp"
+                            android:textColor="@color/science_text_primary"
+                            android:textColorHint="@color/science_text_muted"
+                            android:textSize="13sp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSaveToNotebook"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginTop="20dp"
+                            android:background="@drawable/bg_science_cyan_button"
+                            android:text="Save Report to My Lab Notebook 💾"
+                            android:textColor="@color/science_bg_main"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            app:backgroundTint="@null" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBackToReview"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_science_outline_button"
+                    android:text="← Back to Quiz Review"
+                    android:textColor="@color/science_cyan_accent"
+                    android:textSize="13sp"
+                    app:backgroundTint="@null" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
