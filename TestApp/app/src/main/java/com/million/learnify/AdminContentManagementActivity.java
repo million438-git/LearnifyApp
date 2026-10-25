@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -43,7 +44,7 @@ public class AdminContentManagementActivity extends BaseActivity {
                             getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         } catch (Exception e) { e.printStackTrace(); }
                         selectedFilePath = uri.toString();
-                        tvSelectedFileName.setText("📁 Media Asset: " + getFileName(uri));
+                        tvSelectedFileName.setText("Media Asset: " + getFileName(uri));
                     }
                 }
             }
@@ -93,12 +94,7 @@ public class AdminContentManagementActivity extends BaseActivity {
 
     private void setupToolbar() {
         Toolbar toolbar = findViewById(R.id.contentMgmtToolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Content Infrastructure");
-        }
-        toolbar.setNavigationOnClickListener(v -> finish());
+        setupPortalToolbar(toolbar, "Content & Media Hub");
     }
 
     private void setupDropdowns() {
@@ -143,7 +139,7 @@ public class AdminContentManagementActivity extends BaseActivity {
             // Trigger real-time system notification
             NotificationHelper.showInstantNotification(this, "CONTENT", "New Material: " + title, desc);
 
-            Toast.makeText(this, "🚀 Knowledge Broadcast Successful!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Knowledge Broadcast Successful.", Toast.LENGTH_LONG).show();
             clearMaterialForm();
             refreshRecentContent();
         } else {
@@ -167,7 +163,7 @@ public class AdminContentManagementActivity extends BaseActivity {
         // Trigger real-time system notification
         NotificationHelper.showInstantNotification(this, "ANNOUNCEMENT", title, message);
 
-        Toast.makeText(this, "📢 System Broadcast Dispatched!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "System Broadcast Dispatched.", Toast.LENGTH_LONG).show();
         etAnnTitle.setText("");
         etAnnMessage.setText("");
     }
@@ -200,8 +196,27 @@ public class AdminContentManagementActivity extends BaseActivity {
                 subject.setText(cursor.getString(cursor.getColumnIndexOrThrow("subject")));
                 type.setText(cursor.getString(cursor.getColumnIndexOrThrow("type")));
                 
-                title.setTextColor(getResources().getColor(android.R.color.white));
-                desc.setTextColor(getResources().getColor(android.R.color.darker_gray));
+                title.setTextColor(ContextCompat.getColor(this, R.color.admin_text_primary));
+                desc.setTextColor(ContextCompat.getColor(this, R.color.admin_text_secondary));
+
+                final String filePath = cursor.getString(cursor.getColumnIndexOrThrow("file_path"));
+                View btnView = v.findViewById(R.id.btnViewMaterial);
+                if (btnView != null) {
+                    btnView.setOnClickListener(clickV -> {
+                        if (filePath != null && !filePath.isEmpty()) {
+                            try {
+                                Intent viewIntent = new Intent(Intent.ACTION_VIEW);
+                                viewIntent.setDataAndType(Uri.parse(filePath), "*/*");
+                                viewIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                startActivity(Intent.createChooser(viewIntent, "Open Resource"));
+                            } catch (Exception ex) {
+                                Toast.makeText(this, "Opening file: " + filePath, Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(this, "No file attachment found", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
 
                 llRecentContent.addView(v);
                 count++;

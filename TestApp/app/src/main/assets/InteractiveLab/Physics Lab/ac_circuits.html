@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AC Circuits Laboratory</title>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0a0f1f;
+  --sf:#141b2e;
+  --ln:#26304a;
+  --tx:#e5e9f5;
+  --mu:#93a0bd;
+  --pr:#818cf8;
+  --pr-deep:#6366f1;
+  --ok:#34d399;
+  --bad:#f87171;
+  --wa:#fbbf24;
+  --red:#f43f5e;
+  --blue:#3b82f6;
+  --green:#10d982;
+  --violet:#a78bfa;
+  box-sizing:border-box;
+}
+*{box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;}
+html,body{height:100%;margin:0;}
+body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column;overflow:hidden;}
+
+/* ===== HEADER ===== */
+header{background:var(--bg);color:#fff;padding:10px;text-align:center;border-bottom:3px solid var(--pr);flex:none;}
+header h2{margin:0;font-size:1.1rem;}
+header small{display:block;color:var(--mu);font-size:.8rem;margin-top:2px;}
+
+/* ===== LAB LAYOUT ===== */
+.lab-container{display:flex;flex:1;overflow:hidden;flex-direction:column;min-height:0;}
+
+/* ===== SIM AREA ===== */
+#sim-area{flex:2 1 0;min-height:340px;position:relative;background:#05080f;border-bottom:2px solid #e2e8f0;overflow:hidden;}
+canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;touch-action:none;}
+
+/* ===== HUD ===== */
+.hud{position:absolute;top:10px;left:10px;background:rgba(20,27,46,0.9);padding:8px 10px;border-radius:8px;font-size:.75rem;border:1px solid #26304a;z-index:20;color:var(--tx);pointer-events:none;backdrop-filter:blur(6px);max-width:260px;}
+.hud b{color:var(--pr);font-size:.7rem;letter-spacing:.08em;}
+.hud .metrics{line-height:1.7;}
+.hud span.val{color:var(--wa);font-weight:700;font-variant-numeric:tabular-nums;}
+.hud label{pointer-events:auto;}
+
+/* ===== LEGEND ===== */
+.vector-legend{position:absolute;bottom:10px;left:10px;font-size:.65rem;background:rgba(20,27,46,0.9);padding:5px 8px;border-radius:4px;color:var(--mu);pointer-events:none;border:1px solid #26304a;}
+.vector-legend span{margin-right:10px;}
+
+/* ===== SPLITTER ===== */
+.splitter{height:10px;background:linear-gradient(90deg,rgba(0,0,0,.03),rgba(0,0,0,.06));cursor:ns-resize;flex-shrink:0;border-top:1px solid #26304a;border-bottom:1px solid #26304a;}
+.splitter:hover{background:linear-gradient(90deg,rgba(129,140,248,.3),rgba(129,140,248,.2));}
+
+/* ===== BOTTOM PANEL ===== */
+.bottom-panel{flex:3 1 0;min-height:0;display:flex;flex-direction:row;background:var(--sf);overflow-y:auto;}
+.controls{flex:0 0 360px;padding:16px;border-right:1px solid var(--ln);min-width:300px;background:var(--sf);}
+.analysis{flex:1 1 720px;padding:16px;background:var(--bg);min-width:420px;}
+
+/* ===== CARDS ===== */
+.card{background:var(--sf);border:1px solid var(--ln);padding:12px;border-radius:8px;margin-bottom:10px;font-size:.84rem;line-height:1.55;}
+h4{margin:0 0 10px 0;font-size:.8rem;color:var(--mu);text-transform:uppercase;letter-spacing:.05em;}
+.input-row{margin-bottom:10px;}
+label{display:block;font-size:.78rem;font-weight:600;margin-bottom:3px;}
+input[type=range]{width:100%;accent-color:var(--pr);height:6px;}
+select,input[type=number],textarea{width:100%;padding:8px;border-radius:6px;border:1px solid var(--ln);background:var(--bg);color:var(--tx);font-family:inherit;font-size:.85rem;}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--pr);}
+
+/* ===== BUTTONS ===== */
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+button{padding:10px;border:1px solid var(--ln);border-radius:6px;font-weight:700;cursor:pointer;font-size:.82rem;background:var(--sf);color:var(--tx);font-family:inherit;transition:.2s;}
+button:hover{background:#1a2340;border-color:var(--pr);}
+button.go{background:var(--pr);color:#0b1020;border-color:var(--pr);}
+button.go:hover{background:#a5b4fc;box-shadow:0 4px 14px rgba(129,140,248,.4);}
+button.sound{background:linear-gradient(135deg,#34d399,#059669);color:#fff;border-color:transparent;}
+button.sound.playing{background:linear-gradient(135deg,#f43f5e,#dc2626);}
+button.run{background:linear-gradient(135deg,#34d399,#059669);color:#fff;border-color:transparent;}
+button.run:hover{box-shadow:0 4px 14px rgba(52,211,153,.4);}
+
+/* ===== READOUTS ===== */
+.readouts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;}
+.readout{background:var(--sf);border:1px solid var(--ln);border-radius:6px;padding:8px 10px;}
+.readout span{font-size:.68rem;color:var(--mu);display:block;}
+.readout strong{font-size:.95rem;color:var(--tx);font-variant-numeric:tabular-nums;}
+.readout.hl strong{color:var(--pr);}
+.readout.good strong{color:var(--ok);}
+.readout.warn strong{color:var(--wa);}
+
+/* ===== TABS ===== */
+.tab-btn{padding:8px 12px;border-radius:6px;background:var(--sf);color:var(--mu);font-weight:600;font-size:.78rem;border:1px solid var(--ln);cursor:pointer;transition:.2s;}
+.tab-btn:hover{background:#242e4d;color:var(--tx);}
+.tab-btn.active{background:var(--pr);color:#0b1020;border-color:var(--pr);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* ===== QUIZ ===== */
+.quiz-q{padding:10px 0;border-bottom:1px solid var(--ln);}
+.quiz-q>strong{display:block;margin-bottom:8px;font-size:.88rem;}
+.quiz-q label{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;background:var(--sf);border:1px solid var(--ln);border-radius:6px;margin:3px 6px 3px 0;cursor:pointer;font-weight:500;font-size:.8rem;}
+.quiz-q label:hover{background:#1a2340;border-color:var(--pr);}
+.quiz-q input[type=radio]{accent-color:var(--pr);}
+.explanation{margin-top:8px;padding:10px;border-radius:6px;font-size:.82rem;line-height:1.55;background:rgba(129,140,248,.1);border-left:3px solid var(--pr);}
+.explanation.correct-box{background:rgba(52,211,153,.12);border-left-color:var(--ok);}
+.explanation.wrong-box{background:rgba(248,113,113,.12);border-left-color:var(--bad);}
+.quiz-section{font-size:.72rem;font-weight:700;text-transform:uppercase;color:var(--pr);margin:12px 0 6px 0;letter-spacing:.05em;}
+#quiz-result{margin-top:10px;padding:12px;border-radius:8px;background:rgba(129,140,248,.15);border:1px solid rgba(129,140,248,.4);font-weight:700;text-align:center;}
+
+/* ===== FORMULAS ===== */
+table.formulas{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:6px;}
+table.formulas th,table.formulas td{border:1px solid var(--ln);padding:6px 8px;text-align:left;}
+table.formulas th{background:var(--bg);font-weight:600;color:var(--pr);}
+.eq{font-family:'JetBrains Mono',monospace;background:var(--bg);padding:2px 6px;border-radius:4px;font-size:.8rem;color:var(--wa);border:1px solid var(--ln);}
+.note{font-size:.82rem;color:var(--mu);margin-top:8px;line-height:1.55;}
+ul{color:var(--tx);padding-left:1rem;}
+ul li{line-height:1.7;}
+
+/* ===== CHALLENGE ===== */
+#challenge-note{color:var(--tx);font-size:.85rem;}
+#challenge-result{color:var(--ok);font-weight:600;margin-top:6px;}
+
+/* ===== NOTEBOOK ===== */
+textarea{width:100%;padding:8px;border-radius:6px;border:1px solid var(--ln);font-family:inherit;font-size:.85rem;min-height:64px;resize:vertical;background:var(--bg);color:var(--tx);}
+textarea:focus{outline:none;border-color:var(--pr);}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .bottom-panel{flex-direction:column;}
+  .controls{border-right:none;border-bottom:1px solid var(--ln);min-width:0;}
+  .analysis{min-width:0;}
+  .readouts{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header>
+<h2>⚡ AC Circuits Laboratory</h2>
+<small>Impedance · Reactance · Phase · Resonance · Real physics</small>
+</header>
+
+<div class="lab-container">
+<div id="sim-area">
+<div class="hud">
+<b>LIVE METRICS</b><br>
+<div class="metrics">
+Z: <span class="val" id="out-z">0.0</span> Ω<br>
+I: <span class="val" id="out-i">0.0</span> A<br>
+φ: <span class="val" id="out-ph">0.0</span>°<br>
+f₀: <span class="val" id="out-f0">0.0</span> Hz
+</div>
+<div style="margin-top:6px;font-size:.75rem;">
+<label style="display:inline-flex;align-items:center;gap:6px;"><input id="full-scroll-toggle" type="checkbox"> Free page scroll</label>
+</div>
+</div>
+<div class="vector-legend">
+<span style="color:var(--pr)">● Z</span>
+<span style="color:var(--wa)">● XL</span>
+<span style="color:var(--ok)">● XC</span>
+<span style="color:var(--red)">● I</span>
+</div>
+<canvas id="canvas"></canvas>
+</div>
+
+<div id="splitter" class="splitter"></div>
+
+<div class="bottom-panel">
+<div class="controls">
+<h4>🧪 Lab Settings</h4>
+
+<div class="input-row">
+<button class="sound" id="btn-sound" style="width:100%;">🔈 Enable sound</button>
+</div>
+
+<div class="input-row">
+<label>Circuit mode</label>
+<select id="mode">
+<option value="R">Pure Resistor (R)</option>
+<option value="RC">Series RC</option>
+<option value="RL">Series RL</option>
+<option value="RLC" selected>Series RLC</option>
+</select>
+</div>
+
+<div class="input-row">
+<label>Source voltage V<sub>rms</sub>: <span id="v-v">12</span> V</label>
+<input type="range" id="v" min="1" max="30" value="12">
+</div>
+
+<div class="input-row">
+<label>Frequency f: <span id="v-f">50</span> Hz</label>
+<input type="range" id="f" min="1" max="500" value="50">
+</div>
+
+<div class="input-row">
+<label>Resistance R: <span id="v-r">100</span> Ω</label>
+<input type="range" id="r" min="10" max="1000" step="10" value="100">
+</div>
+
+<div class="input-row">
+<label>Inductance L: <span id="v-l">100</span> mH</label>
+<input type="range" id="l" min="10" max="500" step="10" value="100">
+</div>
+
+<div class="input-row">
+<label>Capacitance C: <span id="v-c">100</span> µF</label>
+<input type="range" id="c" min="10" max="1000" step="10" value="100">
+</div>
+
+<div class="input-row">
+<label>Displayed source</label>
+<select id="shape">
+<option value="sine">Sine wave</option>
+<option value="square">Square (illustrative)</option>
+<option value="triangle">Triangle (illustrative)</option>
+</select>
+</div>
+
+<div class="btn-grid">
+<button class="run" id="btn-run">▶ Run</button>
+<button id="btn-reset">↺ Reset</button>
+</div>
+<button class="go" style="margin-top:8px;width:100%;" id="btn-record">📋 Record measurement</button>
+</div>
+
+<div class="analysis">
+<h4>📊 Learn &amp; Practice</h4>
+
+<div class="readouts">
+<div class="readout hl"><span>Impedance |Z|</span><strong id="ro-z">—</strong></div>
+<div class="readout"><span>RMS current I</span><strong id="ro-i">—</strong></div>
+<div class="readout"><span>Phase angle φ</span><strong id="ro-ph">—</strong></div>
+<div class="readout"><span>Power factor</span><strong id="ro-pf">—</strong></div>
+<div class="readout good"><span>Real power P</span><strong id="ro-p">—</strong></div>
+<div class="readout warn"><span>Reactive power Q</span><strong id="ro-q">—</strong></div>
+<div class="readout"><span>Inductive XL</span><strong id="ro-xl">—</strong></div>
+<div class="readout"><span>Capacitive XC</span><strong id="ro-xc">—</strong></div>
+</div>
+
+<div class="card">
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+<button class="tab-btn active" data-tab="formulas">Formulas</button>
+<button class="tab-btn" data-tab="quiz">Quiz</button>
+<button class="tab-btn" data-tab="challenges">Challenges</button>
+<button class="tab-btn" data-tab="notebook">Notebook</button>
+</div>
+
+<div id="formulas" class="tab-panel active">
+<h3 style="margin:6px 0 8px 0;">Core Formulas — AC Circuits</h3>
+<ul style="font-size:.88rem;">
+<li><b style="color:var(--pr)">Inductive reactance:</b> X<sub>L</sub> = 2πfL</li>
+<li><b style="color:var(--pr)">Capacitive reactance:</b> X<sub>C</sub> = 1 / (2πfC)</li>
+<li><b style="color:var(--pr)">Impedance:</b> |Z| = √(R² + (X<sub>L</sub> − X<sub>C</sub>)²)</li>
+<li><b style="color:var(--pr)">RMS current:</b> I = V / |Z|</li>
+<li><b style="color:var(--pr)">Phase angle:</b> φ = arctan((X<sub>L</sub> − X<sub>C</sub>) / R)</li>
+<li><b style="color:var(--pr)">Real power:</b> P = V·I·cos φ</li>
+<li><b style="color:var(--pr)">Reactive power:</b> Q = V·I·sin φ</li>
+<li><b style="color:var(--pr)">Series resonance:</b> f₀ = 1 / (2π√(LC))</li>
+<li><b style="color:var(--pr)">RMS from peak:</b> V<sub>rms</sub> = V<sub>peak</sub> / √2</li>
+</ul>
+<p class="note"><b style="color:var(--wa)">💡 Quick tips:</b> At resonance XL = XC, Z is minimum (= R), and current is maximum. Increasing f raises XL and lowers XC. In a purely inductive circuit, current lags voltage by 90°; in a purely capacitive circuit, current leads by 90°.</p>
+
+<table class="formulas" style="margin-top:12px;">
+<tr><th>Quantity</th><th>Formula</th></tr>
+<tr><td>Inductive reactance</td><td><span class="eq">X_L = 2πfL</span></td></tr>
+<tr><td>Capacitive reactance</td><td><span class="eq">X_C = 1/(2πfC)</span></td></tr>
+<tr><td>Impedance</td><td><span class="eq">|Z| = √(R²+(X_L−X_C)²)</span></td></tr>
+<tr><td>Resonance</td><td><span class="eq">f₀ = 1/(2π√LC)</span></td></tr>
+</table>
+</div>
+
+<div id="quiz" class="tab-panel" style="max-height:600px;overflow:auto;">
+<h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+<div class="quiz-section">Basic</div>
+<div class="quiz-q" data-q="q1" data-answer="B">
+<strong>1. In an ideal resistor, voltage and current are:</strong>
+<label><input type="radio" name="q1" value="A"> 90° apart</label>
+<label><input type="radio" name="q1" value="B"> In phase</label>
+<label><input type="radio" name="q1" value="C"> 180° apart</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q2" data-answer="B">
+<strong>2. If frequency doubles, X_L:</strong>
+<label><input type="radio" name="q2" value="A"> Halves</label>
+<label><input type="radio" name="q2" value="B"> Doubles</label>
+<label><input type="radio" name="q2" value="C"> Stays same</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q3" data-answer="A">
+<strong>3. If frequency doubles, X_C:</strong>
+<label><input type="radio" name="q3" value="A"> Halves</label>
+<label><input type="radio" name="q3" value="B"> Doubles</label>
+<label><input type="radio" name="q3" value="C"> Stays same</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Intermediate</div>
+<div class="quiz-q" data-q="q4" data-answer="A">
+<strong>4. At series RLC resonance:</strong>
+<label><input type="radio" name="q4" value="A"> X_L = X_C</label>
+<label><input type="radio" name="q4" value="B"> Z is infinite</label>
+<label><input type="radio" name="q4" value="C"> X_L = R</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q5" data-answer="B">
+<strong>5. A 100 V peak sinusoid has RMS ≈:</strong>
+<label><input type="radio" name="q5" value="A"> 50 V</label>
+<label><input type="radio" name="q5" value="B"> 71 V</label>
+<label><input type="radio" name="q5" value="C"> 141 V</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q6" data-answer="A">
+<strong>6. Current in a capacitive circuit:</strong>
+<label><input type="radio" name="q6" value="A"> Leads voltage</label>
+<label><input type="radio" name="q6" value="B"> Lags voltage</label>
+<label><input type="radio" name="q6" value="C"> In phase</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Advanced</div>
+<div class="quiz-q" data-q="q7" data-answer="B">
+<strong>7. At resonance, power factor is:</strong>
+<label><input type="radio" name="q7" value="A"> Zero</label>
+<label><input type="radio" name="q7" value="B"> 1</label>
+<label><input type="radio" name="q7" value="C"> Negative</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q8" data-answer="B">
+<strong>8. If R increases (resonance unchanged), peak current:</strong>
+<label><input type="radio" name="q8" value="A"> Increases</label>
+<label><input type="radio" name="q8" value="B"> Decreases</label>
+<label><input type="radio" name="q8" value="C"> Same</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q9" data-answer="C">
+<strong>9. Reactive power Q is measured in:</strong>
+<label><input type="radio" name="q9" value="A"> Watts</label>
+<label><input type="radio" name="q9" value="B"> VA</label>
+<label><input type="radio" name="q9" value="C"> var</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="btn-grid" style="margin-top:12px;">
+<button class="go" id="btn-quiz-check">Submit Quiz</button>
+<button id="btn-quiz-reset">Reset</button>
+</div>
+<div id="quiz-result" style="display:none;"></div>
+</div>
+
+<div id="challenges" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Challenges</h3>
+<div style="display:flex;flex-direction:column;gap:8px;font-size:.88rem;">
+<div><b style="color:var(--pr)">1. Find resonance</b><br><button class="run" data-challenge="resonance">Set frequency to resonance</button></div>
+<div><b style="color:var(--pr)">2. Inductive vs capacitive</b><br><button class="run" data-challenge="inductive">Make it inductive</button> <button class="run" data-challenge="capacitive">Make it capacitive</button></div>
+<div><b style="color:var(--pr)">3. Double reactance</b><br><button class="run" data-challenge="doubleXL">Double XL (double f)</button> <button class="run" data-challenge="doubleXC">Double XC (half f)</button></div>
+<div><b style="color:var(--pr)">4. Maximize current</b><br><button class="run" data-challenge="maxCurrent">Maximize current at fixed V</button></div>
+<div><b style="color:var(--pr)">5. Predict</b><br>
+<label style="margin-bottom:6px;">Prediction:
+<select id="predict-select" style="margin-top:4px;">
+<option value="increase">Current will increase</option>
+<option value="decrease">Current will decrease</option>
+</select></label>
+<button class="run" data-challenge="predict">Run &amp; check</button>
+</div>
+<div id="challenge-note"></div>
+<div id="challenge-result"></div>
+</div>
+</div>
+
+<div id="notebook" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Notebook</h3>
+<label>Prediction / hypothesis</label>
+<textarea id="hypothesis" placeholder="What do you expect?"></textarea>
+<label style="margin-top:10px;display:block;">Conclusion</label>
+<textarea id="conclusion" placeholder="What did you observe?"></textarea>
+<label style="margin-top:10px;display:block;">Recorded measurements</label>
+<textarea id="records" readonly style="background:var(--bg);font-family:monospace;font-size:.75rem;min-height:100px;"></textarea>
+<div class="btn-grid" style="margin-top:10px;">
+<button class="go" id="btn-export">⬇ Download Report</button>
+<button id="btn-clear-notes">Clear</button>
+</div>
+</div>
+</div>
+
+<div class="card">
+<b style="color:var(--pr)">Energy view:</b> <span id="out-e" style="color:var(--mu);font-size:.85rem;">0.0</span> J<br>
+<small style="color:var(--mu);">P = I²R | Q = I²X | S = V·I</small>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+"use strict";
+(function(){
+
+var $ = function(id){ return document.getElementById(id); };
+var canvas = $('canvas');
+var ctx = canvas.getContext('2d');
+var dpr = window.devicePixelRatio || 1;
+var view = { x:0, y:0, scale:1 };
+var state = { mode:'RLC', records:[], paused:false, running:true };
+var wavePhase = 0;
+
+function resizeCanvas(){
+    var cssW = canvas.clientWidth;
+    var cssH = canvas.clientHeight;
+    canvas.width = Math.max(1, Math.round(cssW * dpr));
+    canvas.height = Math.max(1, Math.round(cssH * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function cssWidth(){ return canvas.width / dpr; }
+function cssHeight(){ return canvas.height / dpr; }
+
+function num(id){ return Number($(id).value); }
+function fmt(n, d){ if (d === undefined) d = 2; return Number.isFinite(n) ? n.toFixed(d) : '—'; }
+
+function model(){
+    var V = num('v'), f = num('f'), R = num('r');
+    var L = num('l') / 1000, C = num('c') / 1e6;
+    var hasL = state.mode === 'RL' || state.mode === 'RLC';
+    var hasC = state.mode === 'RC' || state.mode === 'RLC';
+    var XL = hasL ? 2 * Math.PI * f * L : 0;
+    var XC = hasC ? 1 / (2 * Math.PI * f * C) : 0;
+    var X = XL - XC;
+    var Z = Math.hypot(R, X);
+    var I = V / Z;
+    var phase = Math.atan2(X, R);
+    var pf = Math.cos(phase);
+    return {
+        V: V, f: f, R: R, L: L, C: C, XL: XL, XC: XC, X: X, Z: Z, I: I,
+        phase: phase, pf: pf,
+        P: I * I * R, Q: I * I * X, S: V * I,
+        resonance: 1 / (2 * Math.PI * Math.sqrt(L * C)),
+        hasL: hasL, hasC: hasC
+    };
+}
+
+// ============ AUDIO (Web Audio API) ============
+var audioCtx = null;
+var toneOsc = null, toneGain = null;
+function initAudio(){
+    if (audioCtx) return;
+    try {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        audioCtx = new AC();
+    } catch(e){}
+}
+function beep(freq, dur, type, vol){
+    if (!audioCtx) return;
+    try {
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = type || 'sine';
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(vol || 0.06, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + dur);
+    } catch(e){}
+}
+function startTone(){
+    initAudio();
+    if (!audioCtx) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (toneOsc) return;
+    try {
+        var p = model();
+        toneOsc = audioCtx.createOscillator();
+        toneGain = audioCtx.createGain();
+        toneOsc.type = 'sine';
+        // Map to audible frequency: AC circuit freq 1-500Hz maps to 100-500Hz tone
+        var audibleFreq = 200 + (p.f / 500) * 600;
+        toneOsc.frequency.value = audibleFreq;
+        toneGain.gain.setValueAtTime(0, audioCtx.currentTime);
+        toneGain.gain.linearRampToValueAtTime(0.04, audioCtx.currentTime + 0.3);
+        toneOsc.connect(toneGain);
+        toneGain.connect(audioCtx.destination);
+        toneOsc.start();
+    } catch(e){}
+}
+function stopTone(){
+    if (toneOsc) {
+        try {
+            toneGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
+            toneOsc.stop(audioCtx.currentTime + 0.25);
+        } catch(e){}
+        toneOsc = null;
+        toneGain = null;
+    }
+}
+function updateToneFreq(){
+    if (!toneOsc) return;
+    try {
+        var p = model();
+        var audibleFreq = 200 + (p.f / 500) * 600;
+        toneOsc.frequency.setTargetAtTime(audibleFreq, audioCtx.currentTime, 0.05);
+        // Volume scales with current (louder = more current)
+        var vol = Math.min(0.08, 0.02 + p.I * 0.01);
+        toneGain.gain.setTargetAtTime(vol, audioCtx.currentTime, 0.05);
+    } catch(e){}
+}
+
+$('btn-sound').addEventListener('click', function(){
+    var on = $('btn-sound').classList.contains('playing');
+    if (on) {
+        stopTone();
+        $('btn-sound').classList.remove('playing');
+        $('btn-sound').textContent = '🔈 Enable sound';
+    } else {
+        startTone();
+        $('btn-sound').classList.add('playing');
+        $('btn-sound').textContent = '🔊 Sound ON';
+    }
+});
+
+// ============ DRAWING ============
+function drawGrid(){
+    var w = cssWidth(), h = cssHeight();
+    var bg = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w, h) / 1.4);
+    bg.addColorStop(0, '#0a1220');
+    bg.addColorStop(1, '#020408');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.strokeStyle = 'rgba(129,140,248,0.1)';
+    ctx.lineWidth = 1;
+    var step = 40 * view.scale;
+    var startX = (view.x % step);
+    var startY = (view.y % step);
+    for (var x = startX; x < w; x += step) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+    }
+    for (var y = startY; y < h; y += step) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+    }
+}
+
+function drawCircuit(){
+    var p = model();
+    var w = cssWidth(), h = cssHeight();
+    var s = view.scale;
+
+    ctx.save();
+    ctx.translate(view.x, view.y);
+    ctx.scale(s, s);
+
+    var areaW = w / s, areaH = h / s;
+    var srcX = areaW * 0.14, srcY = areaH * 0.42;
+    var rightX = areaW * 0.86, topY = areaH * 0.25, bottomY = areaH * 0.75;
+
+    // Source circle - glow
+    ctx.save();
+    ctx.shadowColor = '#fbbf24';
+    ctx.shadowBlur = 20;
+    ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(srcX, srcY, 28, 0, Math.PI * 2); ctx.stroke();
+    ctx.restore();
+
+    // Sine wave inside source (animated)
+    ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 2;
+    ctx.shadowColor = '#fbbf24';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    for (var i = 0; i <= 40; i++) {
+        var t = i / 40;
+        var x = srcX - 16 + t * 32;
+        var y = srcY - 8 * Math.sin(t * 2 * Math.PI + wavePhase);
+        if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Wires
+    ctx.strokeStyle = '#818cf8'; ctx.lineWidth = 2.5;
+    ctx.shadowColor = '#818cf8';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.moveTo(srcX, srcY - 28);
+    ctx.lineTo(srcX, topY);
+    ctx.lineTo(rightX, topY);
+    ctx.lineTo(rightX, bottomY);
+    ctx.lineTo(srcX, bottomY);
+    ctx.lineTo(srcX, srcY + 28);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Components on top wire
+    var parts = state.mode.split('');
+    var startX = areaW * 0.30, endX = areaW * 0.78;
+    var seg = (endX - startX) / parts.length;
+
+    parts.forEach(function(part, i){
+        var px = startX + i * seg + seg / 2;
+        ctx.shadowBlur = 15;
+        if (part === 'R') {
+            ctx.strokeStyle = '#fbbf24';
+            ctx.shadowColor = '#fbbf24';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            var rw = 44, rh = 16;
+            ctx.moveTo(px - rw / 2, topY);
+            for (var k = 0; k < 6; k++) {
+                var x = px - rw / 2 + (k + 0.5) * rw / 6;
+                var y = topY + (k % 2 === 0 ? -rh / 2 : rh / 2);
+                ctx.lineTo(x, y);
+            }
+            ctx.lineTo(px + rw / 2, topY);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#fbbf24';
+            ctx.font = 'bold 11px system-ui'; ctx.textAlign = 'center';
+            ctx.fillText('R = ' + p.R + ' Ω', px, topY + 32);
+            // Color bands
+            ctx.fillStyle = '#b45309';
+            ctx.fillRect(px - 20, topY - 14, 40, 4);
+            ctx.fillStyle = '#dc2626';
+            ctx.fillRect(px - 20, topY + 10, 40, 4);
+        } else if (part === 'L') {
+            ctx.strokeStyle = '#3b82f6';
+            ctx.shadowColor = '#3b82f6';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            var r = 8;
+            ctx.moveTo(px - 22, topY);
+            for (var k2 = 0; k2 < 3; k2++) {
+                ctx.arc(px - 12 + k2 * 12, topY, r, Math.PI, 0, true);
+            }
+            ctx.lineTo(px + 22, topY);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#3b82f6';
+            ctx.font = 'bold 11px system-ui'; ctx.textAlign = 'center';
+            ctx.fillText('L = ' + (p.L * 1000) + ' mH', px, topY + 32);
+        } else {
+            ctx.strokeStyle = '#10d982';
+            ctx.shadowColor = '#10d982';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(px - 9, topY - 15); ctx.lineTo(px - 9, topY + 15);
+            ctx.moveTo(px + 9, topY - 15); ctx.lineTo(px + 9, topY + 15);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#10d982';
+            ctx.font = 'bold 11px system-ui'; ctx.textAlign = 'center';
+            ctx.fillText('C = ' + (p.C * 1e6) + ' µF', px, topY + 32);
+        }
+    });
+
+    // Source label
+    ctx.fillStyle = '#fbbf24'; ctx.font = 'bold 11px system-ui'; ctx.textAlign = 'center';
+    ctx.fillText(p.V + ' V rms', srcX, srcY + 50);
+    ctx.fillStyle = '#93a0bd'; ctx.font = '10px system-ui';
+    ctx.fillText('AC SOURCE', srcX, srcY + 64);
+
+    // Animated current dots
+    var t = performance.now() * 0.001;
+    var speed = Math.min(2.5, Math.max(0.4, p.I * 1.5));
+    var nDots = 16;
+    for (var d = 0; d < nDots; d++) {
+        var prog = ((t * speed + d / nDots) % 1);
+        var totalW = rightX - srcX;
+        var totalH = bottomY - topY;
+        var perimeter = 2 * totalW + 2 * totalH;
+        var dist = prog * perimeter;
+        var x2, y2;
+        if (dist < totalW) { x2 = srcX + dist; y2 = topY; }
+        else if (dist < totalW + totalH) { x2 = rightX; y2 = topY + (dist - totalW); }
+        else if (dist < 2 * totalW + totalH) { x2 = rightX - (dist - totalW - totalH); y2 = bottomY; }
+        else { x2 = srcX; y2 = bottomY - (dist - 2 * totalW - totalH); }
+
+        ctx.fillStyle = '#ff5c8a';
+        ctx.shadowColor = '#ff5c8a';
+        ctx.shadowBlur = 6;
+        ctx.beginPath(); ctx.arc(x2, y2, 2.5, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = 0;
+    }
+
+    // Title
+    ctx.fillStyle = '#e5e9f5'; ctx.font = 'bold 13px system-ui'; ctx.textAlign = 'center';
+    ctx.fillText('Series ' + state.mode + ' Circuit · f = ' + p.f + ' Hz', areaW / 2, areaH - 20);
+
+    ctx.restore();
+}
+
+function drawScope(){
+    var w = cssWidth(), h = cssHeight();
+    var p = model();
+    var sw = 280, sh = 140;
+    var sx = w - sw - 16, sy = 16;
+
+    ctx.save();
+    ctx.fillStyle = 'rgba(20,27,46,0.92)';
+    ctx.strokeStyle = '#26304a';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(sx, sy, sw, sh, 8);
+    ctx.fill(); ctx.stroke();
+
+    // Title
+    ctx.fillStyle = '#818cf8';
+    ctx.font = 'bold 11px system-ui';
+    ctx.textAlign = 'left';
+    ctx.fillText('OSCILLOSCOPE', sx + 10, sy + 16);
+
+    // zero-line
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.beginPath();
+    ctx.moveTo(sx + 6, sy + sh / 2);
+    ctx.lineTo(sx + sw - 6, sy + sh / 2);
+    ctx.stroke();
+
+    // voltage waveform (blue)
+    var mid = sy + sh / 2;
+    var amp = sh * 0.32;
+    ctx.strokeStyle = '#818cf8'; ctx.lineWidth = 2;
+    ctx.shadowColor = '#818cf8';
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    for (var x = 0; x <= sw - 12; x++) {
+        var phase = (x / (sw - 12)) * 4 * Math.PI + wavePhase;
+        var y = mid - amp * Math.sin(phase);
+        if (x) ctx.lineTo(sx + 6 + x, y); else ctx.moveTo(sx + 6, y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // current waveform (red, phase shifted)
+    ctx.strokeStyle = '#ff5c8a'; ctx.lineWidth = 2;
+    ctx.shadowColor = '#ff5c8a';
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    for (var x2 = 0; x2 <= sw - 12; x2++) {
+        var phase2 = (x2 / (sw - 12)) * 4 * Math.PI + wavePhase - p.phase;
+        var y2 = mid - amp * 0.75 * Math.sin(phase2);
+        if (x2) ctx.lineTo(sx + 6 + x2, y2); else ctx.moveTo(sx + 6, y2);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // legend
+    ctx.fillStyle = '#818cf8';
+    ctx.beginPath(); ctx.arc(sx + 12, sy + sh - 12, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#93a0bd'; ctx.font = '10px system-ui';
+    ctx.fillText('V', sx + 20, sy + sh - 8);
+    ctx.fillStyle = '#ff5c8a';
+    ctx.beginPath(); ctx.arc(sx + 42, sy + sh - 12, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#93a0bd';
+    ctx.fillText('I', sx + 50, sy + sh - 8);
+
+    // Phase readout
+    ctx.fillStyle = '#fbbf24'; ctx.font = 'bold 10px system-ui';
+    ctx.textAlign = 'right';
+    ctx.fillText('φ = ' + fmt(p.phase * 180 / Math.PI, 1) + '°', sx + sw - 10, sy + sh - 8);
+
+    ctx.restore();
+}
+
+function drawPhasor(){
+    var w = cssWidth(), h = cssHeight();
+    var p = model();
+    var pw = 200, ph = 160;
+    var px = 16, py = h - ph - 16;
+
+    ctx.save();
+    ctx.fillStyle = 'rgba(20,27,46,0.92)';
+    ctx.strokeStyle = '#26304a';
+    ctx.beginPath();
+    ctx.roundRect(px, py, pw, ph, 8);
+    ctx.fill(); ctx.stroke();
+
+    ctx.fillStyle = '#818cf8';
+    ctx.font = 'bold 11px system-ui';
+    ctx.textAlign = 'left';
+    ctx.fillText('PHASOR DIAGRAM', px + 10, py + 16);
+
+    var cx = px + pw / 2, cy = py + ph / 2 + 10;
+    var scale = Math.min(pw, ph) * 0.30 / Math.max(p.R, Math.abs(p.X), 1);
+
+    // axes
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.beginPath();
+    ctx.moveTo(px + 10, cy); ctx.lineTo(px + pw - 10, cy);
+    ctx.moveTo(cx, py + 24); ctx.lineTo(cx, py + ph - 10);
+    ctx.stroke();
+
+    function arrow(x1, y1, x2, y2, color, width) {
+        if (!width) width = 2.5;
+        ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 8;
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+        var a = Math.atan2(y2 - y1, x2 - x1);
+        var sz = 8;
+        ctx.beginPath();
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x2 - sz * Math.cos(a - 0.4), y2 - sz * Math.sin(a - 0.4));
+        ctx.lineTo(x2 - sz * Math.cos(a + 0.4), y2 - sz * Math.sin(a + 0.4));
+        ctx.closePath(); ctx.fill();
+        ctx.shadowBlur = 0;
+    }
+
+    // R along +x
+    arrow(cx, cy, cx + p.R * scale, cy, '#fbbf24');
+    // XL up
+    if (p.XL > 0.5) arrow(cx, cy, cx, cy - p.XL * scale, '#3b82f6');
+    // XC down
+    if (p.XC > 0.5) arrow(cx, cy, cx, cy + p.XC * scale, '#10d982');
+    // Z
+    arrow(cx, cy, cx + p.R * scale, cy - p.X * scale, '#ff5c8a', 3);
+
+    // Labels
+    ctx.fillStyle = '#93a0bd'; ctx.font = '10px system-ui';
+    ctx.fillText('R', cx + p.R * scale + 4, cy - 4);
+    if (p.XL > 0.5) ctx.fillText('XL', cx + 4, cy - p.XL * scale - 4);
+    if (p.XC > 0.5) ctx.fillText('XC', cx + 4, cy + p.XC * scale + 12);
+
+    ctx.restore();
+}
+
+function drawFrequencyResponse(){
+    var w = cssWidth(), h = cssHeight();
+    var p = model();
+    var gw = 260, gh = 140;
+    var gx = w - gw - 16, gy = h - gh - 16;
+
+    ctx.save();
+    ctx.fillStyle = 'rgba(20,27,46,0.92)';
+    ctx.strokeStyle = '#26304a';
+    ctx.beginPath();
+    ctx.roundRect(gx, gy, gw, gh, 8);
+    ctx.fill(); ctx.stroke();
+
+    ctx.fillStyle = '#818cf8';
+    ctx.font = 'bold 11px system-ui';
+    ctx.textAlign = 'left';
+    ctx.fillText('I vs f — RESONANCE', gx + 10, gy + 16);
+
+    var padL = 26, padR = 8, padT = 26, padB = 22;
+    var innerW = gw - padL - padR, innerH = gh - padT - padB;
+
+    var pts = [];
+    var maxI = 0;
+    for (var f = 1; f <= 500; f += 4) {
+        var XL = p.hasL ? 2 * Math.PI * f * p.L : 0;
+        var XC = p.hasC ? 1 / (2 * Math.PI * f * p.C) : 0;
+        var I = p.V / Math.hypot(p.R, XL - XC);
+        pts.push({ f: f, I: I });
+        if (I > maxI) maxI = I;
+    }
+    maxI = Math.max(maxI, p.I) * 1.1;
+
+    // axes
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.beginPath();
+    ctx.moveTo(gx + padL, gy + padT);
+    ctx.lineTo(gx + padL, gy + gh - padB);
+    ctx.lineTo(gx + gw - padR, gy + gh - padB);
+    ctx.stroke();
+
+    // curve
+    ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 2.5;
+    ctx.shadowColor = '#fbbf24';
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    pts.forEach(function(d, i){
+        var x = gx + padL + (d.f / 500) * innerW;
+        var y = gy + gh - padB - (d.I / maxI) * innerH;
+        if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+    });
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // operating point
+    var ox = gx + padL + (p.f / 500) * innerW;
+    var oy = gy + gh - padB - (p.I / maxI) * innerH;
+    ctx.fillStyle = '#ff5c8a';
+    ctx.shadowColor = '#ff5c8a';
+    ctx.shadowBlur = 15;
+    ctx.beginPath(); ctx.arc(ox, oy, 5, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+
+    ctx.fillStyle = '#93a0bd'; ctx.font = '10px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('f →', gx + gw / 2, gy + gh - 6);
+
+    ctx.restore();
+}
+
+function drawAll(){
+    drawGrid();
+    drawCircuit();
+    drawScope();
+    drawPhasor();
+    drawFrequencyResponse();
+}
+
+// ============ READOUTS ============
+function updateOutputs(){
+    var p = model();
+    $('out-z').innerText = fmt(p.Z, 1);
+    $('out-i').innerText = p.I < 0.01 ? fmt(p.I * 1000, 1) + 'm' : fmt(p.I, 3);
+    $('out-ph').innerText = fmt(p.phase * 180 / Math.PI, 1);
+    $('out-f0').innerText = fmt(p.resonance, 1);
+
+    $('ro-z').innerText = fmt(p.Z, 2) + ' Ω';
+    $('ro-i').innerText = p.I < 0.01 ? fmt(p.I * 1000, 2) + ' mA' : fmt(p.I, 4) + ' A';
+    $('ro-ph').innerText = fmt(p.phase * 180 / Math.PI, 1) + '°';
+    $('ro-pf').innerText = fmt(p.pf, 3);
+    $('ro-p').innerText = fmt(p.P, 3) + ' W';
+    $('ro-q').innerText = fmt(p.Q, 3) + ' var';
+    $('ro-xl').innerText = fmt(p.XL, 2) + ' Ω';
+    $('ro-xc').innerText = fmt(p.XC, 2) + ' Ω';
+    $('out-e').innerText = fmt(p.P, 1);
+}
+
+// ============ ANIMATION LOOP ============
+function animate(){
+    if (!state.paused) {
+        wavePhase += 0.06;
+        drawAll();
+        updateOutputs();
+    }
+    requestAnimationFrame(animate);
+}
+
+// ============ EVENTS ============
+$('btn-run').addEventListener('click', function(){
+    state.paused = false;
+    updateOutputs();
+});
+
+['v', 'f', 'r', 'l', 'c'].forEach(function(id){
+    var el = $(id);
+    el.addEventListener('input', function(){
+        $('v-' + id).innerText = el.value;
+        updateOutputs();
+        updateToneFreq();
+    });
+});
+
+$('mode').addEventListener('change', function(e){
+    state.mode = e.target.value;
+    updateOutputs();
+});
+
+$('btn-reset').addEventListener('click', function(){
+    $('v').value = 12; $('v-v').innerText = 12;
+    $('f').value = 50; $('v-f').innerText = 50;
+    $('r').value = 100; $('v-r').innerText = 100;
+    $('l').value = 100; $('v-l').innerText = 100;
+    $('c').value = 100; $('v-c').innerText = 100;
+    $('mode').value = 'RLC';
+    state.mode = 'RLC';
+    updateOutputs();
+});
+
+$('btn-record').addEventListener('click', function(){
+    var p = model();
+    var line = new Date().toLocaleTimeString() + ' | ' + state.mode + ' | V=' + p.V + 'V | f=' + p.f + 'Hz | Z=' + fmt(p.Z, 2) + 'Ω | I=' + fmt(p.I, 4) + 'A | φ=' + fmt(p.phase * 180 / Math.PI, 2) + '° | PF=' + fmt(p.pf, 3) + ' | P=' + fmt(p.P, 3) + 'W';
+    state.records.push(line);
+    $('records').value = state.records.join('\n');
+    $('records').scrollTop = $('records').scrollHeight;
+});
+
+// Tabs
+document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+        document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+        $(btn.dataset.tab).classList.add('active');
+        btn.classList.add('active');
+    });
+});
+
+// Quiz
+var QUIZ_EXPLAIN = {
+    q1:{correct:'B',why:'In a pure resistor, V and I are in phase (φ = 0).',tip:'P = VI cos(0) = VI.'},
+    q2:{correct:'B',why:'XL = 2πfL. Doubling f doubles XL.',tip:'Higher frequency = more opposition from inductor.'},
+    q3:{correct:'A',why:'XC = 1/(2πfC). Doubling f halves XC.',tip:'Higher frequency = less opposition from capacitor.'},
+    q4:{correct:'A',why:'At resonance XL = XC, and they cancel: net reactance = 0.',tip:'Z = R, minimum impedance.'},
+    q5:{correct:'B',why:'Vrms = Vpeak/√2 = 100/√2 ≈ 70.7 V.',tip:'RMS is 0.707 × peak.'},
+    q6:{correct:'A',why:'Capacitive circuits: current leads voltage by up to 90°.',tip:'"CIVIL" — in Capacitor, I leads V.'},
+    q7:{correct:'B',why:'At resonance, φ = 0, so cos φ = 1 (unity power factor).',tip:'Maximum real power transfer.'},
+    q8:{correct:'B',why:'At resonance, I = V/R. Larger R means smaller current.',tip:'This is how "Q factor" is determined.'},
+    q9:{correct:'C',why:'Reactive power Q is measured in var (volt-amp reactive).',tip:'Real power: W. Apparent: VA.'}
+};
+
+$('btn-quiz-check').addEventListener('click', function(){
+    var qs = document.querySelectorAll('.quiz-q');
+    var score = 0;
+    qs.forEach(function(q){
+        var name = q.dataset.q;
+        var correct = q.dataset.answer;
+        var chosen = q.querySelector('input[name="' + name + '"]:checked');
+        var expl = q.querySelector('.explanation');
+        var data = QUIZ_EXPLAIN[name];
+        expl.hidden = false;
+        expl.className = 'explanation';
+        if (chosen && chosen.value === correct) {
+            score++;
+            expl.classList.add('correct-box');
+            expl.innerHTML = '<strong>✓ Correct!</strong> ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:var(--mu);"><b>💡</b> ' + data.tip + '</div>';
+        } else {
+            expl.classList.add('wrong-box');
+            var cv = chosen ? chosen.value : '—';
+            expl.innerHTML = '<strong>✗ Answer: ' + correct + '</strong> You chose ' + cv + '. ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:var(--mu);"><b>💡</b> ' + data.tip + '</div>';
+        }
+    });
+    var pct = Math.round(score / qs.length * 100);
+    $('quiz-result').style.display = 'block';
+    $('quiz-result').innerHTML = '<div style="font-size:1.4rem;color:var(--pr);">' + score + '/' + qs.length + ' · ' + pct + '%</div>';
+    beep(pct >= 78 ? 880 : 440, 0.15, 'sine', 0.1);
+});
+
+$('btn-quiz-reset').addEventListener('click', function(){
+    document.querySelectorAll('.quiz-q').forEach(function(q){
+        q.querySelectorAll('input[type=radio]').forEach(function(r){ r.checked = false; });
+        var e = q.querySelector('.explanation');
+        e.hidden = true; e.innerHTML = ''; e.className = 'explanation';
+    });
+    $('quiz-result').style.display = 'none';
+});
+
+// Challenges
+function applyChallenge(id){
+    var note = $('challenge-note'), cres = $('challenge-result');
+    note.innerText = ''; cres.innerText = '';
+    var p = model();
+
+    if (id === 'resonance') {
+        $('f').value = Math.max(1, Math.min(500, Math.round(p.resonance)));
+        $('v-f').innerText = $('f').value;
+        note.innerText = 'Set frequency to predicted resonance (' + fmt(p.resonance, 2) + ' Hz). Observe Z = R and φ = 0.';
+        updateOutputs();
+    } else if (id === 'inductive') {
+        $('f').value = 200;
+        $('v-f').innerText = 200;
+        note.innerText = 'Frequency raised — XL > XC, circuit is inductive. Current lags voltage.';
+        updateOutputs();
+    } else if (id === 'capacitive') {
+        $('f').value = 20;
+        $('v-f').innerText = 20;
+        note.innerText = 'Frequency lowered — XC > XL, circuit is capacitive. Current leads voltage.';
+        updateOutputs();
+    } else if (id === 'doubleXL') {
+        var f = Math.min(500, num('f') * 2);
+        $('f').value = f;
+        $('v-f').innerText = f;
+        note.innerText = 'Frequency doubled → XL doubled. New XL ≈ ' + fmt(model().XL, 2) + ' Ω.';
+        updateOutputs();
+    } else if (id === 'doubleXC') {
+        var f2 = Math.max(1, Math.round(num('f') / 2));
+        $('f').value = f2;
+        $('v-f').innerText = f2;
+        note.innerText = 'Frequency halved → XC doubled. New XC ≈ ' + fmt(model().XC, 2) + ' Ω.';
+        updateOutputs();
+    } else if (id === 'maxCurrent') {
+        $('f').value = Math.max(1, Math.min(500, Math.round(p.resonance)));
+        $('v-f').innerText = $('f').value;
+        $('r').value = 10;
+        $('v-r').innerText = 10;
+        var np = model();
+        note.innerText = 'At resonance and low R, current is maximized.';
+        cres.innerText = 'I = ' + fmt(np.I, 3) + ' A · Z = ' + fmt(np.Z, 2) + ' Ω · PF = ' + fmt(np.pf, 3);
+        updateOutputs();
+    } else if (id === 'predict') {
+        var pred = $('predict-select').value;
+        var before = model().I;
+        var targetF = Math.round(p.resonance);
+        if (Math.abs(num('f') - targetF) > 5) {
+            $('f').value = targetF;
+            $('v-f').innerText = targetF;
+        } else {
+            $('r').value = Math.max(10, num('r') - 40);
+            $('v-r').innerText = $('r').value;
+        }
+        var after = model().I;
+        var change = after > before ? 'increase' : after < before ? 'decrease' : 'same';
+        var ok = change === pred;
+        note.innerText = 'You predicted: ' + pred + '. Actually: ' + change + '. ' + (ok ? '✓ Correct!' : '✗ Not quite.');
+        cres.innerText = 'I before = ' + fmt(before, 3) + ' A → I after = ' + fmt(after, 3) + ' A';
+        updateOutputs();
+    }
+}
+
+document.querySelectorAll('[data-challenge]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        applyChallenge(btn.dataset.challenge);
+        beep(660, 0.08, 'sine', 0.08);
+    });
+});
+
+// Download report
+$('btn-export').addEventListener('click', function(){
+    var p = model();
+    var text = 'AC CIRCUITS LAB REPORT\nDate: ' + new Date().toLocaleString() + '\n\n' +
+        'Mode: ' + state.mode + '\n' +
+        'V = ' + p.V + ' V rms, f = ' + p.f + ' Hz\n' +
+        'R = ' + p.R + ' Ω, L = ' + p.L + ' H, C = ' + p.C + ' F\n' +
+        'XL = ' + fmt(p.XL, 4) + ' Ω, XC = ' + fmt(p.XC, 4) + ' Ω\n' +
+        'Z = ' + fmt(p.Z, 4) + ' Ω, I = ' + fmt(p.I, 5) + ' A\n' +
+        'Phase = ' + fmt(p.phase * 180 / Math.PI, 3) + '°, PF = ' + fmt(p.pf, 4) + '\n' +
+        'P = ' + fmt(p.P, 4) + ' W, Q = ' + fmt(p.Q, 4) + ' var, S = ' + fmt(p.S, 4) + ' VA\n' +
+        'Predicted resonance f₀ = ' + fmt(p.resonance, 4) + ' Hz\n\n' +
+        'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+        'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+        'MEASUREMENTS\n' + $('records').value + '\n\n' +
+        'LIMITATIONS\nIdeal sinusoidal steady-state series model. Educational use only.\n';
+    var blob = new Blob([text], {type:'text/plain'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'ac-circuits-report.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+});
+
+$('btn-clear-notes').addEventListener('click', function(){
+    if (!confirm('Clear all notebook fields?')) return;
+    $('hypothesis').value = '';
+    $('conclusion').value = '';
+    $('records').value = '';
+    state.records = [];
+});
+
+// ============ ZOOM & PAN ============
+var fullScroll = false;
+var pointers = new Map();
+var pinch = null;
+
+$('full-scroll-toggle').addEventListener('change', function(e){
+    fullScroll = e.target.checked;
+    canvas.style.touchAction = fullScroll ? 'auto' : 'none';
+    pointers.clear(); pinch = null;
+});
+
+function getPos(e){ var r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+
+canvas.addEventListener('wheel', function(e){
+    if (fullScroll) return;
+    e.preventDefault();
+    var cx = e.offsetX, cy = e.offsetY;
+    var wx = (cx - view.x) / view.scale, wy = (cy - view.y) / view.scale;
+    var factor = Math.exp(-e.deltaY * 0.0015);
+    view.scale = Math.max(0.3, Math.min(5, view.scale * factor));
+    view.x = cx - wx * view.scale;
+    view.y = cy - wy * view.scale;
+    drawAll();
+}, { passive: false });
+
+canvas.addEventListener('pointerdown', function(e){
+    if (fullScroll) return;
+    canvas.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, getPos(e));
+    if (pointers.size === 2) {
+        var pts = Array.from(pointers.values());
+        pinch = { dist: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y), startScale: view.scale };
+    }
+});
+
+canvas.addEventListener('pointermove', function(e){
+    if (fullScroll || !pointers.has(e.pointerId)) return;
+    var prev = pointers.get(e.pointerId), pos = getPos(e);
+    pointers.set(e.pointerId, pos);
+    if (pointers.size === 1 && !pinch) {
+        view.x += pos.x - prev.x;
+        view.y += pos.y - prev.y;
+        drawAll();
+    } else if (pointers.size === 2 && pinch) {
+        var pts = Array.from(pointers.values());
+        var d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+        view.scale = Math.max(0.3, Math.min(5, pinch.startScale * d / pinch.dist));
+        drawAll();
+    }
+});
+
+canvas.addEventListener('pointerup', function(e){
+    if (fullScroll) return;
+    pointers.delete(e.pointerId);
+    try { canvas.releasePointerCapture(e.pointerId); } catch(_){}
+    if (pointers.size < 2) pinch = null;
+});
+canvas.addEventListener('pointercancel', function(e){ pointers.delete(e.pointerId); pinch = null; });
+
+// Splitter
+(function(){
+    var sim = $('sim-area'), splitter = $('splitter');
+    var dragging = false, startY = 0, startH = 0;
+    splitter.addEventListener('pointerdown', function(e){
+        e.preventDefault(); dragging = true; startY = e.clientY;
+        startH = sim.getBoundingClientRect().height;
+        try { splitter.setPointerCapture(e.pointerId); } catch(_){}
+    });
+    window.addEventListener('pointermove', function(e){
+        if (!dragging) return;
+        var dy = e.clientY - startY;
+        var nh = Math.max(180, Math.min(window.innerHeight - 240, Math.round(startH + dy)));
+        sim.style.flex = '0 0 ' + nh + 'px';
+        resizeCanvas(); drawAll();
+    });
+    window.addEventListener('pointerup', function(e){
+        if (!dragging) return;
+        dragging = false;
+        try { splitter.releasePointerCapture(e.pointerId); } catch(_){}
+    });
+})();
+
+window.addEventListener('resize', function(){ resizeCanvas(); drawAll(); });
+
+// ============ BOOT ============
+resizeCanvas();
+updateOutputs();
+animate();
+
+})();
+</script>
+</body>
+</html>

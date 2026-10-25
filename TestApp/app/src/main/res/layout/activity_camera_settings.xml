@@ -4,94 +4,161 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/slate_50">
+    android:background="@color/surface_light">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/surface_card"
+        app:elevation="0dp">
+
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/white"
-            app:titleTextColor="@color/slate_900" />
+            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:navigationIconTint="@color/text_primary_slate"
+            app:title="Camera Settings"
+            app:titleCentered="true"
+            app:titleTextColor="@color/text_primary_slate" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.google.android.material.card.MaterialCardView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="0dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/slate_200">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:overScrollMode="never">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="8dp">
+            android:paddingBottom="32dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:padding="16dp">
-                <TextView
-                    android:layout_width="0dp"
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="AI SCANNER PREFERENCES" />
+
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Auto-detect problems"
-                    android:textColor="@color/slate_900"
-                    android:textSize="16sp" />
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/switchAutoDetect"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
+                    android:orientation="vertical">
 
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/slate_200" />
+                    <!-- Auto Detect -->
+                    <LinearLayout
+                        style="@style/SettingsItem">
+                        <ImageView
+                            style="@style/SettingsItemIcon"
+                            android:src="@drawable/ic_real_camera" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                style="@style/SettingsItemText"
+                                android:layout_width="match_parent"
+                                android:layout_weight="0"
+                                android:text="Auto-detect problems" />
+                            <TextView
+                                style="@style/SettingsItemDescription"
+                                android:text="Trigger OCR on steady text framing" />
+                        </LinearLayout>
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchAutoDetect"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:padding="16dp">
-                <TextView
-                    android:layout_width="0dp"
+                    <View style="@style/SettingsDivider" />
+
+                    <!-- Grid Lines -->
+                    <LinearLayout
+                        style="@style/SettingsItem">
+                        <ImageView
+                            style="@style/SettingsItemIcon"
+                            android:src="@drawable/ic_grid" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                style="@style/SettingsItemText"
+                                android:layout_width="match_parent"
+                                android:layout_weight="0"
+                                android:text="Show Grid Lines" />
+                            <TextView
+                                style="@style/SettingsItemDescription"
+                                android:text="Rule-of-thirds viewfinder alignment" />
+                        </LinearLayout>
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchGrid"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
+                    <!-- Save History -->
+                    <LinearLayout
+                        style="@style/SettingsItem">
+                        <ImageView
+                            style="@style/SettingsItemIcon"
+                            android:src="@drawable/ic_history" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                style="@style/SettingsItemText"
+                                android:layout_width="match_parent"
+                                android:layout_weight="0"
+                                android:text="Save scans to history" />
+                            <TextView
+                                style="@style/SettingsItemDescription"
+                                android:text="Automatically record solutions in Lab History" />
+                        </LinearLayout>
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchSaveHistory"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- SCANNER ACCURACY TIP -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/SettingsCard"
+                app:cardBackgroundColor="#EFF6FF"
+                app:strokeColor="#BFDBFE">
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Show Grid Lines"
-                    android:textColor="@color/slate_900"
-                    android:textSize="16sp" />
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/switchGrid"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/slate_200" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:padding="16dp">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Save scans to history"
-                    android:textColor="@color/slate_900"
-                    android:textSize="16sp" />
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/switchSaveHistory"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true" />
-            </LinearLayout>
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_bolt"
+                        app:tint="@color/sapphire_primary"
+                        android:layout_marginEnd="12dp" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Tip: Enable Grid Lines to frame math equations squarely for optimal OCR accuracy."
+                        android:textColor="@color/sapphire_primary"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+    </ScrollView>
 
 </LinearLayout>

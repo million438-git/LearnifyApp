@@ -62,7 +62,7 @@
                 android:layout_height="36dp"
                 android:padding="8dp"
                 android:src="@android:drawable/ic_btn_speak_now"
-                android:contentDescription="Record Audio"
+                android:contentDescription="Record Audio Reflection"
                 app:tint="@android:color/white" />
 
             <ImageView
@@ -71,7 +71,7 @@
                 android:layout_height="36dp"
                 android:padding="8dp"
                 android:src="@android:drawable/ic_menu_edit"
-                android:contentDescription="Handwrite"
+                android:contentDescription="Handwriting Canvas"
                 app:tint="@android:color/white" />
 
             <ImageView
@@ -80,7 +80,7 @@
                 android:layout_height="36dp"
                 android:padding="8dp"
                 android:src="@android:drawable/ic_menu_edit"
-                android:contentDescription="Highlight"
+                android:contentDescription="Highlight Selected Text"
                 app:tint="@android:color/white" />
 
             <ImageView
@@ -89,7 +89,7 @@
                 android:layout_height="36dp"
                 android:padding="8dp"
                 android:src="@android:drawable/ic_menu_agenda"
-                android:contentDescription="Notes"
+                android:contentDescription="Study Notes"
                 app:tint="@android:color/white" />
 
             <ImageView
@@ -98,7 +98,7 @@
                 android:layout_height="36dp"
                 android:padding="8dp"
                 android:src="@android:drawable/btn_star_big_off"
-                android:contentDescription="Important"
+                android:contentDescription="Mark as Important"
                 app:tint="@android:color/white" />
 
             <ImageView
@@ -107,7 +107,7 @@
                 android:layout_height="36dp"
                 android:padding="8dp"
                 android:src="@android:drawable/ic_menu_zoom"
-                android:contentDescription="Fullscreen"
+                android:contentDescription="Toggle Fullscreen"
                 app:tint="@android:color/white" />
 
             <ImageView
@@ -116,6 +116,7 @@
                 android:layout_height="36dp"
                 android:padding="8dp"
                 android:src="@android:drawable/ic_menu_save"
+                android:contentDescription="Bookmark Lesson"
                 app:tint="@android:color/white" />
         </androidx.appcompat.widget.Toolbar>
 
@@ -131,6 +132,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingBottom="56dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.webkit.WebView
@@ -172,6 +174,16 @@
             android:layout_height="match_parent"
             android:visibility="gone" />
 
+        <!-- Docked Accessible Audio Lesson Reading Bar -->
+        <include
+            android:id="@+id/accessibleReadingBar"
+            layout="@layout/view_accessible_reading_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_margin="12dp"
+            android:visibility="gone" />
+
     </FrameLayout>
 
     <com.google.android.material.bottomappbar.BottomAppBar
@@ -193,8 +205,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Voice Study"
-                app:icon="@android:drawable/ic_btn_speak_now" />
+                android:text="Read Aloud"
+                android:contentDescription="Read lesson aloud with Inclusive Audio Reader"
+                app:icon="@drawable/ic_volume_up" />
 
             <View android:layout_width="1dp" android:layout_height="24dp" android:background="#17BD5C" />
 
@@ -205,6 +218,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Practice Quiz"
+                android:contentDescription="Open Practice Quiz for this topic"
                 app:icon="@android:drawable/ic_input_add" />
         </LinearLayout>
     </com.google.android.material.bottomappbar.BottomAppBar>
@@ -218,6 +232,7 @@
         android:src="@android:drawable/ic_menu_revert"
         android:visibility="gone"
         app:fabSize="mini"
-        app:tint="@android:color/white" />
+        app:tint="@android:color/white"
+        android:contentDescription="Exit Fullscreen Mode" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

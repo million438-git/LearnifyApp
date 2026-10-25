@@ -16,24 +16,16 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * GpaCalculatorActivity - Unified Academic Analysis.
- * Updated: Now uses unified BuildConfig API Key for consistent EduAI intelligence.
+ * GPA advice is requested through the Learnify backend, which owns provider credentials.
  */
 public class GpaCalculatorActivity extends AppCompatActivity {
 
@@ -43,8 +35,6 @@ public class GpaCalculatorActivity extends AppCompatActivity {
     private MaterialCardView cardResult, cardSummary;
     private MaterialButton btnAiInsight;
     private List<View> subjectRows = new ArrayList<>();
-
-    private final OkHttpClient client = new OkHttpClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,34 +164,37 @@ public class GpaCalculatorActivity extends AppCompatActivity {
 
         if (gpa >= 3.70) {
             tvGpaStatusLabel.setText("Status: Excellent");
-            tvGpaMessage.setText("🌟 You are performing outstandingly. Keep it up!");
+            tvGpaMessage.setText("You are performing outstandingly. Keep it up.");
             viewStatusIndicator.setBackgroundColor(Color.parseColor("#10B981")); // Green
         } else if (gpa >= 3.00) {
             tvGpaStatusLabel.setText("Status: Very Good");
-            tvGpaMessage.setText("🔵 Great job! You are on the right track.");
+            tvGpaMessage.setText("Great job! You are on the right track.");
             viewStatusIndicator.setBackgroundColor(Color.parseColor("#3B82F6")); // Blue
         } else if (gpa >= 2.50) {
             tvGpaStatusLabel.setText("Status: Good");
-            tvGpaMessage.setText("🟡 Good effort. Focus a bit more to reach the top!");
+            tvGpaMessage.setText("Good effort. Focus on core subjects to reach the top.");
             viewStatusIndicator.setBackgroundColor(Color.parseColor("#F59E0B")); // Yellow
         } else if (gpa >= 2.00) {
             tvGpaStatusLabel.setText("Status: Satisfactory");
-            tvGpaMessage.setText("🟠 You are passing, but there is room for improvement.");
+            tvGpaMessage.setText("You are passing, but there is room for improvement.");
             viewStatusIndicator.setBackgroundColor(Color.parseColor("#FB923C")); // Orange
         } else if (gpa >= 1.00) {
             tvGpaStatusLabel.setText("Status: Warning");
-            tvGpaMessage.setText("🔴 Your performance is below average. Seek help soon.");
+            tvGpaMessage.setText("Your performance is below average. Seek academic support.");
             viewStatusIndicator.setBackgroundColor(Color.parseColor("#EF4444")); // Red
         } else {
             tvGpaStatusLabel.setText("Status: Probation");
-            tvGpaMessage.setText("⚫ Critical focus required. Please consult your advisor.");
+            tvGpaMessage.setText("Critical focus required. Please consult your academic advisor.");
             viewStatusIndicator.setBackgroundColor(Color.parseColor("#111827")); // Dark
         }
     }
 
     private void getAiAdvice() {
+        if (!btnAiInsight.isEnabled()) return;
+
+        btnAiInsight.setEnabled(false);
         tvAiResponse.setVisibility(View.VISIBLE);
-        tvAiResponse.setText("🤖 EduAI is analyzing your results...");
+        tvAiResponse.setText("EduAI is analyzing your results...");
 
         String gpaVal = tvGpaResult.getText().toString();
         String summary = tvGpaSummaryText.getText().toString();
@@ -212,40 +205,48 @@ public class GpaCalculatorActivity extends AppCompatActivity {
                         "Give clear, professional advice to improve or maintain this performance. Be highly motivating and student-friendly.";
 
         try {
-            JSONObject jsonBody = new JSONObject();
-            jsonBody.put("model", "gpt-4o-mini");
-            JSONArray messages = new JSONArray();
-            messages.put(new JSONObject().put("role", "user").put("content", prompt));
-            jsonBody.put("messages", messages);
-
-            RequestBody body = RequestBody.create(jsonBody.toString(), MediaType.parse("application/json"));
-            Request request = new Request.Builder()
-                    .url("https://api.openai.com/v1/chat/completions")
-                    .header("Authorization", "Bearer " + BuildConfig.OPENAI_API_KEY)
-                    .post(body)
-                    .build();
-
-            client.newCall(request).enqueue(new Callback() {
+            AIChatActivity.AssistantService service = AssistantApiClient.create(
+                    BuildConfig.LEARNIFY_API_BASE_URL,
+                    BuildConfig.DEBUG,
+                    new FirebaseBackendTokenProvider(getApplicationContext()));
+            service.ask(new AIChatActivity.AssistantRequest(prompt)).enqueue(new Callback<AIChatActivity.AssistantResponse>() {
                 @Override
-                public void onFailure(Call call, IOException e) {
-                    runOnUiThread(() -> tvAiResponse.setText("🤖 I couldn't reach my brain right now. Please try again soon!"));
+                public void onFailure(Call<AIChatActivity.AssistantResponse> call, Throwable error) {
+                    runOnUiThread(() -> {
+                        btnAiInsight.setEnabled(true);
+                        tvAiResponse.setText("EduAI could not connect. Check your connection and try again.");
+                    });
                 }
 
                 @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    if (response.isSuccessful() && response.body() != null) {
-                        try {
-                            JSONObject jsonResp = new JSONObject(response.body().string());
-                            String advice = jsonResp.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content");
-                            runOnUiThread(() -> tvAiResponse.setText("💡 EduAI Insight:\n" + advice));
-                        } catch (Exception e) {
-                            runOnUiThread(() -> tvAiResponse.setText("🤖 I had trouble understanding your results. Try again!"));
-                        }
+                public void onResponse(Call<AIChatActivity.AssistantResponse> call,
+                                       Response<AIChatActivity.AssistantResponse> response) {
+                    if (response.isSuccessful()
+                            && response.body() != null
+                            && response.body().answer != null
+                            && !response.body().answer.isBlank()) {
+                        String cleanAdvice = AIResponseNormalizer.normalize(response.body().answer);
+                        runOnUiThread(() -> {
+                            btnAiInsight.setEnabled(true);
+                            if (cleanAdvice.startsWith("EduAI Error:")
+                                    || cleanAdvice.startsWith("EduAI Notice:")
+                                    || cleanAdvice.startsWith("EduAI Configuration Notice:")) {
+                                tvAiResponse.setText(cleanAdvice);
+                            } else {
+                                tvAiResponse.setText("EduAI Insight:\n\n" + cleanAdvice);
+                            }
+                        });
                     } else {
-                        runOnUiThread(() -> tvAiResponse.setText("🤖 Service temporarily unavailable. Using Offline Fallback: Keep studying hard!"));
+                        runOnUiThread(() -> {
+                            btnAiInsight.setEnabled(true);
+                            tvAiResponse.setText("EduAI could not provide an insight right now. Please try again later.");
+                        });
                     }
                 }
             });
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (IllegalArgumentException e) {
+            btnAiInsight.setEnabled(true);
+            tvAiResponse.setText(e.getMessage());
+        }
     }
 }

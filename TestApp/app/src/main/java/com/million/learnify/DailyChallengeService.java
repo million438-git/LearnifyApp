@@ -32,8 +32,8 @@ public class DailyChallengeService {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_student_badge)
-                .setContentTitle("🏆 Daily Challenge is Ready!")
-                .setContentText("5 new questions are waiting for you. Brainstorm and keep your streak alive!")
+                .setContentTitle("Daily Challenge is Ready")
+                .setContentText("5 new questions are waiting for you. Test your knowledge and keep your streak alive.")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);

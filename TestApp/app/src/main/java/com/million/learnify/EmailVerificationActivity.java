@@ -1,25 +1,24 @@
 package com.million.learnify;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 /**
  * EmailVerificationActivity - Professional Verification Center.
- * Handles both manual OTP entry and secure Deep Link activation.
+ * Completes activation after Firebase confirms the email verification link.
  */
 public class EmailVerificationActivity extends BaseActivity {
 
-    private static final String TAG = "EmailVerification";
-    private EditText etOtpCode;
     private TextView tvVerificationMsg;
     private String targetEmail, targetUsername;
+    private String loginProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,12 +27,11 @@ public class EmailVerificationActivity extends BaseActivity {
 
         initViews();
         
-        // Retrieve identifiers from registration/resend flow
+        // Identifiers are display context only; Firebase is authoritative for verification.
         targetEmail = getIntent().getStringExtra("EMAIL");
         targetUsername = getIntent().getStringExtra("USERNAME");
-        
-        // Support for incoming deep links (from "Email Inbox")
-        handleIntent(getIntent());
+        loginProvider = getIntent().getStringExtra("PROVIDER");
+        if (loginProvider == null) loginProvider = "Password";
         
         if (targetEmail != null) {
             String msg = getString(R.string.verify_email_msg, targetEmail);
@@ -45,86 +43,75 @@ public class EmailVerificationActivity extends BaseActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        handleIntent(intent);
-    }
-
-    private void handleIntent(Intent intent) {
-        Uri data = intent.getData();
-        if (data != null && "learnify".equals(data.getScheme()) && "verify-email".equals(data.getHost())) {
-            String token = data.getQueryParameter("token");
-            String email = data.getQueryParameter("email");
-            if (token != null && email != null) {
-                this.targetEmail = email;
-                this.targetUsername = email; // In this system, email can act as identifier
-                etOtpCode.setText(token);
-                verifyToken(email, token);
-            }
-        }
+        targetEmail = intent.getStringExtra("EMAIL");
+        targetUsername = intent.getStringExtra("USERNAME");
+        loginProvider = intent.getStringExtra("PROVIDER");
     }
 
     private void initViews() {
-        etOtpCode = findViewById(R.id.etOtpCode);
         MaterialButton btnVerifyOtp = findViewById(R.id.btnVerifyOtp);
         TextView tvResendCode = findViewById(R.id.tvResendCode);
         tvVerificationMsg = findViewById(R.id.tvVerificationMsg);
 
-        btnVerifyOtp.setOnClickListener(v -> {
-            String code = etOtpCode.getText().toString().trim();
-            String identifier = (targetUsername != null) ? targetUsername : targetEmail;
-            
-            if (identifier == null) {
-                Toast.makeText(this, "Session expired. Please register again.", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            if (code.length() == 6) {
-                verifyToken(identifier, code);
-            } else {
-                Toast.makeText(this, R.string.enter_6_digit, Toast.LENGTH_SHORT).show();
-            }
-        });
+        btnVerifyOtp.setText("I verified my email");
+        btnVerifyOtp.setOnClickListener(v -> reloadAndCheckVerification());
 
         tvResendCode.setOnClickListener(v -> {
-            if (targetEmail != null && (targetUsername != null || targetEmail != null)) {
-                String identifier = (targetUsername != null) ? targetUsername : targetEmail;
-                new MailService(this).sendVerificationEmail(targetEmail, identifier);
-                Toast.makeText(this, R.string.verification_resent, Toast.LENGTH_SHORT).show();
+            FirebaseUser user = getCurrentVerificationUser();
+            if (user != null) {
+                user.sendEmailVerification().addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(this, R.string.verification_resent, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, FirebaseAuthSupport.messageFor(task.getException()), Toast.LENGTH_LONG).show();
+                    }
+                });
             }
         });
     }
 
-    private void verifyToken(String identifier, String token) {
-        Log.d(TAG, "Security Protocol: Validating token for " + identifier);
-        
-        if (repository.getLocalDb().verifyToken(identifier, token)) {
-            showSuccessDialog();
-        } else {
-            Toast.makeText(this, R.string.verification_invalid, Toast.LENGTH_LONG).show();
-        }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        reloadAndCheckVerification();
     }
 
-    private void showSuccessDialog() {
-        new MaterialAlertDialogBuilder(this)
-                .setTitle("Identity Verified ✅")
-                .setMessage("Your account has been successfully activated. You now have full access to the student dashboard.")
-                .setPositiveButton("GET STARTED", (dialog, which) -> completeVerification())
-                .setCancelable(false)
-                .show();
+    private FirebaseUser getCurrentVerificationUser() {
+        FirebaseAuth auth = FirebaseAuthSupport.getConfiguredAuth(this);
+        FirebaseUser user = auth != null ? auth.getCurrentUser() : null;
+        if (user == null || user.getEmail() == null
+                || (targetEmail != null && !targetEmail.equalsIgnoreCase(user.getEmail()))) {
+            Toast.makeText(this, "The Firebase sign-in session is unavailable. Sign in again.", Toast.LENGTH_LONG).show();
+            return null;
+        }
+        return user;
     }
 
-    private void completeVerification() {
-        String identifier = (targetUsername != null) ? targetUsername : targetEmail;
-        if (identifier != null) {
-            repository.getLocalDb().setVerified(identifier, true);
-        }
-        
-        // Persist session locally
-        securePrefs.saveBoolean("isLoggedIn", true);
-        getSharedPreferences("UserSession", MODE_PRIVATE).edit()
-                .putBoolean("isLoggedIn", true)
-                .apply();
+    private void reloadAndCheckVerification() {
+        FirebaseUser user = getCurrentVerificationUser();
+        if (user == null) return;
 
-        // Navigate to Dashboard and clear backstack
+        user.reload().addOnCompleteListener(this, task -> {
+            if (!task.isSuccessful()) {
+                Toast.makeText(this, FirebaseAuthSupport.messageFor(task.getException()), Toast.LENGTH_LONG).show();
+            } else if (user.isEmailVerified()) {
+                completeVerification(user);
+            } else {
+                Toast.makeText(this, "Email is not verified yet. Open the Firebase link, then try again.", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void completeVerification(FirebaseUser user) {
+        try {
+            FirebaseSessionManager.StudentProfile profile = FirebaseSessionManager.ensureStudentProfile(
+                    this, user, user.getDisplayName(), targetUsername, null, null, "");
+            FirebaseSessionManager.saveStudentSession(this, user, profile, loginProvider);
+        } catch (IllegalStateException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+            return;
+        }
+
         Intent intent = new Intent(this, DashboardActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

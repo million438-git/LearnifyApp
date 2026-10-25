@@ -5,10 +5,10 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
     android:layout_marginVertical="8dp"
-    app:cardBackgroundColor="#FFFFFF"
+    app:cardBackgroundColor="#0C1426"
     app:cardCornerRadius="16dp"
     app:cardElevation="2dp"
-    app:strokeColor="#E5E7EB"
+    app:strokeColor="#1E2E4A"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -23,11 +23,19 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_adv_ai"
+                app:tint="#00D8FF"
+                android:contentDescription="@null" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="🤖 EduAI"
-                android:textColor="#3B82F6"
+                android:layout_marginStart="8dp"
+                android:text="EduAI Tutor"
+                android:textColor="#00D8FF"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -37,18 +45,28 @@
                 android:layout_weight="1" />
 
             <ImageView
+                android:id="@+id/ivSpeak"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginEnd="16dp"
+                android:src="@android:drawable/ic_lock_silent_mode_off"
+                app:tint="#63E7B7"
+                android:contentDescription="Read explanation aloud" />
+
+            <ImageView
                 android:id="@+id/ivCopy"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@android:drawable/ic_menu_edit"
-                app:tint="#9CA3AF" />
+                android:src="@drawable/ic_copy"
+                app:tint="#94A3B8"
+                android:contentDescription="Copy response" />
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginVertical="12dp"
-            android:background="#F3F4F6" />
+            android:background="#1E2E4A" />
 
         <LinearLayout
             android:id="@+id/llBlocksContainer"
@@ -60,11 +78,12 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginVertical="12dp"
-            android:background="#F3F4F6" />
+            android:background="#1E2E4A" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <TextView
@@ -72,16 +91,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingEnd="16dp"
-                android:text="👍 Helpful"
-                android:textColor="#6B7280"
+                android:text="STEM Verified"
+                android:textColor="#63E7B7"
                 android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/tvRegenerate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="🔁 Regenerate"
-                android:textColor="#6B7280"
+                android:text="Structured Academic Output"
+                android:textColor="#64748B"
                 android:textSize="12sp" />
 
         </LinearLayout>

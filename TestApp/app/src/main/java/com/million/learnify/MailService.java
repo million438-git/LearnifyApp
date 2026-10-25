@@ -38,7 +38,7 @@ public class MailService {
         // 2. Persist to secure database layer for the specific user
         dbHelper.updateVerificationToken(username, otpCode);
 
-        Log.d(TAG, "SECURITY: Dispatching OTP [" + otpCode + "] to " + email);
+        Log.d(TAG, "Dispatching account verification request for user");
 
         // 3. Simulate high-end SMTP processing time
         new Handler(Looper.getMainLooper()).postDelayed(() -> {

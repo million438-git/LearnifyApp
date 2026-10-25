@@ -18,6 +18,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class VisualizerActivity extends AppCompatActivity {
 
@@ -50,10 +51,13 @@ public class VisualizerActivity extends AppCompatActivity {
         subjectTabs = findViewById(R.id.subjectTabs);
         flSubjectLogoContainer = findViewById(R.id.flSubjectLogoContainer);
 
-        // Remove any existing views and replace with a large TextView for the subject emoji
+        // Subject placeholder label
         flSubjectLogoContainer.removeAllViews();
         tvSubjectLogoEmoji = new TextView(this);
-        tvSubjectLogoEmoji.setTextSize(120);
+        tvSubjectLogoEmoji.setTextSize(32);
+        tvSubjectLogoEmoji.setTypeface(null, android.graphics.Typeface.BOLD);
+        tvSubjectLogoEmoji.setTextColor(Color.parseColor("#334155"));
+        tvSubjectLogoEmoji.setLetterSpacing(0.05f);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         params.gravity = android.view.Gravity.CENTER;
@@ -80,8 +84,40 @@ public class VisualizerActivity extends AppCompatActivity {
             @Override public void onTabReselected(TabLayout.Tab tab) {}
         });
 
-        // Load Physics by default
-        updateSimList(0);
+        // Determine target tab from Intent extras (support TARGET_TAB int or SUBJECT string)
+        int targetTab = getIntent().getIntExtra("TARGET_TAB", -1);
+        if (targetTab == -1 && getIntent().hasExtra("SUBJECT")) {
+            String subject = getIntent().getStringExtra("SUBJECT");
+            targetTab = mapSubjectToTabIndex(subject);
+        }
+
+        if (targetTab >= 0 && targetTab < subjectTabs.getTabCount()) {
+            TabLayout.Tab tab = subjectTabs.getTabAt(targetTab);
+            if (tab != null && !tab.isSelected()) {
+                tab.select();
+            } else {
+                updateSimList(targetTab);
+            }
+        } else {
+            // Load Physics by default (preserving existing behavior)
+            updateSimList(0);
+        }
+    }
+
+    public static int mapSubjectToTabIndex(String subject) {
+        if (subject == null) return 0;
+        String s = subject.trim().toUpperCase(Locale.ROOT);
+        if (s.contains("PHYSIC")) return 0;
+        if (s.contains("CHEM")) return 1;
+        if (s.contains("BIO")) return 2;
+        if (s.contains("MATH") || s.contains("GEOMETRY") || s.contains("ALGEBRA")) return 3;
+        if (s.contains("ENGLISH") || s.contains("LANG")) return 4;
+        if (s.contains("AROUND")) return 5;
+        if (s.contains("WHAT_IF") || s.contains("WHAT IF")) return 6;
+        if (s.contains("REAL_DATA") || s.contains("DATA")) return 7;
+        if (s.contains("ANIMATION")) return 8;
+        if (s.contains("ERROR")) return 9;
+        return 0; // Default to Physics
     }
 
     private void updateSimList(int position) {
@@ -93,84 +129,84 @@ public class VisualizerActivity extends AppCompatActivity {
         webView.setVisibility(View.GONE);
 
         int startColor, centerColor, endColor;
-        String subjectEmoji = "📖";
+        String subjectEmoji = "DISCIPLINE";
 
         switch (position) {
             case 0: // Physics - Deep Sky Mix
                 startColor = Color.parseColor("#E0F2FE");
                 centerColor = Color.parseColor("#BAE6FD");
                 endColor = Color.parseColor("#7DD3FC");
-                subjectEmoji = "⚛️";
-                addFullLabButton("🚀 FULL PHYSICS LAB (40+)", R.color.blue_600, PhysicsLabActivity.class);
+                subjectEmoji = "PHYSICS";
+                addFullLabButton("FULL PHYSICS LAB (40+)", R.color.blue_600, PhysicsLabActivity.class);
                 break;
             case 1: // Chemistry - Lavender Mist Mix
                 startColor = Color.parseColor("#F3E8FF");
                 centerColor = Color.parseColor("#E9D5FF");
                 endColor = Color.parseColor("#D8B4FE");
-                subjectEmoji = "🧪";
-                addFullLabButton("⚗️ FULL CHEMISTRY LAB (40+)", R.color.purple_600, ChemistryLabActivity.class);
+                subjectEmoji = "CHEMISTRY";
+                addFullLabButton("FULL CHEMISTRY LAB (40+)", R.color.purple_600, ChemistryLabActivity.class);
                 break;
             case 2: // Biology - Emerald Forest Mix
                 startColor = Color.parseColor("#DCFCE7");
                 centerColor = Color.parseColor("#BBF7D0");
                 endColor = Color.parseColor("#86EFAC");
-                subjectEmoji = "🧬";
-                addFullLabButton("🧬 FULL BIOLOGY LAB (35+)", android.R.color.holo_green_dark, BiologyLabActivity.class);
+                subjectEmoji = "BIOLOGY";
+                addFullLabButton("FULL BIOLOGY LAB (35+)", android.R.color.holo_green_dark, BiologyLabActivity.class);
                 break;
             case 3: // Mathematics - Golden Amber Mix
                 startColor = Color.parseColor("#FEF3C7");
                 centerColor = Color.parseColor("#FDE68A");
                 endColor = Color.parseColor("#FCD34D");
-                subjectEmoji = "📐";
-                sims.add(new SimInfo("3D Geometry 📐", "file:///android_asset/InteractiveLab/Mathematics Lab/geometry.html"));
-                sims.add(new SimInfo("Trigonometry 📐", "file:///android_asset/InteractiveLab/Mathematics Lab/trig.html"));
-                sims.add(new SimInfo("Graph Plotter 📊", "file:///android_asset/InteractiveLab/Mathematics Lab/graphs.html"));
+                subjectEmoji = "MATHEMATICS";
+                sims.add(new SimInfo("3D Geometry", "file:///android_asset/InteractiveLab/Mathematics Lab/geometry.html"));
+                sims.add(new SimInfo("Trigonometry", "file:///android_asset/InteractiveLab/Mathematics Lab/trig.html"));
+                sims.add(new SimInfo("Graph Plotter", "file:///android_asset/InteractiveLab/Mathematics Lab/graphs.html"));
                 break;
             case 4: // English - Sunset Glow Mix
                 startColor = Color.parseColor("#FFEDD5");
                 centerColor = Color.parseColor("#FED7AA");
                 endColor = Color.parseColor("#FDBA8C");
-                subjectEmoji = "📖";
-                sims.add(new SimInfo("Grammar Lab 📖", "file:///android_asset/InteractiveLab/English Lab/grammar.html"));
-                sims.add(new SimInfo("Vocabulary 🔡", "file:///android_asset/InteractiveLab/English Lab/vocabulary.html"));
+                subjectEmoji = "ENGLISH";
+                sims.add(new SimInfo("Grammar Lab", "file:///android_asset/InteractiveLab/English Lab/grammar.html"));
+                sims.add(new SimInfo("Vocabulary", "file:///android_asset/InteractiveLab/English Lab/vocabulary.html"));
                 break;
             case 5: // Around You - Urban Slate Mix
                 startColor = Color.parseColor("#F1F5F9");
                 centerColor = Color.parseColor("#E2E8F0");
                 endColor = Color.parseColor("#CBD5E1");
-                subjectEmoji = "🏙️";
-                sims.add(new SimInfo("Smart City 🏙️", "file:///android_asset/InteractiveLab/Around-You Lab/city.html"));
-                sims.add(new SimInfo("Eco House 🏠", "file:///android_asset/InteractiveLab/Around-You Lab/house.html"));
+                subjectEmoji = "URBAN SYSTEMS";
+                sims.add(new SimInfo("Smart City", "file:///android_asset/InteractiveLab/Around-You Lab/city.html"));
+                sims.add(new SimInfo("Eco House", "file:///android_asset/InteractiveLab/Around-You Lab/house.html"));
                 break;
             case 6: // What If? - Cosmic Fuchsia Mix
                 startColor = Color.parseColor("#FAE8FF");
                 centerColor = Color.parseColor("#F5D0FE");
                 endColor = Color.parseColor("#F0ABFC");
-                subjectEmoji = "🤔";
-                sims.add(new SimInfo("No Gravity 🌌", "file:///android_asset/InteractiveLab/What-If Lab/no_gravity.html"));
-                sims.add(new SimInfo("Infinite Energy ⚡", "file:///android_asset/InteractiveLab/What-If Lab/infinite_energy.html"));
+                subjectEmoji = "THEORETICAL";
+                sims.add(new SimInfo("No Gravity", "file:///android_asset/InteractiveLab/What-If Lab/no_gravity.html"));
+                sims.add(new SimInfo("Infinite Energy", "file:///android_asset/InteractiveLab/What-If Lab/infinite_energy.html"));
                 break;
             case 7: // Real Data - Crystal Emerald Mix
                 startColor = Color.parseColor("#ECFDF5");
                 centerColor = Color.parseColor("#D1FAE5");
                 endColor = Color.parseColor("#A7F3D0");
-                subjectEmoji = "📊";
-                sims.add(new SimInfo("Live Weather 🌦️", "file:///android_asset/InteractiveLab/Real-Data Lab/weather.html"));
+                subjectEmoji = "REAL DATA";
+                sims.add(new SimInfo("Live Weather", "file:///android_asset/InteractiveLab/Real-Data Lab/weather.html"));
                 break;
             case 8: // Micro-Animations - Rose Petal Mix
                 startColor = Color.parseColor("#FFF1F2");
                 centerColor = Color.parseColor("#FFE4E6");
                 endColor = Color.parseColor("#FECDD3");
-                subjectEmoji = "🎥";
-                sims.add(new SimInfo("Atomic Vibrations ⚛️", "file:///android_asset/InteractiveLab/Micro-Animations Lab/atoms.html"));
+                subjectEmoji = "MOLECULAR";
+                sims.add(new SimInfo("Atomic Vibrations", "file:///android_asset/InteractiveLab/Micro-Animations Lab/atoms.html"));
                 break;
             case 9: // Real-World Errors - Warning Crimson Mix
                 startColor = Color.parseColor("#FEF2F2");
                 centerColor = Color.parseColor("#FEE2E2");
                 endColor = Color.parseColor("#FECACA");
-                subjectEmoji = "⚠️";
-                sims.add(new SimInfo("Bridge Collapse 🌉", "file:///android_asset/InteractiveLab/Real-World-Error Lab/bridge.html"));
-                sims.add(new SimInfo("Circuit Short 💥", "file:///android_asset/InteractiveLab/Real-World-Error Lab/circuit_error.html"));
+                subjectEmoji = "ENGINEERING FAILURES";
+                sims.add(new SimInfo("Bridge Collapse", "file:///android_asset/InteractiveLab/Real-World-Error Lab/bridge.html"));
+                sims.add(new SimInfo("Circuit Short", "file:///android_asset/InteractiveLab/Real-World-Error Lab/circuit_error.html"));
                 break;
             default:
                 startColor = Color.parseColor("#FFFFFF");

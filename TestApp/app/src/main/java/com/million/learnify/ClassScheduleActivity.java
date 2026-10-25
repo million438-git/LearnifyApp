@@ -109,7 +109,7 @@ public class ClassScheduleActivity extends BaseActivity {
         layout.addView(etSubject);
 
         final TextView tvTimePicker = new TextView(this);
-        tvTimePicker.setText("🕒 Select Start Time (Tap here)");
+        tvTimePicker.setText("Select Start Time (Tap here)");
         tvTimePicker.setPadding(0, 40, 0, 20);
         tvTimePicker.setTextColor(Color.parseColor("#22D3EE"));
         layout.addView(tvTimePicker);
@@ -123,7 +123,7 @@ public class ClassScheduleActivity extends BaseActivity {
                 String am_pm = (h < 12) ? "AM" : "PM";
                 int displayHour = (h > 12) ? h - 12 : (h == 0 ? 12 : h);
                 selectedTime[0] = String.format(Locale.getDefault(), "%02d:%02d %s", displayHour, m, am_pm);
-                tvTimePicker.setText("🕒 Time Set: " + selectedTime[0]);
+                tvTimePicker.setText("Time Set: " + selectedTime[0]);
             }, hour, minute, false);
             mTimePicker.setTitle("Select Time");
             mTimePicker.show();

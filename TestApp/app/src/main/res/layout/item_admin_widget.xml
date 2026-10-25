@@ -4,50 +4,58 @@
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_columnWeight="1"
-    android:layout_margin="8dp"
+    android:layout_margin="6dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
-    app:cardBackgroundColor="#1E293B"
-    app:cardCornerRadius="24dp"
-    app:cardElevation="6dp"
-    app:strokeWidth="1dp"
-    app:strokeColor="#334155">
+    app:cardBackgroundColor="@color/admin_card_bg"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:strokeColor="@color/admin_card_stroke"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="16dp">
 
-        <ImageView
-            android:id="@+id/ivWidgetIcon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginBottom="12dp"
-            android:src="@android:drawable/ic_menu_info_details"
-            app:tint="#60A5FA" />
+        <FrameLayout
+            android:id="@+id/layoutWidgetIconContainer"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/bg_icon_container_sapphire">
+
+            <ImageView
+                android:id="@+id/ivWidgetIcon"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_student_badge"
+                app:tint="@color/admin_sapphire_primary" />
+        </FrameLayout>
 
         <TextView
             android:id="@+id/tvWidgetValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
-            android:textColor="#FFFFFF"
-            android:textSize="28sp"
+            android:textColor="@color/admin_text_primary"
+            android:textSize="24sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvWidgetLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="2dp"
             android:text="Label"
-            android:textColor="#94A3B8"
-            android:textSize="12sp"
+            android:textColor="@color/admin_text_secondary"
+            android:textSize="11sp"
             android:textAllCaps="true"
-            android:letterSpacing="0.1"
+            android:letterSpacing="0.06"
             android:textStyle="bold" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -2,30 +2,64 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="176dp"
-    android:background="@color/sidebar_bg"
+    android:layout_height="190dp"
+    android:background="@drawable/bg_hero_banner"
     android:gravity="bottom"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:padding="20dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/ivUserHeader"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:src="@android:drawable/ic_lock_lock"
-        app:shapeAppearanceOverlay="@style/CircleImage"
-        app:strokeColor="@android:color/white"
-        app:strokeWidth="2dp"
-        app:tint="@android:color/white" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivUserHeader"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@drawable/ic_user_person"
+            android:scaleType="centerCrop"
+            android:background="#1E293B"
+            app:shapeAppearanceOverlay="@style/CircleImageView"
+            app:strokeColor="@android:color/white"
+            app:strokeWidth="2dp"
+            android:contentDescription="Admin Avatar" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="14dp">
+
+            <!-- Executive Role Pill -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="EXECUTIVE PORTAL"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="#93C5FD"
+                android:letterSpacing="0.08" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Learnify Admin"
+                android:textSize="13sp"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvUserNameHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="AceGrade Administrator"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:text="Administrator"
+        android:textSize="17sp"
         android:textStyle="bold"
         android:textColor="@android:color/white" />
 
@@ -33,8 +67,9 @@
         android:id="@+id/tvUserEmailHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="admin@acegrade.com"
-        android:textColor="#B3FFFFFF"
+        android:layout_marginTop="2dp"
+        android:text="admin@learnify.com"
+        android:textColor="#D1D5DB"
         android:textSize="12sp" />
 
 </LinearLayout>

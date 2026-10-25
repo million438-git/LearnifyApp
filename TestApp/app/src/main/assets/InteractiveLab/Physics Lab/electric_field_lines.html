@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Physics: Electric Field Lines Lab</title>
+<style>
+:root{--primary:#6366f1;--dark:#0f172a;--surface:#fff;--bg:#f1f5f9;--glass:rgba(255,255,255,0.92);}
+*{box-sizing:border-box;font-family:'Inter',system-ui,sans-serif;}
+html,body{height:100%;}
+body{margin:0;background:var(--bg);color:var(--dark);display:flex;flex-direction:column;overflow:hidden;}
+header{background:var(--dark);color:#fff;padding:10px;text-align:center;border-bottom:3px solid var(--primary);flex-shrink:0;}
+.lab-container{display:flex;flex:1;overflow:hidden;flex-direction:column;min-height:0;}
+#sim-area{flex:2 1 0;min-height:360px;position:relative;background:#05080f;border-bottom:2px solid #e2e8f0;overflow:hidden;cursor:crosshair;}
+canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;}
+.splitter{height:10px;background:linear-gradient(90deg,rgba(0,0,0,.03),rgba(0,0,0,.06));cursor:ns-resize;flex-shrink:0;}
+.bottom-panel{flex:3 1 0;min-height:0;display:flex;flex-direction:row;background:var(--surface);overflow-y:auto;}
+.controls{flex:0 0 360px;padding:18px;border-right:1px solid #e2e8f0;min-width:300px;}
+.analysis{flex:1 1 720px;padding:18px;background:#fafafa;min-width:420px;}
+.card{background:#fff;border:1px solid #e2e8f0;padding:12px;border-radius:8px;margin-bottom:10px;}
+h4{margin:0 0 10px 0;font-size:.8rem;color:#64748b;text-transform:uppercase;}
+.input-row{margin-bottom:12px;}
+label{display:block;font-size:.8rem;font-weight:600;margin-bottom:4px;}
+input[type=range]{width:100%;accent-color:var(--primary);}
+select{width:100%;padding:6px;border-radius:6px;border:1px solid #cbd5e1;background:#fff;font-family:inherit;}
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+button{padding:10px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;transition:.2s;font-family:inherit;}
+.btn-fire{background:var(--primary);color:#fff;}.btn-fire:hover{background:#4f46e5;}
+.btn-reset{background:#64748b;color:#fff;}.btn-reset:hover{background:#475569;}
+.btn-add{background:linear-gradient(135deg,#f43f5e,#dc2626);color:#fff;}.btn-add:hover{background:linear-gradient(135deg,#dc2626,#991b1b);}
+.btn-addneg{background:linear-gradient(135deg,#3b82f6,#1e40af);color:#fff;}.btn-addneg:hover{background:linear-gradient(135deg,#1e40af,#1e3a8a);}
+.btn-sound{background:#10b981;color:#fff;}.btn-sound.playing{background:#ef4444;}
+.hud{position:absolute;top:10px;left:10px;background:var(--glass);padding:8px 10px;border-radius:8px;font-size:.75rem;border:1px solid #ddd;z-index:20;color:#0f172a;pointer-events:none;}
+.hud .metrics{line-height:1.7;}
+.hud span.val{color:#4f46e5;font-weight:700;font-variant-numeric:tabular-nums;}
+.vector-legend{position:absolute;bottom:10px;left:10px;font-size:.65rem;background:var(--glass);padding:5px 8px;border-radius:4px;color:#0f172a;pointer-events:none;}
+.vector-legend span{margin-right:8px;}
+.tab-btn{padding:8px 12px;border-radius:6px;background:#e2e8f0;color:var(--dark);font-weight:600;font-size:.8rem;border:none;cursor:pointer;}
+.tab-btn.active{background:var(--primary);color:#fff;}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+.readouts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;}
+.readout{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;}
+.readout span{font-size:.7rem;color:#64748b;display:block;}
+.readout strong{font-size:1rem;color:var(--dark);font-variant-numeric:tabular-nums;}
+.readout.hl strong{color:#4f46e5;}
+.readout.good strong{color:#10b981;}
+.quiz-q{padding:10px 0;border-bottom:1px solid #e2e8f0;}
+.quiz-q>strong{display:block;margin-bottom:8px;font-size:.9rem;}
+.quiz-q label{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;margin:3px 6px 3px 0;cursor:pointer;font-weight:500;}
+.quiz-q label:hover{background:#eef2ff;border-color:#6366f1;}
+.explanation{margin-top:8px;padding:10px;border-radius:6px;font-size:.82rem;line-height:1.55;background:#eef2ff;border-left:3px solid #6366f1;}
+.explanation.correct-box{background:#ecfdf5;border-left-color:#10b981;}
+.explanation.wrong-box{background:#fef2f2;border-left-color:#dc2626;}
+.quiz-section{font-size:.72rem;font-weight:700;text-transform:uppercase;color:#6366f1;margin:12px 0 6px 0;letter-spacing:.05em;}
+#quiz-result{margin-top:10px;padding:12px;border-radius:8px;background:#eef2ff;border:1px solid #c7d2fe;font-weight:700;text-align:center;}
+table.formulas{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:6px;}
+table.formulas th,table.formulas td{border:1px solid #e2e8f0;padding:6px 8px;text-align:left;}
+table.formulas th{background:#f1f5f9;font-weight:600;}
+.eq{font-family:'JetBrains Mono',monospace;background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:.82rem;}
+.note{font-size:.82rem;color:#475569;margin-top:8px;line-height:1.5;}
+.sound-hint{background:#fef3c7;border-left:3px solid #f59e0b;padding:8px;border-radius:6px;font-size:.82rem;margin-top:8px;}
+textarea{width:100%;padding:8px;border-radius:6px;border:1px solid #cbd5e1;font-family:inherit;font-size:.85rem;min-height:64px;resize:vertical;}
+@media(max-width:768px){.bottom-panel{flex-direction:column;}.controls{border-right:none;border-bottom:1px solid #eee;min-width:0;}.analysis{min-width:0;}.readouts{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header>
+<h2 style="margin:0;font-size:1.1rem;">⚡ Electric Field Lines Interactive Lab</h2>
+<small>Coulomb's law · Point charges · Field line tracing · Equipotentials</small>
+</header>
+
+<div class="lab-container">
+<div id="sim-area">
+<div class="hud">
+<b>LIVE FIELD</b><br>
+<div class="metrics">
+Charges: <span class="val" id="hud-n">2</span><br>
+Probe field: <span class="val" id="hud-E">0.00</span> N/C<br>
+Probe potential: <span class="val" id="hud-V">0.00</span> V<br>
+Mode: <span class="val" id="hud-mode">Field lines</span>
+</div>
+</div>
+<div class="vector-legend">
+<span style="color:#f43f5e">● Positive charge</span>
+<span style="color:#3b82f6">● Negative charge</span>
+<span style="color:#fbbf24">● Field lines</span>
+</div>
+<canvas id="canvas"></canvas>
+</div>
+
+<div id="splitter" class="splitter"></div>
+
+<div class="bottom-panel">
+<div class="controls">
+<h4>🧪 Lab Controls</h4>
+
+<div class="input-row">
+<button class="btn-sound" id="btn-sound" style="width:100%;">🔈 Enable sound</button>
+<div class="sound-hint" id="sound-hint">Click charges to hear field strength.</div>
+</div>
+
+<div class="input-row">
+<label>Scene preset</label>
+<select id="preset">
+<option value="dipole" selected>Dipole (one +, one −)</option>
+<option value="single+">Single positive charge</option>
+<option value="single-">Single negative charge</option>
+<option value="twoplus">Two positive charges (repulsion)</option>
+<option value="twominus">Two negative charges</option>
+<option value="quadrupole">Quadrupole (2+ and 2−)</option>
+<option value="parallel">Parallel plates (uniform field)</option>
+<option value="line">Line of charges</option>
+<option value="custom">Custom (click to add)</option>
+</select>
+</div>
+
+<div class="input-row">
+<label>Display mode</label>
+<select id="displaymode">
+<option value="lines" selected>Field lines</option>
+<option value="vectors">Vector grid</option>
+<option value="equipot">Equipotential contours</option>
+<option value="heatmap">Field strength heatmap</option>
+<option value="both">Lines + equipotentials</option>
+</select>
+</div>
+
+<div class="input-row">
+<label>Field line density: <span id="v-density">3</span></label>
+<input type="range" id="density" min="1" max="6" step="1" value="3">
+</div>
+
+<div class="input-row">
+<label>Line animation speed: <span id="v-speed">1.0</span>×</label>
+<input type="range" id="speed" min="0" max="3" step="0.1" value="1">
+</div>
+
+<div class="input-row">
+<label style="display:inline-flex;align-items:center;gap:6px;">
+<input type="checkbox" id="probe-toggle" checked> Show probe cursor field
+</label>
+</div>
+
+<div class="input-row">
+<label style="display:inline-flex;align-items:center;gap:6px;">
+<input type="checkbox" id="animate-toggle" checked> Animate field line direction
+</label>
+</div>
+
+<div class="btn-grid">
+<button class="btn-add" id="btn-addpos">+ Add positive</button>
+<button class="btn-addneg" id="btn-addneg">− Add negative</button>
+</div>
+
+<div class="btn-grid" style="margin-top:8px;">
+<button class="btn-fire" id="btn-clear">🗑 Clear all</button>
+<button class="btn-reset" id="btn-reset">↺ Reset</button>
+</div>
+</div>
+
+<div class="analysis">
+<h4>📊 Learn &amp; Practice</h4>
+
+<div class="readouts">
+<div class="readout hl"><span>Probe field |E|</span><strong id="ro-E">0.00 N/C</strong></div>
+<div class="readout"><span>Probe potential V</span><strong id="ro-V">0.00 V</strong></div>
+<div class="readout"><span>Ex component</span><strong id="ro-Ex">0.00 N/C</strong></div>
+<div class="readout"><span>Ey component</span><strong id="ro-Ey">0.00 N/C</strong></div>
+<div class="readout"><span>Field direction</span><strong id="ro-dir">—</strong></div>
+<div class="readout"><span>Charges in scene</span><strong id="ro-n">2</strong></div>
+<div class="readout"><span>Total charge Q_total</span><strong id="ro-Q">0.00 nC</strong></div>
+<div class="readout"><span>Distance to nearest</span><strong id="ro-d">—</strong></div>
+</div>
+
+<div class="card">
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+<button class="tab-btn active" data-tab="formulas">Formulas</button>
+<button class="tab-btn" data-tab="quiz">Quiz</button>
+<button class="tab-btn" data-tab="challenges">Challenges</button>
+<button class="tab-btn" data-tab="notebook">Notebook</button>
+</div>
+
+<div id="formulas" class="tab-panel active">
+<h3 style="margin:6px 0 8px 0;">Core Formulas — Electric Fields</h3>
+<ul style="font-size:.9rem;line-height:1.6;padding-left:1rem;margin:0;">
+<li><b>Coulomb's law:</b> F = k·q₁·q₂/r²</li>
+<li><b>Electric field of a point charge:</b> E = k·|q|/r²</li>
+<li><b>Field direction:</b> away from positive, toward negative</li>
+<li><b>Force on test charge:</b> F = q·E</li>
+<li><b>Superposition:</b> E_total = ΣE_i (vector sum)</li>
+<li><b>Electric potential:</b> V = k·q/r (scalar sum)</li>
+<li><b>Potential energy:</b> U = q·V</li>
+<li><b>Field from potential:</b> E = −∇V</li>
+<li><b>Uniform field (parallel plates):</b> E = V/d</li>
+</ul>
+<p class="note"><b>💡 Key insights:</b> Field lines point <b>away from positive</b> charges and <b>toward negative</b> charges. They never cross. Their density indicates field strength (closer = stronger). The field is always perpendicular to equipotential lines. Around an isolated charge the field falls as 1/r² and the potential as 1/r. For a dipole, the field is strongest between the charges and weakest perpendicular to the axis.</p>
+
+<table class="formulas" style="margin-top:12px;">
+<tr><th>Quantity</th><th>Formula</th><th>Value</th></tr>
+<tr><td>Coulomb constant</td><td><span class="eq">k = 1/(4πε₀)</span></td><td>8.988×10⁹ N·m²/C²</td></tr>
+<tr><td>Elementary charge</td><td><span class="eq">e</span></td><td>1.602×10⁻¹⁹ C</td></tr>
+<tr><td>Permittivity</td><td><span class="eq">ε₀</span></td><td>8.854×10⁻¹² F/m</td></tr>
+</table>
+</div>
+
+<div id="quiz" class="tab-panel" style="max-height:600px;overflow:auto;">
+<h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+<div class="quiz-section">Basic — Electric Field</div>
+<div class="quiz-q" data-q="q1" data-answer="B">
+<strong>1. Electric field lines point:</strong>
+<label><input type="radio" name="q1" value="A"> From negative to positive</label>
+<label><input type="radio" name="q1" value="B"> From positive to negative</label>
+<label><input type="radio" name="q1" value="C"> Toward the center</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q2" data-answer="A">
+<strong>2. The electric field from a point charge falls off as:</strong>
+<label><input type="radio" name="q2" value="A"> 1/r²</label>
+<label><input type="radio" name="q2" value="B"> 1/r</label>
+<label><input type="radio" name="q2" value="C"> 1/r³</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q3" data-answer="B">
+<strong>3. Field lines from two like charges:</strong>
+<label><input type="radio" name="q3" value="A"> Connect directly</label>
+<label><input type="radio" name="q3" value="B"> Repel each other and curve away</label>
+<label><input type="radio" name="q3" value="C"> Stop midway</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Intermediate — Superposition</div>
+<div class="quiz-q" data-q="q4" data-answer="A">
+<strong>4. In an electric dipole (+ and −), the field at the midpoint is:</strong>
+<label><input type="radio" name="q4" value="A"> Strong, pointing from + to −</label>
+<label><input type="radio" name="q4" value="B"> Zero</label>
+<label><input type="radio" name="q4" value="C"> Infinite</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q5" data-answer="B">
+<strong>5. Electric field strength is indicated by:</strong>
+<label><input type="radio" name="q5" value="A"> Color of the field line</label>
+<label><input type="radio" name="q5" value="B"> Density of field lines (closer = stronger)</label>
+<label><input type="radio" name="q5" value="C"> Length of the field line</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q6" data-answer="A">
+<strong>6. The electric potential V from a point charge falls off as:</strong>
+<label><input type="radio" name="q6" value="A"> 1/r</label>
+<label><input type="radio" name="q6" value="B"> 1/r²</label>
+<label><input type="radio" name="q6" value="C"> 1/r³</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Advanced — Deep Understanding</div>
+<div class="quiz-q" data-q="q7" data-answer="B">
+<strong>7. Equipotential lines are always:</strong>
+<label><input type="radio" name="q7" value="A"> Parallel to field lines</label>
+<label><input type="radio" name="q7" value="B"> Perpendicular to field lines</label>
+<label><input type="radio" name="q7" value="C"> Circular</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q8" data-answer="A">
+<strong>8. Field lines can never cross because:</strong>
+<label><input type="radio" name="q8" value="A"> The field has only one direction at any point in space</label>
+<label><input type="radio" name="q8" value="B"> Charges repel each other</label>
+<label><input type="radio" name="q8" value="C"> Energy is conserved</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q9" data-answer="B">
+<strong>9. For two parallel plates at +100V and −100V, the field between them is:</strong>
+<label><input type="radio" name="q9" value="A"> Zero</label>
+<label><input type="radio" name="q9" value="B"> Uniform, pointing from + to −</label>
+<label><input type="radio" name="q9" value="C"> Radial, from center out</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q10" data-answer="A">
+<strong>10. If you double the distance from a point charge, the field:</strong>
+<label><input type="radio" name="q10" value="A"> Drops to 1/4</label>
+<label><input type="radio" name="q10" value="B"> Halves</label>
+<label><input type="radio" name="q10" value="C"> Stays the same</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="btn-grid" style="margin-top:12px;">
+<button class="btn-fire" id="btn-quiz-check">Submit Quiz</button>
+<button class="btn-reset" id="btn-quiz-reset">Reset</button>
+</div>
+<div id="quiz-result" style="display:none;"></div>
+</div>
+
+<div id="challenges" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Challenges</h3>
+<div style="display:flex;flex-direction:column;gap:8px;font-size:.9rem;">
+<div><b>1. Dipole</b><br><button class="btn-fire" data-challenge="dipole">+ and − charges side by side</button></div>
+<div><b>2. Like charges</b><br><button class="btn-fire" data-challenge="like">Two + charges repel</button></div>
+<div><b>3. Uniform field</b><br><button class="btn-fire" data-challenge="uniform">Parallel plates</button></div>
+<div><b>4. Quadrupole</b><br><button class="btn-fire" data-challenge="quad">Four charges arranged</button></div>
+<div><b>5. Line of charges</b><br><button class="btn-fire" data-challenge="line">Field of a line of charge</button></div>
+<div id="challenge-note" style="color:#0f172a;font-size:.85rem;"></div>
+<div id="challenge-result" style="color:#083344;font-weight:600;margin-top:6px;"></div>
+</div>
+</div>
+
+<div id="notebook" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Notebook</h3>
+<label>Hypothesis</label>
+<textarea id="hypothesis" placeholder="What do you expect?"></textarea>
+<label style="margin-top:10px;display:block;">Conclusion</label>
+<textarea id="conclusion" placeholder="What did you observe?"></textarea>
+<label style="margin-top:10px;display:block;">Measurements</label>
+<textarea id="records" readonly style="background:#f8fafc;font-family:monospace;font-size:.75rem;min-height:100px;"></textarea>
+<div class="btn-grid" style="margin-top:10px;">
+<button class="btn-fire" id="btn-record">📋 Record</button>
+<button class="btn-reset" id="btn-clear-notes">Clear</button>
+</div>
+<button class="btn-fire" style="margin-top:8px;width:100%;" id="btn-export">⬇ Report</button>
+</div>
+</div>
+
+<div class="card">
+<b>Real fact:</b> <span id="fact-box" style="font-size:.85rem;">—</span>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+"use strict";
+(function(){
+
+// ============ CONSTANTS ============
+var K_E = 8.9875517923e9;    // Coulomb constant, N·m²/C²
+var EPS_0 = 8.8541878128e-12;
+var E_CHARGE = 1.602176634e-19;
+var NANO = 1e-9;
+
+// ============ STATE ============
+var S = {
+    preset: 'dipole',
+    displayMode: 'lines',
+    density: 3,      // field lines per unit charge
+    lineSpeed: 1.0,
+    showProbe: true,
+    animate: true,
+    soundOn: false,
+    time: 0,
+    charges: [],     // {x, y, q} in world meters, q in nanocoulombs
+    probeX: 0,
+    probeY: 0,
+    probeActive: false,
+    debugCount: 0,
+    records: []
+};
+
+var $ = function(id){ return document.getElementById(id); };
+var canvas = $('canvas');
+var ctx = canvas.getContext('2d');
+var dpr = window.devicePixelRatio || 1;
+var view = { x:0, y:0, scale:1 };
+var lastW = 0, lastH = 0;
+
+// World extent shown in canvas: 10 m × 10 m roughly
+var WORLD_W = 10;  // meters wide (canvas fits this)
+var WORLD_H = 8;   // meters tall (scaled to canvas aspect)
+
+// ============ CANVAS ============
+function resizeCanvas(){
+    var rect = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(rect.width));
+    var h = Math.max(1, Math.round(rect.height));
+    if (w === lastW && h === lastH) return;
+    lastW = w; lastH = h;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function cw(){ return canvas.width / dpr; }
+function ch(){ return canvas.height / dpr; }
+
+// World to screen
+function worldToScreen(wx, wy){
+    var w = cw(), h = ch();
+    var cx = w / 2, cy = h / 2;
+    var scaleX = w / WORLD_W;
+    var scaleY = h / WORLD_H;
+    return {
+        x: cx + wx * scaleX,
+        y: cy - wy * scaleY  // y flipped (screen y down, world y up)
+    };
+}
+function screenToWorld(sx, sy){
+    var w = cw(), h = ch();
+    var cx = w / 2, cy = h / 2;
+    var scaleX = w / WORLD_W;
+    var scaleY = h / WORLD_H;
+    return {
+        x: (sx - cx) / scaleX,
+        y: -(sy - cy) / scaleY
+    };
+}
+
+// ============ AUDIO ============
+var audioCtx = null;
+function initAudio(){
+    if (audioCtx) return;
+    try {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) { $('sound-hint').textContent = '⚠ No Web Audio.'; return; }
+        audioCtx = new AC();
+    } catch(e){ $('sound-hint').textContent = '⚠ Audio init failed.'; }
+}
+function beep(freq, dur, type, vol){
+    if (!audioCtx || !S.soundOn) return;
+    try {
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = type || 'sine';
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(vol || 0.06, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + dur);
+    } catch(e){}
+}
+function toggleSound(){
+    initAudio();
+    if (!audioCtx) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    S.soundOn = !S.soundOn;
+    if (S.soundOn) {
+        $('btn-sound').textContent = '🔊 Sound ON';
+        $('btn-sound').classList.add('playing');
+        beep(440, 0.1, 'sine', 0.1);
+    } else {
+        $('btn-sound').textContent = '🔈 Enable sound';
+        $('btn-sound').classList.remove('playing');
+    }
+}
+
+// ============ PHYSICS ============
+// Compute net electric field at world point (wx, wy) due to all charges
+// Returns {Ex, Ey, E_mag} in N/C
+function computeField(wx, wy){
+    var Ex = 0, Ey = 0;
+    S.charges.forEach(function(c){
+        var dx = wx - c.x;
+        var dy = wy - c.y;
+        var r2 = dx*dx + dy*dy;
+        var r = Math.sqrt(r2);
+        if (r < 0.01) return; // avoid singularities at charge location
+        // q in nanocoulombs → coulombs
+        var qC = c.q * NANO;
+        // E = k·q/r², directed along (dx, dy)
+        var Emag = K_E * qC / r2;
+        Ex += Emag * dx / r;
+        Ey += Emag * dy / r;
+    });
+    return {
+        Ex: Ex,
+        Ey: Ey,
+        mag: Math.sqrt(Ex*Ex + Ey*Ey)
+    };
+}
+
+// Compute electric potential at world point (wx, wy) — scalar sum
+function computePotential(wx, wy){
+    var V = 0;
+    S.charges.forEach(function(c){
+        var dx = wx - c.x;
+        var dy = wy - c.y;
+        var r = Math.sqrt(dx*dx + dy*dy);
+        if (r < 0.01) return;
+        var qC = c.q * NANO;
+        V += K_E * qC / r;
+    });
+    return V;
+}
+
+// Total charge
+function getTotalCharge(){
+    var Q = 0;
+    S.charges.forEach(function(c){ Q += c.q; });
+    return Q;
+}
+
+// ============ PRESETS ============
+function applyPreset(name){
+    S.charges = [];
+    if (name === 'dipole') {
+        S.charges.push({ x: -1.5, y: 0, q: 1 });
+        S.charges.push({ x: 1.5, y: 0, q: -1 });
+    } else if (name === 'single+') {
+        S.charges.push({ x: 0, y: 0, q: 1 });
+    } else if (name === 'single-') {
+        S.charges.push({ x: 0, y: 0, q: -1 });
+    } else if (name === 'twoplus') {
+        S.charges.push({ x: -1.5, y: 0, q: 1 });
+        S.charges.push({ x: 1.5, y: 0, q: 1 });
+    } else if (name === 'twominus') {
+        S.charges.push({ x: -1.5, y: 0, q: -1 });
+        S.charges.push({ x: 1.5, y: 0, q: -1 });
+    } else if (name === 'quadrupole') {
+        S.charges.push({ x: -1.5, y: 1.5, q: 1 });
+        S.charges.push({ x: 1.5, y: 1.5, q: -1 });
+        S.charges.push({ x: -1.5, y: -1.5, q: -1 });
+        S.charges.push({ x: 1.5, y: -1.5, q: 1 });
+    } else if (name === 'parallel') {
+        // Parallel plates represented by rows of charges
+        for (var i = 0; i < 10; i++) {
+            S.charges.push({ x: -2.5, y: -1.5 + i * 0.33, q: 0.5 });
+        }
+        for (var j = 0; j < 10; j++) {
+            S.charges.push({ x: 2.5, y: -1.5 + j * 0.33, q: -0.5 });
+        }
+    } else if (name === 'line') {
+        for (var i = 0; i < 8; i++) {
+            S.charges.push({ x: 0, y: -2 + i * 0.5, q: 0.3 });
+        }
+    } else if (name === 'custom') {
+        // Start empty for clicking
+    }
+    S.preset = name;
+    $('preset').value = name;
+    updateReadouts();
+}
+
+// ============ FIELD LINE TRACING ============
+// Trace field lines starting from positive charges
+// Returns list of {points: [{x,y}], sign: +1 or -1}
+function traceFieldLines(){
+    var lines = [];
+    if (S.charges.length === 0) return lines;
+
+    // For each positive charge, emit lines in many directions
+    S.charges.forEach(function(c){
+        if (c.q <= 0) return;
+        var numLines = Math.round(Math.abs(c.q) * S.density * 8);
+        if (numLines < 4) numLines = 4;
+        for (var i = 0; i < numLines; i++) {
+            var angle = (i / numLines) * Math.PI * 2;
+            var startR = 0.1; // start slightly away from charge center
+            var startX = c.x + Math.cos(angle) * startR;
+            var startY = c.y + Math.sin(angle) * startR;
+            var line = traceSingleLine(startX, startY, c);
+            if (line.points.length > 2) {
+                lines.push(line);
+            }
+        }
+    });
+
+    // For each negative charge, emit lines going INTO it
+    S.charges.forEach(function(c){
+        if (c.q >= 0) return;
+        var numLines = Math.round(Math.abs(c.q) * S.density * 8);
+        if (numLines < 4) numLines = 4;
+        for (var i = 0; i < numLines; i++) {
+            var angle = (i / numLines) * Math.PI * 2;
+            var startR = 0.1;
+            var startX = c.x + Math.cos(angle) * startR;
+            var startY = c.y + Math.sin(angle) * startR;
+            // Trace BACKWARD (against field) from negative charge
+            var line = traceSingleLine(startX, startY, c, true);
+            if (line.points.length > 2) {
+                lines.push(line);
+            }
+        }
+    });
+
+    return lines;
+}
+
+function traceSingleLine(startX, startY, sourceCharge, backward){
+    var points = [{ x: startX, y: startY }];
+    var x = startX, y = startY;
+    var step = 0.08;  // meters per step
+    var maxSteps = 400;
+    var maxDist = 8;  // max distance from origin
+
+    for (var s = 0; s < maxSteps; s++) {
+        var E = computeField(x, y);
+        var Emag = E.mag;
+        if (Emag < 1e-3) break;  // field too weak
+        var dx = E.Ex / Emag;
+        var dy = E.Ey / Emag;
+        if (backward) { dx = -dx; dy = -dy; }
+        // Adaptive step: smaller when field is strong near charges
+        var thisStep = step;
+        if (Emag > 1000) thisStep = step * 0.2;
+        else if (Emag > 100) thisStep = step * 0.5;
+        x += dx * thisStep;
+        y += dy * thisStep;
+        points.push({ x: x, y: y });
+
+        // Stop if we hit another charge
+        var hit = false;
+        for (var i = 0; i < S.charges.length; i++) {
+            var other = S.charges[i];
+            if (other === sourceCharge && s < 20) continue; // skip source for first few
+            var d = Math.hypot(x - other.x, y - other.y);
+            if (d < 0.1 && (backward ? other.q > 0 : other.q < 0)) {
+                hit = true;
+                break;
+            }
+            if (other !== sourceCharge && d < 0.1) {
+                hit = true;
+                break;
+            }
+        }
+        if (hit) break;
+        // Stop if too far
+        if (Math.hypot(x, y) > maxDist) break;
+        // Stop if out of world bounds
+        if (Math.abs(x) > WORLD_W || Math.abs(y) > WORLD_H) break;
+    }
+
+    return { points: points };
+}
+
+// ============ DRAW ============
+function drawScene(){
+    resizeCanvas();
+    var w = cw(), h = ch();
+    if (w < 10 || h < 10) return;
+
+    // Dark background
+    var bg = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w,h)/1.2);
+    bg.addColorStop(0, '#0a0f1f');
+    bg.addColorStop(1, '#050810');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+
+    // Grid
+    var scaleX = w / WORLD_W;
+    ctx.strokeStyle = 'rgba(99,102,241,0.08)';
+    ctx.lineWidth = 1;
+    for (var gx = -5; gx <= 5; gx += 1) {
+        var p = worldToScreen(gx, 0);
+        ctx.beginPath();
+        ctx.moveTo(p.x, 0);
+        ctx.lineTo(p.x, h);
+        ctx.stroke();
+    }
+    for (var gy = -4; gy <= 4; gy += 1) {
+        var p2 = worldToScreen(0, gy);
+        ctx.beginPath();
+        ctx.moveTo(0, p2.y);
+        ctx.lineTo(w, p2.y);
+        ctx.stroke();
+    }
+    // Axis lines
+    ctx.strokeStyle = 'rgba(99,102,241,0.2)';
+    ctx.lineWidth = 1.5;
+    var origin = worldToScreen(0, 0);
+    ctx.beginPath();
+    ctx.moveTo(0, origin.y);
+    ctx.lineTo(w, origin.y);
+    ctx.moveTo(origin.x, 0);
+    ctx.lineTo(origin.x, h);
+    ctx.stroke();
+
+    // Draw based on display mode
+    var mode = S.displayMode;
+    if (mode === 'heatmap') {
+        drawHeatmap();
+    } else if (mode === 'vectors') {
+        drawVectorGrid();
+    } else if (mode === 'equipot') {
+        drawEquipotentials();
+    } else if (mode === 'both') {
+        drawFieldLines();
+        drawEquipotentials();
+    } else {
+        drawFieldLines();
+    }
+
+    // Draw charges on top
+    drawCharges();
+
+    // Draw probe
+    if (S.showProbe && S.probeActive) {
+        drawProbe();
+    }
+
+    // Legend / status
+    var modeLabel = {lines:'Field lines', vectors:'Vector grid', equipot:'Equipotentials', heatmap:'Field heatmap', both:'Lines + Equipotentials'}[mode];
+    ctx.fillStyle = 'rgba(203,213,225,0.85)';
+    ctx.font = 'bold 12px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText(modeLabel + ' · ' + S.charges.length + ' charges · ' + (getTotalCharge() >= 0 ? '+' : '') + getTotalCharge().toFixed(2) + ' nC', w/2, 24);
+
+    // Live pulse
+    var pulseR = 5 + 3 * Math.sin(S.time * 4);
+    ctx.fillStyle = 'rgba(16,185,129,0.9)';
+    ctx.beginPath();
+    ctx.arc(w - 25, 25, pulseR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#10b981';
+    ctx.font = 'bold 9px Inter';
+    ctx.textAlign = 'right';
+    ctx.fillText('LIVE', w - 38, 28);
+
+    // Caption
+    ctx.fillStyle = 'rgba(148,163,184,0.7)';
+    ctx.font = '11px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('Field lines point away from + charges and toward − charges · click to add charges · hover to probe field', w/2, h - 8);
+}
+
+function drawFieldLines(){
+    var lines = traceFieldLines();
+    var phase = (S.time * S.lineSpeed) % 1;  // 0 to 1, for animated dashes
+    lines.forEach(function(line, idx){
+        if (line.points.length < 2) return;
+        // Draw line as path
+        ctx.strokeStyle = 'rgba(251,191,36,0.7)';
+        ctx.lineWidth = 1.5;
+        ctx.shadowColor = '#fbbf24';
+        ctx.shadowBlur = 4;
+        ctx.beginPath();
+        var first = worldToScreen(line.points[0].x, line.points[0].y);
+        ctx.moveTo(first.x, first.y);
+        for (var i = 1; i < line.points.length; i++) {
+            var p = worldToScreen(line.points[i].x, line.points[i].y);
+            ctx.lineTo(p.x, p.y);
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Animated moving dot along the line if animate enabled
+        if (S.animate) {
+            var totalLen = line.points.length;
+            var pos = Math.floor(((idx * 0.37 + phase * 3) % 1) * totalLen);
+            if (pos < totalLen) {
+                var pt = worldToScreen(line.points[pos].x, line.points[pos].y);
+                ctx.fillStyle = '#fff';
+                ctx.shadowColor = '#fbbf24';
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+    });
+}
+
+function drawVectorGrid(){
+    // Draw small arrows at grid points
+    var step = 0.5;  // meters
+    for (var wx = -WORLD_W/2; wx <= WORLD_W/2; wx += step) {
+        for (var wy = -WORLD_H/2; wy <= WORLD_H/2; wy += step) {
+            var E = computeField(wx, wy);
+            if (E.mag < 1e-3) continue;
+            var p = worldToScreen(wx, wy);
+            var scale = Math.min(20, 10 + Math.log10(E.mag + 1) * 8);
+            var dx = (E.Ex / E.mag) * scale;
+            var dy = -(E.Ey / E.mag) * scale;  // flip y
+            // Color by magnitude (blue weak → red strong)
+            var t = Math.min(1, Math.log10(E.mag + 1) / 3);
+            var r = Math.round(100 + t * 155);
+            var g = Math.round(150 - t * 100);
+            var b = Math.round(255 - t * 200);
+            ctx.strokeStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
+            ctx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p.x + dx, p.y + dy);
+            ctx.stroke();
+            // Arrowhead
+            var ang = Math.atan2(dy, dx);
+            var sz = 5;
+            ctx.beginPath();
+            ctx.moveTo(p.x + dx, p.y + dy);
+            ctx.lineTo(p.x + dx - sz * Math.cos(ang - 0.4), p.y + dy - sz * Math.sin(ang - 0.4));
+            ctx.lineTo(p.x + dx - sz * Math.cos(ang + 0.4), p.y + dy - sz * Math.sin(ang + 0.4));
+            ctx.closePath();
+            ctx.fill();
+        }
+    }
+}
+
+function drawHeatmap(){
+    // Sample field magnitude on grid, render as colored pixels
+    var step = 4;  // pixels
+    var w = cw(), h = ch();
+    for (var px = 0; px < w; px += step) {
+        for (var py = 0; py < h; py += step) {
+            var world = screenToWorld(px, py);
+            var E = computeField(world.x, world.y);
+            var t = Math.min(1, Math.log10(E.mag + 1) / 3);
+            var r = Math.round(80 + t * 175);
+            var g = Math.round(100 + t * 80);
+            var b = Math.round(200 - t * 180);
+            ctx.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + (0.3 + t * 0.5) + ')';
+            ctx.fillRect(px, py, step, step);
+        }
+    }
+}
+
+function drawEquipotentials(){
+    // Draw equipotential contours at fixed voltage intervals
+    // Simple approach: scan grid and draw where potential crosses contour level
+    // Contour levels: ±10, ±30, ±100, ±300 V etc.
+    var levels = [5, 15, 50, 150, 500, 1500];
+    var step = 6;  // pixels
+
+    var w = cw(), h = ch();
+    var cols = Math.ceil(w / step) + 1;
+    var rows = Math.ceil(h / step) + 1;
+
+    // Precompute potential on grid
+    var potentials = [];
+    for (var i = 0; i < cols; i++) {
+        potentials[i] = [];
+        for (var j = 0; j < rows; j++) {
+            var world = screenToWorld(i * step, j * step);
+            potentials[i][j] = computePotential(world.x, world.y);
+        }
+    }
+
+    // Draw contours
+    var colors = ['#8b5cf6', '#6366f1', '#3b82f6', '#06b6d4', '#10b981', '#f59e0b'];
+    levels.forEach(function(level, idx){
+        var color = colors[idx] || '#8b5cf6';
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 3;
+        // For each cell, check if potential crosses level
+        for (var i = 0; i < cols - 1; i++) {
+            for (var j = 0; j < rows - 1; j++) {
+                var p00 = potentials[i][j];
+                var p10 = potentials[i+1][j];
+                var p01 = potentials[i][j+1];
+                var p11 = potentials[i+1][j+1];
+                var crossed = [false, false, false, false];
+                // Check each edge
+                if ((p00 - level) * (p10 - level) < 0) crossed[0] = true; // top edge
+                if ((p00 - level) * (p01 - level) < 0) crossed[1] = true; // left edge
+                if ((p10 - level) * (p11 - level) < 0) crossed[2] = true; // right edge
+                if ((p01 - level) * (p11 - level) < 0) crossed[3] = true; // bottom edge
+                var numCrossed = crossed.filter(function(c){ return c; }).length;
+                if (numCrossed >= 1) {
+                    ctx.fillStyle = color;
+                    ctx.globalAlpha = 0.4;
+                    ctx.fillRect(i * step, j * step, step, step);
+                    ctx.globalAlpha = 1;
+                }
+            }
+        }
+        ctx.shadowBlur = 0;
+    });
+
+    // Also draw positive/negative contours with signs
+    ctx.fillStyle = 'rgba(203,213,225,0.7)';
+    ctx.font = '10px Inter';
+    ctx.textAlign = 'left';
+    ctx.fillText('Equipotential contours (V = const)', 10, 20);
+}
+
+function drawCharges(){
+    S.charges.forEach(function(c){
+        var p = worldToScreen(c.x, c.y);
+        var radius = 10 + Math.abs(c.q) * 3;
+        // Glow
+        var glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, radius * 2.5);
+        var color = c.q > 0 ? '244,63,94' : (c.q < 0 ? '59,130,246' : '148,163,184');
+        glow.addColorStop(0, 'rgba(' + color + ',0.8)');
+        glow.addColorStop(1, 'rgba(' + color + ',0)');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, radius * 2.5, 0, Math.PI * 2);
+        ctx.fill();
+        // Disc
+        ctx.fillStyle = c.q > 0 ? '#f43f5e' : (c.q < 0 ? '#3b82f6' : '#94a3b8');
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        // Sign
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold ' + Math.round(radius * 1.2) + 'px Inter';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(c.q > 0 ? '+' : (c.q < 0 ? '−' : '0'), p.x, p.y + 1);
+        ctx.textBaseline = 'alphabetic';
+    });
+}
+
+function drawProbe(){
+    var world = screenToWorld(S.probeX, S.probeY);
+    var E = computeField(world.x, world.y);
+    var p = { x: S.probeX, y: S.probeY };
+    // Probe crosshair
+    ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 10, 0, Math.PI * 2);
+    ctx.moveTo(p.x - 15, p.y);
+    ctx.lineTo(p.x + 15, p.y);
+    ctx.moveTo(p.x, p.y - 15);
+    ctx.lineTo(p.x, p.y + 15);
+    ctx.stroke();
+    // Field arrow at probe
+    if (E.mag > 1e-3) {
+        var scale = Math.min(40, 15 + Math.log10(E.mag + 1) * 10);
+        var dx = (E.Ex / E.mag) * scale;
+        var dy = -(E.Ey / E.mag) * scale;
+        ctx.strokeStyle = '#fbbf24';
+        ctx.fillStyle = '#fbbf24';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p.x + dx, p.y + dy);
+        ctx.stroke();
+        var ang = Math.atan2(dy, dx);
+        var sz = 8;
+        ctx.beginPath();
+        ctx.moveTo(p.x + dx, p.y + dy);
+        ctx.lineTo(p.x + dx - sz * Math.cos(ang - 0.4), p.y + dy - sz * Math.sin(ang - 0.4));
+        ctx.lineTo(p.x + dx - sz * Math.cos(ang + 0.4), p.y + dy - sz * Math.sin(ang + 0.4));
+        ctx.closePath();
+        ctx.fill();
+    }
+    // Readout
+    ctx.fillStyle = 'rgba(0,0,0,0.7)';
+    ctx.fillRect(p.x + 20, p.y - 30, 140, 40);
+    ctx.strokeStyle = '#fbbf24';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(p.x + 20, p.y - 30, 140, 40);
+    ctx.fillStyle = '#fbbf24';
+    ctx.font = 'bold 11px Inter';
+    ctx.textAlign = 'left';
+    ctx.fillText('|E| = ' + E.mag.toFixed(2) + ' N/C', p.x + 26, p.y - 15);
+    ctx.fillText('V = ' + computePotential(world.x, world.y).toFixed(1) + ' V', p.x + 26, p.y - 2);
+}
+
+// ============ READOUTS ============
+function updateReadouts(){
+    var world = screenToWorld(S.probeX, S.probeY);
+    var E = computeField(world.x, world.y);
+    var V = computePotential(world.x, world.y);
+
+    $('ro-E').innerText = E.mag.toFixed(3) + ' N/C';
+    $('ro-V').innerText = V.toFixed(2) + ' V';
+    $('ro-Ex').innerText = E.Ex.toFixed(3) + ' N/C';
+    $('ro-Ey').innerText = E.Ey.toFixed(3) + ' N/C';
+
+    var dir = '—';
+    if (E.mag > 1e-6) {
+        var angle = Math.atan2(E.Ey, E.Ex) * 180 / Math.PI;
+        dir = angle.toFixed(1) + '°';
+    }
+    $('ro-dir').innerText = dir;
+
+    $('ro-n').innerText = S.charges.length;
+    var Q = getTotalCharge();
+    $('ro-Q').innerText = (Q >= 0 ? '+' : '') + Q.toFixed(2) + ' nC';
+
+    // Nearest charge distance
+    var nearest = Infinity;
+    S.charges.forEach(function(c){
+        var d = Math.hypot(world.x - c.x, world.y - c.y);
+        if (d < nearest) nearest = d;
+    });
+    $('ro-d').innerText = isFinite(nearest) ? nearest.toFixed(2) + ' m' : '—';
+
+    $('hud-n').innerText = S.charges.length;
+    $('hud-E').innerText = E.mag.toFixed(2);
+    $('hud-V').innerText = V.toFixed(1);
+    $('hud-mode').innerText = $('displaymode').options[$('displaymode').selectedIndex].text;
+
+    // Fact
+    var fact;
+    if (S.charges.length === 0) {
+        fact = 'No charges. Select a preset from the dropdown, or click "Add positive" / "Add negative" to place charges, then click on the canvas.';
+    } else if (S.preset === 'parallel') {
+        fact = 'Parallel plates: a nearly uniform field between the plates, pointing from + to −. This is how a capacitor stores energy. E = V/d inside.';
+    } else if (S.preset === 'dipole') {
+        fact = 'Electric dipole: field lines flow from + to −. The field is strongest between the charges, drops off quickly. Real dipoles exist in water molecules (H₂O) and many organic compounds.';
+    } else if (S.preset === 'twoplus' || S.preset === 'twominus') {
+        fact = 'Like charges: field lines repel each other and never cross. The field is zero exactly midway between equal like charges.';
+    } else if (S.preset === 'quadrupole') {
+        fact = 'Quadrupole: a symmetric arrangement of four charges. The field falls off faster (1/r³) than a dipole. Used in particle accelerators and mass spectrometers.';
+    } else if (S.preset === 'line') {
+        fact = 'Line of charges: the field wraps around the line, becoming more radial at distance. A real infinite line charge creates a cylindrical field (E ∝ 1/r).';
+    } else {
+        fact = 'Field lines point away from + charges and toward − charges. Their density shows field strength. Lines never cross because the field has only one direction at each point.';
+    }
+    $('fact-box').innerText = fact;
+}
+
+// ============ QUIZ ============
+var QUIZ_EXPLAIN = {
+    q1:{correct:'B',why:'By convention, electric field lines point <b>from positive to negative</b>. This is the direction of force that a positive test charge would feel.',tip:'Remember: field lines point AWAY from +, TOWARD −.'},
+    q2:{correct:'A',why:'E = k·q/r². Field falls as <b>1/r²</b> from a point charge. (Potential falls as 1/r — slower!)',tip:'Doubling distance cuts field to 1/4, but potential only to 1/2.'},
+    q3:{correct:'B',why:'Like charges repel, so their field lines curve away from each other. They bend outward and never directly connect.',tip:'This is why you can tell apart + and − by whether lines connect or fly apart.'},
+    q4:{correct:'A',why:'At the dipole midpoint, both fields point the same direction (from + toward −). They add up — field is strong and points from + to −.',tip:'Far away, dipole field falls as 1/r³.'},
+    q5:{correct:'B',why:'Denser field lines = stronger field. In a uniform field, lines are equally spaced. Near a charge, lines are dense.',tip:'Number of lines per unit area ∝ |E|.'},
+    q6:{correct:'A',why:'V = k·q/r. Potential falls as <b>1/r</b> — slower than the field (1/r²).',tip:'Field = −dV/dr, which recovers the 1/r² drop of E.'},
+    q7:{correct:'B',why:'Equipotentials are always perpendicular to field lines. No work is done moving along an equipotential, so the field must be perpendicular to it.',tip:'Just like contour lines on a map perpendicular to the steepest descent direction.'},
+    q8:{correct:'A',why:'At any point in space, the electric field has a <b>unique direction</b>. If lines crossed, the field would have two directions at once — impossible.',tip:'This also follows from the fact that the field is the gradient of a potential (single-valued).'},
+    q9:{correct:'B',why:'Two parallel plates at different voltages produce a nearly <b>uniform field</b> between them, pointing from the higher voltage (+) to lower (−). E = V/d.',tip:'This is the field inside a parallel-plate capacitor.'},
+    q10:{correct:'A',why:'E ∝ 1/r². Doubling r means field drops to 1/2² = <b>1/4</b>.',tip:'Inverse-square law — same as gravity.'}
+};
+
+function evaluateQuiz(){
+    var qs = document.querySelectorAll('.quiz-q');
+    var score = 0;
+    qs.forEach(function(q){
+        var name = q.dataset.q;
+        var correct = q.dataset.answer;
+        var chosen = q.querySelector('input[name="'+name+'"]:checked');
+        var expl = q.querySelector('.explanation');
+        var data = QUIZ_EXPLAIN[name];
+        expl.hidden = false;
+        expl.className = 'explanation';
+        if (chosen && chosen.value === correct) {
+            score++;
+            expl.classList.add('correct-box');
+            expl.innerHTML = '<strong>✓ Correct!</strong> ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:#475569;"><b>💡</b> ' + data.tip + '</div>';
+        } else {
+            expl.classList.add('wrong-box');
+            var cv = chosen ? chosen.value : '—';
+            expl.innerHTML = '<strong>✗ Answer: ' + correct + '</strong> You chose ' + cv + '. ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:#475569;"><b>💡</b> ' + data.tip + '</div>';
+        }
+    });
+    var pct = Math.round(score/qs.length*100);
+    beep(pct>=78?880:440,0.15,'sine',0.1);
+    var r = $('quiz-result');
+    r.style.display = 'block';
+    r.innerHTML = '<div style="font-size:1.4rem;color:#4338ca;">' + score + '/' + qs.length + ' · ' + pct + '%</div>';
+}
+function resetQuiz(){
+    document.querySelectorAll('.quiz-q').forEach(function(q){
+        q.querySelectorAll('input[type=radio]').forEach(function(r){ r.checked = false; });
+        var e = q.querySelector('.explanation');
+        e.hidden = true; e.innerHTML = ''; e.className = 'explanation';
+    });
+    $('quiz-result').style.display = 'none';
+}
+
+// ============ CHALLENGES ============
+function applyChallenge(id){
+    var note = $('challenge-note'), cres = $('challenge-result');
+    note.innerText = ''; cres.innerText = '';
+    if (id === 'dipole') {
+        applyPreset('dipole');
+        S.displayMode = 'both';
+        $('displaymode').value = 'both';
+        note.innerText = 'Dipole: field lines flow from + to −. The equipotentials are perpendicular to the field lines.';
+    } else if (id === 'like') {
+        applyPreset('twoplus');
+        S.displayMode = 'lines';
+        $('displaymode').value = 'lines';
+        note.innerText = 'Two positive charges: field lines repel and curve outward. Field is exactly zero at the midpoint.';
+    } else if (id === 'uniform') {
+        applyPreset('parallel');
+        S.displayMode = 'lines';
+        $('displaymode').value = 'lines';
+        note.innerText = 'Parallel plates: uniform field between, weaker outside.';
+    } else if (id === 'quad') {
+        applyPreset('quadrupole');
+        S.displayMode = 'both';
+        $('displaymode').value = 'both';
+        note.innerText = 'Quadrupole: alternating + and − charges create a symmetric field. Used in accelerators.';
+    } else if (id === 'line') {
+        applyPreset('line');
+        S.displayMode = 'vectors';
+        $('displaymode').value = 'vectors';
+        note.innerText = 'Line of positive charges: radial field, becoming more cylindrical with distance.';
+    }
+    updateReadouts();
+}
+
+// ============ NOTEBOOK ============
+function recordMeasurement(){
+    var world = screenToWorld(S.probeX, S.probeY);
+    var E = computeField(world.x, world.y);
+    var V = computePotential(world.x, world.y);
+    var line = new Date().toLocaleTimeString() + ' | probe at (' + world.x.toFixed(2) + ',' + world.y.toFixed(2) + ') m | |E|=' + E.mag.toFixed(2) + ' N/C | V=' + V.toFixed(2) + 'V | charges=' + S.charges.length + ' | preset=' + S.preset;
+    S.records.push(line);
+    $('records').value = S.records.join('\n');
+    $('records').scrollTop = $('records').scrollHeight;
+}
+function downloadReport(){
+    var text = 'ELECTRIC FIELD LINES LAB REPORT\nDate: ' + new Date().toLocaleString() + '\n\n' +
+        'Scene preset: ' + S.preset + '\n' +
+        'Number of charges: ' + S.charges.length + '\n' +
+        'Total charge: ' + getTotalCharge().toFixed(3) + ' nC\n' +
+        'Display mode: ' + S.displayMode + '\n\n' +
+        'CHARGES:\n';
+    S.charges.forEach(function(c, i){
+        text += '  ' + (i+1) + '. q = ' + (c.q >= 0 ? '+' : '') + c.q + ' nC at (' + c.x.toFixed(2) + ', ' + c.y.toFixed(2) + ') m\n';
+    });
+    text += '\nPROBE READING\n' +
+        'Probe position: (' + screenToWorld(S.probeX, S.probeY).x.toFixed(2) + ', ' + screenToWorld(S.probeX, S.probeY).y.toFixed(2) + ') m\n' +
+        '|E| = ' + computeField(screenToWorld(S.probeX, S.probeY).x, screenToWorld(S.probeX, S.probeY).y).mag.toFixed(4) + ' N/C\n' +
+        'V = ' + computePotential(screenToWorld(S.probeX, S.probeY).x, screenToWorld(S.probeX, S.probeY).y).toFixed(4) + ' V\n\n' +
+        'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+        'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+        'MEASUREMENTS\n' + $('records').value + '\n\n' +
+        'LIMITATIONS\nIdeal point charges in vacuum. Field lines are traced numerically with finite step size, so they may be approximate near singularities. Superposition assumed (no interaction between charges). Educational use only.\n';
+    var blob = new Blob([text], {type:'text/plain'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'electric-field-report.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+// ============ ANIMATION ============
+var lastT = 0;
+function animate(now){
+    if (!lastT) lastT = now;
+    var dt = (now - lastT) / 1000;
+    if (dt > 0.2) dt = 0.016;
+    lastT = now;
+    S.time += dt;
+    S.debugCount++;
+    drawScene();
+    updateReadouts();
+    requestAnimationFrame(animate);
+}
+
+// ============ EVENT WIRING ============
+$('btn-sound').addEventListener('click', toggleSound);
+
+$('preset').addEventListener('change', function(e){
+    applyPreset(e.target.value);
+});
+
+$('displaymode').addEventListener('change', function(e){
+    S.displayMode = e.target.value;
+});
+
+$('density').addEventListener('input', function(e){
+    S.density = parseInt(e.target.value);
+    $('v-density').innerText = S.density;
+});
+
+$('speed').addEventListener('input', function(e){
+    S.lineSpeed = parseFloat(e.target.value);
+    $('v-speed').innerText = S.lineSpeed.toFixed(1);
+});
+
+$('probe-toggle').addEventListener('change', function(e){
+    S.showProbe = e.target.checked;
+});
+
+$('animate-toggle').addEventListener('change', function(e){
+    S.animate = e.target.checked;
+});
+
+$('btn-addpos').addEventListener('click', function(){
+    S.preset = 'custom';
+    $('preset').value = 'custom';
+    // Prompt user via hint
+    $('sound-hint').textContent = 'Click on the canvas to place a +1 nC charge.';
+    S._addMode = 'positive';
+});
+
+$('btn-addneg').addEventListener('click', function(){
+    S.preset = 'custom';
+    $('preset').value = 'custom';
+    $('sound-hint').textContent = 'Click on the canvas to place a −1 nC charge.';
+    S._addMode = 'negative';
+});
+
+$('btn-clear').addEventListener('click', function(){
+    S.charges = [];
+    S.preset = 'custom';
+    $('preset').value = 'custom';
+    updateReadouts();
+});
+
+$('btn-reset').addEventListener('click', function(){
+    applyPreset('dipole');
+    S.displayMode = 'lines';
+    $('displaymode').value = 'lines';
+    S.density = 3; $('density').value = 3; $('v-density').innerText = '3';
+    S.lineSpeed = 1.0; $('speed').value = 1; $('v-speed').innerText = '1.0';
+    S.showProbe = true; $('probe-toggle').checked = true;
+    S.animate = true; $('animate-toggle').checked = true;
+    updateReadouts();
+});
+
+// Canvas interactions
+canvas.addEventListener('pointerdown', function(e){
+    var pos = getPos(e);
+    S.probeX = pos.x;
+    S.probeY = pos.y;
+    S.probeActive = true;
+    if (S._addMode) {
+        var world = screenToWorld(pos.x, pos.y);
+        S.charges.push({
+            x: world.x,
+            y: world.y,
+            q: S._addMode === 'positive' ? 1 : -1
+        });
+        S._addMode = null;
+        $('sound-hint').textContent = 'Charge added. Click more or change mode.';
+        beep(S._addMode === 'positive' ? 660 : 330, 0.15, 'sine', 0.1);
+        updateReadouts();
+    }
+});
+
+canvas.addEventListener('pointermove', function(e){
+    var pos = getPos(e);
+    S.probeX = pos.x;
+    S.probeY = pos.y;
+    S.probeActive = true;
+});
+
+function getPos(e){
+    var r = canvas.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+}
+
+document.querySelectorAll('.tab-btn[data-tab]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+        document.querySelectorAll('.tab-btn[data-tab]').forEach(function(b){ b.classList.remove('active'); });
+        document.getElementById(btn.dataset.tab).classList.add('active');
+        btn.classList.add('active');
+    });
+});
+
+document.querySelectorAll('[data-challenge]').forEach(function(btn){
+    btn.addEventListener('click', function(){ applyChallenge(btn.dataset.challenge); beep(660,0.08,'sine',0.08); });
+});
+
+$('btn-quiz-check').addEventListener('click', evaluateQuiz);
+$('btn-quiz-reset').addEventListener('click', resetQuiz);
+$('btn-record').addEventListener('click', recordMeasurement);
+$('btn-clear-notes').addEventListener('click', function(){
+    if (!confirm('Clear notebook?')) return;
+    $('hypothesis').value = ''; $('conclusion').value = ''; $('records').value = '';
+    S.records = [];
+});
+$('btn-export').addEventListener('click', downloadReport);
+
+// Zoom (removed for simplicity — field grid is 1:1 with world)
+
+// Splitter
+(function(){
+    var sim = $('sim-area'), splitter = $('splitter');
+    var dragging = false, startY = 0, startH = 0;
+    splitter.addEventListener('pointerdown', function(e){
+        e.preventDefault(); dragging = true; startY = e.clientY;
+        startH = sim.getBoundingClientRect().height;
+        try { splitter.setPointerCapture(e.pointerId); } catch(_){}
+    });
+    window.addEventListener('pointermove', function(e){
+        if (!dragging) return;
+        var dy = e.clientY - startY;
+        var nh = Math.max(180, Math.min(window.innerHeight-240, Math.round(startH + dy)));
+        sim.style.flex = '0 0 ' + nh + 'px';
+    });
+    window.addEventListener('pointerup', function(e){
+        if (!dragging) return;
+        dragging = false;
+        try { splitter.releasePointerCapture(e.pointerId); } catch(_){}
+    });
+})();
+
+window.addEventListener('resize', function(){ lastW = 0; lastH = 0; });
+
+// ============ BOOT ============
+applyPreset('dipole');
+updateReadouts();
+requestAnimationFrame(animate);
+
+})();
+</script>
+</body>
+</html>

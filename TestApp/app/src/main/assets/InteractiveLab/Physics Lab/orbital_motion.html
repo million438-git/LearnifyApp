@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Physics: Orbital Motion Lab</title>
+<style>
+:root{--primary:#6366f1;--dark:#0f172a;--surface:#fff;--bg:#f1f5f9;--glass:rgba(255,255,255,0.92);}
+*{box-sizing:border-box;font-family:'Inter',system-ui,sans-serif;}
+html,body{height:100%;}
+body{margin:0;background:var(--bg);color:var(--dark);display:flex;flex-direction:column;overflow:hidden;}
+header{background:var(--dark);color:#fff;padding:10px;text-align:center;border-bottom:3px solid var(--primary);flex-shrink:0;}
+.lab-container{display:flex;flex:1;overflow:hidden;flex-direction:column;min-height:0;}
+#sim-area{flex:2 1 0;min-height:340px;position:relative;background:#05080f;border-bottom:2px solid #e2e8f0;overflow:hidden;}
+canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;}
+.splitter{height:10px;background:linear-gradient(90deg,rgba(0,0,0,.03),rgba(0,0,0,.06));cursor:ns-resize;flex-shrink:0;}
+.bottom-panel{flex:3 1 0;min-height:0;display:flex;flex-direction:row;background:var(--surface);overflow-y:auto;}
+.controls{flex:0 0 360px;padding:18px;border-right:1px solid #e2e8f0;min-width:300px;}
+.analysis{flex:1 1 720px;padding:18px;background:#fafafa;min-width:420px;}
+.card{background:#fff;border:1px solid #e2e8f0;padding:12px;border-radius:8px;margin-bottom:10px;}
+h4{margin:0 0 10px 0;font-size:.8rem;color:#64748b;text-transform:uppercase;}
+.input-row{margin-bottom:12px;}
+label{display:block;font-size:.8rem;font-weight:600;margin-bottom:4px;}
+input[type=range]{width:100%;accent-color:var(--primary);}
+select{width:100%;padding:6px;border-radius:6px;border:1px solid #cbd5e1;background:#fff;font-family:inherit;}
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+button{padding:10px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;transition:.2s;font-family:inherit;}
+.btn-fire{background:var(--primary);color:#fff;}.btn-fire:hover{background:#4f46e5;}
+.btn-reset{background:#64748b;color:#fff;}.btn-reset:hover{background:#475569;}
+.btn-launch{background:linear-gradient(135deg,#10b981,#059669);color:#fff;}.btn-launch:hover{background:linear-gradient(135deg,#059669,#047857);}
+.btn-sound{background:#10b981;color:#fff;}.btn-sound.playing{background:#ef4444;}
+.hud{position:absolute;top:10px;left:10px;background:var(--glass);padding:8px 10px;border-radius:8px;font-size:.75rem;border:1px solid #ddd;z-index:20;color:#0f172a;pointer-events:none;}
+.hud .metrics{line-height:1.7;}
+.hud span.val{color:#4f46e5;font-weight:700;font-variant-numeric:tabular-nums;}
+.vector-legend{position:absolute;bottom:10px;left:10px;font-size:.65rem;background:var(--glass);padding:5px 8px;border-radius:4px;color:#0f172a;pointer-events:none;}
+.vector-legend span{margin-right:8px;}
+.tab-btn{padding:8px 12px;border-radius:6px;background:#e2e8f0;color:var(--dark);font-weight:600;font-size:.8rem;border:none;cursor:pointer;}
+.tab-btn.active{background:var(--primary);color:#fff;}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+.readouts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;}
+.readout{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;}
+.readout span{font-size:.7rem;color:#64748b;display:block;}
+.readout strong{font-size:1rem;color:var(--dark);font-variant-numeric:tabular-nums;}
+.readout.hl strong{color:#4f46e5;}
+.readout.good strong{color:#10b981;}
+.readout.warn strong{color:#f59e0b;}
+.quiz-q{padding:10px 0;border-bottom:1px solid #e2e8f0;}
+.quiz-q>strong{display:block;margin-bottom:8px;font-size:.9rem;}
+.quiz-q label{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;margin:3px 6px 3px 0;cursor:pointer;font-weight:500;}
+.quiz-q label:hover{background:#eef2ff;border-color:#6366f1;}
+.explanation{margin-top:8px;padding:10px;border-radius:6px;font-size:.82rem;line-height:1.55;background:#eef2ff;border-left:3px solid #6366f1;}
+.explanation.correct-box{background:#ecfdf5;border-left-color:#10b981;}
+.explanation.wrong-box{background:#fef2f2;border-left-color:#dc2626;}
+.quiz-section{font-size:.72rem;font-weight:700;text-transform:uppercase;color:#6366f1;margin:12px 0 6px 0;letter-spacing:.05em;}
+#quiz-result{margin-top:10px;padding:12px;border-radius:8px;background:#eef2ff;border:1px solid #c7d2fe;font-weight:700;text-align:center;}
+table.formulas{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:6px;}
+table.formulas th,table.formulas td{border:1px solid #e2e8f0;padding:6px 8px;text-align:left;}
+table.formulas th{background:#f1f5f9;font-weight:600;}
+.eq{font-family:'JetBrains Mono',monospace;background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:.82rem;}
+.note{font-size:.82rem;color:#475569;margin-top:8px;line-height:1.5;}
+.sound-hint{background:#fef3c7;border-left:3px solid #f59e0b;padding:8px;border-radius:6px;font-size:.82rem;margin-top:8px;}
+textarea{width:100%;padding:8px;border-radius:6px;border:1px solid #cbd5e1;font-family:inherit;font-size:.85rem;min-height:64px;resize:vertical;}
+@media(max-width:768px){.bottom-panel{flex-direction:column;}.controls{border-right:none;border-bottom:1px solid #eee;min-width:0;}.analysis{min-width:0;}.readouts{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header>
+<h2 style="margin:0;font-size:1.1rem;">🛰️ Orbital Motion Interactive Lab</h2>
+<small>Newton's gravity · Kepler's laws · Orbits · Escape velocity · Real physics</small>
+</header>
+
+<div class="lab-container">
+<div id="sim-area">
+<div class="hud">
+<b>LIVE STATE</b><br>
+<div class="metrics">
+Time: <span class="val" id="hud-t">0.0</span> s<br>
+Speed: <span class="val" id="hud-v">0</span> m/s<br>
+Altitude: <span class="val" id="hud-alt">0</span> km<br>
+Status: <span class="val" id="hud-status">Idle</span>
+</div>
+</div>
+<div class="vector-legend">
+<span style="color:#fbbf24">● Central body</span>
+<span style="color:#a5f3fc">● Satellite</span>
+<span style="color:#f43f5e">● Trajectory</span>
+</div>
+<canvas id="canvas"></canvas>
+</div>
+
+<div id="splitter" class="splitter"></div>
+
+<div class="bottom-panel">
+<div class="controls">
+<h4>🧪 Lab Settings</h4>
+
+<div class="input-row">
+<button class="btn-sound" id="btn-sound" style="width:100%;">🔈 Enable sound</button>
+<div class="sound-hint" id="sound-hint">Engine roar + warning beeps.</div>
+</div>
+
+<div class="input-row">
+<label>Central body</label>
+<select id="body">
+<option value="earth" selected>Earth (M = 5.972×10²⁴ kg)</option>
+<option value="moon">Moon (M = 7.342×10²² kg)</option>
+<option value="mars">Mars (M = 6.417×10²³ kg)</option>
+<option value="jupiter">Jupiter (M = 1.898×10²⁷ kg)</option>
+<option value="sun">Sun (M = 1.989×10³⁰ kg)</option>
+</select>
+</div>
+
+<div class="input-row">
+<label>Orbit preset</label>
+<select id="preset">
+<option value="custom" selected>Custom</option>
+<option value="leo">Low Earth Orbit (400 km)</option>
+<option value="iss">ISS orbit (420 km)</option>
+<option value="gps">GPS orbit (20,200 km)</option>
+<option value="geo">Geostationary (35,786 km)</option>
+<option value="moon">Lunar distance (384,400 km)</option>
+<option value="ellipse">Elliptical orbit</option>
+<option value="escape">Escape trajectory</option>
+</select>
+</div>
+
+<div class="input-row">
+<label>Orbital radius r: <span id="v-r">6771</span> km</label>
+<input type="range" id="radius" min="6400" max="400000" step="100" value="6771">
+</div>
+
+<div class="input-row">
+<label>Launch velocity v: <span id="v-v">7.67</span> km/s</label>
+<input type="range" id="velocity" min="0" max="20" step="0.01" value="7.67">
+</div>
+
+<div class="input-row">
+<label>Time speed: <span id="v-speed">1</span>×</label>
+<input type="range" id="timespeed" min="0.1" max="100" step="0.1" value="1">
+</div>
+
+<div class="input-row">
+<label style="display:inline-flex;align-items:center;gap:6px;">
+<input type="checkbox" id="trail-toggle" checked> Show trajectory trail
+</label>
+</div>
+
+<div class="input-row">
+<label style="display:inline-flex;align-items:center;gap:6px;">
+<input type="checkbox" id="vectors-toggle" checked> Show velocity/force vectors
+</label>
+</div>
+
+<div class="btn-grid">
+<button class="btn-launch" id="btn-launch">🚀 Launch</button>
+<button class="btn-reset" id="btn-reset">↺ Reset</button>
+</div>
+</div>
+
+<div class="analysis">
+<h4>📊 Learn &amp; Practice</h4>
+
+<div class="readouts">
+<div class="readout hl"><span>Central mass M</span><strong id="ro-M">5.97×10²⁴ kg</strong></div>
+<div class="readout"><span>Orbital radius r</span><strong id="ro-r">6,771 km</strong></div>
+<div class="readout"><span>Current speed v</span><strong id="ro-v">7.67 km/s</strong></div>
+<div class="readout hl good"><span>Circular orbit speed</span><strong id="ro-vcirc">7.67 km/s</strong></div>
+<div class="readout hl"><span>Escape velocity</span><strong id="ro-vesc">10.85 km/s</strong></div>
+<div class="readout"><span>Orbital period T</span><strong id="ro-T">92.4 min</strong></div>
+<div class="readout"><span>Specific energy ε</span><strong id="ro-E">−29.4 MJ/kg</strong></div>
+<div class="readout"><span>Angular momentum L</span><strong id="ro-L">5.20×10¹⁰ m²/s</strong></div>
+<div class="readout"><span>Eccentricity e</span><strong id="ro-e">0.000</strong></div>
+<div class="readout"><span>Periapsis r_p</span><strong id="ro-rp">6,771 km</strong></div>
+<div class="readout"><span>Apoapsis r_a</span><strong id="ro-ra">6,771 km</strong></div>
+<div class="readout"><span>Orbit type</span><strong id="ro-type">Circular</strong></div>
+</div>
+
+<div class="card">
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+<button class="tab-btn active" data-tab="formulas">Formulas</button>
+<button class="tab-btn" data-tab="quiz">Quiz</button>
+<button class="tab-btn" data-tab="challenges">Challenges</button>
+<button class="tab-btn" data-tab="notebook">Notebook</button>
+</div>
+
+<div id="formulas" class="tab-panel active">
+<h3 style="margin:6px 0 8px 0;">Core Formulas — Orbital Mechanics</h3>
+<ul style="font-size:.9rem;line-height:1.6;padding-left:1rem;margin:0;">
+<li><b>Newton's gravity:</b> F = G·M·m / r²</li>
+<li><b>Circular orbital speed:</b> v_circ = √(GM/r)</li>
+<li><b>Escape velocity:</b> v_esc = √(2GM/r) = √2 · v_circ</li>
+<li><b>Orbital period:</b> T = 2π·√(r³/GM) (Kepler's 3rd law)</li>
+<li><b>Specific orbital energy:</b> ε = v²/2 − GM/r</li>
+<li><b>Specific angular momentum:</b> h = r × v (perpendicular component)</li>
+<li><b>Eccentricity:</b> e = √(1 + 2εh²/(GM)²)</li>
+<li><b>Periapsis / Apoapsis:</b> r_p = h²/(GM(1+e)); r_a = h²/(GM(1−e))</li>
+</ul>
+<p class="note"><b>💡 Quick tips:</b> An orbit is a continuous free-fall — the satellite is always being pulled toward the central body, but its tangential speed keeps it from falling in. If v = v_circ, you get a circular orbit. If v_circ &lt; v &lt; v_esc, you get an ellipse. If v ≥ v_esc, the orbit becomes a parabola (or hyperbola) and the satellite escapes. If v &lt; v_circ, the satellite falls into a lower orbit or crashes.</p>
+
+<table class="formulas" style="margin-top:12px;">
+<tr><th>Quantity</th><th>Formula</th><th>Value</th></tr>
+<tr><td>Gravitational constant</td><td><span class="eq">G</span></td><td>6.674×10⁻¹¹ N·m²/kg²</td></tr>
+<tr><td>Earth mass</td><td><span class="eq">M_E</span></td><td>5.972×10²⁴ kg</td></tr>
+<tr><td>Earth radius</td><td><span class="eq">R_E</span></td><td>6,371 km</td></tr>
+<tr><td>Earth GM</td><td><span class="eq">μ_E</span></td><td>3.986×10¹⁴ m³/s²</td></tr>
+</table>
+</div>
+
+<div id="quiz" class="tab-panel" style="max-height:600px;overflow:auto;">
+<h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+<div class="quiz-section">Basic — Orbital Mechanics</div>
+<div class="quiz-q" data-q="q1" data-answer="B">
+<strong>1. A satellite in a circular orbit is:</strong>
+<label><input type="radio" name="q1" value="A"> Weightless because gravity is zero</label>
+<label><input type="radio" name="q1" value="B"> In continuous free-fall — gravity provides the centripetal force</label>
+<label><input type="radio" name="q1" value="C"> Held up by its engines</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q2" data-answer="B">
+<strong>2. As orbital radius increases, the circular orbital speed:</strong>
+<label><input type="radio" name="q2" value="A"> Increases</label>
+<label><input type="radio" name="q2" value="B"> Decreases (v = √(GM/r))</label>
+<label><input type="radio" name="q2" value="C"> Stays the same</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q3" data-answer="A">
+<strong>3. Escape velocity from a body of mass M at distance r is:</strong>
+<label><input type="radio" name="q3" value="A"> v_esc = √(2GM/r) ≈ √2 · v_circ</label>
+<label><input type="radio" name="q3" value="B"> v_esc = v_circ</label>
+<label><input type="radio" name="q3" value="C"> v_esc = c</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Intermediate — Kepler's Laws</div>
+<div class="quiz-q" data-q="q4" data-answer="A">
+<strong>4. Kepler's 3rd law states that the square of the orbital period is proportional to:</strong>
+<label><input type="radio" name="q4" value="A"> The cube of the semi-major axis (T² ∝ a³)</label>
+<label><input type="radio" name="q4" value="B"> The square of the semi-major axis</label>
+<label><input type="radio" name="q4" value="C"> The mass of the satellite</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q5" data-answer="A">
+<strong>5. In an elliptical orbit, the satellite moves fastest at:</strong>
+<label><input type="radio" name="q5" value="A"> Periapsis (closest point)</label>
+<label><input type="radio" name="q5" value="B"> Apoapsis (farthest point)</label>
+<label><input type="radio" name="q5" value="C"> Both are the same</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q6" data-answer="B">
+<strong>6. If you launch a satellite at exactly escape velocity:</strong>
+<label><input type="radio" name="q6" value="A"> It falls back</label>
+<label><input type="radio" name="q6" value="B"> It escapes to infinity (with zero velocity at infinity)</label>
+<label><input type="radio" name="q6" value="C"> It crashes</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Advanced — Deep Understanding</div>
+<div class="quiz-q" data-q="q7" data-answer="B">
+<strong>7. For a circular orbit at 400 km altitude around Earth (R_E = 6,371 km, GM = 3.986×10¹⁴):</strong>
+<label><input type="radio" name="q7" value="A"> v ≈ 5 km/s</label>
+<label><input type="radio" name="q7" value="B"> v ≈ 7.67 km/s</label>
+<label><input type="radio" name="q7" value="C"> v ≈ 11 km/s</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q8" data-answer="B">
+<strong>8. If total specific orbital energy ε = 0, the orbit is:</strong>
+<label><input type="radio" name="q8" value="A"> Circular</label>
+<label><input type="radio" name="q8" value="B"> Parabolic (escape trajectory)</label>
+<label><input type="radio" name="q8" value="C"> Elliptical</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q9" data-answer="B">
+<strong>9. Geostationary orbits must be at 35,786 km altitude because:</strong>
+<label><input type="radio" name="q9" value="A"> That is the highest orbit possible</label>
+<label><input type="radio" name="q9" value="B"> At that radius, T = 24 hours and the satellite stays above the same point on Earth</label>
+<label><input type="radio" name="q9" value="C"> Above that altitude there is no gravity</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="btn-grid" style="margin-top:12px;">
+<button class="btn-fire" id="btn-quiz-check">Submit Quiz</button>
+<button class="btn-reset" id="btn-quiz-reset">Reset</button>
+</div>
+<div id="quiz-result" style="display:none;"></div>
+</div>
+
+<div id="challenges" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Challenges</h3>
+<div style="display:flex;flex-direction:column;gap:8px;font-size:.9rem;">
+<div><b>1. ISS orbit</b><br><button class="btn-launch" data-challenge="iss">400 km circular orbit</button></div>
+<div><b>2. GPS orbit</b><br><button class="btn-launch" data-challenge="gps">20,200 km altitude</button></div>
+<div><b>3. Geostationary</b><br><button class="btn-launch" data-challenge="geo">35,786 km — 24-hour period</button></div>
+<div><b>4. Elliptical orbit</b><br><button class="btn-launch" data-challenge="ellipse">Launch between v_circ and v_esc</button></div>
+<div><b>5. Escape trajectory</b><br><button class="btn-launch" data-challenge="escape">Launch at escape velocity</button></div>
+<div id="challenge-note" style="color:#0f172a;font-size:.85rem;"></div>
+<div id="challenge-result" style="color:#083344;font-weight:600;margin-top:6px;"></div>
+</div>
+</div>
+
+<div id="notebook" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Notebook</h3>
+<label>Hypothesis</label>
+<textarea id="hypothesis" placeholder="What do you expect?"></textarea>
+<label style="margin-top:10px;display:block;">Conclusion</label>
+<textarea id="conclusion" placeholder="What did you observe?"></textarea>
+<label style="margin-top:10px;display:block;">Measurements</label>
+<textarea id="records" readonly style="background:#f8fafc;font-family:monospace;font-size:.75rem;min-height:100px;"></textarea>
+<div class="btn-grid" style="margin-top:10px;">
+<button class="btn-fire" id="btn-record">📋 Record</button>
+<button class="btn-reset" id="btn-clear-notes">Clear</button>
+</div>
+<button class="btn-fire" style="margin-top:8px;width:100%;" id="btn-export">⬇ Report</button>
+</div>
+</div>
+
+<div class="card">
+<b>Real fact:</b> <span id="fact-box" style="font-size:.85rem;">—</span>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+"use strict";
+(function(){
+
+// ============ CONSTANTS ============
+var G = 6.674e-11;
+var C_LIGHT = 299792458;
+
+var BODIES = {
+    earth:   { name:'Earth',   M: 5.972e24, R: 6.371e6, color:'#3b82f6', fact:'Earth: radius 6,371 km, GM = 3.986×10¹⁴ m³/s². Low Earth orbit (400 km) has v_circ ≈ 7.67 km/s and orbital period ≈ 92 min.' },
+    moon:    { name:'Moon',    M: 7.342e22, R: 1.737e6, color:'#94a3b8', fact:'Moon: radius 1,737 km, GM = 4.905×10¹² m³/s². Low lunar orbit (100 km) has v_circ ≈ 1.63 km/s — much slower than Earth due to lower mass.' },
+    mars:    { name:'Mars',    M: 6.417e23, R: 3.390e6, color:'#dc2626', fact:'Mars: radius 3,390 km, GM = 4.282×10¹³ m³/s². Low Mars orbit (400 km) has v_circ ≈ 3.36 km/s.' },
+    jupiter: { name:'Jupiter', M: 1.898e27, R: 6.991e7, color:'#f59e0b', fact:'Jupiter: radius 69,911 km, GM = 1.267×10¹⁷ m³/s². Ganymede orbits at 1.07 million km with period 7.15 days.' },
+    sun:     { name:'Sun',     M: 1.989e30, R: 6.957e8, color:'#fbbf24', fact:'Sun: radius 695,700 km, GM = 1.327×10²⁰ m³/s². Earth orbits at 149.6 million km, v_circ ≈ 29.78 km/s, period 365.25 days.' }
+};
+
+// ============ STATE ============
+var S = {
+    body: 'earth',
+    preset: 'custom',
+    radius: 6771e3,       // meters (center-to-satellite)
+    velocity: 7670,       // m/s (tangential)
+    timeSpeed: 1,
+    showTrail: true,
+    showVectors: true,
+    running: false,
+    soundOn: false,
+    time: 0,
+    // satellite state (real physics)
+    sat: { x: 0, y: 0, vx: 0, vy: 0 },
+    trail: [],
+    timeStep: 1,          // simulation seconds per real second
+    debugCount: 0,
+    records: []
+};
+
+var $ = function(id){ return document.getElementById(id); };
+var canvas = $('canvas');
+var ctx = canvas.getContext('2d');
+var dpr = window.devicePixelRatio || 1;
+var view = { x:0, y:0, scale:1 };
+var lastW = 0, lastH = 0;
+
+// ============ CANVAS ============
+function resizeCanvas(){
+    var rect = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(rect.width));
+    var h = Math.max(1, Math.round(rect.height));
+    if (w === lastW && h === lastH) return;
+    lastW = w; lastH = h;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function cw(){ return canvas.width / dpr; }
+function ch(){ return canvas.height / dpr; }
+
+// ============ AUDIO ============
+var audioCtx = null;
+var engineOsc = null, engineGain = null;
+
+function initAudio(){
+    if (audioCtx) return;
+    try {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        audioCtx = new AC();
+    } catch(e){}
+}
+function beep(freq, dur, type, vol){
+    if (!audioCtx || !S.soundOn) return;
+    try {
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = type || 'sine';
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(vol || 0.06, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + dur);
+    } catch(e){}
+}
+function startEngine(){
+    if (!audioCtx || !S.soundOn) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (engineOsc) return;
+    try {
+        engineOsc = audioCtx.createOscillator();
+        engineGain = audioCtx.createGain();
+        engineOsc.type = 'sawtooth';
+        engineOsc.frequency.value = 80;
+        engineGain.gain.setValueAtTime(0, audioCtx.currentTime);
+        engineGain.gain.linearRampToValueAtTime(0.05, audioCtx.currentTime + 0.3);
+        engineOsc.connect(engineGain);
+        engineGain.connect(audioCtx.destination);
+        engineOsc.start();
+    } catch(e){}
+}
+function stopEngine(){
+    if (engineOsc) {
+        try {
+            engineGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+            engineOsc.stop(audioCtx.currentTime + 0.35);
+        } catch(e){}
+        engineOsc = null;
+        engineGain = null;
+    }
+}
+function toggleSound(){
+    initAudio();
+    if (!audioCtx) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    S.soundOn = !S.soundOn;
+    if (S.soundOn) {
+        $('btn-sound').textContent = '🔊 Sound ON';
+        $('btn-sound').classList.add('playing');
+        beep(440, 0.1, 'sine', 0.1);
+    } else {
+        stopEngine();
+        $('btn-sound').textContent = '🔈 Enable sound';
+        $('btn-sound').classList.remove('playing');
+    }
+}
+
+// ============ PHYSICS ============
+function getBody(){ return BODIES[S.body]; }
+function getGM(){ return G * getBody().M; }
+function getRBody(){ return getBody().R; }
+
+function getVCirc(r){ return Math.sqrt(getGM() / r); }
+function getVEscape(r){ return Math.sqrt(2 * getGM() / r); }
+function getPeriod(r){ return 2 * Math.PI * Math.sqrt(r*r*r / getGM()); }
+
+function getSatRadius(){
+    return Math.hypot(S.sat.x, S.sat.y);
+}
+function getSatSpeed(){
+    return Math.hypot(S.sat.vx, S.sat.vy);
+}
+function getSatAltitude(){
+    return getSatRadius() - getRBody();
+}
+function getSpecificEnergy(){
+    var r = getSatRadius();
+    var v = getSatSpeed();
+    return v*v/2 - getGM()/r;
+}
+function getSpecificAngMomentum(){
+    // h = r × v (z component)
+    return S.sat.x * S.sat.vy - S.sat.y * S.sat.vx;
+}
+function getEccentricity(){
+    var h = getSpecificAngMomentum();
+    var e = getSpecificEnergy();
+    var mu = getGM();
+    var arg = 1 + 2 * e * h * h / (mu * mu);
+    if (arg < 0) return 0;
+    return Math.sqrt(arg);
+}
+function getPeriapsis(){
+    var h = getSpecificAngMomentum();
+    var e = getEccentricity();
+    return Math.abs(h) * Math.abs(h) / (getGM() * (1 + e));
+}
+function getApoapsis(){
+    var h = getSpecificAngMomentum();
+    var e = getEccentricity();
+    if (e >= 1) return Infinity;
+    return Math.abs(h) * Math.abs(h) / (getGM() * (1 - e));
+}
+function getOrbitType(){
+    var e = getEccentricity();
+    var r = getSatRadius();
+    if (r <= getRBody()) return 'Crashed';
+    if (e < 0.01) return 'Circular';
+    if (e < 0.99) return 'Elliptical';
+    if (Math.abs(e - 1) < 0.01) return 'Parabolic';
+    return 'Hyperbolic';
+}
+
+// ============ INIT ORBIT ============
+function resetSatellite(){
+    // Place satellite at (radius, 0) — directly to the right of body
+    // Give it tangential velocity (perpendicular = +y direction)
+    S.sat.x = S.radius;
+    S.sat.y = 0;
+    S.sat.vx = 0;
+    S.sat.vy = S.velocity;
+    S.trail = [{ x: S.sat.x, y: S.sat.y }];
+    S.time = 0;
+    S.running = false;
+}
+
+// ============ RK4 INTEGRATION ============
+// Two-body gravitational integration using 4th-order Runge-Kutta
+function accelerations(x, y, vx, vy){
+    var r = Math.hypot(x, y);
+    if (r < 1) r = 1;
+    var mu = getGM();
+    var aMag = -mu / (r * r * r);
+    return { ax: aMag * x, ay: aMag * y };
+}
+function stepSatellite(dt){
+    var x = S.sat.x, y = S.sat.y;
+    var vx = S.sat.vx, vy = S.sat.vy;
+
+    // k1
+    var a1 = accelerations(x, y, vx, vy);
+    var k1x = vx;
+    var k1y = vy;
+    var k1vx = a1.ax;
+    var k1vy = a1.ay;
+
+    // k2
+    var a2 = accelerations(x + 0.5*dt*k1x, y + 0.5*dt*k1y, vx + 0.5*dt*k1vx, vy + 0.5*dt*k1vy);
+    var k2x = vx + 0.5*dt*k1vx;
+    var k2y = vy + 0.5*dt*k1vy;
+    var k2vx = a2.ax;
+    var k2vy = a2.ay;
+
+    // k3
+    var a3 = accelerations(x + 0.5*dt*k2x, y + 0.5*dt*k2y, vx + 0.5*dt*k2vx, vy + 0.5*dt*k2vy);
+    var k3x = vx + 0.5*dt*k2vx;
+    var k3y = vy + 0.5*dt*k2vy;
+    var k3vx = a3.ax;
+    var k3vy = a3.ay;
+
+    // k4
+    var a4 = accelerations(x + dt*k3x, y + dt*k3y, vx + dt*k3vx, vy + dt*k3vy);
+    var k4x = vx + dt*k3vx;
+    var k4y = vy + dt*k3vy;
+    var k4vx = a4.ax;
+    var k4vy = a4.ay;
+
+    // Combine
+    S.sat.x = x + dt/6 * (k1x + 2*k2x + 2*k3x + k4x);
+    S.sat.y = y + dt/6 * (k1y + 2*k2y + 2*k3y + k4y);
+    S.sat.vx = vx + dt/6 * (k1vx + 2*k2vx + 2*k3vx + k4vx);
+    S.sat.vy = vy + dt/6 * (k1vy + 2*k2vy + 2*k3vy + k4vy);
+}
+
+// ============ DRAW ============
+function drawScene(){
+    resizeCanvas();
+    var w = cw(), h = ch();
+    if (w < 10 || h < 10) return;
+
+    // Space background
+    var bg = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w,h)/1.5);
+    bg.addColorStop(0, '#0a1220');
+    bg.addColorStop(1, '#03060e');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+
+    // Stars
+    var t = Date.now() * 0.001;
+    for (var i = 0; i < 80; i++) {
+        var sx = (i * 137 + 41) % w;
+        var sy = (i * 71 + 23) % h;
+        var tw = 0.4 + 0.6 * Math.abs(Math.sin(t * 1.5 + i));
+        ctx.fillStyle = 'rgba(255,255,255,' + tw + ')';
+        ctx.beginPath();
+        ctx.arc(sx, sy, 0.8 + (i % 3) * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // World scale: fit orbit in view
+    var maxR = Math.max(S.radius * 1.5, getApoapsis() !== Infinity ? getApoapsis() * 1.2 : 0);
+    if (maxR < getRBody() * 3) maxR = getRBody() * 3;
+    var scale = Math.min(w, h) * 0.42 / maxR;
+
+    ctx.save();
+    ctx.translate(w/2, h/2);
+    ctx.scale(view.scale, view.scale);
+
+    var body = getBody();
+    var Rbody = getRBody() * scale;
+
+    // Draw central body
+    // Glow
+    var glowR = Rbody * 2.5;
+    var glow = ctx.createRadialGradient(0, 0, Rbody * 0.8, 0, 0, glowR);
+    glow.addColorStop(0, 'rgba(' + hexToRgb(body.color) + ',0.4)');
+    glow.addColorStop(1, 'rgba(' + hexToRgb(body.color) + ',0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(0, 0, glowR, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Body disc
+    var bodyGrad = ctx.createRadialGradient(-Rbody*0.3, -Rbody*0.3, Rbody*0.1, 0, 0, Rbody);
+    bodyGrad.addColorStop(0, lightenColor(body.color, 0.4));
+    bodyGrad.addColorStop(1, body.color);
+    ctx.fillStyle = bodyGrad;
+    ctx.beginPath();
+    ctx.arc(0, 0, Rbody, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Body label
+    ctx.fillStyle = '#cbd5e1';
+    ctx.font = 'bold 11px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText(body.name, 0, Rbody + 18);
+
+    // Trail
+    if (S.showTrail && S.trail.length > 1) {
+        ctx.strokeStyle = 'rgba(244,63,94,0.6)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([]);
+        ctx.beginPath();
+        for (var j = 0; j < S.trail.length; j++) {
+            var tp = S.trail[j];
+            var tpx = tp.x * scale;
+            var tpy = -tp.y * scale;
+            if (j === 0) ctx.moveTo(tpx, tpy);
+            else ctx.lineTo(tpx, tpy);
+        }
+        ctx.stroke();
+        // Glow trail
+        ctx.strokeStyle = 'rgba(244,63,94,0.15)';
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        for (var k = 0; k < S.trail.length; k++) {
+            var tp2 = S.trail[k];
+            var tpx2 = tp2.x * scale;
+            var tpy2 = -tp2.y * scale;
+            if (k === 0) ctx.moveTo(tpx2, tpy2);
+            else ctx.lineTo(tpx2, tpy2);
+        }
+        ctx.stroke();
+    }
+
+    // Satellite position
+    var satX = S.sat.x * scale;
+    var satY = -S.sat.y * scale;
+
+    // Velocity vector
+    if (S.showVectors) {
+        var vScale = 30 / Math.max(1, getSatSpeed() / 1000);
+        // Gravity vector
+        var r = getSatRadius();
+        var aMag = getGM() / (r*r);
+        var axDir = -S.sat.x / r;
+        var ayDir = -S.sat.y / r;
+        var fScale = 20;
+        drawArrow(satX, satY, satX + axDir * fScale, satY - ayDir * fScale, '#f59e0b', 2);
+        // Velocity vector
+        var vxDir = S.sat.vx / Math.max(1, getSatSpeed());
+        var vyDir = S.sat.vy / Math.max(1, getSatSpeed());
+        drawArrow(satX, satY, satX + vxDir * vScale, satY - vyDir * vScale, '#a5f3fc', 2);
+    }
+
+    // Satellite glow
+    var satGlow = ctx.createRadialGradient(satX, satY, 0, satX, satY, 20);
+    satGlow.addColorStop(0, 'rgba(165,243,252,0.9)');
+    satGlow.addColorStop(1, 'rgba(165,243,252,0)');
+    ctx.fillStyle = satGlow;
+    ctx.beginPath();
+    ctx.arc(satX, satY, 20, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Satellite dot
+    ctx.fillStyle = '#a5f3fc';
+    ctx.beginPath();
+    ctx.arc(satX, satY, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#0ea5e9';
+    ctx.beginPath();
+    ctx.arc(satX, satY, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+
+    // Status text
+    var status = getStatusText();
+    ctx.fillStyle = status.color;
+    ctx.font = 'bold 13px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText(status.text, w/2, 30);
+
+    // Live pulse
+    var pulseR = 5 + 3 * Math.sin(S.time * 4);
+    ctx.fillStyle = 'rgba(16,185,129,0.9)';
+    ctx.beginPath();
+    ctx.arc(w - 25, 25, pulseR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#10b981';
+    ctx.font = 'bold 9px Inter';
+    ctx.textAlign = 'right';
+    ctx.fillText('LIVE', w - 38, 28);
+
+    // Caption
+    ctx.fillStyle = 'rgba(203,213,225,0.75)';
+    ctx.font = '11px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('Real 4th-order Runge-Kutta integration of Newton\'s gravity · trajectory trail = true orbit', w/2, h - 8);
+}
+
+function drawArrow(x1, y1, x2, y2, color, width){
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = width;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    var ang = Math.atan2(y2 - y1, x2 - x1);
+    var sz = 7;
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - sz * Math.cos(ang - 0.4), y2 - sz * Math.sin(ang - 0.4));
+    ctx.lineTo(x2 - sz * Math.cos(ang + 0.4), y2 - sz * Math.sin(ang + 0.4));
+    ctx.closePath();
+    ctx.fill();
+}
+
+function hexToRgb(hex){
+    var h = hex.replace('#', '');
+    return parseInt(h.substr(0,2),16) + ',' + parseInt(h.substr(2,2),16) + ',' + parseInt(h.substr(4,2),16);
+}
+function lightenColor(hex, amt){
+    var h = hex.replace('#', '');
+    var r = parseInt(h.substr(0,2),16);
+    var g = parseInt(h.substr(2,2),16);
+    var b = parseInt(h.substr(4,2),16);
+    r = Math.round(r + (255-r) * amt);
+    g = Math.round(g + (255-g) * amt);
+    b = Math.round(b + (255-b) * amt);
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+}
+
+function getStatusText(){
+    if (!S.running) {
+        var r = getSatRadius();
+        if (r <= getRBody()) return { text:'⚠ BELOW SURFACE — crashed', color:'#dc2626' };
+        return { text:'⏸ Idle — press Launch', color:'#f59e0b' };
+    }
+    var r = getSatRadius();
+    if (r <= getRBody()) return { text:'💥 CRASHED INTO ' + getBody().name.toUpperCase(), color:'#dc2626' };
+    var type = getOrbitType();
+    if (type === 'Circular') return { text:'⚡ CIRCULAR ORBIT', color:'#10b981' };
+    if (type === 'Elliptical') return { text:'🛰️ ELLIPTICAL ORBIT', color:'#3b82f6' };
+    if (type === 'Parabolic') return { text:'🚀 ESCAPE (parabolic)', color:'#8b5cf6' };
+    if (type === 'Hyperbolic') return { text:'🚀 ESCAPING THE SYSTEM', color:'#ec4899' };
+    return { text:'Orbit type: ' + type, color:'#94a3b8' };
+}
+
+// ============ UPDATE ============
+var lastT = 0;
+function animate(now){
+    if (!lastT) lastT = now;
+    var dtReal = (now - lastT) / 1000;
+    if (dtReal > 0.1) dtReal = 0.05;
+    if (dtReal < 0) dtReal = 0.016;
+    lastT = now;
+    S.time += dtReal;
+    S.debugCount++;
+
+    if (S.running) {
+        // Compute simulation dt: with timeSpeed 1, each real second = 60 sim seconds (1 min)
+        // This gives reasonable motion for typical orbits
+        var simDt = dtReal * S.timeSpeed * 60;  // 1× = 60 sim sec/sec
+        // Use several substeps for stability
+        var substeps = 8;
+        var stepDt = simDt / substeps;
+        for (var i = 0; i < substeps; i++) {
+            stepSatellite(stepDt);
+            // Check collision
+            if (getSatRadius() <= getRBody()) {
+                S.running = false;
+                stopEngine();
+                beep(220, 0.4, 'sawtooth', 0.15);
+                break;
+            }
+        }
+        // Record trail point
+        S.trail.push({ x: S.sat.x, y: S.sat.y });
+        if (S.trail.length > 2000) S.trail.shift();
+        // Check escape
+        var r = getSatRadius();
+        if (r > S.radius * 15) {
+            S.running = false;
+            stopEngine();
+        }
+    }
+
+    drawScene();
+    updateReadouts();
+    requestAnimationFrame(animate);
+}
+
+// ============ READOUTS ============
+function updateReadouts(){
+    var body = getBody();
+    var r = getSatRadius();
+    var v = getSatSpeed();
+    var vc = getVCirc(r);
+    var ve = getVEscape(r);
+    var T = getPeriod(r);
+    var E = getSpecificEnergy();
+    var h = getSpecificAngMomentum();
+    var e = getEccentricity();
+    var rp = getPeriapsis();
+    var ra = getApoapsis();
+    var type = getOrbitType();
+
+    $('ro-M').innerText = (body.M / 1e24).toFixed(2) + '×10²⁴ kg';
+    $('ro-r').innerText = (r / 1000).toFixed(0) + ' km';
+    $('ro-v').innerText = (v / 1000).toFixed(3) + ' km/s';
+    $('ro-vcirc').innerText = (vc / 1000).toFixed(3) + ' km/s';
+    $('ro-vesc').innerText = (ve / 1000).toFixed(3) + ' km/s';
+    $('ro-T').innerText = formatPeriod(T);
+    $('ro-E').innerText = (E / 1e6).toFixed(2) + ' MJ/kg';
+    $('ro-L').innerText = h.toExponential(2) + ' m²/s';
+    $('ro-e').innerText = isFinite(e) ? e.toFixed(4) : '—';
+    $('ro-rp').innerText = (rp / 1000).toFixed(0) + ' km';
+    $('ro-ra').innerText = isFinite(ra) ? (ra / 1000).toFixed(0) + ' km' : '∞';
+    $('ro-type').innerText = type;
+
+    $('hud-t').innerText = (S.time / 60).toFixed(1);
+    $('hud-v').innerText = (v / 1000).toFixed(2) + ' km/s';
+    $('hud-alt').innerText = (getSatAltitude() / 1000).toFixed(0);
+    $('hud-status').innerText = type;
+    $('hud-status').style.color = type === 'Circular' ? '#10b981' : type === 'Elliptical' ? '#3b82f6' : type === 'Crashed' ? '#dc2626' : '#8b5cf6';
+
+    $('fact-box').innerText = body.fact;
+}
+
+function formatPeriod(T){
+    if (T < 3600) return (T / 60).toFixed(1) + ' min';
+    if (T < 86400) return (T / 3600).toFixed(2) + ' hr';
+    return (T / 86400).toFixed(2) + ' days';
+}
+
+// ============ QUIZ ============
+var QUIZ_EXPLAIN = {
+    q1:{correct:'B',why:'A satellite in orbit is in <b>continuous free-fall</b> — gravity is very much present and provides the centripetal force keeping it in its circular path. Astronauts float because they and the ship fall together, not because gravity is absent.',tip:'The ISS at 400 km altitude has ~89% of Earth surface gravity — but everything is falling at the same rate.'},
+    q2:{correct:'B',why:'v_circ = √(GM/r). As r increases, the denominator grows, so v decreases. That\'s why GPS orbits (20,200 km) are slower than ISS orbits (400 km) — about 3.87 km/s vs 7.67 km/s.',tip:'This is also why outer planets take longer to orbit the Sun.'},
+    q3:{correct:'A',why:'Escape velocity: <b>v_esc = √(2GM/r) = √2 · v_circ</b>. It comes from setting total energy (KE + PE) to zero. For Earth at surface: v_esc ≈ 11.2 km/s.',tip:'v_esc is always √2 ≈ 1.414 times the local circular velocity.'},
+    q4:{correct:'A',why:'Kepler\'s 3rd law: T² = (4π²/GM) · a³. Period squared ∝ semi-major axis cubed. This is exact for any two-body system.',tip:'The constant 4π²/GM is what makes this universal.'},
+    q5:{correct:'A',why:'Conservation of angular momentum (h = r × v). Closer to the central body (smaller r), the satellite must move faster to keep h constant.',tip:'Kepler\'s 2nd law: equal areas in equal times — a consequence of angular momentum conservation.'},
+    q6:{correct:'B',why:'At exactly v = v_esc, total energy is zero. The satellite reaches infinity with zero velocity — this is a <b>parabolic trajectory</b>.',tip:'Elliptical orbits have E < 0. Parabolic E = 0. Hyperbolic E > 0.'},
+    q7:{correct:'B',why:'r = R_E + 400 km = 6,771,000 m. v = √(GM/r) = √(3.986×10¹⁴/6.771×10⁶) = √(5.887×10⁷) ≈ 7,671 m/s ≈ <b>7.67 km/s</b>.',tip:'That\'s why the ISS takes about 92 minutes per orbit.'},
+    q8:{correct:'B',why:'ε = v²/2 − GM/r. Setting ε = 0 gives v = √(2GM/r) = v_esc — a <b>parabolic</b> orbit, escaping with zero velocity at infinity.',tip:'ε < 0 → ellipse; ε = 0 → parabola; ε > 0 → hyperbola.'},
+    q9:{correct:'B',why:'Geostationary orbit requires T = 1 sidereal day (86,164 s). From T = 2π√(r³/GM): r = (GM·T²/(4π²))^(1/3) ≈ 42,164 km from center, so altitude = 42,164 − 6,371 ≈ 35,786 km.',tip:'It must also be equatorial, or the satellite would drift north-south.'}
+};
+
+function evaluateQuiz(){
+    var qs = document.querySelectorAll('.quiz-q');
+    var score = 0;
+    qs.forEach(function(q){
+        var name = q.dataset.q;
+        var correct = q.dataset.answer;
+        var chosen = q.querySelector('input[name="'+name+'"]:checked');
+        var expl = q.querySelector('.explanation');
+        var data = QUIZ_EXPLAIN[name];
+        expl.hidden = false;
+        expl.className = 'explanation';
+        if (chosen && chosen.value === correct) {
+            score++;
+            expl.classList.add('correct-box');
+            expl.innerHTML = '<strong>✓ Correct!</strong> ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:#475569;"><b>💡</b> ' + data.tip + '</div>';
+        } else {
+            expl.classList.add('wrong-box');
+            var cv = chosen ? chosen.value : '—';
+            expl.innerHTML = '<strong>✗ Answer: ' + correct + '</strong> You chose ' + cv + '. ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:#475569;"><b>💡</b> ' + data.tip + '</div>';
+        }
+    });
+    var pct = Math.round(score/qs.length*100);
+    beep(pct>=78?880:440,0.15,'sine',0.1);
+    var r = $('quiz-result');
+    r.style.display = 'block';
+    r.innerHTML = '<div style="font-size:1.4rem;color:#4338ca;">' + score + '/' + qs.length + ' · ' + pct + '%</div>';
+}
+function resetQuiz(){
+    document.querySelectorAll('.quiz-q').forEach(function(q){
+        q.querySelectorAll('input[type=radio]').forEach(function(r){ r.checked = false; });
+        var e = q.querySelector('.explanation');
+        e.hidden = true; e.innerHTML = ''; e.className = 'explanation';
+    });
+    $('quiz-result').style.display = 'none';
+}
+
+// ============ PRESETS / CHALLENGES ============
+function applyPreset(preset){
+    var body = getBody();
+    var R = body.R;
+    var mu = G * body.M;
+    S.preset = preset;
+
+    if (preset === 'leo') {
+        S.radius = R + 400e3;
+        S.velocity = Math.sqrt(mu / S.radius);
+    } else if (preset === 'iss') {
+        S.radius = R + 420e3;
+        S.velocity = Math.sqrt(mu / S.radius);
+    } else if (preset === 'gps') {
+        S.radius = R + 20200e3;
+        S.velocity = Math.sqrt(mu / S.radius);
+    } else if (preset === 'geo') {
+        S.radius = R + 35786e3;
+        S.velocity = Math.sqrt(mu / S.radius);
+    } else if (preset === 'moon') {
+        S.radius = 384400e3;
+        S.velocity = Math.sqrt(mu / S.radius);
+    } else if (preset === 'ellipse') {
+        S.radius = R + 400e3;
+        var vc = Math.sqrt(mu / S.radius);
+        S.velocity = vc * 1.25;
+    } else if (preset === 'escape') {
+        S.radius = R + 400e3;
+        S.velocity = Math.sqrt(2 * mu / S.radius);
+    }
+    $('radius').value = S.radius / 1000;
+    $('v-r').innerText = (S.radius / 1000).toFixed(0);
+    $('velocity').value = S.velocity / 1000;
+    $('v-v').innerText = (S.velocity / 1000).toFixed(2);
+    resetSatellite();
+    updateReadouts();
+}
+
+function applyChallenge(id){
+    var note = $('challenge-note'), cres = $('challenge-result');
+    note.innerText = ''; cres.innerText = '';
+    if (id === 'iss') {
+        applyPreset('iss');
+        note.innerText = 'ISS orbit: 420 km altitude. Circular velocity ≈ 7.66 km/s, period ≈ 93 min.';
+    } else if (id === 'gps') {
+        applyPreset('gps');
+        note.innerText = 'GPS orbit: 20,200 km altitude. Period ≈ 12 hours. 24 satellites cover the whole Earth.';
+    } else if (id === 'geo') {
+        applyPreset('geo');
+        note.innerText = 'Geostationary orbit: 35,786 km altitude. Period = 24 hours exactly.';
+    } else if (id === 'ellipse') {
+        applyPreset('ellipse');
+        note.innerText = 'Launch at 1.25× circular speed — elliptical orbit. Watch speed change: fast at periapsis, slow at apoapsis.';
+    } else if (id === 'escape') {
+        applyPreset('escape');
+        note.innerText = 'Launch at escape velocity (√2 × circular). The satellite will travel to infinity and never return.';
+    }
+    updateReadouts();
+}
+
+// ============ NOTEBOOK ============
+function recordMeasurement(){
+    var body = getBody();
+    var r = getSatRadius();
+    var v = getSatSpeed();
+    var line = new Date().toLocaleTimeString() + ' | ' + body.name + ' | r=' + (r/1000).toFixed(0) + 'km | v=' + (v/1000).toFixed(3) + 'km/s | v_circ=' + (getVCirc(r)/1000).toFixed(3) + 'km/s | v_esc=' + (getVEscape(r)/1000).toFixed(3) + 'km/s | type=' + getOrbitType() + ' | e=' + getEccentricity().toFixed(3);
+    S.records.push(line);
+    $('records').value = S.records.join('\n');
+    $('records').scrollTop = $('records').scrollHeight;
+}
+function downloadReport(){
+    var body = getBody();
+    var r = getSatRadius();
+    var v = getSatSpeed();
+    var text = 'ORBITAL MOTION LAB REPORT\nDate: ' + new Date().toLocaleString() + '\n\n' +
+        'Central body: ' + body.name + ' (M = ' + body.M.toExponential(3) + ' kg)\n' +
+        'Orbital radius r = ' + (r/1000).toFixed(0) + ' km\n' +
+        'Current velocity = ' + (v/1000).toFixed(3) + ' km/s\n' +
+        'Circular velocity at r = ' + (getVCirc(r)/1000).toFixed(3) + ' km/s\n' +
+        'Escape velocity at r = ' + (getVEscape(r)/1000).toFixed(3) + ' km/s\n' +
+        'Orbital period T = ' + formatPeriod(getPeriod(r)) + '\n' +
+        'Specific energy ε = ' + getSpecificEnergy().toExponential(3) + ' J/kg\n' +
+        'Specific angular momentum h = ' + getSpecificAngMomentum().toExponential(3) + ' m²/s\n' +
+        'Eccentricity e = ' + getEccentricity().toFixed(4) + '\n' +
+        'Periapsis r_p = ' + (getPeriapsis()/1000).toFixed(0) + ' km\n' +
+        'Apoapsis r_a = ' + (getApoapsis() === Infinity ? '∞' : (getApoapsis()/1000).toFixed(0) + ' km') + '\n' +
+        'Orbit type: ' + getOrbitType() + '\n\n' +
+        'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+        'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+        'MEASUREMENTS\n' + $('records').value + '\n\n' +
+        'LIMITATIONS\nIdeal two-body problem. Ignores atmospheric drag, solar radiation pressure, lunar/solar perturbations, and non-spherical central body. Assumes a point-mass central body. Educational use only.\n';
+    var blob = new Blob([text], {type:'text/plain'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'orbital-motion-report.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+// ============ EVENTS ============
+$('btn-sound').addEventListener('click', toggleSound);
+$('body').addEventListener('change', function(e){
+    S.body = e.target.value;
+    // Reset to default LEO around new body
+    var body = getBody();
+    S.radius = body.R + Math.min(400e3, body.R * 0.1);
+    S.velocity = Math.sqrt(G * body.M / S.radius);
+    $('radius').value = S.radius / 1000;
+    $('v-r').innerText = (S.radius / 1000).toFixed(0);
+    $('velocity').value = (S.velocity / 1000).toFixed(2);
+    $('v-v').innerText = (S.velocity / 1000).toFixed(2);
+    resetSatellite();
+    updateReadouts();
+});
+$('preset').addEventListener('change', function(e){
+    if (e.target.value !== 'custom') {
+        applyPreset(e.target.value);
+    }
+});
+$('radius').addEventListener('input', function(e){
+    S.radius = parseFloat(e.target.value) * 1000;
+    $('v-r').innerText = parseFloat(e.target.value).toFixed(0);
+    S.preset = 'custom'; $('preset').value = 'custom';
+    resetSatellite();
+    updateReadouts();
+});
+$('velocity').addEventListener('input', function(e){
+    S.velocity = parseFloat(e.target.value) * 1000;
+    $('v-v').innerText = parseFloat(e.target.value).toFixed(2);
+    S.preset = 'custom'; $('preset').value = 'custom';
+    resetSatellite();
+    updateReadouts();
+});
+$('timespeed').addEventListener('input', function(e){
+    S.timeSpeed = parseFloat(e.target.value);
+    $('v-speed').innerText = S.timeSpeed.toFixed(1);
+});
+$('trail-toggle').addEventListener('change', function(e){
+    S.showTrail = e.target.checked;
+});
+$('vectors-toggle').addEventListener('change', function(e){
+    S.showVectors = e.target.checked;
+});
+$('btn-launch').addEventListener('click', function(){
+    resetSatellite();
+    S.running = true;
+    startEngine();
+    beep(440, 0.2, 'sine', 0.1);
+});
+$('btn-reset').addEventListener('click', function(){
+    S.running = false;
+    stopEngine();
+    resetSatellite();
+    updateReadouts();
+});
+
+document.querySelectorAll('.tab-btn[data-tab]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+        document.querySelectorAll('.tab-btn[data-tab]').forEach(function(b){ b.classList.remove('active'); });
+        document.getElementById(btn.dataset.tab).classList.add('active');
+        btn.classList.add('active');
+    });
+});
+document.querySelectorAll('[data-challenge]').forEach(function(btn){
+    btn.addEventListener('click', function(){ applyChallenge(btn.dataset.challenge); beep(660,0.08,'sine',0.08); });
+});
+$('btn-quiz-check').addEventListener('click', evaluateQuiz);
+$('btn-quiz-reset').addEventListener('click', resetQuiz);
+$('btn-record').addEventListener('click', recordMeasurement);
+$('btn-clear-notes').addEventListener('click', function(){
+    if (!confirm('Clear notebook?')) return;
+    $('hypothesis').value = ''; $('conclusion').value = ''; $('records').value = '';
+    S.records = [];
+});
+$('btn-export').addEventListener('click', downloadReport);
+
+// Zoom
+var pointers = new Map(), pinch = null;
+function getPos(e){ var r = canvas.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
+canvas.addEventListener('wheel', function(e){
+    e.preventDefault();
+    var cx = e.offsetX, cy = e.offsetY;
+    var wx = (cx - view.x)/view.scale, wy = (cy - view.y)/view.scale;
+    var factor = Math.exp(-e.deltaY * 0.0015);
+    view.scale = Math.max(0.3, Math.min(5, view.scale * factor));
+    view.x = cx - wx * view.scale;
+    view.y = cy - wy * view.scale;
+}, {passive:false});
+canvas.addEventListener('pointerdown', function(e){
+    canvas.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, getPos(e));
+    if (pointers.size === 2) {
+        var pts = Array.from(pointers.values());
+        pinch = {dist: Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y), startScale: view.scale};
+    }
+});
+canvas.addEventListener('pointermove', function(e){
+    if (!pointers.has(e.pointerId)) return;
+    var prev = pointers.get(e.pointerId), pos = getPos(e);
+    pointers.set(e.pointerId, pos);
+    if (pointers.size === 1 && !pinch) {
+        view.x += pos.x - prev.x; view.y += pos.y - prev.y;
+    } else if (pointers.size === 2 && pinch) {
+        var pts = Array.from(pointers.values());
+        var d = Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
+        view.scale = Math.max(0.3, Math.min(5, pinch.startScale * d / pinch.dist));
+    }
+});
+canvas.addEventListener('pointerup', function(e){
+    pointers.delete(e.pointerId);
+    try { canvas.releasePointerCapture(e.pointerId); } catch(_){}
+    if (pointers.size < 2) pinch = null;
+});
+canvas.addEventListener('pointercancel', function(e){ pointers.delete(e.pointerId); pinch = null; });
+
+// Splitter
+(function(){
+    var sim = $('sim-area'), splitter = $('splitter');
+    var dragging = false, startY = 0, startH = 0;
+    splitter.addEventListener('pointerdown', function(e){
+        e.preventDefault(); dragging = true; startY = e.clientY;
+        startH = sim.getBoundingClientRect().height;
+        try { splitter.setPointerCapture(e.pointerId); } catch(_){}
+    });
+    window.addEventListener('pointermove', function(e){
+        if (!dragging) return;
+        var dy = e.clientY - startY;
+        var nh = Math.max(180, Math.min(window.innerHeight-240, Math.round(startH + dy)));
+        sim.style.flex = '0 0 ' + nh + 'px';
+    });
+    window.addEventListener('pointerup', function(e){
+        if (!dragging) return;
+        dragging = false;
+        try { splitter.releasePointerCapture(e.pointerId); } catch(_){}
+    });
+})();
+
+window.addEventListener('resize', function(){ lastW = 0; lastH = 0; });
+
+// ============ BOOT ============
+resetSatellite();
+updateReadouts();
+requestAnimationFrame(animate);
+
+})();
+</script>
+</body>
+</html>

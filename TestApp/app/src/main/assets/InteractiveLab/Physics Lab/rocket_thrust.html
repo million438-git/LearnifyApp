@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Physics: Rocket Thrust Lab</title>
+    <style>
+        :root {
+            --primary: #6366f1; --secondary: #f43f5e; --dark: #0f172a;
+            --surface: #ffffff; --bg: #f1f5f9; --glass: rgba(255,255,255,0.9);
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        html, body { height: 100%; }
+        body { margin: 0; background: var(--bg); color: var(--dark); display: flex; flex-direction: column; overflow: auto; -webkit-font-smoothing:antialiased; }
+
+        header { background: var(--dark); color: white; padding: 10px; text-align: center; border-bottom: 3px solid var(--primary); }
+        .lab-container { display: flex; flex: 1; overflow: auto; flex-direction: column; }
+
+        #sim-area { flex: 2 1 460px; position: relative; background: #0a0f1f; border-bottom: 2px solid #e2e8f0; overflow: auto; cursor: crosshair; min-height:360px; }
+        canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+        .splitter { height: 10px; background: linear-gradient(90deg, rgba(0,0,0,0.03), rgba(0,0,0,0.06)); cursor: ns-resize; display:block; }
+        .splitter:hover { background: linear-gradient(90deg, rgba(0,0,0,0.05), rgba(0,0,0,0.09)); }
+
+        .bottom-panel { flex: 3; display: flex; flex-direction: row; background: var(--surface); overflow-y: auto; }
+        .controls { flex: 0 0 360px; padding: 18px; border-right: 1px solid #e2e8f0; min-width: 300px; }
+        .analysis { flex: 1 1 720px; padding: 18px; background: #fafafa; min-width: 420px; }
+
+        .card { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        h4 { margin: 0 0 10px 0; font-size: 0.8rem; color: #64748b; text-transform: uppercase; }
+        .input-row { margin-bottom: 12px; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; }
+        input[type="range"] { width: 100%; accent-color: var(--primary); }
+        select, input[type="number"] { width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; font-family: inherit; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        button { padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit; }
+        .btn-fire { background: var(--primary); color: white; }
+        .btn-fire:hover { background: #4f46e5; }
+        .btn-launch { background: linear-gradient(135deg, #f97316, #dc2626); color: white; }
+        .btn-launch:hover { background: linear-gradient(135deg, #ea580c, #b91c1c); }
+        .btn-reset { background: #64748b; color: white; }
+        .btn-reset:hover { background: #475569; }
+        .btn-sound { background: #10b981; color: white; }
+        .btn-sound:hover { background: #059669; }
+        .btn-sound.playing { background: #ef4444; }
+        .btn-sound.playing:hover { background: #dc2626; }
+
+        .hud { position: absolute; top: 10px; left: 10px; background: var(--glass); padding: 8px; border-radius: 8px; font-size: 0.75rem; border: 1px solid #ddd; z-index: 20; color: #0f172a; }
+        .hud * { pointer-events: auto; }
+        .hud .metrics { pointer-events: none; line-height: 1.7; }
+        .zoom-controls { display:flex; gap:6px; margin-top:6px; }
+        .zoom-controls button { padding:6px 8px; border-radius:6px; border:1px solid rgba(0,0,0,0.06); background:white; cursor:pointer; }
+        .vector-legend { position: absolute; bottom: 10px; left: 10px; font-size: 0.65rem; background: var(--glass); padding: 5px; border-radius: 4px; color: #0f172a; }
+
+        .tab-btn { padding: 8px 12px; border-radius: 6px; background: #e2e8f0; color: var(--dark); font-weight: 600; font-size: 0.8rem; }
+        .tab-btn:hover { background: #cbd5e1; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        .readouts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+        .readout { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; }
+        .readout span { font-size: 0.7rem; color: #64748b; display: block; }
+        .readout strong { font-size: 1rem; color: var(--dark); }
+
+        .quiz-q { padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+        .quiz-q:last-child { border-bottom: none; }
+        .quiz-q > strong { display: block; margin-bottom: 8px; font-size: 0.9rem; }
+        .quiz-q label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; margin: 3px 6px 3px 0; cursor: pointer; font-weight: 500; }
+        .quiz-q label:hover { background: #eef2ff; border-color: #6366f1; }
+        .explanation {
+            margin-top: 8px; padding: 10px 12px; border-radius: 6px; font-size: 0.82rem; line-height: 1.55;
+            background: #eef2ff; border-left: 3px solid #6366f1; color: #1e293b;
+        }
+        .explanation.correct-box { background: #ecfdf5; border-left-color: #10b981; }
+        .explanation.wrong-box { background: #fef2f2; border-left-color: #dc2626; }
+        .explanation strong { display: block; margin-bottom: 3px; }
+
+        .quiz-section { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6366f1; margin: 12px 0 6px 0; }
+        .quiz-section:first-child { margin-top: 0; }
+
+        #quiz-result { margin-top: 10px; padding: 12px; border-radius: 8px; background: #eef2ff; border: 1px solid #c7d2fe; font-weight: 700; text-align: center; }
+
+        table.formulas { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 6px; }
+        table.formulas th, table.formulas td { border: 1px solid #e2e8f0; padding: 6px 8px; text-align: left; }
+        table.formulas th { background: #f1f5f9; font-weight: 600; }
+        .eq { font-family: 'JetBrains Mono', ui-monospace, monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.82rem; }
+        .note { font-size: 0.82rem; color: #475569; margin-top: 8px; line-height: 1.5; }
+        .sound-hint { background: #fef3c7; border-left: 3px solid #f59e0b; padding: 8px 10px; border-radius: 6px; font-size: 0.82rem; margin-top: 8px; }
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 99px; font-size: 0.72rem; font-weight: 700; }
+        .status-idle { background: #e2e8f0; color: #475569; }
+        .status-burning { background: #fef3c7; color: #b45309; }
+        .status-liftoff { background: #d1fae5; color: #065f46; }
+        .status-apogee { background: #e0e7ff; color: #3730a3; }
+        .status-landing { background: #fee2e2; color: #991b1b; }
+
+        textarea { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 0.85rem; min-height: 64px; resize: vertical; }
+
+        @media (max-width: 768px) {
+            .bottom-panel { flex-direction: column; }
+            .controls { border-right: none; border-bottom: 1px solid #eee; min-width: 0; }
+            .analysis { min-width: 0; }
+            .readouts { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">🚀 Rocket Thrust Interactive Lab</h2>
+    <small>Explore Thrust · Mass Flow Rate · Exhaust Velocity · Real-Time Launch Dynamics</small>
+</header>
+
+<div class="lab-container">
+    <div id="sim-area">
+        <div class="hud">
+            <b>LIVE STATE</b><br>
+            <div class="metrics">
+                Status: <span id="hud-status" class="status-badge status-idle">IDLE</span><br>
+                Thrust F: <span id="hud-F">0</span> N<br>
+                Mass m: <span id="hud-m">1000</span> kg<br>
+                Altitude: <span id="hud-alt">0</span> m<br>
+                Velocity: <span id="hud-v">0</span> m/s
+            </div>
+            <div style="margin-top:6px; font-size:0.75rem;">
+                <label style="display:inline-flex;align-items:center;gap:6px;"><input id="full-scroll-toggle" type="checkbox"> Enable Full Page Scrolling</label>
+            </div>
+        </div>
+        <div class="vector-legend">
+            <span style="color:#f97316">🔥 Thrust</span> | <span style="color:#94a3b8">● Exhaust</span> | <span style="color:#10b981">● Rocket</span>
+        </div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div id="splitter" class="splitter" title="Drag to resize simulation area"></div>
+
+    <div class="bottom-panel">
+        <div class="controls">
+            <h4>🧪 Launch Control</h4>
+
+            <div class="input-row">
+                <button class="btn-sound" id="btn-sound" style="width:100%;">🔈 Enable sound</button>
+                <div class="sound-hint" id="sound-hint">Enable engine rumble, ignition, and whoosh sounds.</div>
+            </div>
+
+            <div class="input-row">
+                <label>Propellant / engine type</label>
+                <select id="engine">
+                    <option value="solid" selected>Solid (model rocket) — Isp ≈ 200 s</option>
+                    <option value="kerolox">Kerosene/LOX — Isp ≈ 300 s</option>
+                    <option value="hydrolox">Hydrogen/LOX — Isp ≈ 450 s</option>
+                    <option value="ion">Ion thruster — Isp ≈ 3000 s</option>
+                </select>
+            </div>
+
+            <div class="input-row">
+                <label>Dry mass (rocket structure): <span id="v-m0">800</span> kg</label>
+                <input type="range" id="m0" min="100" max="5000" step="50" value="800">
+            </div>
+
+            <div class="input-row">
+                <label>Propellant mass: <span id="v-mp">200</span> kg</label>
+                <input type="range" id="mp" min="50" max="4000" step="50" value="200">
+            </div>
+
+            <div class="input-row">
+                <label>Mass flow rate ṁ: <span id="v-mdot">2.0</span> kg/s</label>
+                <input type="range" id="mdot" min="0.5" max="20" step="0.5" value="2">
+            </div>
+
+            <div class="input-row">
+                <label>Exhaust velocity v_e: <span id="v-ve">2000</span> m/s</label>
+                <input type="range" id="ve" min="500" max="5000" step="100" value="2000">
+            </div>
+
+            <div class="btn-grid">
+                <button class="btn-launch" id="btn-launch">🚀 IGNITE</button>
+                <button class="btn-reset" id="btn-reset">↺ Reset</button>
+            </div>
+        </div>
+
+        <div class="analysis">
+            <h4>📊 Learn &amp; Practice</h4>
+
+            <div class="readouts">
+                <div class="readout"><span>Status</span><strong id="ro-status">Idle</strong></div>
+                <div class="readout"><span>Thrust F = ṁ·v_e</span><strong id="ro-F">4000 N</strong></div>
+                <div class="readout"><span>Dry mass m₀</span><strong id="ro-m0">800 kg</strong></div>
+                <div class="readout"><span>Propellant mass</span><strong id="ro-mp">200 kg</strong></div>
+                <div class="readout"><span>Current mass</span><strong id="ro-m">1000 kg</strong></div>
+                <div class="readout"><span>Weight W = mg</span><strong id="ro-W">9810 N</strong></div>
+                <div class="readout"><span>Net force F − W</span><strong id="ro-net">−5810 N</strong></div>
+                <div class="readout"><span>Acceleration a</span><strong id="ro-a">0.0 m/s²</strong></div>
+                <div class="readout"><span>Thrust-to-weight</span><strong id="ro-twr">0.41</strong></div>
+                <div class="readout"><span>Specific impulse</span><strong id="ro-isp">204 s</strong></div>
+                <div class="readout"><span>Δv (Tsiolkovsky)</span><strong id="ro-dv">447 m/s</strong></div>
+                <div class="readout"><span>Burn time</span><strong id="ro-burn">100 s</strong></div>
+            </div>
+
+            <div class="card">
+                <div class="tabs" style="display:flex; flex-wrap: wrap; gap:8px; margin-bottom:8px;">
+                    <button class="tab-btn active" data-tab="formulas">Formulas</button>
+                    <button class="tab-btn" data-tab="quiz">Quiz</button>
+                    <button class="tab-btn" data-tab="challenges">Challenges</button>
+                    <button class="tab-btn" data-tab="notebook">Notebook</button>
+                </div>
+
+                <!-- FORMULAS -->
+                <div id="formulas" class="tab-panel active">
+                    <h3 style="margin:6px 0 8px 0;">Core Formulas — Rocket Thrust</h3>
+                    <ul style="font-size:0.9rem; line-height:1.6; padding-left:1rem; margin:0;">
+                        <li><b>Thrust:</b> F = ṁ · v_e (mass flow rate × exhaust velocity)</li>
+                        <li><b>Specific impulse:</b> I_sp = v_e / g₀ (in seconds)</li>
+                        <li><b>Tsiolkovsky rocket equation:</b> Δv = v_e · ln(m₀/m_f)</li>
+                        <li><b>Current mass:</b> m(t) = m₀ + m_p − ṁ · t (while burning)</li>
+                        <li><b>Net force:</b> F_net = F − m·g (near Earth's surface)</li>
+                        <li><b>Acceleration:</b> a = F_net / m</li>
+                        <li><b>Thrust-to-weight ratio:</b> TWR = F / (m·g) — must exceed 1 for liftoff</li>
+                        <li><b>Burn time:</b> t_burn = m_p / ṁ</li>
+                    </ul>
+                    <p class="note"><b>💡 Quick tips:</b> A rocket must have TWR > 1 to lift off. Thrust comes from expelling mass at high speed — Newton's third law. Higher Isp (exhaust velocity) is better for efficiency, but real engines trade thrust for Isp. Ion engines have huge Isp but tiny thrust. g₀ = 9.80665 m/s².</p>
+
+                    <table class="formulas" style="margin-top:12px;">
+                        <tr><th>Quantity</th><th>Formula</th><th>Units</th></tr>
+                        <tr><td>Thrust</td><td><span class="eq">F = ṁ · v_e</span></td><td>N</td></tr>
+                        <tr><td>Specific impulse</td><td><span class="eq">I_sp = v_e / g₀</span></td><td>s</td></tr>
+                        <tr><td>Δv (Tsiolkovsky)</td><td><span class="eq">Δv = v_e · ln(m₀/m_f)</span></td><td>m/s</td></tr>
+                        <tr><td>Burn time</td><td><span class="eq">t = m_p / ṁ</span></td><td>s</td></tr>
+                    </table>
+                </div>
+
+                <!-- QUIZ -->
+                <div id="quiz" class="tab-panel" style="max-height:600px; overflow:auto;">
+                    <h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+                    <div class="quiz-section">Basic — Rocket Basics</div>
+
+                    <div class="quiz-q" data-q="q1" data-answer="B">
+                        <strong>1. Rocket thrust is produced by:</strong>
+                        <label><input type="radio" name="q1" value="A"> Pushing against the air</label>
+                        <label><input type="radio" name="q1" value="B"> Expelling mass at high velocity (Newton's 3rd law)</label>
+                        <label><input type="radio" name="q1" value="C"> Sucking air into the nozzle</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q2" data-answer="B">
+                        <strong>2. Thrust is calculated as:</strong>
+                        <label><input type="radio" name="q2" value="A"> F = m·a</label>
+                        <label><input type="radio" name="q2" value="B"> F = ṁ · v_e</label>
+                        <label><input type="radio" name="q2" value="C"> F = ½mv²</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q3" data-answer="A">
+                        <strong>3. Rockets work in space (vacuum) because:</strong>
+                        <label><input type="radio" name="q3" value="A"> They carry their own oxidizer and don't need air</label>
+                        <label><input type="radio" name="q3" value="B"> There is no gravity in space</label>
+                        <label><input type="radio" name="q3" value="C"> Space has thin air to push against</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Intermediate — Tsiolkovsky &amp; Isp</div>
+
+                    <div class="quiz-q" data-q="q4" data-answer="B">
+                        <strong>4. Specific impulse I_sp has units of:</strong>
+                        <label><input type="radio" name="q4" value="A"> m/s</label>
+                        <label><input type="radio" name="q4" value="B"> seconds</label>
+                        <label><input type="radio" name="q4" value="C"> N/kg</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q5" data-answer="B">
+                        <strong>5. To lift off from Earth, the thrust-to-weight ratio must be:</strong>
+                        <label><input type="radio" name="q5" value="A"> Less than 1</label>
+                        <label><input type="radio" name="q5" value="B"> Greater than 1</label>
+                        <label><input type="radio" name="q5" value="C"> Exactly 0</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q6" data-answer="A">
+                        <strong>6. The Tsiolkovsky equation says that as the propellant fraction (m_p/m_total) increases, Δv:</strong>
+                        <label><input type="radio" name="q6" value="A"> Increases logarithmically (diminishing returns)</label>
+                        <label><input type="radio" name="q6" value="B"> Decreases</label>
+                        <label><input type="radio" name="q6" value="C"> Stays the same</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Advanced — Deep Understanding</div>
+
+                    <div class="quiz-q" data-q="q7" data-answer="B">
+                        <strong>7. A rocket has ṁ = 5 kg/s and v_e = 3000 m/s. Its thrust is:</strong>
+                        <label><input type="radio" name="q7" value="A"> 600 N</label>
+                        <label><input type="radio" name="q7" value="B"> 15,000 N</label>
+                        <label><input type="radio" name="q7" value="C"> 150,000 N</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q8" data-answer="B">
+                        <strong>8. A 1000 kg rocket (thrust 15,000 N). Its TWR is:</strong>
+                        <label><input type="radio" name="q8" value="A"> 0.5</label>
+                        <label><input type="radio" name="q8" value="B"> ≈ 1.53</label>
+                        <label><input type="radio" name="q8" value="C"> ≈ 15</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q9" data-answer="B">
+                        <strong>9. An ion thruster (Isp ≈ 3000 s) has extremely high exhaust velocity but tiny thrust because:</strong>
+                        <label><input type="radio" name="q9" value="A"> It uses weak fuel</label>
+                        <label><input type="radio" name="q9" value="B"> The mass flow rate ṁ is very small</label>
+                        <label><input type="radio" name="q9" value="C"> It violates physics</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="btn-grid" style="margin-top:12px;">
+                        <button class="btn-fire" id="btn-quiz-check">Submit Quiz</button>
+                        <button class="btn-reset" id="btn-quiz-reset">Reset</button>
+                    </div>
+                    <div id="quiz-result" style="display:none;"></div>
+                </div>
+
+                <!-- CHALLENGES -->
+                <div id="challenges" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Interactive Challenges</h3>
+                    <div style="display:flex; flex-direction:column; gap:8px; font-size:0.9rem;">
+                        <div>
+                            <b>Challenge 1 — Model rocket</b><br>
+                            <button class="btn-launch" data-challenge="model">Small model rocket (Isp 200s)</button>
+                        </div>
+                        <div>
+                            <b>Challenge 2 — Kerolox</b><br>
+                            <button class="btn-launch" data-challenge="kerolox">Falcon-9 style (Isp 300s)</button>
+                        </div>
+                        <div>
+                            <b>Challenge 3 — Hydrolox</b><br>
+                            <button class="btn-launch" data-challenge="hydrolox">Shuttle style (Isp 450s)</button>
+                        </div>
+                        <div>
+                            <b>Challenge 4 — Ion thruster</b><br>
+                            <button class="btn-launch" data-challenge="ion">Deep space ion drive (Isp 3000s)</button>
+                        </div>
+                        <div>
+                            <b>Challenge 5 — Heavy lifter</b><br>
+                            <button class="btn-launch" data-challenge="heavy">Saturn-V scale (3000 kg)</button>
+                        </div>
+                        <div id="challenge-note" style="color:#0f172a; font-size:0.85rem;"></div>
+                        <div id="challenge-result" style="color:#083344; font-weight:600; margin-top:6px;"></div>
+                    </div>
+                </div>
+
+                <!-- NOTEBOOK -->
+                <div id="notebook" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Experiment Notebook</h3>
+                    <label>Prediction / hypothesis</label>
+                    <textarea id="hypothesis" placeholder="What do you expect to happen, and why?"></textarea>
+                    <label style="margin-top:10px; display:block;">Conclusion / evidence</label>
+                    <textarea id="conclusion" placeholder="Explain what your observations show."></textarea>
+                    <label style="margin-top:10px; display:block;">Recorded measurements</label>
+                    <textarea id="records" readonly style="background:#f8fafc; font-family:monospace; font-size:0.75rem; min-height:100px;"></textarea>
+                    <div class="btn-grid" style="margin-top:10px;">
+                        <button class="btn-fire" id="btn-record">📋 Record</button>
+                        <button class="btn-reset" id="btn-clear-notes">Clear</button>
+                    </div>
+                    <button class="btn-fire" style="margin-top:8px; width:100%;" id="btn-export">⬇ Download Report</button>
+                </div>
+
+            </div>
+
+            <div class="card">
+                <b>Real-world fact:</b> <span id="fact-box" style="font-size:0.85rem;">—</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+"use strict";
+(function () {
+    // === Physical constants ===
+    var G0 = 9.80665;    // standard gravity (m/s²)
+    var G_EARTH = 9.81;  // used near Earth's surface
+
+    // === Engine presets (realistic Isp values) ===
+    // Isp in seconds → v_e = Isp × g0
+    var ENGINES = {
+        solid:     { name: 'Solid (model rocket)', isp: 200,  mdot: 2,   ve: 200*9.80665 },
+        kerolox:   { name: 'Kerosene/LOX',         isp: 300,  mdot: 5,   ve: 300*9.80665 },
+        hydrolox:  { name: 'Hydrogen/LOX',         isp: 450,  mdot: 4,   ve: 450*9.80665 },
+        ion:       { name: 'Ion thruster',         isp: 3000, mdot: 0.05,ve: 3000*9.80665 }
+    };
+
+    // === State ===
+    var S = {
+        engine: 'solid',
+        m0: 800,          // dry mass (kg)
+        mp: 200,          // propellant mass (kg)
+        mdot: 2,          // mass flow rate (kg/s)
+        ve: 2000,         // exhaust velocity (m/s)
+        soundOn: false,
+        // simulation state
+        running: false,
+        propellantLeft: 200,
+        altitude: 0,
+        velocity: 0,
+        time: 0,
+        accel: 0,
+        status: 'idle',   // idle | burning | liftoff | apogee | landing
+        // visual state
+        flameIntensity: 0,
+        smokeParticles: [],
+        flameParticles: [],
+        stars: [],
+        records: []
+    };
+
+    var $ = function (id) { return document.getElementById(id); };
+
+    // === Canvas ===
+    var canvas = $('canvas');
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var view = { x: 0, y: 0, scale: 1 };
+
+    function resizeCanvas() {
+        var w = canvas.clientWidth, h = canvas.clientHeight;
+        canvas.width = Math.max(1, Math.round(w * dpr));
+        canvas.height = Math.max(1, Math.round(h * dpr));
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function cw() { return canvas.width / dpr; }
+    function ch() { return canvas.height / dpr; }
+
+    // === Web Audio API ===
+    var audioCtx = null;
+    var rumbleOsc = null;
+    var rumbleGain = null;
+
+    function initAudio() {
+        if (audioCtx) return;
+        try {
+            var AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) {
+                $('sound-hint').textContent = '⚠ Your browser does not support Web Audio API.';
+                return;
+            }
+            audioCtx = new AC();
+        } catch (err) {
+            $('sound-hint').textContent = '⚠ Audio failed to initialize.';
+        }
+    }
+
+    function startRumble() {
+        if (!audioCtx || !S.soundOn) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        if (rumbleOsc) return;
+        try {
+            rumbleOsc = audioCtx.createOscillator();
+            rumbleGain = audioCtx.createGain();
+            rumbleOsc.type = 'sawtooth';
+            rumbleOsc.frequency.value = 55;
+            rumbleGain.gain.setValueAtTime(0, audioCtx.currentTime);
+            rumbleGain.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + 0.3);
+            rumbleOsc.connect(rumbleGain);
+            rumbleGain.connect(audioCtx.destination);
+            rumbleOsc.start();
+            // add a subtle low-pass filter to make it more "rumble"-like
+            var filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 200;
+            rumbleGain.disconnect();
+            rumbleGain.connect(filter);
+            filter.connect(audioCtx.destination);
+        } catch (e) {}
+    }
+
+    function stopRumble() {
+        if (rumbleOsc) {
+            try {
+                rumbleGain.gain.setValueAtTime(rumbleGain.gain.value, audioCtx.currentTime);
+                rumbleGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+                rumbleOsc.stop(audioCtx.currentTime + 0.3);
+            } catch (e) {}
+            rumbleOsc = null;
+            rumbleGain = null;
+        }
+    }
+
+    function playIgnition() {
+        if (!audioCtx || !S.soundOn) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        try {
+            // Noise burst for ignition
+            var bufferSize = audioCtx.sampleRate * 0.6;
+            var buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            var data = buffer.getChannelData(0);
+            for (var i = 0; i < bufferSize; i++) {
+                data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2);
+            }
+            var noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            var noiseGain = audioCtx.createGain();
+            noiseGain.gain.value = 0.25;
+            var filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 400;
+            noise.connect(filter);
+            filter.connect(noiseGain);
+            noiseGain.connect(audioCtx.destination);
+            noise.start();
+            // sweep-tone underneath
+            var osc = audioCtx.createOscillator();
+            var og = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(80, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(220, audioCtx.currentTime + 0.4);
+            og.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            og.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+            osc.connect(og);
+            og.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.6);
+        } catch (e) {}
+    }
+
+    function playWhoosh() {
+        if (!audioCtx || !S.soundOn) return;
+        try {
+            var bufferSize = audioCtx.sampleRate * 0.4;
+            var buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            var data = buffer.getChannelData(0);
+            for (var i = 0; i < bufferSize; i++) {
+                data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 3);
+            }
+            var noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            var noiseGain = audioCtx.createGain();
+            noiseGain.gain.value = 0.15;
+            var filter = audioCtx.createBiquadFilter();
+            filter.type = 'highpass';
+            filter.frequency.value = 800;
+            noise.connect(filter);
+            filter.connect(noiseGain);
+            noiseGain.connect(audioCtx.destination);
+            noise.start();
+        } catch (e) {}
+    }
+
+    function toggleSound() {
+        initAudio();
+        if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        S.soundOn = !S.soundOn;
+        if (S.soundOn) {
+            $('btn-sound').textContent = '🔊 Sound ON';
+            $('btn-sound').classList.add('playing');
+            $('sound-hint').textContent = 'Ignition, rumble, and whoosh enabled.';
+            // test beep
+            try {
+                var o = audioCtx.createOscillator();
+                var g = audioCtx.createGain();
+                o.frequency.value = 660;
+                g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+                o.connect(g); g.connect(audioCtx.destination);
+                o.start(); o.stop(audioCtx.currentTime + 0.1);
+            } catch (e) {}
+        } else {
+            stopRumble();
+            $('btn-sound').textContent = '🔈 Enable sound';
+            $('btn-sound').classList.remove('playing');
+            $('sound-hint').textContent = 'Sound disabled.';
+        }
+    }
+
+    // === Physics ===
+    function getCurrentMass() {
+        if (!S.running) return S.m0 + S.mp;
+        return S.m0 + S.propellantLeft;
+    }
+    function getThrust() {
+        if (!S.running || S.propellantLeft <= 0) return 0;
+        return S.mdot * S.ve;
+    }
+    function getIsp() {
+        return S.ve / G0;
+    }
+    function getBurnTime() {
+        return S.mp / S.mdot;
+    }
+    function getDeltaV() {
+        var mf = S.m0;
+        var m0Total = S.m0 + S.mp;
+        if (mf <= 0) return 0;
+        return S.ve * Math.log(m0Total / mf);
+    }
+
+    // === Star field (for background) ===
+    function initStars() {
+        S.stars = [];
+        for (var i = 0; i < 60; i++) {
+            S.stars.push({
+                x: Math.random(),
+                y: Math.random() * 0.6,
+                r: Math.random() * 1.5 + 0.3,
+                tw: Math.random() * Math.PI * 2
+            });
+        }
+    }
+
+    // === Drawing ===
+    function drawScene() {
+        var w = cw(), h = ch();
+
+        // Sky gradient — gets darker with altitude
+        var altFactor = Math.min(1, S.altitude / 8000);
+        var topColor = mixColor('#87ceeb', '#0a0f1f', altFactor);
+        var botColor = mixColor('#cfe8ff', '#1e293b', altFactor);
+        var grad = ctx.createLinearGradient(0, 0, 0, h);
+        grad.addColorStop(0, topColor);
+        grad.addColorStop(1, botColor);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
+
+        // Stars (visible when high up)
+        if (altFactor > 0.15) {
+            var starAlpha = altFactor * 0.9;
+            var t = Date.now() * 0.001;
+            for (var i = 0; i < S.stars.length; i++) {
+                var star = S.stars[i];
+                var tw = 0.5 + 0.5 * Math.sin(t * 2 + star.tw);
+                ctx.fillStyle = 'rgba(255,255,255,' + (starAlpha * tw) + ')';
+                ctx.beginPath();
+                ctx.arc(star.x * w, star.y * h, star.r, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        ctx.save();
+        ctx.translate(view.x, view.y);
+        ctx.scale(view.scale, view.scale);
+        var W = w / view.scale, H = h / view.scale;
+
+        // Ground line (bottom) — moves up as rocket rises
+        var altScale = H / 3000; // 3000 m range
+        var groundY = H - S.altitude * altScale * 0.4; // rocket climbs visually
+        // Cap: don't let ground scroll off forever — fade & clamp
+        if (groundY < H * 0.5) {
+            groundY = H * 0.5;
+        }
+
+        // Ground
+        ctx.fillStyle = '#475569';
+        ctx.fillRect(0, groundY, W, H - groundY);
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(0, groundY, W, 6);
+
+        // Launch pad
+        var rocketX = W * 0.5;
+        var rocketBaseY = groundY - 10;
+        var rocketY = rocketBaseY - S.altitude * altScale * 0.4;
+        if (rocketY < H * 0.25) rocketY = H * 0.25;
+        if (rocketY > rocketBaseY) rocketY = rocketBaseY;
+
+        // Pad detail
+        if (S.altitude < 30) {
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(rocketX - 45, groundY - 6, 90, 6);
+            ctx.fillStyle = '#f97316';
+            for (var m = 0; m < 5; m++) {
+                ctx.fillRect(rocketX - 40 + m * 18, groundY - 8, 10, 4);
+            }
+        }
+
+        // Rocket
+        drawRocket(rocketX, rocketY, S.altitude);
+
+        // Exhaust flame and smoke
+        drawExhaust(rocketX, rocketY);
+
+        // Smoke particles
+        updateAndDrawParticles(W, H);
+
+        ctx.restore();
+
+        // Altitude gauge (right side)
+        drawAltitudeGauge(w - 60, 80, 200, S.altitude);
+
+        // Velocity gauge (right, below altitude)
+        drawVelocityGauge(w - 60, 310, 100, S.velocity);
+
+        // Caption
+        ctx.fillStyle = altFactor > 0.5 ? '#cbd5e1' : '#475569';
+        ctx.font = '11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Real-time simulation · thrust vs. gravity · mass decreasing as fuel burns', w / 2, h - 8);
+    }
+
+    function drawRocket(cx, baseY, altitude) {
+        var scale = 1 + Math.min(0.3, altitude / 10000); // slight scale-up with distance
+        var bodyW = 24 * scale;
+        var bodyH = 70 * scale;
+        var noseH = 22 * scale;
+
+        // Rocket body
+        ctx.fillStyle = '#f1f5f9';
+        ctx.beginPath();
+        ctx.moveTo(cx - bodyW / 2, baseY);
+        ctx.lineTo(cx - bodyW / 2, baseY - bodyH);
+        ctx.lineTo(cx, baseY - bodyH - noseH);
+        ctx.lineTo(cx + bodyW / 2, baseY - bodyH);
+        ctx.lineTo(cx + bodyW / 2, baseY);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Nose cone (red)
+        ctx.fillStyle = '#dc2626';
+        ctx.beginPath();
+        ctx.moveTo(cx - bodyW / 2, baseY - bodyH);
+        ctx.lineTo(cx, baseY - bodyH - noseH);
+        ctx.lineTo(cx + bodyW / 2, baseY - bodyH);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#0f172a';
+        ctx.stroke();
+
+        // Fins (both sides)
+        ctx.fillStyle = '#dc2626';
+        ctx.beginPath();
+        ctx.moveTo(cx - bodyW / 2, baseY - 5);
+        ctx.lineTo(cx - bodyW / 2 - 14 * scale, baseY + 8 * scale);
+        ctx.lineTo(cx - bodyW / 2, baseY + 4);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#0f172a';
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(cx + bodyW / 2, baseY - 5);
+        ctx.lineTo(cx + bodyW / 2 + 14 * scale, baseY + 8 * scale);
+        ctx.lineTo(cx + bodyW / 2, baseY + 4);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Window (dark blue circle)
+        ctx.fillStyle = '#1e40af';
+        ctx.beginPath();
+        ctx.arc(cx, baseY - bodyH + 18 * scale, 5 * scale, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Nozzle at bottom
+        ctx.fillStyle = '#1e293b';
+        ctx.beginPath();
+        ctx.moveTo(cx - bodyW / 2 + 4, baseY);
+        ctx.lineTo(cx - bodyW / 2 + 2, baseY + 8 * scale);
+        ctx.lineTo(cx + bodyW / 2 - 2, baseY + 8 * scale);
+        ctx.lineTo(cx + bodyW / 2 - 4, baseY);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#0f172a';
+        ctx.stroke();
+    }
+
+    function drawExhaust(cx, baseY) {
+        if (S.flameIntensity <= 0.05) return;
+
+        var len = 40 + S.flameIntensity * 80;
+        var wBase = 14 + S.flameIntensity * 6;
+        var nozzleY = baseY + 8;
+
+        // Outer glow (orange/yellow)
+        var grad = ctx.createLinearGradient(cx, nozzleY, cx, nozzleY + len);
+        grad.addColorStop(0, 'rgba(255, 255, 200, ' + S.flameIntensity + ')');
+        grad.addColorStop(0.3, 'rgba(255, 180, 40, ' + S.flameIntensity * 0.9 + ')');
+        grad.addColorStop(0.7, 'rgba(244, 63, 94, ' + S.flameIntensity * 0.6 + ')');
+        grad.addColorStop(1, 'rgba(244, 63, 94, 0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        // flickering flame shape
+        var t = Date.now() * 0.01;
+        var flicker = Math.sin(t) * 3 + Math.sin(t * 2.3) * 2;
+        ctx.moveTo(cx - wBase, nozzleY);
+        ctx.quadraticCurveTo(cx - wBase * 0.5, nozzleY + len * 0.5, cx - 4 + flicker, nozzleY + len);
+        ctx.quadraticCurveTo(cx + 4 + flicker, nozzleY + len + 8, cx + wBase * 0.5, nozzleY + len * 0.5);
+        ctx.quadraticCurveTo(cx + wBase, nozzleY + len * 0.3, cx + wBase, nozzleY);
+        ctx.closePath();
+        ctx.fill();
+
+        // Inner bright core
+        var innerGrad = ctx.createLinearGradient(cx, nozzleY, cx, nozzleY + len * 0.6);
+        innerGrad.addColorStop(0, 'rgba(255, 255, 255, ' + S.flameIntensity + ')');
+        innerGrad.addColorStop(1, 'rgba(255, 200, 100, 0)');
+        ctx.fillStyle = innerGrad;
+        ctx.beginPath();
+        ctx.moveTo(cx - 5, nozzleY);
+        ctx.lineTo(cx, nozzleY + len * 0.7);
+        ctx.lineTo(cx + 5, nozzleY);
+        ctx.closePath();
+        ctx.fill();
+
+        // Emit flame particles
+        if (Math.random() < 0.6 && S.flameIntensity > 0.2) {
+            S.flameParticles.push({
+                x: cx + (Math.random() - 0.5) * 10,
+                y: nozzleY + len * 0.5,
+                vx: (Math.random() - 0.5) * 30,
+                vy: 60 + Math.random() * 40,
+                life: 1.0,
+                size: 2 + Math.random() * 3
+            });
+        }
+        // Emit smoke
+        if (Math.random() < 0.4) {
+            S.smokeParticles.push({
+                x: cx + (Math.random() - 0.5) * 20,
+                y: nozzleY + 20,
+                vx: (Math.random() - 0.5) * 50,
+                vy: 30 + Math.random() * 30,
+                life: 1.0,
+                size: 8 + Math.random() * 12
+            });
+        }
+    }
+
+    function updateAndDrawParticles(W, H) {
+        // Flame particles
+        for (var i = S.flameParticles.length - 1; i >= 0; i--) {
+            var p = S.flameParticles[i];
+            p.x += p.vx * 0.02;
+            p.y += p.vy * 0.02;
+            p.life -= 0.04;
+            if (p.life <= 0) { S.flameParticles.splice(i, 1); continue; }
+            ctx.fillStyle = 'rgba(255, 200, 80, ' + p.life + ')';
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        // Smoke particles
+        for (var j = S.smokeParticles.length - 1; j >= 0; j--) {
+            var s = S.smokeParticles[j];
+            s.x += s.vx * 0.02;
+            s.y += s.vy * 0.02;
+            s.life -= 0.01;
+            if (s.life <= 0) { S.smokeParticles.splice(j, 1); continue; }
+            ctx.fillStyle = 'rgba(200, 200, 200, ' + (s.life * 0.4) + ')';
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.size * (1.2 - s.life * 0.5), 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    function drawAltitudeGauge(x, y, height, altitude) {
+        // Vertical gauge
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.7)';
+        ctx.fillRect(x - 20, y, 40, height);
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x - 20, y, 40, height);
+
+        // Fill proportional to altitude (max 5000m)
+        var pct = Math.min(1, altitude / 5000);
+        var fillH = height * pct;
+        var grad = ctx.createLinearGradient(0, y + height, 0, y);
+        grad.addColorStop(0, '#10b981');
+        grad.addColorStop(0.5, '#fbbf24');
+        grad.addColorStop(1, '#ef4444');
+        ctx.fillStyle = grad;
+        ctx.fillRect(x - 18, y + height - fillH, 36, fillH);
+
+        // Ticks
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = '9px Inter';
+        ctx.textAlign = 'right';
+        for (var tick = 0; tick <= 5000; tick += 1000) {
+            var ty = y + height - (tick / 5000) * height;
+            ctx.fillRect(x - 24, ty - 1, 6, 1);
+            if (tick > 0) ctx.fillText(tick + '', x - 28, ty + 3);
+        }
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = 'bold 10px Inter';
+        ctx.fillText('ALT', x, y - 10);
+        ctx.fillText('(m)', x, y - 22);
+    }
+
+    function drawVelocityGauge(x, y, height, velocity) {
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.7)';
+        ctx.fillRect(x - 20, y, 40, height);
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x - 20, y, 40, height);
+        // Fill (velocity 0 to 500 m/s)
+        var pct = Math.min(1, Math.abs(velocity) / 500);
+        var fillH = height * pct;
+        ctx.fillStyle = velocity >= 0 ? '#3b82f6' : '#ef4444';
+        ctx.fillRect(x - 18, y + height - fillH, 36, fillH);
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = 'bold 10px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('VEL', x, y - 10);
+        ctx.fillText('(m/s)', x, y - 22);
+    }
+
+    function mixColor(c1, c2, t) {
+        function parse(h) {
+            h = h.replace('#', '');
+            return [parseInt(h.substr(0, 2), 16), parseInt(h.substr(2, 2), 16), parseInt(h.substr(4, 2), 16)];
+        }
+        var a = parse(c1), b = parse(c2);
+        var r = Math.round(a[0] + (b[0] - a[0]) * t);
+        var g = Math.round(a[1] + (b[1] - a[1]) * t);
+        var bl = Math.round(a[2] + (b[2] - a[2]) * t);
+        return 'rgb(' + r + ',' + g + ',' + bl + ')';
+    }
+
+    // === Physics step (called from animate) ===
+    var lastTime = 0;
+    function physicsStep(now) {
+        var dt = (now - lastTime) / 1000;
+        lastTime = now;
+        if (!isFinite(dt) || dt <= 0 || dt > 0.2) dt = 0.016;
+
+        if (S.running && S.propellantLeft > 0) {
+            // Burn propellant
+            S.propellantLeft -= S.mdot * dt;
+            if (S.propellantLeft < 0) S.propellantLeft = 0;
+
+            // Thrust force
+            var F = S.mdot * S.ve;
+
+            // Total mass
+            var mTotal = S.m0 + S.propellantLeft;
+
+            // Net force (thrust - weight, no drag modeled — keep simple)
+            var W = mTotal * G_EARTH;
+            var Fnet = F - W;
+
+            // Acceleration (Newton's second law with variable mass)
+            S.accel = Fnet / mTotal;
+
+            // Velocity & position
+            S.velocity += S.accel * dt;
+            S.altitude += S.velocity * dt;
+
+            // Ground collision
+            if (S.altitude < 0) {
+                S.altitude = 0;
+                if (S.velocity < 0) S.velocity = 0;
+            }
+
+            // Flame intensity
+            S.flameIntensity = Math.min(1, S.mdot / 10) * (0.8 + 0.2 * Math.sin(now * 0.02));
+
+            // Status
+            if (S.altitude <= 0 && S.velocity <= 0) {
+                S.status = 'burning';
+            } else {
+                S.status = 'liftoff';
+            }
+        } else if (S.running) {
+            // Coasting after propellant exhausted
+            var mTotal2 = S.m0;
+            var Fnet2 = -mTotal2 * G_EARTH;   // only gravity
+            S.accel = Fnet2 / mTotal2;         // = -g
+            S.velocity += S.accel * dt;
+            S.altitude += S.velocity * dt;
+            if (S.altitude < 0) {
+                S.altitude = 0;
+                S.velocity = 0;
+                S.running = false;
+                S.status = 'landing';
+                stopRumble();
+            }
+            S.flameIntensity = 0;
+
+            // Detect apogee (peak of trajectory)
+            if (S.velocity < 0 && S.status !== 'apogee' && S.status !== 'landing') {
+                S.status = 'apogee';
+                playWhoosh();
+            }
+        } else {
+            S.flameIntensity = 0;
+        }
+
+        S.time += dt;
+    }
+
+    // === Readouts update ===
+    function updateReadouts() {
+        var F = getThrust();
+        var mCur = getCurrentMass();
+        var W = mCur * G_EARTH;
+        var net = F - W;
+        var twr = F / W;
+        var isp = getIsp();
+        var dv = getDeltaV();
+        var burnTime = getBurnTime();
+
+        $('ro-status').innerText = S.status.charAt(0).toUpperCase() + S.status.slice(1);
+        $('ro-F').innerText = Math.round(F) + ' N';
+        $('ro-m0').innerText = S.m0 + ' kg';
+        $('ro-mp').innerText = S.mp + ' kg';
+        $('ro-m').innerText = Math.round(mCur) + ' kg';
+        $('ro-W').innerText = Math.round(W) + ' N';
+        $('ro-net').innerText = Math.round(net) + ' N';
+        $('ro-a').innerText = S.accel.toFixed(2) + ' m/s²';
+        $('ro-twr').innerText = twr.toFixed(2);
+        $('ro-isp').innerText = Math.round(isp) + ' s';
+        $('ro-dv').innerText = Math.round(dv) + ' m/s';
+        $('ro-burn').innerText = burnTime.toFixed(1) + ' s';
+
+        $('hud-F').innerText = Math.round(F);
+        $('hud-m').innerText = Math.round(mCur);
+        $('hud-alt').innerText = Math.round(S.altitude);
+        $('hud-v').innerText = S.velocity.toFixed(1);
+
+        // Status badge
+        var badge = $('hud-status');
+        badge.className = 'status-badge status-' + S.status;
+        badge.innerText = S.status.toUpperCase();
+
+        // Fact
+        var fact;
+        if (S.engine === 'ion') {
+            fact = 'Ion thrusters have Isp up to 3000 s — hugely efficient but with millinewtons of thrust. They run for months to reach high speed. NASA\'s Dawn mission reached 41,000 km/h this way.';
+        } else if (S.engine === 'hydrolox') {
+            fact = 'The Space Shuttle Main Engine (SSME) used hydrogen/LOX at Isp ~453 s. Three engines together produced ~5.3 million N of thrust — powerful AND efficient.';
+        } else if (S.engine === 'kerolox') {
+            fact = 'The SpaceX Merlin engine runs on kerosene/LOX at Isp ~311 s, producing 845 kN at sea level. Nine engines on Falcon 9 give 7.6 million N.';
+        } else {
+            fact = 'Solid rocket boosters (like the Space Shuttle SRB) burn aluminum powder + ammonium perchlorate. Very high thrust but cannot be throttled or shut down once started.';
+        }
+        $('fact-box').innerText = fact;
+    }
+
+    // === Quiz ===
+    var QUIZ_EXPLAIN = {
+        q1: { correct: 'B', why: 'Rockets produce thrust by expelling mass at high velocity — Newton\'s third law (every action has an equal and opposite reaction). Air is NOT needed; this is why rockets work in space.', tip: 'The reaction mass is the exhaust itself, not the air or the ground.' },
+        q2: { correct: 'B', why: 'Thrust F = ṁ · v_e, where ṁ is mass flow rate (kg/s) and v_e is exhaust velocity (m/s). It has units of (kg/s)·(m/s) = kg·m/s² = N.', tip: 'Higher mass flow or higher exhaust velocity both increase thrust.' },
+        q3: { correct: 'A', why: 'Rockets carry both fuel and oxidizer, so they work without external air. The Space Shuttle carried liquid oxygen for the main engines and solid oxidizer in the boosters.', tip: 'This is the key difference from jet engines, which do need air.' },
+        q4: { correct: 'B', why: 'Specific impulse I_sp = v_e / g₀. The g₀ in the denominator has units m/s², and v_e is m/s, so I_sp is in <b>seconds</b>. It represents how long 1 kg of propellant can produce 1 kg₣ (9.81 N) of thrust.', tip: 'Higher Isp = more efficient. Ion ~3000s, hydrolox ~450s, kerolox ~300s, solid ~200s.' },
+        q5: { correct: 'B', why: 'TWR = F / (m·g). For liftoff, thrust must exceed weight, so TWR > 1. A rocket with TWR < 1 just sits on the pad.', tip: 'Falcon 9 starts at TWR ~1.3. Saturn V ~1.15. Too much TWR wastes energy on drag.' },
+        q6: { correct: 'A', why: 'Δv = v_e · ln(m₀/m_f). The log means adding mass has diminishing returns — you can never double Δv by doubling propellant.', tip: 'This is why SSTO (single-stage-to-orbit) is so hard: 90%+ of mass must be propellant.' },
+        q7: { correct: 'B', why: 'F = ṁ·v_e = 5 × 3000 = <b>15,000 N</b>.', tip: '15,000 N ≈ weight of 1.5 tons on Earth.' },
+        q8: { correct: 'B', why: 'W = 1000 × 9.81 = 9810 N. TWR = 15000/9810 = <b>1.53</b>.', tip: 'TWR 1.53 means net upward acceleration of about 0.53·g ≈ 5.2 m/s².' },
+        q9: { correct: 'B', why: 'Ion thrusters have Isp ~3000 s (v_e ~30,000 m/s) but mdot is tiny (milligrams/s), so F = ṁ·v_e is only millinewtons. Perfect for long-duration deep-space missions.', tip: 'DAWN mission ion engine produced 90 mN — about weight of a sheet of paper.' }
+    };
+
+    function evaluateQuiz() {
+        var qs = document.querySelectorAll('.quiz-q');
+        var score = 0, total = qs.length;
+        qs.forEach(function (q) {
+            var name = q.dataset.q;
+            var correct = q.dataset.answer;
+            var chosen = q.querySelector('input[name="' + name + '"]:checked');
+            var expl = q.querySelector('.explanation');
+            var data = QUIZ_EXPLAIN[name];
+            expl.hidden = false;
+            expl.className = 'explanation';
+            if (chosen && chosen.value === correct) {
+                score++;
+                expl.classList.add('correct-box');
+                expl.innerHTML = '<strong>✓ Correct!</strong>' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            } else {
+                expl.classList.add('wrong-box');
+                var chosenVal = chosen ? chosen.value : '—';
+                expl.innerHTML = '<strong>✗ Correct answer is ' + correct + '</strong>You chose ' + chosenVal + '. ' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            }
+        });
+        var pct = Math.round(score / total * 100);
+        var msg = '💪 Keep exploring!';
+        if (pct === 100) msg = '🌟 Perfect score!';
+        else if (pct >= 78) msg = '🎉 Excellent work!';
+        else if (pct >= 55) msg = '👍 Good effort! Review the explanations.';
+        if (S.soundOn) {
+            try {
+                var o = audioCtx.createOscillator();
+                var g = audioCtx.createGain();
+                o.frequency.value = pct >= 78 ? 880 : 440;
+                g.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+                o.connect(g); g.connect(audioCtx.destination);
+                o.start(); o.stop(audioCtx.currentTime + 0.15);
+            } catch (e) {}
+        }
+        var result = $('quiz-result');
+        result.style.display = 'block';
+        result.innerHTML = '<div style="font-size:1.4rem; color:#4338ca;">' + score + '/' + total + ' · ' + pct + '%</div><div style="font-size:0.85rem; color:#334155; margin-top:4px; font-weight:500;">' + msg + '</div>';
+    }
+
+    function resetQuiz() {
+        document.querySelectorAll('.quiz-q').forEach(function (q) {
+            q.querySelectorAll('input[type=radio]').forEach(function (r) { r.checked = false; });
+            var expl = q.querySelector('.explanation');
+            expl.hidden = true;
+            expl.innerHTML = '';
+            expl.className = 'explanation';
+        });
+        $('quiz-result').style.display = 'none';
+        $('quiz-result').innerHTML = '';
+    }
+
+    // === Challenges ===
+    function applyChallenge(id) {
+        var note = $('challenge-note');
+        var cres = $('challenge-result');
+        note.innerText = '';
+        cres.innerText = '';
+
+        if (id === 'model') {
+            S.engine = 'solid'; $('engine').value = 'solid';
+            S.m0 = 800; $('m0').value = 800; $('v-m0').innerText = '800';
+            S.mp = 200; $('mp').value = 200; $('v-mp').innerText = '200';
+            S.mdot = 2; $('mdot').value = 2; $('v-mdot').innerText = '2.0';
+            S.ve = Math.round(200 * G0); $('ve').value = S.ve; $('v-ve').innerText = S.ve;
+            note.innerText = 'Model rocket: solid propellant, Isp ≈ 200 s, moderate thrust. Should lift off if TWR > 1.';
+            cres.innerText = 'Isp = 200 s · v_e = ' + S.ve + ' m/s · F = ' + Math.round(S.mdot * S.ve) + ' N · TWR = ' + (S.mdot * S.ve / ((S.m0 + S.mp) * G_EARTH)).toFixed(2);
+        } else if (id === 'kerolox') {
+            S.engine = 'kerolox'; $('engine').value = 'kerolox';
+            S.m0 = 2000; $('m0').value = 2000; $('v-m0').innerText = '2000';
+            S.mp = 1000; $('mp').value = 1000; $('v-mp').innerText = '1000';
+            S.mdot = 8; $('mdot').value = 8; $('v-mdot').innerText = '8.0';
+            S.ve = Math.round(300 * G0); $('ve').value = S.ve; $('v-ve').innerText = S.ve;
+            note.innerText = 'Kerolox: Isp ≈ 300 s. Falcon-9 style — moderate efficiency, high thrust.';
+            cres.innerText = 'Isp = 300 s · v_e = ' + S.ve + ' m/s · F = ' + Math.round(S.mdot * S.ve) + ' N';
+        } else if (id === 'hydrolox') {
+            S.engine = 'hydrolox'; $('engine').value = 'hydrolox';
+            S.m0 = 2000; $('m0').value = 2000; $('v-m0').innerText = '2000';
+            S.mp = 2000; $('mp').value = 2000; $('v-mp').innerText = '2000';
+            S.mdot = 6; $('mdot').value = 6; $('v-mdot').innerText = '6.0';
+            S.ve = Math.round(450 * G0); $('ve').value = S.ve; $('v-ve').innerText = S.ve;
+            note.innerText = 'Hydrolox: Isp ≈ 450 s. Space Shuttle Main Engine — very efficient.';
+            cres.innerText = 'Isp = 450 s · v_e = ' + S.ve + ' m/s · F = ' + Math.round(S.mdot * S.ve) + ' N';
+        } else if (id === 'ion') {
+            S.engine = 'ion'; $('engine').value = 'ion';
+            S.m0 = 1000; $('m0').value = 1000; $('v-m0').innerText = '1000';
+            S.mp = 100; $('mp').value = 100; $('v-mp').innerText = '100';
+            S.mdot = 0.5; $('mdot').value = 0.5; $('v-mdot').innerText = '0.5'; // raised from 0.05 to make thrust visible
+            S.ve = Math.round(3000 * G0); $('ve').value = S.ve; $('v-ve').innerText = S.ve;
+            note.innerText = 'Ion: Isp ≈ 3000 s. Huge exhaust velocity but tiny mass flow → tiny thrust. SpaceX Ion-scale test.';
+            cres.innerText = 'Isp = 3000 s · v_e = ' + S.ve + ' m/s · F = ' + Math.round(S.mdot * S.ve) + ' N (real ion is ~0.1 N)';
+        } else if (id === 'heavy') {
+            S.engine = 'kerolox'; $('engine').value = 'kerolox';
+            S.m0 = 3000; $('m0').value = 3000; $('v-m0').innerText = '3000';
+            S.mp = 3000; $('mp').value = 3000; $('v-mp').innerText = '3000';
+            S.mdot = 15; $('mdot').value = 15; $('v-mdot').innerText = '15.0';
+            S.ve = Math.round(300 * G0); $('ve').value = S.ve; $('v-ve').innerText = S.ve;
+            note.innerText = 'Saturn-V style: 3000 kg dry mass + 3000 kg propellant. Very high thrust needed.';
+            cres.innerText = 'F = ' + Math.round(S.mdot * S.ve) + ' N · TWR = ' + (S.mdot * S.ve / ((S.m0 + S.mp) * G_EARTH)).toFixed(2);
+        }
+        updateReadouts();
+    }
+
+    // === Notebook ===
+    function recordMeasurement() {
+        var F = getThrust();
+        var line = new Date().toLocaleTimeString() + ' | status=' + S.status + ' | F=' + Math.round(F) + ' N | m=' + Math.round(getCurrentMass()) + ' kg | alt=' + Math.round(S.altitude) + ' m | v=' + S.velocity.toFixed(1) + ' m/s | a=' + S.accel.toFixed(2) + ' m/s²';
+        S.records.push(line);
+        $('records').value = S.records.join('\n');
+        $('records').scrollTop = $('records').scrollHeight;
+    }
+
+    function downloadReport() {
+        var F = getThrust();
+        var text = 'LEARNIFY - ROCKET THRUST - LAB REPORT\n' +
+            'Date: ' + new Date().toLocaleString() + '\n\n' +
+            'ENGINE\n' +
+            'Type: ' + ENGINES[S.engine].name + '\n' +
+            'Dry mass m0 = ' + S.m0 + ' kg\n' +
+            'Propellant mass = ' + S.mp + ' kg\n' +
+            'Mass flow rate mdot = ' + S.mdot + ' kg/s\n' +
+            'Exhaust velocity ve = ' + S.ve + ' m/s\n' +
+            'Specific impulse Isp = ' + getIsp().toFixed(1) + ' s\n' +
+            'Burn time = ' + getBurnTime().toFixed(2) + ' s\n' +
+            'Tsiolkovsky dV = ' + getDeltaV().toFixed(1) + ' m/s\n' +
+            'Thrust F = mdot * ve = ' + Math.round(F) + ' N\n\n' +
+            'FLIGHT STATE (recorded)\n' +
+            'Status: ' + S.status + '\n' +
+            'Altitude = ' + Math.round(S.altitude) + ' m\n' +
+            'Velocity = ' + S.velocity.toFixed(2) + ' m/s\n' +
+            'Propellant left = ' + S.propellantLeft.toFixed(1) + ' kg\n\n' +
+            'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+            'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+            'MEASUREMENTS\n' + $('records').value + '\n\n' +
+            'LIMITATIONS\nIdeal rocket equation with no drag, no gravity variation with altitude, no atmospheric pressure term. Real rockets must also overcome drag and steering. Educational use only.\n';
+        var blob = new Blob([text], { type: 'text/plain' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'rocket-thrust-report.txt';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    // === Main animation loop ===
+    var lastNow = performance.now();
+    function animate() {
+        var now = performance.now();
+        physicsStep(now);
+        drawScene();
+        updateReadouts();
+        requestAnimationFrame(animate);
+    }
+
+    // === Event wiring ===
+    $('btn-sound').addEventListener('click', toggleSound);
+    $('engine').addEventListener('change', function (e) {
+        S.engine = e.target.value;
+        // Auto-set Isp-appropriate exhaust velocity
+        S.ve = Math.round(ENGINES[S.engine].isp * G0);
+        S.mdot = ENGINES[S.engine].mdot;
+        $('ve').value = S.ve; $('v-ve').innerText = S.ve;
+        $('mdot').value = S.mdot; $('v-mdot').innerText = S.mdot.toFixed(1);
+        updateReadouts();
+    });
+    $('m0').addEventListener('input', function (e) {
+        S.m0 = parseFloat(e.target.value);
+        $('v-m0').innerText = S.m0;
+        updateReadouts();
+    });
+    $('mp').addEventListener('input', function (e) {
+        S.mp = parseFloat(e.target.value);
+        $('v-mp').innerText = S.mp;
+        updateReadouts();
+    });
+    $('mdot').addEventListener('input', function (e) {
+        S.mdot = parseFloat(e.target.value);
+        $('v-mdot').innerText = S.mdot.toFixed(1);
+        updateReadouts();
+    });
+    $('ve').addEventListener('input', function (e) {
+        S.ve = parseFloat(e.target.value);
+        $('v-ve').innerText = S.ve;
+        updateReadouts();
+    });
+    $('btn-launch').addEventListener('click', function () {
+        if (S.running) return;
+        // Reset flight
+        S.running = true;
+        S.propellantLeft = S.mp;
+        S.altitude = 0;
+        S.velocity = 0;
+        S.time = 0;
+        S.accel = 0;
+        S.status = 'burning';
+        S.flameIntensity = 0;
+        S.smokeParticles = [];
+        S.flameParticles = [];
+        // Check TWR
+        var F = S.mdot * S.ve;
+        var W = (S.m0 + S.mp) * G_EARTH;
+        if (F <= W) {
+            // Not enough thrust — still burn but no liftoff
+            S.status = 'burning';
+        }
+        playIgnition();
+        startRumble();
+    });
+    $('btn-reset').addEventListener('click', function () {
+        S.running = false;
+        S.propellantLeft = S.mp;
+        S.altitude = 0;
+        S.velocity = 0;
+        S.time = 0;
+        S.accel = 0;
+        S.status = 'idle';
+        S.flameIntensity = 0;
+        S.smokeParticles = [];
+        S.flameParticles = [];
+        stopRumble();
+        updateReadouts();
+    });
+
+    document.querySelectorAll('.tab-btn[data-tab]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+            document.querySelectorAll('.tab-btn[data-tab]').forEach(function (b) { b.classList.remove('active'); });
+            document.getElementById(btn.dataset.tab).classList.add('active');
+            btn.classList.add('active');
+        });
+    });
+
+    document.querySelectorAll('[data-challenge]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            applyChallenge(btn.dataset.challenge);
+            if (S.soundOn) {
+                try {
+                    var o = audioCtx.createOscillator();
+                    var g = audioCtx.createGain();
+                    o.frequency.value = 660;
+                    g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+                    o.connect(g); g.connect(audioCtx.destination);
+                    o.start(); o.stop(audioCtx.currentTime + 0.1);
+                } catch (e) {}
+            }
+        });
+    });
+
+    $('btn-quiz-check').addEventListener('click', evaluateQuiz);
+    $('btn-quiz-reset').addEventListener('click', resetQuiz);
+
+    $('btn-record').addEventListener('click', recordMeasurement);
+    $('btn-clear-notes').addEventListener('click', function () {
+        if (!confirm('Clear all notebook fields?')) return;
+        $('hypothesis').value = '';
+        $('conclusion').value = '';
+        $('records').value = '';
+        S.records = [];
+    });
+    $('btn-export').addEventListener('click', downloadReport);
+
+    // Zoom & pan
+    var fullScroll = false;
+    var pointers = new Map();
+    var pinch = null;
+
+    $('full-scroll-toggle').addEventListener('change', function (e) {
+        fullScroll = e.target.checked;
+        canvas.style.touchAction = fullScroll ? 'auto' : 'none';
+        pointers.clear();
+        pinch = null;
+    });
+
+    function getPos(e) {
+        var r = canvas.getBoundingClientRect();
+        return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+
+    canvas.addEventListener('wheel', function (e) {
+        if (fullScroll) return;
+        e.preventDefault();
+        var cx = e.offsetX, cy = e.offsetY;
+        var wx = (cx - view.x) / view.scale;
+        var wy = (cy - view.y) / view.scale;
+        var factor = Math.exp(-e.deltaY * 0.0015);
+        view.scale = Math.max(0.3, Math.min(5, view.scale * factor));
+        view.x = cx - wx * view.scale;
+        view.y = cy - wy * view.scale;
+    }, { passive: false });
+
+    canvas.addEventListener('pointerdown', function (e) {
+        if (fullScroll) return;
+        canvas.setPointerCapture(e.pointerId);
+        pointers.set(e.pointerId, getPos(e));
+        if (pointers.size === 2) {
+            var pts = Array.from(pointers.values());
+            pinch = { dist: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y), startScale: view.scale };
+        }
+    });
+    canvas.addEventListener('pointermove', function (e) {
+        if (fullScroll || !pointers.has(e.pointerId)) return;
+        var prev = pointers.get(e.pointerId);
+        var pos = getPos(e);
+        pointers.set(e.pointerId, pos);
+        if (pointers.size === 1 && !pinch) {
+            view.x += pos.x - prev.x;
+            view.y += pos.y - prev.y;
+        } else if (pointers.size === 2 && pinch) {
+            var pts = Array.from(pointers.values());
+            var d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+            view.scale = Math.max(0.3, Math.min(5, pinch.startScale * d / pinch.dist));
+        }
+    });
+    canvas.addEventListener('pointerup', function (e) {
+        if (fullScroll) return;
+        pointers.delete(e.pointerId);
+        try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
+        if (pointers.size < 2) pinch = null;
+    });
+    canvas.addEventListener('pointercancel', function (e) {
+        pointers.delete(e.pointerId);
+        pinch = null;
+    });
+
+    (function () {
+        var hud = document.querySelector('.hud');
+        if (!hud) return;
+        var z = document.createElement('div');
+        z.className = 'zoom-controls';
+        z.innerHTML = '<button id="zoom-out">-</button><button id="zoom-reset">Reset</button><button id="zoom-in">+</button>';
+        hud.appendChild(z);
+        $('zoom-in').addEventListener('click', function () { view.scale = Math.min(5, view.scale * 1.25); });
+        $('zoom-out').addEventListener('click', function () { view.scale = Math.max(0.3, view.scale / 1.25); });
+        $('zoom-reset').addEventListener('click', function () { view.x = 0; view.y = 0; view.scale = 1; });
+    })();
+
+    (function () {
+        var sim = $('sim-area'), splitter = $('splitter');
+        if (!sim || !splitter) return;
+        var dragging = false, startY = 0, startH = 0;
+        var minH = 180, maxH = window.innerHeight - 240;
+
+        splitter.addEventListener('pointerdown', function (e) {
+            e.preventDefault();
+            dragging = true;
+            startY = e.clientY;
+            startH = sim.getBoundingClientRect().height;
+            try { splitter.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+        window.addEventListener('pointermove', function (e) {
+            if (!dragging) return;
+            var dy = e.clientY - startY;
+            var nh = Math.max(minH, Math.min(maxH, Math.round(startH + dy)));
+            sim.style.flex = '0 0 ' + nh + 'px';
+            resizeCanvas();
+        });
+        window.addEventListener('pointerup', function (e) {
+            if (!dragging) return;
+            dragging = false;
+            try { splitter.releasePointerCapture(e.pointerId); } catch (err) {}
+        });
+        splitter.addEventListener('dblclick', function () {
+            sim.style.flex = '';
+            resizeCanvas();
+        });
+    })();
+
+    window.addEventListener('resize', function () { resizeCanvas(); });
+
+    // === Boot ===
+    initStars();
+    resizeCanvas();
+    S.propellantLeft = S.mp;
+    lastTime = performance.now();
+    updateReadouts();
+    animate();
+})();
+</script>
+</body>
+</html>

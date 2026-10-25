@@ -1,116 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>States of Matter Simulation</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background-color: #0f172a; color: white; overflow: hidden; }
-        .container { max-width: 800px; margin: auto; height: 90vh; display: flex; flex-direction: column; }
-        .sim-box { flex-grow: 1; background: #1e293b; border: 2px solid #334155; border-radius: 20px; position: relative; overflow: hidden; margin: 20px 0; }
-        .particle { position: absolute; background: #60a5fa; border-radius: 50%; width: 15px; height: 15px; box-shadow: 0 0 10px rgba(96, 165, 250, 0.5); }
-        .controls { background: #334155; padding: 20px; border-radius: 15px; display: flex; justify-content: space-around; align-items: center; }
-        button { background: #3b82f6; color: white; border: none; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .temp-display { font-size: 24px; font-family: monospace; color: #10b981; }
-        .label { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 5px; font-size: 14px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Water Phase-Change Laboratory</title>
+<style>
+:root{color-scheme:dark;--bg:#0a0f1f;--panel:#141b2e;--line:#26304a;--text:#e5e9f5;--muted:#93a0bd;--accent:#818cf8;--green:#34d399;--yellow:#fbbf24}
+*{box-sizing:border-box;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}body{margin:0;padding:16px;background:var(--bg);color:var(--text)}main{max-width:1050px;margin:auto}
+header{text-align:center;border-bottom:3px solid var(--accent);padding:8px 0 14px}h1{font-size:1.35rem;margin:0 0 5px}header p,.note{color:var(--muted);margin:4px 0}
+.grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(280px,1fr);gap:14px;margin-top:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+canvas{display:block;width:100%;height:220px;background:#05080f;border-radius:8px;margin-bottom:12px}.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.metric{padding:9px;background:#0d1425;border:1px solid var(--line);border-radius:8px}.metric span{display:block;color:var(--muted);font-size:.75rem}.metric strong{color:var(--yellow)}
+.control{margin:12px 0}.control label{display:flex;justify-content:space-between;gap:8px;font-size:.9rem;font-weight:600}input[type=range]{width:100%;accent-color:var(--accent);margin-top:8px}
+button{border:1px solid var(--line);border-radius:7px;padding:9px 12px;background:#202943;color:var(--text);font-weight:700;cursor:pointer}button.primary{background:var(--accent);color:#101426;border-color:var(--accent)}.buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.status{min-height:1.5em;color:var(--green)}.formula{line-height:1.65}.formula code{color:var(--yellow)}
+@media(max-width:700px){body{padding:10px}.grid{grid-template-columns:1fr}canvas{height:200px}}
+</style>
 </head>
 <body>
-<div class="container">
-    <h1>States of Matter</h1>
-    <div class="sim-box" id="container">
-        <div class="label" id="stateLabel">State: Solid</div>
-        <!-- Particles will be injected here -->
-    </div>
-    <div class="controls">
-        <div class="temp-display">TEMP: <span id="temp">50</span> K</div>
-        <button onclick="changeState('solid')">Solid</button>
-        <button onclick="changeState('liquid')">Liquid</button>
-        <button onclick="changeState('gas')">Gas</button>
-    </div>
+<main>
+<header><h1>Water Phase-Change Laboratory</h1><p>Follow one kilogram of water as heat warms ice, melts it, warms liquid and vaporizes it.</p></header>
+<div class="grid">
+<section class="card" aria-label="Water particle model and heating curve">
+<canvas id="particles" role="img" aria-label="Qualitative particle arrangement for the current phase of water"></canvas>
+<canvas id="curve" role="img" aria-label="Heating curve showing temperature plateaus during melting and boiling"></canvas>
+<div class="metrics" aria-live="polite">
+<div class="metric"><span>Phase</span><strong id="phaseOut">Ice (solid)</strong></div>
+<div class="metric"><span>Temperature</span><strong id="temperatureOut">−20.0 °C (253.2 K)</strong></div>
+<div class="metric"><span>Phase fraction</span><strong id="fractionOut">—</strong></div>
+<div class="metric"><span>Total heat added</span><strong id="energyOut">0 J</strong></div>
 </div>
-
+<p class="note">The particle view is qualitative. Heat capacities and latent heats use approximate values for water at 1 atm.</p>
+</section>
+<section class="card" aria-label="Heating and phase controls">
+<div class="control"><label for="mass">Water mass <output id="massLabel">1.00 kg</output></label><input id="mass" type="range" min="0.25" max="5" step="0.25" value="1" aria-label="Water mass in kilograms"></div>
+<div class="control"><label for="energy">Heat supplied per kilogram <output id="energyLabel">0.00 MJ/kg</output></label><input id="energy" type="range" min="0" max="3250000" step="10000" value="0" aria-label="Specific heat input in joules per kilogram"></div>
+<div class="buttons"><button id="solidPreset" type="button">Show ice</button><button id="liquidPreset" type="button">Show liquid</button><button id="gasPreset" type="button">Show vapor</button></div>
+<div class="buttons"><button id="run" class="primary" type="button">Start motion</button><button id="reset" type="button">Reset</button></div>
+<p id="status" class="status" aria-live="polite">Ready. Increase heat input to move along the heating curve.</p>
+<div class="formula"><strong>Heating curve at 1 atm</strong><br><code>Q = mcΔT</code> within a phase; <code>Q = mL</code> during a phase change. For water, cice ≈ 2.10 kJ·kg⁻¹·K⁻¹, cfusion ≈ 334 kJ/kg, cliquid ≈ 4.186 kJ·kg⁻¹·K⁻¹, Lvaporization ≈ 2256 kJ/kg. At the melting and boiling plateaus, added heat changes the phase fraction rather than the temperature.</div>
+</section>
+</div>
+</main>
 <script>
-    const container = document.getElementById('container');
-    const particles = [];
-    const numParticles = 40;
-    let currentState = 'solid';
-    let temperature = 50;
-
-    function createParticles() {
-        for (let i = 0; i < numParticles; i++) {
-            const p = document.createElement('div');
-            p.className = 'particle';
-            container.appendChild(p);
-            particles.push({
-                el: p,
-                x: Math.random() * 80 + 10,
-                y: Math.random() * 80 + 10,
-                vx: 0,
-                vy: 0
-            });
-        }
-    }
-
-    function update() {
-        const width = container.clientWidth;
-        const height = container.clientHeight;
-
-        particles.forEach((p, i) => {
-            if (currentState === 'solid') {
-                // Lattice structure with vibration
-                const row = i % 6;
-                const col = Math.floor(i / 6);
-                const targetX = (width / 2 - 60) + row * 20;
-                const targetY = (height / 2 - 60) + col * 20;
-                p.x += (targetX - p.x) * 0.1 + (Math.random() - 0.5) * (temperature / 50);
-                p.y += (targetY - p.y) * 0.1 + (Math.random() - 0.5) * (temperature / 50);
-            } else if (currentState === 'liquid') {
-                // Clumped but moving
-                p.vx += (Math.random() - 0.5) * (temperature / 100);
-                p.vy += (Math.random() - 0.5) * (temperature / 100) + 0.05; // Gravity-ish
-                p.x += p.vx;
-                p.y += p.vy;
-                // Boundary for liquid (bottom)
-                if (p.y > height - 20) { p.y = height - 20; p.vy *= -0.5; }
-                if (p.x < 10) { p.x = 10; p.vx *= -0.5; }
-                if (p.x > width - 20) { p.x = width - 20; p.vx *= -0.5; }
-            } else {
-                // Free moving gas
-                p.vx += (Math.random() - 0.5) * (temperature / 20);
-                p.vy += (Math.random() - 0.5) * (temperature / 20);
-                p.x += p.vx;
-                p.y += p.vy;
-                // Boundary bounce
-                if (p.x < 0 || p.x > width - 15) p.vx *= -1;
-                if (p.y < 0 || p.y > height - 15) p.vy *= -1;
-            }
-
-            p.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
-        });
-        requestAnimationFrame(update);
-    }
-
-    function changeState(state) {
-        currentState = state;
-        document.getElementById('stateLabel').innerText = "State: " + state.toUpperCase();
-        if (state === 'solid') temperature = 50;
-        if (state === 'liquid') temperature = 200;
-        if (state === 'gas') temperature = 500;
-        document.getElementById('temp').innerText = temperature;
-    }
-
-    function setEnergy(val) {
-        temperature = val * 5;
-        document.getElementById('temp').innerText = temperature;
-        if (temperature < 100) currentState = 'solid';
-        else if (temperature < 350) currentState = 'liquid';
-        else currentState = 'gas';
-        document.getElementById('stateLabel').innerText = "State: " + currentState.toUpperCase();
-    }
-
-    createParticles();
-    update();
+(function(){
+  var particleCanvas=document.getElementById('particles'),particleCtx=particleCanvas.getContext('2d'),curveCanvas=document.getElementById('curve'),curveCtx=curveCanvas.getContext('2d');
+  var massInput=document.getElementById('mass'),energyInput=document.getElementById('energy'),running=false,raf=0,last=0,elapsed=0,particles=[];
+  var fusionStart=42000,fusionEnd=376000,liquidEnd=794600,boilingEnd=3050600,maximum=3250000;
+  for(var i=0;i<48;i++)particles.push({x:((i*37)%97)/100,y:((i*61)%89)/100,vx:((i*17)%11-5)/70,vy:((i*23)%13-6)/70});
+  function stateFor(q){
+    if(q<fusionStart)return{phase:'Ice (solid)',celsius:-20+q/2100,kind:'solid',fraction:null,description:'Ice is warming; added energy raises its temperature.'};
+    if(q<fusionEnd)return{phase:'Melting (ice + liquid)',celsius:0,kind:'melt',fraction:(q-fusionStart)/(fusionEnd-fusionStart),description:'Melting plateau: heat changes solid into liquid while temperature stays at 0 °C.'};
+    if(q<liquidEnd)return{phase:'Liquid water',celsius:(q-fusionEnd)/4186,kind:'liquid',fraction:null,description:'Liquid water is warming between 0 °C and 100 °C.'};
+    if(q<boilingEnd)return{phase:'Boiling (liquid + vapor)',celsius:100,kind:'boil',fraction:(q-liquidEnd)/(boilingEnd-liquidEnd),description:'Boiling plateau: heat vaporizes water while temperature stays at 100 °C.'};
+    return{phase:'Water vapor',celsius:100+(q-boilingEnd)/2010,kind:'gas',fraction:null,description:'Water vapor is warming above its boiling point.'};
+  }
+  function setCanvasSize(canvas,ctx){
+    var d=Math.max(1,window.devicePixelRatio||1),r=canvas.getBoundingClientRect();canvas.width=Math.max(1,Math.round(r.width*d));canvas.height=Math.max(1,Math.round(r.height*d));ctx.setTransform(d,0,0,d,0,0);
+  }
+  function drawParticles(state){
+    var w=particleCanvas.clientWidth,h=particleCanvas.clientHeight;if(!w||!h)return;particleCtx.clearRect(0,0,w,h);particleCtx.fillStyle='#05080f';particleCtx.fillRect(0,0,w,h);
+    var x0=w*.12,y0=h*.15,bw=w*.76,bh=h*.72;particleCtx.strokeStyle='#64748b';particleCtx.lineWidth=2;particleCtx.strokeRect(x0,y0,bw,bh);
+    particleCtx.fillStyle='#93a0bd';particleCtx.font='12px system-ui';particleCtx.fillText('PARTICLE ARRANGEMENT (SCHEMATIC)',x0,y0-5);
+    var mix=state.kind==='melt'?state.fraction:state.kind==='boil'?state.fraction:0;
+    particles.forEach(function(p,i){
+      var baseX,baseY;
+      if(state.kind==='solid'||state.kind==='melt'){
+        var col=i%8,row=Math.floor(i/8);baseX=x0+bw*.25+col*bw*.07;baseY=y0+bh*.22+row*bh*.12;
+        if(state.kind==='melt'&&i/particles.length<mix){baseX=x0+bw*(.2+p.x*.6);baseY=y0+bh*(.53+p.y*.38);}
+      }else if(state.kind==='liquid'){
+        baseX=x0+bw*(.12+p.x*.76);baseY=y0+bh*(.55+p.y*.4);
+      }else if(state.kind==='boil'&&i/particles.length>mix){
+        baseX=x0+bw*(.08+p.x*.84);baseY=y0+bh*(.08+p.y*.4);
+      }else{
+        baseX=x0+bw*(.08+p.x*.84);baseY=y0+bh*(.08+p.y*.84);
+      }
+      var jitter=running?(state.kind==='solid'?1.4:state.kind==='melt'?2.8:state.kind==='liquid'?4.5:7):0;
+      var px=baseX+Math.sin(elapsed*3+i*1.7)*jitter,py=baseY+Math.cos(elapsed*2.6+i*1.3)*jitter;
+      particleCtx.fillStyle=(state.kind==='melt'&&i/particles.length<mix)||(state.kind==='boil'&&i/particles.length>mix)?'#fbbf24':'#60a5fa';
+      particleCtx.beginPath();particleCtx.arc(px,py,4,0,Math.PI*2);particleCtx.fill();
+    });
+  }
+  function drawCurve(q){
+    var w=curveCanvas.clientWidth,h=curveCanvas.clientHeight;if(!w||!h)return;curveCtx.clearRect(0,0,w,h);curveCtx.fillStyle='#05080f';curveCtx.fillRect(0,0,w,h);
+    var left=42,right=w-14,top=14,bottom=h-30,xFor=function(v){return left+(v/maximum)*(right-left);},yFor=function(temp){return bottom-(temp+20)/240*(bottom-top);};
+    curveCtx.strokeStyle='#64748b';curveCtx.lineWidth=1;curveCtx.beginPath();curveCtx.moveTo(left,top);curveCtx.lineTo(left,bottom);curveCtx.lineTo(right,bottom);curveCtx.stroke();
+    curveCtx.fillStyle='#93a0bd';curveCtx.font='11px system-ui';curveCtx.fillText('T (°C)',6,16);curveCtx.fillText('Heat added per kg (J/kg) →',left,bottom+20);
+    curveCtx.strokeStyle='#818cf8';curveCtx.lineWidth=2.5;curveCtx.beginPath();
+    var points=[[0,-20],[fusionStart,0],[fusionEnd,0],[liquidEnd,100],[boilingEnd,100],[maximum,100+(maximum-boilingEnd)/2010]];
+    points.forEach(function(p,i){var x=xFor(p[0]),y=yFor(p[1]);if(i===0)curveCtx.moveTo(x,y);else curveCtx.lineTo(x,y);});curveCtx.stroke();
+    var now=stateFor(q);curveCtx.fillStyle='#fbbf24';curveCtx.beginPath();curveCtx.arc(xFor(q),yFor(now.celsius),5,0,Math.PI*2);curveCtx.fill();
+    curveCtx.fillStyle='#93a0bd';curveCtx.fillText('melting',xFor(fusionStart)+3,yFor(0)-8);curveCtx.fillText('boiling',xFor(liquidEnd)+3,yFor(100)-8);
+  }
+  function update(){
+    var kg=+massInput.value,q=Math.max(0,Math.min(maximum,+energyInput.value)),state=stateFor(q),total=q*kg;
+    document.getElementById('massLabel').textContent=kg.toFixed(2)+' kg';document.getElementById('energyLabel').textContent=(q/1000000).toFixed(2)+' MJ/kg';
+    document.getElementById('phaseOut').textContent=state.phase;document.getElementById('temperatureOut').textContent=state.celsius.toFixed(1)+' °C ('+(state.celsius+273.15).toFixed(1)+' K)';
+    document.getElementById('fractionOut').textContent=state.fraction===null?'—':(state.fraction*100).toFixed(1)+'%';
+    document.getElementById('energyOut').textContent=total.toLocaleString(undefined,{maximumFractionDigits:0})+' J';
+    document.getElementById('status').textContent=state.description;drawParticles(state);drawCurve(q);
+  }
+  function resize(){setCanvasSize(particleCanvas,particleCtx);setCanvasSize(curveCanvas,curveCtx);update();}
+  function stop(){running=false;last=0;cancelAnimationFrame(raf);document.getElementById('run').textContent='Start motion';}
+  function tick(ts){if(!running)return;if(last)elapsed+=(ts-last)/1000;last=ts;update();raf=requestAnimationFrame(tick);}
+  function start(){if(running){stop();document.getElementById('status').textContent='Particle motion paused.';return;}running=true;last=0;document.getElementById('run').textContent='Pause motion';document.getElementById('status').textContent='Qualitative particle motion running.';raf=requestAnimationFrame(tick);}
+  function preset(value){energyInput.value=String(value);update();}
+  document.getElementById('solidPreset').addEventListener('click',function(){preset(20000);});
+  document.getElementById('liquidPreset').addEventListener('click',function(){preset(500000);});
+  document.getElementById('gasPreset').addEventListener('click',function(){preset(3100000);});
+  document.getElementById('run').addEventListener('click',start);
+  document.getElementById('reset').addEventListener('click',function(){stop();massInput.value='1';energyInput.value='0';elapsed=0;update();});
+  [massInput,energyInput].forEach(function(el){el.addEventListener('input',update);el.addEventListener('change',update);});
+  document.addEventListener('visibilitychange',function(){if(document.hidden)stop();});
+  window.addEventListener('pagehide',stop);window.addEventListener('resize',resize);
+  resize();update();
+})();
 </script>
 </body>
 </html>

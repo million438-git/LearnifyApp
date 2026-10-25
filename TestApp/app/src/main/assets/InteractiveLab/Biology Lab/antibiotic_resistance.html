@@ -1,160 +1,1262 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Microbiology: Antibiotic Resistance</title>
-    <style>
-        :root {
-            --petri: #e2e8f0; --bacteria: #10b981; --resistant: #f43f5e;
-            --primary: #6366f1; --dark: #0f172a; --surface: #ffffff;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Antibiotic Resistance Lab — Pro Biology</title>
+<style>
+:root{
+  --bg:#f4f6fa;--sf:#fff;--tx:#0f172a;--mu:#64748b;--ln:#dde3ee;
+  --ac:#7c3aed;--ok:#059669;--warn:#f59e0b;--bad:#ef4444;--info:#3b82f6;
+  --sensitive:#3b82f6;--resistant:#ef4444;--antibiotic:#10b981;
+  color-scheme:light;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0b1020;--sf:#141b30;--tx:#e6eaf5;--mu:#93a0bd;--ln:#27304a;
+  --ac:#a78bfa;--ok:#34d399;--warn:#fbbf24;--bad:#f87171;--info:#60a5fa;
+  --sensitive:#60a5fa;--resistant:#f87171;--antibiotic:#34d399;
+  color-scheme:dark;
+}}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;overflow:auto}
 
-        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
-        body { margin: 0; background: #1e293b; color: #f8fafc; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+header{padding:14px 16px;border-bottom:1px solid var(--ln);background:var(--sf);text-align:center}
+header h1{margin:0;font-size:1.15rem}
+header p{margin:2px 0 0;color:var(--mu);font-size:.8rem}
 
-        header { background: var(--dark); padding: 12px; text-align: center; border-bottom: 3px solid var(--primary); }
-        .lab-container { display: flex; flex: 1; flex-direction: column; overflow: hidden; }
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:14px;padding:14px;max-width:1500px;margin:auto}
+@media(max-width:1000px){.wrap{grid-template-columns:1fr}}
 
-        /* 1. Petri Dish (The Simulation) */
-        #observation-deck {
-            flex: 1.5; position: relative; background: #000;
-            display: flex; align-items: center; justify-content: center;
-            border-bottom: 2px solid #334155;
-        }
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:10px;padding:12px}
 
-        .petri-dish {
-            width: 300px; height: 300px; background: var(--petri);
-            border-radius: 50%; border: 8px solid #94a3b8;
-            position: relative; overflow: hidden;
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.1), 0 0 30px rgba(99,102,241,0.3);
-        }
+/* Simulation stage */
+#stage{position:relative;height:min(65vh,580px);min-height:340px;background:#0a0f1f;border-radius:10px;overflow:hidden;cursor:crosshair}
+canvas#cv{width:100%;height:100%;display:block;touch-action:none;cursor:grab}
 
-        .microbe {
-            position: absolute; width: 10px; height: 10px; border-radius: 50%;
-            transition: all 0.3s ease; transform: scale(0);
-        }
-        .normal { background: var(--bacteria); box-shadow: 0 0 5px var(--bacteria); }
-        .resistant { background: var(--resistant); box-shadow: 0 0 10px var(--resistant); border: 1px solid white; }
+/* Overlay cards */
+.drag-card{position:absolute;background:rgba(15,23,42,.94);border:1px solid rgba(255,255,255,.14);border-radius:10px;z-index:20;color:#e2e8f5;backdrop-filter:blur(8px);box-shadow:0 8px 24px rgba(0,0,0,.4);touch-action:none;user-select:none;-webkit-user-select:none;transition:box-shadow .2s}
+.drag-card:hover{box-shadow:0 12px 32px rgba(0,0,0,.5)}
+.drag-card.dragging{box-shadow:0 16px 40px rgba(124,58,237,.4);border-color:rgba(124,58,237,.5)}
+.drag-handle{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;cursor:grab;border-bottom:1px solid rgba(255,255,255,.08);font-size:.62rem;font-weight:700;color:#93a0bd;letter-spacing:.06em;text-transform:uppercase;border-radius:10px 10px 0 0}
+.drag-handle:active{cursor:grabbing}
+.drag-handle .title{display:flex;align-items:center;gap:5px}
+.drag-handle .title b{color:#a78bfa}
+.drag-handle .grip{color:#64748b;font-size:.9rem;letter-spacing:2px}
+.drag-content{padding:8px 10px;font-size:.72rem;line-height:1.7}
+.resize-handle{position:absolute;right:2px;bottom:2px;width:16px;height:16px;cursor:nwse-resize;z-index:5;opacity:.6}
+.resize-handle::after{content:'';position:absolute;right:3px;bottom:3px;width:8px;height:8px;border-right:2px solid #64748b;border-bottom:2px solid #64748b}
 
-        /* 2. Control & Data Panel */
-        .panel { flex: 2; display: flex; flex-direction: row; background: var(--surface); color: #1e293b; overflow-y: auto; }
-        .controls { flex: 1; padding: 20px; border-right: 1px solid #e2e8f0; min-width: 320px; }
-        .data-stats { flex: 1.2; padding: 20px; background: #f8fafc; }
+.hud-card{left:8px;top:8px;width:min(270px,58vw)}
+.hud-card .drag-content{line-height:1.75}
+.hud-card span{color:#fbbf24;font-variant-numeric:tabular-nums;font-weight:600}
+.hud-card hr{margin:5px 0;border:none;border-top:1px solid rgba(255,255,255,.1)}
 
-        .stat-bar-container { height: 20px; background: #eee; border-radius: 10px; overflow: hidden; margin: 10px 0; }
-        .stat-bar { height: 100%; transition: width 0.3s ease; }
+.legend-card{left:8px;bottom:38px;width:auto;max-width:min(340px,65vw)}
+.legend-card .drag-content{padding:5px 10px;display:flex;gap:8px;flex-wrap:wrap;font-size:.64rem}
+.legend-card .drag-content span{display:inline-flex;align-items:center;gap:4px;font-weight:600;color:#93a0bd}
+.legend-card .drag-content i{width:9px;height:9px;border-radius:50%;display:inline-block}
 
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 10px; color: white; }
-        .btn-dose { background: var(--primary); }
-        .btn-reset { background: #64748b; }
+.graph-card{right:8px;bottom:38px;width:min(340px,52vw);height:auto}
+.graph-card .drag-content{padding:0}
+#graph{display:block;width:100%;height:100px;border-radius:0 0 10px 10px}
 
-        .card { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 10px; font-size: 0.85rem; }
+.views{position:absolute;top:8px;right:8px;display:flex;gap:5px;z-index:10}
+.views button{font-size:.72rem;padding:4px 9px;border-radius:6px;border:1px solid #334155;background:rgba(15,23,42,.85);color:#e2e8f0;cursor:pointer;font-family:inherit;font-weight:600}
+.views button.active{background:var(--ac);border-color:var(--ac);color:#fff}
 
-        @media (max-width: 768px) {
-            .panel { flex-direction: column; }
-            .controls { border-right: none; }
-        }
-    </style>
+.zoom{position:absolute;left:8px;top:88px;display:flex;gap:4px;z-index:10}
+.zoom button{padding:4px 9px;border-radius:5px;border:1px solid rgba(255,255,255,.2);background:rgba(15,23,42,.85);color:#e2e8f0;cursor:pointer;font-size:.72rem;font-weight:700}
+
+.tag{position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:.68rem;padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.2);background:rgba(15,23,42,.92);color:#e2e8f5;cursor:default;z-index:10;font-weight:600;white-space:nowrap;backdrop-filter:blur(6px)}
+
+/* Side panels */
+.side-panel{position:fixed;top:70px;width:340px;bottom:20px;background:var(--sf);border:1px solid var(--ln);border-radius:10px;padding:14px;overflow:auto;z-index:40;box-shadow:0 6px 24px rgba(0,0,0,.15)}
+.side-panel.left{left:-380px;transition:left 260ms ease}
+.side-panel.right{right:-380px;transition:right 260ms ease}
+.side-panel.open.left{left:10px}
+.side-panel.open.right{right:10px}
+.side-panel h4{margin:0 0 10px 0;font-size:.9rem;color:var(--ac)}
+.side-panel .step{padding:8px 0;border-bottom:1px solid var(--ln)}
+.side-panel .step:last-child{border-bottom:none}
+.side-panel b{color:var(--ac)}
+.panel-toggle{position:fixed;top:200px;right:16px;display:flex;flex-direction:column;gap:6px;z-index:60}
+.panel-toggle button{padding:7px 10px;min-width:94px;border-radius:7px;border:1px solid var(--ln);background:var(--sf);color:var(--tx);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.08);font-weight:600;font-size:.76rem;font-family:inherit}
+@media(max-width:768px){
+  .side-panel{width:85%;max-width:420px}
+  .side-panel.left{left:-90%}
+  .side-panel.right{right:-90%}
+  .side-panel.open.left{left:5%}
+  .side-panel.open.right{right:5%}
+  .panel-toggle{bottom:12px;top:auto;left:12px;right:12px;flex-direction:row;justify-content:space-between}
+  body.panel-open{overflow:hidden}
+}
+
+/* Controls */
+label{display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--mu);margin:10px 0 3px}
+label b{float:right;color:var(--ac);text-transform:none;font-size:.8rem;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--ac);height:6px}
+select{width:100%;padding:7px;border-radius:6px;border:1px solid var(--ln);background:var(--bg);color:var(--tx);font-size:.85rem;font-family:inherit}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+button.b{padding:10px;border:0;border-radius:8px;font-weight:700;cursor:pointer;background:var(--ac);color:#fff;font-family:inherit;font-size:.85rem;transition:.2s}
+button.b:active{transform:scale(.98)}
+button.b.g{background:var(--mu)}
+button.b.snd{background:linear-gradient(135deg,#34d399,#059669)}
+button.b.snd.playing{background:linear-gradient(135deg,#f43f5e,#dc2626)}
+button.b.warn{background:linear-gradient(135deg,#f59e0b,#d97706)}
+
+/* Readouts */
+.ro{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:14px}
+.ro div{background:var(--sf);border:1px solid var(--ln);border-radius:8px;padding:7px 10px}
+.ro span{display:block;font-size:.65rem;color:var(--mu);text-transform:uppercase;font-weight:700;letter-spacing:.04em}
+.ro strong{font-variant-numeric:tabular-nums;font-size:.9rem;color:var(--tx);word-break:break-word}
+.ro div.hl strong{color:var(--ac)}
+.ro div.good strong{color:var(--ok)}
+.ro div.warn strong{color:var(--warn)}
+.ro div.bad strong{color:var(--bad)}
+
+/* Presets */
+.pre{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.pre button{padding:7px 10px;border-radius:6px;border:1px solid var(--ln);background:var(--bg);color:var(--tx);cursor:pointer;font-size:.76rem;font-weight:600;font-family:inherit}
+.pre button:hover{border-color:var(--ac)}
+#note{margin-top:8px;color:var(--mu);font-size:.82rem;min-height:2.6em;line-height:1.5}
+
+code{font-family:ui-monospace,Menlo,monospace;font-size:.8rem;color:var(--ac)}
+ul{padding-left:18px;margin:6px 0}
+small{color:var(--mu)}
+
+/* Tabs */
+.tabs{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.tab-btn{padding:7px 10px;border-radius:6px;background:var(--bg);color:var(--mu);font-weight:600;font-size:.75rem;border:1px solid var(--ln);cursor:pointer;flex:1 1 auto;font-family:inherit}
+.tab-btn.active{background:var(--ac);color:#fff;border-color:var(--ac)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* Quiz */
+.quiz-q{padding:9px 0;border-bottom:1px solid var(--ln);font-size:.86rem;line-height:1.55}
+.quiz-q>b{display:block;margin-bottom:5px;color:var(--tx)}
+.quiz-q label{display:flex;align-items:center;gap:6px;padding:6px 9px;background:var(--bg);border:1px solid var(--ln);border-radius:6px;margin:3px 0;cursor:pointer;font-weight:500;font-size:.8rem;text-transform:none;letter-spacing:0;color:var(--tx)}
+.quiz-q label:hover{background:rgba(124,58,237,.08);border-color:var(--ac)}
+.quiz-q input{accent-color:var(--ac);margin:0}
+.q-res{margin-top:5px;padding:7px;border-radius:5px;font-size:.78rem;line-height:1.45;display:none}
+#q-result{margin-top:8px;padding:10px;border-radius:6px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);font-weight:700;text-align:center;display:none;color:var(--tx)}
+
+/* Challenges */
+.challenge-box{padding:9px 0;border-bottom:1px solid var(--ln)}
+.challenge-box b{color:var(--ac);display:block;margin-bottom:5px;font-size:.84rem}
+.challenge-box button{padding:7px 11px;background:rgba(124,58,237,.1);color:var(--ac);border:1px solid rgba(124,58,237,.3);border-radius:6px;font-size:.76rem;font-weight:700;margin:2px 2px 2px 0;cursor:pointer;font-family:inherit}
+.challenge-box button:hover{background:rgba(124,58,237,.2)}
+#challenge-note{color:var(--mu);font-size:.82rem;margin-top:8px;min-height:1.2em;line-height:1.5}
+#challenge-result{color:var(--ok);font-weight:700;margin-top:6px;font-size:.82rem;min-height:1.2em;line-height:1.5}
+
+/* Notebook */
+textarea{width:100%;padding:7px;border-radius:6px;border:1px solid var(--ln);font-family:inherit;font-size:.82rem;min-height:56px;resize:vertical;background:var(--bg);color:var(--tx)}
+textarea:focus{outline:none;border-color:var(--ac)}
+
+/* Formulas table */
+table.formulas{width:100%;border-collapse:collapse;font-size:.78rem;margin-top:8px}
+table.formulas th,table.formulas td{border:1px solid var(--ln);padding:5px 7px;text-align:left;word-wrap:break-word}
+table.formulas th{background:rgba(124,58,237,.08);font-weight:600;color:var(--ac)}
+</style>
 </head>
 <body>
 
 <header>
-    <h2 style="margin:0; font-size: 1.1rem;">🧫 Lab: Antibiotic Resistance Evolution</h2>
+  <h1>🦠 Antibiotic Resistance Lab — Pro Biology</h1>
+  <p>Mutation · Selection · Population dynamics · Real epidemiological model · SI units</p>
 </header>
 
-<div class="lab-container">
-    <div id="observation-deck">
-        <div class="petri-dish" id="dish"></div>
+<div class="wrap">
+<div>
+  <div id="stage">
+    <canvas id="cv"></canvas>
+    <div class="tag" id="tag">● RUNNING · Day 0</div>
+    <div class="views">
+      <button data-v="petri" class="active">Petri Dish</button>
+      <button data-v="graph">Graph</button>
+    </div>
+    <div class="zoom">
+      <button id="zin">+</button>
+      <button id="zout">−</button>
+      <button id="zres">Reset</button>
     </div>
 
-    <div class="panel">
-        <div class="controls">
-            <label style="font-size:0.7rem; font-weight:bold;">RESISTANCE LEVEL</label>
-            <div class="stat-bar-container">
-                <div id="res-bar" class="stat-bar" style="background:var(--resistant); width: 0%;"></div>
-            </div>
-
-            <button class="btn btn-dose" onclick="applyAntibiotic()">APPLY ANTIBIOTIC DOSE</button>
-            <button class="btn btn-reset" onclick="resetLab()">REPLACE PETRI DISH</button>
-
-            <div class="card">
-                <b>Instructions:</b> Add a dose of antibiotics. Normal bacteria (green) will die, but watch what happens to the rare mutants (red).
-            </div>
-        </div>
-
-        <div class="data-stats">
-            <div class="card">
-                <b>Theory:</b> Natural Selection. Bacteria multiply rapidly. Random <b>Mutations</b> can make a bacterium immune to antibiotics. If we kill the "weak" bacteria, the "strong" ones take over the space.
-            </div>
-
-            <div class="card">
-                <b>Quiz:</b> How do bacteria become resistant?
-                <button class="btn" style="background:#f1f5f9; color:black; font-size:0.7rem; margin-top:5px;" onclick="alert('Correct! Genetic mutations allow them to survive drugs.')">Random Mutation</button>
-                <button class="btn" style="background:#f1f5f9; color:black; font-size:0.7rem; margin-top:5px;" onclick="alert('Incorrect. Bacteria don\'t have brains to decide to change!')">They decide to change</button>
-            </div>
-        </div>
+    <div class="drag-card hud-card" id="hud">
+      <div class="drag-handle">
+        <span class="title">📊 <b>LIVE STATE</b></span>
+        <span class="grip">⠿</span>
+      </div>
+      <div class="drag-content">
+        Day: <span id="h-t">0</span><br>
+        Total pop: <span id="h-n">0</span><br>
+        Sensitive: <span id="h-s">0</span><br>
+        Resistant: <span id="h-r">0</span><br>
+        Resistance %: <span id="h-pct">0.0%</span>
+      </div>
+      <div class="resize-handle"></div>
     </div>
+
+    <div class="drag-card legend-card" id="legend">
+      <div class="drag-handle">
+        <span class="title">🎨 <b>LEGEND</b></span>
+        <span class="grip">⠿</span>
+      </div>
+      <div class="drag-content">
+        <span><i style="background:#3b82f6"></i>Sensitive</span>
+        <span><i style="background:#ef4444"></i>Resistant</span>
+        <span><i style="background:#10b981"></i>Antibiotic</span>
+      </div>
+      <div class="resize-handle"></div>
+    </div>
+
+    <div class="drag-card graph-card" id="graph-card">
+      <div class="drag-handle">
+        <span class="title">📈 <b>POPULATION vs TIME</b></span>
+        <span class="grip">⠿</span>
+      </div>
+      <div class="drag-content">
+        <canvas id="graph"></canvas>
+      </div>
+      <div class="resize-handle"></div>
+    </div>
+  </div>
+
+  <div class="ro" id="ro"></div>
+
+  <div class="card" style="margin-top:14px">
+    <b>Experiments</b>
+    <div class="pre" id="pre"></div>
+    <div id="note">Adjust the sliders and press Start. Watch how antibiotic use and mutation rate shape the population over time.</div>
+  </div>
+</div>
+
+<div>
+  <div class="card">
+    <h4 style="margin:0 0 4px;font-size:.8rem;color:var(--mu);text-transform:uppercase;letter-spacing:.05em">⚙️ Lab Setup</h4>
+
+    <label>Initial population <b id="v-n0">1000</b></label>
+    <input type="range" id="n0" min="100" max="5000" step="100" value="1000">
+
+    <label>Doubling time (hours) <b id="v-td">20</b></label>
+    <input type="range" id="td" min="5" max="60" step="1" value="20">
+
+    <label>Antibiotic dose (kills sensitive) <b id="v-dose">0.80</b></label>
+    <input type="range" id="dose" min="0" max="1" step="0.05" value="0.8">
+
+    <label>Mutation rate (sens → resistant) <b id="v-mut">0.0010</b></label>
+    <input type="range" id="mut" min="0" max="0.01" step="0.0001" value="0.001">
+
+    <label>Fitness cost of resistance <b id="v-fit">0.10</b></label>
+    <input type="range" id="fit" min="0" max="0.5" step="0.01" value="0.1">
+
+    <label>Antibiotic schedule</label>
+    <select id="sched">
+      <option value="continuous" selected>Continuous (every day)</option>
+      <option value="pulsed">Pulsed (every 3 days)</option>
+      <option value="none">No antibiotic</option>
+    </select>
+
+    <label>Simulation speed <b id="v-sp">1.0</b>×</label>
+    <input type="range" id="sp" min="0.2" max="5" step="0.1" value="1">
+
+    <div class="row">
+      <button class="b" id="go">⏸ Pause</button>
+      <button class="b g" id="rs">↺ Reset</button>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <button class="b snd" id="snd">🔈 Sound</button>
+      <button class="b warn" id="abx">💊 Apply antibiotic</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="f">Formulas</button>
+      <button class="tab-btn" data-tab="q">Quiz</button>
+      <button class="tab-btn" data-tab="c">Challenges</button>
+      <button class="tab-btn" data-tab="n">Notebook</button>
+    </div>
+
+    <!-- FORMULAS -->
+    <div id="f" class="tab-panel active">
+      <b>Model — SIR-style with resistance</b>
+      <p style="font-size:.82rem;line-height:1.55;margin:6px 0">
+        Each day, sensitive cells grow, mutate to resistant at rate μ, and die from the antibiotic at rate d.
+        Resistant cells grow slower (fitness cost φ) but are not killed by the antibiotic.
+      </p>
+      <ul style="font-size:.82rem;line-height:1.6">
+        <li><b>Sensitive:</b> S(t+1) = S·(1 + r) − μ·S − d·S</li>
+        <li><b>Resistant:</b> R(t+1) = R·(1 + r(1−φ)) + μ·S</li>
+        <li><b>Total:</b> N = S + R</li>
+        <li><b>Growth rate:</b> r = ln(2) / t_d per hour</li>
+      </ul>
+      <table class="formulas">
+        <tr><th>Symbol</th><th>Meaning</th><th>Typical value</th></tr>
+        <tr><td>N₀</td><td>Initial population</td><td>1000 cells</td></tr>
+        <tr><td>t_d</td><td>Doubling time</td><td>20 h (E. coli)</td></tr>
+        <tr><td>μ</td><td>Mutation rate</td><td>10⁻⁶–10⁻³ per cell·gen</td></tr>
+        <tr><td>d</td><td>Antibiotic kill rate</td><td>0.5–1.0 (fraction/day)</td></tr>
+        <tr><td>φ</td><td>Fitness cost of resistance</td><td>0.05–0.30</td></tr>
+        <tr><td>r</td><td>Daily growth rate</td><td>ln(2)·24/t_d</td></tr>
+      </table>
+      <p style="font-size:.8rem;color:var(--mu);margin-top:8px">
+        <b>Key insight:</b> Antibiotics select for pre-existing resistant mutants. The mutation supplies variation;
+        the antibiotic is the selection pressure. Without antibiotic, resistant cells often lose out due to fitness cost.
+      </p>
+    </div>
+
+    <!-- QUIZ -->
+    <div id="q" class="tab-panel">
+      <h3 style="margin:4px 0 8px;font-size:.92rem">Quiz — Antibiotic Resistance</h3>
+
+      <div class="quiz-q" data-q="bq1" data-answer="B">
+        <b>1. Antibiotic resistance arises primarily because:</b>
+        <label><input type="radio" name="bq1" value="A"> Bacteria learn to resist</label>
+        <label><input type="radio" name="bq1" value="B"> Pre-existing mutations are selected for</label>
+        <label><input type="radio" name="bq1" value="C"> The antibiotic creates resistance</label>
+      </div>
+
+      <div class="quiz-q" data-q="bq2" data-answer="C">
+        <b>2. The main driver of resistance spread in hospitals is:</b>
+        <label><input type="radio" name="bq2" value="A"> Cold weather</label>
+        <label><input type="radio" name="bq2" value="B"> High mutation rate alone</label>
+        <label><input type="radio" name="bq2" value="C"> Overuse and misuse of antibiotics</label>
+      </div>
+
+      <div class="quiz-q" data-q="bq3" data-answer="A">
+        <b>3. If the fitness cost of resistance is high and no antibiotic is used, the resistant fraction will:</b>
+        <label><input type="radio" name="bq3" value="A"> Decline over time</label>
+        <label><input type="radio" name="bq3" value="B"> Grow exponentially</label>
+        <label><input type="radio" name="bq3" value="C"> Stay exactly constant</label>
+      </div>
+
+      <div class="quiz-q" data-q="bq4" data-answer="B">
+        <b>4. The term "selection pressure" refers to:</b>
+        <label><input type="radio" name="bq4" value="A"> Random mutation</label>
+        <label><input type="radio" name="bq4" value="B"> Environmental factors that favor some variants over others</label>
+        <label><input type="radio" name="bq4" value="C"> Antibiotic production by bacteria</label>
+      </div>
+
+      <div class="quiz-q" data-q="bq5" data-answer="C">
+        <b>5. Pulsed antibiotic therapy can be useful because:</b>
+        <label><input type="radio" name="bq5" value="A"> It kills all bacteria at once</label>
+        <label><input type="radio" name="bq5" value="B"> It permanently cures patients</label>
+        <label><input type="radio" name="bq5" value="C"> It reduces continuous selection for resistance</label>
+      </div>
+
+      <div class="quiz-q" data-q="bq6" data-answer="A">
+        <b>6. A fitness cost of resistance means:</b>
+        <label><input type="radio" name="bq6" value="A"> Resistant bacteria grow more slowly without antibiotics</label>
+        <label><input type="radio" name="bq6" value="B"> Resistant bacteria are killed by antibiotics</label>
+        <label><input type="radio" name="bq6" value="C"> Resistant bacteria mutate faster</label>
+      </div>
+
+      <div class="quiz-q" data-q="bq7" data-answer="B">
+        <b>7. The "mutation rate" μ in this model controls:</b>
+        <label><input type="radio" name="bq7" value="A"> How fast resistant cells die</label>
+        <label><input type="radio" name="bq7" value="B"> The chance a sensitive cell becomes resistant</label>
+        <label><input type="radio" name="bq7" value="C"> The total population size</label>
+      </div>
+
+      <div class="quiz-q" data-q="bq8" data-answer="C">
+        <b>8. If a population becomes almost 100% resistant, the most likely cause is:</b>
+        <label><input type="radio" name="bq8" value="A"> Low mutation rate</label>
+        <label><input type="radio" name="bq8" value="B"> No antibiotic use</label>
+        <label><input type="radio" name="bq8" value="C"> Long-term continuous antibiotic exposure</label>
+      </div>
+
+      <div class="quiz-q" data-q="bq9" data-answer="A">
+        <b>9. Which is the best strategy to slow resistance evolution?</b>
+        <label><input type="radio" name="bq9" value="A"> Use antibiotics only when necessary and complete the course</label>
+        <label><input type="radio" name="bq9" value="B"> Use antibiotics every day as a precaution</label>
+        <label><input type="radio" name="bq9" value="C"> Use the strongest antibiotic first</label>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <button class="b" id="qcheck">Submit Quiz</button>
+        <button class="b g" id="qreset">Reset</button>
+      </div>
+      <div id="q-result"></div>
+    </div>
+
+    <!-- CHALLENGES -->
+    <div id="c" class="tab-panel">
+      <h3 style="margin:4px 0 8px;font-size:.92rem">Interactive Challenges</h3>
+
+      <div class="challenge-box">
+        <b>Challenge 1 — Continuous antibiotic</b>
+        <button data-ch="cont">Run continuous antibiotic</button>
+      </div>
+
+      <div class="challenge-box">
+        <b>Challenge 2 — No antibiotic</b>
+        <button data-ch="none">Run with no antibiotic</button>
+      </div>
+
+      <div class="challenge-box">
+        <b>Challenge 3 — Pulsed therapy</b>
+        <button data-ch="pulse">Run pulsed antibiotic</button>
+      </div>
+
+      <div class="challenge-box">
+        <b>Challenge 4 — High mutation rate</b>
+        <button data-ch="highmut">μ = 0.005 (high mutation)</button>
+      </div>
+
+      <div class="challenge-box">
+        <b>Challenge 5 — Predict the outcome</b>
+        <label>Predict:
+          <select id="pred">
+            <option value="resistant">Resistant dominates</option>
+            <option value="sensitive">Sensitive dominates</option>
+          </select>
+        </label>
+        <button data-ch="predict">Run & Check</button>
+      </div>
+
+      <div id="challenge-note"></div>
+      <div id="challenge-result"></div>
+    </div>
+
+    <!-- NOTEBOOK -->
+    <div id="n" class="tab-panel">
+      <h3 style="margin:4px 0 8px;font-size:.92rem">Experiment Notebook</h3>
+
+      <label>Hypothesis</label>
+      <textarea id="hyp" placeholder="What do you expect to happen?"></textarea>
+
+      <label style="margin-top:8px;display:block">Conclusion</label>
+      <textarea id="concl" placeholder="What did you observe?"></textarea>
+
+      <label style="margin-top:8px;display:block">Measurements</label>
+      <textarea id="rec" readonly style="font-family:monospace;font-size:.72rem;min-height:90px"></textarea>
+
+      <div class="row" style="margin-top:8px">
+        <button class="b" id="export">⬇ Report</button>
+        <button class="b g" id="clear">Clear</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Side panels -->
+<aside id="lp" class="side-panel left">
+  <h4>🔬 Live Solutions — Steps</h4>
+  <div class="step"><b>Daily growth</b><br><span id="s-grow">—</span></div>
+  <div class="step"><b>Mutation flux</b><br><span id="s-mut">—</span></div>
+  <div class="step"><b>Antibiotic kill</b><br><span id="s-kill">—</span></div>
+  <div class="step"><b>Selection coefficient</b><br><span id="s-sel">—</span></div>
+</aside>
+
+<aside id="rp" class="side-panel right">
+  <h4>📈 Live Values</h4>
+  <div class="step"><b>Resistant fraction</b><br><span id="s-pct">—</span></div>
+  <div class="step"><b>Effective growth (resistant)</b><br><span id="s-rgrow">—</span></div>
+  <div class="step"><b>Effective growth (sensitive)</b><br><span id="s-sgrow">—</span></div>
+  <div class="step"><b>Doubling time</b><br><span id="s-td">—</span></div>
+</aside>
+
+<div class="panel-toggle">
+  <button id="opl">Solutions ◀</button>
+  <button id="opr">Solutions ▶</button>
 </div>
 
 <script>
-    const dish = document.getElementById('dish');
-    let bacteria = [];
-    const maxPop = 100;
+"use strict";
+(function(){
+var $ = function(id){ return document.getElementById(id); };
 
-    function spawn(type) {
-        if(bacteria.length >= maxPop) return;
-        const el = document.createElement('div');
-        el.className = `microbe ${type}`;
-        const x = Math.random() * 280;
-        const y = Math.random() * 280;
-        el.style.left = x + 'px';
-        el.style.top = y + 'px';
-        dish.appendChild(el);
+// === State ===
+var S = {
+  n0: 1000,
+  td: 20,           // doubling time (hours)
+  dose: 0.80,       // kill rate per day (fraction)
+  mut: 0.001,       // mutation rate per cell per day
+  fit: 0.10,        // fitness cost of resistance
+  sched: 'continuous',
+  speed: 1.0,
+  running: true,
+  soundOn: false,
+  view: 'petri',
+  // simulation state
+  day: 0,
+  t: 0,             // total hours elapsed
+  Sens: 1000,
+  Res: 0,
+  history: [],      // {day, S, R, N}
+  // display
+  yaw: 0, zoom: 1
+};
 
-        const b = { el, type, x, y };
-        bacteria.push(b);
-        setTimeout(() => el.style.transform = 'scale(1)', 10);
+// === Constants ===
+var MAX_DAYS = 30;
+var MAX_CELLS_DRAWN = 1200;   // cap bacteria rendered for performance
+
+// === Canvas ===
+var cv = $('cv'), ctx = cv.getContext('2d');
+var gcv = $('graph'), gctx = gcv.getContext('2d');
+var dpr = window.devicePixelRatio || 1;
+var lw = 0, lh = 0, glw = 0, glh = 0;
+
+function resize(){
+  var r = cv.getBoundingClientRect();
+  var w = Math.max(1, Math.round(r.width));
+  var h = Math.max(1, Math.round(r.height));
+  if (w === lw && h === lh) return;
+  lw = w; lh = h;
+  cv.width = Math.round(w * dpr);
+  cv.height = Math.round(h * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function resizeGraph(){
+  var r = gcv.getBoundingClientRect();
+  var w = Math.max(1, Math.round(r.width));
+  var h = Math.max(1, Math.round(r.height));
+  if (w === glw && h === glh) return;
+  glw = w; glh = h;
+  gcv.width = Math.round(w * dpr);
+  gcv.height = Math.round(h * dpr);
+  gctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+// === Audio ===
+var AC = null;
+function initAudio(){
+  if (AC) return;
+  try {
+    var A = window.AudioContext || window.webkitAudioContext;
+    if (A) AC = new A();
+  } catch(e){}
+}
+function beep(f, d, t, v){
+  if (!AC || !S.soundOn) return;
+  try {
+    var o = AC.createOscillator(), g = AC.createGain();
+    o.type = t || 'sine';
+    o.frequency.value = f;
+    g.gain.setValueAtTime(v || 0.06, AC.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime + d);
+    o.connect(g); g.connect(AC.destination);
+    o.start(); o.stop(AC.currentTime + d);
+  } catch(e){}
+}
+
+// === Population update (one day) ===
+function stepDay(){
+  var r = Math.log(2) * 24 / S.td;         // per-day growth rate
+  var kill = (S.sched === 'continuous') ? S.dose
+          : (S.sched === 'pulsed' && S.day % 3 === 0) ? S.dose * 1.2
+          : 0;
+  var mutFlux = S.mut * S.Sens;
+  // New counts
+  var S_new = S.Sens * (1 + r) - mutFlux - kill * S.Sens;
+  var R_new = S.Res  * (1 + r * (1 - S.fit)) + mutFlux;
+  // Clamp at 0
+  S.Sens = Math.max(0, S_new);
+  S.Res  = Math.max(0, R_new);
+  S.day += 1;
+  S.t += 24;
+  S.history.push({ day: S.day, S: S.Sens, R: S.Res, N: S.Sens + S.Res });
+  if (S.history.length > MAX_DAYS) S.history.shift();
+}
+
+// === Reset ===
+function reset(){
+  S.day = 0;
+  S.t = 0;
+  S.Sens = S.n0;
+  S.Res = 0;
+  S.history = [{ day: 0, S: S.n0, R: 0, N: S.n0 }];
+}
+
+// === Draw scene ===
+function drawScene(){
+  resize();
+  var w = cv.clientWidth, h = cv.clientHeight;
+  ctx.fillStyle = '#0a0f1f';
+  ctx.fillRect(0, 0, w, h);
+
+  if (S.view === 'petri') {
+    drawPetri(w, h);
+  } else {
+    drawGraphLarge(w, h);
+  }
+  drawGraphSmall();
+}
+
+function drawPetri(w, h){
+  var cx = w / 2, cy = h / 2;
+  var radius = Math.min(w, h) * 0.42 * S.zoom;
+
+  // Petri dish base
+  var grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+  grad.addColorStop(0, '#1a2238');
+  grad.addColorStop(1, '#0d1220');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Rim
+  ctx.strokeStyle = 'rgba(148,163,184,.35)';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Antibiotic field overlay (green tint when active)
+  var kill = (S.sched === 'continuous') ? S.dose
+          : (S.sched === 'pulsed' && S.day % 3 === 0) ? S.dose * 1.2
+          : 0;
+  if (kill > 0) {
+    var ag = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+    ag.addColorStop(0, 'rgba(16,185,129,' + (0.10 + kill * 0.10) + ')');
+    ag.addColorStop(1, 'rgba(16,185,129,0)');
+    ctx.fillStyle = ag;
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Draw bacteria as small dots
+  var total = S.Sens + S.Res;
+  var maxDraw = Math.min(MAX_CELLS_DRAWN, Math.max(20, total));
+  var ratio = total > 0 ? S.Sens / total : 0;
+  var sCount = Math.round(maxDraw * ratio);
+  var rCount = maxDraw - sCount;
+
+  // Seed pseudo-random positions (deterministic so they don't jitter)
+  function drawDots(count, color, seedOff){
+    ctx.fillStyle = color;
+    for (var i = 0; i < count; i++) {
+      var ang = (i * 2.399963 + seedOff);
+      var rad = Math.sqrt((i + 0.5) / count) * radius * 0.92;
+      var x = cx + Math.cos(ang) * rad;
+      var y = cy + Math.sin(ang) * rad;
+      ctx.beginPath();
+      ctx.arc(x, y, 2.4, 0, Math.PI * 2);
+      ctx.fill();
     }
+  }
+  // Sensitive — blue
+  ctx.shadowColor = '#3b82f6';
+  ctx.shadowBlur = 6;
+  drawDots(sCount, '#3b82f6', 0);
+  // Resistant — red
+  ctx.shadowColor = '#ef4444';
+  drawDots(rCount, '#ef4444', 1.7);
+  ctx.shadowBlur = 0;
 
-    function applyAntibiotic() {
-        // Kill 90% of normal, 5% of resistant
-        bacteria = bacteria.filter(b => {
-            const dieChance = b.type === 'normal' ? 0.9 : 0.05;
-            if(Math.random() < dieChance) {
-                dish.removeChild(b.el);
-                return false;
-            }
-            return true;
-        });
-        updateStats();
-    }
+  // Labels
+  ctx.fillStyle = '#93a0bd';
+  ctx.font = '11px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText('Day ' + S.day + ' · ' + Math.round(total).toLocaleString() + ' cells', cx, h - 18);
 
-    function simLoop() {
-        // Reproduction
-        if(bacteria.length > 0 && bacteria.length < maxPop) {
-            const parent = bacteria[Math.floor(Math.random() * bacteria.length)];
-            // Mutation chance: 5%
-            const type = (Math.random() < 0.05) ? 'resistant' : parent.type;
-            spawn(type);
+  // Antibiotic indicator
+  if (kill > 0) {
+    ctx.fillStyle = 'rgba(16,185,129,.85)';
+    ctx.font = 'bold 11px system-ui';
+    ctx.fillText('💊 Antibiotic active (' + Math.round(kill * 100) + '% kill)', cx, 26);
+  } else {
+    ctx.fillStyle = '#64748b';
+    ctx.font = '11px system-ui';
+    ctx.fillText('No antibiotic', cx, 26);
+  }
+}
+
+function drawGraphLarge(w, h){
+  ctx.fillStyle = '#0a0f1f';
+  ctx.fillRect(0, 0, w, h);
+  ctx.fillStyle = '#93a0bd';
+  ctx.font = 'bold 12px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText('Population vs Time', w / 2, 24);
+
+  var pad = { l: 55, r: 20, t: 45, b: 40 };
+  var pw = w - pad.l - pad.r;
+  var ph = h - pad.t - pad.b;
+
+  // Axes
+  ctx.strokeStyle = 'rgba(148,163,184,.35)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad.l, pad.t);
+  ctx.lineTo(pad.l, pad.t + ph);
+  ctx.lineTo(pad.l + pw, pad.t + ph);
+  ctx.stroke();
+
+  // Max Y for scaling
+  var maxN = 1;
+  S.history.forEach(function(h){ maxN = Math.max(maxN, h.N); });
+  maxN = Math.max(maxN, S.n0);
+
+  // Y-axis labels
+  ctx.fillStyle = '#64748b';
+  ctx.font = '9px system-ui';
+  ctx.textAlign = 'right';
+  for (var i = 0; i <= 4; i++) {
+    var val = maxN * i / 4;
+    var y = pad.t + ph - (i / 4) * ph;
+    ctx.fillText(Math.round(val).toLocaleString(), pad.l - 6, y + 3);
+    ctx.strokeStyle = 'rgba(148,163,184,.12)';
+    ctx.beginPath();
+    ctx.moveTo(pad.l, y);
+    ctx.lineTo(pad.l + pw, y);
+    ctx.stroke();
+  }
+
+  // X-axis labels
+  ctx.textAlign = 'center';
+  for (var d = 0; d <= MAX_DAYS; d += 5) {
+    var x = pad.l + (d / MAX_DAYS) * pw;
+    ctx.fillText(d + 'd', x, pad.t + ph + 14);
+  }
+
+  // Draw curves
+  function curve(key, color){
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    S.history.forEach(function(h, i){
+      var x = pad.l + (h.day / MAX_DAYS) * pw;
+      var y = pad.t + ph - (h[key] / maxN) * ph;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  }
+  curve('S', '#3b82f6');
+  curve('R', '#ef4444');
+
+  // Legend
+  ctx.font = '10px system-ui';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#3b82f6';
+  ctx.fillText('● Sensitive', pad.l + 8, pad.t + 14);
+  ctx.fillStyle = '#ef4444';
+  ctx.fillText('● Resistant', pad.l + 100, pad.t + 14);
+}
+
+function drawGraphSmall(){
+  resizeGraph();
+  var w = gcv.clientWidth, h = gcv.clientHeight;
+  if (w < 10 || h < 10) return;
+  gctx.clearRect(0, 0, w, h);
+  gctx.fillStyle = '#0a0f1f';
+  gctx.fillRect(0, 0, w, h);
+  gctx.strokeStyle = 'rgba(255,255,255,.1)';
+  gctx.strokeRect(0.5, 0.5, w - 1, h - 1);
+
+  var pad = { l: 6, r: 6, t: 12, b: 8 };
+  var pw = w - pad.l - pad.r;
+  var ph = h - pad.t - pad.b;
+
+  var maxN = 1;
+  S.history.forEach(function(h){ maxN = Math.max(maxN, h.N); });
+  maxN = Math.max(maxN, S.n0);
+
+  // Grid
+  gctx.strokeStyle = 'rgba(148,163,184,.12)';
+  for (var i = 1; i < 4; i++) {
+    var y = pad.t + (i / 4) * ph;
+    gctx.beginPath();
+    gctx.moveTo(pad.l, y);
+    gctx.lineTo(pad.l + pw, y);
+    gctx.stroke();
+  }
+
+  function curve(key, color){
+    gctx.strokeStyle = color;
+    gctx.lineWidth = 1.6;
+    gctx.beginPath();
+    S.history.forEach(function(hh, ii){
+      var x = pad.l + (hh.day / MAX_DAYS) * pw;
+      var y = pad.t + ph - (hh[key] / maxN) * ph;
+      if (ii === 0) gctx.moveTo(x, y);
+      else gctx.lineTo(x, y);
+    });
+    gctx.stroke();
+  }
+  curve('S', '#3b82f6');
+  curve('R', '#ef4444');
+
+  gctx.fillStyle = '#93a0bd';
+  gctx.font = '9px system-ui';
+  gctx.textAlign = 'left';
+  gctx.fillText('Day ' + S.day, pad.l + 2, h - 2);
+  gctx.textAlign = 'right';
+  gctx.fillText('N=' + Math.round(S.Sens + S.Res).toLocaleString(), w - 4, h - 2);
+}
+
+// === Readouts ===
+function readouts(){
+  var total = S.Sens + S.Res;
+  var pct = total > 0 ? S.Res / total * 100 : 0;
+  var rDaily = Math.log(2) * 24 / S.td;
+  var kill = (S.sched === 'continuous') ? S.dose
+          : (S.sched === 'pulsed' && S.day % 3 === 0) ? S.dose * 1.2
+          : 0;
+  var mutFlux = S.mut * S.Sens;
+
+  // HUD
+  $('h-t').textContent = S.day;
+  $('h-n').textContent = Math.round(total).toLocaleString();
+  $('h-s').textContent = Math.round(S.Sens).toLocaleString();
+  $('h-r').textContent = Math.round(S.Res).toLocaleString();
+  $('h-pct').textContent = pct.toFixed(1) + '%';
+  $('tag').textContent = (S.running ? '● RUNNING' : '❚❚ PAUSED') + ' · Day ' + S.day;
+
+  // Readout tiles
+  var ro = $('ro');
+  if (!ro._built) {
+    var keys = [
+      ['S','Sensitive','hl'], ['R','Resistant','bad'], ['N','Total',''],
+      ['pct','Resistance %','warn'], ['r','Growth rate/day',''],
+      ['mutFlux','Mutation flux',''], ['kill','Antibiotic kill',''],
+      ['td','Doubling time','']
+    ];
+    ro.innerHTML = keys.map(function(k){
+      return '<div class="' + k[2] + '"><span>' + k[1] + '</span><strong id="r_' + k[0] + '">—</strong></div>';
+    }).join('');
+    ro._built = true;
+  }
+
+  function R(k, v){ var el = $('r_' + k); if (el) el.textContent = v; }
+  R('S', Math.round(S.Sens).toLocaleString());
+  R('R', Math.round(S.Res).toLocaleString());
+  R('N', Math.round(total).toLocaleString());
+  R('pct', pct.toFixed(1) + '%');
+  R('r', rDaily.toFixed(3) + '/day');
+  R('mutFlux', mutFlux.toFixed(1) + ' cells/day');
+  R('kill', (kill * 100).toFixed(0) + '%');
+  R('td', S.td + ' h');
+
+  // Side panels
+  $('s-grow').textContent = 'S·(1+r) = ' + Math.round(S.Sens * (1 + rDaily)).toLocaleString() + ' cells/day';
+  $('s-mut').textContent  = 'μ·S = ' + mutFlux.toFixed(1) + ' cells → resistant';
+  $('s-kill').textContent = 'd·S = ' + Math.round(kill * S.Sens).toLocaleString() + ' cells killed today';
+  $('s-sel').textContent  = 's = (r·φ) / (1 + r) ≈ ' + ((rDaily * S.fit) / (1 + rDaily)).toFixed(4);
+
+  $('s-pct').textContent = pct.toFixed(2) + '%';
+  $('s-rgrow').textContent = (rDaily * (1 - S.fit)).toFixed(3) + '/day';
+  $('s-sgrow').textContent = (rDaily - kill).toFixed(3) + '/day';
+  $('s-td').textContent = S.td + ' h';
+}
+
+// === Animation loop ===
+var lastTime = performance.now();
+var dayAccum = 0;   // seconds accumulated toward next day
+
+function loop(now){
+  var dt = Math.min((now - lastTime) / 1000, 0.05);
+  lastTime = now;
+
+  if (S.running && S.day < MAX_DAYS) {
+    // Map real time → simulated days. 1 sim day per (1/sp) seconds.
+    dayAccum += dt * S.speed;
+    var daysToAdvance = Math.floor(dayAccum);
+    if (daysToAdvance > 0) {
+      dayAccum -= daysToAdvance;
+      for (var i = 0; i < daysToAdvance && S.day < MAX_DAYS; i++) {
+        stepDay();
+        // Sound feedback
+        if (S.soundOn && S.day % 5 === 0) {
+          var total = S.Sens + S.Res;
+          var pct = total > 0 ? S.Res / total : 0;
+          beep(220 + pct * 600, 0.05, 'sine', 0.04);
         }
-        updateStats();
+      }
     }
+  } else if (S.day >= MAX_DAYS) {
+    S.running = false;
+  }
 
-    function updateStats() {
-        const resCount = bacteria.filter(b => b.type === 'resistant').length;
-        const percent = bacteria.length > 0 ? (resCount / bacteria.length) * 100 : 0;
-        document.getElementById('res-bar').style.width = percent + '%';
+  drawScene();
+  readouts();
+  requestAnimationFrame(loop);
+}
+
+// === Controls ===
+function labels(){
+  $('v-n0').textContent = S.n0.toLocaleString();
+  $('v-td').textContent = S.td;
+  $('v-dose').textContent = S.dose.toFixed(2);
+  $('v-mut').textContent = S.mut.toFixed(4);
+  $('v-fit').textContent = S.fit.toFixed(2);
+  $('v-sp').textContent = S.speed.toFixed(1);
+}
+
+function applyControls(){
+  S.n0 = +$('n0').value;
+  S.td = +$('td').value;
+  S.dose = +$('dose').value;
+  S.mut = +$('mut').value;
+  S.fit = +$('fit').value;
+  S.sched = $('sched').value;
+  S.speed = +$('sp').value;
+  labels();
+}
+
+['n0','td','dose','mut','fit','sched','sp'].forEach(function(id){
+  $(id).addEventListener('input', function(){
+    applyControls();
+    // Some params require reset to be meaningful
+    if (id === 'n0' || id === 'td') reset();
+  });
+});
+
+$('go').addEventListener('click', function(){
+  S.running = !S.running;
+  this.textContent = S.running ? '⏸ Pause' : '▶ Start';
+  beep(S.running ? 660 : 330, 0.08, 'sine', 0.06);
+});
+
+$('rs').addEventListener('click', function(){
+  reset();
+  S.running = true;
+  $('go').textContent = '⏸ Pause';
+  beep(440, 0.06, 'sine', 0.05);
+});
+
+$('abx').addEventListener('click', function(){
+  // Manually apply a single strong antibiotic pulse
+  var before = S.Sens;
+  S.Sens = S.Sens * (1 - S.dose);
+  S.history.push({ day: S.day, S: S.Sens, R: S.Res, N: S.Sens + S.Res });
+  beep(880, 0.15, 'sawtooth', 0.08);
+  beep(440, 0.2, 'triangle', 0.06);
+});
+
+$('snd').addEventListener('click', function(){
+  initAudio();
+  if (AC && AC.state === 'suspended') AC.resume();
+  S.soundOn = !S.soundOn;
+  this.textContent = S.soundOn ? '🔊 Sound On' : '🔈 Sound';
+  this.classList.toggle('playing', S.soundOn);
+  beep(880, 0.1, 'sine', 0.06);
+});
+
+// Views
+document.querySelectorAll('[data-v]').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('[data-v]').forEach(function(x){ x.classList.remove('active'); });
+    b.classList.add('active');
+    S.view = b.dataset.v;
+  });
+});
+
+// Zoom
+$('zin').addEventListener('click', function(){ S.zoom = Math.min(2.5, S.zoom * 1.15); });
+$('zout').addEventListener('click', function(){ S.zoom = Math.max(0.4, S.zoom / 1.15); });
+$('zres').addEventListener('click', function(){ S.zoom = 1; });
+
+// Tabs
+document.querySelectorAll('.tab-btn').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('.tab-btn').forEach(function(x){ x.classList.remove('active'); });
+    document.querySelectorAll('.tab-panel').forEach(function(x){ x.classList.remove('active'); });
+    b.classList.add('active');
+    var t = $(b.dataset.tab);
+    if (t) t.classList.add('active');
+  });
+});
+
+// === Quiz ===
+var QK = { bq1:'B', bq2:'C', bq3:'A', bq4:'B', bq5:'C', bq6:'A', bq7:'B', bq8:'C', bq9:'A' };
+var QW = {
+  bq1:'Resistance is not caused by the antibiotic itself — mutations arise randomly, and the antibiotic selects for pre-existing resistant variants.',
+  bq2:'Overuse and misuse of antibiotics are the main drivers. They give resistant bacteria a massive survival advantage.',
+  bq3:'Without antibiotic selection, resistant cells pay a fitness cost and are outcompeted by sensitive cells.',
+  bq4:'Selection pressure = environmental factors that favor some variants over others. In this lab, the antibiotic is the selection pressure.',
+  bq5:'Pulsed therapy reduces the continuous selection pressure, giving sensitive strains a chance to outcompete resistant ones between doses.',
+  bq6:'A fitness cost means resistant cells grow more slowly than sensitive cells when no antibiotic is present.',
+  bq7:'μ is the per-cell probability that a sensitive cell mutates to resistant in a given day. It controls how fast resistance arises.',
+  bq8:'Long-term continuous antibiotic exposure is the strongest selection pressure — almost all sensitive cells die, leaving resistant cells to dominate.',
+  bq9:'Prudent use — only when needed, right dose, complete course — is the most effective strategy to slow resistance evolution.'
+};
+
+$('qcheck').addEventListener('click', function(){
+  var score = 0, total = 0;
+  document.querySelectorAll('.quiz-q').forEach(function(q){
+    var n = q.dataset.q;
+    var ans = q.dataset.answer;
+    var ch = q.querySelector('input[name="' + n + '"]:checked');
+    var ex = q.querySelector('.q-res');
+    if (!ex) { ex = document.createElement('div'); ex.className = 'q-res'; q.appendChild(ex); }
+    ex.style.display = 'block'; total++;
+    if (ch && ch.value === ans) {
+      score++;
+      ex.style.background = 'rgba(16,185,129,.1)';
+      ex.style.color = '#065f46';
+      ex.style.borderLeft = '3px solid #10b981';
+      ex.innerHTML = '<b>✓ Correct!</b> ' + QW[n];
+    } else {
+      ex.style.background = 'rgba(239,68,68,.1)';
+      ex.style.color = '#991b1b';
+      ex.style.borderLeft = '3px solid #ef4444';
+      ex.innerHTML = '<b>✗ Answer: ' + ans + '</b> ' + QW[n];
     }
+  });
+  var pct = Math.round(score / total * 100);
+  var out = $('q-result');
+  out.style.display = 'block';
+  out.innerHTML = 'Score: ' + score + '/' + total + ' — ' + pct + '%';
+  beep(pct >= 78 ? 880 : 440, 0.15, 'sine', 0.1);
+});
 
-    function resetLab() {
-        dish.innerHTML = '';
-        bacteria = [];
-        for(let i=0; i<10; i++) spawn('normal');
+$('qreset').addEventListener('click', function(){
+  document.querySelectorAll('.quiz-q').forEach(function(q){
+    q.querySelectorAll('input').forEach(function(r){ r.checked = false; });
+    var e = q.querySelector('.q-res');
+    if (e) e.style.display = 'none';
+  });
+  $('q-result').style.display = 'none';
+});
+
+// === Challenges ===
+function setValues(o){
+  for (var k in o) { var el = $(k); if (el) el.value = o[k]; }
+  applyControls();
+}
+
+document.querySelectorAll('[data-ch]').forEach(function(b){
+  b.addEventListener('click', function(){
+    var id = b.dataset.ch;
+    var note = $('challenge-note'), cres = $('challenge-result');
+    note.textContent = ''; cres.textContent = '';
+
+    if (id === 'cont') {
+      setValues({ n0:1000, td:20, dose:0.8, mut:0.001, fit:0.1, sched:'continuous' });
+      reset(); S.running = true; $('go').textContent = '⏸ Pause';
+      note.textContent = 'Continuous antibiotic — observe the resistant population rising.';
+      cres.textContent = 'Starting N = ' + S.n0 + ' · dose = 80% · μ = 0.001';
+    } else if (id === 'none') {
+      setValues({ n0:1000, td:20, dose:0.8, mut:0.001, fit:0.1, sched:'none' });
+      reset(); S.running = true; $('go').textContent = '⏸ Pause';
+      note.textContent = 'No antibiotic — resistant cells pay a fitness cost, so they decline.';
+      cres.textContent = 'Sensitive should dominate again after 30 days.';
+    } else if (id === 'pulse') {
+      setValues({ n0:1000, td:20, dose:0.8, mut:0.001, fit:0.1, sched:'pulsed' });
+      reset(); S.running = true; $('go').textContent = '⏸ Pause';
+      note.textContent = 'Pulsed antibiotic every 3 days — compare to continuous.';
+      cres.textContent = 'Resistance evolves more slowly with pulses.';
+    } else if (id === 'highmut') {
+      setValues({ n0:1000, td:20, dose:0.8, mut:0.005, fit:0.1, sched:'continuous' });
+      reset(); S.running = true; $('go').textContent = '⏸ Pause';
+      note.textContent = 'High mutation rate (0.005) — resistance appears much faster.';
+      cres.textContent = 'Resistance should appear in the first few days.';
+    } else if (id === 'predict') {
+      var pr = $('pred').value;
+      setValues({ n0:1000, td:20, dose:0.8, mut:0.001, fit:0.1, sched:'continuous' });
+      reset(); S.running = true; $('go').textContent = '⏸ Pause';
+      // Run a quick preview to check
+      var S_snap = S.Sens, R_snap = S.Res;
+      for (var i = 0; i < 30; i++) {
+        var r = Math.log(2) * 24 / S.td;
+        var mutFlux = S.mut * S.Sens;
+        var S_new = S.Sens * (1 + r) - mutFlux - S.dose * S.Sens;
+        var R_new = S.Res * (1 + r * (1 - S.fit)) + mutFlux;
+        S.Sens = Math.max(0, S_new);
+        S.Res = Math.max(0, R_new);
+      }
+      var total = S.Sens + S.Res;
+      var actual = S.Res > S.Sens ? 'resistant' : 'sensitive';
+      var pct = total > 0 ? (S.Res / total * 100).toFixed(0) : 0;
+      S.Sens = S_snap; S.Res = R_snap;   // restore
+      note.textContent = 'Prediction: ' + pr;
+      cres.textContent = 'Actual (predicted by model): ' + actual + ' (' + pct + '% resistant). ' + (pr === actual ? '✓ Correct!' : '✗ Try again.');
+      beep(pr === actual ? 880 : 440, 0.15, 'sine', 0.1);
     }
+  });
+});
 
-    setInterval(simLoop, 400);
-    resetLab();
+// === Notebook ===
+$('export').addEventListener('click', function(){
+  var total = S.Sens + S.Res;
+  var pct = total > 0 ? (S.Res / total * 100).toFixed(1) : 0;
+  var txt = 'ANTIBIOTIC RESISTANCE — LAB REPORT\n' +
+    new Date().toLocaleString() + '\n\n' +
+    'PARAMETERS\n' +
+    'Initial population N0 = ' + S.n0 + '\n' +
+    'Doubling time td = ' + S.td + ' h\n' +
+    'Antibiotic dose = ' + (S.dose * 100).toFixed(0) + '%\n' +
+    'Mutation rate μ = ' + S.mut + '\n' +
+    'Fitness cost φ = ' + S.fit + '\n' +
+    'Schedule = ' + S.sched + '\n\n' +
+    'RESULT AT DAY ' + S.day + '\n' +
+    'Sensitive = ' + Math.round(S.Sens).toLocaleString() + '\n' +
+    'Resistant = ' + Math.round(S.Res).toLocaleString() + '\n' +
+    'Total = ' + Math.round(total).toLocaleString() + '\n' +
+    'Resistance % = ' + pct + '%\n\n' +
+    'HYPOTHESIS\n' + $('hyp').value + '\n\n' +
+    'CONCLUSION\n' + $('concl').value + '\n\n' +
+    'MEASUREMENTS\n' + $('rec').value + '\n\n' +
+    'LIMITATIONS\nSimplified ODE model. Ignores spatial structure, immune system, horizontal gene transfer, and stochastic extinctions. Educational use only.\n';
+
+  var blob = new Blob([txt], {type:'text/plain'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'antibiotic-resistance-report.txt';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+$('clear').addEventListener('click', function(){
+  $('hyp').value = '';
+  $('concl').value = '';
+  $('rec').value = '';
+});
+
+// === Side panels ===
+$('opl').addEventListener('click', function(){
+  var l = $('lp'), r = $('rp');
+  if (!l.classList.contains('open')) r.classList.remove('open');
+  l.classList.toggle('open');
+});
+$('opr').addEventListener('click', function(){
+  var l = $('lp'), r = $('rp');
+  if (!r.classList.contains('open')) l.classList.remove('open');
+  r.classList.toggle('open');
+});
+
+// === Draggable cards ===
+function makeDrag(el){
+  var h = el.querySelector('.drag-handle');
+  var rh = el.querySelector('.resize-handle');
+  if (!h) return;
+  var drag = false, resize = false;
+  var sx, sy, sl, st, sw, sh;
+
+  h.addEventListener('pointerdown', function(e){
+    if (e.target.closest('.resize-handle')) return;
+    e.preventDefault();
+    var r = el.getBoundingClientRect();
+    var pr = el.parentElement.getBoundingClientRect();
+    el.style.left = (r.left - pr.left) + 'px';
+    el.style.top = (r.top - pr.top) + 'px';
+    el.style.bottom = 'auto';
+    el.style.right = 'auto';
+    el.style.width = r.width + 'px';
+    drag = true;
+    sx = e.clientX; sy = e.clientY;
+    sl = parseFloat(el.style.left);
+    st = parseFloat(el.style.top);
+    try { h.setPointerCapture(e.pointerId); } catch(x){}
+    el.classList.add('dragging');
+  });
+  h.addEventListener('pointermove', function(e){
+    if (!drag) return;
+    el.style.left = (sl + e.clientX - sx) + 'px';
+    el.style.top = (st + e.clientY - sy) + 'px';
+  });
+  h.addEventListener('pointerup', function(e){
+    drag = false;
+    el.classList.remove('dragging');
+    try { h.releasePointerCapture(e.pointerId); } catch(x){}
+  });
+  h.addEventListener('pointercancel', function(){ drag = false; el.classList.remove('dragging'); });
+
+  if (rh) {
+    rh.addEventListener('pointerdown', function(e){
+      e.preventDefault(); e.stopPropagation();
+      var r = el.getBoundingClientRect();
+      var pr = el.parentElement.getBoundingClientRect();
+      el.style.left = (r.left - pr.left) + 'px';
+      el.style.top = (r.top - pr.top) + 'px';
+      el.style.bottom = 'auto';
+      el.style.right = 'auto';
+      el.style.width = r.width + 'px';
+      el.style.height = r.height + 'px';
+      resize = true;
+      sx = e.clientX; sy = e.clientY;
+      sw = r.width; sh = r.height;
+      try { rh.setPointerCapture(e.pointerId); } catch(x){}
+      el.classList.add('dragging');
+    });
+    rh.addEventListener('pointermove', function(e){
+      if (!resize) return;
+      var nw = Math.max(140, sw + e.clientX - sx);
+      var nh = Math.max(60, sh + e.clientY - sy);
+      el.style.width = nw + 'px';
+      el.style.height = nh + 'px';
+      if (el.id === 'hud') el.style.height = 'auto';
+      if (el.id === 'graph-card') resizeGraph();
+    });
+    rh.addEventListener('pointerup', function(e){
+      resize = false;
+      el.classList.remove('dragging');
+      try { rh.releasePointerCapture(e.pointerId); } catch(x){}
+      resizeGraph();
+    });
+    rh.addEventListener('pointercancel', function(){ resize = false; el.classList.remove('dragging'); });
+  }
+}
+makeDrag($('hud'));
+makeDrag($('legend'));
+makeDrag($('graph-card'));
+
+// Scene drag (rotate view — small yaw effect for 3D feel)
+var sdrag = null;
+cv.addEventListener('pointerdown', function(e){
+  if (cv.style.touchAction === 'auto') return;
+  sdrag = [e.clientX, e.clientY];
+  try { cv.setPointerCapture(e.pointerId); } catch(x){}
+});
+cv.addEventListener('pointermove', function(e){
+  if (!sdrag) return;
+  S.yaw += (e.clientX - sdrag[0]) * 0.003;
+  sdrag = [e.clientX, e.clientY];
+});
+cv.addEventListener('pointerup', function(){ sdrag = null; });
+cv.addEventListener('pointercancel', function(){ sdrag = null; });
+
+// === Presets ===
+var PRE = [
+  ['Continuous antibiotic', function(){
+    setValues({ n0:1000, td:20, dose:0.8, mut:0.001, fit:0.1, sched:'continuous' });
+    reset(); S.running = true; $('go').textContent = '⏸ Pause';
+    return 'Watch resistance spread under constant antibiotic pressure.';
+  }],
+  ['No antibiotic', function(){
+    setValues({ n0:1000, td:20, dose:0.8, mut:0.001, fit:0.1, sched:'none' });
+    reset(); S.running = true; $('go').textContent = '⏸ Pause';
+    return 'Without selection, resistant cells decline due to fitness cost.';
+  }],
+  ['Pulsed therapy', function(){
+    setValues({ n0:1000, td:20, dose:0.8, mut:0.001, fit:0.1, sched:'pulsed' });
+    reset(); S.running = true; $('go').textContent = '⏸ Pause';
+    return 'Antibiotic every 3 days — resistance evolves more slowly.';
+  }],
+  ['High mutation', function(){
+    setValues({ n0:1000, td:20, dose:0.8, mut:0.005, fit:0.1, sched:'continuous' });
+    reset(); S.running = true; $('go').textContent = '⏸ Pause';
+    return 'μ = 0.005 — resistance appears quickly.';
+  }],
+  ['Low mutation, high cost', function(){
+    setValues({ n0:1000, td:20, dose:0.8, mut:0.0001, fit:0.4, sched:'continuous' });
+    reset(); S.running = true; $('go').textContent = '⏸ Pause';
+    return 'Low μ and high φ — resistance struggles to establish.';
+  }]
+];
+$('pre').innerHTML = '';
+PRE.forEach(function(p){
+  var b = document.createElement('button');
+  b.textContent = p[0];
+  b.onclick = function(){ $('note').textContent = p[1](); };
+  $('pre').appendChild(b);
+});
+
+// === BOOT ===
+applyControls();
+reset();
+resize();
+resizeGraph();
+requestAnimationFrame(loop);
+window.addEventListener('resize', function(){ resize(); resizeGraph(); });
+
+})();
 </script>
 </body>
 </html>

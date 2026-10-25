@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Collision Lab — 1D · 2D · 3D</title>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0a0f1f;
+  --sf:#141b2e;
+  --ln:#26304a;
+  --tx:#e5e9f5;
+  --mu:#93a0bd;
+  --pr:#818cf8;
+  --pr-deep:#6366f1;
+  --ok:#34d399;
+  --bad:#f87171;
+  --wa:#fbbf24;
+  --red:#f43f5e;
+  --blue:#3b82f6;
+  box-sizing:border-box;
+}
+*{box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;}
+html,body{height:100%;margin:0;}
+body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column;overflow:hidden;}
+
+/* ===== HEADER (Projectile style) ===== */
+header{background:var(--bg);color:#fff;padding:10px;text-align:center;border-bottom:3px solid var(--pr);flex:none;position:relative;}
+header h2{margin:0;font-size:1.1rem;}
+header small{display:block;color:var(--mu);font-size:.8rem;margin-top:2px;}
+#xp{font-size:.75rem;color:#c7d2fe;margin-top:4px;}
+
+/* ===== LAB CONTAINER ===== */
+.lab-container{display:flex;flex:1;overflow:hidden;flex-direction:column;min-height:0;}
+
+/* ===== SIM AREA (Projectile style) ===== */
+#sim-area{flex:2 1 0;min-height:340px;position:relative;background:#05080f;border-bottom:2px solid #e2e8f0;overflow:hidden;}
+canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;touch-action:none;}
+
+/* ===== HUD (Projectile style) ===== */
+.hud{position:absolute;top:10px;left:10px;background:rgba(20,27,46,0.9);padding:8px 10px;border-radius:8px;font-size:.75rem;border:1px solid #26304a;z-index:20;color:var(--tx);pointer-events:none;backdrop-filter:blur(6px);max-width:280px;}
+.hud b{color:var(--pr);font-size:.7rem;letter-spacing:.08em;}
+.hud .metrics{line-height:1.65;}
+.hud span.val{color:var(--wa);font-weight:700;font-variant-numeric:tabular-nums;}
+
+/* ===== LEGEND (Projectile style) ===== */
+.vector-legend{position:absolute;bottom:10px;left:10px;font-size:.65rem;background:rgba(20,27,46,0.9);padding:5px 8px;border-radius:4px;color:var(--mu);pointer-events:none;border:1px solid #26304a;}
+.vector-legend span{margin-right:10px;}
+
+/* ===== SPLITTER (Projectile style) ===== */
+.splitter{height:10px;background:linear-gradient(90deg,rgba(0,0,0,.03),rgba(0,0,0,.06));cursor:ns-resize;flex-shrink:0;border-top:1px solid #26304a;border-bottom:1px solid #26304a;}
+.splitter:hover{background:linear-gradient(90deg,rgba(129,140,248,.3),rgba(129,140,248,.2));}
+
+/* ===== BOTTOM PANEL (Projectile style) ===== */
+.bottom-panel{flex:3 1 0;min-height:0;display:flex;flex-direction:row;background:var(--sf);overflow-y:auto;}
+.controls{flex:0 0 360px;padding:16px;border-right:1px solid var(--ln);min-width:300px;background:var(--sf);}
+.analysis{flex:1 1 720px;padding:16px;background:var(--bg);min-width:420px;}
+
+/* ===== CARDS ===== */
+.card{background:var(--sf);border:1px solid var(--ln);padding:12px;border-radius:8px;margin-bottom:10px;font-size:.84rem;line-height:1.55;}
+h4{margin:0 0 10px 0;font-size:.8rem;color:var(--mu);text-transform:uppercase;letter-spacing:.05em;}
+.row{margin-bottom:10px;}
+label{display:block;font-size:.78rem;font-weight:600;margin-bottom:3px;}
+input[type=range]{width:100%;accent-color:var(--pr);height:6px;}
+select,input[type=number]{width:100%;padding:8px;border-radius:6px;border:1px solid var(--ln);background:var(--bg);color:var(--tx);font-family:inherit;font-size:.85rem;}
+select:focus,input:focus{outline:none;border-color:var(--pr);}
+
+/* ===== BUTTONS (Projectile style) ===== */
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+button{padding:10px;border:1px solid var(--ln);border-radius:6px;font-weight:700;cursor:pointer;font-size:.82rem;background:var(--sf);color:var(--tx);font-family:inherit;transition:.2s;}
+button:hover{background:#1a2340;border-color:var(--pr);}
+button.go{background:var(--pr);color:#0b1020;border-color:var(--pr);}
+button.go:hover{background:#a5b4fc;box-shadow:0 4px 14px rgba(129,140,248,.4);}
+button.on{background:var(--pr);color:#0b1020;}
+
+/* ===== READOUTS TABLE (Projectile style) ===== */
+table{width:100%;border-collapse:collapse;font-size:.8rem;}
+td{padding:5px 6px;border-bottom:1px solid var(--ln);}
+td:first-child{color:var(--mu);}
+td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;color:var(--tx);}
+.mu{color:var(--mu);}
+.ok{color:var(--ok);}
+.bad{color:var(--bad);}
+
+/* ===== TABS (Projectile style) ===== */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.tabs button{padding:8px 12px;font-size:.8rem;border-radius:6px;}
+
+/* ===== PANELS ===== */
+.pn{display:none;}
+.pn.on{display:block;}
+
+/* ===== QUIZ OPTIONS (Projectile style) ===== */
+.opt{display:block;width:100%;text-align:left;margin:4px 0;font-weight:500;padding:8px 11px;}
+.opt.c{border-color:var(--ok);color:var(--ok);background:rgba(52,211,153,.08);}
+.opt.w{border-color:var(--bad);color:var(--bad);background:rgba(248,113,113,.08);}
+
+/* ===== REAL-WORLD SCENARIOS ===== */
+#rwl{display:grid;gap:6px;}
+#rwl button{text-align:left;padding:9px 11px;font-size:.82rem;}
+
+/* ===== TOAST ===== */
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--pr);color:#0b1020;padding:9px 14px;border-radius:8px;z-index:99;font-size:.85rem;font-weight:700;box-shadow:0 6px 20px rgba(129,140,248,.5);opacity:0;transition:opacity .3s;pointer-events:none;}
+#toast.show{opacity:1;}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .bottom-panel{flex-direction:column;}
+  .controls{border-right:none;border-bottom:1px solid var(--ln);min-width:0;}
+  .analysis{min-width:0;}
+  header h2{font-size:1rem;}
+  .hud{font-size:.7rem;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h2>💥 Collision Lab — 1D · 2D · 3D</h2>
+  <small>Elastic · Inelastic · Explosion · Conservation of momentum &amp; energy</small>
+  <div id="xp"></div>
+</header>
+
+<div class="lab-container">
+  <div id="sim-area">
+    <div class="hud" id="hud">
+      <b>LIVE STATE</b><br>
+      <div class="metrics">
+        Time: <span class="val" id="hud-t">0.00</span> s<br>
+        Momentum: <span class="val" id="hud-p">0.00</span> kg·m/s<br>
+        KE: <span class="val" id="hud-ke">0.00</span> J<br>
+        Status: <span class="val" id="hud-status">Idle</span>
+      </div>
+    </div>
+    <div class="vector-legend">
+      <span style="color:var(--red)">● Ball A</span>
+      <span style="color:var(--blue)">● Ball B</span>
+      <span style="color:var(--wa)">● Velocity</span>
+    </div>
+    <canvas id="cv"></canvas>
+  </div>
+
+  <div class="splitter" id="splitter"></div>
+
+  <div class="bottom-panel">
+    <div class="controls">
+      <h4>💥 Collision Setup</h4>
+
+      <div class="row">
+        <label>Dimension</label>
+        <select id="dim">
+          <option value="1d">1D — head-on</option>
+          <option value="2d" selected>2D — planar</option>
+          <option value="3d">3D — drag to rotate</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label>Collision type</label>
+        <select id="type">
+          <option value="elastic">Elastic (KE conserved)</option>
+          <option value="inelastic">Inelastic (some KE lost)</option>
+          <option value="perfect">Perfectly inelastic (stick)</option>
+          <option value="explosion">Explosion (KE increases)</option>
+        </select>
+      </div>
+
+      <div id="sl"></div>
+
+      <div class="row">
+        <label style="display:inline-flex;align-items:center;gap:6px;">
+          <input type="checkbox" id="trail" checked> Show trajectories
+        </label>
+      </div>
+
+      <div class="btn-grid" style="margin-top:10px;">
+        <button class="go" id="launch">🚀 Launch</button>
+        <button id="reset">↺ Reset</button>
+      </div>
+    </div>
+
+    <div class="analysis">
+      <h4>📊 Learn &amp; Practice</h4>
+
+      <div class="tabs" id="tabs"></div>
+
+      <div class="card" id="ro"></div>
+
+      <!-- Real World -->
+      <div class="pn on" id="p-rw">
+        <div class="card">
+          <b>🌍 Real-world scenarios</b><br>
+          <span class="mu">Real masses and speeds are scaled into the simulator (collision physics is scale-invariant), then results are converted back to real units.</span>
+          <div id="rwl" style="margin-top:8px;"></div>
+        </div>
+        <div class="card" id="rwo"></div>
+      </div>
+
+      <!-- Predict -->
+      <div class="pn" id="p-pr">
+        <div class="card">
+          <b>🎯 Predict, then test</b><br>
+          <span class="mu">Solve a random 1D problem on paper, enter your answers, and watch the simulation check you.</span>
+          <br><br>
+          <button class="go" id="np" style="width:100%">🎲 New problem</button>
+          <div id="pq" style="margin:8px 0"></div>
+          <div class="btn-grid">
+            <div>
+              <label>v₁′ (m/s, right = +)</label>
+              <input type="number" id="pa" step="0.01">
+            </div>
+            <div>
+              <label>v₂′ (m/s)</label>
+              <input type="number" id="pb" step="0.01">
+            </div>
+          </div>
+          <button class="go" id="pc" style="width:100%;margin-top:8px">Check &amp; launch</button>
+          <div id="pf" style="margin-top:8px"></div>
+        </div>
+      </div>
+
+      <!-- Quiz -->
+      <div class="pn" id="p-qz">
+        <div class="card">
+          <b>🧠 Quiz</b> — instant feedback <span id="qs" class="mu"></span>
+          <div id="qb"></div>
+        </div>
+      </div>
+
+      <!-- Formulas -->
+      <div class="pn" id="p-fm">
+        <div class="card">
+          <b>Core formulas</b><br>
+          Momentum: <b>p = m·v</b> (vector) · Kinetic energy: <b>KE = ½mv²</b><br>
+          Conservation: <b>m₁u₁ + m₂u₂ = m₁v₁′ + m₂v₂′</b> (each of x, y, z)<br>
+          Restitution: <b>e = (v₂′ − v₁′)/(u₁ − u₂)</b> — e = 1 elastic, e = 0 stick together<br>
+          1D result: <b>v₁′ = [m₁u₁ + m₂u₂ + m₂e(u₂ − u₁)]/(m₁+m₂)</b>, <b>v₂′ = [m₁u₁ + m₂u₂ + m₁e(u₁ − u₂)]/(m₁+m₂)</b><br>
+          <span class="mu">Momentum is always conserved with no external force. KE is lost to heat, sound and deformation unless e = 1. Model limits: point masses, no spin, no friction.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+
+var $ = function(id){ return document.getElementById(id); };
+
+// ============ STATE ============
+var S = {
+    dim: '2d',
+    type: 'elastic',
+    e: 0.5,
+    m1: 1, v1: 3, a1: 0,
+    m2: 2, v2: 0, a2: 180,
+    off: 0,
+    spd: 1,
+    run: false,
+    t: 0,
+    A: {}, B: {},
+    tA: [], tB: [],
+    hit: false,
+    rx: -0.3, ry: 0.5,
+    rw: null, pb: null, pa: null,
+    kb: 0, ka: null,
+    i0: null,
+    trail: true
+};
+
+// ============ SLIDER DEFINITIONS ============
+var SL = [
+    ['m1', 'Ball A mass m₁ (kg)', 0.5, 5, 0.1],
+    ['v1', 'Ball A speed v₁ (m/s)', 0, 8, 0.1],
+    ['a1', 'Ball A angle θ₁ (°)', -180, 180, 1],
+    ['m2', 'Ball B mass m₂ (kg)', 0.5, 5, 0.1],
+    ['v2', 'Ball B speed v₂ (m/s)', 0, 8, 0.1],
+    ['a2', 'Ball B angle θ₂ (°) — 180 = toward A', -180, 180, 1],
+    ['off', 'Impact offset (m)', -2, 2, 0.1],
+    ['spd', 'Sim speed ×', 0.1, 3, 0.1],
+    ['e', 'Bounciness e', 0, 1, 0.05]
+];
+
+var cv = $('cv');
+var ctx = cv.getContext('2d');
+var W = 1, H = 1, U = 1;
+var dpr = window.devicePixelRatio || 1;
+
+// ============ PROGRESS / XP ============
+var P = { xp: 0, done: {}, preds: 0, best: 0 };
+try {
+    var raw = localStorage.getItem('collisionLabP');
+    if (raw) P = Object.assign(P, JSON.parse(raw));
+} catch(e){}
+function save(){ try{ localStorage.setItem('collisionLabP', JSON.stringify(P)); }catch(e){} }
+
+function toast(m){
+    var t = $('toast');
+    t.textContent = m;
+    t.classList.add('show');
+    clearTimeout(t._to);
+    t._to = setTimeout(function(){ t.classList.remove('show'); }, 2400);
+}
+function addXP(n, m){ P.xp += n; save(); toast('+' + n + ' XP · ' + m); xpbar(); }
+function award(k, n, m){ if (P.done[k]) return; P.done[k] = 1; addXP(n, m); }
+function xpbar(){
+    var lv = P.xp < 25 ? 'Beginner' : P.xp < 75 ? 'Apprentice' : P.xp < 150 ? 'Physicist' : 'Expert';
+    var b = [];
+    if (P.done.launch) b.push('🚀 Launcher');
+    if (P.preds >= 3) b.push('🎯 Predictor');
+    if (P.best >= 6) b.push('🧠 Quiz master');
+    if (RW.every(function(_, i){ return P.done['rw' + i]; })) b.push('🌍 Explorer');
+    $('xp').textContent = '⭐ ' + P.xp + ' XP · ' + lv + (b.length ? ' · ' + b.join(' ') : '');
+}
+
+// ============ SLIDER BUILD ============
+SL.forEach(function(s){
+    var d = document.createElement('div');
+    d.className = 'row';
+    d.id = 'r-' + s[0];
+    d.innerHTML = '<label>' + s[1] + ': <span id="l-' + s[0] + '"></span></label>' +
+                  '<input type="range" id="' + s[0] + '" min="' + s[2] + '" max="' + s[3] + '" step="' + s[4] + '" value="' + S[s[0]] + '">';
+    $('sl').appendChild(d);
+    $('l-' + s[0]).textContent = S[s[0]];
+    $(s[0]).addEventListener('input', function(ev){
+        S[s[0]] = parseFloat(ev.target.value);
+        $('l-' + s[0]).textContent = S[s[0]];
+        if (s[0] !== 'spd') { S.rw = null; reset(); }
+    });
+});
+
+function sync(){
+    var one = S.dim === '1d';
+    $('r-a1').style.display = one ? 'none' : '';
+    $('r-a2').style.display = one ? 'none' : '';
+    $('r-e').style.display = S.type === 'inelastic' ? '' : 'none';
+}
+
+function setP(p){
+    Object.keys(p).forEach(function(k){
+        S[k] = p[k];
+        var el = $(k);
+        if (el) {
+            el.value = p[k];
+            if ($('l-' + k)) $('l-' + k).textContent = p[k];
+        }
+    });
+    sync();
+    reset();
+}
+
+// ============ PHYSICS ============
+function mom(){
+    var A = S.A, B = S.B;
+    return {
+        x: A.m * A.vx + B.m * B.vx,
+        y: A.m * A.vy + B.m * B.vy,
+        z: A.m * A.vz + B.m * B.vz
+    };
+}
+function sp2(b){ return b.vx*b.vx + b.vy*b.vy + b.vz*b.vz; }
+function ke(){ return 0.5 * S.A.m * sp2(S.A) + 0.5 * S.B.m * sp2(S.B); }
+function mag(p){ return Math.hypot(p.x, p.y, p.z); }
+
+function reset(){
+    var d = S.dim, r1 = S.a1 * Math.PI / 180, r2 = S.a2 * Math.PI / 180;
+    var A = S.A, B = S.B, one = (d === '1d');
+
+    A.m = S.m1;
+    A.r = 0.4 + 0.08 * S.m1;
+    A.x = -3;
+    A.y = one ? 0 : S.off / 2;
+    A.z = d === '3d' ? 0.5 : 0;
+    A.vx = one ? S.v1 : S.v1 * Math.cos(r1);
+    A.vy = one ? 0 : S.v1 * Math.sin(r1);
+    A.vz = 0;
+
+    B.m = S.m2;
+    B.r = 0.4 + 0.08 * S.m2;
+    B.x = 3;
+    B.y = one ? 0 : -S.off / 2;
+    B.z = d === '3d' ? -0.5 : 0;
+    B.vx = one ? -S.v2 : S.v2 * Math.cos(r2);
+    B.vy = one ? 0 : S.v2 * Math.sin(r2);
+    B.vz = 0;
+
+    S.t = 0;
+    S.run = false;
+    S.hit = false;
+    S.tA = [{ x: A.x, y: A.y, z: A.z }];
+    S.tB = [{ x: B.x, y: B.y, z: B.z }];
+    S.i0 = [[A.vx, A.vy, A.vz], [B.vx, B.vy, B.vz]];
+    S.pb = mom();
+    S.kb = ke();
+    S.pa = null;
+    S.ka = null;
+}
+
+function collide(){
+    if (S.hit) return;
+    var A = S.A, B = S.B;
+    var dx = B.x - A.x, dy = B.y - A.y, dz = B.z - A.z;
+    var d = Math.hypot(dx, dy, dz);
+    var rs = A.r + B.r;
+    if (d > rs) return;
+    if (d < 1e-6) { dx = 0.01; dy = 0; dz = 0; d = 0.01; }
+
+    var nx = dx/d, ny = dy/d, nz = dz/d;
+    var vr = (B.vx - A.vx) * nx + (B.vy - A.vy) * ny + (B.vz - A.vz) * nz;
+    if (vr > 0) return;
+
+    S.hit = true;
+    var M = A.m + B.m;
+
+    if (S.type === 'perfect' || S.type === 'explosion') {
+        var c = ['vx', 'vy', 'vz'].map(function(q){ return (A.m * A[q] + B.m * B[q]) / M; });
+        ['vx', 'vy', 'vz'].forEach(function(q, i){
+            var ra = A[q] - c[i], rb = B[q] - c[i];
+            if (S.type === 'perfect') { A[q] = c[i]; B[q] = c[i]; }
+            else { A[q] = c[i] - ra * 2.5; B[q] = c[i] - rb * 2.5; }
+        });
+    } else {
+        var e = S.type === 'elastic' ? 1 : S.e;
+        var j = -(1 + e) * vr / (1 / A.m + 1 / B.m);
+        A.vx -= j * nx / A.m; A.vy -= j * ny / A.m; A.vz -= j * nz / A.m;
+        B.vx += j * nx / B.m; B.vy += j * ny / B.m; B.vz += j * nz / B.m;
+    }
+
+    var o = (rs - d) / 2;
+    A.x -= nx * o; A.y -= ny * o; A.z -= nz * o;
+    B.x += nx * o; B.y += ny * o; B.z += nz * o;
+
+    S.pa = mom();
+    S.ka = ke();
+}
+
+// ============ PROJECTION ============
+function PR(x, y, z){
+    var cy = 1, sy = 0, cx = 1, sx = 0;
+    if (S.dim === '3d') {
+        cy = Math.cos(S.ry); sy = Math.sin(S.ry);
+        cx = Math.cos(S.rx); sx = Math.sin(S.rx);
+    }
+    var x1 = x * cy - z * sy;
+    var z1 = x * sy + z * cy;
+    var y1 = y * cx - z1 * sx;
+    var z2 = y * sx + z1 * cx;
+    var f = 14 / (14 + z2);
+    return { x: W/2 + x1 * U * f, y: H/2 - y1 * U * f, f: f, d: z2 };
+}
+
+function line(pts, col, w){
+    if (pts.length < 2) return;
+    ctx.strokeStyle = col;
+    ctx.lineWidth = w;
+    ctx.beginPath();
+    pts.forEach(function(q, i){
+        var p = PR(q.x, q.y, q.z);
+        if (i) ctx.lineTo(p.x, p.y); else ctx.moveTo(p.x, p.y);
+    });
+    ctx.stroke();
+}
+
+function arrow(a, b, col){
+    ctx.strokeStyle = col;
+    ctx.fillStyle = col;
+    ctx.lineWidth = 2.5;
+    ctx.shadowColor = col;
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    if (Math.hypot(b.x - a.x, b.y - a.y) < 4) return;
+    var g = Math.atan2(b.y - a.y, b.x - a.x);
+    ctx.beginPath();
+    ctx.moveTo(b.x, b.y);
+    ctx.lineTo(b.x - 9 * Math.cos(g - 0.4), b.y - 9 * Math.sin(g - 0.4));
+    ctx.lineTo(b.x - 9 * Math.cos(g + 0.4), b.y - 9 * Math.sin(g + 0.4));
+    ctx.closePath();
+    ctx.fill();
+}
+
+// ============ DRAW ============
+function draw(){
+    var r = cv.getBoundingClientRect();
+    var w = Math.max(1, Math.round(r.width));
+    var h = Math.max(1, Math.round(r.height));
+    if (w !== W || h !== H || cv.width !== Math.round(w * dpr)) {
+        W = w; H = h;
+        cv.width = Math.round(w * dpr);
+        cv.height = Math.round(h * dpr);
+    }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    U = Math.min(W/12, H/9);
+
+    // Background gradient
+    var bg = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W, H)/1.4);
+    bg.addColorStop(0, '#0a1220');
+    bg.addColorStop(1, '#020408');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Grid
+    ctx.strokeStyle = 'rgba(129,140,248,.18)';
+    ctx.lineWidth = 1;
+    var i, a, b;
+    for (i = -6; i <= 6; i++) {
+        if (S.dim === '3d') {
+            a = PR(i, -2, -6); b = PR(i, -2, 6);
+        } else {
+            a = PR(i, -4.5, 0); b = PR(i, 4.5, 0);
+        }
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        if (S.dim === '3d') {
+            a = PR(-6, -2, i); b = PR(6, -2, i);
+        } else {
+            a = PR(-6, i * 0.75, 0); b = PR(6, i * 0.75, 0);
+        }
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+    }
+
+    // Trails
+    if (S.trail) {
+        line(S.tA, 'rgba(244,63,94,.55)', 2.5);
+        line(S.tB, 'rgba(59,130,246,.55)', 2.5);
+    }
+
+    // Balls (depth-sorted for 3D)
+    var bs = [[S.A, '#f43f5e', 'A'], [S.B, '#3b82f6', 'B']].map(function(q){
+        q.p = PR(q[0].x, q[0].y, q[0].z);
+        return q;
+    }).sort(function(p, q){ return q.p.d - p.p.d; });
+
+    bs.forEach(function(q){
+        var b = q[0], p = q.p;
+        var R = b.r * U * p.f;
+        // Glow
+        var g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, R * 2);
+        g.addColorStop(0, q[1] + 'cc');
+        g.addColorStop(1, q[1] + '00');
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(p.x, p.y, R * 2, 0, 7); ctx.fill();
+        // Ball
+        ctx.fillStyle = q[1];
+        ctx.beginPath(); ctx.arc(p.x, p.y, R, 0, 7); ctx.fill();
+        // Specular
+        var hl = ctx.createRadialGradient(p.x - R*0.3, p.y - R*0.3, 0, p.x, p.y, R);
+        hl.addColorStop(0, 'rgba(255,255,255,0.7)');
+        hl.addColorStop(0.4, q[1]);
+        hl.addColorStop(1, q[1]);
+        ctx.fillStyle = hl;
+        ctx.beginPath(); ctx.arc(p.x, p.y, R, 0, 7); ctx.fill();
+        // White border
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(p.x, p.y, R, 0, 7); ctx.stroke();
+        // Label
+        ctx.fillStyle = '#000';
+        ctx.font = 'bold ' + Math.max(10, Math.round(R * 0.95)) + 'px system-ui';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(q[2], p.x, p.y);
+        ctx.textBaseline = 'alphabetic';
+
+        // Velocity arrow
+        arrow(p, PR(b.x + b.vx * 0.35, b.y + b.vy * 0.35, b.z + b.vz * 0.35), '#fbbf24');
+        // Speed label
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = 'bold 11px system-ui';
+        ctx.textAlign = 'left';
+        ctx.fillText(Math.sqrt(sp2(b)).toFixed(2) + ' m/s', p.x + R + 6, p.y - R);
+    });
+
+    // Running indicator
+    var pulseR = 5 + 3 * Math.sin(S.t * 4);
+    ctx.fillStyle = S.run ? 'rgba(52,211,153,1)' : 'rgba(100,116,139,.6)';
+    ctx.shadowColor = S.run ? '#34d399' : 'transparent';
+    ctx.shadowBlur = S.run ? 12 : 0;
+    ctx.beginPath(); ctx.arc(W - 25, 25, pulseR, 0, 7); ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = S.run ? '#34d399' : '#64748b';
+    ctx.font = 'bold 10px system-ui';
+    ctx.textAlign = 'right';
+    ctx.fillText(S.run ? 'RUNNING' : 'PAUSED', W - 40, 29);
+
+    // Bottom label
+    ctx.fillStyle = 'rgba(147,160,189,.85)';
+    ctx.font = '11px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText(S.dim.toUpperCase() + ' · ' + S.type + (S.dim === '3d' ? ' · drag to rotate' : ''), W/2, H - 8);
+}
+
+// ============ REAL-WORLD SCENARIOS ============
+var RW = [
+    {n: '🚗 Car crash (2 equal cars)', p: {dim: '1d', type: 'perfect', m1: 1, v1: 4, m2: 1, v2: 0}, fm: 1500, fv: 5, t: 0.1, note: 'Two 1,500 kg cars lock together; one was moving at 72 km/h. Equal masses share the velocity change equally. Crumple zones lengthen the crash time, cutting the force.'},
+    {n: '🚛 Truck hits a car', p: {dim: '1d', type: 'perfect', m1: 5, v1: 4, m2: 0.5, v2: 0}, fm: 2000, fv: 5, t: 0.1, note: 'A 10,000 kg truck at 72 km/h meets a 1,000 kg car at rest. The impulse is equal and opposite, so the lighter car gets about 10× the velocity change. That is why mass mismatch is so dangerous.'},
+    {n: '🎱 Pool shot (off-centre)', p: {dim: '2d', type: 'inelastic', e: 0.95, m1: 1, v1: 4, a1: 0, m2: 1, v2: 0, off: 0.5}, fm: 0.17, fv: 1.25, ang: 1, note: 'A 0.17 kg pool ball at 5 m/s; real balls have e ≈ 0.95 (approx.). For equal masses and a near-elastic hit, the balls leave about 90° apart, a rule pool players use.'},
+    {n: '🔔 Newton\u2019s cradle (steel balls)', p: {dim: '1d', type: 'inelastic', e: 0.95, m1: 1, v1: 3, m2: 1, v2: 0}, fm: 0.05, fv: 0.5, note: 'Steel balls have e of roughly 0.9–0.95, so the swing slowly dies. The lost energy becomes sound and heat.'},
+    {n: '🚂 Rail coupling', p: {dim: '1d', type: 'perfect', m1: 1, v1: 3, m2: 1, v2: 0}, fm: 80000, fv: 0.5, note: 'An 80,000 kg freight car couples to a stationary one at 1.5 m/s. Couplings are done slowly so the coupler can absorb the lost energy.'}
+];
+
+var RWL = $('rwl');
+RW.forEach(function(r, i){
+    var b = document.createElement('button');
+    b.textContent = r.n;
+    b.onclick = function(){
+        setP(r.p);
+        S.rw = r;
+        S.run = true;
+        award('rw' + i, 10, 'Real-world scenario');
+    };
+    RWL.appendChild(b);
+});
+
+function f(n, d){ return (+n).toLocaleString(undefined, {maximumFractionDigits: d === undefined ? 2 : d}); }
+function sp(a){ return Math.hypot(a[0], a[1], a[2]); }
+
+function rwText(){
+    var r = S.rw;
+    if (!r) return '<span class="mu">Pick a scenario to see real-world numbers.</span>';
+    var A = S.A, B = S.B;
+    var a0 = S.i0[0], b0 = S.i0[1];
+    var fm = r.fm, fv = r.fv;
+    var h = '<b>' + r.n + '</b><br>Before: A = ' + f(A.m * fm) + ' kg at ' + f(sp(a0) * fv) + ' m/s (' + f(sp(a0) * fv * 3.6, 0) + ' km/h); B = ' + f(B.m * fm) + ' kg at ' + f(sp(b0) * fv) + ' m/s.';
+    if (!S.pa) return h + '<br><i class="mu">Launching…</i><br><span class="mu">' + r.note + '</span>';
+    var vA = [A.vx, A.vy, A.vz], vB = [B.vx, B.vy, B.vz];
+    var dA = Math.hypot(vA[0] - a0[0], vA[1] - a0[1], vA[2] - a0[2]) * fv;
+    var dB = Math.hypot(vB[0] - b0[0], vB[1] - b0[1], vB[2] - b0[2]) * fv;
+    var loss = (S.kb - S.ka) * fm * fv * fv;
+    h += '<br>After: A at ' + f(sp(vA) * fv) + ' m/s (' + f(sp(vA) * fv * 3.6, 0) + ' km/h), B at ' + f(sp(vB) * fv) + ' m/s (' + f(sp(vB) * fv * 3.6, 0) + ' km/h).<br>Velocity change: A ' + f(dA * 3.6, 0) + ' km/h, B ' + f(dB * 3.6, 0) + ' km/h.';
+    if (loss > 1e-9) h += '<br>Energy dissipated: ' + (loss >= 1000 ? f(loss/1000, 1) + ' kJ' : f(loss, 2) + ' J') + ' (same as dropping A from ' + f(loss/(A.m * fm * 9.81), 2) + ' m).';
+    if (r.t) h += '<br>Average deceleration, assuming a typical ~0.1 s crash: A ≈ ' + f(dA/r.t/9.81, 1) + ' g, B ≈ ' + f(dB/r.t/9.81, 1) + ' g.';
+    if (r.ang && sp(vA) > 0.01 && sp(vB) > 0.01) h += '<br>Angle between the balls after impact: ' + f(Math.acos((vA[0]*vB[0] + vA[1]*vB[1] + vA[2]*vB[2]) / (sp(vA) * sp(vB))) * 180 / Math.PI, 1) + '°.';
+    return h + '<br><span class="mu">' + r.note + '</span>';
+}
+
+// ============ READOUTS ============
+function show(){
+    var A = S.A, B = S.B;
+    var p = mom(), k = ke();
+    var au;
+    if (!S.pa) {
+        au = '<span class="mu">Launch to audit momentum and energy.</span>';
+    } else {
+        var dp = Math.hypot(S.pa.x - S.pb.x, S.pa.y - S.pb.y, S.pa.z - S.pb.z);
+        var dE = S.ka - S.kb;
+        au = (dp < 1e-6 ? '<span class="ok">✓ Momentum conserved</span>' : '<span class="bad">✗ Momentum changed</span>') +
+             ' (Δp = ' + dp.toFixed(6) + ') · ' +
+             (Math.abs(dE) < 1e-6 ? '<span class="ok">✓ KE conserved</span>' :
+              dE < 0 ? '<span class="bad">⬇ ' + (-dE).toFixed(3) + ' J → heat, sound, deformation</span>' :
+              '<span class="ok">⬆ ' + dE.toFixed(3) + ' J released from stored energy</span>');
+    }
+
+    // Update HUD
+    $('hud-t').innerText = S.t.toFixed(2);
+    $('hud-p').innerText = mag(p).toFixed(2);
+    $('hud-ke').innerText = k.toFixed(2);
+    $('hud-status').innerText = S.hit ? 'Collided' : (S.run ? 'Moving' : 'Idle');
+
+    // Update readout table
+    $('ro').innerHTML =
+        '<table>' +
+        '<tr><td>p before → after</td><td>' + mag(S.pb).toFixed(3) + ' → ' + (S.pa ? mag(S.pa).toFixed(3) : '—') + ' kg·m/s</td></tr>' +
+        '<tr><td>KE before → after</td><td>' + S.kb.toFixed(3) + ' → ' + (S.ka === null ? '—' : S.ka.toFixed(3)) + ' J</td></tr>' +
+        '<tr><td>Speed A · B</td><td>' + Math.sqrt(sp2(A)).toFixed(2) + ' · ' + Math.sqrt(sp2(B)).toFixed(2) + ' m/s</td></tr>' +
+        '</table>' +
+        '<div style="margin-top:8px">🔍 ' + au + '</div>';
+
+    $('rwo').innerHTML = rwText();
+}
+
+// ============ PREDICT ============
+var act = false;
+function exp1(){
+    var m1 = S.m1, m2 = S.m2;
+    var u1 = S.v1, u2 = -S.v2;
+    var e = S.type === 'elastic' ? 1 : S.type === 'perfect' ? 0 : S.e;
+    var M = m1 + m2;
+    var p = m1 * u1 + m2 * u2;
+    return {
+        p: p, e: e,
+        v1: (p + m2 * e * (u2 - u1)) / M,
+        v2: (p + m1 * e * (u1 - u2)) / M
+    };
+}
+
+$('np').onclick = function(){
+    var T = ['elastic', 'perfect', 'inelastic'];
+    var t = T[Math.floor(Math.random() * 3)];
+    function rr(a, b, s){ return Math.round((a + Math.random() * (b - a)) / s) * s; }
+    var m1 = rr(0.5, 5, 0.5), m2 = rr(0.5, 5, 0.5);
+    var v1 = rr(1, 6, 1), v2 = Math.random() < 0.5 ? 0 : rr(1, 4, 1);
+    S.rw = null;
+    setP({ dim: '1d', type: t, m1: m1, v1: v1, m2: m2, v2: v2, e: 0.5 });
+    act = true;
+    $('pq').innerHTML = 'A: <b>' + m1.toFixed(1) + ' kg</b> moving right at <b>' + v1 + ' m/s</b>. B: <b>' + m2.toFixed(1) + ' kg</b> ' + (v2 ? 'moving left at <b>' + v2 + ' m/s</b>' : 'at rest') + '. Type: <b>' + ({elastic: 'elastic (e = 1)', perfect: 'perfectly inelastic (stick)', inelastic: 'inelastic, e = 0.5'})[t] + '</b>.';
+    $('pf').innerHTML = '';
+    $('pa').value = '';
+    $('pb').value = '';
+};
+
+$('pc').onclick = function(){
+    if (!act) { $('pf').textContent = 'Press "New problem" first.'; return; }
+    var a = parseFloat($('pa').value), b = parseFloat($('pb').value);
+    if (isNaN(a) || isNaN(b)) { $('pf').textContent = 'Enter both velocities.'; return; }
+    var x = exp1();
+    var ok = Math.abs(a - x.v1) <= 0.06 && Math.abs(b - x.v2) <= 0.06;
+    $('pf').innerHTML = (ok ? '<span class="ok">✅ Correct!</span> ' : '<span class="bad">❌ Not quite.</span> ') +
+        'Total momentum p = ' + x.p.toFixed(2) + ' kg·m/s, and separation speed = e × approach speed (e = ' + x.e + '). Answer: v₁′ = <b>' + x.v1.toFixed(2) + '</b>, v₂′ = <b>' + x.v2.toFixed(2) + '</b> m/s.';
+    if (ok) { P.preds++; addXP(20, 'Correct prediction'); }
+    act = false;
+    reset();
+    S.run = true;
+};
+
+// ============ QUIZ ============
+var Q = [
+    ['Momentum is…', ['A scalar', 'A vector: mass × velocity', 'Same as energy'], 1, 'p = m·v has a direction, so in 2D/3D you conserve each component.'],
+    ['With no external force, total momentum in a collision is…', ['Always conserved', 'Conserved only if elastic', 'Never conserved'], 0, 'Equal and opposite impulses (Newton\'s 3rd law) cancel in every collision type.'],
+    ['Two equal masses collide head-on elastically; one was at rest. Afterwards…', ['Both move at half speed', 'The first stops, the second moves off at the original speed', 'Both bounce back'], 1, 'Equal masses swap velocities, as in Newton\'s cradle.'],
+    ['1 kg at 4 m/s sticks to 3 kg at rest. Final speed?', ['1 m/s', '2 m/s', '4 m/s'], 0, 'v′ = (1×4)/(1+3) = 1 m/s. KE falls from 8 J to 2 J, and the missing 6 J becomes heat and deformation.'],
+    ['In an explosion, total kinetic energy…', ['Decreases', 'Stays the same', 'Increases (stored energy is released)'], 2, 'Chemical or spring energy converts to KE, but momentum is still conserved.'],
+    ['Why does a small car suffer more in a crash with a heavy truck?', ['It gets a larger velocity change for the same impulse', 'The truck exerts a bigger force on it', 'Momentum is not conserved'], 0, 'Forces are equal and opposite; Δv = impulse/mass, so the lighter vehicle changes velocity more.'],
+    ['In a 2D collision, momentum is conserved…', ['Only along x', 'Separately in x and y', 'Only if the balls bounce'], 1, 'Each direction gives its own equation (3 equations in 3D).']
+];
+
+var qsc = 0, qn = 0;
+Q.forEach(function(q, qi){
+    var d = document.createElement('div');
+    d.style.margin = '12px 0';
+    d.innerHTML = '<b>' + (qi + 1) + '. ' + q[0] + '</b>';
+    var ex = document.createElement('div');
+    ex.className = 'mu';
+    ex.style.marginTop = '6px';
+    ex.style.fontSize = '.78rem';
+    var bs = q[1].map(function(t, oi){
+        var b = document.createElement('button');
+        b.className = 'opt';
+        b.textContent = t;
+        b.onclick = function(){
+            if (d.dataset.done) return;
+            d.dataset.done = 1;
+            qn++;
+            bs.forEach(function(x, i){
+                x.disabled = true;
+                if (i === q[2]) x.classList.add('c');
+                else if (i === oi) x.classList.add('w');
+            });
+            ex.textContent = (oi === q[2] ? '✓ ' : '✗ ') + q[3];
+            if (oi === q[2]) { qsc++; award('q' + qi, 5, 'Quiz answer'); }
+            $('qs').textContent = '· ' + qsc + '/' + qn;
+            if (qsc > P.best) { P.best = qsc; save(); xpbar(); }
+        };
+        d.appendChild(b);
+        return b;
+    });
+    d.appendChild(ex);
+    $('qb').appendChild(d);
+});
+
+// ============ TABS ============
+[['p-rw', '🌍 Real world'], ['p-pr', '🎯 Predict'], ['p-qz', '🧠 Quiz'], ['p-fm', '📐 Formulas']].forEach(function(t, i){
+    var b = document.createElement('button');
+    b.textContent = t[1];
+    b.className = 'tab-btn' + (i === 0 ? ' active' : '');
+    if (!i) b.classList.add('on');
+    b.onclick = function(){
+        document.querySelectorAll('.pn').forEach(function(p){ p.classList.remove('on'); });
+        document.querySelectorAll('#tabs button').forEach(function(x){ x.classList.remove('on', 'active'); });
+        $(t[0]).classList.add('on');
+        b.classList.add('on', 'active');
+    };
+    $('tabs').appendChild(b);
+});
+
+// ============ EVENTS ============
+$('dim').onchange = function(e){ S.dim = e.target.value; S.rw = null; sync(); reset(); };
+$('type').onchange = function(e){ S.type = e.target.value; S.rw = null; sync(); reset(); };
+$('trail').onchange = function(e){ S.trail = e.target.checked; };
+
+$('launch').onclick = function(){
+    reset();
+    S.run = true;
+    award('launch', 5, 'First launch');
+};
+$('reset').onclick = reset;
+
+// 3D drag
+var drag = false, dx0 = 0, dy0 = 0;
+cv.addEventListener('pointerdown', function(e){
+    if (S.dim !== '3d') return;
+    drag = true;
+    dx0 = e.clientX; dy0 = e.clientY;
+    try { cv.setPointerCapture(e.pointerId); } catch(_){}
+});
+cv.addEventListener('pointermove', function(e){
+    if (!drag) return;
+    S.ry += (e.clientX - dx0) * 0.01;
+    S.rx = Math.max(-1.2, Math.min(1.2, S.rx + (e.clientY - dy0) * 0.01));
+    dx0 = e.clientX;
+    dy0 = e.clientY;
+});
+cv.addEventListener('pointerup', function(){ drag = false; });
+cv.addEventListener('pointercancel', function(){ drag = false; });
+
+// Splitter
+(function(){
+    var sim = $('sim-area'), splitter = $('splitter');
+    var dragging = false, startY = 0, startH = 0;
+    splitter.addEventListener('pointerdown', function(e){
+        e.preventDefault();
+        dragging = true;
+        startY = e.clientY;
+        startH = sim.getBoundingClientRect().height;
+        try { splitter.setPointerCapture(e.pointerId); } catch(_){}
+    });
+    window.addEventListener('pointermove', function(e){
+        if (!dragging) return;
+        var dy = e.clientY - startY;
+        var nh = Math.max(180, Math.min(window.innerHeight - 240, Math.round(startH + dy)));
+        sim.style.flex = '0 0 ' + nh + 'px';
+    });
+    window.addEventListener('pointerup', function(e){
+        if (!dragging) return;
+        dragging = false;
+        try { splitter.releasePointerCapture(e.pointerId); } catch(_){}
+    });
+})();
+
+window.addEventListener('resize', function(){ W = 1; H = 1; });
+
+// ============ LOOP ============
+var last = 0;
+function loop(now){
+    var dt = Math.min(0.05, (now - (last || now)) / 1000);
+    last = now;
+
+    if (S.run) {
+        S.t += dt;
+        var sd = dt * S.spd;
+        var n = Math.max(1, Math.ceil(sd / 0.004));
+        var h = sd / n;
+        for (var i = 0; i < n; i++) {
+            [S.A, S.B].forEach(function(b){
+                b.x += b.vx * h;
+                b.y += b.vy * h;
+                b.z += b.vz * h;
+            });
+            collide();
+        }
+        S.tA.push({ x: S.A.x, y: S.A.y, z: S.A.z });
+        S.tB.push({ x: S.B.x, y: S.B.y, z: S.B.z });
+        if (S.tA.length > 600) { S.tA.shift(); S.tB.shift(); }
+        if ([S.A, S.B].some(function(b){
+            return Math.abs(b.x) > 9 || Math.abs(b.y) > 9 || Math.abs(b.z) > 9;
+        })) S.run = false;
+    }
+
+    draw();
+    show();
+    requestAnimationFrame(loop);
+}
+
+// ============ BOOT ============
+sync();
+reset();
+xpbar();
+requestAnimationFrame(loop);
+
+})();
+</script>
+</body>
+</html>

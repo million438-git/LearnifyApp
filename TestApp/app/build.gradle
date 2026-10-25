@@ -3,6 +3,43 @@ plugins {
     id 'com.chaquo.python'
 }
 
+def firebaseConfigFile = file("google-services.json")
+if (firebaseConfigFile.isFile()) {
+    def firebaseConfig = new groovy.json.JsonSlurper().parse(firebaseConfigFile)
+    def hasMatchingAndroidClient = firebaseConfig.client?.any { client ->
+        client.client_info?.android_client_info?.package_name == "com.million.learnify"
+    } ?: false
+    if (!hasMatchingAndroidClient) {
+        throw new GradleException("Firebase Android config does not contain the Learnify application ID.")
+    }
+    apply plugin: 'com.google.gms.google-services'
+} else {
+    logger.warn("Firebase Android config is missing; Firebase sign-in will not be available in this build.")
+}
+
+def debugApiBaseUrl = (project.findProperty("LEARNIFY_DEBUG_API_BASE_URL") ?: "http://localhost:8080/").toString()
+def releaseApiBaseUrl = (
+        project.findProperty("LEARNIFY_API_BASE_URL")
+                ?: System.getenv("LEARNIFY_API_BASE_URL")
+                ?: ""
+).toString()
+
+def learnifyBuildDirectory = (
+        project.findProperty("LEARNIFY_BUILD_DIR")
+                ?: System.getenv("LEARNIFY_BUILD_DIR")
+                ?: "C:/Android/build/LearnifyApp/app"
+).toString()
+layout.buildDirectory.set(file(learnifyBuildDirectory))
+
+def localPython310 = new File(
+        System.getenv("LOCALAPPDATA") ?: System.getProperty("user.home"),
+        "Programs/Python/Python310/python.exe")
+def chaquopyBuildPython = (
+        project.findProperty("LEARNIFY_BUILD_PYTHON")
+                ?: System.getenv("LEARNIFY_BUILD_PYTHON")
+                ?: (localPython310.isFile() ? localPython310.absolutePath : "python")
+).toString()
+
 android {
     namespace 'com.million.learnify'
     compileSdk 36
@@ -16,9 +53,6 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        // SECURITY: API Key is retrieved from the system environment.
-        buildConfigField "String", "OPENAI_API_KEY", "\"${System.getenv("OPENAI_API_KEY") ?: ""}\""
-
         ndk {
             abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
         }
@@ -29,7 +63,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField "String", "LEARNIFY_API_BASE_URL", "\"${debugApiBaseUrl}\""
+        }
         release {
+            buildConfigField "String", "LEARNIFY_API_BASE_URL", "\"${releaseApiBaseUrl}\""
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -46,7 +84,7 @@ chaquopy {
     defaultConfig {
         version = "3.10"
 
-        buildPython "C:/Users/Million-PC/AppData/Local/Programs/Python/Python310/python.exe"
+        buildPython chaquopyBuildPython
 
         pip {
             install "sympy"
@@ -58,17 +96,18 @@ chaquopy {
 }
 
 dependencies {
+    implementation platform('com.google.firebase:firebase-bom:35.1.0')
+    implementation 'com.google.firebase:firebase-auth'
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'com.google.android.material:material:1.10.0'
     implementation 'androidx.activity:activity:1.13.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.ai.client.generativeai:generativeai:0.9.0'
     implementation 'com.google.guava:guava:33.5.0-android'
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     implementation 'io.noties.markwon:core:4.6.2'
     implementation 'com.squareup.retrofit2:retrofit:3.0.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
     implementation 'androidx.core:core-splashscreen:1.0.1'
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
 
@@ -96,4 +135,46 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
+}
+
+tasks.configureEach { task ->
+    if (task instanceof Test
+            || task.name.toLowerCase().contains("python")
+            || task.name.toLowerCase().contains("buildconfig")) {
+        task.doNotTrackState("OneDrive file-system placeholder workaround")
+    }
+}
+
+
+
+tasks.register("verifyReleaseApiBaseUrl") {
+    doLast {
+        java.net.URI endpoint = null
+        try {
+            endpoint = new java.net.URI(releaseApiBaseUrl)
+        } catch (java.net.URISyntaxException ignored) {
+        }
+
+        boolean validHttpsUrl = (
+                endpoint != null &&
+                "https".equals(endpoint.scheme) &&
+                endpoint.host != null &&
+                endpoint.path != null &&
+                endpoint.path.endsWith("/") &&
+                !"localhost".equalsIgnoreCase(endpoint.host) &&
+                !"127.0.0.1".equals(endpoint.host) &&
+                !"10.0.2.2".equals(endpoint.host)
+        )
+
+        if (!validHttpsUrl) {
+            throw new GradleException(
+                    "Release builds require LEARNIFY_API_BASE_URL to be a real HTTPS service URL ending in '/'.")
+        }
+    }
+}
+
+tasks.configureEach {
+    if (name == "assembleRelease" || name == "bundleRelease") {
+        dependsOn("verifyReleaseApiBaseUrl")
+    }
 }

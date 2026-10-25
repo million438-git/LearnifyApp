@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Lens Ray Diagram Lab — Pro Physics</title>
+<style>
+:root{
+  --primary:#3b82f6; --secondary:#ef4444; --dark:#0f172a;
+  --surface:#ffffff; --bg:#f8fafc; --accent:#10b981;
+  --muted:#64748b; --line:#e2e8f0; --amber:#f59e0b; --violet:#8b5cf6;
+}
+*{box-sizing:border-box;font-family:'Inter',system-ui,sans-serif;touch-action:manipulation;}
+html,body{height:100%;}
+body{margin:0;background:var(--bg);color:var(--dark);display:flex;flex-direction:column;overflow:auto;-webkit-font-smoothing:antialiased;}
+
+header{background:var(--dark);color:#fff;padding:12px;text-align:center;border-bottom:3px solid var(--primary);flex-shrink:0;}
+header h2{margin:0;font-size:1.2rem;letter-spacing:.02em;}
+header small{display:block;color:#94a3b8;font-size:.72rem;margin-top:2px;}
+
+.main-wrapper{display:flex;flex:1;overflow:hidden;flex-direction:column;min-height:0;}
+
+#sim-container{flex:1.5 1 360px;position:relative;background:#fff;border-bottom:2px solid var(--line);overflow:hidden;min-height:260px;}
+canvas{width:100%;height:100%;display:block;touch-action:none;cursor:crosshair;}
+.splitter{height:10px;background:linear-gradient(90deg,rgba(0,0,0,.03),rgba(0,0,0,.06));cursor:ns-resize;flex-shrink:0;}
+.splitter:hover{background:linear-gradient(90deg,rgba(0,0,0,.05),rgba(0,0,0,.09));}
+
+.side-panel{position:fixed;top:70px;width:320px;bottom:20px;background:#fff;box-shadow:0 6px 18px rgba(2,6,23,.08);border-left:1px solid #e6eef8;padding:14px;overflow:auto;z-index:40;}
+.side-panel.left{left:-360px;border-right:1px solid #e6eef8;transition:left 220ms ease;}
+.side-panel.right{right:-360px;transition:right 220ms ease;}
+.side-panel.open.left{left:0;}
+.side-panel.open.right{right:0;}
+.side-panel h4{margin-top:0;}
+.panel-frame{touch-action:none;transform-origin:0 0;will-change:transform;cursor:grab;}
+.panel-frame.grabbing{cursor:grabbing;}
+.panel-frame *{user-select:none;-webkit-user-select:none;}
+.panel-toggle{position:fixed;top:200px;right:16px;display:flex;flex-direction:column;gap:8px;z-index:60;}
+.panel-toggle button{padding:8px 10px;min-width:84px;border-radius:8px;border:1px solid rgba(0,0,0,.06);background:#fff;cursor:pointer;box-shadow:0 2px 6px rgba(2,6,23,.06);font-weight:600;font-size:.8rem;}
+
+.hud{position:absolute;top:10px;left:10px;background:rgba(255,255,255,.92);padding:10px;border-radius:8px;font-size:.8rem;border:1px solid #ddd;z-index:10;pointer-events:none;backdrop-filter:blur(6px);max-width:min(280px,60vw);}
+.hud b{color:var(--primary);}
+.hud hr{margin:6px 0;border:none;border-top:1px solid var(--line);}
+.hud span{font-variant-numeric:tabular-nums;font-weight:600;}
+
+.legend{position:absolute;bottom:8px;left:8px;background:rgba(255,255,255,.92);padding:5px 9px;border-radius:6px;font-size:.66rem;border:1px solid #ddd;display:flex;gap:10px;flex-wrap:wrap;z-index:10;pointer-events:none;backdrop-filter:blur(6px);}
+.legend span{display:inline-flex;align-items:center;gap:4px;font-weight:600;color:var(--muted);}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block;}
+
+.ui-panel{flex:2 1 420px;display:flex;flex-direction:row;background:var(--surface);overflow-y:auto;min-height:0;}
+.controls{flex:0 0 360px;padding:18px;border-right:1px solid var(--line);min-width:300px;}
+.analysis{flex:1 1 720px;padding:18px;background:#fcfcfc;min-width:420px;}
+
+.control-group{margin-bottom:15px;}
+label{display:block;font-size:.72rem;font-weight:700;color:#64748b;text-transform:uppercase;margin-bottom:5px;letter-spacing:.04em;}
+input[type=range]{width:100%;accent-color:var(--primary);height:6px;}
+.val-display{float:right;color:var(--primary);font-weight:bold;}
+
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+button{padding:12px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;transition:.2s;font-family:inherit;font-size:.85rem;}
+button:active{transform:scale(.98);}
+.btn-play{background:var(--primary);color:#fff;}
+.btn-play:hover{background:#2563eb;}
+.btn-reset{background:#64748b;color:#fff;}
+.btn-reset:hover{background:#475569;}
+
+.card{background:#fff;border:1px solid var(--line);padding:12px;border-radius:8px;margin-bottom:15px;font-size:.85rem;}
+.formula{font-family:"Courier New",monospace;color:var(--secondary);font-weight:bold;display:block;margin:5px 0;}
+
+.tabs{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.tab-btn{padding:8px 12px;border-radius:6px;background:#f1f5f9;color:var(--muted);font-weight:600;font-size:.78rem;border:1px solid var(--line);cursor:pointer;transition:.2s;flex:1 1 auto;}
+.tab-btn:hover{background:#e2e8f0;color:var(--dark);}
+.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:10px;}
+.readout{background:#fff;border:1px solid var(--line);border-radius:6px;padding:8px 10px;}
+.readout span{font-size:.66rem;color:var(--muted);display:block;font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
+.readout strong{font-size:.9rem;color:var(--dark);font-variant-numeric:tabular-nums;word-break:break-word;}
+.readout.hl strong{color:var(--primary);}
+.readout.good strong{color:var(--accent);}
+.readout.warn strong{color:var(--amber);}
+
+.quiz-q{padding:10px 0;border-bottom:1px solid var(--line);font-size:.88rem;line-height:1.6;}
+.quiz-q>b{display:block;margin-bottom:6px;color:var(--dark);}
+.quiz-q label{display:flex;align-items:center;gap:6px;padding:7px 10px;background:#f8fafc;border:1px solid var(--line);border-radius:6px;margin:4px 0;cursor:pointer;font-weight:500;font-size:.82rem;text-transform:none;letter-spacing:0;color:var(--dark);}
+.quiz-q label:hover{background:#eff6ff;border-color:var(--primary);}
+.quiz-q input[type=radio]{accent-color:var(--primary);margin:0;}
+.q-res{margin-top:6px;padding:8px;border-radius:6px;font-size:.8rem;line-height:1.5;display:none;}
+#l-quiz-result{margin-top:10px;padding:12px;border-radius:8px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);font-weight:700;text-align:center;display:none;}
+
+.challenge-box{padding:10px 0;border-bottom:1px solid var(--line);}
+.challenge-box b{color:var(--primary);display:block;margin-bottom:6px;}
+.challenge-box button{padding:8px 12px;background:#eef2ff;color:var(--primary);border:1px solid #c7d2fe;border-radius:6px;font-size:.78rem;font-weight:700;margin:2px 2px 2px 0;}
+.challenge-box button:hover{background:#e0e7ff;}
+.challenge-box input,.challenge-box select{padding:6px 8px;border:1px solid var(--line);border-radius:6px;font-size:.8rem;}
+#l-challenge-note{color:var(--muted);font-size:.85rem;margin-top:8px;min-height:1.2em;}
+#l-challenge-result{color:#065f46;font-weight:700;margin-top:6px;font-size:.85rem;min-height:1.2em;}
+
+@media(max-width:768px){
+  .side-panel{width:85%;max-width:420px;top:70px;bottom:20px;height:auto;border-left:none;border-right:none;box-shadow:0 6px 24px rgba(2,6,23,.12);}
+  .side-panel.left{left:-90%;transition:left 260ms ease;}
+  .side-panel.right{right:-90%;transition:right 260ms ease;}
+  .side-panel.open.left{left:0;}
+  .side-panel.open.right{right:0;}
+  body.panel-open{overflow:hidden;}
+  body.panel-open #sim-container{flex:0 0 45vh!important;min-height:140px;}
+  .panel-toggle{bottom:12px;top:auto;left:12px;right:12px;justify-content:space-between;display:flex;flex-direction:row;gap:8px;}
+  .panel-toggle button{min-width:64px;padding:10px;}
+  .ui-panel{flex-direction:column;}
+  .controls{border-right:none;border-bottom:1px solid var(--line);}
+  .main-wrapper{flex:1;}
+}
+@media(max-width:480px){
+  .analysis{min-width:0;}
+  .controls{min-width:0;}
+  .readouts{grid-template-columns:repeat(2,1fr);}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h2>🔬 Lens Ray Diagram Lab — Pro Physics</h2>
+  <small>Converging &amp; Diverging Lenses · Image Formation · Ray Tracing</small>
+</header>
+
+<div class="main-wrapper">
+  <div id="sim-container">
+    <div class="hud">
+      <b>LIVE OPTICS</b><hr>
+      Object dist (u): <span id="out-u">25.0</span>cm<br>
+      Focal length (f): <span id="out-f">10.0</span>cm<br>
+      Image dist (v): <span id="out-v">16.7</span>cm<br>
+      Magnification (m): <span id="out-mag">-0.67</span>×<br>
+      Image type: <span id="out-type">Real, inverted, diminished</span>
+    </div>
+
+    <div class="legend">
+      <span><i style="background:#f43f5e"></i>Ray 1 (parallel→focus)</span>
+      <span><i style="background:#22c55e"></i>Ray 2 (center)</span>
+      <span><i style="background:#f59e0b"></i>Ray 3 (focus→parallel)</span>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <div class="panel-toggle">
+      <button id="open-left">Solutions ◀</button>
+      <button id="open-right">Solutions ▶</button>
+    </div>
+  </div>
+
+  <div id="splitter" class="splitter" title="Drag to resize simulation area"></div>
+
+  <div class="ui-panel">
+    <div class="controls">
+      <h4 style="margin:0 0 12px 0;color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;">⚙️ Optical Bench</h4>
+
+      <div class="control-group">
+        <label>Lens Type</label>
+        <select id="lens-type" style="width:100%;padding:8px;border-radius:6px;border:1px solid var(--line);font-size:.85rem;background:#f8fafc;">
+          <option value="converging" selected>Converging (Convex) Lens</option>
+          <option value="diverging">Diverging (Concave) Lens</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>Focal Length (f): <span class="val-display" id="v-f">10.0</span>cm</label>
+        <input type="range" id="focal" min="5" max="30" step="0.5" value="10">
+      </div>
+
+      <div class="control-group">
+        <label>Object Distance (u): <span class="val-display" id="v-u">25.0</span>cm</label>
+        <input type="range" id="objdist" min="5" max="60" step="0.5" value="25">
+      </div>
+
+      <div class="control-group">
+        <label>Object Height (h₀): <span class="val-display" id="v-h">8.0</span>cm</label>
+        <input type="range" id="objheight" min="2" max="16" step="0.5" value="8">
+      </div>
+
+      <div class="control-group">
+        <label style="display:inline-flex;align-items:center;gap:6px;text-transform:none;font-size:.8rem;">
+          <input type="checkbox" id="show-rays" checked> Show principal rays
+        </label>
+      </div>
+      <div class="control-group">
+        <label style="display:inline-flex;align-items:center;gap:6px;text-transform:none;font-size:.8rem;">
+          <input type="checkbox" id="show-focus" checked> Show focal points
+        </label>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-play" id="btn-animate">▶ Animate</button>
+        <button class="btn-reset" id="btn-reset-all">↺ Reset</button>
+      </div>
+    </div>
+
+    <div class="analysis">
+      <div class="card">
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="l-formulas">Formulas</button>
+          <button class="tab-btn" data-tab="l-quiz">Quiz</button>
+          <button class="tab-btn" data-tab="l-challenges">Challenges</button>
+        </div>
+
+        <div id="l-formulas" class="tab-panel active">
+          <h3 style="margin:6px 0 8px 0;">Core Formulas — Thin Lens</h3>
+          <ul style="font-size:.92rem;line-height:1.6;margin:0;padding-left:1.1rem;">
+            <li><b>Thin lens equation:</b> 1/f = 1/u + 1/v</li>
+            <li><b>Magnification:</b> m = -v/u = hᵢ/h₀</li>
+            <li><b>Image distance:</b> v = uf/(u − f)</li>
+            <li><b>Magnification:</b> m = f/(f − u)</li>
+            <li><b>Power of lens:</b> P = 1/f (in diopters, f in metres)</li>
+            <li><b>Diverging lens:</b> f is negative; image always virtual, upright, reduced</li>
+          </ul>
+          <p style="font-size:.85rem;color:#475569;margin-top:8px;line-height:1.55;">
+            <b>Sign convention:</b> u is positive (object on the left). For converging lenses f &gt; 0.
+            Real images have v &gt; 0 (on the right) and m &lt; 0 (inverted). Virtual images have v &lt; 0 and m &gt; 0 (upright).
+          </p>
+        </div>
+
+        <div id="l-quiz" class="tab-panel">
+          <h3 style="margin:6px 0 8px 0;">Quiz — Lenses</h3>
+
+          <div class="quiz-section" style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:var(--primary);margin:12px 0 6px;">Basic</div>
+          <div class="quiz-q" data-q="l1" data-answer="B">
+            <b>1. A converging lens is also called:</b>
+            <label><input type="radio" name="l1" value="A"> Concave lens</label>
+            <label><input type="radio" name="l1" value="B"> Convex lens</label>
+            <label><input type="radio" name="l1" value="C"> Plane lens</label>
+          </div>
+          <div class="quiz-q" data-q="l2" data-answer="A">
+            <b>2. The focal length of a converging lens is:</b>
+            <label><input type="radio" name="l2" value="A"> Positive</label>
+            <label><input type="radio" name="l2" value="B"> Negative</label>
+            <label><input type="radio" name="l2" value="C"> Zero</label>
+          </div>
+          <div class="quiz-q" data-q="l3" data-answer="C">
+            <b>3. The thin lens equation is:</b>
+            <label><input type="radio" name="l3" value="A"> 1/f = 1/u − 1/v</label>
+            <label><input type="radio" name="l3" value="B"> f = u + v</label>
+            <label><input type="radio" name="l3" value="C"> 1/f = 1/u + 1/v</label>
+          </div>
+
+          <div class="quiz-section" style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:var(--primary);margin:12px 0 6px;">Intermediate</div>
+          <div class="quiz-q" data-q="l4" data-answer="B">
+            <b>4. A ray parallel to the principal axis after a converging lens passes through:</b>
+            <label><input type="radio" name="l4" value="A"> The optical centre</label>
+            <label><input type="radio" name="l4" value="B"> The principal focus</label>
+            <label><input type="radio" name="l4" value="C"> The centre of curvature</label>
+          </div>
+          <div class="quiz-q" data-q="l5" data-answer="A">
+            <b>5. If an object is placed beyond 2f of a converging lens, the image is:</b>
+            <label><input type="radio" name="l5" value="A"> Real, inverted, diminished</label>
+            <label><input type="radio" name="l5" value="B"> Virtual, upright, enlarged</label>
+            <label><input type="radio" name="l5" value="C"> Real, upright, same size</label>
+          </div>
+          <div class="quiz-q" data-q="l6" data-answer="C">
+            <b>6. A diverging lens always produces:</b>
+            <label><input type="radio" name="l6" value="A"> Real images</label>
+            <label><input type="radio" name="l6" value="B"> Magnified images</label>
+            <label><input type="radio" name="l6" value="C"> Virtual, upright, reduced images</label>
+          </div>
+
+          <div class="quiz-section" style="font-size:.72rem;font-weight:700;text-transform:uppercase;color:var(--primary);margin:12px 0 6px;">Advanced</div>
+          <div class="quiz-q" data-q="l7" data-answer="B">
+            <b>7. If magnification m = -2, the image is:</b>
+            <label><input type="radio" name="l7" value="A"> Upright, 2× size</label>
+            <label><input type="radio" name="l7" value="B"> Inverted, 2× size</label>
+            <label><input type="radio" name="l7" value="C"> Inverted, half size</label>
+          </div>
+          <div class="quiz-q" data-q="l8" data-answer="A">
+            <b>8. A ray through the optical centre of a thin lens:</b>
+            <label><input type="radio" name="l8" value="A"> Passes undeviated</label>
+            <label><input type="radio" name="l8" value="B"> Bends toward focus</label>
+            <label><input type="radio" name="l8" value="C"> Reflects back</label>
+          </div>
+          <div class="quiz-q" data-q="l9" data-answer="C">
+            <b>9. When object distance u = 2f for a converging lens, image distance v = ?</b>
+            <label><input type="radio" name="l9" value="A"> f</label>
+            <label><input type="radio" name="l9" value="B"> 3f</label>
+            <label><input type="radio" name="l9" value="C"> 2f</label>
+          </div>
+
+          <div class="btn-row" style="margin-top:12px;">
+            <button class="btn-play" id="l-quiz-check">Submit Quiz</button>
+            <button class="btn-reset" id="l-quiz-reset">Reset</button>
+          </div>
+          <div id="l-quiz-result"></div>
+        </div>
+
+        <div id="l-challenges" class="tab-panel">
+          <h3 style="margin:6px 0 8px 0;">Interactive Challenges</h3>
+          <div class="challenge-box">
+            <b>Challenge 1 — Find the Image</b>
+            <button data-challenge="basic">Converging, u &gt; 2f</button>
+            <button data-challenge="between">Converging, f &lt; u &lt; 2f</button>
+          </div>
+          <div class="challenge-box">
+            <b>Challenge 2 — Magnifier</b>
+            <button data-challenge="magnifier">Object inside f (u &lt; f)</button>
+          </div>
+          <div class="challenge-box">
+            <b>Challenge 3 — Diverging Lens</b>
+            <button data-challenge="diverging">Observe virtual image</button>
+          </div>
+          <div class="challenge-box">
+            <b>Challenge 4 — Predict Image Type</b>
+            <label>Predict:
+              <select id="l-predict-select">
+                <option value="real">Real, inverted</option>
+                <option value="virtual">Virtual, upright</option>
+              </select>
+            </label>
+            <button data-challenge="predict">Run & Check</button>
+          </div>
+          <div class="challenge-box">
+            <b>Challenge 5 — Measure Focal Length</b>
+            <label>Set u = <input id="challenge-u" type="number" value="20" step="1" style="width:70px;"></label>
+            <button data-challenge="focal">Calculate f from v</button>
+          </div>
+          <div id="l-challenge-note"></div>
+          <div id="l-challenge-result"></div>
+        </div>
+      </div>
+
+      <div class="readouts">
+        <div class="readout hl"><span>Object dist u</span><strong id="ro-u">25.0 cm</strong></div>
+        <div class="readout hl"><span>Image dist v</span><strong id="ro-v">16.7 cm</strong></div>
+        <div class="readout good"><span>Focal length f</span><strong id="ro-f">10.0 cm</strong></div>
+        <div class="readout"><span>Magnification m</span><strong id="ro-m">-0.67</strong></div>
+        <div class="readout"><span>Image height hᵢ</span><strong id="ro-hi">-5.3 cm</strong></div>
+        <div class="readout"><span>Image type</span><strong id="ro-type">Real, inverted, diminished</strong></div>
+        <div class="readout"><span>Lens power P</span><strong id="ro-p">10.00 D</strong></div>
+        <div class="readout"><span>Object height h₀</span><strong id="ro-ho">8.0 cm</strong></div>
+      </div>
+
+      <div class="card">
+        <b style="color:var(--primary);">💡 Real fact:</b>
+        <span id="fact-box" style="color:var(--muted);font-size:.85rem;">A converging lens forms a real image that can be projected onto a screen. A diverging lens always forms a virtual image that cannot be projected.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Side panels -->
+<aside id="left-panel" class="side-panel left" aria-hidden="true">
+  <h4>Live Solutions — Steps</h4>
+  <div id="left-content">
+    <div class="panel-frame" id="left-frame">
+      <p><b>Thin lens equation</b></p>
+      <div id="eq-step"></div>
+      <hr>
+      <p><b>Image distance (v)</b></p>
+      <div id="v-step"></div>
+      <hr>
+      <p><b>Magnification (m)</b></p>
+      <div id="m-step"></div>
+    </div>
+  </div>
+</aside>
+
+<aside id="right-panel" class="side-panel right" aria-hidden="true">
+  <h4>Live Values — Optics</h4>
+  <div id="right-content">
+    <div class="panel-frame" id="right-frame">
+      <p><b>Focal length &amp; power</b></p>
+      <div id="fp-step"></div>
+      <hr>
+      <p><b>Image height</b></p>
+      <div id="hi-step"></div>
+      <hr>
+      <p><b>Ray geometry</b></p>
+      <div id="ray-step"></div>
+    </div>
+  </div>
+</aside>
+
+<script>
+"use strict";
+(function(){
+
+var $ = function(id){ return document.getElementById(id); };
+var canvas = $('canvas');
+var ctx = canvas.getContext('2d');
+var dpr = window.devicePixelRatio || 1;
+var lastW = 0, lastH = 0;
+
+function resizeCanvas(){
+  var rect = canvas.getBoundingClientRect();
+  var w = Math.max(1, Math.round(rect.width));
+  var h = Math.max(1, Math.round(rect.height));
+  if (w === lastW && h === lastH) return;
+  lastW = w; lastH = h;
+  canvas.width = Math.round(w * dpr);
+  canvas.height = Math.round(h * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function cw(){ return canvas.width / dpr; }
+function ch(){ return canvas.height / dpr; }
+
+// ============ STATE ============
+var S = {
+  lensType: 'converging',
+  f: 10,
+  u: 25,
+  h0: 8,
+  showRays: true,
+  showFocus: true,
+  animating: false,
+  animPhase: 0
+};
+
+// ============ PHYSICS ============
+function computeImage(){
+  var f = S.f;
+  var u = S.u;
+  var h0 = S.h0;
+  var feff = S.lensType === 'diverging' ? -f : f;
+
+  var denom = u - feff;
+  var v = (denom !== 0) ? (u * feff) / denom : Infinity;
+
+  var m = (u !== 0) ? -v / u : 0;
+  var hi = m * h0;
+
+  var isReal = v > 0 && isFinite(v);
+  var isVirtual = v < 0 && isFinite(v);
+  var isInverted = m < 0;
+  var isUpright = m > 0;
+
+  var typeStr;
+  if (!isFinite(v)) {
+    typeStr = 'No image (at focus)';
+  } else if (isReal) {
+    typeStr = 'Real, ' + (isInverted ? 'inverted' : 'upright') + ', ' + (Math.abs(m) > 1 ? 'enlarged' : Math.abs(m) < 1 ? 'diminished' : 'same size');
+  } else {
+    typeStr = 'Virtual, ' + (isUpright ? 'upright' : 'inverted') + ', ' + (Math.abs(m) > 1 ? 'enlarged' : Math.abs(m) < 1 ? 'diminished' : 'same size');
+  }
+
+  return {
+    feff: feff, v: v, m: m, hi: hi,
+    isReal: isReal, isVirtual: isVirtual,
+    isInverted: isInverted, isUpright: isUpright,
+    typeStr: typeStr,
+    power: 1 / (feff / 100)
+  };
+}
+
+// ============ DRAW ============
+function drawScene(){
+  resizeCanvas();
+  var w = cw(), h = ch();
+  if (w < 10 || h < 10) return;
+
+  var cx = w / 2;
+  var cy = h / 2;
+  var img = computeImage();
+
+  // Background
+  var bg = ctx.createLinearGradient(0, 0, 0, h);
+  bg.addColorStop(0, '#f8fafc');
+  bg.addColorStop(1, '#e2e8f0');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // Scale
+  var maxDist = Math.max(S.u, Math.abs(img.v), 2 * S.f, 10);
+  var scale = Math.min(w * 0.42, h * 0.38) / maxDist;
+  scale = Math.max(scale, 1.5);
+  scale = Math.min(scale, 25);
+
+  // Principal axis
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(0, cy);
+  ctx.lineTo(w, cy);
+  ctx.stroke();
+
+  var lensX = cx;
+
+  // Draw lens
+  drawLens(lensX, cy);
+
+  // Focal points
+  if (S.showFocus && isFinite(img.feff)) {
+    var fpx = Math.abs(img.feff) * scale;
+    drawFocusPoint(lensX - fpx, cy, 'F');
+    drawFocusPoint(lensX + fpx, cy, "F'");
+    drawFocusPoint(lensX - 2 * fpx, cy, '2F', true);
+    drawFocusPoint(lensX + 2 * fpx, cy, "2F'", true);
+  }
+
+  // Object
+  var objX = lensX - S.u * scale;
+  var objTopY = cy - S.h0 * scale;
+  drawObject(objX, cy, objTopY);
+
+  // Rays
+  if (S.showRays) {
+    drawRays(lensX, cy, scale, img, objX, objTopY);
+  }
+
+  // Image
+  if (isFinite(img.v) && Math.abs(img.v) > 0.01) {
+    var imgX = lensX + img.v * scale;
+    var imgTopY = cy - img.hi * scale;
+    drawImage(imgX, cy, imgTopY, img.isVirtual);
+  }
+
+  // Labels
+  ctx.fillStyle = '#64748b';
+  ctx.font = '11px system-ui';
+  ctx.textAlign = 'left';
+  ctx.fillText('Principal axis', 10, cy - 8);
+
+  ctx.fillStyle = '#0f172a';
+  ctx.font = 'bold 13px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText(S.lensType === 'converging' ? 'Converging Lens' : 'Diverging Lens', cx, 22);
+}
+
+function drawLens(x, cy){
+  var lensH = Math.min(ch() * 0.55, 120);
+  var lensW = 14;
+
+  ctx.save();
+  var grad = ctx.createLinearGradient(x - lensW, 0, x + lensW, 0);
+  grad.addColorStop(0, 'rgba(14,165,233,0.15)');
+  grad.addColorStop(0.5, 'rgba(14,165,233,0.35)');
+  grad.addColorStop(1, 'rgba(14,165,233,0.15)');
+  ctx.fillStyle = grad;
+  ctx.strokeStyle = '#0ea5e9';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+
+  if (S.lensType === 'converging') {
+    ctx.moveTo(x, cy - lensH);
+    ctx.quadraticCurveTo(x + lensW, cy - lensH * 0.4, x + lensW * 1.5, cy);
+    ctx.quadraticCurveTo(x + lensW, cy + lensH * 0.4, x, cy + lensH);
+    ctx.quadraticCurveTo(x - lensW, cy + lensH * 0.4, x - lensW * 1.5, cy);
+    ctx.quadraticCurveTo(x - lensW, cy - lensH * 0.4, x, cy - lensH);
+  } else {
+    ctx.moveTo(x - lensW * 1.2, cy - lensH);
+    ctx.quadraticCurveTo(x + lensW * 0.5, cy - lensH * 0.4, x + lensW * 0.5, cy);
+    ctx.quadraticCurveTo(x + lensW * 0.5, cy + lensH * 0.4, x - lensW * 1.2, cy + lensH);
+    ctx.lineTo(x + lensW * 1.2, cy + lensH);
+    ctx.quadraticCurveTo(x - lensW * 0.5, cy + lensH * 0.4, x - lensW * 0.5, cy);
+    ctx.quadraticCurveTo(x - lensW * 0.5, cy - lensH * 0.4, x + lensW * 1.2, cy - lensH);
+    ctx.closePath();
+  }
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#0ea5e9';
+  ctx.beginPath();
+  ctx.arc(x, cy, 3, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#0ea5e9';
+  ctx.font = 'bold 11px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText('O', x, cy + 18);
+  ctx.restore();
+}
+
+function drawFocusPoint(x, y, label, minor){
+  if (x < 5 || x > cw() - 5) return;
+  ctx.fillStyle = minor ? 'rgba(245,158,11,0.5)' : '#f59e0b';
+  ctx.beginPath();
+  ctx.arc(x, y, minor ? 3 : 4.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = minor ? 'rgba(245,158,11,0.7)' : '#d97706';
+  ctx.font = minor ? '9px system-ui' : 'bold 10px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText(label, x, y - 8);
+}
+
+function drawObject(x, baseY, topY){
+  ctx.strokeStyle = '#3b82f6';
+  ctx.fillStyle = '#3b82f6';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(x, baseY);
+  ctx.lineTo(x, topY);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x, topY);
+  ctx.lineTo(x - 6, topY + 10);
+  ctx.lineTo(x + 6, topY + 10);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = '#2563eb';
+  ctx.font = 'bold 11px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText('Object', x, baseY + 16);
+}
+
+function drawImage(x, baseY, topY, isVirtual){
+  var color = isVirtual ? '#8b5cf6' : '#10b981';
+  ctx.save();
+  if (isVirtual) ctx.setLineDash([6, 4]);
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(x, baseY);
+  ctx.lineTo(x, topY);
+  ctx.stroke();
+  var dir = topY < baseY ? -1 : 1;
+  ctx.beginPath();
+  ctx.moveTo(x, topY);
+  ctx.lineTo(x - 6, topY + dir * 10);
+  ctx.lineTo(x + 6, topY + dir * 10);
+  ctx.closePath();
+  ctx.fill();
+  ctx.setLineDash([]);
+  ctx.font = 'bold 11px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText(isVirtual ? 'Virtual Image' : 'Real Image', x, baseY + 16);
+  ctx.restore();
+}
+
+function drawRays(lensX, cy, scale, img, objX, objTopY){
+  var feff = img.feff;
+
+  ctx.save();
+  ctx.lineWidth = 2;
+  ctx.globalAlpha = 0.85;
+
+  // Ray 1: parallel → focus
+  ctx.strokeStyle = '#f43f5e';
+  ctx.beginPath();
+  ctx.moveTo(objX, objTopY);
+  ctx.lineTo(lensX, objTopY);
+  var fpx = feff * scale;
+  var afterLensX = cw();
+  if (Math.abs(fpx) > 0.5) {
+    var slope = (cy - objTopY) / fpx;
+    var endY = objTopY + slope * (afterLensX - lensX);
+    ctx.lineTo(afterLensX, endY);
+  } else {
+    ctx.lineTo(afterLensX, objTopY);
+  }
+  ctx.stroke();
+
+  // Ray 2: through centre
+  ctx.strokeStyle = '#22c55e';
+  ctx.beginPath();
+  ctx.moveTo(objX, objTopY);
+  ctx.lineTo(lensX, cy);
+  var dx = lensX - objX;
+  var dy = cy - objTopY;
+  var extend = (cw() - lensX) / Math.max(Math.abs(dx), 1);
+  ctx.lineTo(lensX + dx * extend, cy + dy * extend);
+  ctx.stroke();
+
+  // Ray 3: through front focus → parallel
+  ctx.strokeStyle = '#f59e0b';
+  ctx.beginPath();
+  ctx.moveTo(objX, objTopY);
+  var frontFocalX = lensX - fpx;
+  if (Math.abs(frontFocalX - objX) > 1 && Math.abs(fpx) > 0.5) {
+    var slope3 = (objTopY - cy) / (objX - frontFocalX);
+    var lensY3 = objTopY + slope3 * (lensX - objX);
+    ctx.lineTo(lensX, lensY3);
+    ctx.lineTo(cw(), lensY3);
+  } else {
+    ctx.lineTo(lensX, objTopY);
+    ctx.lineTo(cw(), objTopY);
+  }
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+// ============ READOUTS ============
+function updateReadouts(){
+  var img = computeImage();
+
+  $('out-u').innerText = S.u.toFixed(1);
+  $('out-f').innerText = (S.lensType === 'diverging' ? '−' : '') + S.f.toFixed(1);
+  $('out-v').innerText = isFinite(img.v) ? img.v.toFixed(1) : '∞';
+  $('out-mag').innerText = isFinite(img.m) ? img.m.toFixed(2) : '—';
+  $('out-type').innerText = img.typeStr;
+
+  $('ro-u').innerText = S.u.toFixed(1) + ' cm';
+  $('ro-v').innerText = isFinite(img.v) ? img.v.toFixed(1) + ' cm' : '∞';
+  $('ro-f').innerText = (S.lensType === 'diverging' ? '−' : '') + S.f.toFixed(1) + ' cm';
+  $('ro-m').innerText = isFinite(img.m) ? img.m.toFixed(3) + '×' : '—';
+  $('ro-hi').innerText = isFinite(img.hi) ? img.hi.toFixed(2) + ' cm' : '—';
+  $('ro-type').innerText = img.typeStr;
+  $('ro-p').innerText = img.power.toFixed(2) + ' D';
+  $('ro-ho').innerText = S.h0.toFixed(1) + ' cm';
+
+  var feff = img.feff;
+  $('eq-step').innerHTML = '1/f = 1/u + 1/v<br>1/' + feff.toFixed(2) + ' = 1/' + S.u.toFixed(2) + ' + 1/v';
+  $('v-step').innerHTML = 'v = uf/(u−f) = (' + S.u.toFixed(2) + '·' + feff.toFixed(2) + ')/(' + S.u.toFixed(2) + '−' + feff.toFixed(2) + ') = <b>' + (isFinite(img.v) ? img.v.toFixed(3) + ' cm' : '∞') + '</b>';
+  $('m-step').innerHTML = 'm = −v/u = −(' + (isFinite(img.v) ? img.v.toFixed(2) : '∞') + ')/' + S.u.toFixed(2) + ' = <b>' + (isFinite(img.m) ? img.m.toFixed(3) : '—') + '</b>';
+
+  $('fp-step').innerHTML = 'f = ' + feff.toFixed(2) + ' cm<br>P = 1/f = 1/' + (feff/100).toFixed(3) + ' m = <b>' + img.power.toFixed(2) + ' D</b>';
+  $('hi-step').innerHTML = 'hᵢ = m·h₀ = ' + (isFinite(img.m) ? img.m.toFixed(3) : '—') + '·' + S.h0.toFixed(1) + ' = <b>' + (isFinite(img.hi) ? img.hi.toFixed(2) + ' cm' : '—') + '</b>';
+  $('ray-step').innerHTML = 'Ray 1: parallel → focus<br>Ray 2: through centre → undeviated<br>Ray 3: through focus → parallel';
+
+  var fact;
+  if (S.lensType === 'diverging') {
+    fact = 'A diverging lens always produces a virtual, upright, reduced image on the same side as the object. It cannot form a real image.';
+  } else if (S.u > 2 * S.f) {
+    fact = 'Object beyond 2F: image is real, inverted, diminished, and lies between F and 2F on the other side.';
+  } else if (Math.abs(S.u - 2 * S.f) < 0.5) {
+    fact = 'Object at 2F: image is real, inverted, same size, and also at 2F on the other side.';
+  } else if (S.u > S.f && S.u < 2 * S.f) {
+    fact = 'Object between F and 2F: image is real, inverted, enlarged, and beyond 2F on the other side.';
+  } else if (Math.abs(S.u - S.f) < 0.5) {
+    fact = 'Object at F: rays emerge parallel — no image is formed (image at infinity).';
+  } else if (S.u < S.f) {
+    fact = 'Object inside F (magnifying glass): image is virtual, upright, enlarged, on the same side as the object.';
+  } else {
+    fact = 'Use the sliders to change object distance and focal length to see how the image changes.';
+  }
+  $('fact-box').innerText = fact;
+}
+
+// ============ EVENTS ============
+$('lens-type').addEventListener('change', function(e){
+  S.lensType = e.target.value;
+  updateReadouts();
+});
+$('focal').addEventListener('input', function(e){
+  S.f = parseFloat(e.target.value);
+  $('v-f').innerText = S.f.toFixed(1);
+  updateReadouts();
+});
+$('objdist').addEventListener('input', function(e){
+  S.u = parseFloat(e.target.value);
+  $('v-u').innerText = S.u.toFixed(1);
+  updateReadouts();
+});
+$('objheight').addEventListener('input', function(e){
+  S.h0 = parseFloat(e.target.value);
+  $('v-h').innerText = S.h0.toFixed(1);
+  updateReadouts();
+});
+$('show-rays').addEventListener('change', function(e){ S.showRays = e.target.checked; });
+$('show-focus').addEventListener('change', function(e){ S.showFocus = e.target.checked; });
+
+$('btn-animate').addEventListener('click', function(){
+  S.animating = !S.animating;
+  this.innerText = S.animating ? '⏸ Pause' : '▶ Animate';
+});
+$('btn-reset-all').addEventListener('click', function(){
+  S.lensType = 'converging';
+  S.f = 10;
+  S.u = 25;
+  S.h0 = 8;
+  S.animating = false;
+  $('lens-type').value = 'converging';
+  $('focal').value = 10; $('v-f').innerText = '10.0';
+  $('objdist').value = 25; $('v-u').innerText = '25.0';
+  $('objheight').value = 8; $('v-h').innerText = '8.0';
+  $('btn-animate').innerText = '▶ Animate';
+  updateReadouts();
+});
+
+// ============ TABS ============
+document.querySelectorAll('.tab-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+    document.querySelectorAll('.tab-panel').forEach(function(pn){ pn.classList.remove('active'); });
+    btn.classList.add('active');
+    var target = document.getElementById(btn.dataset.tab);
+    if (target) target.classList.add('active');
+  });
+});
+
+// ============ QUIZ ============
+var L_QUIZ_KEY = { l1:'B', l2:'A', l3:'C', l4:'B', l5:'A', l6:'C', l7:'B', l8:'A', l9:'C' };
+var L_QUIZ_WHY = {
+  l1:'A converging lens is thicker in the middle and is also called a convex lens.',
+  l2:'Converging lenses have a positive focal length by convention.',
+  l3:'The thin lens equation is 1/f = 1/u + 1/v.',
+  l4:'A ray parallel to the principal axis is refracted through the principal focus.',
+  l5:'Object beyond 2F → image between F and 2F, real, inverted, diminished.',
+  l6:'A diverging lens always produces a virtual, upright, reduced image.',
+  l7:'m = -2 means the image is inverted (negative) and twice the size (|m|=2).',
+  l8:'A ray through the optical centre of a thin lens passes straight through undeviated.',
+  l9:'When u = 2f, v = 2f and m = -1 (same size, inverted).'
+};
+
+function evaluateLQuiz(){
+  var score = 0, total = 9;
+  for (var i = 1; i <= 9; i++) {
+    var name = 'l' + i;
+    var els = document.getElementsByName(name);
+    var val = null;
+    for (var j = 0; j < els.length; j++) if (els[j].checked) val = els[j].value;
+    var qEl = document.querySelector('.quiz-q[data-q="' + name + '"]');
+    var expl = qEl ? qEl.querySelector('.q-res') : null;
+    if (!expl && qEl) {
+      expl = document.createElement('div');
+      expl.className = 'q-res';
+      qEl.appendChild(expl);
+    }
+    if (expl) {
+      expl.style.display = 'block';
+      if (val && val === L_QUIZ_KEY[name]) {
+        score++;
+        expl.style.background = 'rgba(16,185,129,.1)';
+        expl.style.color = '#065f46';
+        expl.style.borderLeft = '3px solid #10b981';
+        expl.innerHTML = '<b>✓ Correct!</b> ' + L_QUIZ_WHY[name];
+      } else {
+        expl.style.background = 'rgba(239,68,68,.1)';
+        expl.style.color = '#991b1b';
+        expl.style.borderLeft = '3px solid #ef4444';
+        expl.innerHTML = '<b>✗ Answer: ' + L_QUIZ_KEY[name] + '</b> ' + L_QUIZ_WHY[name];
+      }
+    }
+  }
+  var out = $('l-quiz-result');
+  out.style.display = 'block';
+  out.innerHTML = 'Score: ' + score + '/' + total + ' — ' + Math.round(score/total*100) + '%';
+}
+function resetLQuiz(){
+  for (var i = 1; i <= 9; i++) {
+    var name = 'l' + i;
+    var els = document.getElementsByName(name);
+    for (var j = 0; j < els.length; j++) els[j].checked = false;
+    var qEl = document.querySelector('.quiz-q[data-q="' + name + '"]');
+    if (qEl) {
+      var expl = qEl.querySelector('.q-res');
+      if (expl) expl.style.display = 'none';
+    }
+  }
+  $('l-quiz-result').style.display = 'none';
+}
+$('l-quiz-check').addEventListener('click', evaluateLQuiz);
+$('l-quiz-reset').addEventListener('click', resetLQuiz);
+
+// ============ CHALLENGES ============
+document.querySelectorAll('[data-challenge]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var id = btn.dataset.challenge;
+    var note = $('l-challenge-note');
+    var cres = $('l-challenge-result');
+    note.innerText = ''; cres.innerText = '';
+    var img;
+
+    if (id === 'basic') {
+      S.lensType = 'converging'; $('lens-type').value = 'converging';
+      S.f = 10; $('focal').value = 10; $('v-f').innerText = '10.0';
+      S.u = 25; $('objdist').value = 25; $('v-u').innerText = '25.0';
+      img = computeImage();
+      note.innerText = 'Converging lens, object at u = 25 cm (> 2f = 20 cm).';
+      cres.innerText = 'Image: v = ' + img.v.toFixed(1) + ' cm, m = ' + img.m.toFixed(2) + ', ' + img.typeStr;
+    } else if (id === 'between') {
+      S.lensType = 'converging'; $('lens-type').value = 'converging';
+      S.f = 10; $('focal').value = 10; $('v-f').innerText = '10.0';
+      S.u = 15; $('objdist').value = 15; $('v-u').innerText = '15.0';
+      img = computeImage();
+      note.innerText = 'Converging lens, object between f (10 cm) and 2f (20 cm).';
+      cres.innerText = 'Image: v = ' + img.v.toFixed(1) + ' cm, m = ' + img.m.toFixed(2) + ', ' + img.typeStr;
+    } else if (id === 'magnifier') {
+      S.lensType = 'converging'; $('lens-type').value = 'converging';
+      S.f = 10; $('focal').value = 10; $('v-f').innerText = '10.0';
+      S.u = 6; $('objdist').value = 6; $('v-u').innerText = '6.0';
+      img = computeImage();
+      note.innerText = 'Object inside the focal point (u = 6 cm < f = 10 cm) — magnifying glass.';
+      cres.innerText = 'Image: v = ' + img.v.toFixed(1) + ' cm, m = ' + img.m.toFixed(2) + ', ' + img.typeStr + ' (virtual image on same side)';
+    } else if (id === 'diverging') {
+      S.lensType = 'diverging'; $('lens-type').value = 'diverging';
+      S.f = 10; $('focal').value = 10; $('v-f').innerText = '10.0';
+      S.u = 20; $('objdist').value = 20; $('v-u').innerText = '20.0';
+      img = computeImage();
+      note.innerText = 'Diverging lens with f = −10 cm.';
+      cres.innerText = 'Image: v = ' + img.v.toFixed(1) + ' cm, m = ' + img.m.toFixed(2) + ', ' + img.typeStr;
+    } else if (id === 'predict') {
+      var pred = $('l-predict-select').value;
+      S.lensType = 'converging'; $('lens-type').value = 'converging';
+      S.f = 10; $('focal').value = 10; $('v-f').innerText = '10.0';
+      S.u = 25; $('objdist').value = 25; $('v-u').innerText = '25.0';
+      img = computeImage();
+      var actual = img.isReal ? 'real' : 'virtual';
+      note.innerText = 'Prediction: ' + pred + '. Object at u = 25 cm with f = 10 cm.';
+      cres.innerText = 'Actual: ' + actual + ' image. ' + (pred === actual ? '✓ Correct!' : '✗ Try again.') + ' (v = ' + img.v.toFixed(1) + ' cm, m = ' + img.m.toFixed(2) + ')';
+    } else if (id === 'focal') {
+      var uVal = parseFloat($('challenge-u').value) || 20;
+      S.u = uVal; $('objdist').value = Math.min(60, Math.max(5, uVal)); $('v-u').innerText = S.u.toFixed(1);
+      img = computeImage();
+      if (isFinite(img.v)) {
+        var fCalc = (uVal * img.v) / (uVal + img.v);
+        cres.innerText = 'With u = ' + uVal + ' cm, v = ' + img.v.toFixed(1) + ' cm → f = uv/(u+v) = ' + fCalc.toFixed(2) + ' cm (expected ' + S.f.toFixed(1) + ' cm)';
+      } else {
+        cres.innerText = 'No finite image — object is at the focal point.';
+      }
+      note.innerText = 'Using the thin lens equation to find focal length from measured u and v.';
+    }
+    updateReadouts();
+  });
+});
+
+// ============ SPLITTER ============
+(function(){
+  var sim = $('sim-container');
+  var splitter = $('splitter');
+  if (!sim || !splitter) return;
+  var dragging = false, startY = 0, startHeight = 0;
+  var minH = 160;
+  function maxH(){ return window.innerHeight - 220; }
+
+  splitter.addEventListener('pointerdown', function(e){
+    e.preventDefault();
+    dragging = true;
+    startY = e.clientY;
+    startHeight = sim.getBoundingClientRect().height;
+    try { splitter.setPointerCapture(e.pointerId); } catch(err){}
+  });
+  window.addEventListener('pointermove', function(e){
+    if (!dragging) return;
+    var dy = e.clientY - startY;
+    var newH = Math.round(startHeight + dy);
+    newH = Math.max(minH, Math.min(maxH(), newH));
+    sim.style.flex = '0 0 ' + newH + 'px';
+    resizeCanvas();
+    drawScene();
+  });
+  window.addEventListener('pointerup', function(e){
+    if (!dragging) return;
+    dragging = false;
+    try { splitter.releasePointerCapture(e.pointerId); } catch(err){}
+  });
+  splitter.addEventListener('dblclick', function(){
+    sim.style.flex = '';
+    resizeCanvas();
+    drawScene();
+  });
+})();
+
+// ============ SIDE PANELS ============
+(function(){
+  function makePanel(frameEl){
+    if (!frameEl) return;
+    var state = { x:0, y:0, s:1 };
+    var pointers = new Map();
+    var lastPanPos = null, pinchStart = null;
+
+    function apply(){
+      frameEl.style.transform = 'translate(' + state.x + 'px,' + state.y + 'px) scale(' + state.s + ')';
+    }
+    function onPointerDown(e){
+      frameEl.setPointerCapture && frameEl.setPointerCapture(e.pointerId);
+      pointers.set(e.pointerId, { x:e.clientX, y:e.clientY });
+      if (pointers.size === 1) {
+        lastPanPos = { x:e.clientX, y:e.clientY };
+        frameEl.classList.add('grabbing');
+      } else if (pointers.size === 2) {
+        var pts = Array.from(pointers.values());
+        pinchStart = {
+          dist: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y),
+          mid: { x:(pts[0].x + pts[1].x)/2, y:(pts[0].y + pts[1].y)/2 },
+          s: state.s
+        };
+      }
+    }
+    function onPointerMove(e){
+      if (!pointers.has(e.pointerId)) return;
+      pointers.set(e.pointerId, { x:e.clientX, y:e.clientY });
+      if (pointers.size === 1 && lastPanPos) {
+        var cur = pointers.get(e.pointerId);
+        state.x += cur.x - lastPanPos.x;
+        state.y += cur.y - lastPanPos.y;
+        lastPanPos = { x:cur.x, y:cur.y };
+        apply();
+      } else if (pointers.size === 2 && pinchStart) {
+        var pts = Array.from(pointers.values());
+        var dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+        var mid = { x:(pts[0].x + pts[1].x)/2, y:(pts[0].y + pts[1].y)/2 };
+        var scaleFactor = dist / pinchStart.dist;
+        var newS = Math.min(3, Math.max(0.5, pinchStart.s * scaleFactor));
+        var rect = frameEl.getBoundingClientRect();
+        var localMidX = mid.x - rect.left, localMidY = mid.y - rect.top;
+        var sRatio = newS / state.s;
+        state.x = (state.x - localMidX) * sRatio + localMidX;
+        state.y = (state.y - localMidY) * sRatio + localMidY;
+        state.s = newS;
+        apply();
+      }
+    }
+    function endPointer(e){
+      pointers.delete(e.pointerId);
+      if (pointers.size === 0) {
+        lastPanPos = null; pinchStart = null;
+        frameEl.classList.remove('grabbing');
+      } else if (pointers.size === 1) {
+        var pt = pointers.values().next().value;
+        lastPanPos = { x:pt.x, y:pt.y };
+      }
+    }
+    function onWheel(e){
+      e.preventDefault();
+      var rect = frameEl.getBoundingClientRect();
+      var cx = e.clientX - rect.left, cy = e.clientY - rect.top;
+      var oldS = state.s;
+      var factor = Math.exp(-e.deltaY * 0.0015);
+      var newS = Math.min(3, Math.max(0.5, oldS * factor));
+      var sRatio = newS / oldS;
+      state.x = (state.x - cx) * sRatio + cx;
+      state.y = (state.y - cy) * sRatio + cy;
+      state.s = newS;
+      apply();
+    }
+    function onDblClick(){ state.x = 0; state.y = 0; state.s = 1; apply(); }
+
+    frameEl.addEventListener('pointerdown', onPointerDown);
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', endPointer);
+    window.addEventListener('pointercancel', endPointer);
+    frameEl.addEventListener('wheel', onWheel, { passive:false });
+    frameEl.addEventListener('dblclick', onDblClick);
+  }
+  makePanel($('left-panel'));
+  makePanel($('right-panel'));
+})();
+
+(function(){
+  var left = $('left-panel');
+  var right = $('right-panel');
+  var btnL = $('open-left');
+  var btnR = $('open-right');
+  if (!left || !right || !btnL || !btnR) return;
+
+  function syncBodyState(){
+    var anyOpen = left.classList.contains('open') || right.classList.contains('open');
+    if (window.innerWidth <= 768) document.body.classList.toggle('panel-open', anyOpen);
+  }
+  btnL.addEventListener('click', function(){
+    if (!left.classList.contains('open')) right.classList.remove('open');
+    left.classList.toggle('open');
+    left.setAttribute('aria-hidden', String(!left.classList.contains('open')));
+    right.setAttribute('aria-hidden', String(!right.classList.contains('open')));
+    syncBodyState();
+  });
+  btnR.addEventListener('click', function(){
+    if (!right.classList.contains('open')) left.classList.remove('open');
+    right.classList.toggle('open');
+    left.setAttribute('aria-hidden', String(!left.classList.contains('open')));
+    right.setAttribute('aria-hidden', String(!right.classList.contains('open')));
+    syncBodyState();
+  });
+  window.addEventListener('resize', function(){
+    if (window.innerWidth > 768) document.body.classList.remove('panel-open');
+  });
+})();
+
+// ============ ANIMATION LOOP ============
+var lastTime = performance.now();
+function animate(now){
+  var dt = Math.min((now - lastTime) / 1000, 0.05);
+  lastTime = now;
+
+  if (S.animating) {
+    S.animPhase += dt * 0.5;
+    var base = 25;
+    var range = 18;
+    S.u = base + range * Math.sin(S.animPhase);
+    S.u = Math.max(5, Math.min(60, S.u));
+    $('objdist').value = S.u;
+    $('v-u').innerText = S.u.toFixed(1);
+    updateReadouts();
+  }
+
+  drawScene();
+  requestAnimationFrame(animate);
+}
+
+// ============ INIT ============
+$('v-f').innerText = S.f.toFixed(1);
+$('v-u').innerText = S.u.toFixed(1);
+$('v-h').innerText = S.h0.toFixed(1);
+updateReadouts();
+resizeCanvas();
+requestAnimationFrame(animate);
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardAccessibleReadingBar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="12dp"
+    app:cardBackgroundColor="#0C1426"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="6dp"
+    app:strokeColor="#1E293B"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- Header / Status Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_volume_up"
+                app:tint="#00D8FF"
+                android:importantForAccessibility="no" />
+
+            <TextView
+                android:id="@+id/tvReadingStatus"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="Audio Lesson Reader"
+                android:textColor="#F1F5F9"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:accessibilityLiveRegion="polite" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReadSpeed"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:minWidth="48dp"
+                android:text="1.0x"
+                android:textColor="#00D8FF"
+                android:textSize="12sp"
+                android:contentDescription="Speech speed: 1.0 times normal" />
+        </LinearLayout>
+
+        <!-- Player Controls Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="8dp">
+
+            <!-- Previous Section -->
+            <ImageButton
+                android:id="@+id/btnReadPrevious"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_chevron_right"
+                android:rotation="180"
+                app:tint="#94A3B8"
+                android:contentDescription="Previous lesson section" />
+
+            <!-- Play / Pause -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReadPlayPause"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:minWidth="120dp"
+                android:layout_marginHorizontal="12dp"
+                android:text="READ ALOUD"
+                android:textColor="#060A14"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:backgroundTint="#00D8FF"
+                app:cornerRadius="24dp"
+                app:icon="@drawable/ic_volume_up"
+                app:iconTint="#060A14"
+                android:contentDescription="Read lesson aloud" />
+
+            <!-- Next Section -->
+            <ImageButton
+                android:id="@+id/btnReadNext"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_chevron_right"
+                app:tint="#94A3B8"
+                android:contentDescription="Next lesson section" />
+
+            <!-- Stop -->
+            <ImageButton
+                android:id="@+id/btnReadStop"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_trash"
+                app:tint="#EF4444"
+                android:contentDescription="Stop audio reading" />
+
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

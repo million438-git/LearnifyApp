@@ -8,15 +8,15 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.core.splashscreen.SplashScreen;
 
 import com.google.android.material.button.MaterialButton;
 
 /**
- * WelcomeActivity - Entry point with professional animations and strict auto-login verification.
- * Ensures that unverified users are always redirected to the verification portal.
+ * WelcomeActivity - Entry point for the Learnify educational platform.
+ * Features the approved Futuristic Luxury visual identity, responsive scrollable
+ * presentation, smooth entrance choreography, and strict session/verification preservation.
  */
 public class WelcomeActivity extends BaseActivity {
 
@@ -24,26 +24,36 @@ public class WelcomeActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // 1. Install SplashScreen API
+        // 1. Install AndroidX SplashScreen API
         SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
 
-        // 2. Load UI first to prevent blank screens
+        // 2. Load Welcome UI
         try {
             setContentView(R.layout.activity_welcome);
             initWelcomeUI();
         } catch (Exception e) {
             Log.e(TAG, "Layout inflation failed", e);
-            // Fallback: Just proceed to Main if welcome layout is broken
+            // Fallback: Proceed to portal hub if inflation fails
             navigateToMain();
             return;
         }
 
-        // 3. Perform session check after a small delay to ensure repository is ready
-        new Handler(Looper.getMainLooper()).postDelayed(this::checkSessionAndProceed, 1500);
+        // 3. Strictly preserve auto-login session routing
+        new Handler(Looper.getMainLooper()).postDelayed(this::checkSessionAndProceed, 1200);
     }
 
+    /**
+     * Preserves existing session verification and routing:
+     * - Authenticated & verified student -> Student Dashboard
+     * - Authenticated unverified student -> Email Verification Portal
+     * - Authenticated administrator -> Admin Dashboard
+     * - Unauthenticated user -> Remains on Welcome page
+     */
     private void checkSessionAndProceed() {
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
         try {
             SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
             if (session.getBoolean("isLoggedIn", false)) {
@@ -65,43 +75,127 @@ public class WelcomeActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Binds all navigation actions and executes tasteful, non-blocking entrance choreography.
+     */
     private void initWelcomeUI() {
-        View logoCard = findViewById(R.id.welcomeLogoCard);
-        TextView tvTitle = findViewById(R.id.welcomeTitleText);
-        TextView tvDesc = findViewById(R.id.welcomeDescText);
-        MaterialButton btnGetStarted = findViewById(R.id.btnGetStarted);
-
-        // Entrance Animations
-        if (logoCard != null) {
-            logoCard.setAlpha(0f);
-            logoCard.setTranslationY(50f);
-            logoCard.animate().alpha(1f).translationY(0f).setDuration(1000).start();
-        }
-
-        if (tvTitle != null) {
-            tvTitle.setAlpha(0f);
-            tvTitle.animate().alpha(1f).setDuration(800).setStartDelay(400).start();
-        }
-
-        if (tvDesc != null) {
-            tvDesc.setAlpha(0f);
-            tvDesc.animate().alpha(1f).setDuration(800).setStartDelay(600).start();
-        }
+        // Section E & H: Get Started buttons (Direct to RegisterActivity)
+        View btnGetStarted = findViewById(R.id.btnGetStarted);
+        View btnGetStartedBottom = findViewById(R.id.btnGetStartedBottom);
 
         if (btnGetStarted != null) {
-            btnGetStarted.setAlpha(0f);
-            btnGetStarted.animate().alpha(1f).setDuration(800).setStartDelay(800).start();
-            btnGetStarted.setOnClickListener(v -> navigateToMain());
+            btnGetStarted.setOnClickListener(v -> animateButtonAndExecute(v, this::navigateToRegister));
+        }
+        if (btnGetStartedBottom != null) {
+            btnGetStartedBottom.setOnClickListener(v -> animateButtonAndExecute(v, this::navigateToRegister));
+        }
+
+        // Section E & H: Sign In buttons (Direct to StudentLoginActivity)
+        View btnSignIn = findViewById(R.id.btnSignIn);
+        View btnSignInBottom = findViewById(R.id.btnSignInBottom);
+
+        if (btnSignIn != null) {
+            btnSignIn.setOnClickListener(v -> animateButtonAndExecute(v, this::navigateToLogin));
+        }
+        if (btnSignInBottom != null) {
+            btnSignInBottom.setOnClickListener(v -> animateButtonAndExecute(v, this::navigateToLogin));
+        }
+
+        // Portal Selector Hub links (Preserves access to MainActivity for Student vs Admin chooser)
+        View btnPortalHubTop = findViewById(R.id.btnPortalHubTop);
+        View tvPortalHubBottom = findViewById(R.id.tvPortalHubBottom);
+
+        if (btnPortalHubTop != null) {
+            btnPortalHubTop.setOnClickListener(v -> navigateToMain());
+        }
+        if (tvPortalHubBottom != null) {
+            tvPortalHubBottom.setOnClickListener(v -> navigateToMain());
+        }
+
+        // Restrained, professional entrance choreography
+        playEntranceAnimations();
+    }
+
+    /**
+     * Touch feedback animation providing tactile response before navigation.
+     */
+    private void animateButtonAndExecute(View v, Runnable action) {
+        v.animate()
+            .scaleX(0.96f)
+            .scaleY(0.96f)
+            .setDuration(100)
+            .withEndAction(() -> {
+                v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100).start();
+                action.run();
+            })
+            .start();
+    }
+
+    /**
+     * Subtle, non-blocking entrance animation for first-screen hero elements.
+     */
+    private void playEntranceAnimations() {
+        View header = findViewById(R.id.headerContainer);
+        View heroIntro = findViewById(R.id.heroIntroContainer);
+        View heroArt = findViewById(R.id.heroArtContainer);
+        View primaryActions = findViewById(R.id.primaryActionsContainer);
+
+        if (header != null) {
+            header.setAlpha(0f);
+            header.setTranslationY(-20f);
+            header.animate().alpha(1f).translationY(0f).setDuration(600).start();
+        }
+
+        if (heroIntro != null) {
+            heroIntro.setAlpha(0f);
+            heroIntro.setTranslationY(30f);
+            heroIntro.animate().alpha(1f).translationY(0f).setDuration(700).setStartDelay(150).start();
+        }
+
+        if (heroArt != null) {
+            heroArt.setAlpha(0f);
+            heroArt.setScaleX(0.92f);
+            heroArt.setScaleY(0.92f);
+            heroArt.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(800).setStartDelay(250).start();
+        }
+
+        if (primaryActions != null) {
+            primaryActions.setAlpha(0f);
+            primaryActions.setTranslationY(20f);
+            primaryActions.animate().alpha(1f).translationY(0f).setDuration(600).setStartDelay(400).start();
         }
     }
 
+    /**
+     * Launches the student registration / onboarding flow.
+     */
+    private void navigateToRegister() {
+        Intent intent = new Intent(this, RegisterActivity.class);
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+
+    /**
+     * Launches the student login flow.
+     */
+    private void navigateToLogin() {
+        Intent intent = new Intent(this, StudentLoginActivity.class);
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+
+    /**
+     * Launches the MainActivity portal hub (Student vs Admin portal selection).
+     */
     private void navigateToMain() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        finish();
     }
 
+    /**
+     * Redirects unverified student to email verification portal.
+     */
     private void navigateToVerification(String username) {
         Intent intent = new Intent(this, EmailVerificationActivity.class);
         intent.putExtra("USERNAME", username);
@@ -110,6 +204,9 @@ public class WelcomeActivity extends BaseActivity {
         finish();
     }
 
+    /**
+     * Redirects authenticated user to their respective dashboard.
+     */
     private void navigateToDashboard(boolean isAdmin) {
         Intent intent = new Intent(this, isAdmin ? AdminDashboardActivity.class : DashboardActivity.class);
         startActivity(intent);

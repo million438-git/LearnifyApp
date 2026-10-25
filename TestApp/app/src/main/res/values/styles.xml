@@ -1,4 +1,4 @@
-<resources xmlns:app="http://schemas.android.com/apk/res-auto">
+﻿<resources xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <style name="CircleImageView">
         <item name="cornerFamily">rounded</item>
@@ -145,18 +145,36 @@
         <item name="strokeColor">#F59E0B</item>
     </style>
 
+    <!-- Admin Executive Action Button (Batch 2A) -->
+    <style name="AdminExecutiveButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/admin_text_primary</item>
+        <item name="backgroundTint">@color/admin_card_bg</item>
+        <item name="strokeColor">@color/admin_border</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cornerRadius">14dp</item>
+        <item name="iconSize">20dp</item>
+        <item name="iconPadding">12dp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="rippleColor">#203B82F6</item>
+    </style>
+
     <!-- RESTORED: All missing styles to fix linking errors -->
     <style name="SettingsSectionHeader">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">28dp</item>
-        <item name="android:layout_marginStart">24dp</item>
-        <item name="android:layout_marginBottom">12dp</item>
-        <item name="android:textColor">#4F46E5</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:layout_marginStart">20dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:textColor">@color/sapphire_primary</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">true</item>
-        <item name="android:letterSpacing">0.1</item>
+        <item name="android:letterSpacing">0.08</item>
     </style>
 
     <style name="SettingsCard" parent="Widget.MaterialComponents.CardView">
@@ -165,60 +183,61 @@
         <item name="android:layout_marginStart">16dp</item>
         <item name="android:layout_marginEnd">16dp</item>
         <item name="android:layout_marginBottom">12dp</item>
-        <item name="cardBackgroundColor">#FFFFFF</item>
-        <item name="cardCornerRadius">20dp</item>
-        <item name="cardElevation">2dp</item>
-        <item name="strokeColor">#E5E7EB</item>
+        <item name="cardBackgroundColor">@color/surface_card</item>
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeColor">@color/card_stroke</item>
         <item name="strokeWidth">1dp</item>
     </style>
 
     <style name="SettingsItem">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:padding">20dp</item>
+        <item name="android:paddingHorizontal">16dp</item>
+        <item name="android:paddingVertical">16dp</item>
         <item name="android:background">?attr/selectableItemBackground</item>
         <item name="android:orientation">horizontal</item>
         <item name="android:gravity">center_vertical</item>
     </style>
 
     <style name="SettingsItemIcon">
-        <item name="android:layout_width">24dp</item>
-        <item name="android:layout_height">24dp</item>
-        <item name="android:layout_marginEnd">20dp</item>
-        <item name="android:tint">#4F46E5</item>
+        <item name="android:layout_width">22dp</item>
+        <item name="android:layout_height">22dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:tint">@color/sapphire_primary</item>
     </style>
 
     <style name="SettingsItemText">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:textColor">#111827</item>
-        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/text_primary_slate</item>
+        <item name="android:textSize">15sp</item>
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
     <style name="SettingsItemDescription">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">#6B7280</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_secondary_slate</item>
+        <item name="android:textSize">13sp</item>
         <item name="android:layout_marginTop">2dp</item>
     </style>
 
     <style name="SettingsItemValue">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">#4F46E5</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/sapphire_primary</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="SettingsDivider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
-        <item name="android:background">#E5E7EB</item>
-        <item name="android:layout_marginStart">64dp</item>
-        <item name="android:layout_marginEnd">20dp</item>
+        <item name="android:background">@color/card_stroke</item>
+        <item name="android:layout_marginStart">54dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
     </style>
 
     <style name="SettingsItemAction">
@@ -240,7 +259,7 @@
         <item name="android:layout_marginTop">24dp</item>
         <item name="android:layout_marginStart">24dp</item>
         <item name="android:layout_marginBottom">8dp</item>
-        <item name="android:textColor">#6B7280</item>
+        <item name="android:textColor">@color/text_secondary_slate</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">true</item>
@@ -253,10 +272,10 @@
         <item name="android:layout_marginStart">16dp</item>
         <item name="android:layout_marginEnd">16dp</item>
         <item name="android:layout_marginBottom">12dp</item>
-        <item name="cardBackgroundColor">#FFFFFF</item>
+        <item name="cardBackgroundColor">@color/surface_card</item>
         <item name="cardCornerRadius">20dp</item>
         <item name="cardElevation">0dp</item>
-        <item name="strokeColor">#E5E7EB</item>
+        <item name="strokeColor">@color/card_stroke</item>
         <item name="strokeWidth">1dp</item>
     </style>
 
@@ -267,9 +286,9 @@
         <item name="android:layout_marginEnd">16dp</item>
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:layout_marginBottom">8dp</item>
-        <item name="boxStrokeColor">#E5E7EB</item>
+        <item name="boxStrokeColor">@color/card_stroke</item>
         <item name="boxStrokeWidth">1dp</item>
-        <item name="hintTextColor">#6B7280</item>
+        <item name="hintTextColor">@color/text_secondary_slate</item>
         <item name="boxCornerRadiusTopStart">16dp</item>
         <item name="boxCornerRadiusTopEnd">16dp</item>
         <item name="boxCornerRadiusBottomStart">16dp</item>
@@ -289,7 +308,7 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
-        <item name="android:textColor">#111827</item>
+        <item name="android:textColor">@color/text_primary_slate</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">normal</item>
     </style>
@@ -322,11 +341,12 @@
     <style name="ExamOptionStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">48dp</item>
         <item name="android:layout_marginBottom">12dp</item>
         <item name="android:background">@drawable/bg_exam_option</item>
         <item name="android:button">@null</item>
         <item name="android:padding">16dp</item>
-        <item name="android:textColor">#333333</item>
+        <item name="android:textColor">@color/text_primary_slate</item>
         <item name="android:textSize">16sp</item>
     </style>
 

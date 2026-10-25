@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Physics: Telescope Simulator Lab</title>
+    <style>
+        :root {
+            --primary: #6366f1; --secondary: #f43f5e; --dark: #0f172a;
+            --surface: #ffffff; --bg: #f1f5f9; --glass: rgba(255,255,255,0.9);
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        html, body { height: 100%; }
+        body { margin: 0; background: var(--bg); color: var(--dark); display: flex; flex-direction: column; overflow: auto; -webkit-font-smoothing:antialiased; }
+
+        header { background: var(--dark); color: white; padding: 10px; text-align: center; border-bottom: 3px solid var(--primary); }
+        .lab-container { display: flex; flex: 1; overflow: auto; flex-direction: column; }
+
+        #sim-area { flex: 2 1 440px; position: relative; background: white; border-bottom: 2px solid #e2e8f0; overflow: auto; cursor: crosshair; min-height:340px; }
+        canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+        .splitter { height: 10px; background: linear-gradient(90deg, rgba(0,0,0,0.03), rgba(0,0,0,0.06)); cursor: ns-resize; display:block; }
+        .splitter:hover { background: linear-gradient(90deg, rgba(0,0,0,0.05), rgba(0,0,0,0.09)); }
+
+        .bottom-panel { flex: 3; display: flex; flex-direction: row; background: var(--surface); overflow-y: auto; }
+        .controls { flex: 0 0 360px; padding: 18px; border-right: 1px solid #e2e8f0; min-width: 300px; }
+        .analysis { flex: 1 1 720px; padding: 18px; background: #fafafa; min-width: 420px; }
+
+        .card { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        h4 { margin: 0 0 10px 0; font-size: 0.8rem; color: #64748b; text-transform: uppercase; }
+        .input-row { margin-bottom: 12px; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; }
+        input[type="range"] { width: 100%; accent-color: var(--primary); }
+        select, input[type="number"] { width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; font-family: inherit; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        button { padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit; }
+        .btn-fire { background: var(--primary); color: white; }
+        .btn-fire:hover { background: #4f46e5; }
+        .btn-reset { background: #64748b; color: white; }
+        .btn-reset:hover { background: #475569; }
+
+        .hud { position: absolute; top: 10px; left: 10px; background: var(--glass); padding: 8px; border-radius: 8px; font-size: 0.75rem; border: 1px solid #ddd; z-index: 20; }
+        .hud * { pointer-events: auto; }
+        .hud .metrics { pointer-events: none; line-height: 1.7; }
+        .zoom-controls { display:flex; gap:6px; margin-top:6px; }
+        .zoom-controls button { padding:6px 8px; border-radius:6px; border:1px solid rgba(0,0,0,0.06); background:white; cursor:pointer; }
+        .vector-legend { position: absolute; bottom: 10px; left: 10px; font-size: 0.65rem; background: var(--glass); padding: 5px; border-radius: 4px; }
+
+        .tab-btn { padding: 8px 12px; border-radius: 6px; background: #e2e8f0; color: var(--dark); font-weight: 600; font-size: 0.8rem; }
+        .tab-btn:hover { background: #cbd5e1; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        .readouts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+        .readout { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; }
+        .readout span { font-size: 0.7rem; color: #64748b; display: block; }
+        .readout strong { font-size: 1rem; color: var(--dark); }
+
+        .quiz-q { padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+        .quiz-q:last-child { border-bottom: none; }
+        .quiz-q > strong { display: block; margin-bottom: 8px; font-size: 0.9rem; }
+        .quiz-q label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; margin: 3px 6px 3px 0; cursor: pointer; font-weight: 500; }
+        .quiz-q label:hover { background: #eef2ff; border-color: #6366f1; }
+        .explanation {
+            margin-top: 8px; padding: 10px 12px; border-radius: 6px; font-size: 0.82rem; line-height: 1.55;
+            background: #eef2ff; border-left: 3px solid #6366f1; color: #1e293b;
+        }
+        .explanation.correct-box { background: #ecfdf5; border-left-color: #10b981; }
+        .explanation.wrong-box { background: #fef2f2; border-left-color: #dc2626; }
+        .explanation strong { display: block; margin-bottom: 3px; }
+
+        .quiz-section { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6366f1; margin: 12px 0 6px 0; }
+        .quiz-section:first-child { margin-top: 0; }
+
+        #quiz-result { margin-top: 10px; padding: 12px; border-radius: 8px; background: #eef2ff; border: 1px solid #c7d2fe; font-weight: 700; text-align: center; }
+
+        table.formulas { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 6px; }
+        table.formulas th, table.formulas td { border: 1px solid #e2e8f0; padding: 6px 8px; text-align: left; }
+        table.formulas th { background: #f1f5f9; font-weight: 600; }
+        .eq { font-family: 'JetBrains Mono', ui-monospace, monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.82rem; }
+        .note { font-size: 0.82rem; color: #475569; margin-top: 8px; line-height: 1.5; }
+
+        textarea { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 0.85rem; min-height: 64px; resize: vertical; }
+
+        @media (max-width: 768px) {
+            .bottom-panel { flex-direction: column; }
+            .controls { border-right: none; border-bottom: 1px solid #eee; min-width: 0; }
+            .analysis { min-width: 0; }
+            .readouts { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">🔭 Telescope Simulator Interactive Lab</h2>
+    <small>Explore Refracting &amp; Reflecting Telescopes · Magnification · Resolution</small>
+</header>
+
+<div class="lab-container">
+    <div id="sim-area">
+        <div class="hud">
+            <b>LIVE METRICS</b><br>
+            <div class="metrics">
+                Type: <span id="hud-type">Refracting</span><br>
+                Magnification: <span id="hud-mag">10.0×</span><br>
+                f_obj: <span id="hud-fo">1000</span> mm<br>
+                f_eye: <span id="hud-fe">100</span> mm
+            </div>
+            <div style="margin-top:6px; font-size:0.75rem;">
+                <label style="display:inline-flex;align-items:center;gap:6px;"><input id="full-scroll-toggle" type="checkbox"> Enable Full Page Scrolling</label>
+            </div>
+        </div>
+        <div class="vector-legend">
+            <span style="color:#6366f1">— Light rays</span> | <span style="color:#f43f5e">● Focal point</span> | <span style="color:#10b981">○ Lens/Mirror</span>
+        </div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div id="splitter" class="splitter" title="Drag to resize simulation area"></div>
+
+    <div class="bottom-panel">
+        <div class="controls">
+            <h4>🧪 Lab Settings</h4>
+
+            <div class="input-row">
+                <label>Telescope type</label>
+                <select id="type">
+                    <option value="refracting" selected>Refracting (lens-based)</option>
+                    <option value="reflecting">Reflecting (mirror-based)</option>
+                </select>
+            </div>
+
+            <div class="input-row">
+                <label>Objective focal length f_obj: <span id="v-fo">1000</span> mm</label>
+                <input type="range" id="fo" min="100" max="3000" step="50" value="1000">
+            </div>
+
+            <div class="input-row">
+                <label>Eyepiece focal length f_eye: <span id="v-fe">100</span> mm</label>
+                <input type="range" id="fe" min="5" max="250" step="5" value="100">
+            </div>
+
+            <div class="input-row">
+                <label>Objective aperture D: <span id="v-d">100</span> mm</label>
+                <input type="range" id="d" min="10" max="500" step="10" value="100">
+            </div>
+
+            <div class="input-row">
+                <label>Wavelength λ: <span id="v-wl">550</span> nm</label>
+                <input type="range" id="wl" min="400" max="700" step="10" value="550">
+            </div>
+
+            <div class="btn-grid">
+                <button class="btn-fire" id="btn-observe">🔭 Observe</button>
+                <button class="btn-reset" id="btn-reset">↺ Reset</button>
+            </div>
+        </div>
+
+        <div class="analysis">
+            <h4>📊 Learn &amp; Practice</h4>
+
+            <div class="readouts">
+                <div class="readout"><span>Angular magnification M</span><strong id="ro-m">10.0×</strong></div>
+                <div class="readout"><span>Focal ratio (f/#)</span><strong id="ro-fratio">f/10</strong></div>
+                <div class="readout"><span>Tube length L</span><strong id="ro-tube">1100 mm</strong></div>
+                <div class="readout"><span>Resolving power θ_min</span><strong id="ro-res">1.34″</strong></div>
+                <div class="readout"><span>Light-gathering area</span><strong id="ro-area">7854 mm²</strong></div>
+                <div class="readout"><span>Limiting magnitude</span><strong id="ro-mag">+11.3</strong></div>
+            </div>
+
+            <div class="card">
+                <div class="tabs" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                    <button class="tab-btn active" data-tab="formulas">Formulas</button>
+                    <button class="tab-btn" data-tab="quiz">Quiz</button>
+                    <button class="tab-btn" data-tab="challenges">Challenges</button>
+                    <button class="tab-btn" data-tab="notebook">Notebook</button>
+                </div>
+
+                <!-- FORMULAS -->
+                <div id="formulas" class="tab-panel active">
+                    <h3 style="margin:6px 0 8px 0;">Core Formulas — Telescopes</h3>
+                    <ul style="font-size:0.9rem; line-height:1.6; padding-left:1rem; margin:0;">
+                        <li><b>Angular magnification:</b> M = f_obj / f_eye</li>
+                        <li><b>Tube length (refracting):</b> L = f_obj + f_eye</li>
+                        <li><b>Tube length (reflecting):</b> L ≈ f_obj (with flat secondary)</li>
+                        <li><b>Focal ratio:</b> f/# = f_obj / D</li>
+                        <li><b>Resolving power (Rayleigh):</b> θ_min = 1.22 λ / D</li>
+                        <li><b>Light-gathering area:</b> A = π (D/2)²</li>
+                        <li><b>Limiting magnitude:</b> m_lim ≈ 2 + 5·log₁₀(D in mm)</li>
+                        <li><b>Angular size viewed:</b> θ' = M · θ_original</li>
+                    </ul>
+                    <p class="note"><b>💡 Quick tips:</b> Longer f_obj and shorter f_eye give higher magnification. Larger D collects more light AND gives finer resolution — which is why bigger telescopes see fainter, sharper objects. Optical telescopes record intensity, wavelength, and position — not physical detail beyond the diffraction limit.</p>
+
+                    <table class="formulas" style="margin-top:12px;">
+                        <tr><th>Quantity</th><th>Formula</th><th>Units</th></tr>
+                        <tr><td>Magnification</td><td><span class="eq">M = f_obj / f_eye</span></td><td>×</td></tr>
+                        <tr><td>Resolving power</td><td><span class="eq">θ = 1.22 λ / D</span></td><td>rad</td></tr>
+                        <tr><td>Focal ratio</td><td><span class="eq">f/# = f_obj / D</span></td><td>—</td></tr>
+                        <tr><td>Light area</td><td><span class="eq">A = π (D/2)²</span></td><td>mm²</td></tr>
+                    </table>
+                </div>
+
+                <!-- QUIZ -->
+                <div id="quiz" class="tab-panel" style="max-height:600px; overflow:auto;">
+                    <h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+                    <div class="quiz-section">Basic — Telescope Basics</div>
+
+                    <div class="quiz-q" data-q="q1" data-answer="B">
+                        <strong>1. A telescope's primary purpose in astronomy is to:</strong>
+                        <label><input type="radio" name="q1" value="A"> Magnify physical size of objects</label>
+                        <label><input type="radio" name="q1" value="B"> Collect more light and resolve finer detail</label>
+                        <label><input type="radio" name="q1" value="C"> Make distant stars appear closer</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q2" data-answer="B">
+                        <strong>2. The angular magnification of a telescope is:</strong>
+                        <label><input type="radio" name="q2" value="A"> M = f_eye / f_obj</label>
+                        <label><input type="radio" name="q2" value="B"> M = f_obj / f_eye</label>
+                        <label><input type="radio" name="q2" value="C"> M = f_obj · f_eye</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q3" data-answer="A">
+                        <strong>3. A refracting telescope uses _____ as its objective:</strong>
+                        <label><input type="radio" name="q3" value="A"> A converging lens</label>
+                        <label><input type="radio" name="q3" value="B"> A concave mirror</label>
+                        <label><input type="radio" name="q3" value="C"> A prism</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Intermediate — Resolution &amp; Design</div>
+
+                    <div class="quiz-q" data-q="q4" data-answer="A">
+                        <strong>4. If you double the objective diameter D, light-gathering power:</strong>
+                        <label><input type="radio" name="q4" value="A"> Quadruples (×4)</label>
+                        <label><input type="radio" name="q4" value="B"> Doubles (×2)</label>
+                        <label><input type="radio" name="q4" value="C"> Stays the same</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q5" data-answer="B">
+                        <strong>5. The Rayleigh criterion says resolving power improves (smaller θ_min) when:</strong>
+                        <label><input type="radio" name="q5" value="A"> Wavelength increases</label>
+                        <label><input type="radio" name="q5" value="B"> Aperture D increases</label>
+                        <label><input type="radio" name="q5" value="C"> Focal length shortens</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q6" data-answer="A">
+                        <strong>6. A reflecting telescope's main advantage over refracting is:</strong>
+                        <label><input type="radio" name="q6" value="A"> No chromatic aberration and easier to make large</label>
+                        <label><input type="radio" name="q6" value="B"> Cheaper optics always</label>
+                        <label><input type="radio" name="q6" value="C"> Requires no mirror</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Advanced — Deep Understanding</div>
+
+                    <div class="quiz-q" data-q="q7" data-answer="B">
+                        <strong>7. A telescope with f_obj = 2000 mm and f_eye = 20 mm has magnification:</strong>
+                        <label><input type="radio" name="q7" value="A"> 20×</label>
+                        <label><input type="radio" name="q7" value="B"> 100×</label>
+                        <label><input type="radio" name="q7" value="C"> 200×</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q8" data-answer="A">
+                        <strong>8. An 8-inch (203 mm) telescope compared to a 4-inch (102 mm) telescope collects:</strong>
+                        <label><input type="radio" name="q8" value="A"> About 4× more light</label>
+                        <label><input type="radio" name="q8" value="B"> About 2× more light</label>
+                        <label><input type="radio" name="q8" value="C"> Same amount of light</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q9" data-answer="B">
+                        <strong>9. Astronomers build huge telescopes mainly because:</strong>
+                        <label><input type="radio" name="q9" value="A"> Bigger tubes magnify more</label>
+                        <label><input type="radio" name="q9" value="B"> Larger apertures collect more light and resolve finer details</label>
+                        <label><input type="radio" name="q9" value="C"> They need long focal lengths for photos</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="btn-grid" style="margin-top:12px;">
+                        <button class="btn-fire" id="btn-quiz-check">Submit Quiz</button>
+                        <button class="btn-reset" id="btn-quiz-reset">Reset</button>
+                    </div>
+                    <div id="quiz-result" style="display:none;"></div>
+                </div>
+
+                <!-- CHALLENGES -->
+                <div id="challenges" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Interactive Challenges</h3>
+                    <div style="display:flex; flex-direction:column; gap:8px; font-size:0.9rem;">
+                        <div>
+                            <b>Challenge 1 — High Magnification</b><br>
+                            <button class="btn-fire" data-challenge="highmag">Set 200× magnification</button>
+                        </div>
+                        <div>
+                            <b>Challenge 2 — Wide Field</b><br>
+                            <button class="btn-fire" data-challenge="widefield">Set low mag (25×) with large aperture</button>
+                        </div>
+                        <div>
+                            <b>Challenge 3 — Big Light Bucket</b><br>
+                            <button class="btn-fire" data-challenge="biglight">Max aperture D = 500 mm</button>
+                        </div>
+                        <div>
+                            <b>Challenge 4 — Reflecting Telescope</b><br>
+                            <button class="btn-fire" data-challenge="reflect">Switch to reflecting type</button>
+                        </div>
+                        <div>
+                            <b>Challenge 5 — Best Resolution</b><br>
+                            <button class="btn-fire" data-challenge="resolution">Blue light + max aperture</button>
+                        </div>
+                        <div id="challenge-note" style="color:#0f172a; font-size:0.85rem;"></div>
+                        <div id="challenge-result" style="color:#083344; font-weight:600; margin-top:6px;"></div>
+                    </div>
+                </div>
+
+                <!-- NOTEBOOK -->
+                <div id="notebook" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Experiment Notebook</h3>
+                    <label>Prediction / hypothesis</label>
+                    <textarea id="hypothesis" placeholder="What do you expect to happen, and why?"></textarea>
+                    <label style="margin-top:10px; display:block;">Conclusion / evidence</label>
+                    <textarea id="conclusion" placeholder="Explain what your observations show."></textarea>
+                    <label style="margin-top:10px; display:block;">Recorded measurements</label>
+                    <textarea id="records" readonly style="background:#f8fafc; font-family:monospace; font-size:0.75rem; min-height:100px;"></textarea>
+                    <div class="btn-grid" style="margin-top:10px;">
+                        <button class="btn-fire" id="btn-record">📋 Record</button>
+                        <button class="btn-reset" id="btn-clear-notes">Clear</button>
+                    </div>
+                    <button class="btn-fire" style="margin-top:8px; width:100%;" id="btn-export">⬇ Download Report</button>
+                </div>
+
+            </div>
+
+            <div class="card">
+                <b>Real-world fact:</b> <span id="fact-box" style="font-size:0.85rem;">—</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+"use strict";
+(function () {
+    // === State ===
+    var S = {
+        type: 'refracting',
+        fo: 1000,       // objective focal length (mm)
+        fe: 100,        // eyepiece focal length (mm)
+        d: 100,         // objective aperture (mm)
+        wl: 550,        // wavelength (nm)
+        observing: false,
+        viewAngle: 0,   // for animated panning
+        records: []
+    };
+
+    var $ = function (id) { return document.getElementById(id); };
+
+    // === Canvas ===
+    var canvas = $('canvas');
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var view = { x: 0, y: 0, scale: 1 };
+
+    function resizeCanvas() {
+        var w = canvas.clientWidth, h = canvas.clientHeight;
+        canvas.width = Math.max(1, Math.round(w * dpr));
+        canvas.height = Math.max(1, Math.round(h * dpr));
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function cw() { return canvas.width / dpr; }
+    function ch() { return canvas.height / dpr; }
+
+    // === Physics calculations ===
+    function getMag() { return S.fo / S.fe; }
+    function getFratio() { return S.fo / S.d; }
+    function getTubeLength() {
+        if (S.type === 'refracting') return S.fo + S.fe;
+        return S.fo; // simplified, ignoring secondary mirror offset
+    }
+    function getResolvingArcsec() {
+        // theta = 1.22 * lambda / D, in radians
+        var lambdaM = S.wl * 1e-9;
+        var dM = S.d * 1e-3;
+        var thetaRad = 1.22 * lambdaM / dM;
+        var thetaArcsec = thetaRad * (180 / Math.PI) * 3600;
+        return thetaArcsec;
+    }
+    function getLightArea() {
+        var r = S.d / 2;
+        return Math.PI * r * r;
+    }
+    function getLimitingMag() {
+        // m_lim = 2 + 5*log10(D_mm), D in mm (approx, dark sky)
+        return 2 + 5 * Math.log10(S.d);
+    }
+
+    // === Drawing ===
+    function drawScene() {
+        var w = cw(), h = ch();
+        ctx.fillStyle = '#0a0f1f';   // dark sky background
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.save();
+        ctx.translate(view.x, view.y);
+        ctx.scale(view.scale, view.scale);
+
+        var W = w / view.scale, H = h / view.scale;
+
+        // Star field
+        drawStars(W, H);
+
+        // Telescope on bottom half of canvas
+        var scopeY = H * 0.62;
+
+        if (S.type === 'refracting') drawRefractor(W, H, scopeY);
+        else drawReflector(W, H, scopeY);
+
+        // Field of view inset (what you see through the eyepiece)
+        drawViewInset(W, H);
+
+        ctx.restore();
+
+        // Caption
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText(getCaption(), w / 2, h - 8);
+    }
+
+    function getCaption() {
+        if (S.type === 'refracting') return 'Refracting telescope — light refracts through the objective lens';
+        return 'Reflecting telescope — light reflects off the primary mirror';
+    }
+
+    function drawStars(W, H) {
+        // deterministic star field
+        var seed = 12345;
+        function rand() {
+            seed = (seed * 9301 + 49297) % 233280;
+            return seed / 233280;
+        }
+        for (var i = 0; i < 80; i++) {
+            var x = rand() * W;
+            var y = rand() * H * 0.5;
+            var r = rand() * 1.5 + 0.3;
+            var tw = 0.5 + 0.5 * Math.sin(Date.now() * 0.002 + i * 0.5);
+            ctx.fillStyle = 'rgba(255,255,255,' + (0.3 + tw * 0.7) + ')';
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    function drawRefractor(W, H, scopeY) {
+        var tubeX = W * 0.1;
+        var tubeW = W * 0.7;
+        var tubeH = 28;
+        var tubeY = scopeY;
+        var eyeX = tubeX + tubeW;
+        var objX = tubeX + 120;
+
+        // Tube
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(tubeX, tubeY, tubeW, tubeH);
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(tubeX, tubeY, tubeW, tubeH);
+
+        // Objective lens (biconvex)
+        ctx.fillStyle = '#10b981';
+        ctx.beginPath();
+        ctx.ellipse(objX, tubeY + tubeH / 2, 8, 20, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#065f46';
+        ctx.stroke();
+
+        // Eyepiece lens (small)
+        ctx.fillStyle = '#10b981';
+        ctx.beginPath();
+        ctx.ellipse(eyeX - 10, tubeY + tubeH / 2, 5, 10, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Labels
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Objective lens', objX, tubeY + tubeH + 20);
+        ctx.fillText('Eyepiece', eyeX - 10, tubeY + tubeH + 20);
+        ctx.fillText('f_obj = ' + S.fo + ' mm', objX, tubeY - 12);
+        ctx.fillText('f_eye = ' + S.fe + ' mm', eyeX - 10, tubeY - 12);
+
+        // Focal point marker
+        var fpX = objX + S.fo * 0.05; // scaled for visualization
+        var fpY = tubeY + tubeH / 2;
+        if (fpX < eyeX) {
+            ctx.fillStyle = '#f43f5e';
+            ctx.beginPath();
+            ctx.arc(fpX, fpY, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#94a3b8';
+            ctx.fillText('Focal point', fpX, fpY - 12);
+        }
+
+        // Incoming light rays (from distant object, parallel)
+        var rayY1 = tubeY + 8;
+        var rayY2 = tubeY + tubeH - 8;
+        ctx.strokeStyle = '#6366f1';
+        ctx.lineWidth = 1.5;
+        // Top parallel ray
+        ctx.beginPath();
+        ctx.moveTo(10, rayY1);
+        ctx.lineTo(objX, rayY1);
+        // refracts through focal point
+        ctx.lineTo(fpX, fpY);
+        ctx.lineTo(eyeX - 10, tubeY + tubeH / 2 - 5);
+        ctx.stroke();
+        // Bottom parallel ray
+        ctx.beginPath();
+        ctx.moveTo(10, rayY2);
+        ctx.lineTo(objX, rayY2);
+        ctx.lineTo(fpX, fpY);
+        ctx.lineTo(eyeX - 10, tubeY + tubeH / 2 + 5);
+        ctx.stroke();
+        // Parallel ray through center
+        ctx.beginPath();
+        ctx.moveTo(10, tubeY + tubeH / 2);
+        ctx.lineTo(objX, tubeY + tubeH / 2);
+        ctx.lineTo(eyeX - 10, tubeY + tubeH / 2);
+        ctx.stroke();
+
+        // Animated light beam from distant star
+        var t = Date.now() * 0.001;
+        for (var i = 0; i < 6; i++) {
+            var prog = (t * 0.5 + i / 6) % 1;
+            var px = 10 + prog * (objX - 10);
+            ctx.fillStyle = 'rgba(255, 255, 200, 0.8)';
+            ctx.beginPath();
+            ctx.arc(px, rayY1, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(px, rayY2, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Observer eye at eyepiece
+        ctx.fillStyle = '#fef3c7';
+        ctx.beginPath();
+        ctx.arc(eyeX + 8, tubeY + tubeH / 2, 10, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.arc(eyeX + 10, tubeY + tubeH / 2, 4, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    function drawReflector(W, H, scopeY) {
+        var tubeX = W * 0.15;
+        var tubeW = W * 0.65;
+        var tubeH = 80;
+        var tubeY = scopeY - tubeH / 2;
+
+        // Tube
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(tubeX, tubeY, tubeW, tubeH);
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(tubeX, tubeY, tubeW, tubeH);
+
+        // Primary mirror (parabolic) at bottom left
+        var mirX = tubeX + 30;
+        var mirY = tubeY + tubeH;
+        ctx.fillStyle = '#10b981';
+        ctx.beginPath();
+        ctx.ellipse(mirX, mirY - 8, 8, 35, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#065f46';
+        ctx.stroke();
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Primary mirror', mirX + 50, mirY + 20);
+
+        // Secondary mirror (small flat) near top
+        var secX = tubeX + 30;
+        var secY = tubeY + 12;
+        ctx.fillStyle = '#10b981';
+        ctx.beginPath();
+        ctx.ellipse(secX, secY, 20, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#065f46';
+        ctx.stroke();
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText('Secondary', secX + 70, secY - 10);
+
+        // Eyepiece on side of tube
+        var eyeX = tubeX + 30;
+        var eyeY = tubeY - 5;
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(eyeX - 8, eyeY - 20, 16, 20);
+        ctx.fillStyle = '#10b981';
+        ctx.beginPath();
+        ctx.ellipse(eyeX, eyeY - 20, 5, 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText('Eyepiece', eyeX + 70, eyeY - 25);
+
+        // Incoming light rays from star (parallel) hitting primary
+        ctx.strokeStyle = '#6366f1';
+        ctx.lineWidth = 1.5;
+        // Ray from top-right
+        ctx.beginPath();
+        ctx.moveTo(tubeX + tubeW, tubeY + 15);
+        ctx.lineTo(secX, secY);
+        ctx.lineTo(mirX, mirY - 30);
+        ctx.stroke();
+        // Ray from right-center
+        ctx.beginPath();
+        ctx.moveTo(tubeX + tubeW, tubeY + tubeH / 2);
+        ctx.lineTo(secX, secY);
+        ctx.lineTo(mirX, mirY - 8);
+        ctx.stroke();
+        // Ray reflecting up from primary to secondary
+        ctx.beginPath();
+        ctx.moveTo(mirX, mirY - 30);
+        ctx.lineTo(secX, secY);
+        ctx.lineTo(eyeX, eyeY - 20);
+        ctx.stroke();
+
+        // Animated light from primary to secondary
+        var t = Date.now() * 0.001;
+        for (var i = 0; i < 4; i++) {
+            var prog = (t * 0.6 + i / 4) % 1;
+            var px = mirX + (secX - mirX) * prog;
+            var py = (mirY - 8) + (secY - (mirY - 8)) * prog;
+            ctx.fillStyle = 'rgba(255, 255, 200, 0.8)';
+            ctx.beginPath();
+            ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Labels
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('f_obj = ' + S.fo + ' mm', tubeX + tubeW / 2, tubeY + tubeH + 22);
+    }
+
+    function drawViewInset(W, H) {
+        // Show what observer sees through eyepiece
+        var insetW = 160, insetH = 160;
+        var ix = W - insetW - 20, iy = 20;
+
+        // Sky background in eyepiece view
+        var grad = ctx.createRadialGradient(ix + insetW/2, iy + insetH/2, 0, ix + insetW/2, iy + insetH/2, insetW/2);
+        grad.addColorStop(0, '#1e1b4b');
+        grad.addColorStop(1, '#0a0f1f');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(ix + insetW/2, iy + insetH/2, insetW/2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Determine what's visible: bright objects if aperture big, faint if small
+        var magFactor = getMag();
+        var lightArea = getLightArea();
+        var visibleStars = Math.min(30, Math.floor(lightArea / 500));
+
+        // Star positions (deterministic, zoom by magnification)
+        var seed = 777;
+        function rand() {
+            seed = (seed * 9301 + 49297) % 233280;
+            return seed / 233280;
+        }
+        for (var i = 0; i < visibleStars; i++) {
+            var ang = rand() * Math.PI * 2;
+            var dist = rand() * (insetW / 2 - 10);
+            var sx = ix + insetW/2 + Math.cos(ang) * dist;
+            var sy = iy + insetH/2 + Math.sin(ang) * dist;
+            var brightness = 0.4 + rand() * 0.6;
+            ctx.fillStyle = 'rgba(255,255,255,' + brightness + ')';
+            ctx.beginPath();
+            ctx.arc(sx, sy, 1.2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Central target star — appears bigger with higher magnification
+        var targetSize = Math.min(6, 1 + magFactor * 0.15);
+        var pulse = 0.85 + 0.15 * Math.sin(Date.now() * 0.003);
+        ctx.fillStyle = 'rgba(255, 240, 200, ' + pulse + ')';
+        ctx.beginPath();
+        ctx.arc(ix + insetW/2, iy + insetH/2, targetSize, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Diffraction spike if magnification high enough
+        if (magFactor > 40) {
+            ctx.strokeStyle = 'rgba(255, 240, 200, 0.5)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(ix + insetW/2 - targetSize * 3, iy + insetH/2);
+            ctx.lineTo(ix + insetW/2 + targetSize * 3, iy + insetH/2);
+            ctx.moveTo(ix + insetW/2, iy + insetH/2 - targetSize * 3);
+            ctx.lineTo(ix + insetW/2, iy + insetH/2 + targetSize * 3);
+            ctx.stroke();
+        }
+
+        // Ring border
+        ctx.strokeStyle = '#6366f1';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(ix + insetW/2, iy + insetH/2, insetW/2, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Label
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = 'bold 11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Eyepiece view', ix + insetW/2, iy + insetH + 16);
+        ctx.font = '10px Inter';
+        ctx.fillText('M = ' + magFactor.toFixed(1) + '×', ix + insetW/2, iy + insetH + 30);
+    }
+
+    // === Readouts ===
+    function updateReadouts() {
+        var mag = getMag();
+        var fratio = getFratio();
+        var tubeLen = getTubeLength();
+        var resArcsec = getResolvingArcsec();
+        var area = getLightArea();
+        var limitMag = getLimitingMag();
+
+        $('ro-m').innerText = mag.toFixed(1) + '×';
+        $('ro-fratio').innerText = 'f/' + fratio.toFixed(1);
+        $('ro-tube').innerText = tubeLen.toFixed(0) + ' mm';
+        $('ro-res').innerText = resArcsec.toFixed(2) + '″';
+        $('ro-area').innerText = area.toFixed(0) + ' mm²';
+        $('ro-mag').innerText = '+' + limitMag.toFixed(1);
+
+        $('hud-type').innerText = S.type === 'refracting' ? 'Refracting' : 'Reflecting';
+        $('hud-mag').innerText = mag.toFixed(1) + '×';
+        $('hud-fo').innerText = S.fo;
+        $('hud-fe').innerText = S.fe;
+
+        // Update fact based on settings
+        var fact = '';
+        if (S.d >= 300) fact = 'A ' + S.d + ' mm aperture captures huge light — like professional amateur telescopes that rival the 100-year-old Mt. Wilson 60-inch.';
+        else if (S.fe <= 10) fact = 'A very short eyepiece (f=' + S.fe + ' mm) gives high magnification but a narrow, dim view.';
+        else if (S.type === 'reflecting') fact = 'Newtonian reflectors are popular amateur telescopes — no chromatic aberration, big apertures affordable.';
+        else if (S.fo >= 2000) fact = 'Long focal length refractors give sharp images but become physically huge — the Yerkes 40-inch refractor is 19 m long.';
+        else fact = 'The Hubble Space Telescope has a 2.4 m mirror — D = 2400 mm. Its resolving power is about 0.05 arcseconds.';
+        $('fact-box').innerText = fact;
+    }
+
+    // === Quiz ===
+    var QUIZ_EXPLAIN = {
+        q1: { correct: 'B', why: 'A telescope is fundamentally a <b>light bucket</b>. The larger the aperture, the more photons it collects, and the finer the detail it can resolve. Magnification is secondary — a high-mag telescope with a tiny aperture shows nothing but a blurry, dim image.', tip: 'This is why observatories build 10-meter mirrors, not 10-meter eyepieces.' },
+        q2: { correct: 'B', why: 'Angular magnification M = f_obj / f_eye. Long objective + short eyepiece = high magnification.', tip: 'For refractors, tube length ≈ f_obj + f_eye.' },
+        q3: { correct: 'A', why: 'A <b>refracting</b> telescope uses a <b>converging (convex) lens</b> as the objective. Reflecting telescopes use concave mirrors.', tip: 'The largest refractor ever built is the Yerkes 40-inch (102 cm).' },
+        q4: { correct: 'A', why: 'Light-gathering power ∝ area ∝ D². Doubling D gives 4× the area, so 4× more light collected.', tip: 'An 8-inch telescope collects about 4× the light of a 4-inch telescope — you can see 4× fainter stars.' },
+        q5: { correct: 'B', why: 'Rayleigh criterion: θ_min = 1.22 λ / D. Larger D → smaller θ_min → finer detail visible. Shorter λ also helps, but D is what we can build bigger.', tip: 'That is why radio telescopes need huge dishes — λ is much larger.' },
+        q6: { correct: 'A', why: 'Reflectors have <b>no chromatic aberration</b> (mirrors focus all wavelengths equally) and can be built with much larger apertures because a mirror is supported from behind — no glass sag.', tip: 'Every very-large research telescope today is a reflector.' },
+        q7: { correct: 'B', why: 'M = f_obj / f_eye = 2000 / 20 = <b>100×</b>.', tip: 'Practical amateur rule: max useful magnification ≈ 2× aperture in mm, so 100 mm telescope maxes around 200×.' },
+        q8: { correct: 'A', why: 'Area ∝ D². 8-inch / 4-inch = 2, so area ratio = 2² = <b>4×</b> the light.', tip: 'Doubling diameter quadruples light — the single most important spec.' },
+        q9: { correct: 'B', why: 'Big telescopes collect <b>more light</b> (deeper views of faint objects) and <b>resolve finer details</b> (smaller diffraction limit). This is the real reason — not magnification.', tip: 'Keck is 10 m, JWST is 6.5 m — chosen for light and resolution, not magnification.' }
+    };
+
+    function evaluateQuiz() {
+        var qs = document.querySelectorAll('.quiz-q');
+        var score = 0, total = qs.length;
+
+        qs.forEach(function (q) {
+            var name = q.dataset.q;
+            var correct = q.dataset.answer;
+            var chosen = q.querySelector('input[name="' + name + '"]:checked');
+            var expl = q.querySelector('.explanation');
+            var data = QUIZ_EXPLAIN[name];
+
+            expl.hidden = false;
+            expl.className = 'explanation';
+
+            if (chosen && chosen.value === correct) {
+                score++;
+                expl.classList.add('correct-box');
+                expl.innerHTML = '<strong>✓ Correct!</strong>' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            } else {
+                expl.classList.add('wrong-box');
+                var chosenVal = chosen ? chosen.value : '—';
+                expl.innerHTML = '<strong>✗ Correct answer is ' + correct + '</strong>You chose ' + chosenVal + '. ' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            }
+        });
+
+        var pct = Math.round(score / total * 100);
+        var msg = '💪 Keep exploring!';
+        if (pct === 100) msg = '🌟 Perfect score!';
+        else if (pct >= 78) msg = '🎉 Excellent work!';
+        else if (pct >= 55) msg = '👍 Good effort! Review the explanations.';
+
+        var result = $('quiz-result');
+        result.style.display = 'block';
+        result.innerHTML = '<div style="font-size:1.4rem; color:#4338ca;">' + score + '/' + total + ' · ' + pct + '%</div><div style="font-size:0.85rem; color:#334155; margin-top:4px; font-weight:500;">' + msg + '</div>';
+    }
+
+    function resetQuiz() {
+        document.querySelectorAll('.quiz-q').forEach(function (q) {
+            q.querySelectorAll('input[type=radio]').forEach(function (r) { r.checked = false; });
+            var expl = q.querySelector('.explanation');
+            expl.hidden = true;
+            expl.innerHTML = '';
+            expl.className = 'explanation';
+        });
+        $('quiz-result').style.display = 'none';
+        $('quiz-result').innerHTML = '';
+    }
+
+    // === Challenges ===
+    function applyChallenge(id) {
+        var note = $('challenge-note');
+        var cres = $('challenge-result');
+        note.innerText = '';
+        cres.innerText = '';
+
+        if (id === 'highmag') {
+            S.fo = 2000;
+            S.fe = 10;
+            $('fo').value = 2000; $('v-fo').innerText = '2000';
+            $('fe').value = 10; $('v-fe').innerText = '10';
+            note.innerText = 'High magnification (200×) achieved with long f_obj and short f_eye. Notice how dim and zoomed-in the eyepiece view becomes.';
+            cres.innerText = 'M = ' + getMag().toFixed(0) + '× · field of view narrow';
+        } else if (id === 'widefield') {
+            S.fo = 500;
+            S.fe = 20;
+            S.d = 200;
+            $('fo').value = 500; $('v-fo').innerText = '500';
+            $('fe').value = 20; $('v-fe').innerText = '20';
+            $('d').value = 200; $('v-d').innerText = '200';
+            note.innerText = 'Wide-field config: M = 25×, big aperture, easy to find objects.';
+            cres.innerText = 'M = ' + getMag().toFixed(0) + '× · D = 200 mm · f/' + getFratio().toFixed(1);
+        } else if (id === 'biglight') {
+            S.d = 500;
+            $('d').value = 500; $('v-d').innerText = '500';
+            note.innerText = 'Max aperture D = 500 mm — this is 25× more light than a 100 mm telescope.';
+            cres.innerText = 'Area = ' + getLightArea().toFixed(0) + ' mm² · limiting mag = +' + getLimitingMag().toFixed(1) + ' · resolution = ' + getResolvingArcsec().toFixed(2) + '″';
+        } else if (id === 'reflect') {
+            S.type = 'reflecting';
+            $('type').value = 'reflecting';
+            note.innerText = 'Reflecting telescope: light bounces off primary mirror to secondary, then to eyepiece. No chromatic aberration.';
+            cres.innerText = 'Tube length ≈ f_obj = ' + S.fo + ' mm';
+        } else if (id === 'resolution') {
+            S.d = 500;
+            S.wl = 400;
+            $('d').value = 500; $('v-d').innerText = '500';
+            $('wl').value = 400; $('v-wl').innerText = '400';
+            note.innerText = 'Blue light (shorter λ) + max aperture = best possible resolution for this setup.';
+            cres.innerText = 'θ_min = ' + getResolvingArcsec().toFixed(2) + '″ (best possible)';
+        }
+        updateReadouts();
+    }
+
+    // === Notebook ===
+    function recordMeasurement() {
+        var line = new Date().toLocaleTimeString() + ' | ' + S.type + ' | f_obj=' + S.fo + ' mm | f_eye=' + S.fe + ' mm | D=' + S.d + ' mm | λ=' + S.wl + ' nm | M=' + getMag().toFixed(1) + '× | f/' + getFratio().toFixed(1) + ' | θ=' + getResolvingArcsec().toFixed(2) + '″ | area=' + getLightArea().toFixed(0) + ' mm²';
+        S.records.push(line);
+        $('records').value = S.records.join('\n');
+        $('records').scrollTop = $('records').scrollHeight;
+    }
+
+    function downloadReport() {
+        var text = 'LEARNIFY - TELESCOPE SIMULATOR - LAB REPORT\n' +
+            'Date: ' + new Date().toLocaleString() + '\n\n' +
+            'CURRENT STATE\n' +
+            'Type: ' + S.type + '\n' +
+            'Objective focal length f_obj = ' + S.fo + ' mm\n' +
+            'Eyepiece focal length f_eye = ' + S.fe + ' mm\n' +
+            'Aperture D = ' + S.d + ' mm\n' +
+            'Wavelength λ = ' + S.wl + ' nm\n' +
+            'Angular magnification M = ' + getMag().toFixed(2) + 'x\n' +
+            'Focal ratio = f/' + getFratio().toFixed(2) + '\n' +
+            'Tube length = ' + getTubeLength().toFixed(0) + ' mm\n' +
+            'Resolving power θ_min = ' + getResolvingArcsec().toFixed(3) + ' arcsec\n' +
+            'Light-gathering area = ' + getLightArea().toFixed(0) + ' mm2\n' +
+            'Limiting magnitude = +' + getLimitingMag().toFixed(2) + '\n\n' +
+            'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+            'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+            'MEASUREMENTS\n' + $('records').value + '\n\n' +
+            'LIMITATIONS\nIdeal thin-lens approximation for refractors. Reflector tube length ignores secondary mirror offset. Rayleigh criterion for circular aperture. Educational use only.\n';
+        var blob = new Blob([text], { type: 'text/plain' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'telescope-report.txt';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    // === Animation ===
+    function animate() {
+        drawScene();
+        updateReadouts();
+        requestAnimationFrame(animate);
+    }
+
+    // === Event wiring ===
+    $('type').addEventListener('change', function (e) { S.type = e.target.value; });
+    $('fo').addEventListener('input', function (e) {
+        S.fo = parseInt(e.target.value, 10);
+        $('v-fo').innerText = S.fo;
+    });
+    $('fe').addEventListener('input', function (e) {
+        S.fe = parseInt(e.target.value, 10);
+        $('v-fe').innerText = S.fe;
+    });
+    $('d').addEventListener('input', function (e) {
+        S.d = parseInt(e.target.value, 10);
+        $('v-d').innerText = S.d;
+    });
+    $('wl').addEventListener('input', function (e) {
+        S.wl = parseInt(e.target.value, 10);
+        $('v-wl').innerText = S.wl;
+    });
+    $('btn-observe').addEventListener('click', function () {
+        S.observing = !S.observing;
+        $('btn-observe').innerText = S.observing ? '⏸ Stop observing' : '🔭 Observe';
+    });
+    $('btn-reset').addEventListener('click', function () {
+        S.type = 'refracting';
+        S.fo = 1000;
+        S.fe = 100;
+        S.d = 100;
+        S.wl = 550;
+        S.observing = false;
+        $('type').value = 'refracting';
+        $('fo').value = 1000; $('v-fo').innerText = '1000';
+        $('fe').value = 100; $('v-fe').innerText = '100';
+        $('d').value = 100; $('v-d').innerText = '100';
+        $('wl').value = 550; $('v-wl').innerText = '550';
+        $('btn-observe').innerText = '🔭 Observe';
+        updateReadouts();
+    });
+
+    // Tabs
+    document.querySelectorAll('.tab-btn[data-tab]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+            document.querySelectorAll('.tab-btn[data-tab]').forEach(function (b) { b.classList.remove('active'); });
+            document.getElementById(btn.dataset.tab).classList.add('active');
+            btn.classList.add('active');
+        });
+    });
+
+    // Challenge buttons
+    document.querySelectorAll('[data-challenge]').forEach(function (btn) {
+        btn.addEventListener('click', function () { applyChallenge(btn.dataset.challenge); });
+    });
+
+    $('btn-quiz-check').addEventListener('click', evaluateQuiz);
+    $('btn-quiz-reset').addEventListener('click', resetQuiz);
+
+    $('btn-record').addEventListener('click', recordMeasurement);
+    $('btn-clear-notes').addEventListener('click', function () {
+        if (!confirm('Clear all notebook fields?')) return;
+        $('hypothesis').value = '';
+        $('conclusion').value = '';
+        $('records').value = '';
+        S.records = [];
+    });
+    $('btn-export').addEventListener('click', downloadReport);
+
+    // Zoom & pan
+    var fullScroll = false;
+    var pointers = new Map();
+    var pinch = null;
+
+    $('full-scroll-toggle').addEventListener('change', function (e) {
+        fullScroll = e.target.checked;
+        canvas.style.touchAction = fullScroll ? 'auto' : 'none';
+        pointers.clear();
+        pinch = null;
+    });
+
+    function getPos(e) {
+        var r = canvas.getBoundingClientRect();
+        return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+
+    canvas.addEventListener('wheel', function (e) {
+        if (fullScroll) return;
+        e.preventDefault();
+        var cx = e.offsetX, cy = e.offsetY;
+        var wx = (cx - view.x) / view.scale;
+        var wy = (cy - view.y) / view.scale;
+        var factor = Math.exp(-e.deltaY * 0.0015);
+        view.scale = Math.max(0.3, Math.min(5, view.scale * factor));
+        view.x = cx - wx * view.scale;
+        view.y = cy - wy * view.scale;
+    }, { passive: false });
+
+    canvas.addEventListener('pointerdown', function (e) {
+        if (fullScroll) return;
+        canvas.setPointerCapture(e.pointerId);
+        pointers.set(e.pointerId, getPos(e));
+        if (pointers.size === 2) {
+            var pts = Array.from(pointers.values());
+            pinch = { dist: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y), startScale: view.scale };
+        }
+    });
+    canvas.addEventListener('pointermove', function (e) {
+        if (fullScroll || !pointers.has(e.pointerId)) return;
+        var prev = pointers.get(e.pointerId);
+        var pos = getPos(e);
+        pointers.set(e.pointerId, pos);
+        if (pointers.size === 1 && !pinch) {
+            view.x += pos.x - prev.x;
+            view.y += pos.y - prev.y;
+        } else if (pointers.size === 2 && pinch) {
+            var pts = Array.from(pointers.values());
+            var d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+            view.scale = Math.max(0.3, Math.min(5, pinch.startScale * d / pinch.dist));
+        }
+    });
+    canvas.addEventListener('pointerup', function (e) {
+        if (fullScroll) return;
+        pointers.delete(e.pointerId);
+        try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
+        if (pointers.size < 2) pinch = null;
+    });
+    canvas.addEventListener('pointercancel', function (e) {
+        pointers.delete(e.pointerId);
+        pinch = null;
+    });
+
+    // Zoom controls
+    (function () {
+        var hud = document.querySelector('.hud');
+        if (!hud) return;
+        var z = document.createElement('div');
+        z.className = 'zoom-controls';
+        z.innerHTML = '<button id="zoom-out">-</button><button id="zoom-reset">Reset</button><button id="zoom-in">+</button>';
+        hud.appendChild(z);
+        $('zoom-in').addEventListener('click', function () { view.scale = Math.min(5, view.scale * 1.25); });
+        $('zoom-out').addEventListener('click', function () { view.scale = Math.max(0.3, view.scale / 1.25); });
+        $('zoom-reset').addEventListener('click', function () { view.x = 0; view.y = 0; view.scale = 1; });
+    })();
+
+    // Splitter
+    (function () {
+        var sim = $('sim-area'), splitter = $('splitter');
+        if (!sim || !splitter) return;
+        var dragging = false, startY = 0, startH = 0;
+        var minH = 160, maxH = window.innerHeight - 220;
+
+        splitter.addEventListener('pointerdown', function (e) {
+            e.preventDefault();
+            dragging = true;
+            startY = e.clientY;
+            startH = sim.getBoundingClientRect().height;
+            try { splitter.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+        window.addEventListener('pointermove', function (e) {
+            if (!dragging) return;
+            var dy = e.clientY - startY;
+            var nh = Math.max(minH, Math.min(maxH, Math.round(startH + dy)));
+            sim.style.flex = '0 0 ' + nh + 'px';
+            resizeCanvas();
+        });
+        window.addEventListener('pointerup', function (e) {
+            if (!dragging) return;
+            dragging = false;
+            try { splitter.releasePointerCapture(e.pointerId); } catch (err) {}
+        });
+        splitter.addEventListener('dblclick', function () {
+            sim.style.flex = '';
+            resizeCanvas();
+        });
+    })();
+
+    window.addEventListener('resize', function () { resizeCanvas(); });
+
+    // === Boot ===
+    resizeCanvas();
+    updateReadouts();
+    animate();
+})();
+</script>
+</body>
+</html>

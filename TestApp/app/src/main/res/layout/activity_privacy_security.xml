@@ -4,24 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_off_white"
+    android:background="@color/surface_light"
     tools:context=".PrivacySecurityActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/surface_white"
-        app:elevation="0dp">
+        android:background="@color/surface_card"
+        app:elevation="1dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/privacyToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="?attr/homeAsUpIndicator"
-            app:navigationIconTint="@color/text_primary_dark"
+            app:navigationIconTint="@color/text_primary_slate"
             app:title="@string/settings_privacy_security"
             app:titleCentered="true"
-            app:titleTextColor="@color/text_primary_dark" />
+            app:titleTextColor="@color/text_primary_slate" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -37,50 +37,235 @@
             android:paddingBottom="40dp">
 
             <!-- SECURITY SECTION -->
-            <TextView style="@style/SettingsSectionHeader" android:text="@string/section_security" />
-            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="@string/section_security"
+                android:textColor="@color/sapphire_primary" />
 
-                    <LinearLayout android:id="@+id/llChangePassword" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_lock_idle_lock" />
-                        <TextView style="@style/SettingsItemText" android:text="@string/action_change_password" />
-                        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_media_next" android:alpha="0.3" app:tint="@color/text_secondary_grey" />
+            <com.google.android.material.card.MaterialCardView
+                style="@style/SettingsCard"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/llChangePassword"
+                        style="@style/SettingsItem"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <FrameLayout
+                            android:layout_width="38dp"
+                            android:layout_height="38dp"
+                            android:background="@drawable/bg_icon_container_sapphire">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_lock"
+                                app:tint="@color/sapphire_primary" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/SettingsItemText"
+                                android:layout_width="wrap_content"
+                                android:text="@string/action_change_password" />
+
+                            <TextView
+                                style="@style/SettingsItemDescription"
+                                android:text="Update your account password with current verification" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/text_secondary_slate" />
                     </LinearLayout>
 
                     <View style="@style/SettingsDivider" />
 
-                    <LinearLayout android:id="@+id/llTwoFactor" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_dialog_dialer" />
-                        <TextView style="@style/SettingsItemText" android:text="@string/action_two_factor" />
-                        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_media_next" android:alpha="0.3" app:tint="@color/text_secondary_grey" />
+                    <LinearLayout
+                        android:id="@+id/llTwoFactor"
+                        style="@style/SettingsItem"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <FrameLayout
+                            android:layout_width="38dp"
+                            android:layout_height="38dp"
+                            android:background="@drawable/bg_icon_container_emerald">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_verified_check"
+                                app:tint="@color/emerald_accent" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/SettingsItemText"
+                                android:layout_width="wrap_content"
+                                android:text="@string/action_two_factor" />
+
+                            <TextView
+                                style="@style/SettingsItemDescription"
+                                android:text="Add secondary verification to secure your student portal" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/text_secondary_slate" />
                     </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <!-- DATA SECTION -->
-            <TextView style="@style/SettingsSectionHeader" android:text="@string/section_data" />
-            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="@string/section_data"
+                android:textColor="@color/sapphire_primary" />
 
-                    <LinearLayout android:id="@+id/llExportData" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/stat_sys_download" />
-                        <TextView style="@style/SettingsItemText" android:text="@string/action_export_data" />
-                        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_media_next" android:alpha="0.3" app:tint="@color/text_secondary_grey" />
+            <com.google.android.material.card.MaterialCardView
+                style="@style/SettingsCard"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/llExportData"
+                        style="@style/SettingsItem"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <FrameLayout
+                            android:layout_width="38dp"
+                            android:layout_height="38dp"
+                            android:background="@drawable/bg_icon_container_teal">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_database"
+                                app:tint="@color/teal_accent" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/SettingsItemText"
+                                android:layout_width="wrap_content"
+                                android:text="@string/action_export_data" />
+
+                            <TextView
+                                style="@style/SettingsItemDescription"
+                                android:text="Export learning stats, quiz scores, and profile records (JSON)" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/text_secondary_slate" />
                     </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <!-- DANGER ZONE -->
-            <TextView style="@style/SettingsSectionHeader" android:text="@string/section_danger_zone" android:textColor="@color/danger_red" />
-            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard" app:strokeColor="@color/danger_red">
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="@string/section_danger_zone"
+                android:textColor="@color/rose_accent" />
 
-                    <LinearLayout android:id="@+id/llDeleteAccount" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_menu_delete" app:tint="@color/danger_red" />
-                        <TextView style="@style/SettingsItemText" android:text="@string/action_delete_account" android:textColor="@color/danger_red" />
-                        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_media_next" android:alpha="0.3" app:tint="@color/danger_red" />
+            <com.google.android.material.card.MaterialCardView
+                style="@style/SettingsCard"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#FECDD3"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/llDeleteAccount"
+                        style="@style/SettingsItem"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <FrameLayout
+                            android:layout_width="38dp"
+                            android:layout_height="38dp"
+                            android:background="@drawable/bg_icon_container_rose">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_trash"
+                                app:tint="@color/rose_accent" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/SettingsItemText"
+                                android:layout_width="wrap_content"
+                                android:text="@string/action_delete_account"
+                                android:textColor="@color/rose_accent" />
+
+                            <TextView
+                                style="@style/SettingsItemDescription"
+                                android:text="Permanently erase account, certificates, and academic records"
+                                android:textColor="#9E1236" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/rose_accent" />
                     </LinearLayout>
 
                 </LinearLayout>

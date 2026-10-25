@@ -50,25 +50,26 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         // 2. Specialized Flow: Various Notification Types
         if ("email_verification".equals(type)) {
-            title = "📧 Verification Code: " + extraData;
+            title = "Verification Code: " + extraData;
             message = "Confirm registration for " + email + ". Tap to verify.";
-            Uri verifyUri = Uri.parse("learnify://verify-email?token=" + extraData + "&email=" + email);
-            targetIntent = new Intent(Intent.ACTION_VIEW, verifyUri);
-            targetIntent.setPackage(context.getPackageName());
+            targetIntent = new Intent(context, EmailVerificationActivity.class);
+            targetIntent.putExtra("EMAIL", email);
+            targetIntent.putExtra("USERNAME", email);
+            targetIntent.putExtra("OTP_TOKEN", extraData);
         } else if ("welcome".equals(type)) {
-            title = "🎓 Welcome to Learnify!";
+            title = "Welcome to Learnify";
             message = "We're glad to have you. Explore your dashboard to start learning.";
             targetIntent = new Intent(context, DashboardActivity.class);
         } else if ("motivation".equals(type)) {
-            title = "🌅 Good Morning Student!";
-            message = "Believe in yourself and all that you are. Today is a great day to learn something new!";
+            title = "Daily Study Motivation";
+            message = "Believe in yourself and all that you are. Today is a great day to learn something new.";
             targetIntent = new Intent(context, DashboardActivity.class);
         } else if ("login_reminder".equals(type)) {
-            title = "🔔 We miss you!";
-            message = "It's been 24 hours since your last session. Keep your streak alive and study now!";
+            title = "Study Session Reminder";
+            message = "It's been 24 hours since your last session. Keep your streak alive and study now.";
             targetIntent = new Intent(context, DashboardActivity.class);
         } else if ("homework".equals(type)) {
-            title = "📝 Study Task Reminder";
+            title = "Study Task Reminder";
             message = titleExtra != null ? "Upcoming Deadline: " + titleExtra : "You have pending academic tasks.";
             targetIntent = new Intent(context, TasksActivity.class);
         } else if ("ANNOUNCEMENT".equals(type) || "CONTENT".equals(type)) {

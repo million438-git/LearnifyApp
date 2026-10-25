@@ -4,143 +4,200 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/slate_50">
+    android:background="@color/surface_light">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/surface_card"
+        app:elevation="0dp">
+
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/white"
-            app:titleTextColor="@color/slate_900" />
+            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:navigationIconTint="@color/text_primary_slate"
+            app:title="Linked Accounts"
+            app:titleCentered="true"
+            app:titleTextColor="@color/text_primary_slate" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Connected Accounts"
-        android:textColor="@color/slate_500"
-        android:textSize="14sp"
-        android:textStyle="bold" />
-
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="0dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="@color/slate_200">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:overScrollMode="never">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="24dp">
 
-            <!-- Google -->
-            <LinearLayout
-                android:id="@+id/llGoogle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackground"
-                android:gravity="center_vertical"
-                android:padding="16dp">
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@android:drawable/ic_menu_search" />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="16dp"
-                    android:text="Google"
-                    android:textColor="@color/slate_900"
-                    android:textSize="16sp" />
-                <TextView
-                    android:id="@+id/tvGoogleStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Connected"
-                    android:textColor="@color/blue_600" />
-            </LinearLayout>
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="CONNECTED IDENTITY PROVIDERS" />
 
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/slate_200" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-            <!-- Apple -->
-            <LinearLayout
-                android:id="@+id/llApple"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackground"
-                android:gravity="center_vertical"
-                android:padding="16dp">
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@android:drawable/ic_menu_compass" />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="16dp"
-                    android:text="Apple"
-                    android:textColor="@color/slate_900"
-                    android:textSize="16sp" />
-                <TextView
-                    android:id="@+id/tvAppleStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Not Connected"
-                    android:textColor="@color/slate_500" />
-            </LinearLayout>
+                    <!-- Google -->
+                    <LinearLayout
+                        android:id="@+id/llGoogle"
+                        style="@style/SettingsItem"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_marginEnd="16dp"
+                            android:src="@drawable/ic_google_logo" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                style="@style/SettingsItemText"
+                                android:layout_width="match_parent"
+                                android:layout_weight="0"
+                                android:text="Google" />
+                            <TextView
+                                style="@style/SettingsItemDescription"
+                                android:text="Primary sign-in &amp; study sync" />
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/tvGoogleStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Connected"
+                            android:textColor="@color/emerald_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
 
-            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/slate_200" />
+                    <View style="@style/SettingsDivider" />
 
-            <!-- Microsoft -->
-            <LinearLayout
-                android:id="@+id/llMicrosoft"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?attr/selectableItemBackground"
-                android:gravity="center_vertical"
-                android:padding="16dp">
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@android:drawable/ic_menu_agenda" />
-                <TextView
-                    android:layout_width="0dp"
+                    <!-- Apple -->
+                    <LinearLayout
+                        android:id="@+id/llApple"
+                        style="@style/SettingsItem"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_marginEnd="16dp"
+                            android:src="@drawable/ic_apple_logo" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                style="@style/SettingsItemText"
+                                android:layout_width="match_parent"
+                                android:layout_weight="0"
+                                android:text="Apple" />
+                            <TextView
+                                style="@style/SettingsItemDescription"
+                                android:text="Sign in with Apple ID" />
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/tvAppleStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Not Connected"
+                            android:textColor="@color/text_secondary_slate"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
+                    <!-- Microsoft -->
+                    <LinearLayout
+                        android:id="@+id/llMicrosoft"
+                        style="@style/SettingsItem"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_marginEnd="16dp"
+                            android:src="@drawable/ic_microsoft_logo" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                style="@style/SettingsItemText"
+                                android:layout_width="match_parent"
+                                android:layout_weight="0"
+                                android:text="Microsoft" />
+                            <TextView
+                                style="@style/SettingsItemDescription"
+                                android:text="Office 365 &amp; School account" />
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/tvMicrosoftStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Not Connected"
+                            android:textColor="@color/text_secondary_slate"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- SECURITY NOTE CARD -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/SettingsCard"
+                app:cardBackgroundColor="#F0FDF4"
+                app:strokeColor="#BBF7D0">
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="16dp"
-                    android:text="Microsoft"
-                    android:textColor="@color/slate_900"
-                    android:textSize="16sp" />
-                <TextView
-                    android:id="@+id/tvMicrosoftStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Not Connected"
-                    android:textColor="@color/slate_500" />
-            </LinearLayout>
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_verified_check"
+                        app:tint="@color/emerald_primary"
+                        android:layout_marginEnd="12dp" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Linking multiple accounts allows seamless sign-in across all your mobile and web devices."
+                        android:textColor="#166534"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+    </ScrollView>
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnLinkNewAccount"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="52dp"
         android:layout_margin="16dp"
-        android:text="Link New Account"
-        app:cornerRadius="8dp" />
+        android:text="Link New Provider"
+        android:textAllCaps="false"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:backgroundTint="@color/sapphire_primary"
+        android:textColor="@color/white"
+        app:cornerRadius="12dp"
+        app:elevation="0dp" />
 
 </LinearLayout>

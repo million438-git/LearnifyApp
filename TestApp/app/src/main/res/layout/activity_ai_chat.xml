@@ -4,20 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="#060A14"
     tools:context=".AIChatActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        app:elevation="0dp">
+        android:background="#0C1426"
+        app:elevation="2dp">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="?attr/homeAsUpIndicator"
             app:contentInsetStartWithNavigation="0dp">
 
             <RelativeLayout
@@ -32,30 +33,62 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/ic_adv_ai"
+                        app:tint="#00D8FF"
+                        android:contentDescription="@null" />
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="🤖 EduAI"
-                        android:textColor="#111827"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:orientation="vertical">
 
-                    <View
-                        android:id="@+id/viewStatusDot"
-                        android:layout_width="8dp"
-                        android:layout_height="8dp"
-                        android:layout_marginStart="12dp"
-                        android:background="@android:color/holo_green_light" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="EduAI Tutor"
+                            android:textColor="#F4F7FF"
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/tvStatusText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="Online"
-                        android:textColor="#4B5563"
-                        android:textSize="12sp" />
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <View
+                                android:id="@+id/viewStatusDot"
+                                android:layout_width="8dp"
+                                android:layout_height="8dp"
+                                android:background="@drawable/bg_status_dot_ready" />
+
+                            <TextView
+                                android:id="@+id/tvStatusText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:text="Ready to help"
+                                android:textColor="#00D8FF"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/btnClearChat"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_delete"
+                    app:tint="#94A3B8"
+                    android:contentDescription="Clear conversation history" />
+
             </RelativeLayout>
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
@@ -65,7 +98,7 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- Welcome Area (Centered for Desktop/Tablet support) -->
+        <!-- Welcome Area with Academic Suggestion Chips -->
         <ScrollView
             android:id="@+id/emptyStateView"
             android:layout_width="0dp"
@@ -84,29 +117,38 @@
                 android:orientation="vertical"
                 android:padding="24dp">
 
+                <ImageView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginTop="24dp"
+                    android:src="@drawable/ic_adv_ai"
+                    app:tint="#00D8FF"
+                    android:contentDescription="@null" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="40dp"
-                    android:text="👋 Welcome to EduAI"
-                    android:textColor="#111827"
-                    android:textSize="28sp"
+                    android:layout_marginTop="16dp"
+                    android:text="Welcome to EduAI Tutor"
+                    android:textColor="#F4F7FF"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tvStudentSubtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Your smart assistant for learning 📚"
-                    android:textColor="#4B5563"
-                    android:textSize="16sp" />
+                    android:layout_marginTop="6dp"
+                    android:text="Your Grade 9-12 STEM &amp; Academic Partner"
+                    android:textColor="#94A3B8"
+                    android:textSize="14sp" />
 
-                <!-- Suggestion Chips -->
+                <!-- Suggestion Chips with Academic Focus -->
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chipGroupSuggestions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
+                    android:layout_marginTop="28dp"
                     app:chipSpacingHorizontal="8dp"
                     app:chipSpacingVertical="8dp">
 
@@ -115,8 +157,11 @@
                         style="@style/Widget.MaterialComponents.Chip.Action"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📘 Explain"
-                        app:chipBackgroundColor="#F3F4F6"
+                        android:text="Explain Photosynthesis"
+                        android:textColor="#F4F7FF"
+                        app:chipBackgroundColor="#0C1426"
+                        app:chipStrokeColor="#1E2E4A"
+                        app:chipStrokeWidth="1dp"
                         app:chipCornerRadius="12dp" />
 
                     <com.google.android.material.chip.Chip
@@ -124,26 +169,35 @@
                         style="@style/Widget.MaterialComponents.Chip.Action"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="🧮 Math"
-                        app:chipBackgroundColor="#F3F4F6"
+                        android:text="Solve Quadratic Equations"
+                        android:textColor="#F4F7FF"
+                        app:chipBackgroundColor="#0C1426"
+                        app:chipStrokeColor="#1E2E4A"
+                        app:chipStrokeWidth="1dp"
                         app:chipCornerRadius="12dp" />
 
                     <com.google.android.material.chip.Chip
-                        android:id="@+id/chipCode"
+                        android:id="@+id/chipPhysics"
                         style="@style/Widget.MaterialComponents.Chip.Action"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="💻 Code"
-                        app:chipBackgroundColor="#F3F4F6"
+                        android:text="Newton's Second Law"
+                        android:textColor="#F4F7FF"
+                        app:chipBackgroundColor="#0C1426"
+                        app:chipStrokeColor="#1E2E4A"
+                        app:chipStrokeWidth="1dp"
                         app:chipCornerRadius="12dp" />
 
                     <com.google.android.material.chip.Chip
-                        android:id="@+id/chipNotes"
+                        android:id="@+id/chipChemistry"
                         style="@style/Widget.MaterialComponents.Chip.Action"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📝 Notes"
-                        app:chipBackgroundColor="#F3F4F6"
+                        android:text="Acid-Base Titration"
+                        android:textColor="#F4F7FF"
+                        app:chipBackgroundColor="#0C1426"
+                        app:chipStrokeColor="#1E2E4A"
+                        app:chipStrokeWidth="1dp"
                         app:chipCornerRadius="12dp" />
                 </com.google.android.material.chip.ChipGroup>
             </LinearLayout>
@@ -162,12 +216,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Input Area (Main Focus - Responsive Width) -->
+        <!-- Multiline Input Composer -->
         <LinearLayout
             android:id="@+id/cardInputContainer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@android:color/white"
+            android:background="#0C1426"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             app:layout_constraintWidth_max="700dp"
@@ -178,7 +232,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#E5E7EB" />
+                android:background="#1E2E4A" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -191,10 +245,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    app:cardBackgroundColor="#F9FAFB"
+                    app:cardBackgroundColor="#060A14"
                     app:cardCornerRadius="24dp"
                     app:cardElevation="0dp"
-                    app:strokeColor="#E5E7EB"
+                    app:strokeColor="#1E2E4A"
                     app:strokeWidth="1dp">
 
                     <EditText
@@ -202,14 +256,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
-                        android:hint="💬 Ask a question..."
+                        android:hint="Ask an academic question..."
+                        android:textColorHint="#64748B"
                         android:inputType="textCapSentences|textMultiLine"
                         android:imeOptions="actionSend"
                         android:maxLines="4"
                         android:paddingHorizontal="16dp"
                         android:paddingVertical="12dp"
-                        android:textColor="#111827"
-                        android:textSize="16sp" />
+                        android:textColor="#F4F7FF"
+                        android:textSize="15sp" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -219,9 +274,10 @@
                     android:layout_marginStart="8dp"
                     app:fabCustomSize="48dp"
                     app:elevation="0dp"
-                    android:src="@android:drawable/ic_menu_send"
-                    app:tint="@android:color/white"
-                    app:backgroundTint="#3B82F6" />
+                    android:src="@drawable/ic_send"
+                    android:contentDescription="Send question"
+                    app:tint="#FFFFFF"
+                    app:backgroundTint="#7650FF" />
             </LinearLayout>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

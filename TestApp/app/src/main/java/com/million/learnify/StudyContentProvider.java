@@ -3,9 +3,11 @@ package com.million.learnify;
 import android.content.Context;
 import android.util.Log;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * StudyContentProvider - Perfected Academic Path Resolver.
@@ -69,17 +71,68 @@ public class StudyContentProvider {
      * Guaranteed robustness for naming mismatches like 'Biology Technology' vs 'Biology and Technology'.
      */
     public static String getHtmlUrl(Context context, String subject, String chapter, String topic) {
-        try {
-            String subjectPath = findActualPath(context, ASSETS_BASE, subject);
-            if (subjectPath == null) return null;
+    try {
+        String subjectPath = findActualPath(context, ASSETS_BASE, subject);
+        if (subjectPath == null || topic == null || topic.trim().isEmpty()) return null;
 
-            String targetFile = topic.contains("/") ? topic.substring(topic.lastIndexOf("/") + 1).trim() : topic.trim();
-            String foundPath = searchFileWithFuzzyLogic(context, subjectPath, targetFile);
-            
-            if (foundPath != null) return "file:///android_asset/" + foundPath;
-            return null;
+        String normalizedTopic = topic.trim().replace('\\', '/');
+        if (normalizedTopic.toLowerCase().endsWith(".html")) {
+            normalizedTopic = normalizedTopic.substring(0, normalizedTopic.length() - 5);
+        }
+
+        String chapterPath = chapter == null ? null
+                : findActualPath(context, subjectPath, chapter);
+
+        if (chapterPath != null) {
+            String exactPath = chapterPath + "/" + normalizedTopic + ".html";
+            try (InputStream ignored = context.getAssets().open(exactPath)) {
+                return "file:///android_asset/" + exactPath;
+            } catch (IOException ignored) {
+                // Continue with compatible fuzzy matching.
+            }
+
+            String searchPath = chapterPath;
+            String target = normalizedTopic;
+
+            if (normalizedTopic.contains("/")) {
+                int slash = normalizedTopic.lastIndexOf('/');
+                String parent = normalizedTopic.substring(0, slash);
+                target = normalizedTopic.substring(slash + 1);
+                String resolvedParent = findActualPath(context, chapterPath, parent);
+                if (resolvedParent != null) searchPath = resolvedParent;
+            }
+
+            String found = searchFileWithFuzzyLogic(context, searchPath, target);
+            if (found != null) return "file:///android_asset/" + found;
+        }
+
+        // Legacy fallback for existing course layouts.
+        String targetFile = normalizedTopic.contains("/")
+                ? normalizedTopic.substring(normalizedTopic.lastIndexOf('/') + 1)
+                : normalizedTopic;
+        String found = searchFileWithFuzzyLogic(context, subjectPath, targetFile);
+        return found == null ? null : "file:///android_asset/" + found;
+    } catch (Exception e) {
+        Log.e(TAG, "URL resolution failed", e);
+        return null;
+    }
+}
+
+    /**
+     * Reads raw HTML content from the resolved asset file for Text-to-Speech and Inclusive Reading.
+     */
+    public static String getHtmlContent(Context context, String subject, String chapter, String topic) {
+        String url = getHtmlUrl(context, subject, chapter, topic);
+        if (url == null) return null;
+        try {
+            String assetPath = url.replace("file:///android_asset/", "");
+            InputStream is = context.getAssets().open(assetPath);
+            Scanner scanner = new Scanner(is, "UTF-8").useDelimiter("\\A");
+            String content = scanner.hasNext() ? scanner.next() : "";
+            is.close();
+            return content;
         } catch (Exception e) {
-            Log.e(TAG, "URL resolution failed", e);
+            Log.e(TAG, "Failed reading HTML asset content for " + topic, e);
             return null;
         }
     }

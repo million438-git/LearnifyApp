@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carnot Heat Engine Laboratory</title>
+<style>
+:root{color-scheme:dark;--bg:#0a0f1f;--panel:#141b2e;--line:#26304a;--text:#e5e9f5;--muted:#93a0bd;--accent:#818cf8;--green:#34d399;--yellow:#fbbf24;--red:#f87171}
+*{box-sizing:border-box;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}body{margin:0;padding:16px;background:var(--bg);color:var(--text)}main{max-width:1000px;margin:auto}
+header{text-align:center;border-bottom:3px solid var(--accent);padding:8px 0 14px}h1{font-size:1.35rem;margin:0 0 5px}header p,.note{color:var(--muted);margin:4px 0}
+.grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,1fr);gap:14px;margin-top:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+canvas{width:100%;height:300px;display:block;border-radius:8px;background:#05080f}.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}.metric{padding:9px;background:#0d1425;border:1px solid var(--line);border-radius:8px}.metric span{display:block;color:var(--muted);font-size:.75rem}.metric strong{color:var(--yellow)}
+.control{margin:12px 0}.control label{display:flex;justify-content:space-between;gap:8px;font-size:.9rem;font-weight:600}input[type=range]{width:100%;accent-color:var(--accent);margin-top:8px}
+button{border:1px solid var(--line);border-radius:7px;padding:10px 14px;background:#202943;color:var(--text);font-weight:700;cursor:pointer}.primary{background:var(--accent);color:#101426;border-color:var(--accent)}.buttons{display:flex;gap:8px;margin-top:14px}
+.status{min-height:1.5em;color:var(--green)}.formula{line-height:1.65}.formula code{color:var(--yellow)}
+@media(max-width:700px){body{padding:10px}.grid{grid-template-columns:1fr}canvas{height:240px}}
+</style>
+</head>
+<body>
+<main>
+<header><h1>Carnot Heat Engine Laboratory</h1><p>Explore the maximum efficiency of an ideal reversible heat engine.</p></header>
+<div class="grid">
+<section class="card" aria-label="Engine and heat flow diagram">
+<canvas id="engine" role="img" aria-label="Heat flow between hot reservoir, Carnot engine and cold reservoir"></canvas>
+<div class="metrics" aria-live="polite">
+<div class="metric"><span>Carnot efficiency</span><strong id="effOut">62.5%</strong></div>
+<div class="metric"><span>Work output W</span><strong id="workOut">1250 J</strong></div>
+<div class="metric"><span>Heat rejected Qc</span><strong id="coldOut">750 J</strong></div>
+<div class="metric"><span>Entropy transfer Qh/Th</span><strong id="entropyOut">2.50 J/K</strong></div>
+</div><p class="note">Ideal, reversible cycle; the indicated work is the upper limit for the selected reservoir temperatures.</p>
+</section>
+<section class="card" aria-label="Heat engine controls">
+<div class="control"><label for="hot">Hot reservoir Th <output id="hotLabel">800 K</output></label><input id="hot" type="range" min="300" max="1200" step="10" value="800" aria-label="Hot reservoir temperature in kelvin"></div>
+<div class="control"><label for="cold">Cold reservoir Tc <output id="coldLabel">300 K</output></label><input id="cold" type="range" min="100" max="1000" step="10" value="300" aria-label="Cold reservoir temperature in kelvin"></div>
+<div class="control"><label for="heat">Heat absorbed Qh <output id="heatLabel">2000 J</output></label><input id="heat" type="range" min="100" max="10000" step="100" value="2000" aria-label="Heat absorbed in joules"></div>
+<div class="buttons"><button id="run" class="primary" type="button">Start cycle</button><button id="reset" type="button">Reset</button></div>
+<p id="status" class="status" aria-live="polite">Ready. Adjust the reservoir temperatures or heat input.</p>
+<div class="formula"><strong>Carnot model</strong><br><code>η = 1 − Tc/Th</code><br><code>W = η Qh</code><br><code>Qc = Qh − W</code><br>Temperatures are absolute kelvin. The ideal-cycle entropy balance is Qh/Th = Qc/Tc. Real engines have lower efficiency because of irreversibility.</div>
+</section>
+</div>
+</main>
+<script>
+(function(){
+  var c=document.getElementById('engine'),ctx=c.getContext('2d'),hot=document.getElementById('hot'),cold=document.getElementById('cold'),heat=document.getElementById('heat');
+  var running=false,phase=0,last=0,raf=0;
+  function calculate(){
+    var th=+hot.value,tc=+cold.value,qh=+heat.value,valid=Number.isFinite(th)&&Number.isFinite(tc)&&Number.isFinite(qh)&&th>tc&&tc>0&&qh>0;
+    document.getElementById('hotLabel').textContent=th+' K';document.getElementById('coldLabel').textContent=tc+' K';document.getElementById('heatLabel').textContent=qh+' J';
+    if(!valid){document.getElementById('status').textContent='Invalid temperatures: the hot reservoir must be warmer than the cold reservoir.';document.getElementById('status').style.color='#f87171';document.getElementById('effOut').textContent='—';document.getElementById('workOut').textContent='—';document.getElementById('coldOut').textContent='—';document.getElementById('entropyOut').textContent='—';draw();return;}
+    var eta=1-tc/th,w=eta*qh,qc=qh-w;
+    document.getElementById('status').style.color='#34d399';document.getElementById('status').textContent='Valid reversible Carnot cycle.';
+    document.getElementById('effOut').textContent=(eta*100).toFixed(1)+'%';document.getElementById('workOut').textContent=w.toFixed(1)+' J';document.getElementById('coldOut').textContent=qc.toFixed(1)+' J';document.getElementById('entropyOut').textContent=(qh/th).toFixed(3)+' J/K';draw();
+  }
+  function resize(){var d=Math.max(1,window.devicePixelRatio||1),r=c.getBoundingClientRect();c.width=Math.max(1,Math.round(r.width*d));c.height=Math.max(1,Math.round(r.height*d));ctx.setTransform(d,0,0,d,0,0);draw();}
+  function draw(){
+    var w=c.clientWidth,h=c.clientHeight;if(!w||!h)return;ctx.clearRect(0,0,w,h);ctx.fillStyle='#05080f';ctx.fillRect(0,0,w,h);
+    var th=+hot.value,tc=+cold.value,qh=+heat.value,valid=th>tc&&tc>0&&qh>0,eta=valid?1-tc/th:0,wout=eta*qh,qc=qh-wout;
+    function box(x,y,bw,bh,fill,title,sub){ctx.fillStyle=fill;ctx.fillRect(x,y,bw,bh);ctx.strokeStyle='#26304a';ctx.strokeRect(x,y,bw,bh);ctx.fillStyle='#e5e9f5';ctx.textAlign='center';ctx.font='bold 14px system-ui';ctx.fillText(title,x+bw/2,y+bh/2-5);ctx.font='12px system-ui';ctx.fillStyle='#cbd5e1';ctx.fillText(sub,x+bw/2,y+bh/2+15);}
+    box(18,45,w*.24,h*.48,'#7f1d1d','HOT RESERVOIR',th+' K');box(w*.39,45,w*.22,h*.48,'#312e81','ENGINE','Carnot cycle');box(w*.70,45,w*.27,h*.48,'#164e63','COLD RESERVOIR',tc+' K');
+    ctx.textAlign='center';ctx.font='bold 13px system-ui';ctx.fillStyle='#f87171';ctx.fillText('Qh = '+(valid?qh.toFixed(0):'—')+' J',w*.315,70);ctx.fillStyle='#34d399';ctx.fillText('W = '+(valid?wout.toFixed(0):'—')+' J',w*.50,h*.72);ctx.fillStyle='#60a5fa';ctx.fillText('Qc = '+(valid?qc.toFixed(0):'—')+' J',w*.65,70);
+    ctx.strokeStyle='#e5e9f5';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(w*.27,105);ctx.lineTo(w*.37,105);ctx.moveTo(w*.62,105);ctx.lineTo(w*.69,105);ctx.moveTo(w*.50,h*.55);ctx.lineTo(w*.50,h*.66);ctx.stroke();
+    ctx.fillStyle='#fbbf24';for(var i=0;i<4;i++){var x=w*.25+((phase*35+i*28)%(w*.11));ctx.beginPath();ctx.arc(x,105,4,0,Math.PI*2);ctx.fill();}
+    ctx.fillStyle='#93a0bd';ctx.font='12px system-ui';ctx.fillText('Energy in',w*.315,128);ctx.fillText('Useful work',w*.50,h*.78);ctx.fillText('Energy rejected',w*.65,128);ctx.textAlign='left';ctx.lineWidth=1;
+  }
+  function tick(t){if(!running)return;if(last)phase+=(t-last)/1000;last=t;draw();raf=requestAnimationFrame(tick);}
+  document.getElementById('run').addEventListener('click',function(){running=!running;last=0;this.textContent=running?'Pause cycle':'Resume cycle';document.getElementById('status').textContent=running?'Cycle animation running.':'Cycle paused.';if(running)raf=requestAnimationFrame(tick);else cancelAnimationFrame(raf);});
+  document.getElementById('reset').addEventListener('click',function(){running=false;cancelAnimationFrame(raf);hot.value='800';cold.value='300';heat.value='2000';phase=0;document.getElementById('run').textContent='Start cycle';calculate();});
+  [hot,cold,heat].forEach(function(el){el.addEventListener('input',calculate);el.addEventListener('change',calculate);});window.addEventListener('resize',resize);resize();calculate();
+})();
+</script>
+</body>
+</html>

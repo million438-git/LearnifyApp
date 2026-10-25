@@ -17,21 +17,6 @@ public class MainApplication extends Application {
         }
 
         // 2. Initialize Global Theme to prevent crashes on startup
-        applySavedTheme();
-    }
-
-    private void applySavedTheme() {
-        SettingsService settingsService = new SettingsService(this);
-        String theme = settingsService.loadSettings().getThemeMode();
-        
-        int mode;
-        if ("dark".equals(theme)) {
-            mode = AppCompatDelegate.MODE_NIGHT_YES;
-        } else if ("light".equals(theme)) {
-            mode = AppCompatDelegate.MODE_NIGHT_NO;
-        } else {
-            mode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
-        }
-        AppCompatDelegate.setDefaultNightMode(mode);
+        ThemeManager.applyTheme(this);
     }
 }

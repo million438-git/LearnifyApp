@@ -77,7 +77,7 @@ public class FlashcardActivity extends BaseActivity {
         cursor.close();
 
         if (reviewList.isEmpty()) {
-            tvQuestion.setText("All caught up! 🎯\nNo flashcards for review today.");
+            tvQuestion.setText("All caught up!\nNo flashcards for review today.");
             tvAnswer.setVisibility(View.GONE);
             btnShowAnswer.setVisibility(View.GONE);
             setRatingButtonsVisibility(View.GONE);

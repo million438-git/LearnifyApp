@@ -35,7 +35,7 @@ import java.util.Calendar;
 public class DashboardActivity extends BaseActivity implements VoiceStudyManager.VoiceCallback {
 
     private static final int MIC_PERMISSION_CODE = 200;
-    private TextView tvWelcomeTitle, tvNotificationBadgeCount;
+    private TextView tvWelcomeTitle, tvNotificationBadgeCount, tvStreakCount, tvTotalXp;
     private DrawerLayout drawerLayout;
     private String currentUsername;
     private VoiceStudyManager voiceStudyManager;
@@ -72,8 +72,8 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
             return;
         }
 
-        setupPortalToolbar(findViewById(R.id.toolbar), "Student Dashboard");
         drawerLayout = findViewById(R.id.drawerLayout);
+        setupRootToolbar(findViewById(R.id.toolbar), "Student Dashboard", drawerLayout);
         setupDrawerButton(drawerLayout);
 
         try {
@@ -131,6 +131,23 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
             tvWelcomeTitle.setText(welcome);
         }
 
+        if (tvStreakCount != null || tvTotalXp != null) {
+            try {
+                Cursor cursor = repository.getLocalDb().getChallengeStats(currentUsername);
+                if (cursor != null) {
+                    if (cursor.moveToFirst()) {
+                        int xp = cursor.getInt(cursor.getColumnIndexOrThrow("total_xp"));
+                        int streak = cursor.getInt(cursor.getColumnIndexOrThrow("streak"));
+                        if (tvStreakCount != null) tvStreakCount.setText(streak + " Day Streak");
+                        if (tvTotalXp != null) tvTotalXp.setText(xp + " XP");
+                    }
+                    cursor.close();
+                }
+            } catch (Exception e) {
+                Log.e("Dashboard", "Error loading stats", e);
+            }
+        }
+
         NavigationView navView = findViewById(R.id.navigationView);
         if (navView != null && navView.getHeaderCount() > 0) {
             View header = navView.getHeaderView(0);
@@ -154,6 +171,8 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
     private void initViews() {
         tvWelcomeTitle = findViewById(R.id.tvWelcomeTitle);
         tvNotificationBadgeCount = findViewById(R.id.tvNotificationBadgeCount);
+        tvStreakCount = findViewById(R.id.tvStreakCount);
+        tvTotalXp = findViewById(R.id.tvTotalXp);
         rlNotificationContainer = findViewById(R.id.rlNotificationContainer);
 
         if (rlNotificationContainer != null) {
@@ -168,7 +187,7 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
         safeSetClick(R.id.cardCourses, v -> startActivity(new Intent(this, SubjectActivity.class)));
         safeSetClick(R.id.cardAssignments, v -> startActivity(new Intent(this, TasksActivity.class)));
         safeSetClick(R.id.cardDailyChallenge, v -> startActivity(new Intent(this, DailyChallengeActivity.class)));
-        safeSetClick(R.id.cardCameraLab, v -> startActivity(new Intent(this, CameraLabActivity.class)));
+        safeSetClick(R.id.cardCameraLab, v -> startActivity(new Intent(this, CameraHubActivity.class)));
         safeSetClick(R.id.cardVisualizers, v -> startActivity(new Intent(this, VisualizerActivity.class)));
         safeSetClick(R.id.cardAI, v -> startActivity(new Intent(this, AIChatActivity.class)));
         safeSetClick(R.id.cardPremium, v -> startActivity(new Intent(this, PaymentActivity.class)));
@@ -193,12 +212,12 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
     }
 
     private void showMoodDialog() {
-        String[] moods = {"Great 🌟", "Good 🙂", "Okay 😐", "Tired 😴", "Stressed 😫"};
+        String[] moods = {"Great", "Good", "Okay", "Tired", "Stressed"};
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-        builder.setTitle("🌈 How are you feeling today?");
+        builder.setTitle("How are you feeling today?");
         builder.setItems(moods, (d, which) -> {
             repository.getLocalDb().logMood(currentUsername, moods[which], "Recorded via Dashboard");
-            Toast.makeText(this, "Mood logged! Take care of yourself.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Mood logged.", Toast.LENGTH_SHORT).show();
         });
         builder.show();
     }
@@ -256,15 +275,19 @@ public class DashboardActivity extends BaseActivity implements VoiceStudyManager
             startActivity(new Intent(this, ClassScheduleActivity.class));
         } else if (id == R.id.nav_announcements) {
             startActivity(new Intent(this, AnnouncementsActivity.class));
+        } else if (id == R.id.nav_analytics) {
+            startActivity(new Intent(this, AnalyticsActivity.class));
+        } else if (id == R.id.nav_attendance) {
+            startActivity(new Intent(this, AttendanceActivity.class));
+        } else if (id == R.id.nav_gpa_calc) {
+            startActivity(new Intent(this, GpaCalculatorActivity.class));
         } else if (id == R.id.nav_logout) {
             logout();
         }
     }
 
     private void logout() {
-        SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
-        pref.edit().clear().apply();
-        securePrefs.clearSession();
+        FirebaseSessionManager.signOut(this, FirebaseAuthSupport.getConfiguredAuth(this));
         Intent intent = new Intent(this, WelcomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

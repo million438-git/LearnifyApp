@@ -126,7 +126,7 @@ public class DailyChallengeActivity extends BaseActivity {
         if (cursor.moveToFirst()) {
             currentStreak = cursor.getInt(cursor.getColumnIndexOrThrow("streak"));
             totalXP = cursor.getInt(cursor.getColumnIndexOrThrow("total_xp"));
-            tvStreakVal.setText("🔥 " + currentStreak);
+            tvStreakVal.setText(currentStreak + " Days");
             tvTotalXP.setText(String.valueOf(totalXP));
         }
         cursor.close();
@@ -324,7 +324,7 @@ public class DailyChallengeActivity extends BaseActivity {
         String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         dbHelper.updateChallengeStats(currentUsername, totalXP, currentStreak + 1, today);
         new AlertDialog.Builder(this)
-                .setTitle("Daily Goal Achieved! 🏆")
+                .setTitle("Daily Goal Achieved")
                 .setMessage("Total XP: " + totalXP + "\nStreak: " + (currentStreak + 1) + " Days")
                 .setPositiveButton("Finish", (d, w) -> finish())
                 .setCancelable(false).show();

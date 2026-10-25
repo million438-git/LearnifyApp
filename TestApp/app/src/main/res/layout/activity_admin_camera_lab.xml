@@ -3,19 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#F8FAFC">
+    android:background="@color/admin_bg"
+    android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_admin_hero_banner"
+        app:elevation="2dp">
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/adminCameraToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#1E293B"
+            app:navigationIcon="@drawable/ic_back_white"
             app:title="Camera Lab Governance"
-            app:titleTextColor="@android:color/white" />
+            app:titleTextColor="@color/white" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -28,52 +31,139 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- 11.1 Global Toggle -->
+            <!-- 11.1 Global System Status -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
+                app:cardBackgroundColor="@color/admin_card_bg"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/admin_card_stroke"
+                app:strokeWidth="1dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/ic_real_camera"
+                            app:tint="@color/admin_sapphire_primary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="System Status"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="System Status"
-                        android:textStyle="bold"
-                        android:textColor="#1E293B" />
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="12dp"
+                        android:text="Master control for real-time camera lab solving functionality"
+                        android:textColor="@color/admin_text_secondary"
+                        android:textSize="13sp" />
+
                     <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/switchGlobalCamera"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:checked="true"
                         android:text="Enable Camera Lab Globally"
-                        android:checked="true" />
+                        android:textColor="@color/admin_text_primary"
+                        android:textSize="14sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- 11.2 Supported Subjects -->
+            <!-- 11.2 Supported Domains -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp">
+                app:cardBackgroundColor="@color/admin_card_bg"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/admin_card_stroke"
+                app:strokeWidth="1dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/ic_courses"
+                            app:tint="@color/admin_sapphire_primary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="Supported Domains"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Supported Domains"
-                        android:textStyle="bold" />
-                    <CheckBox android:id="@+id/cbMath" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mathematics (Calculus/Algebra)" android:checked="true"/>
-                    <CheckBox android:id="@+id/cbPhysics" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Physics (Mechanics/Ohm's Law)" android:checked="true"/>
-                    <CheckBox android:id="@+id/cbChemistry" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Chemistry (Stoichiometry)" android:checked="true"/>
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="12dp"
+                        android:text="Authorize STEM domains enabled for OCR recognition"
+                        android:textColor="@color/admin_text_secondary"
+                        android:textSize="13sp" />
+
+                    <CheckBox
+                        android:id="@+id/cbMath"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="Mathematics (Calculus / Algebra)"
+                        android:textColor="@color/admin_text_primary"
+                        android:textSize="14sp" />
+
+                    <CheckBox
+                        android:id="@+id/cbPhysics"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="Physics (Mechanics / Ohm's Law)"
+                        android:textColor="@color/admin_text_primary"
+                        android:textSize="14sp" />
+
+                    <CheckBox
+                        android:id="@+id/cbChemistry"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="Chemistry (Stoichiometry / Equations)"
+                        android:textColor="@color/admin_text_primary"
+                        android:textSize="14sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -82,67 +172,150 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp">
+                app:cardBackgroundColor="@color/admin_card_bg"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/admin_card_stroke"
+                app:strokeWidth="1dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/ic_settings"
+                            app:tint="@color/admin_sapphire_primary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="Solver Engine Tuning"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Solver Engine Tuning"
-                        android:textStyle="bold" />
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="12dp"
+                        android:text="Configure step resolution limits and calculation precision"
+                        android:textColor="@color/admin_text_secondary"
+                        android:textSize="13sp" />
+
                     <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Maximum Solution Steps"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                        app:boxStrokeColor="@color/admin_sapphire_primary">
+
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etMaxSteps"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:inputType="number"
                             android:text="10"
-                            android:inputType="number" />
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="14sp" />
                     </com.google.android.material.textfield.TextInputLayout>
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Default Unit System: SI (Standard)" />
+                        android:layout_marginTop="10dp"
+                        android:text="Default Unit System: SI (Standard Metric)"
+                        android:textColor="@color/admin_text_secondary"
+                        android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- 11.4 OCR Training & 11.6 Content Moderation -->
+            <!-- 11.4 OCR Training & Moderation -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp">
+                app:cardBackgroundColor="@color/admin_card_bg"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/admin_card_stroke"
+                app:strokeWidth="1dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/ic_verified_check"
+                            app:tint="@color/admin_sapphire_primary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="Training &amp; Moderation"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Training &amp; Moderation"
-                        android:textStyle="bold" />
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="14dp"
+                        android:text="Manage OCR dictionary packages and audit flagged captures"
+                        android:textColor="@color/admin_text_secondary"
+                        android:textSize="13sp" />
+
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnUploadOCR"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Upload Improved Language Packs (OCR)" />
+                        android:layout_height="48dp"
+                        android:text="Upload Language Pack (OCR)"
+                        android:textColor="@color/admin_sapphire_primary"
+                        app:cornerRadius="10dp"
+                        app:icon="@drawable/ic_download"
+                        app:iconSize="18dp"
+                        app:iconTint="@color/admin_sapphire_primary"
+                        app:strokeColor="@color/admin_sapphire_primary" />
+
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnFlaggedContent"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="10dp"
                         android:text="View Flagged Captured Content"
-                        app:strokeColor="#EF4444"
-                        android:textColor="#EF4444" />
+                        android:textColor="@color/rose_accent"
+                        app:cornerRadius="10dp"
+                        app:icon="@drawable/ic_eye_visible"
+                        app:iconSize="18dp"
+                        app:iconTint="@color/rose_accent"
+                        app:strokeColor="@color/rose_accent" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -151,19 +324,98 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp">
+                app:cardBackgroundColor="@color/admin_card_bg"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/admin_card_stroke"
+                app:strokeWidth="1dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Real-time Analytics"
-                        android:textStyle="bold" />
-                    <TextView android:id="@+id/tvTotalScans" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Total Scans Today: 0" />
-                    <TextView android:id="@+id/tvSuccessRate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Recognition Success Rate: 94%" />
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/ic_bolt"
+                            app:tint="@color/admin_sapphire_primary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="Real-Time Analytics"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="6dp"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@color/admin_sapphire_subtle"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="12dp">
+
+                                <TextView
+                                    android:id="@+id/tvTotalScans"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Total Scans: 0"
+                                    android:textColor="@color/admin_sapphire_primary"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@color/emerald_subtle"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="12dp">
+
+                                <TextView
+                                    android:id="@+id/tvSuccessRate"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Accuracy: 96.4%"
+                                    android:textColor="@color/emerald_accent"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -171,36 +423,91 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp">
+                android:layout_marginBottom="20dp"
+                app:cardBackgroundColor="@color/admin_card_bg"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/admin_card_stroke"
+                app:strokeWidth="1dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Infrastructure Mode"
-                        android:textStyle="bold" />
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/ic_database"
+                            app:tint="@color/admin_sapphire_primary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="Infrastructure Mode"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
                     <RadioGroup
                         android:id="@+id/rgProcessMode"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <RadioButton android:id="@+id/rbClient" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Client-side only (Offline)" android:checked="true" />
-                        <RadioButton android:id="@+id/rbServer" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Server-side (API)" />
-                        <RadioButton android:id="@+id/rbHybrid" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Hybrid (Optimized)" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp">
+
+                        <RadioButton
+                            android:id="@+id/rbClient"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="Client-side only (On-device OCR)"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="14sp" />
+
+                        <RadioButton
+                            android:id="@+id/rbServer"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Server-side (High precision API)"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="14sp" />
+
+                        <RadioButton
+                            android:id="@+id/rbHybrid"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Hybrid (Automatic failover)"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="14sp" />
                     </RadioGroup>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Save Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSaveAdminCamera"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="52dp"
+                android:layout_marginBottom="32dp"
+                android:backgroundTint="@color/sapphire_primary"
                 android:text="SYNC GOVERNANCE POLICY"
+                android:textColor="@color/white"
+                android:textStyle="bold"
                 app:cornerRadius="12dp"
-                android:backgroundTint="#1E293B" />
+                app:icon="@drawable/ic_verified_check"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconSize="18dp"
+                app:iconTint="@color/white" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

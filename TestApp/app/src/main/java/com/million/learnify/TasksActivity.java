@@ -96,10 +96,10 @@ public class TasksActivity extends BaseActivity {
     }
 
     private void setupFormDropdowns() {
-        String[] subjects = {"Mathematics 📐", "Physics ⚛️", "Chemistry 🧪", "Biology 🧬", "English 📖", "Computer Science 💻", "Personal Study 🏠"};
+        String[] subjects = {"Mathematics", "Physics", "Chemistry", "Biology", "English", "Computer Science", "Personal Study"};
         actvTaskSubject.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, subjects));
 
-        String[] priorities = {"High 🔴", "Medium 🟡", "Low 🟢"};
+        String[] priorities = {"High", "Medium", "Low"};
         actvTaskPriority.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, priorities));
     }
 
@@ -133,7 +133,7 @@ public class TasksActivity extends BaseActivity {
         // Using Repository for insertion (future-proof)
         boolean success = repository.getLocalDb().insertTask(title, desc, subject, userGrade, date, time, priority);
         if (success) {
-            Toast.makeText(this, "📌 Task Saved!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Task saved successfully.", Toast.LENGTH_SHORT).show();
             
             SettingsService settings = new SettingsService(this);
             if (settings.loadSettings().isHomeworkAlerts()) {
@@ -172,7 +172,7 @@ public class TasksActivity extends BaseActivity {
     }
 
     private void getAiHelp() {
-        Toast.makeText(this, "🤖 AI analyzing your schedule...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "AI analyzing schedule...", Toast.LENGTH_SHORT).show();
     }
 
     class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> {
@@ -195,7 +195,7 @@ public class TasksActivity extends BaseActivity {
             holder.tvSubject.setText(task.getSubject().toUpperCase());
             holder.tvTitle.setText(task.getTitle());
             holder.tvDesc.setText(task.getDescription());
-            holder.tvDue.setText("📅 " + task.getDueDate() + "  ⏰ " + task.getDueTime());
+            holder.tvDue.setText(task.getDueDate() + " • " + task.getDueTime());
             holder.tvStatus.setText(task.getStatus());
             holder.tvPriority.setText(task.getPriority());
 

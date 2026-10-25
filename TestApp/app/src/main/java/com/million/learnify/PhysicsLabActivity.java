@@ -84,56 +84,56 @@ public class PhysicsLabActivity extends AppCompatActivity {
     private List<Experiment> getExperiments() {
         List<Experiment> list = new ArrayList<>();
         // 1. Mechanics
-        list.add(new Experiment("Projectile Motion", "Mechanics", "Kinematics, trajectory", 1, "🚀"));
-        list.add(new Experiment("Pendulum", "Mechanics", "Simple harmonic motion", 2, "⏱️"));
-        list.add(new Experiment("Spring-Mass System", "Mechanics", "Hooke's law, oscillation", 3, "🌀"));
-        list.add(new Experiment("Newton's Cradle", "Mechanics", "Conservation of momentum", 4, "🎱"));
-        list.add(new Experiment("Inclined Plane", "Mechanics", "Friction, forces", 5, "📐"));
-        list.add(new Experiment("Atwood Machine", "Mechanics", "Tension, acceleration", 6, "🏗️"));
-        list.add(new Experiment("Rocket Thrust", "Mechanics", "Newton's third law", 7, "🚀"));
-        list.add(new Experiment("Orbital Motion", "Mechanics", "Gravity, centripetal force", 8, "🪐"));
-        list.add(new Experiment("Conservation of Energy", "Mechanics", "Roller coaster", 9, "🎢"));
-        list.add(new Experiment("Collisions (1D/2D)", "Mechanics", "Elastic/inelastic", 10, "💥"));
+        list.add(new Experiment("Projectile Motion", "Mechanics", "Kinematics, trajectory", 1, "PHY"));
+        list.add(new Experiment("Pendulum", "Mechanics", "Simple harmonic motion", 2, "PHY"));
+        list.add(new Experiment("Spring-Mass System", "Mechanics", "Hooke's law, oscillation", 3, "PHY"));
+        list.add(new Experiment("Newton's Cradle", "Mechanics", "Conservation of momentum", 4, "PHY"));
+        list.add(new Experiment("Inclined Plane", "Mechanics", "Friction, forces", 5, "PHY"));
+        list.add(new Experiment("Atwood Machine", "Mechanics", "Tension, acceleration", 6, "PHY"));
+        list.add(new Experiment("Rocket Thrust", "Mechanics", "Newton's third law", 7, "PHY"));
+        list.add(new Experiment("Orbital Motion", "Mechanics", "Gravity, centripetal force", 8, "PHY"));
+        list.add(new Experiment("Conservation of Energy", "Mechanics", "Roller coaster", 9, "PHY"));
+        list.add(new Experiment("Collisions (1D/2D)", "Mechanics", "Elastic/inelastic", 10, "PHY"));
 
         // 2. Waves
-        list.add(new Experiment("Wave on a String", "Waves & Oscillations", "Transverse waves", 11, "🌊"));
-        list.add(new Experiment("Sound Waves", "Waves & Oscillations", "Longitudinal waves", 12, "🔊"));
-        list.add(new Experiment("Doppler Effect", "Waves & Oscillations", "Frequency shift", 13, "🏎️"));
-        list.add(new Experiment("Interference (Double Slit)", "Waves & Oscillations", "Wave interference", 14, "🌈"));
-        list.add(new Experiment("Resonance Tube", "Waves & Oscillations", "Sound resonance", 15, "🎺"));
-        list.add(new Experiment("Fourier Synthesis", "Waves & Oscillations", "Harmonics", 16, "🎹"));
+        list.add(new Experiment("Wave on a String", "Waves & Oscillations", "Transverse waves", 11, "PHY"));
+        list.add(new Experiment("Sound Waves", "Waves & Oscillations", "Longitudinal waves", 12, "PHY"));
+        list.add(new Experiment("Doppler Effect", "Waves & Oscillations", "Frequency shift", 13, "PHY"));
+        list.add(new Experiment("Interference (Double Slit)", "Waves & Oscillations", "Wave interference", 14, "PHY"));
+        list.add(new Experiment("Resonance Tube", "Waves & Oscillations", "Sound resonance", 15, "PHY"));
+        list.add(new Experiment("Fourier Synthesis", "Waves & Oscillations", "Harmonics", 16, "PHY"));
 
         // 3. E&M
-        list.add(new Experiment("Ohm's Law", "Electricity & Magnetism", "Simple circuits", 17, "💡"));
-        list.add(new Experiment("RC Circuit", "Electricity & Magnetism", "Capacitor charging", 18, "🔋"));
-        list.add(new Experiment("Magnetic Field of a Wire", "Electricity & Magnetism", "Biot-Savart law", 19, "🧲"));
-        list.add(new Experiment("Electric Field Lines", "Electricity & Magnetism", "Coulomb's law", 20, "⚡"));
-        list.add(new Experiment("Lorentz Force", "Electricity & Magnetism", "Charged particle", 21, "⚛️"));
-        list.add(new Experiment("Faraday's Law", "Electricity & Magnetism", "Induction", 22, "🌀"));
-        list.add(new Experiment("AC Circuits", "Electricity & Magnetism", "Impedance, resonance", 23, "🔌"));
-        list.add(new Experiment("Motor/Generator", "Electricity & Magnetism", "Electromechanics", 24, "⚙️"));
+        list.add(new Experiment("Ohm's Law", "Electricity & Magnetism", "Simple circuits", 17, "PHY"));
+        list.add(new Experiment("RC Circuit", "Electricity & Magnetism", "Capacitor charging", 18, "PHY"));
+        list.add(new Experiment("Magnetic Field of a Wire", "Electricity & Magnetism", "Biot-Savart law", 19, "PHY"));
+        list.add(new Experiment("Electric Field Lines", "Electricity & Magnetism", "Coulomb's law", 20, "PHY"));
+        list.add(new Experiment("Lorentz Force", "Electricity & Magnetism", "Charged particle", 21, "PHY"));
+        list.add(new Experiment("Faraday's Law", "Electricity & Magnetism", "Induction", 22, "PHY"));
+        list.add(new Experiment("AC Circuits", "Electricity & Magnetism", "Impedance, resonance", 23, "PHY"));
+        list.add(new Experiment("Motor/Generator", "Electricity & Magnetism", "Electromechanics", 24, "PHY"));
 
         // 4. Optics
-        list.add(new Experiment("Snell's Law", "Optics", "Refraction", 25, "🔦"));
-        list.add(new Experiment("Lens Ray Diagram", "Optics", "Thin lens equation", 26, "🔍"));
-        list.add(new Experiment("Mirror Ray Diagram", "Optics", "Concave/convex mirrors", 27, "🪞"));
-        list.add(new Experiment("Prism Dispersion", "Optics", "Spectrum", 28, "💎"));
-        list.add(new Experiment("Diffraction Grating", "Optics", "Interference pattern", 29, "💿"));
-        list.add(new Experiment("Telescope Simulator", "Optics", "Magnification", 30, "🔭"));
+        list.add(new Experiment("Snell's Law", "Optics", "Refraction", 25, "PHY"));
+        list.add(new Experiment("Lens Ray Diagram", "Optics", "Thin lens equation", 26, "PHY"));
+        list.add(new Experiment("Mirror Ray Diagram", "Optics", "Concave/convex mirrors", 27, "PHY"));
+        list.add(new Experiment("Prism Dispersion", "Optics", "Spectrum", 28, "PHY"));
+        list.add(new Experiment("Diffraction Grating", "Optics", "Interference pattern", 29, "PHY"));
+        list.add(new Experiment("Telescope Simulator", "Optics", "Magnification", 30, "PHY"));
 
         // 5. Thermo
-        list.add(new Experiment("Ideal Gas Law", "Thermodynamics", "P-V-T relations", 31, "🎈"));
-        list.add(new Experiment("Heat Engine (Carnot)", "Thermodynamics", "Efficiency", 32, "🚂"));
-        list.add(new Experiment("Specific Heat Capacity", "Thermodynamics", "Calorimetry", 33, "🌡️"));
-        list.add(new Experiment("Thermal Expansion", "Thermodynamics", "Linear expansion", 34, "📏"));
-        list.add(new Experiment("Phase Changes", "Thermodynamics", "Latent heat", 35, "🧊"));
+        list.add(new Experiment("Ideal Gas Law", "Thermodynamics", "P-V-T relations", 31, "PHY"));
+        list.add(new Experiment("Heat Engine (Carnot)", "Thermodynamics", "Efficiency", 32, "PHY"));
+        list.add(new Experiment("Specific Heat Capacity", "Thermodynamics", "Calorimetry", 33, "PHY"));
+        list.add(new Experiment("Thermal Expansion", "Thermodynamics", "Linear expansion", 34, "PHY"));
+        list.add(new Experiment("Phase Changes", "Thermodynamics", "Latent heat", 35, "PHY"));
 
         // 6. Modern Physics
-        list.add(new Experiment("Photoelectric Effect", "Modern Physics", "Photon energy", 36, "✨"));
-        list.add(new Experiment("Bohr Model (Hydrogen)", "Modern Physics", "Energy levels", 37, "⚛️"));
-        list.add(new Experiment("Radioactive Decay", "Modern Physics", "Half-life", 38, "☢️"));
-        list.add(new Experiment("Nuclear Fusion", "Modern Physics", "Mass-energy", 39, "☀️"));
-        list.add(new Experiment("Relativity", "Modern Physics", "Time dilation", 40, "⌛"));
+        list.add(new Experiment("Photoelectric Effect", "Modern Physics", "Photon energy", 36, "PHY"));
+        list.add(new Experiment("Bohr Model (Hydrogen)", "Modern Physics", "Energy levels", 37, "PHY"));
+        list.add(new Experiment("Radioactive Decay", "Modern Physics", "Half-life", 38, "PHY"));
+        list.add(new Experiment("Nuclear Fusion", "Modern Physics", "Mass-energy", 39, "PHY"));
+        list.add(new Experiment("Relativity", "Modern Physics", "Time dilation", 40, "PHY"));
 
         return list;
     }
@@ -167,7 +167,7 @@ public class PhysicsLabActivity extends AppCompatActivity {
             Experiment exp = experiments.get(position);
             holder.tvName.setText(exp.name);
             holder.tvCategory.setText(String.format(Locale.US, "%s • %s", exp.category, exp.concept));
-            holder.tvIcon.setText(exp.icon);
+            holder.tvIcon.setText(String.format(Locale.US, "#%d", position + 1));
             holder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(PhysicsLabActivity.this, PhysicsSimulationActivity.class);
                 intent.putExtra("experiment_id", exp.id);

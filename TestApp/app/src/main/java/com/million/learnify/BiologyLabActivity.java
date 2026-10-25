@@ -84,48 +84,48 @@ public class BiologyLabActivity extends AppCompatActivity {
     private List<Experiment> getExperiments() {
         List<Experiment> list = new ArrayList<>();
         
-        // --- 🧪 LOW LEVEL (Beginner Labs) ---
-        list.add(new Experiment("Microscope Introduction", "Beginner", "Parts & Focusing (Onion Cells)", 201, "🔬"));
-        list.add(new Experiment("Cell Observation", "Beginner", "Plant vs Animal Cells", 202, "🧫"));
-        list.add(new Experiment("Diffusion and Osmosis", "Beginner", "Water Movement (Potato/Egg)", 203, "💧"));
-        list.add(new Experiment("Food Test Lab", "Beginner", "Starch, Protein, Glucose", 204, "🧪"));
-        list.add(new Experiment("Photosynthesis Basics", "Beginner", "Leaf Starch Test", 205, "🍃"));
-        list.add(new Experiment("Respiration in Living Organisms", "Beginner", "CO2 Production (Seeds)", 206, "🌱"));
-        list.add(new Experiment("Enzyme Activity (Simple)", "Beginner", "Saliva & Starch reaction", 207, "⏱️"));
-        list.add(new Experiment("Human Body Systems Intro", "Beginner", "Interactive Organ Labeling", 208, "👤"));
-        list.add(new Experiment("Plant Structure Lab", "Beginner", "Roots, Stems, Leaves Dissection", 209, "🌿"));
-        list.add(new Experiment("Simple Classification", "Beginner", "Grouping Organisms", 210, "📁"));
+        // --- Low Level (Beginner Labs) ---
+        list.add(new Experiment("Microscope Introduction", "Beginner", "Parts & Focusing (Onion Cells)", 201, "BIO"));
+        list.add(new Experiment("Cell Observation", "Beginner", "Plant vs Animal Cells", 202, "BIO"));
+        list.add(new Experiment("Diffusion and Osmosis", "Beginner", "Water Movement (Potato/Egg)", 203, "BIO"));
+        list.add(new Experiment("Food Test Lab", "Beginner", "Starch, Protein, Glucose", 204, "BIO"));
+        list.add(new Experiment("Photosynthesis Basics", "Beginner", "Leaf Starch Test", 205, "BIO"));
+        list.add(new Experiment("Respiration in Living Organisms", "Beginner", "CO2 Production (Seeds)", 206, "BIO"));
+        list.add(new Experiment("Enzyme Activity (Simple)", "Beginner", "Saliva & Starch reaction", 207, "BIO"));
+        list.add(new Experiment("Human Body Systems Intro", "Beginner", "Interactive Organ Labeling", 208, "BIO"));
+        list.add(new Experiment("Plant Structure Lab", "Beginner", "Roots, Stems, Leaves Dissection", 209, "BIO"));
+        list.add(new Experiment("Simple Classification", "Beginner", "Grouping Organisms", 210, "BIO"));
 
-        // --- 🧬 INTERMEDIATE LEVEL (Grade 10–11) ---
-        list.add(new Experiment("Enzyme Activity (Advanced)", "Intermediate", "Temp & pH Effects", 211, "🌡️"));
-        list.add(new Experiment("Photosynthesis Rate", "Intermediate", "Oxygen Bubbles (Light Intensity)", 212, "🫧"));
-        list.add(new Experiment("Respiration Rate", "Intermediate", "Yeast + Sugar Gas Production", 213, "🍞"));
-        list.add(new Experiment("Genetics Simulation", "Intermediate", "Punnett Squares Traits", 214, "🔲"));
-        list.add(new Experiment("DNA Extraction", "Intermediate", "Fruit DNA Visualization", 215, "🧬"));
-        list.add(new Experiment("Mitosis Observation", "Intermediate", "Cell Division Phases", 216, "➗"));
-        list.add(new Experiment("Meiosis Simulation", "Intermediate", "Genetic Variation & Crossing Over", 217, "✖️"));
-        list.add(new Experiment("Blood Group Testing", "Intermediate", "Virtual Blood Typing (ABO)", 218, "🩸"));
-        list.add(new Experiment("Human Digestive System", "Intermediate", "Food Breakdown Simulation", 219, "🍔"));
-        list.add(new Experiment("Nervous System Reaction", "Intermediate", "Reflex & Reaction Time", 220, "⚡"));
-        list.add(new Experiment("Ecosystem Interaction", "Intermediate", "Food Web Model", 221, "🕸️"));
-        list.add(new Experiment("Population Growth", "Intermediate", "Exponential Growth Graphs", 222, "📈"));
-        list.add(new Experiment("Water Transport in Plants", "Intermediate", "Xylem Movement", 223, "🪵"));
-        list.add(new Experiment("Transpiration Lab", "Intermediate", "Water Loss (Plastic Bag method)", 224, "☁️"));
+        // --- Intermediate Level (Grade 10–11) ---
+        list.add(new Experiment("Enzyme Activity (Advanced)", "Intermediate", "Temp & pH Effects", 211, "BIO"));
+        list.add(new Experiment("Photosynthesis Rate", "Intermediate", "Oxygen Bubbles (Light Intensity)", 212, "BIO"));
+        list.add(new Experiment("Respiration Rate", "Intermediate", "Yeast + Sugar Gas Production", 213, "BIO"));
+        list.add(new Experiment("Genetics Simulation", "Intermediate", "Punnett Squares Traits", 214, "BIO"));
+        list.add(new Experiment("DNA Extraction", "Intermediate", "Fruit DNA Visualization", 215, "BIO"));
+        list.add(new Experiment("Mitosis Observation", "Intermediate", "Cell Division Phases", 216, "BIO"));
+        list.add(new Experiment("Meiosis Simulation", "Intermediate", "Genetic Variation & Crossing Over", 217, "BIO"));
+        list.add(new Experiment("Blood Group Testing", "Intermediate", "Virtual Blood Typing (ABO)", 218, "BIO"));
+        list.add(new Experiment("Human Digestive System", "Intermediate", "Food Breakdown Simulation", 219, "BIO"));
+        list.add(new Experiment("Nervous System Reaction", "Intermediate", "Reflex & Reaction Time", 220, "BIO"));
+        list.add(new Experiment("Ecosystem Interaction", "Intermediate", "Food Web Model", 221, "BIO"));
+        list.add(new Experiment("Population Growth", "Intermediate", "Exponential Growth Graphs", 222, "BIO"));
+        list.add(new Experiment("Water Transport in Plants", "Intermediate", "Xylem Movement", 223, "BIO"));
+        list.add(new Experiment("Transpiration Lab", "Intermediate", "Water Loss (Plastic Bag method)", 224, "BIO"));
 
-        // --- 🧫 ADVANCED LEVEL (Grade 11–12) ---
-        list.add(new Experiment("Enzyme Kinetics", "Advanced", "Mathematical Reaction Rates", 225, "📊"));
-        list.add(new Experiment("DNA Replication Model", "Advanced", "Copying Simulation", 226, "🖨️"));
-        list.add(new Experiment("Protein Synthesis", "Advanced", "Transcription & Translation", 227, "🔗"));
-        list.add(new Experiment("Biotechnology Lab", "Advanced", "Genetic Engineering Basics", 228, "✂️"));
-        list.add(new Experiment("Gel Electrophoresis", "Advanced", "DNA Fragment Analysis", 229, "🏁"));
-        list.add(new Experiment("Immunology Lab", "Advanced", "Antigen-Antibody Reaction", 230, "🛡️"));
-        list.add(new Experiment("Evolution Simulation", "Advanced", "Natural Selection Survival", 231, "🦎"));
-        list.add(new Experiment("Ecology Field Study", "Advanced", "Biodiversity Collection", 232, "🌍"));
-        list.add(new Experiment("Antibiotic Resistance", "Advanced", "Bacterial Growth Comparison", 233, "💊"));
-        list.add(new Experiment("Hormone Action Lab", "Advanced", "Endocrine Feedback loops", 234, "🧪"));
-        list.add(new Experiment("Cardiovascular System", "Advanced", "Heart Rate & Exercise", 235, "❤️"));
-        list.add(new Experiment("Lung Capacity Lab", "Advanced", "Breathing Volume (Balloon)", 236, "🎈"));
-        list.add(new Experiment("Bioinformatics Lab", "Advanced", "DNA Sequence Analysis", 237, "💻"));
+        // --- Advanced Level (Grade 11–12) ---
+        list.add(new Experiment("Enzyme Kinetics", "Advanced", "Mathematical Reaction Rates", 225, "BIO"));
+        list.add(new Experiment("DNA Replication Model", "Advanced", "Copying Simulation", 226, "BIO"));
+        list.add(new Experiment("Protein Synthesis", "Advanced", "Transcription & Translation", 227, "BIO"));
+        list.add(new Experiment("Biotechnology Lab", "Advanced", "Genetic Engineering Basics", 228, "BIO"));
+        list.add(new Experiment("Gel Electrophoresis", "Advanced", "DNA Fragment Analysis", 229, "BIO"));
+        list.add(new Experiment("Immunology Lab", "Advanced", "Antigen-Antibody Reaction", 230, "BIO"));
+        list.add(new Experiment("Evolution Simulation", "Advanced", "Natural Selection Survival", 231, "BIO"));
+        list.add(new Experiment("Ecology Field Study", "Advanced", "Biodiversity Collection", 232, "BIO"));
+        list.add(new Experiment("Antibiotic Resistance", "Advanced", "Bacterial Growth Comparison", 233, "BIO"));
+        list.add(new Experiment("Hormone Action Lab", "Advanced", "Endocrine Feedback loops", 234, "BIO"));
+        list.add(new Experiment("Cardiovascular System", "Advanced", "Heart Rate & Exercise", 235, "BIO"));
+        list.add(new Experiment("Lung Capacity Lab", "Advanced", "Breathing Volume (Balloon)", 236, "BIO"));
+        list.add(new Experiment("Bioinformatics Lab", "Advanced", "DNA Sequence Analysis", 237, "BIO"));
 
         return list;
     }
@@ -159,7 +159,7 @@ public class BiologyLabActivity extends AppCompatActivity {
             Experiment exp = experiments.get(position);
             holder.tvName.setText(exp.name);
             holder.tvCategory.setText(String.format(Locale.US, "%s • %s", exp.category, exp.concept));
-            holder.tvIcon.setText(exp.icon);
+            holder.tvIcon.setText(String.format(Locale.US, "#%d", position + 1));
             holder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(BiologyLabActivity.this, BiologySimulationActivity.class);
                 intent.putExtra("experiment_id", exp.id);

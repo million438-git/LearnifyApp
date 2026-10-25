@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Physics: Specific Heat Capacity Lab</title>
+    <style>
+        :root {
+            --primary: #6366f1; --secondary: #f43f5e; --dark: #0f172a;
+            --surface: #ffffff; --bg: #f1f5f9; --glass: rgba(255,255,255,0.9);
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        html, body { height: 100%; }
+        body { margin: 0; background: var(--bg); color: var(--dark); display: flex; flex-direction: column; overflow: auto; -webkit-font-smoothing:antialiased; }
+
+        header { background: var(--dark); color: white; padding: 10px; text-align: center; border-bottom: 3px solid var(--primary); }
+        .lab-container { display: flex; flex: 1; overflow: auto; flex-direction: column; }
+
+        #sim-area { flex: 2 1 440px; position: relative; background: white; border-bottom: 2px solid #e2e8f0; overflow: auto; cursor: crosshair; min-height:340px; }
+        canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+        .splitter { height: 10px; background: linear-gradient(90deg, rgba(0,0,0,0.03), rgba(0,0,0,0.06)); cursor: ns-resize; display:block; }
+        .splitter:hover { background: linear-gradient(90deg, rgba(0,0,0,0.05), rgba(0,0,0,0.09)); }
+
+        .bottom-panel { flex: 3; display: flex; flex-direction: row; background: var(--surface); overflow-y: auto; }
+        .controls { flex: 0 0 360px; padding: 18px; border-right: 1px solid #e2e8f0; min-width: 300px; }
+        .analysis { flex: 1 1 720px; padding: 18px; background: #fafafa; min-width: 420px; }
+
+        .card { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        h4 { margin: 0 0 10px 0; font-size: 0.8rem; color: #64748b; text-transform: uppercase; }
+        .input-row { margin-bottom: 12px; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; }
+        input[type="range"] { width: 100%; accent-color: var(--primary); }
+        select, input[type="number"] { width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; font-family: inherit; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        button { padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit; }
+        .btn-fire { background: var(--primary); color: white; }
+        .btn-fire:hover { background: #4f46e5; }
+        .btn-reset { background: #64748b; color: white; }
+        .btn-reset:hover { background: #475569; }
+
+        .hud { position: absolute; top: 10px; left: 10px; background: var(--glass); padding: 8px; border-radius: 8px; font-size: 0.75rem; border: 1px solid #ddd; z-index: 20; }
+        .hud * { pointer-events: auto; }
+        .hud .metrics { pointer-events: none; line-height: 1.7; }
+        .zoom-controls { display:flex; gap:6px; margin-top:6px; }
+        .zoom-controls button { padding:6px 8px; border-radius:6px; border:1px solid rgba(0,0,0,0.06); background:white; cursor:pointer; }
+        .vector-legend { position: absolute; bottom: 10px; left: 10px; font-size: 0.65rem; background: var(--glass); padding: 5px; border-radius: 4px; }
+
+        .tab-btn { padding: 8px 12px; border-radius: 6px; background: #e2e8f0; color: var(--dark); font-weight: 600; font-size: 0.8rem; }
+        .tab-btn:hover { background: #cbd5e1; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        .readouts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+        .readout { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; }
+        .readout span { font-size: 0.7rem; color: #64748b; display: block; }
+        .readout strong { font-size: 1rem; color: var(--dark); }
+
+        .quiz-q { padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+        .quiz-q:last-child { border-bottom: none; }
+        .quiz-q > strong { display: block; margin-bottom: 8px; font-size: 0.9rem; }
+        .quiz-q label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; margin: 3px 6px 3px 0; cursor: pointer; font-weight: 500; }
+        .quiz-q label:hover { background: #eef2ff; border-color: #6366f1; }
+        .explanation {
+            margin-top: 8px; padding: 10px 12px; border-radius: 6px; font-size: 0.82rem; line-height: 1.55;
+            background: #eef2ff; border-left: 3px solid #6366f1; color: #1e293b;
+        }
+        .explanation.correct-box { background: #ecfdf5; border-left-color: #10b981; }
+        .explanation.wrong-box { background: #fef2f2; border-left-color: #dc2626; }
+        .explanation strong { display: block; margin-bottom: 3px; }
+
+        .quiz-section { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6366f1; margin: 12px 0 6px 0; }
+        .quiz-section:first-child { margin-top: 0; }
+
+        #quiz-result { margin-top: 10px; padding: 12px; border-radius: 8px; background: #eef2ff; border: 1px solid #c7d2fe; font-weight: 700; text-align: center; }
+
+        table.formulas { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 6px; }
+        table.formulas th, table.formulas td { border: 1px solid #e2e8f0; padding: 6px 8px; text-align: left; }
+        table.formulas th { background: #f1f5f9; font-weight: 600; }
+        .eq { font-family: 'JetBrains Mono', ui-monospace, monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.82rem; }
+        .note { font-size: 0.82rem; color: #475569; margin-top: 8px; line-height: 1.5; }
+
+        textarea { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 0.85rem; min-height: 64px; resize: vertical; }
+
+        @media (max-width: 768px) {
+            .bottom-panel { flex-direction: column; }
+            .controls { border-right: none; border-bottom: 1px solid #eee; min-width: 0; }
+            .analysis { min-width: 0; }
+            .readouts { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">🔥 Specific Heat Capacity Interactive Lab</h2>
+    <small>Explore Q = mcΔT · Real Materials · Energy &amp; Temperature Change</small>
+</header>
+
+<div class="lab-container">
+    <div id="sim-area">
+        <div class="hud">
+            <b>LIVE METRICS</b><br>
+            <div class="metrics">
+                Material: <span id="hud-mat">Water</span><br>
+                Mass: <span id="hud-m">1.000</span> kg<br>
+                T₀: <span id="hud-t0">20.0</span> °C<br>
+                T: <span id="hud-t">20.0</span> °C<br>
+                ΔT: <span id="hud-dt">0.0</span> °C
+            </div>
+            <div style="margin-top:6px; font-size:0.75rem;">
+                <label style="display:inline-flex;align-items:center;gap:6px;"><input id="full-scroll-toggle" type="checkbox"> Enable Full Page Scrolling</label>
+            </div>
+        </div>
+        <div class="vector-legend">
+            <span style="color:#6366f1">— Heat added</span> | <span style="color:#f43f5e">● Thermometer</span> | <span style="color:#10b981">○ Material</span>
+        </div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div id="splitter" class="splitter" title="Drag to resize simulation area"></div>
+
+    <div class="bottom-panel">
+        <div class="controls">
+            <h4>🧪 Lab Settings</h4>
+
+            <div class="input-row">
+                <label>Material</label>
+                <select id="material">
+                    <option value="water" selected>Water (c = 4186 J/kg·°C)</option>
+                    <option value="ice">Ice (c = 2100 J/kg·°C)</option>
+                    <option value="aluminum">Aluminum (c = 900 J/kg·°C)</option>
+                    <option value="copper">Copper (c = 385 J/kg·°C)</option>
+                    <option value="iron">Iron (c = 450 J/kg·°C)</option>
+                    <option value="lead">Lead (c = 128 J/kg·°C)</option>
+                    <option value="glass">Glass (c = 840 J/kg·°C)</option>
+                    <option value="oil">Olive oil (c = 1970 J/kg·°C)</option>
+                    <option value="ethanol">Ethanol (c = 2440 J/kg·°C)</option>
+                    <option value="mercury">Mercury (c = 140 J/kg·°C)</option>
+                </select>
+            </div>
+
+            <div class="input-row">
+                <label>Mass m: <span id="v-m">1.000</span> kg</label>
+                <input type="range" id="m" min="0.1" max="5" step="0.05" value="1">
+            </div>
+
+            <div class="input-row">
+                <label>Initial temperature T₀: <span id="v-t0">20</span> °C</label>
+                <input type="range" id="t0" min="0" max="80" step="1" value="20">
+            </div>
+
+            <div class="input-row">
+                <label>Heat energy Q: <span id="v-q">100</span> kJ</label>
+                <input type="range" id="q" min="1" max="1000" step="1" value="100">
+            </div>
+
+            <div class="btn-grid">
+                <button class="btn-fire" id="btn-apply">🔥 Add heat</button>
+                <button class="btn-reset" id="btn-reset">↺ Reset</button>
+            </div>
+        </div>
+
+        <div class="analysis">
+            <h4>📊 Learn &amp; Practice</h4>
+
+            <div class="readouts">
+                <div class="readout"><span>Material</span><strong id="ro-mat">Water</strong></div>
+                <div class="readout"><span>Specific heat c</span><strong id="ro-c">4186 J/kg·°C</strong></div>
+                <div class="readout"><span>Mass m</span><strong id="ro-m">1.000 kg</strong></div>
+                <div class="readout"><span>Heat added Q</span><strong id="ro-q">100.0 kJ</strong></div>
+                <div class="readout"><span>Temperature change ΔT</span><strong id="ro-dt">23.90 °C</strong></div>
+                <div class="readout"><span>Final temperature T</span><strong id="ro-t">43.90 °C</strong></div>
+                <div class="readout"><span>Energy per °C (mc)</span><strong id="ro-mc">4186 J/°C</strong></div>
+                <div class="readout"><span>Heat capacity C</span><strong id="ro-cm">4186 J/°C</strong></div>
+            </div>
+
+            <div class="card">
+                <div class="tabs" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                    <button class="tab-btn active" data-tab="formulas">Formulas</button>
+                    <button class="tab-btn" data-tab="quiz">Quiz</button>
+                    <button class="tab-btn" data-tab="challenges">Challenges</button>
+                    <button class="tab-btn" data-tab="notebook">Notebook</button>
+                </div>
+
+                <!-- FORMULAS -->
+                <div id="formulas" class="tab-panel active">
+                    <h3 style="margin:6px 0 8px 0;">Core Formulas — Specific Heat Capacity</h3>
+                    <ul style="font-size:0.9rem; line-height:1.6; padding-left:1rem; margin:0;">
+                        <li><b>Heat equation:</b> Q = m · c · ΔT</li>
+                        <li><b>Temperature change:</b> ΔT = Q / (m · c)</li>
+                        <li><b>Final temperature:</b> T = T₀ + ΔT</li>
+                        <li><b>Heat capacity (total):</b> C = m · c</li>
+                        <li><b>Heat rate (power):</b> P = Q / t = m · c · (ΔT/t)</li>
+                        <li><b>Calorimetry mixing:</b> m₁c₁(T_f − T₁) = m₂c₂(T₂ − T_f)</li>
+                        <li><b>Latent heat (phase change):</b> Q = m · L (no ΔT during phase change)</li>
+                    </ul>
+                    <p class="note"><b>💡 Quick tips:</b> Water has an unusually high c (~4186 J/kg·°C) — that is why oceans moderate climate and it takes 4.18 kJ to heat 1 kg water by 1 °C. Metals like lead have low c (~128 J/kg·°C), so they heat up and cool down fast. Doubling mass or heat doubles ΔT; doubling c halves ΔT.</p>
+
+                    <table class="formulas" style="margin-top:12px;">
+                        <tr><th>Quantity</th><th>Formula</th><th>Units</th></tr>
+                        <tr><td>Heat energy</td><td><span class="eq">Q = mcΔT</span></td><td>J</td></tr>
+                        <tr><td>Temperature change</td><td><span class="eq">ΔT = Q/(mc)</span></td><td>°C</td></tr>
+                        <tr><td>Heat capacity</td><td><span class="eq">C = mc</span></td><td>J/°C</td></tr>
+                    </table>
+                </div>
+
+                <!-- QUIZ -->
+                <div id="quiz" class="tab-panel" style="max-height:600px; overflow:auto;">
+                    <h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+                    <div class="quiz-section">Basic — Heat and Temperature</div>
+
+                    <div class="quiz-q" data-q="q1" data-answer="B">
+                        <strong>1. Specific heat capacity c is defined as the heat needed to:</strong>
+                        <label><input type="radio" name="q1" value="A"> Boil 1 kg of a substance</label>
+                        <label><input type="radio" name="q1" value="B"> Raise 1 kg of a substance by 1 °C</label>
+                        <label><input type="radio" name="q1" value="C"> Melt 1 kg of a substance</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q2" data-answer="B">
+                        <strong>2. If you double the mass while keeping Q and c constant, ΔT will:</strong>
+                        <label><input type="radio" name="q2" value="A"> Double</label>
+                        <label><input type="radio" name="q2" value="B"> Halve</label>
+                        <label><input type="radio" name="q2" value="C"> Stay the same</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q3" data-answer="A">
+                        <strong>3. Compared to lead, water has a much higher specific heat. This means water:</strong>
+                        <label><input type="radio" name="q3" value="A"> Heats up more slowly for the same energy input</label>
+                        <label><input type="radio" name="q3" value="B"> Heats up faster than lead</label>
+                        <label><input type="radio" name="q3" value="C"> Cannot absorb heat</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Intermediate — Calculations</div>
+
+                    <div class="quiz-q" data-q="q4" data-answer="B">
+                        <strong>4. How much heat is needed to raise 2 kg of water by 10 °C? (c = 4186 J/kg·°C)</strong>
+                        <label><input type="radio" name="q4" value="A"> 8,372 J</label>
+                        <label><input type="radio" name="q4" value="B"> 83,720 J</label>
+                        <label><input type="radio" name="q4" value="C"> 837,200 J</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q5" data-answer="A">
+                        <strong>5. The unit of specific heat capacity is:</strong>
+                        <label><input type="radio" name="q5" value="A"> J/(kg·°C)</label>
+                        <label><input type="radio" name="q5" value="B"> J·kg</label>
+                        <label><input type="radio" name="q5" value="C"> kg/°C</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q6" data-answer="B">
+                        <strong>6. During a phase change (ice melting), the temperature:</strong>
+                        <label><input type="radio" name="q6" value="A"> Rises steadily</label>
+                        <label><input type="radio" name="q6" value="B"> Stays constant while heat is added</label>
+                        <label><input type="radio" name="q6" value="C"> Drops</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Advanced — Real-World Physics</div>
+
+                    <div class="quiz-q" data-q="q7" data-answer="B">
+                        <strong>7. A 0.5 kg block of copper (c=385) absorbs 3,850 J. Its temperature rise is:</strong>
+                        <label><input type="radio" name="q7" value="A"> 5 °C</label>
+                        <label><input type="radio" name="q7" value="B"> 20 °C</label>
+                        <label><input type="radio" name="q7" value="C"> 40 °C</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q8" data-answer="A">
+                        <strong>8. Two objects with equal mass absorb the same Q. Object A (c=900) and B (c=450). Which heats up more?</strong>
+                        <label><input type="radio" name="q8" value="A"> Object B (lower c)</label>
+                        <label><input type="radio" name="q8" value="B"> Object A (higher c)</label>
+                        <label><input type="radio" name="q8" value="C"> They heat equally</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q9" data-answer="B">
+                        <strong>9. Why do coastal cities have milder climates than inland areas?</strong>
+                        <label><input type="radio" name="q9" value="A"> Coastal cities have more gravity</label>
+                        <label><input type="radio" name="q9" value="B"> Water's high c buffers temperature changes</label>
+                        <label><input type="radio" name="q9" value="C"> Ocean water is always cold</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="btn-grid" style="margin-top:12px;">
+                        <button class="btn-fire" id="btn-quiz-check">Submit Quiz</button>
+                        <button class="btn-reset" id="btn-quiz-reset">Reset</button>
+                    </div>
+                    <div id="quiz-result" style="display:none;"></div>
+                </div>
+
+                <!-- CHALLENGES -->
+                <div id="challenges" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Interactive Challenges</h3>
+                    <div style="display:flex; flex-direction:column; gap:8px; font-size:0.9rem;">
+                        <div>
+                            <b>Challenge 1 — Water vs Lead</b><br>
+                            <button class="btn-fire" data-challenge="compare">Same Q to water then lead</button>
+                        </div>
+                        <div>
+                            <b>Challenge 2 — Double the Mass</b><br>
+                            <button class="btn-fire" data-challenge="doublemass">Double mass → half the ΔT</button>
+                        </div>
+                        <div>
+                            <b>Challenge 3 — Metal Heating</b><br>
+                            <button class="btn-fire" data-challenge="metalhot">Heat copper strongly</button>
+                        </div>
+                        <div>
+                            <b>Challenge 4 — Real kitchen boil</b><br>
+                            <button class="btn-fire" data-challenge="boil">Energy to boil 1 kg water</button>
+                        </div>
+                        <div>
+                            <b>Challenge 5 — High Heat Capacity Material</b><br>
+                            <button class="btn-fire" data-challenge="highc">Compare oil vs mercury</button>
+                        </div>
+                        <div id="challenge-note" style="color:#0f172a; font-size:0.85rem;"></div>
+                        <div id="challenge-result" style="color:#083344; font-weight:600; margin-top:6px;"></div>
+                    </div>
+                </div>
+
+                <!-- NOTEBOOK -->
+                <div id="notebook" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Experiment Notebook</h3>
+                    <label>Prediction / hypothesis</label>
+                    <textarea id="hypothesis" placeholder="What do you expect to happen, and why?"></textarea>
+                    <label style="margin-top:10px; display:block;">Conclusion / evidence</label>
+                    <textarea id="conclusion" placeholder="Explain what your observations show."></textarea>
+                    <label style="margin-top:10px; display:block;">Recorded measurements</label>
+                    <textarea id="records" readonly style="background:#f8fafc; font-family:monospace; font-size:0.75rem; min-height:100px;"></textarea>
+                    <div class="btn-grid" style="margin-top:10px;">
+                        <button class="btn-fire" id="btn-record">📋 Record</button>
+                        <button class="btn-reset" id="btn-clear-notes">Clear</button>
+                    </div>
+                    <button class="btn-fire" style="margin-top:8px; width:100%;" id="btn-export">⬇ Download Report</button>
+                </div>
+
+            </div>
+
+            <div class="card">
+                <b>Real-world fact:</b> <span id="fact-box" style="font-size:0.85rem;">—</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+"use strict";
+(function () {
+    // === Materials with real specific heat values (J/kg·°C) ===
+    var MATERIALS = {
+        water:   { name: 'Water',     c: 4186, color: '#3b82f6', fact: 'Water has one of the highest specific heats of any common liquid (4186 J/kg·C) - this is why oceans and lakes moderate local climates.' },
+        ice:     { name: 'Ice',       c: 2100, color: '#93c5fd', fact: 'Ice has about half the specific heat of liquid water - that is why the Arctic warms faster than the ocean.' },
+        aluminum:{ name: 'Aluminum',  c: 900,  color: '#94a3b8', fact: 'Aluminum (c = 900 J/kg·C) is used in cookware because it conducts heat fast and heats up quickly.' },
+        copper:  { name: 'Copper',    c: 385,  color: '#b45309', fact: 'Copper has c = 385 J/kg·C - excellent electrical and thermal conductor, used in pots and radiators.' },
+        iron:    { name: 'Iron',      c: 450,  color: '#334155', fact: 'Iron (c = 450 J/kg·C) is the base of steel; iron cooking pans heat slowly but hold heat well.' },
+        lead:    { name: 'Lead',      c: 128,  color: '#64748b', fact: 'Lead has very low c = 128 J/kg·C - it heats up and cools very fast, which is why it was used in old bullet casting.' },
+        glass:   { name: 'Glass',     c: 840,  color: '#67e8f9', fact: 'Glass (c = 840 J/kg·C) is used in windows and oven doors - it survives heat shock by resisting rapid temperature change.' },
+        oil:     { name: 'Olive oil', c: 1970, color: '#ca8a04', fact: 'Olive oil (c = 1970 J/kg·C) is used as a frying medium - it stays hot without smoking due to fairly high c.' },
+        ethanol: { name: 'Ethanol',   c: 2440, color: '#a855f7', fact: 'Ethanol (c = 2440 J/kg·C) is a common solvent and biofuel - it absorbs a lot of energy per degree.' },
+        mercury: { name: 'Mercury',   c: 140,  color: '#78716c', fact: 'Mercury (c = 140 J/kg·C) is used in old thermometers because it responds quickly - very low c means small energy changes show up fast.' }
+    };
+
+    // === State ===
+    var S = {
+        material: 'water',
+        m: 1.0,
+        t0: 20,
+        Q: 100000,      // heat energy in J (100 kJ)
+        animatedT: 20,  // displayed temperature (animate toward final)
+        records: []
+    };
+
+    var $ = function (id) { return document.getElementById(id); };
+
+    // === Canvas ===
+    var canvas = $('canvas');
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var view = { x: 0, y: 0, scale: 1 };
+
+    function resizeCanvas() {
+        var w = canvas.clientWidth, h = canvas.clientHeight;
+        canvas.width = Math.max(1, Math.round(w * dpr));
+        canvas.height = Math.max(1, Math.round(h * dpr));
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function cw() { return canvas.width / dpr; }
+    function ch() { return canvas.height / dpr; }
+
+    // === Physics ===
+    function getC() { return MATERIALS[S.material].c; }
+    function getDeltaT() { return S.Q / (S.m * getC()); }
+    function getFinalT() { return S.t0 + getDeltaT(); }
+    function getHeatCapacity() { return S.m * getC(); }
+
+    // === Drawing ===
+    function drawScene() {
+        var w = cw(), h = ch();
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.save();
+        ctx.translate(view.x, view.y);
+        ctx.scale(view.scale, view.scale);
+
+        var W = w / view.scale, H = h / view.scale;
+
+        // grid
+        ctx.strokeStyle = '#f1f5f9';
+        ctx.lineWidth = 1;
+        for (var x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+        for (var y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+        var mat = MATERIALS[S.material];
+
+        // Container (beaker) on left
+        var cx = W * 0.32;
+        var beakerW = Math.min(W * 0.28, 240);
+        var beakerH = Math.min(H * 0.55, 280);
+        var beakerX = cx - beakerW / 2;
+        var beakerY = H * 0.55 - beakerH / 2;
+
+        // Beaker outline
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(beakerX, beakerY);
+        ctx.lineTo(beakerX, beakerY + beakerH);
+        ctx.lineTo(beakerX + beakerW, beakerY + beakerH);
+        ctx.lineTo(beakerX + beakerW, beakerY);
+        ctx.stroke();
+
+        // Fill level (proportional to mass, capped)
+        var fillLevel = 0.5 + Math.min(0.4, S.m / 5 * 0.4);
+        var fillTop = beakerY + beakerH * (1 - fillLevel);
+        var finalT = getFinalT();
+        var heat = Math.max(0, Math.min(1, (S.animatedT - S.t0) / 60));
+
+        // Material color from cold to hot
+        var coldColor = mat.color;
+        var hotColor = '#ef4444';
+        var liquidColor = mixColor(coldColor, hotColor, heat);
+
+        ctx.fillStyle = liquidColor;
+        ctx.fillRect(beakerX + 4, fillTop, beakerW - 8, beakerY + beakerH - fillTop);
+
+        // Ripple top
+        ctx.strokeStyle = '#0ea5e9';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (var rx = 0; rx < beakerW - 8; rx += 4) {
+            var ry = fillTop + Math.sin(rx * 0.1 + Date.now() * 0.003) * 2;
+            if (rx === 0) ctx.moveTo(beakerX + 4 + rx, ry);
+            else ctx.lineTo(beakerX + 4 + rx, ry);
+        }
+        ctx.stroke();
+
+        // Bubbles when hot
+        if (heat > 0.3) {
+            var t = Date.now() * 0.001;
+            for (var i = 0; i < 8; i++) {
+                var seed = (i * 137) % 100;
+                var bx = beakerX + 20 + seed * (beakerW - 40) / 100;
+                var by = fillTop + ((t * 30 + seed * 5) % (beakerY + beakerH - fillTop));
+                var br = 2 + Math.sin(t + i) * 1.5;
+                ctx.fillStyle = 'rgba(255,255,255,0.6)';
+                ctx.beginPath();
+                ctx.arc(bx, by, br, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Heat waves above beaker when heat > 0
+        if (heat > 0.1) {
+            ctx.strokeStyle = 'rgba(239, 68, 68, 0.5)';
+            ctx.lineWidth = 1.5;
+            for (var hw = 0; hw < 6; hw++) {
+                var hx = beakerX + 30 + hw * (beakerW - 60) / 5;
+                ctx.beginPath();
+                for (var hy = 0; hy < 40; hy += 4) {
+                    var px = hx + Math.sin(hy * 0.4 + Date.now() * 0.005 + hw) * 3;
+                    if (hy === 0) ctx.moveTo(px, fillTop - 5 - hy);
+                    else ctx.lineTo(px, fillTop - 5 - hy);
+                }
+                ctx.stroke();
+            }
+        }
+
+        // Thermometer on right
+        drawThermometer(W * 0.75, H * 0.5, S.animatedT);
+
+        // Energy bar / heat flow indicator at bottom
+        drawEnergyBar(W * 0.5, H * 0.92, S.Q);
+
+        ctx.restore();
+
+        // Caption
+        ctx.fillStyle = '#475569';
+        ctx.font = '11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Beaker of ' + mat.name + ' · Q = ' + (S.Q / 1000).toFixed(1) + ' kJ heats the sample · thermometer shows T', w / 2, h - 8);
+    }
+
+    function drawThermometer(tx, ty, temp) {
+        var bulbR = 14;
+        var stemW = 10;
+        var stemH = 140;
+        var stemTop = ty - stemH / 2;
+
+        // Stem outline
+        ctx.fillStyle = '#fff';
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.rect(tx - stemW / 2, stemTop, stemW, stemH);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(tx, ty + stemH / 2 + bulbR - 4, bulbR, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Fill level proportional to temp (0-100 °C)
+        var pct = Math.max(0, Math.min(1, temp / 100));
+        var fillH = stemH * pct;
+
+        // Red liquid in stem
+        ctx.fillStyle = '#ef4444';
+        ctx.fillRect(tx - stemW / 2 + 2, stemTop + stemH - fillH, stemW - 4, fillH);
+        // Bulb fill
+        ctx.beginPath();
+        ctx.arc(tx, ty + stemH / 2 + bulbR - 4, bulbR - 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Scale ticks
+        ctx.fillStyle = '#64748b';
+        ctx.font = '10px Inter';
+        ctx.textAlign = 'left';
+        for (var t = 0; t <= 100; t += 20) {
+            var yy = stemTop + stemH * (1 - t / 100);
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(tx - stemW / 2 - 4, yy);
+            ctx.lineTo(tx - stemW / 2, yy);
+            ctx.stroke();
+            ctx.fillText(t + '°', tx + stemW / 2 + 4, yy + 3);
+        }
+
+        // Current temp readout
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 14px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText(temp.toFixed(1) + ' °C', tx, ty + stemH / 2 + bulbR + 26);
+    }
+
+    function drawEnergyBar(bx, by, Q) {
+        var barW = 240, barH = 16;
+        var x = bx - barW / 2;
+        var y = by - barH / 2;
+
+        // Frame
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, y, barW, barH);
+
+        // Fill
+        var maxQ = 1000000;
+        var pct = Math.min(1, Q / maxQ);
+        ctx.fillStyle = '#f43f5e';
+        ctx.fillRect(x + 1, y + 1, (barW - 2) * pct, barH - 2);
+
+        // Label
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Heat energy Q = ' + (Q / 1000).toFixed(1) + ' kJ', bx, y - 8);
+
+        // Energy wave
+        ctx.strokeStyle = 'rgba(244, 63, 94, 0.6)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        for (var i = 0; i < barW; i += 3) {
+            var wy = y - 20 + Math.sin(i * 0.1 + Date.now() * 0.004) * 3 * (1 - i / barW);
+            if (i === 0) ctx.moveTo(x + i, wy);
+            else ctx.lineTo(x + i, wy);
+        }
+        ctx.stroke();
+    }
+
+    function mixColor(c1, c2, t) {
+        function parse(h) {
+            h = h.replace('#', '');
+            return [parseInt(h.substr(0, 2), 16), parseInt(h.substr(2, 2), 16), parseInt(h.substr(4, 2), 16)];
+        }
+        var a = parse(c1), b = parse(c2);
+        var r = Math.round(a[0] + (b[0] - a[0]) * t);
+        var g = Math.round(a[1] + (b[1] - a[1]) * t);
+        var bl = Math.round(a[2] + (b[2] - a[2]) * t);
+        return 'rgb(' + r + ',' + g + ',' + bl + ')';
+    }
+
+    // === Readouts ===
+    function updateReadouts() {
+        var mat = MATERIALS[S.material];
+        var dT = getDeltaT();
+        var finalT = getFinalT();
+        var mC = S.m * mat.c;
+
+        $('ro-mat').innerText = mat.name;
+        $('ro-c').innerText = mat.c + ' J/kg·°C';
+        $('ro-m').innerText = S.m.toFixed(3) + ' kg';
+        $('ro-q').innerText = (S.Q / 1000).toFixed(1) + ' kJ';
+        $('ro-dt').innerText = dT.toFixed(2) + ' °C';
+        $('ro-t').innerText = finalT.toFixed(2) + ' °C';
+        $('ro-mc').innerText = mC.toFixed(0) + ' J/°C';
+        $('ro-cm').innerText = mC.toFixed(0) + ' J/°C';
+
+        $('hud-mat').innerText = mat.name;
+        $('hud-m').innerText = S.m.toFixed(3);
+        $('hud-t0').innerText = S.t0.toFixed(1);
+        $('hud-t').innerText = S.animatedT.toFixed(1);
+        $('hud-dt').innerText = (S.animatedT - S.t0).toFixed(1);
+
+        $('fact-box').innerText = mat.fact;
+    }
+
+    // === Quiz ===
+    var QUIZ_EXPLAIN = {
+        q1: { correct: 'B', why: 'Specific heat capacity c is the heat energy needed to raise 1 kg of a substance by 1 °C (or 1 K). Water\'s c = 4186 J/kg·°C.', tip: 'Its units are J/(kg·°C). Sometimes quoted as J/(kg·K).' },
+        q2: { correct: 'B', why: 'From ΔT = Q/(mc), ΔT is inversely proportional to mass. Doubling m halves ΔT for the same heat.', tip: 'More mass means more total heat capacity C = mc, so the same Q raises temperature less.' },
+        q3: { correct: 'A', why: 'Water has c ≈ 4186 J/kg·°C, lead ≈ 128 J/kg·°C. For the same Q and m, water\'s ΔT is ~33× smaller. That is why boiling water takes time but a lead bullet heats instantly.', tip: 'Higher c = more energy needed per degree = slower to heat.' },
+        q4: { correct: 'B', why: 'Q = mcΔT = 2 × 4186 × 10 = 83,720 J ≈ 83.7 kJ.', tip: 'Check: 2 × 4186 = 8372 J per °C, times 10 °C = 83,720 J.' },
+        q5: { correct: 'A', why: 'Specific heat capacity is heat energy (J) per mass (kg) per temperature rise (°C or K). So its unit is J/(kg·°C).', tip: 'Heat capacity C = mc has units J/°C (no per-kg).' },
+        q6: { correct: 'B', why: 'During a phase change (melting or boiling), temperature stays constant while heat is absorbed. The energy goes into breaking bonds, not into raising temperature.', tip: 'This is why boiling water on a stove stays at 100 °C even though heat is constantly added.' },
+        q7: { correct: 'B', why: 'ΔT = Q/(mc) = 3850 / (0.5 × 385) = 3850 / 192.5 = <b>20 °C</b>.', tip: 'Sanity: c = 385 J/kg·°C, 0.5 kg gives 192.5 J/°C, 3850 J / 192.5 = 20 °C.' },
+        q8: { correct: 'A', why: 'ΔT = Q/(mc). Lower c means smaller denominator means larger ΔT. Object B with c = 450 heats twice as much as Object A with c = 900.', tip: 'Compare: 1/(450) vs 1/(900) — the first is twice as large.' },
+        q9: { correct: 'B', why: 'Water has a very high specific heat (~4186 J/kg·°C) and high thermal inertia. Coastal water absorbs heat during the day and releases it at night, moderating air temperature.', tip: 'San Francisco and London have milder climates than inland deserts because of this.' }
+    };
+
+    function evaluateQuiz() {
+        var qs = document.querySelectorAll('.quiz-q');
+        var score = 0, total = qs.length;
+
+        qs.forEach(function (q) {
+            var name = q.dataset.q;
+            var correct = q.dataset.answer;
+            var chosen = q.querySelector('input[name="' + name + '"]:checked');
+            var expl = q.querySelector('.explanation');
+            var data = QUIZ_EXPLAIN[name];
+
+            expl.hidden = false;
+            expl.className = 'explanation';
+
+            if (chosen && chosen.value === correct) {
+                score++;
+                expl.classList.add('correct-box');
+                expl.innerHTML = '<strong>✓ Correct!</strong>' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            } else {
+                expl.classList.add('wrong-box');
+                var chosenVal = chosen ? chosen.value : '—';
+                expl.innerHTML = '<strong>✗ Correct answer is ' + correct + '</strong>You chose ' + chosenVal + '. ' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            }
+        });
+
+        var pct = Math.round(score / total * 100);
+        var msg = '💪 Keep exploring!';
+        if (pct === 100) msg = '🌟 Perfect score!';
+        else if (pct >= 78) msg = '🎉 Excellent work!';
+        else if (pct >= 55) msg = '👍 Good effort! Review the explanations.';
+
+        var result = $('quiz-result');
+        result.style.display = 'block';
+        result.innerHTML = '<div style="font-size:1.4rem; color:#4338ca;">' + score + '/' + total + ' · ' + pct + '%</div><div style="font-size:0.85rem; color:#334155; margin-top:4px; font-weight:500;">' + msg + '</div>';
+    }
+
+    function resetQuiz() {
+        document.querySelectorAll('.quiz-q').forEach(function (q) {
+            q.querySelectorAll('input[type=radio]').forEach(function (r) { r.checked = false; });
+            var expl = q.querySelector('.explanation');
+            expl.hidden = true;
+            expl.innerHTML = '';
+            expl.className = 'explanation';
+        });
+        $('quiz-result').style.display = 'none';
+        $('quiz-result').innerHTML = '';
+    }
+
+    // === Challenges ===
+    function applyChallenge(id) {
+        var note = $('challenge-note');
+        var cres = $('challenge-result');
+        note.innerText = '';
+        cres.innerText = '';
+
+        if (id === 'compare') {
+            S.material = 'water';
+            $('material').value = 'water';
+            S.m = 1.0; $('m').value = '1'; $('v-m').innerText = '1.000';
+            S.t0 = 20; $('t0').value = '20'; $('v-t0').innerText = '20';
+            S.Q = 100000; $('q').value = '100'; $('v-q').innerText = '100';
+            var dTwater = getDeltaT();
+            note.innerText = 'Water: ΔT = ' + dTwater.toFixed(2) + ' °C for 100 kJ. Now switch material to Lead — same Q, same mass, will give a much larger ΔT.';
+            cres.innerText = 'Water: c=4186, ΔT=' + dTwater.toFixed(2) + '°C. Try Lead: c=128, expected ΔT=' + (S.Q / (S.m * 128)).toFixed(1) + '°C.';
+        } else if (id === 'doublemass') {
+            S.material = 'water'; $('material').value = 'water';
+            S.m = 2.0; $('m').value = '2'; $('v-m').innerText = '2.000';
+            S.Q = 100000; $('q').value = '100'; $('v-q').innerText = '100';
+            var dt = getDeltaT();
+            note.innerText = 'Same 100 kJ, but now 2 kg of water instead of 1 kg — ΔT halves.';
+            cres.innerText = '2 kg water ΔT = ' + dt.toFixed(2) + ' °C (1 kg was ' + (100000 / (1 * 4186)).toFixed(2) + ' °C)';
+        } else if (id === 'metalhot') {
+            S.material = 'copper'; $('material').value = 'copper';
+            S.m = 1.0; $('m').value = '1'; $('v-m').innerText = '1.000';
+            S.Q = 500000; $('q').value = '500'; $('v-q').innerText = '500';
+            var dtC = getDeltaT();
+            note.innerText = 'Copper (c=385) absorbing 500 kJ — because c is small, ΔT is very large. Watch the temperature rise!';
+            cres.innerText = 'Copper ΔT = ' + dtC.toFixed(1) + ' °C (final T would be T₀ + ' + dtC.toFixed(1) + ')';
+        } else if (id === 'boil') {
+            S.material = 'water'; $('material').value = 'water';
+            S.m = 1.0; $('m').value = '1'; $('v-m').innerText = '1.000';
+            S.t0 = 20; $('t0').value = '20'; $('v-t0').innerText = '20';
+            // Energy to raise 1 kg water from 20 to 100 °C = 1 × 4186 × 80 = 334,880 J = 334.88 kJ
+            S.Q = 334880; $('q').value = '335'; $('v-q').innerText = '335';
+            var dtW = getDeltaT();
+            note.innerText = 'To boil 1 kg water from 20 °C to 100 °C takes 1 × 4186 × 80 = 334.88 kJ (335 kJ). This is only the "sensible heat" — additional latent heat (2260 kJ/kg) is needed to actually vaporize it.';
+            cres.innerText = 'ΔT = ' + dtW.toFixed(2) + ' °C · final T = ' + getFinalT().toFixed(2) + ' °C · plus 2260 kJ/kg latent heat for phase change';
+        } else if (id === 'highc') {
+            S.material = 'oil'; $('material').value = 'oil';
+            S.m = 1.0; $('m').value = '1'; $('v-m').innerText = '1.000';
+            S.Q = 100000; $('q').value = '100'; $('v-q').innerText = '100';
+            var dtO = getDeltaT();
+            var dtM = 100000 / (1 * 140);
+            note.innerText = 'Olive oil c=1970 → ΔT = ' + dtO.toFixed(2) + ' °C. Mercury c=140 → same Q would give ΔT = ' + dtM.toFixed(1) + ' °C.';
+            cres.innerText = 'Oil ΔT: ' + dtO.toFixed(2) + ' °C · Mercury ΔT: ' + dtM.toFixed(1) + ' °C — ~14× larger!';
+        }
+        updateReadouts();
+    }
+
+    // === Notebook ===
+    function recordMeasurement() {
+        var mat = MATERIALS[S.material];
+        var line = new Date().toLocaleTimeString() + ' | ' + mat.name + ' | c=' + mat.c + ' J/kg·°C | m=' + S.m.toFixed(3) + ' kg | T0=' + S.t0 + '°C | Q=' + (S.Q / 1000).toFixed(1) + ' kJ | ΔT=' + getDeltaT().toFixed(3) + '°C | T=' + getFinalT().toFixed(3) + '°C';
+        S.records.push(line);
+        $('records').value = S.records.join('\n');
+        $('records').scrollTop = $('records').scrollHeight;
+    }
+
+    function downloadReport() {
+        var mat = MATERIALS[S.material];
+        var dT = getDeltaT();
+        var finalT = getFinalT();
+        var text = 'LEARNIFY - SPECIFIC HEAT CAPACITY - LAB REPORT\n' +
+            'Date: ' + new Date().toLocaleString() + '\n\n' +
+            'CURRENT STATE\n' +
+            'Material: ' + mat.name + '\n' +
+            'Specific heat c = ' + mat.c + ' J/kg·°C\n' +
+            'Mass m = ' + S.m.toFixed(4) + ' kg\n' +
+            'Initial temperature T0 = ' + S.t0.toFixed(1) + ' °C\n' +
+            'Heat added Q = ' + S.Q.toFixed(0) + ' J (' + (S.Q / 1000).toFixed(2) + ' kJ)\n' +
+            'Temperature change dT = ' + dT.toFixed(4) + ' °C\n' +
+            'Final temperature T = ' + finalT.toFixed(4) + ' °C\n' +
+            'Heat capacity C = mc = ' + (S.m * mat.c).toFixed(0) + ' J/°C\n\n' +
+            'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+            'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+            'MEASUREMENTS\n' + $('records').value + '\n\n' +
+            'LIMITATIONS\nIdeal model - no phase changes, no heat losses to surroundings. Temperature assumed uniform within sample. Real materials can undergo phase changes (melting, boiling) where heat goes into latent processes, not temperature rise. Educational use only.\n';
+        var blob = new Blob([text], { type: 'text/plain' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'specific-heat-report.txt';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    // === Animation ===
+    // Animate the displayed temperature toward the final target
+    function animate() {
+        var target = getFinalT();
+        S.animatedT += (target - S.animatedT) * 0.03;
+        if (Math.abs(target - S.animatedT) < 0.02) S.animatedT = target;
+
+        drawScene();
+        updateReadouts();
+        requestAnimationFrame(animate);
+    }
+
+    // === Event wiring ===
+    $('material').addEventListener('change', function (e) {
+        S.material = e.target.value;
+        S.animatedT = S.t0; // reset animation on material change
+    });
+    $('m').addEventListener('input', function (e) {
+        S.m = parseFloat(e.target.value);
+        $('v-m').innerText = S.m.toFixed(3);
+    });
+    $('t0').addEventListener('input', function (e) {
+        S.t0 = parseFloat(e.target.value);
+        $('v-t0').innerText = S.t0.toFixed(0);
+        S.animatedT = S.t0;
+    });
+    $('q').addEventListener('input', function (e) {
+        S.Q = parseFloat(e.target.value) * 1000;
+        $('v-q').innerText = e.target.value;
+    });
+    $('btn-apply').addEventListener('click', function () {
+        // Reset animated temperature and let it animate up
+        S.animatedT = S.t0;
+        // Force target visible
+        updateReadouts();
+    });
+    $('btn-reset').addEventListener('click', function () {
+        S.material = 'water';
+        S.m = 1.0;
+        S.t0 = 20;
+        S.Q = 100000;
+        S.animatedT = 20;
+        $('material').value = 'water';
+        $('m').value = '1'; $('v-m').innerText = '1.000';
+        $('t0').value = '20'; $('v-t0').innerText = '20';
+        $('q').value = '100'; $('v-q').innerText = '100';
+        updateReadouts();
+    });
+
+    // Tabs
+    document.querySelectorAll('.tab-btn[data-tab]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+            document.querySelectorAll('.tab-btn[data-tab]').forEach(function (b) { b.classList.remove('active'); });
+            document.getElementById(btn.dataset.tab).classList.add('active');
+            btn.classList.add('active');
+        });
+    });
+
+    // Challenge buttons
+    document.querySelectorAll('[data-challenge]').forEach(function (btn) {
+        btn.addEventListener('click', function () { applyChallenge(btn.dataset.challenge); });
+    });
+
+    $('btn-quiz-check').addEventListener('click', evaluateQuiz);
+    $('btn-quiz-reset').addEventListener('click', resetQuiz);
+
+    $('btn-record').addEventListener('click', recordMeasurement);
+    $('btn-clear-notes').addEventListener('click', function () {
+        if (!confirm('Clear all notebook fields?')) return;
+        $('hypothesis').value = '';
+        $('conclusion').value = '';
+        $('records').value = '';
+        S.records = [];
+    });
+    $('btn-export').addEventListener('click', downloadReport);
+
+    // Zoom & pan
+    var fullScroll = false;
+    var pointers = new Map();
+    var pinch = null;
+
+    $('full-scroll-toggle').addEventListener('change', function (e) {
+        fullScroll = e.target.checked;
+        canvas.style.touchAction = fullScroll ? 'auto' : 'none';
+        pointers.clear();
+        pinch = null;
+    });
+
+    function getPos(e) {
+        var r = canvas.getBoundingClientRect();
+        return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+
+    canvas.addEventListener('wheel', function (e) {
+        if (fullScroll) return;
+        e.preventDefault();
+        var cx = e.offsetX, cy = e.offsetY;
+        var wx = (cx - view.x) / view.scale;
+        var wy = (cy - view.y) / view.scale;
+        var factor = Math.exp(-e.deltaY * 0.0015);
+        view.scale = Math.max(0.3, Math.min(5, view.scale * factor));
+        view.x = cx - wx * view.scale;
+        view.y = cy - wy * view.scale;
+    }, { passive: false });
+
+    canvas.addEventListener('pointerdown', function (e) {
+        if (fullScroll) return;
+        canvas.setPointerCapture(e.pointerId);
+        pointers.set(e.pointerId, getPos(e));
+        if (pointers.size === 2) {
+            var pts = Array.from(pointers.values());
+            pinch = { dist: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y), startScale: view.scale };
+        }
+    });
+    canvas.addEventListener('pointermove', function (e) {
+        if (fullScroll || !pointers.has(e.pointerId)) return;
+        var prev = pointers.get(e.pointerId);
+        var pos = getPos(e);
+        pointers.set(e.pointerId, pos);
+        if (pointers.size === 1 && !pinch) {
+            view.x += pos.x - prev.x;
+            view.y += pos.y - prev.y;
+        } else if (pointers.size === 2 && pinch) {
+            var pts = Array.from(pointers.values());
+            var d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+            view.scale = Math.max(0.3, Math.min(5, pinch.startScale * d / pinch.dist));
+        }
+    });
+    canvas.addEventListener('pointerup', function (e) {
+        if (fullScroll) return;
+        pointers.delete(e.pointerId);
+        try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
+        if (pointers.size < 2) pinch = null;
+    });
+    canvas.addEventListener('pointercancel', function (e) {
+        pointers.delete(e.pointerId);
+        pinch = null;
+    });
+
+    // Zoom controls
+    (function () {
+        var hud = document.querySelector('.hud');
+        if (!hud) return;
+        var z = document.createElement('div');
+        z.className = 'zoom-controls';
+        z.innerHTML = '<button id="zoom-out">-</button><button id="zoom-reset">Reset</button><button id="zoom-in">+</button>';
+        hud.appendChild(z);
+        $('zoom-in').addEventListener('click', function () { view.scale = Math.min(5, view.scale * 1.25); });
+        $('zoom-out').addEventListener('click', function () { view.scale = Math.max(0.3, view.scale / 1.25); });
+        $('zoom-reset').addEventListener('click', function () { view.x = 0; view.y = 0; view.scale = 1; });
+    })();
+
+    // Splitter
+    (function () {
+        var sim = $('sim-area'), splitter = $('splitter');
+        if (!sim || !splitter) return;
+        var dragging = false, startY = 0, startH = 0;
+        var minH = 160, maxH = window.innerHeight - 220;
+
+        splitter.addEventListener('pointerdown', function (e) {
+            e.preventDefault();
+            dragging = true;
+            startY = e.clientY;
+            startH = sim.getBoundingClientRect().height;
+            try { splitter.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+        window.addEventListener('pointermove', function (e) {
+            if (!dragging) return;
+            var dy = e.clientY - startY;
+            var nh = Math.max(minH, Math.min(maxH, Math.round(startH + dy)));
+            sim.style.flex = '0 0 ' + nh + 'px';
+            resizeCanvas();
+        });
+        window.addEventListener('pointerup', function (e) {
+            if (!dragging) return;
+            dragging = false;
+            try { splitter.releasePointerCapture(e.pointerId); } catch (err) {}
+        });
+        splitter.addEventListener('dblclick', function () {
+            sim.style.flex = '';
+            resizeCanvas();
+        });
+    })();
+
+    window.addEventListener('resize', function () { resizeCanvas(); });
+
+    // === Boot ===
+    resizeCanvas();
+    S.animatedT = S.t0;
+    updateReadouts();
+    animate();
+})();
+</script>
+</body>
+</html>

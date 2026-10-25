@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,8 +18,9 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
+    private static final String TAG = "DatabaseHelper";
     private static final String DATABASE_NAME = "AceGradeProfessional.db";
-    private static final int DATABASE_VERSION = 57; 
+    private static final int DATABASE_VERSION = 58;
     private final Context context;
 
     public DatabaseHelper(Context context) {
@@ -27,7 +31,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         createTables(db);
-        seedAllData(db);
+        // seedAllData(db); // REMOVED FOR PRODUCTION SECURITY: Do not seed hardcoded admin accounts
         seedDailyQuestionsFromCSV(db);
     }
 
@@ -110,13 +114,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "mood TEXT, " +
                 "note TEXT, " +
                 "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
+
+        // NEW: AI Chat History for persistent student conversations
+        db.execSQL("CREATE TABLE IF NOT EXISTS ai_chat_history (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "username TEXT, " +
+                "message TEXT, " +
+                "is_user INTEGER, " +
+                "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
     }
 
     private void seedAllData(SQLiteDatabase db) {
         ContentValues v = new ContentValues();
         v.put("full_name", "System Admin");
-        v.put("username", "admin");
-        v.put("password", "admin123");
+        // Default hardcoded admin account removed for security
         v.put("user_type", "ADMIN");
         v.put("is_verified", 1);
         db.insertWithOnConflict("users", null, v, SQLiteDatabase.CONFLICT_IGNORE);
@@ -173,18 +184,54 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // --- Core User Methods ---
 
     public boolean checkUser(String user, String pass, String type) {
+        if (user == null || pass == null || type == null) {
+            return false;
+        }
         SQLiteDatabase db = getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT * FROM users WHERE (username=? OR email=?) AND password=? AND user_type=?", new String[]{user, user, pass, type});
-        boolean exists = c.getCount() > 0;
+        Cursor c = db.rawQuery("SELECT id, password FROM users WHERE (username=? OR email=?) AND user_type=?", new String[]{user, user, type});
+        if (c == null) {
+            return false;
+        }
+
+        int userId = -1;
+        String storedPassword = null;
+        if (c.moveToFirst()) {
+            userId = c.getInt(0);
+            storedPassword = c.getString(1);
+        }
         c.close();
-        return exists;
+
+        if (storedPassword == null || userId == -1) {
+            return false;
+        }
+
+        boolean isValid = PasswordUtils.verifyPassword(pass, storedPassword);
+        if (!isValid) {
+            return false;
+        }
+
+        // Controlled lazy migration: upgrade legacy plaintext records upon verified login
+        if (PasswordUtils.needsUpgrade(storedPassword)) {
+            try {
+                String upgradedHash = PasswordUtils.hashPassword(pass);
+                SQLiteDatabase writeDb = getWritableDatabase();
+                ContentValues cv = new ContentValues();
+                cv.put("password", upgradedHash);
+                writeDb.update("users", cv, "id=?", new String[]{String.valueOf(userId)});
+            } catch (Exception e) {
+                Log.e("DatabaseHelper", "Failed to migrate legacy password hash", e);
+            }
+        }
+
+        return true;
     }
 
     public boolean registerUser(String name, String uid, String role, String user, String email, String pass, String img, String type) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues v = new ContentValues();
         v.put("full_name", name); v.put("unique_id", uid); v.put("grade_or_role", role);
-        v.put("username", user); v.put("email", email); v.put("password", pass);
+        v.put("username", user); v.put("email", email);
+        v.put("password", PasswordUtils.hashPassword(pass));
         v.put("profile_image", img); v.put("user_type", type);
         return db.insert("users", null, v) != -1;
     }
@@ -235,11 +282,231 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.update("users", cv, "username=?", new String[]{username}) > 0;
     }
 
-    public void updatePassword(String identifier, String newPassword) {
+    public boolean updateUserProfileImage(String identifier, String imageUri) {
+        if (identifier == null) return false;
+        try {
+            SQLiteDatabase db = getWritableDatabase();
+            ContentValues cv = new ContentValues();
+            cv.put("profile_image", imageUri != null ? imageUri : "");
+            return db.update("users", cv, "username=? OR email=?", new String[]{identifier, identifier}) > 0;
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Failed to update profile image for " + identifier, e);
+            return false;
+        }
+    }
+
+    public boolean deleteUserAccount(String identifier) {
+        if (identifier == null || identifier.trim().isEmpty()) {
+            return false;
+        }
         SQLiteDatabase db = getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put("password", newPassword);
-        db.update("users", cv, "username=? OR email=?", new String[]{identifier, identifier});
+        db.beginTransaction();
+        try {
+            // Resolve canonical username
+            String username = identifier.trim();
+            Cursor c = db.rawQuery("SELECT username FROM users WHERE username=? OR email=?", new String[]{identifier, identifier});
+            if (c != null) {
+                if (c.moveToFirst()) {
+                    username = c.getString(0);
+                }
+                c.close();
+            }
+
+            String[] userArg = new String[]{username};
+            db.delete("challenge_stats", "username=?", userArg);
+            db.delete("user_notifications", "username=?", userArg);
+            db.delete("lab_results", "username=?", userArg);
+            db.delete("enrollments", "username=?", userArg);
+            db.delete("payments", "username=?", userArg);
+            db.delete("exam_results", "username=?", userArg);
+            db.delete("certificates", "username=?", userArg);
+            db.delete("study_notes", "username=?", userArg);
+            db.delete("flashcards", "username=?", userArg);
+            db.delete("mood_logs", "username=?", userArg);
+            db.delete("support_tickets", "username=?", userArg);
+
+            int deletedUsers = db.delete("users", "username=?", userArg);
+
+            db.setTransactionSuccessful();
+            return deletedUsers > 0;
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Failed to cascade delete user account: " + identifier, e);
+            return false;
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    public JSONObject exportUserData(String identifier) {
+        JSONObject root = new JSONObject();
+        if (identifier == null || identifier.trim().isEmpty()) {
+            return root;
+        }
+        SQLiteDatabase db = getReadableDatabase();
+        try {
+            String username = identifier.trim();
+            JSONObject profileObj = new JSONObject();
+            Cursor c = db.rawQuery("SELECT full_name, username, email, phone, university, year, major, xp_goal, subjects, visibility, created_at, user_type FROM users WHERE username=? OR email=?", new String[]{identifier, identifier});
+            if (c != null) {
+                if (c.moveToFirst()) {
+                    username = c.getString(c.getColumnIndexOrThrow("username"));
+                    profileObj.put("full_name", c.getString(c.getColumnIndexOrThrow("full_name")));
+                    profileObj.put("username", username);
+                    profileObj.put("email", c.getString(c.getColumnIndexOrThrow("email")));
+                    profileObj.put("phone", c.getString(c.getColumnIndexOrThrow("phone")));
+                    profileObj.put("university", c.getString(c.getColumnIndexOrThrow("university")));
+                    profileObj.put("year", c.getString(c.getColumnIndexOrThrow("year")));
+                    profileObj.put("major", c.getString(c.getColumnIndexOrThrow("major")));
+                    profileObj.put("xp_goal", c.getInt(c.getColumnIndexOrThrow("xp_goal")));
+                    profileObj.put("subjects", c.getString(c.getColumnIndexOrThrow("subjects")));
+                    profileObj.put("visibility", c.getString(c.getColumnIndexOrThrow("visibility")));
+                    profileObj.put("user_type", c.getString(c.getColumnIndexOrThrow("user_type")));
+                    profileObj.put("created_at", c.getString(c.getColumnIndexOrThrow("created_at")));
+                }
+                c.close();
+            }
+            root.put("app", "Learnify");
+            root.put("export_version", "2.8");
+            root.put("exported_at", java.text.DateFormat.getDateTimeInstance().format(new java.util.Date()));
+            root.put("profile", profileObj);
+
+            // Challenge stats
+            JSONObject challengeObj = new JSONObject();
+            Cursor cStats = db.rawQuery("SELECT total_xp, streak, last_completion_date FROM challenge_stats WHERE username=?", new String[]{username});
+            if (cStats != null) {
+                if (cStats.moveToFirst()) {
+                    challengeObj.put("total_xp", cStats.getInt(0));
+                    challengeObj.put("streak", cStats.getInt(1));
+                    challengeObj.put("last_completion_date", cStats.getString(2));
+                }
+                cStats.close();
+            }
+            root.put("learning_stats", challengeObj);
+
+            // Enrollments
+            JSONArray enrollmentsArray = new JSONArray();
+            Cursor cEnr = db.rawQuery("SELECT course_name FROM enrollments WHERE username=?", new String[]{username});
+            if (cEnr != null) {
+                while (cEnr.moveToNext()) {
+                    enrollmentsArray.put(cEnr.getString(0));
+                }
+                cEnr.close();
+            }
+            root.put("enrollments", enrollmentsArray);
+
+            // Exam results
+            JSONArray examArray = new JSONArray();
+            Cursor cExam = db.rawQuery("SELECT subject, score_text, total_questions, correct_answers, timestamp FROM exam_results WHERE username=?", new String[]{username});
+            if (cExam != null) {
+                while (cExam.moveToNext()) {
+                    JSONObject examItem = new JSONObject();
+                    examItem.put("subject", cExam.getString(0));
+                    examItem.put("score", cExam.getString(1));
+                    examItem.put("total_questions", cExam.getInt(2));
+                    examItem.put("correct_answers", cExam.getInt(3));
+                    examItem.put("date", cExam.getString(4));
+                    examArray.put(examItem);
+                }
+                cExam.close();
+            }
+            root.put("exam_results", examArray);
+
+            // Certificates
+            JSONArray certArray = new JSONArray();
+            Cursor cCert = db.rawQuery("SELECT title, course, date, certificate_id FROM certificates WHERE username=?", new String[]{username});
+            if (cCert != null) {
+                while (cCert.moveToNext()) {
+                    JSONObject certItem = new JSONObject();
+                    certItem.put("title", cCert.getString(0));
+                    certItem.put("course", cCert.getString(1));
+                    certItem.put("date", cCert.getString(2));
+                    certItem.put("certificate_id", cCert.getString(3));
+                    certArray.put(certItem);
+                }
+                cCert.close();
+            }
+            root.put("certificates", certArray);
+
+            // Summary counts
+            JSONObject activitySummary = new JSONObject();
+            Cursor cNotes = db.rawQuery("SELECT COUNT(*) FROM study_notes WHERE username=?", new String[]{username});
+            if (cNotes != null) {
+                if (cNotes.moveToFirst()) activitySummary.put("total_study_notes", cNotes.getInt(0));
+                cNotes.close();
+            }
+            Cursor cCards = db.rawQuery("SELECT COUNT(*) FROM flashcards WHERE username=?", new String[]{username});
+            if (cCards != null) {
+                if (cCards.moveToFirst()) activitySummary.put("total_flashcards", cCards.getInt(0));
+                cCards.close();
+            }
+            Cursor cMood = db.rawQuery("SELECT COUNT(*) FROM mood_logs WHERE username=?", new String[]{username});
+            if (cMood != null) {
+                if (cMood.moveToFirst()) activitySummary.put("total_mood_logs", cMood.getInt(0));
+                cMood.close();
+            }
+            root.put("activity_summary", activitySummary);
+
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error exporting user data for " + identifier, e);
+        }
+        return root;
+    }
+
+    public boolean updatePassword(String identifier, String newPassword) {
+        if (identifier == null || newPassword == null || newPassword.trim().isEmpty()) {
+            return false;
+        }
+        try {
+            SQLiteDatabase db = getWritableDatabase();
+            ContentValues cv = new ContentValues();
+            cv.put("password", PasswordUtils.hashPassword(newPassword));
+            return db.update("users", cv, "username=? OR email=?", new String[]{identifier, identifier}) > 0;
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Failed to update password for " + identifier, e);
+            return false;
+        }
+    }
+
+    public boolean verifyUserPassword(String identifier, String candidatePassword) {
+        if (identifier == null || candidatePassword == null || candidatePassword.isEmpty()) {
+            return false;
+        }
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = null;
+        try {
+            c = db.rawQuery("SELECT id, password FROM users WHERE username=? OR email=?", new String[]{identifier, identifier});
+            if (c == null || !c.moveToFirst()) {
+                return false;
+            }
+            int userId = c.getInt(0);
+            String storedPassword = c.getString(1);
+            if (storedPassword == null) {
+                return false;
+            }
+            boolean isValid = PasswordUtils.verifyPassword(candidatePassword, storedPassword);
+            if (!isValid) {
+                return false;
+            }
+            if (PasswordUtils.needsUpgrade(storedPassword)) {
+                try {
+                    String upgradedHash = PasswordUtils.hashPassword(candidatePassword);
+                    SQLiteDatabase writeDb = getWritableDatabase();
+                    ContentValues cv = new ContentValues();
+                    cv.put("password", upgradedHash);
+                    writeDb.update("users", cv, "id=?", new String[]{String.valueOf(userId)});
+                } catch (Exception e) {
+                    Log.e("DatabaseHelper", "Failed to migrate legacy password during verification", e);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Error verifying password for " + identifier, e);
+            return false;
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
     }
 
     public boolean isEmailRegistered(String email) {
@@ -253,7 +520,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean updatePasswordByEmail(String email, String newPass) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put("password", newPass);
+        cv.put("password", PasswordUtils.hashPassword(newPass));
         return db.update("users", cv, "email=?", new String[]{email}) > 0;
     }
 
@@ -453,7 +720,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getStudentPayments(String username) {
-        return getReadableDatabase().rawQuery("SELECT * FROM payments WHERE username=?", new String[]{username});
+        return getReadableDatabase().rawQuery("SELECT * FROM payments WHERE username=? ORDER BY id DESC", new String[]{username});
     }
 
     public Cursor getAllPayments() {
@@ -465,17 +732,43 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put("status", status);
         db.update("payments", cv, "id=?", new String[]{String.valueOf(id)});
+
+        try {
+            Cursor c = db.rawQuery("SELECT username, amount, transaction_id FROM payments WHERE id=?", new String[]{String.valueOf(id)});
+            if (c != null && c.moveToFirst()) {
+                String u = c.getString(0);
+                String amt = c.getString(1);
+                String tx = c.getString(2);
+                c.close();
+                if ("Approved".equalsIgnoreCase(status)) {
+                    addNotification(u, "Payment Approved", "Your payment for " + amt + " (TxID: " + tx + ") was verified. Premium learning access is now unlocked.", "payment");
+                } else if ("Rejected".equalsIgnoreCase(status)) {
+                    addNotification(u, "Payment Verification Notice", "Your payment proof for " + amt + " (TxID: " + tx + ") could not be verified. Please check details and re-submit.", "payment");
+                }
+            } else if (c != null) {
+                c.close();
+            }
+        } catch (Exception e) {
+            android.util.Log.e("DatabaseHelper", "Failed to dispatch payment notification", e);
+        }
     }
 
     public boolean submitPayment(String username, String txId, String amount, String img) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues v = new ContentValues();
         v.put("username", username); v.put("transaction_id", txId); v.put("amount", amount); v.put("image_path", img);
-        return db.insert("payments", null, v) != -1;
+        long rowId = db.insert("payments", null, v);
+        if (rowId != -1) {
+            try {
+                addNotification(username, "Payment Submitted ⏳", "Your payment proof for " + amount + " (TxID: " + txId + ") is under review by admin.", "payment");
+            } catch (Exception ignored) {}
+            return true;
+        }
+        return false;
     }
 
     public String getAdminAccountDetails() {
-        return "Bank: AceBank\nAccount Name: Learnify Inc.\nAccount No: 1234567890\nRef: [Username]";
+        return "CBE: 1000591245407\nTelebirr: 0902939206\nBeneficiary: Million Teshome Gudeto";
     }
 
     public boolean insertMaterial(String title, String content, String type, String subject, String grade, String filePath, String difficulty) {
@@ -501,7 +794,73 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getCustomCertificate(String username) {
-        return getReadableDatabase().rawQuery("SELECT * FROM certificates WHERE username=? ORDER BY timestamp DESC LIMIT 1", new String[]{username});
+        String sql = "SELECT id, username, " +
+                     "title, title AS cert_title, " +
+                     "presentation, presentation AS presentation_text, " +
+                     "student_name, " +
+                     "body, body AS body_text, " +
+                     "course, course AS course_name, " +
+                     "date, date AS issue_date, " +
+                     "student_id, certificate_id, " +
+                     "director, director AS director_name, " +
+                     "role, role AS director_role, " +
+                     "timestamp " +
+                     "FROM certificates WHERE username=? ORDER BY id DESC LIMIT 1";
+        return getReadableDatabase().rawQuery(sql, new String[]{username});
+    }
+
+    public Cursor getAllCertificates() {
+        return getReadableDatabase().rawQuery("SELECT * FROM certificates ORDER BY id DESC", null);
+    }
+
+    public Cursor getCertificateById(String certId) {
+        if (certId == null) return null;
+        return getReadableDatabase().rawQuery("SELECT * FROM certificates WHERE certificate_id=?", new String[]{certId.trim()});
+    }
+
+    public boolean hasCertificateForCourse(String username, String course) {
+        if (username == null || course == null) return false;
+        Cursor c = null;
+        try {
+            c = getReadableDatabase().rawQuery("SELECT id FROM certificates WHERE username=? AND course=? COLLATE NOCASE", new String[]{username.trim(), course.trim()});
+            return (c != null && c.getCount() > 0);
+        } catch (Exception e) {
+            return false;
+        } finally {
+            if (c != null) c.close();
+        }
+    }
+
+    public boolean isCertificateIdTaken(String certId) {
+        if (certId == null) return false;
+        Cursor c = null;
+        try {
+            c = getReadableDatabase().rawQuery("SELECT id FROM certificates WHERE certificate_id=?", new String[]{certId.trim()});
+            return (c != null && c.getCount() > 0);
+        } catch (Exception e) {
+            return false;
+        } finally {
+            if (c != null) c.close();
+        }
+    }
+
+    public int getCertificateCount() {
+        return getTableCount("certificates", null, null);
+    }
+
+    public int getEligibleStudentCount() {
+        Cursor c = null;
+        try {
+            c = getReadableDatabase().rawQuery(
+                "SELECT COUNT(DISTINCT u.username) FROM users u " +
+                "INNER JOIN payments p ON u.username = p.username " +
+                "WHERE u.user_type='STUDENT' AND u.status='Active' AND p.status='Approved'", null);
+            if (c != null && c.moveToFirst()) return c.getInt(0);
+        } catch (Exception ignored) {
+        } finally {
+            if (c != null) c.close();
+        }
+        return 0;
     }
 
     public boolean insertDailyQuestionFull(String q, String a, String b, String c, String d, String ans, String g, String cat, String diff, String expl) {
@@ -526,6 +885,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getLabStats(String username) {
         return getReadableDatabase().rawQuery("SELECT problem_type, COUNT(*) FROM lab_results WHERE username=? GROUP BY problem_type", new String[]{username});
+    }
+
+    public boolean deleteLabResult(int id) {
+        try {
+            SQLiteDatabase db = getWritableDatabase();
+            return db.delete("lab_results", "id=?", new String[]{String.valueOf(id)}) > 0;
+        } catch (Exception e) {
+            Log.e("DatabaseHelper", "Failed to delete lab result " + id, e);
+            return false;
+        }
     }
 
     public void insertClassCustom(String sub, String ins, String loc, String time, String dur, String day, String grade) {
@@ -567,11 +936,97 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insertWithOnConflict("study_notes", null, v, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
+    public long getTrialDurationMillis() {
+        return 3L * 24L * 60L * 60L * 1000L; // 3 Days in milliseconds
+    }
+
+    public boolean isTrialActive(String username) {
+        return getTrialRemainingMillis(username) > 0;
+    }
+
+    public long getTrialRemainingMillis(String username) {
+        if (username == null || username.trim().isEmpty() || "admin".equalsIgnoreCase(username)) {
+            return 0;
+        }
+        long createdAtMillis = 0;
+        Cursor c = null;
+        try {
+            c = getReadableDatabase().rawQuery("SELECT created_at FROM users WHERE username=?", new String[]{username});
+            if (c != null && c.moveToFirst()) {
+                String createdStr = c.getString(0);
+                if (createdStr != null && !createdStr.trim().isEmpty()) {
+                    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.US);
+                    sdf.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+                    java.util.Date date = sdf.parse(createdStr);
+                    if (date != null) {
+                        createdAtMillis = date.getTime();
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+        } finally {
+            if (c != null) c.close();
+        }
+
+        if (createdAtMillis <= 0) {
+            return 0;
+        }
+
+        long now = System.currentTimeMillis();
+        long elapsed = now - createdAtMillis;
+        long duration = getTrialDurationMillis();
+        if (elapsed >= 0 && elapsed < duration) {
+            return duration - elapsed;
+        }
+        return 0;
+    }
+
     public boolean hasPremiumAccess(String user, String grade) {
-        Cursor c = getReadableDatabase().rawQuery("SELECT id FROM payments WHERE username=? AND status='Approved'", new String[]{user});
-        boolean premium = c.getCount() > 0;
-        c.close();
-        return premium;
+        return hasPremiumAccess(user, grade, null);
+    }
+
+    public boolean hasPremiumAccess(String user, String grade, String subjectName) {
+        if (user == null || user.trim().isEmpty()) return false;
+
+        // 1. 3-Day Free Trial check: grants full access to test all subjects
+        if (isTrialActive(user)) {
+            return true;
+        }
+
+        // 2. Check approved payments
+        Cursor c = null;
+        try {
+            c = getReadableDatabase().rawQuery("SELECT amount FROM payments WHERE username=? AND status='Approved' ORDER BY id DESC", new String[]{user});
+            if (c != null && c.moveToFirst()) {
+                do {
+                    String amount = c.getString(0);
+                    if (amount == null) amount = "";
+                    String amtUpper = amount.toUpperCase().trim();
+
+                    // Plan B: 100 ETB grants full lifetime access to all subjects
+                    if (amtUpper.contains("100") || amtUpper.contains("FULL") || amtUpper.contains("PREMIUM")) {
+                        return true;
+                    }
+
+                    // Plan A: 50 ETB grants access to Mathematics and English only
+                    if (amtUpper.contains("50") || amtUpper.contains("BASIC") || amtUpper.contains("STANDARD")) {
+                        if (subjectName == null || subjectName.trim().isEmpty()) {
+                            return true; // General access check
+                        }
+                        String sLower = subjectName.toLowerCase().trim();
+                        if (sLower.contains("math") || sLower.contains("english")) {
+                            return true;
+                        }
+                    }
+                } while (c.moveToNext());
+            }
+        } catch (Exception e) {
+            android.util.Log.e("DatabaseHelper", "hasPremiumAccess query error", e);
+        } finally {
+            if (c != null) c.close();
+        }
+
+        return false;
     }
 
     public int getTableCount(String table, String where, String[] args) {
@@ -653,9 +1108,59 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert("mood_logs", null, cv);
     }
 
+    // --- AI Chat History Methods ---
+
+    public void saveChatMessage(String user, String message, boolean isUser) {
+        if (user == null || message == null || message.trim().isEmpty()) return;
+        try {
+            SQLiteDatabase db = getWritableDatabase();
+            ContentValues cv = new ContentValues();
+            cv.put("username", user);
+            cv.put("message", message);
+            cv.put("is_user", isUser ? 1 : 0);
+            db.insert("ai_chat_history", null, cv);
+        } catch (Exception e) {
+            Log.e(TAG, "Error saving chat message", e);
+        }
+    }
+
+    public List<ChatMessage> getChatHistory(String user) {
+        List<ChatMessage> list = new ArrayList<>();
+        if (user == null) return list;
+        Cursor cursor = null;
+        try {
+            SQLiteDatabase db = getReadableDatabase();
+            cursor = db.rawQuery("SELECT message, is_user FROM ai_chat_history WHERE username = ? ORDER BY id ASC LIMIT 100", new String[]{user});
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    String msg = cursor.getString(0);
+                    boolean isUser = cursor.getInt(1) == 1;
+                    list.add(new ChatMessage(msg, isUser));
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error fetching chat history", e);
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+        return list;
+    }
+
+    public void clearChatHistory(String user) {
+        if (user == null) return;
+        try {
+            SQLiteDatabase db = getWritableDatabase();
+            db.delete("ai_chat_history", "username = ?", new String[]{user});
+        } catch (Exception e) {
+            Log.e(TAG, "Error clearing chat history", e);
+        }
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < 57) {
+            createTables(db);
+        } else if (oldVersion < DATABASE_VERSION) {
             createTables(db);
         } else {
             db.execSQL("DROP TABLE IF EXISTS daily_questions");

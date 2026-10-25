@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Physics: Thermal Expansion Lab</title>
+    <style>
+        :root {
+            --primary: #6366f1; --secondary: #f43f5e; --dark: #0f172a;
+            --surface: #ffffff; --bg: #f1f5f9; --glass: rgba(255,255,255,0.9);
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        html, body { height: 100%; }
+        body { margin: 0; background: var(--bg); color: var(--dark); display: flex; flex-direction: column; overflow: auto; -webkit-font-smoothing:antialiased; }
+
+        header { background: var(--dark); color: white; padding: 10px; text-align: center; border-bottom: 3px solid var(--primary); }
+        .lab-container { display: flex; flex: 1; overflow: auto; flex-direction: column; }
+
+        #sim-area { flex: 2 1 440px; position: relative; background: white; border-bottom: 2px solid #e2e8f0; overflow: auto; cursor: crosshair; min-height:340px; }
+        canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+        .splitter { height: 10px; background: linear-gradient(90deg, rgba(0,0,0,0.03), rgba(0,0,0,0.06)); cursor: ns-resize; display:block; }
+        .splitter:hover { background: linear-gradient(90deg, rgba(0,0,0,0.05), rgba(0,0,0,0.09)); }
+
+        .bottom-panel { flex: 3; display: flex; flex-direction: row; background: var(--surface); overflow-y: auto; }
+        .controls { flex: 0 0 360px; padding: 18px; border-right: 1px solid #e2e8f0; min-width: 300px; }
+        .analysis { flex: 1 1 720px; padding: 18px; background: #fafafa; min-width: 420px; }
+
+        .card { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        h4 { margin: 0 0 10px 0; font-size: 0.8rem; color: #64748b; text-transform: uppercase; }
+        .input-row { margin-bottom: 12px; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; }
+        input[type="range"] { width: 100%; accent-color: var(--primary); }
+        select, input[type="number"] { width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; font-family: inherit; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        button { padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit; }
+        .btn-fire { background: var(--primary); color: white; }
+        .btn-fire:hover { background: #4f46e5; }
+        .btn-reset { background: #64748b; color: white; }
+        .btn-reset:hover { background: #475569; }
+
+        .hud { position: absolute; top: 10px; left: 10px; background: var(--glass); padding: 8px; border-radius: 8px; font-size: 0.75rem; border: 1px solid #ddd; z-index: 20; }
+        .hud * { pointer-events: auto; }
+        .hud .metrics { pointer-events: none; line-height: 1.7; }
+        .zoom-controls { display:flex; gap:6px; margin-top:6px; }
+        .zoom-controls button { padding:6px 8px; border-radius:6px; border:1px solid rgba(0,0,0,0.06); background:white; cursor:pointer; }
+        .vector-legend { position: absolute; bottom: 10px; left: 10px; font-size: 0.65rem; background: var(--glass); padding: 5px; border-radius: 4px; }
+
+        .tab-btn { padding: 8px 12px; border-radius: 6px; background: #e2e8f0; color: var(--dark); font-weight: 600; font-size: 0.8rem; }
+        .tab-btn:hover { background: #cbd5e1; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        .readouts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+        .readout { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; }
+        .readout span { font-size: 0.7rem; color: #64748b; display: block; }
+        .readout strong { font-size: 1rem; color: var(--dark); }
+
+        .quiz-q { padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+        .quiz-q:last-child { border-bottom: none; }
+        .quiz-q > strong { display: block; margin-bottom: 8px; font-size: 0.9rem; }
+        .quiz-q label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; margin: 3px 6px 3px 0; cursor: pointer; font-weight: 500; }
+        .quiz-q label:hover { background: #eef2ff; border-color: #6366f1; }
+        .explanation {
+            margin-top: 8px; padding: 10px 12px; border-radius: 6px; font-size: 0.82rem; line-height: 1.55;
+            background: #eef2ff; border-left: 3px solid #6366f1; color: #1e293b;
+        }
+        .explanation.correct-box { background: #ecfdf5; border-left-color: #10b981; }
+        .explanation.wrong-box { background: #fef2f2; border-left-color: #dc2626; }
+        .explanation strong { display: block; margin-bottom: 3px; }
+
+        .quiz-section { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6366f1; margin: 12px 0 6px 0; }
+        .quiz-section:first-child { margin-top: 0; }
+
+        #quiz-result { margin-top: 10px; padding: 12px; border-radius: 8px; background: #eef2ff; border: 1px solid #c7d2fe; font-weight: 700; text-align: center; }
+
+        table.formulas { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 6px; }
+        table.formulas th, table.formulas td { border: 1px solid #e2e8f0; padding: 6px 8px; text-align: left; }
+        table.formulas th { background: #f1f5f9; font-weight: 600; }
+        .eq { font-family: 'JetBrains Mono', ui-monospace, monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.82rem; }
+        .note { font-size: 0.82rem; color: #475569; margin-top: 8px; line-height: 1.5; }
+
+        textarea { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 0.85rem; min-height: 64px; resize: vertical; }
+
+        @media (max-width: 768px) {
+            .bottom-panel { flex-direction: column; }
+            .controls { border-right: none; border-bottom: 1px solid #eee; min-width: 0; }
+            .analysis { min-width: 0; }
+            .readouts { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">🌡️ Thermal Expansion Interactive Lab</h2>
+    <small>Explore Linear &amp; Volumetric Expansion · Bimetallic Strips · Real Materials</small>
+</header>
+
+<div class="lab-container">
+    <div id="sim-area">
+        <div class="hud">
+            <b>LIVE METRICS</b><br>
+            <div class="metrics">
+                T₀: <span id="hud-t0">20.0</span> °C<br>
+                T: <span id="hud-t">20.0</span> °C<br>
+                ΔT: <span id="hud-dt">0.0</span> °C<br>
+                ΔL: <span id="hud-dl">0.000</span> mm
+            </div>
+            <div style="margin-top:6px; font-size:0.75rem;">
+                <label style="display:inline-flex;align-items:center;gap:6px;"><input id="full-scroll-toggle" type="checkbox"> Enable Full Page Scrolling</label>
+            </div>
+        </div>
+        <div class="vector-legend">
+            <span style="color:#6366f1">— Material</span> | <span style="color:#94a3b8">○ Original</span> | <span style="color:#f43f5e">● Heated</span>
+        </div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div id="splitter" class="splitter" title="Drag to resize simulation area"></div>
+
+    <div class="bottom-panel">
+        <div class="controls">
+            <h4>🧪 Lab Settings</h4>
+
+            <div class="input-row">
+                <label>Experiment type</label>
+                <select id="exp-type">
+                    <option value="rod" selected>Linear expansion — metal rod</option>
+                    <option value="bimetal">Bimetallic strip — bending</option>
+                    <option value="liquid">Volumetric expansion — liquid</option>
+                </select>
+            </div>
+
+            <div class="input-row">
+                <label>Material</label>
+                <select id="material">
+                    <option value="aluminum" selected>Aluminum (α = 23×10⁻⁶ /°C)</option>
+                    <option value="copper">Copper (α = 17×10⁻⁶ /°C)</option>
+                    <option value="steel">Steel (α = 12×10⁻⁶ /°C)</option>
+                    <option value="glass">Glass (α = 9×10⁻⁶ /°C)</option>
+                    <option value="invar">Invar (α = 1.2×10⁻⁶ /°C)</option>
+                    <option value="brass">Brass (α = 19×10⁻⁶ /°C)</option>
+                </select>
+            </div>
+
+            <div class="input-row">
+                <label>Initial length L₀: <span id="v-l">1.000</span> m</label>
+                <input type="range" id="L" min="0.1" max="2" step="0.01" value="1">
+            </div>
+
+            <div class="input-row">
+                <label>Initial temperature T₀: <span id="v-t0">20</span> °C</label>
+                <input type="range" id="T0" min="0" max="100" step="1" value="20">
+            </div>
+
+            <div class="input-row">
+                <label>Final temperature T: <span id="v-t">20</span> °C</label>
+                <input type="range" id="T" min="0" max="400" step="1" value="20">
+            </div>
+
+            <div class="btn-grid">
+                <button class="btn-fire" id="btn-apply">🔥 Heat +50 °C</button>
+                <button class="btn-reset" id="btn-reset">↺ Reset</button>
+            </div>
+        </div>
+
+        <div class="analysis">
+            <h4>📊 Learn &amp; Practice</h4>
+
+            <div class="readouts">
+                <div class="readout"><span>ΔT (temperature change)</span><strong id="ro-dt">0.0 °C</strong></div>
+                <div class="readout"><span>Coefficient α</span><strong id="ro-a">23×10⁻⁶ /°C</strong></div>
+                <div class="readout"><span>Change in length ΔL</span><strong id="ro-dl">0.000 mm</strong></div>
+                <div class="readout"><span>New length L</span><strong id="ro-lnew">1.000 m</strong></div>
+                <div class="readout"><span>Fractional expansion</span><strong id="ro-frac">0.00%</strong></div>
+                <div class="readout"><span>Volume expansion (3α)</span><strong id="ro-vol">0.000 mm³</strong></div>
+            </div>
+
+            <div class="card">
+                <div class="tabs" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                    <button class="tab-btn active" data-tab="formulas">Formulas</button>
+                    <button class="tab-btn" data-tab="quiz">Quiz</button>
+                    <button class="tab-btn" data-tab="challenges">Challenges</button>
+                    <button class="tab-btn" data-tab="notebook">Notebook</button>
+                </div>
+
+                <div id="formulas" class="tab-panel active">
+                    <h3 style="margin:6px 0 8px 0;">Core Formulas — Thermal Expansion</h3>
+                    <ul style="font-size:0.9rem; line-height:1.6; padding-left:1rem; margin:0;">
+                        <li><b>Linear expansion:</b> ΔL = α · L₀ · ΔT</li>
+                        <li><b>New length:</b> L = L₀ (1 + α · ΔT)</li>
+                        <li><b>Area expansion:</b> ΔA = 2α · A₀ · ΔT</li>
+                        <li><b>Volumetric expansion:</b> ΔV = 3α · V₀ · ΔT (isotropic solids)</li>
+                        <li><b>Liquid expansion:</b> ΔV = β_liquid · V₀ · ΔT</li>
+                        <li><b>Bimetallic bending:</b> curvature ∝ (α₂ − α₁) · ΔT</li>
+                    </ul>
+                    <p class="note"><b>💡 Quick tips:</b> Most metals expand about 0.001–0.002% per °C. Invar (α = 1.2×10⁻⁶) barely changes — used in precision instruments.</p>
+
+                    <table class="formulas" style="margin-top:12px;">
+                        <tr><th>Quantity</th><th>Formula</th><th>Units</th></tr>
+                        <tr><td>Linear expansion</td><td><span class="eq">ΔL = α L₀ ΔT</span></td><td>m</td></tr>
+                        <tr><td>Volumetric</td><td><span class="eq">ΔV = β V₀ ΔT</span></td><td>m³</td></tr>
+                        <tr><td>Solid β</td><td><span class="eq">β = 3α</span></td><td>1/°C</td></tr>
+                        <tr><td>New length</td><td><span class="eq">L = L₀(1 + α ΔT)</span></td><td>m</td></tr>
+                    </table>
+                </div>
+
+                <div id="quiz" class="tab-panel" style="max-height:600px; overflow:auto;">
+                    <h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+                    <div class="quiz-section">Basic — Thermal Expansion</div>
+
+                    <div class="quiz-q" data-q="q1" data-answer="B">
+                        <strong>1. When a solid is heated, its atoms/molecules:</strong>
+                        <label><input type="radio" name="q1" value="A"> Shrink in size</label>
+                        <label><input type="radio" name="q1" value="B"> Vibrate more, pushing apart on average</label>
+                        <label><input type="radio" name="q1" value="C"> Stop moving</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q2" data-answer="B">
+                        <strong>2. Linear expansion ΔL is given by:</strong>
+                        <label><input type="radio" name="q2" value="A"> ΔL = L₀ / (α ΔT)</label>
+                        <label><input type="radio" name="q2" value="B"> ΔL = α · L₀ · ΔT</label>
+                        <label><input type="radio" name="q2" value="C"> ΔL = α · ΔT</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q3" data-answer="A">
+                        <strong>3. A metal with a larger α will:</strong>
+                        <label><input type="radio" name="q3" value="A"> Expand more for the same ΔT</label>
+                        <label><input type="radio" name="q3" value="B"> Expand less for the same ΔT</label>
+                        <label><input type="radio" name="q3" value="C"> Not expand at all</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Intermediate — Volumetric &amp; Applications</div>
+
+                    <div class="quiz-q" data-q="q4" data-answer="B">
+                        <strong>4. For an isotropic solid, volumetric coefficient β equals:</strong>
+                        <label><input type="radio" name="q4" value="A"> α</label>
+                        <label><input type="radio" name="q4" value="B"> 3α</label>
+                        <label><input type="radio" name="q4" value="C"> 2α</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q5" data-answer="A">
+                        <strong>5. A bimetallic strip bends when heated because:</strong>
+                        <label><input type="radio" name="q5" value="A"> The two metals have different α values</label>
+                        <label><input type="radio" name="q5" value="B"> The metals melt at different temperatures</label>
+                        <label><input type="radio" name="q5" value="C"> Only one metal expands</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q6" data-answer="A">
+                        <strong>6. A stuck metal lid is loosened with hot water because:</strong>
+                        <label><input type="radio" name="q6" value="A"> The metal lid expands more than the glass</label>
+                        <label><input type="radio" name="q6" value="B"> The glass expands more than the metal</label>
+                        <label><input type="radio" name="q6" value="C"> Water lubricates the lid</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Advanced — Deep Understanding</div>
+
+                    <div class="quiz-q" data-q="q7" data-answer="B">
+                        <strong>7. A 1 m steel rod (α=12×10⁻⁶/°C) heated by 100 °C lengthens by:</strong>
+                        <label><input type="radio" name="q7" value="A"> 12 mm</label>
+                        <label><input type="radio" name="q7" value="B"> 1.2 mm</label>
+                        <label><input type="radio" name="q7" value="C"> 0.12 mm</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q8" data-answer="A">
+                        <strong>8. Invar is used in precision instruments because:</strong>
+                        <label><input type="radio" name="q8" value="A"> Very small α — barely expands</label>
+                        <label><input type="radio" name="q8" value="B"> It expands faster than steel</label>
+                        <label><input type="radio" name="q8" value="C"> It is cheaper than copper</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q9" data-answer="B">
+                        <strong>9. A hole in a metal plate when the plate is heated:</strong>
+                        <label><input type="radio" name="q9" value="A"> Shrinks</label>
+                        <label><input type="radio" name="q9" value="B"> Expands as if made of the metal</label>
+                        <label><input type="radio" name="q9" value="C"> Stays the same</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="btn-grid" style="margin-top:12px;">
+                        <button class="btn-fire" id="btn-quiz-check">Submit Quiz</button>
+                        <button class="btn-reset" id="btn-quiz-reset">Reset</button>
+                    </div>
+                    <div id="quiz-result" style="display:none;"></div>
+                </div>
+
+                <div id="challenges" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Interactive Challenges</h3>
+                    <div style="display:flex; flex-direction:column; gap:8px; font-size:0.9rem;">
+                        <div>
+                            <b>Challenge 1 — Compare Materials</b><br>
+                            <button class="btn-fire" data-challenge="compare">Aluminum vs Steel at 200 °C</button>
+                        </div>
+                        <div>
+                            <b>Challenge 2 — Bimetallic Strip</b><br>
+                            <button class="btn-fire" data-challenge="bimetal">Show bimetallic bending</button>
+                        </div>
+                        <div>
+                            <b>Challenge 3 — Invar Magic</b><br>
+                            <button class="btn-fire" data-challenge="invar">Invar barely expands</button>
+                        </div>
+                        <div>
+                            <b>Challenge 4 — Double Length</b><br>
+                            <button class="btn-fire" data-challenge="doubleL">Double L₀ → double ΔL</button>
+                        </div>
+                        <div>
+                            <b>Challenge 5 — Extreme Heat</b><br>
+                            <button class="btn-fire" data-challenge="extreme">Steel at 400 °C</button>
+                        </div>
+                        <div id="challenge-note" style="color:#0f172a; font-size:0.85rem;"></div>
+                        <div id="challenge-result" style="color:#083344; font-weight:600; margin-top:6px;"></div>
+                    </div>
+                </div>
+
+                <div id="notebook" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Experiment Notebook</h3>
+                    <label>Prediction / hypothesis</label>
+                    <textarea id="hypothesis" placeholder="What do you expect to happen, and why?"></textarea>
+                    <label style="margin-top:10px; display:block;">Conclusion / evidence</label>
+                    <textarea id="conclusion" placeholder="Explain what your observations show."></textarea>
+                    <label style="margin-top:10px; display:block;">Recorded measurements</label>
+                    <textarea id="records" readonly style="background:#f8fafc; font-family:monospace; font-size:0.75rem; min-height:100px;"></textarea>
+                    <div class="btn-grid" style="margin-top:10px;">
+                        <button class="btn-fire" id="btn-record">📋 Record</button>
+                        <button class="btn-reset" id="btn-clear-notes">Clear</button>
+                    </div>
+                    <button class="btn-fire" style="margin-top:8px; width:100%;" id="btn-export">⬇ Download Report</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <b>Real-world fact:</b> <span id="fact-box" style="font-size:0.85rem;">—</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+"use strict";
+(function () {
+    // === Material data (no apostrophes in single-quoted strings) ===
+    const MATERIALS = {
+        aluminum: { name: 'Aluminum', alpha: 23e-6, color: '#94a3b8',
+            fact: 'Aluminum has alpha ~ 23e-6 per degree C - used in aircraft where thermal growth must be accounted for.' },
+        copper: { name: 'Copper', alpha: 17e-6, color: '#b45309',
+            fact: 'Copper has alpha ~ 17e-6 per degree C - electrical contacts often need spring tension to compensate for expansion.' },
+        steel: { name: 'Steel', alpha: 12e-6, color: '#475569',
+            fact: 'Steel has alpha ~ 12e-6 per degree C - bridges use expansion joints to accommodate seasonal length changes.' },
+        glass: { name: 'Glass', alpha: 9e-6, color: '#67e8f9',
+            fact: 'Glass has alpha ~ 9e-6 per degree C - Pyrex is borosilicate glass with alpha ~ 3e-6, more heat-resistant.' },
+        invar: { name: 'Invar', alpha: 1.2e-6, color: '#64748b',
+            fact: 'Invar (36 percent Ni, 64 percent Fe) has alpha ~ 1.2e-6 - barely expands, used in precision instruments.' },
+        brass: { name: 'Brass', alpha: 19e-6, color: '#ca8a04',
+            fact: 'Brass has alpha ~ 19e-6 per degree C - used in musical instruments where expansions affect tuning.' }
+    };
+
+    // === State ===
+    const S = {
+        expType: 'rod',
+        material: 'aluminum',
+        L0: 1.0,
+        T0: 20,
+        T: 20,
+        records: []
+    };
+
+    const $ = function (id) { return document.getElementById(id); };
+
+    // === Canvas ===
+    const canvas = $('canvas');
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const view = { x: 0, y: 0, scale: 1 };
+
+    function resizeCanvas() {
+        const w = canvas.clientWidth, h = canvas.clientHeight;
+        canvas.width = Math.max(1, Math.round(w * dpr));
+        canvas.height = Math.max(1, Math.round(h * dpr));
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function cw() { return canvas.width / dpr; }
+    function ch() { return canvas.height / dpr; }
+
+    // === Physics ===
+    function getAlpha() { return MATERIALS[S.material].alpha; }
+    function getDeltaT() { return S.T - S.T0; }
+    function getDeltaL() { return getAlpha() * S.L0 * getDeltaT(); }
+    function getLnew() { return S.L0 + getDeltaL(); }
+
+    // === Color mixing helper ===
+    function mixColor(c1, c2, t) {
+        function parse(h) {
+            h = h.replace('#', '');
+            return [parseInt(h.substr(0, 2), 16), parseInt(h.substr(2, 2), 16), parseInt(h.substr(4, 2), 16)];
+        }
+        const a = parse(c1), b = parse(c2);
+        const r = Math.round(a[0] + (b[0] - a[0]) * t);
+        const g = Math.round(a[1] + (b[1] - a[1]) * t);
+        const bl = Math.round(a[2] + (b[2] - a[2]) * t);
+        return 'rgb(' + r + ',' + g + ',' + bl + ')';
+    }
+
+    // === Drawing ===
+    function drawScene() {
+        const w = cw(), h = ch();
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.save();
+        ctx.translate(view.x, view.y);
+        ctx.scale(view.scale, view.scale);
+
+        const W = w / view.scale, H = h / view.scale;
+
+        ctx.strokeStyle = '#f1f5f9';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+        for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+        if (S.expType === 'rod') drawRod(W, H);
+        else if (S.expType === 'bimetal') drawBimetal(W, H);
+        else drawLiquid(W, H);
+
+        ctx.restore();
+
+        ctx.fillStyle = '#475569';
+        ctx.font = '11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText(getCaption(), w / 2, h - 8);
+    }
+
+    function getCaption() {
+        if (S.expType === 'rod') return 'Linear expansion - rod length change is exaggerated for visibility';
+        if (S.expType === 'bimetal') return 'Bimetallic strip - different alpha values cause bending';
+        return 'Liquid volumetric expansion - level rises when heated';
+    }
+
+    function drawRod(W, H) {
+        const mat = MATERIALS[S.material];
+        const deltaT = getDeltaT();
+        const dL = getDeltaL();
+        const Lnew = getLnew();
+
+        const rodY = H * 0.5;
+        const maxPixels = W * 0.75;
+        const pixelsPerMeter = maxPixels / 2.2;
+        const origPx = S.L0 * pixelsPerMeter;
+        const newPx = Lnew * pixelsPerMeter;
+        const startX = (W - origPx) / 2;
+
+        // Original outline
+        ctx.strokeStyle = '#94a3b8';
+        ctx.setLineDash([6, 4]);
+        ctx.lineWidth = 2;
+        ctx.strokeRect(startX, rodY - 24, origPx, 48);
+        ctx.setLineDash([]);
+
+        // Original rod ghost
+        ctx.fillStyle = 'rgba(148, 163, 184, 0.15)';
+        ctx.fillRect(startX, rodY - 22, origPx, 44);
+
+        // Heated rod
+        const heat = Math.max(0, Math.min(1, deltaT / 200));
+        const hotColor = mixColor(mat.color, '#ef4444', heat);
+        const newStartX = (W - newPx) / 2;
+        ctx.fillStyle = hotColor;
+        ctx.fillRect(newStartX, rodY - 22, newPx, 44);
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(newStartX, rodY - 22, newPx, 44);
+
+        // Heat waves
+        if (deltaT > 0) {
+            ctx.strokeStyle = 'rgba(239, 68, 68, 0.7)';
+            ctx.lineWidth = 1.5;
+            for (let i = 0; i < 5; i++) {
+                const hx = newStartX + (i + 0.5) * newPx / 5;
+                ctx.beginPath();
+                for (let y = 0; y < 30; y += 4) {
+                    const px = hx + Math.sin(y * 0.5 + Date.now() * 0.005) * 4;
+                    if (y === 0) ctx.moveTo(px, rodY - 40 - y * 0.3);
+                    else ctx.lineTo(px, rodY - 40 - y * 0.3);
+                }
+                ctx.stroke();
+            }
+        }
+
+        // Labels
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 12px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText(S.L0.toFixed(2) + ' m', startX + origPx / 2, rodY + 60);
+        ctx.fillStyle = '#ef4444';
+        ctx.fillText(Lnew.toFixed(4) + ' m', newStartX + newPx / 2, rodY + 80);
+
+        // ΔL arrow
+        if (dL > 0) {
+            const arrowY = rodY - 45;
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(startX + origPx, arrowY);
+            ctx.lineTo(newStartX + newPx, arrowY);
+            ctx.stroke();
+            const ax = newStartX + newPx;
+            ctx.beginPath();
+            ctx.moveTo(ax, arrowY);
+            ctx.lineTo(ax - 8, arrowY - 5);
+            ctx.lineTo(ax - 8, arrowY + 5);
+            ctx.closePath();
+            ctx.fillStyle = '#ef4444';
+            ctx.fill();
+            ctx.fillStyle = '#ef4444';
+            ctx.font = 'bold 11px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText('ΔL = ' + (dL * 1000).toFixed(3) + ' mm', (startX + origPx + ax) / 2, arrowY - 10);
+        }
+
+        // Material info
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 14px Inter';
+        ctx.textAlign = 'left';
+        ctx.fillText(mat.name, 20, 30);
+        ctx.font = '11px Inter';
+        ctx.fillStyle = '#64748b';
+        ctx.fillText('alpha = ' + (mat.alpha * 1e6).toFixed(1) + 'e-6 per deg C', 20, 48);
+        ctx.fillText('dT = ' + deltaT.toFixed(1) + ' deg C', 20, 64);
+    }
+
+    function drawBimetal(W, H) {
+        const mat = MATERIALS[S.material];
+        const deltaT = getDeltaT();
+        const cx = W / 2, cy = H * 0.55;
+        const stripLen = W * 0.6;
+        const stripThick = 40;
+
+        const otherMaterial = S.material === 'steel' ? MATERIALS.copper : MATERIALS.steel;
+        const alpha1 = mat.alpha;
+        const alpha2 = otherMaterial.alpha;
+        const diffAlpha = alpha1 - alpha2;
+
+        const bendPx = Math.max(-H * 0.35, Math.min(H * 0.35, diffAlpha * deltaT * 6 * 100));
+        const bendUp = diffAlpha > 0;
+
+        const startX = cx - stripLen / 2;
+        const endX = cx + stripLen / 2;
+        const endY = cy + (bendUp ? -bendPx : bendPx);
+        const ctrlX = cx;
+        const ctrlY = cy + (bendUp ? -bendPx * 2 : bendPx * 2);
+
+        // Straight ghost
+        ctx.strokeStyle = '#94a3b8';
+        ctx.setLineDash([6, 4]);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(startX, cy - stripThick / 2);
+        ctx.lineTo(endX, cy - stripThick / 2);
+        ctx.moveTo(startX, cy + stripThick / 2);
+        ctx.lineTo(endX, cy + stripThick / 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        const heat = Math.max(0, Math.min(1, deltaT / 200));
+        const topColor = mixColor(mat.color, '#ef4444', heat);
+        const bottomColor = mixColor(otherMaterial.color, '#ef4444', heat);
+
+        // Top layer
+        ctx.fillStyle = topColor;
+        ctx.beginPath();
+        ctx.moveTo(startX, cy - stripThick / 2);
+        ctx.quadraticCurveTo(ctrlX, ctrlY - stripThick / 2, endX, endY - stripThick / 2);
+        ctx.lineTo(endX, endY);
+        ctx.quadraticCurveTo(ctrlX, ctrlY, startX, cy);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Bottom layer
+        ctx.fillStyle = bottomColor;
+        ctx.beginPath();
+        ctx.moveTo(startX, cy);
+        ctx.quadraticCurveTo(ctrlX, ctrlY, endX, endY);
+        ctx.lineTo(endX, endY + stripThick / 2);
+        ctx.quadraticCurveTo(ctrlX, ctrlY + stripThick / 2, startX, cy + stripThick / 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 13px Inter';
+        ctx.textAlign = 'left';
+        ctx.fillText(mat.name + ' (alpha = ' + (mat.alpha * 1e6).toFixed(1) + 'e-6)', 20, 30);
+        ctx.fillStyle = '#64748b';
+        ctx.font = '11px Inter';
+        ctx.fillText(otherMaterial.name + ' (alpha = ' + (otherMaterial.alpha * 1e6).toFixed(1) + 'e-6)', 20, 48);
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 12px Inter';
+        ctx.fillText('dT = ' + deltaT.toFixed(1) + ' deg C', 20, 70);
+
+        ctx.fillStyle = bendUp ? '#dc2626' : '#2563eb';
+        ctx.font = 'bold 14px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText(bendUp ? 'bends UP toward lower-alpha side' : 'bends DOWN toward lower-alpha side', cx, 30);
+    }
+
+    function drawLiquid(W, H) {
+        const mat = MATERIALS[S.material];
+        // Use volumetric beta_liquid = 3*alpha for this simulation, labelled clearly
+        const betaLiquid = getAlpha() * 3;
+        const deltaT = getDeltaT();
+
+        const cx = W / 2;
+        const beakerW = Math.min(W * 0.4, 280);
+        const beakerH = Math.min(H * 0.6, 320);
+        const beakerX = cx - beakerW / 2;
+        const beakerY = H * 0.55 - beakerH / 2;
+
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(beakerX, beakerY);
+        ctx.lineTo(beakerX, beakerY + beakerH);
+        ctx.lineTo(beakerX + beakerW, beakerY + beakerH);
+        ctx.lineTo(beakerX + beakerW, beakerY);
+        ctx.stroke();
+
+        const baseLevel = beakerY + beakerH * 0.5;
+        const newLevel = baseLevel - (betaLiquid * deltaT * beakerH * 30); // exaggerated for visibility
+
+        ctx.strokeStyle = '#94a3b8';
+        ctx.setLineDash([6, 4]);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(beakerX + 5, baseLevel);
+        ctx.lineTo(beakerX + beakerW - 5, baseLevel);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        const heat = Math.max(0, Math.min(1, deltaT / 200));
+        const liquidColor = mixColor('#38bdf8', '#f97316', heat);
+        ctx.fillStyle = liquidColor;
+        ctx.fillRect(beakerX + 5, newLevel, beakerW - 10, beakerY + beakerH - newLevel);
+
+        ctx.strokeStyle = '#0ea5e9';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let x = 0; x < beakerW - 10; x += 4) {
+            const y = newLevel + Math.sin(x * 0.1 + Date.now() * 0.005) * 2;
+            if (x === 0) ctx.moveTo(beakerX + 5 + x, y);
+            else ctx.lineTo(beakerX + 5 + x, y);
+        }
+        ctx.stroke();
+
+        const dVolPct = (betaLiquid * deltaT * 100).toFixed(2);
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 13px Inter';
+        ctx.textAlign = 'left';
+        ctx.fillText('Liquid: ' + mat.name, 20, 30);
+        ctx.font = '11px Inter';
+        ctx.fillStyle = '#64748b';
+        ctx.fillText('beta_liquid assumed = 3*alpha = ' + (getAlpha() * 3e6).toFixed(1) + 'e-6 per deg C', 20, 48);
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 12px Inter';
+        ctx.fillText('dT = ' + deltaT.toFixed(1) + ' deg C', 20, 70);
+        ctx.fillText('dV/V0 = ' + dVolPct + ' percent', 20, 88);
+
+        if (deltaT > 20) {
+            const t = Date.now() * 0.001;
+            for (let i = 0; i < 8; i++) {
+                const seed = (i * 137) % 100;
+                const bx = beakerX + 20 + seed;
+                const by = newLevel + ((t * 30 + seed * 5) % (beakerY + beakerH - newLevel));
+                const r = 3 + Math.sin(t + i) * 2;
+                ctx.fillStyle = 'rgba(255,255,255,0.6)';
+                ctx.beginPath();
+                ctx.arc(bx, by, r, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+    }
+
+    // === Readouts ===
+    function updateReadouts() {
+        const mat = MATERIALS[S.material];
+        const deltaT = getDeltaT();
+        const dL = getDeltaL();
+        const Lnew = getLnew();
+        const frac = (dL / S.L0) * 100;
+        const vol = 3 * mat.alpha * Math.pow(S.L0, 3) * deltaT * 1e9;
+
+        $('ro-dt').innerText = deltaT.toFixed(1) + ' °C';
+        $('ro-a').innerText = (mat.alpha * 1e6).toFixed(1) + '×10⁻⁶ /°C';
+        $('ro-dl').innerText = (dL * 1000).toFixed(4) + ' mm';
+        $('ro-lnew').innerText = Lnew.toFixed(5) + ' m';
+        $('ro-frac').innerText = frac.toFixed(4) + '%';
+        $('ro-vol').innerText = Math.abs(vol).toExponential(2) + ' mm³';
+
+        $('hud-t0').innerText = S.T0.toFixed(1);
+        $('hud-t').innerText = S.T.toFixed(1);
+        $('hud-dt').innerText = deltaT.toFixed(1);
+        $('hud-dl').innerText = (dL * 1000).toFixed(3);
+
+        $('fact-box').innerText = mat.fact;
+    }
+
+    // === Quiz ===
+    const QUIZ_EXPLAIN = {
+        q1: { correct: 'B', why: 'At higher temperature, atoms vibrate with greater amplitude. Their average separation increases, so the material expands.', tip: 'Thermal expansion is not because atoms get bigger - it is because their average spacing grows.' },
+        q2: { correct: 'B', why: 'Linear expansion: dL = alpha * L0 * dT, where alpha has units of 1/degC.', tip: 'Match units: if alpha is 1/degC, dT must be in degC (or K - the difference is the same).' },
+        q3: { correct: 'A', why: 'alpha measures response to temperature. Larger alpha means more expansion for the same dT.', tip: 'Invar is an engineered exception with extremely small alpha.' },
+        q4: { correct: 'B', why: 'For an isotropic solid, beta = 3*alpha. Area expansion uses 2*alpha.', tip: 'Derivation: V = L^3, so dV/V = 3(dL/L) = 3*alpha*dT.' },
+        q5: { correct: 'A', why: 'A bimetallic strip bonds two metals with different alpha values. On heating, one side expands more, forcing the strip to bend - used in thermostats.', tip: 'Brass + steel is a common pair.' },
+        q6: { correct: 'A', why: 'Metal has larger alpha than glass. Heating makes the lid expand more than the jar, loosening the grip.', tip: 'Classic kitchen trick.' },
+        q7: { correct: 'B', why: 'dL = 12e-6 * 1 * 100 = 1.2e-3 m = 1.2 mm.', tip: '12e-6 * 100 = 12e-4 = 0.0012 m = 1.2 mm.' },
+        q8: { correct: 'A', why: 'Invar (Fe-36Ni) has alpha ~ 1.2e-6, about 10x smaller than steel. Instrument readings stay accurate.', tip: 'Used in clock pendulums, telescope supports, length standards.' },
+        q9: { correct: 'B', why: 'A hole expands as if it were made of the surrounding metal. When the plate heats, the hole grows.', tip: 'Think of the hole replaced by metal - everything gets proportionally bigger.' }
+    };
+
+    function evaluateQuiz() {
+        const qs = document.querySelectorAll('.quiz-q');
+        let score = 0, total = qs.length;
+
+        qs.forEach(function (q) {
+            const name = q.dataset.q;
+            const correct = q.dataset.answer;
+            const chosen = q.querySelector('input[name="' + name + '"]:checked');
+            const expl = q.querySelector('.explanation');
+            const data = QUIZ_EXPLAIN[name];
+
+            expl.hidden = false;
+            expl.className = 'explanation';
+
+            if (chosen && chosen.value === correct) {
+                score++;
+                expl.classList.add('correct-box');
+                expl.innerHTML = '<strong>✓ Correct!</strong>' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            } else {
+                expl.classList.add('wrong-box');
+                const chosenVal = chosen ? chosen.value : '—';
+                expl.innerHTML = '<strong>✗ Correct answer is ' + correct + '</strong>You chose ' + chosenVal + '. ' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            }
+        });
+
+        const pct = Math.round(score / total * 100);
+        let msg = '💪 Keep exploring!';
+        if (pct === 100) msg = '🌟 Perfect score!';
+        else if (pct >= 78) msg = '🎉 Excellent work!';
+        else if (pct >= 55) msg = '👍 Good effort! Review the explanations.';
+
+        const result = $('quiz-result');
+        result.style.display = 'block';
+        result.innerHTML = '<div style="font-size:1.4rem; color:#4338ca;">' + score + '/' + total + ' · ' + pct + '%</div><div style="font-size:0.85rem; color:#334155; margin-top:4px; font-weight:500;">' + msg + '</div>';
+    }
+
+    function resetQuiz() {
+        document.querySelectorAll('.quiz-q').forEach(function (q) {
+            q.querySelectorAll('input[type=radio]').forEach(function (r) { r.checked = false; });
+            const expl = q.querySelector('.explanation');
+            expl.hidden = true;
+            expl.innerHTML = '';
+            expl.className = 'explanation';
+        });
+        $('quiz-result').style.display = 'none';
+        $('quiz-result').innerHTML = '';
+    }
+
+    // === Challenges (bound via data-attribute listeners below) ===
+    function applyChallenge(id) {
+        const note = $('challenge-note');
+        const cres = $('challenge-result');
+        note.innerText = '';
+        cres.innerText = '';
+
+        if (id === 'compare') {
+            S.expType = 'rod'; $('exp-type').value = 'rod';
+            S.material = 'aluminum'; $('material').value = 'aluminum';
+            S.T = 200; $('T').value = 200; $('v-t').innerText = 200;
+            const alDl = 23e-6 * S.L0 * (200 - S.T0) * 1000;
+            note.innerText = 'Now switch material to Steel - you will see roughly half the expansion.';
+            cres.innerText = 'Aluminum dL = ' + alDl.toFixed(4) + ' mm (vs steel ~ ' + (12e-6 * S.L0 * (200 - S.T0) * 1000).toFixed(4) + ' mm)';
+        } else if (id === 'bimetal') {
+            S.expType = 'bimetal'; $('exp-type').value = 'bimetal';
+            S.material = 'brass'; $('material').value = 'brass';
+            S.T = 150; $('T').value = 150; $('v-t').innerText = 150;
+            note.innerText = 'Bimetallic strip: brass (larger alpha) on top, steel (smaller alpha) below. Heated -> bends toward steel.';
+        } else if (id === 'invar') {
+            S.expType = 'rod'; $('exp-type').value = 'rod';
+            S.material = 'invar'; $('material').value = 'invar';
+            S.T = 300; $('T').value = 300; $('v-t').innerText = 300;
+            const dL = getDeltaL() * 1000;
+            note.innerText = 'Invar has alpha = 1.2e-6 per degC. Even at 300 degC the rod barely changes.';
+            cres.innerText = 'dL = ' + dL.toFixed(5) + ' mm (steel would be ' + (12e-6 * S.L0 * (300 - S.T0) * 1000).toFixed(4) + ' mm).';
+        } else if (id === 'doubleL') {
+            S.material = 'copper'; $('material').value = 'copper';
+            S.expType = 'rod'; $('exp-type').value = 'rod';
+            S.L0 = 2.0; $('L').value = 2.0; $('v-l').innerText = '2.00';
+            S.T = 200; $('T').value = 200; $('v-t').innerText = 200;
+            const dL = getDeltaL() * 1000;
+            note.innerText = 'Copper rod doubled to 2 m. dL scales linearly with L0.';
+            cres.innerText = 'New dL at L0 = 2 m: ' + dL.toFixed(4) + ' mm';
+        } else if (id === 'extreme') {
+            S.expType = 'rod'; $('exp-type').value = 'rod';
+            S.material = 'steel'; $('material').value = 'steel';
+            S.T = 400; $('T').value = 400; $('v-t').innerText = 400;
+            const dL = getDeltaL() * 1000;
+            note.innerText = 'Steel rod heated to 400 degC - the color shifts red as heat increases.';
+            cres.innerText = 'Steel dL at 400 degC: ' + dL.toFixed(4) + ' mm';
+        }
+        updateReadouts();
+    }
+
+    // === Notebook ===
+    function recordMeasurement() {
+        const mat = MATERIALS[S.material];
+        const dT = getDeltaT();
+        const dL = getDeltaL();
+        const line = new Date().toLocaleTimeString() + ' | ' + S.expType + ' | ' + mat.name + ' | alpha=' + (mat.alpha * 1e6).toFixed(1) + 'e-6 | L0=' + S.L0.toFixed(3) + ' m | T0=' + S.T0 + 'C | T=' + S.T + 'C | dT=' + dT.toFixed(1) + 'C | dL=' + (dL * 1000).toFixed(4) + ' mm';
+        S.records.push(line);
+        $('records').value = S.records.join('\n');
+        $('records').scrollTop = $('records').scrollHeight;
+    }
+
+    function downloadReport() {
+        const mat = MATERIALS[S.material];
+        const dT = getDeltaT();
+        const dL = getDeltaL();
+        const Lnew = getLnew();
+        const text = 'LEARNIFY - THERMAL EXPANSION - LAB REPORT\n' +
+            'Date: ' + new Date().toLocaleString() + '\n\n' +
+            'CURRENT STATE\n' +
+            'Experiment: ' + S.expType + '\n' +
+            'Material: ' + mat.name + '\n' +
+            'alpha = ' + (mat.alpha * 1e6).toFixed(2) + 'e-6 per deg C\n' +
+            'L0 = ' + S.L0.toFixed(4) + ' m\n' +
+            'T0 = ' + S.T0.toFixed(1) + ' C\n' +
+            'T  = ' + S.T.toFixed(1) + ' C\n' +
+            'dT = ' + dT.toFixed(2) + ' C\n' +
+            'dL = ' + (dL * 1000).toFixed(5) + ' mm\n' +
+            'L  = ' + Lnew.toFixed(6) + ' m\n' +
+            'Fractional expansion = ' + ((dL / S.L0) * 100).toFixed(5) + ' percent\n\n' +
+            'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+            'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+            'MEASUREMENTS\n' + $('records').value + '\n\n' +
+            'LIMITATIONS\nIdeal linear expansion model. Real materials may be nonlinear near phase transitions. Educational use only.\n';
+        const blob = new Blob([text], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'thermal-expansion-report.txt';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    // === Animation loop ===
+    function animate() {
+        drawScene();
+        updateReadouts();
+        requestAnimationFrame(animate);
+    }
+
+    // === Event wiring ===
+    $('exp-type').addEventListener('change', function (e) { S.expType = e.target.value; });
+    $('material').addEventListener('change', function (e) { S.material = e.target.value; });
+    $('L').addEventListener('input', function (e) {
+        S.L0 = parseFloat(e.target.value);
+        $('v-l').innerText = S.L0.toFixed(3);
+    });
+    $('T0').addEventListener('input', function (e) {
+        S.T0 = parseFloat(e.target.value);
+        $('v-t0').innerText = S.T0.toFixed(0);
+    });
+    $('T').addEventListener('input', function (e) {
+        S.T = parseFloat(e.target.value);
+        $('v-t').innerText = S.T.toFixed(0);
+    });
+    $('btn-apply').addEventListener('click', function () {
+        S.T = Math.min(400, S.T + 50);
+        $('T').value = S.T;
+        $('v-t').innerText = S.T;
+        updateReadouts();
+    });
+    $('btn-reset').addEventListener('click', function () {
+        S.expType = 'rod';
+        S.material = 'aluminum';
+        S.L0 = 1.0;
+        S.T0 = 20;
+        S.T = 20;
+        $('exp-type').value = 'rod';
+        $('material').value = 'aluminum';
+        $('L').value = '1'; $('v-l').innerText = '1.000';
+        $('T0').value = '20'; $('v-t0').innerText = '20';
+        $('T').value = '20'; $('v-t').innerText = '20';
+        updateReadouts();
+    });
+
+    // Tabs
+    document.querySelectorAll('.tab-btn[data-tab]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+            document.querySelectorAll('.tab-btn[data-tab]').forEach(function (b) { b.classList.remove('active'); });
+            document.getElementById(btn.dataset.tab).classList.add('active');
+            btn.classList.add('active');
+        });
+    });
+
+    // Challenge buttons — bound by data attribute, no global function needed
+    document.querySelectorAll('[data-challenge]').forEach(function (btn) {
+        btn.addEventListener('click', function () { applyChallenge(btn.dataset.challenge); });
+    });
+
+    $('btn-quiz-check').addEventListener('click', evaluateQuiz);
+    $('btn-quiz-reset').addEventListener('click', resetQuiz);
+
+    $('btn-record').addEventListener('click', recordMeasurement);
+    $('btn-clear-notes').addEventListener('click', function () {
+        if (!confirm('Clear all notebook fields?')) return;
+        $('hypothesis').value = '';
+        $('conclusion').value = '';
+        $('records').value = '';
+        S.records = [];
+    });
+    $('btn-export').addEventListener('click', downloadReport);
+
+    // Zoom & pan
+    let fullScroll = false;
+    const pointers = new Map();
+    let pinch = null;
+
+    $('full-scroll-toggle').addEventListener('change', function (e) {
+        fullScroll = e.target.checked;
+        canvas.style.touchAction = fullScroll ? 'auto' : 'none';
+        pointers.clear();
+        pinch = null;
+    });
+
+    function getPos(e) {
+        const r = canvas.getBoundingClientRect();
+        return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+
+    canvas.addEventListener('wheel', function (e) {
+        if (fullScroll) return;
+        e.preventDefault();
+        const cx = e.offsetX, cy = e.offsetY;
+        const wx = (cx - view.x) / view.scale;
+        const wy = (cy - view.y) / view.scale;
+        const factor = Math.exp(-e.deltaY * 0.0015);
+        view.scale = Math.max(0.3, Math.min(5, view.scale * factor));
+        view.x = cx - wx * view.scale;
+        view.y = cy - wy * view.scale;
+    }, { passive: false });
+
+    canvas.addEventListener('pointerdown', function (e) {
+        if (fullScroll) return;
+        canvas.setPointerCapture(e.pointerId);
+        pointers.set(e.pointerId, getPos(e));
+        if (pointers.size === 2) {
+            const pts = Array.from(pointers.values());
+            pinch = { dist: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y), startScale: view.scale };
+        }
+    });
+    canvas.addEventListener('pointermove', function (e) {
+        if (fullScroll || !pointers.has(e.pointerId)) return;
+        const prev = pointers.get(e.pointerId);
+        const pos = getPos(e);
+        pointers.set(e.pointerId, pos);
+        if (pointers.size === 1 && !pinch) {
+            view.x += pos.x - prev.x;
+            view.y += pos.y - prev.y;
+        } else if (pointers.size === 2 && pinch) {
+            const pts = Array.from(pointers.values());
+            const d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+            view.scale = Math.max(0.3, Math.min(5, pinch.startScale * d / pinch.dist));
+        }
+    });
+    canvas.addEventListener('pointerup', function (e) {
+        if (fullScroll) return;
+        pointers.delete(e.pointerId);
+        try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
+        if (pointers.size < 2) pinch = null;
+    });
+    canvas.addEventListener('pointercancel', function (e) {
+        pointers.delete(e.pointerId);
+        pinch = null;
+    });
+
+    // Zoom controls in HUD
+    (function () {
+        const hud = document.querySelector('.hud');
+        if (!hud) return;
+        const z = document.createElement('div');
+        z.className = 'zoom-controls';
+        z.innerHTML = '<button id="zoom-out">-</button><button id="zoom-reset">Reset</button><button id="zoom-in">+</button>';
+        hud.appendChild(z);
+        $('zoom-in').addEventListener('click', function () { view.scale = Math.min(5, view.scale * 1.25); });
+        $('zoom-out').addEventListener('click', function () { view.scale = Math.max(0.3, view.scale / 1.25); });
+        $('zoom-reset').addEventListener('click', function () { view.x = 0; view.y = 0; view.scale = 1; });
+    })();
+
+    // Splitter
+    (function () {
+        const sim = $('sim-area'), splitter = $('splitter');
+        if (!sim || !splitter) return;
+        let dragging = false, startY = 0, startH = 0;
+        const minH = 160, maxH = window.innerHeight - 220;
+
+        splitter.addEventListener('pointerdown', function (e) {
+            e.preventDefault();
+            dragging = true;
+            startY = e.clientY;
+            startH = sim.getBoundingClientRect().height;
+            try { splitter.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+        window.addEventListener('pointermove', function (e) {
+            if (!dragging) return;
+            const dy = e.clientY - startY;
+            const nh = Math.max(minH, Math.min(maxH, Math.round(startH + dy)));
+            sim.style.flex = '0 0 ' + nh + 'px';
+            resizeCanvas();
+        });
+        window.addEventListener('pointerup', function (e) {
+            if (!dragging) return;
+            dragging = false;
+            try { splitter.releasePointerCapture(e.pointerId); } catch (err) {}
+        });
+        splitter.addEventListener('dblclick', function () {
+            sim.style.flex = '';
+            resizeCanvas();
+        });
+    })();
+
+    window.addEventListener('resize', function () {
+        resizeCanvas();
+    });
+
+    // === Boot ===
+    resizeCanvas();
+    updateReadouts();
+    animate();
+})();
+</script>
+</body>
+</html>

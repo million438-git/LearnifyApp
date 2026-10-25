@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Physics: Diffraction Grating Laboratory</title>
+<style>
+:root{
+  --primary:#7c9dff;
+  --primary-deep:#4f6bff;
+  --darker:#050810;
+  --surface:#0f1729;
+  --surface-3:#141b30;
+  --border:#2a3352;
+  --border-bright:#3d4a72;
+  --text:#e8eefc;
+  --text-dim:#8b96b3;
+  --accent-red:#ff5c8a;
+  --accent-blue:#4fa8ff;
+  --accent-yellow:#fbbf24;
+  --accent-green:#10d982;
+  --accent-violet:#a78bfa;
+}
+*{box-sizing:border-box;font-family:'Inter',system-ui,sans-serif;}
+html,body{height:100%;}
+body{margin:0;background:var(--darker);color:var(--text);display:flex;flex-direction:column;overflow:hidden;}
+header{background:linear-gradient(180deg,#0a0f1f,#070b15);color:#fff;padding:12px;text-align:center;border-bottom:2px solid var(--primary-deep);flex-shrink:0;box-shadow:0 2px 12px rgba(79,107,255,0.2);}
+header h2{margin:0;font-size:1.1rem;background:linear-gradient(135deg,#e8eefc,#7c9dff);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;}
+header small{color:var(--text-dim);font-size:.8rem;}
+.lab-container{display:flex;flex:1;overflow:hidden;flex-direction:column;min-height:0;}
+#sim-area{flex:2 1 0;min-height:380px;position:relative;background:#020408;border-bottom:2px solid var(--border);overflow:hidden;}
+canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;}
+.splitter{height:8px;background:linear-gradient(90deg,#0a0f1f,#1a2340,#0a0f1f);cursor:ns-resize;flex-shrink:0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.splitter:hover{background:linear-gradient(90deg,#1a2340,#4f6bff,#1a2340);}
+.bottom-panel{flex:3 1 0;min-height:0;display:flex;flex-direction:row;background:var(--darker);overflow-y:auto;}
+.controls{flex:0 0 380px;padding:16px;border-right:1px solid var(--border);min-width:320px;background:var(--surface);}
+.analysis{flex:1 1 720px;padding:16px;background:var(--darker);min-width:420px;}
+.card{background:var(--surface-3);border:1px solid var(--border);padding:12px;border-radius:10px;margin-bottom:10px;}
+h4{margin:0 0 10px 0;font-size:.75rem;color:var(--primary);text-transform:uppercase;letter-spacing:.05em;font-weight:700;}
+.input-row{margin-bottom:10px;}
+label{display:block;font-size:.78rem;font-weight:600;margin-bottom:4px;color:var(--text-dim);}
+input[type=range]{width:100%;accent-color:var(--primary);height:6px;}
+select,input[type=number]{width:100%;padding:8px;border-radius:6px;border:1px solid var(--border);background:var(--darker);color:var(--text);font-family:inherit;font-size:.85rem;}
+select:focus,input:focus{outline:none;border-color:var(--primary);}
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+button{padding:11px;border:none;border-radius:8px;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;font-size:.82rem;}
+.btn-fire{background:linear-gradient(135deg,#4f6bff,#7c3aed);color:#fff;}.btn-fire:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(79,107,255,0.4);}
+.btn-reset{background:var(--surface);color:var(--text);border:1px solid var(--border);}.btn-reset:hover{background:#242e4d;}
+.btn-laser{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000;font-weight:800;}.btn-laser:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(251,191,36,0.4);}
+.btn-sound{background:linear-gradient(135deg,#10d982,#059669);color:#fff;}.btn-sound.playing{background:linear-gradient(135deg,#ff5c8a,#dc2626);}
+.hud{position:absolute;top:12px;left:12px;background:rgba(10,15,31,0.92);padding:10px 14px;border-radius:10px;font-size:.75rem;border:1px solid var(--border-bright);z-index:20;color:var(--text);pointer-events:none;backdrop-filter:blur(8px);box-shadow:0 4px 20px rgba(0,0,0,0.6);}
+.hud b{color:var(--primary);font-size:.7rem;letter-spacing:.08em;}
+.hud .metrics{line-height:1.7;}
+.hud span.val{color:var(--accent-yellow);font-weight:700;font-variant-numeric:tabular-nums;}
+.vector-legend{position:absolute;bottom:12px;left:12px;font-size:.65rem;background:rgba(10,15,31,0.92);padding:6px 10px;border-radius:6px;color:var(--text-dim);pointer-events:none;border:1px solid var(--border);}
+.vector-legend span{margin-right:10px;}
+.tab-btn{padding:8px 12px;border-radius:6px;background:var(--surface);color:var(--text-dim);font-weight:600;font-size:.78rem;border:1px solid var(--border);cursor:pointer;transition:.2s;}
+.tab-btn:hover{background:#242e4d;color:var(--text);}
+.tab-btn.active{background:linear-gradient(135deg,#4f6bff,#7c3aed);color:#fff;border-color:transparent;box-shadow:0 2px 10px rgba(79,107,255,0.3);}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+.readouts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;}
+.readout{background:var(--surface-3);border:1px solid var(--border);border-radius:8px;padding:9px 11px;}
+.readout span{font-size:.65rem;color:var(--text-dim);display:block;font-weight:600;letter-spacing:.03em;}
+.readout strong{font-size:.95rem;color:var(--text);font-variant-numeric:tabular-nums;}
+.readout.hl strong{color:var(--primary);}
+.readout.good strong{color:var(--accent-green);}
+.readout.warn strong{color:var(--accent-yellow);}
+.quiz-q{padding:10px 0;border-bottom:1px solid var(--border);}
+.quiz-q>strong{display:block;margin-bottom:8px;font-size:.88rem;color:var(--text);}
+.quiz-q label{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;background:var(--surface-3);border:1px solid var(--border);border-radius:6px;margin:3px 6px 3px 0;cursor:pointer;font-weight:500;font-size:.8rem;color:var(--text-dim);}
+.quiz-q label:hover{background:#1a2340;border-color:var(--border-bright);color:var(--text);}
+.quiz-q input[type=radio]{accent-color:var(--primary);}
+.explanation{margin-top:8px;padding:10px;border-radius:6px;font-size:.82rem;line-height:1.55;background:rgba(79,107,255,0.1);border-left:3px solid var(--primary);color:var(--text);}
+.explanation.correct-box{background:rgba(16,217,130,0.12);border-left-color:var(--accent-green);}
+.explanation.wrong-box{background:rgba(255,92,138,0.12);border-left-color:var(--accent-red);}
+.quiz-section{font-size:.7rem;font-weight:700;text-transform:uppercase;color:var(--primary);margin:12px 0 6px 0;letter-spacing:.08em;}
+#quiz-result{margin-top:10px;padding:12px;border-radius:8px;background:rgba(79,107,255,0.15);border:1px solid rgba(79,107,255,0.4);font-weight:700;text-align:center;color:var(--text);}
+table.formulas{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:6px;}
+table.formulas th,table.formulas td{border:1px solid var(--border);padding:6px 8px;text-align:left;color:var(--text);}
+table.formulas th{background:var(--surface);font-weight:600;color:var(--primary);}
+.eq{font-family:'JetBrains Mono',monospace;background:var(--darker);padding:2px 6px;border-radius:4px;font-size:.78rem;color:var(--accent-yellow);border:1px solid var(--border);}
+.note{font-size:.82rem;color:var(--text-dim);margin-top:8px;line-height:1.55;}
+.sound-hint{background:rgba(251,191,36,0.1);border-left:3px solid var(--accent-yellow);padding:8px;border-radius:6px;font-size:.8rem;margin-top:8px;color:var(--text-dim);}
+textarea{width:100%;padding:8px;border-radius:6px;border:1px solid var(--border);font-family:inherit;font-size:.85rem;min-height:64px;resize:vertical;background:var(--darker);color:var(--text);}
+textarea:focus{outline:none;border-color:var(--primary);}
+ul{color:var(--text);padding-left:1rem;}
+ul li{color:var(--text);line-height:1.7;}
+@media(max-width:768px){.bottom-panel{flex-direction:column;}.controls{border-right:none;border-bottom:1px solid var(--border);min-width:0;}.analysis{min-width:0;}.readouts{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header>
+<h2>🌈 Diffraction Grating Laboratory</h2>
+<small>Grating equation · Interference orders · Spectral lines · Real optics</small>
+</header>
+
+<div class="lab-container">
+<div id="sim-area">
+<div class="hud">
+<b>LIVE STATE</b><br>
+<div class="metrics">
+Wavelength λ: <span class="val" id="hud-wl">550</span> nm<br>
+Slit spacing d: <span class="val" id="hud-d">2000</span> nm<br>
+Grating lines: <span class="val" id="hud-n">500</span> /mm<br>
+Orders visible: <span class="val" id="hud-orders">3</span>
+</div>
+</div>
+<div class="vector-legend">
+<span style="color:#fbbf24">● Incoming light</span>
+<span style="color:#a78bfa">● Grating</span>
+<span style="color:#10d982">● Diffracted orders</span>
+</div>
+<canvas id="canvas"></canvas>
+</div>
+
+<div id="splitter" class="splitter"></div>
+
+<div class="bottom-panel">
+<div class="controls">
+<h4>🌈 Grating Setup</h4>
+
+<div class="input-row">
+<button class="btn-sound" id="btn-sound" style="width:100%;">🔈 Enable sound</button>
+<div class="sound-hint" id="sound-hint">Laser tone + diffraction ping.</div>
+</div>
+
+<div class="input-row">
+<label>Light source</label>
+<select id="source">
+<option value="mono" selected>Monochromatic laser</option>
+<option value="hydrogen">Hydrogen lamp (4 lines)</option>
+<option value="sodium">Sodium doublet (589 nm)</option>
+<option value="mercury">Mercury lamp (3 lines)</option>
+<option value="whitelight">White light (full spectrum)</option>
+</select>
+</div>
+
+<div class="input-row" id="wlrow">
+<label>Wavelength λ: <span id="v-wl">550</span> nm</label>
+<input type="range" id="wl" min="380" max="750" step="1" value="550">
+</div>
+
+<div class="input-row">
+<label>Grating lines per mm: <span id="v-lines">500</span></label>
+<input type="range" id="lines" min="100" max="2000" step="10" value="500">
+</div>
+
+<div class="input-row">
+<label>Slit-to-screen distance L: <span id="v-L">1.00</span> m</label>
+<input type="range" id="dist" min="0.2" max="3" step="0.05" value="1">
+</div>
+
+<div class="input-row">
+<label>Max order to show: <span id="v-maxorder">3</span></label>
+<input type="range" id="maxorder" min="1" max="8" step="1" value="3">
+</div>
+
+<div class="input-row">
+<label style="display:inline-flex;align-items:center;gap:6px;">
+<input type="checkbox" id="showlabels" checked> Show order labels
+</label>
+</div>
+
+<div class="input-row">
+<label style="display:inline-flex;align-items:center;gap:6px;">
+<input type="checkbox" id="showformula" checked> Show calculation steps
+</label>
+</div>
+
+<div class="btn-grid">
+<button class="btn-laser" id="btn-fire">💡 Fire laser</button>
+<button class="btn-reset" id="btn-reset">↺ Reset</button>
+</div>
+</div>
+
+<div class="analysis">
+<h4>📊 Learn &amp; Practice</h4>
+
+<div class="readouts">
+<div class="readout hl"><span>Wavelength λ</span><strong id="ro-wl">550 nm</strong></div>
+<div class="readout"><span>Slit spacing d</span><strong id="ro-d">2000 nm</strong></div>
+<div class="readout"><span>Lines/mm</span><strong id="ro-lines">500</strong></div>
+<div class="readout good"><span>Max order m_max</span><strong id="ro-mmax">3</strong></div>
+<div class="readout"><span>θ₁ (order 1)</span><strong id="ro-t1">—</strong></div>
+<div class="readout"><span>θ₂ (order 2)</span><strong id="ro-t2">—</strong></div>
+<div class="readout"><span>θ₃ (order 3)</span><strong id="ro-t3">—</strong></div>
+<div class="readout"><span>y₁ on screen</span><strong id="ro-y1">—</strong></div>
+<div class="readout"><span>y₂ on screen</span><strong id="ro-y2">—</strong></div>
+<div class="readout"><span>y₃ on screen</span><strong id="ro-y3">—</strong></div>
+<div class="readout"><span>Screen distance L</span><strong id="ro-L">1.00 m</strong></div>
+<div class="readout"><span>Angular dispersion</span><strong id="ro-disp">—</strong></div>
+</div>
+
+<div class="card">
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+<button class="tab-btn active" data-tab="formulas">Formulas</button>
+<button class="tab-btn" data-tab="quiz">Quiz</button>
+<button class="tab-btn" data-tab="challenges">Challenges</button>
+<button class="tab-btn" data-tab="notebook">Notebook</button>
+</div>
+
+<div id="formulas" class="tab-panel active">
+<h3 style="margin:6px 0 8px 0;color:var(--text);">Core Formulas — Diffraction Grating</h3>
+<ul style="font-size:.88rem;">
+<li><b style="color:var(--primary)">Grating equation:</b> d·sin θ = m·λ</li>
+<li><b style="color:var(--primary)">Slit spacing:</b> d = 1 / (lines per meter)</li>
+<li><b style="color:var(--primary)">Order angle:</b> θ_m = arcsin(m·λ / d)</li>
+<li><b style="color:var(--primary)">Screen position:</b> y_m = L · tan θ_m</li>
+<li><b style="color:var(--primary)">Max order:</b> m_max = floor(d / λ)</li>
+<li><b style="color:var(--primary)">Angular dispersion:</b> dθ/dλ = m / (d·cos θ)</li>
+<li><b style="color:var(--primary)">Resolving power:</b> R = m·N</li>
+</ul>
+<p class="note"><b style="color:var(--accent-yellow)">💡 Key insights:</b> A diffraction grating has thousands of narrow parallel slits. Light passing through adjacent slits interferes constructively only at specific angles: <b>d·sin θ = m·λ</b>, where d is the slit spacing and m is the order (0, 1, 2, ...). The zero-order (m=0) is always straight through. Higher orders spread wider. Different wavelengths (colors) diffract at different angles — this is how a grating splits white light into a spectrum (and how a spectrometer works).</p>
+</div>
+
+<div id="quiz" class="tab-panel" style="max-height:600px;overflow:auto;">
+<h3 style="margin:6px 0 8px 0;color:var(--text);">Conceptual Quiz</h3>
+
+<div class="quiz-section">Basic — Grating Fundamentals</div>
+<div class="quiz-q" data-q="q1" data-answer="B">
+<strong>1. The grating equation is:</strong>
+<label><input type="radio" name="q1" value="A"> d·sin θ = λ / m</label>
+<label><input type="radio" name="q1" value="B"> d·sin θ = m·λ</label>
+<label><input type="radio" name="q1" value="C"> d·cos θ = m·λ</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q2" data-answer="A">
+<strong>2. As wavelength increases, the diffraction angle for a given order:</strong>
+<label><input type="radio" name="q2" value="A"> Increases</label>
+<label><input type="radio" name="q2" value="B"> Decreases</label>
+<label><input type="radio" name="q2" value="C"> Stays the same</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q3" data-answer="B">
+<strong>3. The zeroth-order (m=0) beam:</strong>
+<label><input type="radio" name="q3" value="A"> Bends to the side</label>
+<label><input type="radio" name="q3" value="B"> Goes straight through (θ = 0)</label>
+<label><input type="radio" name="q3" value="C"> Disappears</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Intermediate — Calculations</div>
+<div class="quiz-q" data-q="q4" data-answer="B">
+<strong>4. A grating has 500 lines/mm. Its slit spacing d is:</strong>
+<label><input type="radio" name="q4" value="A"> 500 nm</label>
+<label><input type="radio" name="q4" value="B"> 2000 nm</label>
+<label><input type="radio" name="q4" value="C"> 5000 nm</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q5" data-answer="A">
+<strong>5. With 500 lines/mm and λ = 500 nm, the first-order angle is:</strong>
+<label><input type="radio" name="q5" value="A"> ≈ 14.5°</label>
+<label><input type="radio" name="q5" value="B"> ≈ 30°</label>
+<label><input type="radio" name="q5" value="C"> ≈ 45°</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q6" data-answer="B">
+<strong>6. Higher grating line density (more lines/mm) means:</strong>
+<label><input type="radio" name="q6" value="A"> Smaller diffraction angles</label>
+<label><input type="radio" name="q6" value="B"> Larger diffraction angles</label>
+<label><input type="radio" name="q6" value="C"> No change</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Advanced — Applications</div>
+<div class="quiz-q" data-q="q7" data-answer="A">
+<strong>7. In a grating spectrum, violet light appears:</strong>
+<label><input type="radio" name="q7" value="A"> Closer to the center than red</label>
+<label><input type="radio" name="q7" value="B"> Farther from the center than red</label>
+<label><input type="radio" name="q7" value="C"> At the same position as red</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q8" data-answer="B">
+<strong>8. The maximum possible order m_max occurs when:</strong>
+<label><input type="radio" name="q8" value="A"> θ = 0°</label>
+<label><input type="radio" name="q8" value="B"> θ = 90° (sin θ = 1)</label>
+<label><input type="radio" name="q8" value="C"> θ = 45°</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q9" data-answer="A">
+<strong>9. A grating with more lines can resolve two closely-spaced wavelengths:</strong>
+<label><input type="radio" name="q9" value="A"> Better (higher resolving power R = mN)</label>
+<label><input type="radio" name="q9" value="B"> Worse</label>
+<label><input type="radio" name="q9" value="C"> Not at all</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q10" data-answer="B">
+<strong>10. For white light through a grating, the center shows:</strong>
+<label><input type="radio" name="q10" value="A"> A rainbow</label>
+<label><input type="radio" name="q10" value="B"> White light (all wavelengths go straight through at m=0)</label>
+<label><input type="radio" name="q10" value="C"> Nothing</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="btn-grid" style="margin-top:12px;">
+<button class="btn-fire" id="btn-quiz-check">Submit Quiz</button>
+<button class="btn-reset" id="btn-quiz-reset">Reset</button>
+</div>
+<div id="quiz-result" style="display:none;"></div>
+</div>
+
+<div id="challenges" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;color:var(--text);">Challenges</h3>
+<div style="display:flex;flex-direction:column;gap:8px;font-size:.88rem;">
+<div><b style="color:var(--primary)">1. Red laser</b><br><button class="btn-laser" data-challenge="red">632 nm red laser on grating</button></div>
+<div><b style="color:var(--primary)">2. Green laser</b><br><button class="btn-laser" data-challenge="green">532 nm green laser</button></div>
+<div><b style="color:var(--primary)">3. Hydrogen spectrum</b><br><button class="btn-laser" data-challenge="hydrogen">Show the 4 hydrogen lines</button></div>
+<div><b style="color:var(--primary)">4. White light</b><br><button class="btn-laser" data-challenge="white">Full white light spectrum</button></div>
+<div><b style="color:var(--primary)">5. High-resolution grating</b><br><button class="btn-laser" data-challenge="highres">2000 lines/mm grating</button></div>
+<div><b style="color:var(--primary)">6. Fewer lines</b><br><button class="btn-laser" data-challenge="lowres">100 lines/mm grating</button></div>
+<div id="challenge-note" style="color:var(--text);font-size:.85rem;"></div>
+<div id="challenge-result" style="color:var(--accent-green);font-weight:600;margin-top:6px;"></div>
+</div>
+</div>
+
+<div id="notebook" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;color:var(--text);">Notebook</h3>
+<label>Hypothesis</label>
+<textarea id="hypothesis" placeholder="What do you expect?"></textarea>
+<label style="margin-top:10px;display:block;">Conclusion</label>
+<textarea id="conclusion" placeholder="What did you observe?"></textarea>
+<label style="margin-top:10px;display:block;">Measurements</label>
+<textarea id="records" readonly style="background:var(--darker);font-family:monospace;font-size:.75rem;min-height:100px;"></textarea>
+<div class="btn-grid" style="margin-top:10px;">
+<button class="btn-fire" id="btn-record">📋 Record</button>
+<button class="btn-reset" id="btn-clear-notes">Clear</button>
+</div>
+<button class="btn-fire" style="margin-top:8px;width:100%;" id="btn-export">⬇ Report</button>
+</div>
+</div>
+
+<div class="card">
+<b style="color:var(--primary)">Real fact:</b> <span id="fact-box" style="font-size:.85rem;color:var(--text-dim);">—</span>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+"use strict";
+(function(){
+
+// ============ CONSTANTS ============
+var C_LIGHT = 299792458;
+
+// ============ SPECTRAL LINES ============
+var SPECTRA = {
+    mono: { name: 'Monochromatic laser', lines: [] },
+    hydrogen: {
+        name: 'Hydrogen',
+        lines: [
+            { wl: 410.2, color: '#a78bfa', label: 'H-δ' },
+            { wl: 434.0, color: '#4fa8ff', label: 'H-γ' },
+            { wl: 486.1, color: '#10d982', label: 'H-β' },
+            { wl: 656.3, color: '#ff5c8a', label: 'H-α' }
+        ]
+    },
+    sodium: {
+        name: 'Sodium doublet',
+        lines: [
+            { wl: 589.0, color: '#fbbf24', label: 'D2' },
+            { wl: 589.6, color: '#fbbf24', label: 'D1' }
+        ]
+    },
+    mercury: {
+        name: 'Mercury',
+        lines: [
+            { wl: 404.7, color: '#a78bfa', label: 'V' },
+            { wl: 435.8, color: '#4fa8ff', label: 'B' },
+            { wl: 546.1, color: '#10d982', label: 'G' }
+        ]
+    },
+    whitelight: { name: 'White light', lines: [] }
+};
+
+// ============ STATE ============
+var S = {
+    source: 'mono',
+    wl: 550,
+    linesPerMM: 500,
+    L: 1.0,
+    maxOrder: 3,
+    showLabels: true,
+    showFormula: true,
+    soundOn: false,
+    time: 0,
+    firing: false,
+    fireTime: 0,
+    records: []
+};
+
+var $ = function(id){ return document.getElementById(id); };
+var canvas = $('canvas');
+var ctx = canvas.getContext('2d');
+var dpr = window.devicePixelRatio || 1;
+var lastW = 0, lastH = 0;
+
+function resizeCanvas(){
+    var rect = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(rect.width));
+    var h = Math.max(1, Math.round(rect.height));
+    if (w === lastW && h === lastH) return;
+    lastW = w; lastH = h;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function cw(){ return canvas.width / dpr; }
+function ch(){ return canvas.height / dpr; }
+
+// ============ AUDIO ============
+var audioCtx = null;
+function initAudio(){
+    if (audioCtx) return;
+    try {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) { $('sound-hint').textContent = '⚠ No Web Audio.'; return; }
+        audioCtx = new AC();
+    } catch(e){ $('sound-hint').textContent = '⚠ Audio init failed.'; }
+}
+function beep(freq, dur, type, vol){
+    if (!audioCtx || !S.soundOn) return;
+    try {
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = type || 'sine';
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(vol || 0.06, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + dur);
+    } catch(e){}
+}
+function playLaser(){
+    if (!audioCtx || !S.soundOn) return;
+    // Descending sweep
+    try {
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = 'sawtooth';
+        o.frequency.setValueAtTime(800, audioCtx.currentTime);
+        o.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.25);
+        g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + 0.3);
+    } catch(e){}
+}
+function playDiffractionPing(){
+    if (!audioCtx || !S.soundOn) return;
+    beep(880, 0.08, 'sine', 0.05);
+}
+function toggleSound(){
+    initAudio();
+    if (!audioCtx) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    S.soundOn = !S.soundOn;
+    if (S.soundOn) {
+        $('btn-sound').textContent = '🔊 Sound ON';
+        $('btn-sound').classList.add('playing');
+        beep(440, 0.1, 'sine', 0.1);
+    } else {
+        $('btn-sound').textContent = '🔈 Enable sound';
+        $('btn-sound').classList.remove('playing');
+    }
+}
+
+// ============ PHYSICS ============
+// Slit spacing d in nanometers
+function getD(){
+    return 1e6 / S.linesPerMM;  // 1 mm / lines = meters per line; convert to nm
+}
+
+// Diffraction angle for a given order and wavelength
+function getTheta(m, wl){
+    var d = getD();
+    var arg = (m * wl) / d;
+    if (Math.abs(arg) > 1) return null;  // no solution — order doesn't exist
+    return Math.asin(arg);
+}
+
+// Position on screen (meters)
+function getY(m, wl){
+    var theta = getTheta(m, wl);
+    if (theta === null) return null;
+    return S.L * Math.tan(theta);
+}
+
+// Maximum order possible
+function getMaxOrder(){
+    var d = getD();
+    return Math.floor(d / S.wl);
+}
+
+// Wavelength to RGB color (visible spectrum)
+function wlToRGB(wl){
+    var r=0, g=0, b=0;
+    if (wl >= 380 && wl < 440) { r = -(wl - 440) / 60; b = 1; }
+    else if (wl < 490) { g = (wl - 440) / 50; b = 1; }
+    else if (wl < 510) { g = 1; b = -(wl - 510) / 20; }
+    else if (wl < 580) { r = (wl - 510) / 70; g = 1; }
+    else if (wl < 645) { r = 1; g = -(wl - 645) / 65; }
+    else if (wl <= 780) { r = 1; }
+    var f = 1;
+    if (wl > 700) f = 0.3 + 0.7 * (780 - wl) / 80;
+    if (wl < 420) f = 0.3 + 0.7 * (wl - 380) / 40;
+    return { r: Math.round(r * f * 255), g: Math.round(g * f * 255), b: Math.round(b * f * 255) };
+}
+function wlColor(wl){
+    var c = wlToRGB(wl);
+    return 'rgb(' + c.r + ',' + c.g + ',' + c.b + ')';
+}
+
+// ============ DRAW ============
+function drawScene(){
+    resizeCanvas();
+    var w = cw(), h = ch();
+    if (w < 10 || h < 10) return;
+
+    // Deep dark background
+    var bg = ctx.createRadialGradient(w * 0.2, h * 0.5, 0, w * 0.2, h * 0.5, Math.max(w, h) * 1.2);
+    bg.addColorStop(0, '#0a1428');
+    bg.addColorStop(1, '#020408');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+
+    // Layout
+    var leftEdge = w * 0.08;       // where the laser source is
+    var gratingX = w * 0.42;       // grating position
+    var screenX = w * 0.92;        // detection screen position
+    var midY = h / 2;
+
+    // ===== Laser source =====
+    ctx.save();
+    ctx.shadowColor = '#fbbf24';
+    ctx.shadowBlur = 20;
+    ctx.fillStyle = '#fbbf24';
+    ctx.fillRect(leftEdge - 30, midY - 15, 40, 30);
+    ctx.restore();
+    ctx.fillStyle = '#0a0f1f';
+    ctx.font = 'bold 11px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('LASER', leftEdge - 10, midY + 4);
+
+    // ===== Incoming beam (laser → grating) =====
+    var incomingWl = (S.source === 'whitelight') ? 550 : S.wl;
+    ctx.strokeStyle = (S.source === 'whitelight') ? '#ffffff' : wlColor(S.wl);
+    ctx.lineWidth = 4;
+    ctx.shadowColor = ctx.strokeStyle;
+    ctx.shadowBlur = 15;
+    ctx.beginPath();
+    ctx.moveTo(leftEdge + 10, midY);
+    ctx.lineTo(gratingX, midY);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // ===== Grating (vertical strip with slits) =====
+    ctx.fillStyle = 'rgba(167,139,250,0.15)';
+    ctx.fillRect(gratingX - 6, h * 0.05, 12, h * 0.9);
+    ctx.strokeStyle = '#a78bfa';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(gratingX, h * 0.05);
+    ctx.lineTo(gratingX, h * 0.95);
+    ctx.stroke();
+
+    // Slit lines (represent grating pattern)
+    var numSlits = Math.min(60, S.linesPerMM / 20);
+    var slitSpacing = (h * 0.9) / numSlits;
+    ctx.strokeStyle = 'rgba(167,139,250,0.6)';
+    ctx.lineWidth = 1;
+    for (var i = 0; i < numSlits; i++) {
+        var sy = h * 0.05 + i * slitSpacing;
+        ctx.beginPath();
+        ctx.moveTo(gratingX - 8, sy);
+        ctx.lineTo(gratingX + 8, sy);
+        ctx.stroke();
+    }
+
+    // Grating label
+    ctx.fillStyle = '#a78bfa';
+    ctx.font = 'bold 11px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('GRATING', gratingX, h * 0.03);
+    ctx.fillStyle = '#8b96b3';
+    ctx.font = '10px Inter';
+    ctx.fillText(S.linesPerMM + ' lines/mm', gratingX, h * 0.98);
+
+    // ===== Determine wavelengths to show =====
+    var wavelengths = [];
+    if (S.source === 'mono') {
+        wavelengths = [{ wl: S.wl, color: wlColor(S.wl), label: S.wl + 'nm' }];
+    } else if (S.source === 'whitelight') {
+        for (var wl = 400; wl <= 700; wl += 10) {
+            wavelengths.push({ wl: wl, color: wlColor(wl), label: '' });
+        }
+    } else {
+        var spec = SPECTRA[S.source];
+        spec.lines.forEach(function(l) {
+            wavelengths.push({ wl: l.wl, color: l.color, label: l.label });
+        });
+    }
+
+    // ===== Draw diffracted beams =====
+    // Screen y-position (real): y_m = L·tan(θ_m)
+    // We map y values to screen pixels.
+    // Choose screen half-height = max of L·tan(maxOrder·θ_max) for the shortest wavelength
+    // Use a simple scale: 1 meter of screen = 40% of canvas height
+    var pixelsPerMeter = h * 0.4 / 1.0;  // 1m distance on screen = 40% of canvas height
+    var screenCenterY = midY;
+
+    wavelengths.forEach(function(item) {
+        var color = item.color;
+        // m=0 always straight through
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.moveTo(gratingX, midY);
+        ctx.lineTo(screenX, midY);
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Positive and negative orders
+        for (var m = 1; m <= S.maxOrder; m++) {
+            var thetaPlus = getTheta(m, item.wl);
+            if (thetaPlus === null) continue;
+            var yPlus = getY(m, item.wl);
+            if (yPlus === null) continue;
+            var pyPlus = screenCenterY - yPlus * pixelsPerMeter;
+            var thetaMinus = -thetaPlus;
+            var pyMinus = screenCenterY + yPlus * pixelsPerMeter;
+
+            // Draw beam to +m order
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.shadowColor = color;
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.moveTo(gratingX, midY);
+            ctx.lineTo(screenX, pyPlus);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(gratingX, midY);
+            ctx.lineTo(screenX, pyMinus);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            // Order label at screen
+            if (S.showLabels) {
+                ctx.fillStyle = '#e8eefc';
+                ctx.font = 'bold 10px Inter';
+                ctx.textAlign = 'left';
+                ctx.fillText('m=' + m, screenX - 30, pyPlus - 3);
+                ctx.fillText('m=-' + m, screenX - 30, pyMinus + 10);
+            }
+        }
+    });
+
+    // ===== Detection screen =====
+    // Screen as a vertical line with bright dots where beams land
+    ctx.strokeStyle = 'rgba(232,238,252,0.3)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(screenX + 8, h * 0.05);
+    ctx.lineTo(screenX + 8, h * 0.95);
+    ctx.stroke();
+
+    // Bright spots on screen
+    wavelengths.forEach(function(item) {
+        var color = item.color;
+        // m=0 spot (center)
+        ctx.save();
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 20;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(screenX + 8, screenCenterY, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        // ±m spots
+        for (var m = 1; m <= S.maxOrder; m++) {
+            var yPlus = getY(m, item.wl);
+            if (yPlus === null) continue;
+            var pyPlus = screenCenterY - yPlus * pixelsPerMeter;
+            var pyMinus = screenCenterY + yPlus * pixelsPerMeter;
+            ctx.save();
+            ctx.shadowColor = color;
+            ctx.shadowBlur = 15;
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(screenX + 8, pyPlus, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(screenX + 8, pyMinus, 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+    });
+
+    // ===== Title & info =====
+    ctx.fillStyle = '#e8eefc';
+    ctx.font = 'bold 13px Inter';
+    ctx.textAlign = 'center';
+    var sourceLabel = (S.source === 'mono') ? (S.wl + ' nm laser') :
+                      (S.source === 'whitelight') ? 'White light' :
+                      SPECTRA[S.source].name;
+    ctx.fillText('Diffraction Grating — ' + sourceLabel, w / 2, 25);
+    ctx.font = '11px Inter';
+    ctx.fillStyle = '#8b96b3';
+    var dVal = getD();
+    ctx.fillText('d = ' + dVal.toFixed(1) + ' nm · L = ' + S.L.toFixed(2) + ' m · max order = ' + getMaxOrder(), w / 2, 42);
+
+    // Running indicator
+    var pulseR = 5 + 3 * Math.sin(S.time * 4);
+    ctx.fillStyle = S.firing ? 'rgba(251,191,36,1)' : 'rgba(90,101,132,0.6)';
+    ctx.shadowColor = S.firing ? '#fbbf24' : 'transparent';
+    ctx.shadowBlur = S.firing ? 15 : 0;
+    ctx.beginPath();
+    ctx.arc(w - 30, 30, pulseR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = S.firing ? '#fbbf24' : '#5a6584';
+    ctx.font = 'bold 9px Inter';
+    ctx.textAlign = 'right';
+    ctx.fillText(S.firing ? 'FIRING' : 'READY', w - 45, 34);
+
+    // Formula overlay (optional)
+    if (S.showFormula && S.source === 'mono') {
+        var formulaX = gratingX + 30;
+        var formulaY = h * 0.12;
+        ctx.fillStyle = 'rgba(10,15,31,0.9)';
+        ctx.fillRect(formulaX, formulaY, 280, 130);
+        ctx.strokeStyle = 'rgba(124,157,255,0.4)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(formulaX, formulaY, 280, 130);
+        ctx.fillStyle = '#7c9dff';
+        ctx.font = 'bold 11px Inter';
+        ctx.textAlign = 'left';
+        ctx.fillText('Calculation steps:', formulaX + 10, formulaY + 20);
+        ctx.fillStyle = '#e8eefc';
+        ctx.font = '11px "JetBrains Mono", monospace';
+        ctx.fillText('d·sin θ = m·λ', formulaX + 10, formulaY + 42);
+        ctx.fillText('d = ' + dVal.toFixed(1) + ' nm', formulaX + 10, formulaY + 60);
+        ctx.fillText('λ = ' + S.wl + ' nm', formulaX + 10, formulaY + 78);
+        for (var mm = 1; mm <= Math.min(3, getMaxOrder()); mm++) {
+            var th = getTheta(mm, S.wl);
+            if (th === null) {
+                ctx.fillStyle = '#ff5c8a';
+                ctx.fillText('m=' + mm + ': no solution (m·λ > d)', formulaX + 10, formulaY + 78 + mm * 18);
+            } else {
+                ctx.fillStyle = '#fbbf24';
+                ctx.fillText('m=' + mm + ': θ = ' + (th * 180 / Math.PI).toFixed(2) + '°', formulaX + 10, formulaY + 78 + mm * 18);
+            }
+        }
+    }
+}
+
+// ============ READOUTS ============
+function updateReadouts(){
+    var d = getD();
+    var maxOrder = getMaxOrder();
+
+    $('ro-wl').innerText = S.wl + ' nm';
+    $('ro-d').innerText = d.toFixed(1) + ' nm';
+    $('ro-lines').innerText = S.linesPerMM;
+    $('ro-mmax').innerText = maxOrder;
+    $('ro-L').innerText = S.L.toFixed(2) + ' m';
+
+    // Order angles
+    var angles = [];
+    for (var m = 1; m <= 3; m++) {
+        var th = getTheta(m, S.wl);
+        var y = getY(m, S.wl);
+        angles.push({ theta: th, y: y });
+        var el = $('ro-t' + m);
+        var elY = $('ro-y' + m);
+        if (th === null) {
+            el.innerText = '—';
+            elY.innerText = '—';
+        } else {
+            el.innerText = (th * 180 / Math.PI).toFixed(2) + '°';
+            elY.innerText = (y * 100).toFixed(1) + ' cm';
+        }
+    }
+
+    // Angular dispersion (for m=1)
+    var th1 = getTheta(1, S.wl);
+    if (th1 !== null) {
+        var cosT = Math.cos(th1);
+        var disp = (1 / (d * cosT)) * (180 / Math.PI) * 1e-9;
+        $('ro-disp').innerText = disp.toFixed(4) + ' °/nm';
+    } else {
+        $('ro-disp').innerText = '—';
+    }
+
+    $('hud-wl').innerText = S.wl;
+    $('hud-d').innerText = d.toFixed(0);
+    $('hud-n').innerText = S.linesPerMM;
+    $('hud-orders').innerText = maxOrder;
+
+    var fact;
+    if (maxOrder === 0) {
+        fact = 'No diffraction orders possible — the wavelength is longer than the slit spacing d. Increase lines/mm (decrease d) or decrease wavelength.';
+    } else if (S.linesPerMM >= 1000) {
+        fact = 'High-resolution grating: ' + S.linesPerMM + ' lines/mm. Small slit spacing d = ' + d.toFixed(1) + ' nm produces large diffraction angles. Used in spectrometers to resolve closely-spaced spectral lines.';
+    } else if (S.linesPerMM <= 200) {
+        fact = 'Low-density grating: ' + S.linesPerMM + ' lines/mm. Large d = ' + d.toFixed(1) + ' nm. Small diffraction angles — orders crowd near the center.';
+    } else {
+        fact = 'Grating with ' + S.linesPerMM + ' lines/mm gives d = ' + d.toFixed(1) + ' nm. At λ = ' + S.wl + ' nm, max order m_max = floor(d/λ) = ' + maxOrder + '. Increasing wavelength pushes higher orders off the screen.';
+    }
+    $('fact-box').innerText = fact;
+}
+
+// ============ QUIZ ============
+var QUIZ_EXPLAIN = {
+    q1:{correct:'B',why:'Grating equation: <b>d·sin θ = m·λ</b>. This is the condition for constructive interference between adjacent slits.',tip:'Note it is m·λ (order × wavelength), not λ/m.'},
+    q2:{correct:'A',why:'From d·sin θ = m·λ, larger λ → larger sin θ → larger θ. <b>Red light diffracts to wider angles than violet.</b>',tip:'This is why the rainbow spreads out with red on the outside.'},
+    q3:{correct:'B',why:'For m=0, sin θ = 0 → θ = 0. The zeroth-order beam <b>goes straight through</b> the grating unaffected.',tip:'That is why white light shows a white spot at the center of a grating spectrum.'},
+    q4:{correct:'B',why:'500 lines/mm → d = (1 mm) / 500 = 0.002 mm = 2 μm = <b>2000 nm</b>.',tip:'Formula: d = 1,000,000 nm / lines_per_mm.'},
+    q5:{correct:'A',why:'d·sin θ = m·λ → sin θ = (1×500)/2000 = 0.25 → θ = arcsin(0.25) ≈ <b>14.5°</b>.',tip:'Small angle! d=2000 nm is much larger than λ=500 nm.'},
+    q6:{correct:'B',why:'More lines/mm → smaller slit spacing d → from d·sin θ = m·λ, smaller d means <b>larger sin θ → larger angle</b>.',tip:'Higher density gratings spread light more.'},
+    q7:{correct:'A',why:'Violet (400 nm) has smaller λ than red (700 nm). From d·sin θ = m·λ, smaller λ → smaller angle → violet appears <b>closer to center</b> than red.',tip:'Grating spectra have red on the OUTSIDE (opposite of prism spectra!).'},
+    q8:{correct:'B',why:'The maximum possible θ is 90° (sin θ = 1). At this point m_max = d/λ. Beyond this, <b>no real solution exists</b> for that order.',tip:'Try: lines = 500/mm, λ = 700nm → m_max = floor(2000/700) = 2.'},
+    q9:{correct:'A',why:'Resolving power R = m·N where N is total lines illuminated. More lines = <b>higher resolution</b> — can separate closer wavelengths (like the sodium doublet).',tip:'Professional spectrometers use gratings with 1000s of lines/mm.'},
+    q10:{correct:'B',why:'At m=0, all wavelengths satisfy the equation with θ=0 — every color goes straight through. The <b>center is white</b>; rainbows appear at ±1, ±2 orders on the sides.',tip:'Classic demonstration of white light diffraction.'}
+};
+
+function evaluateQuiz(){
+    var qs = document.querySelectorAll('.quiz-q');
+    var score = 0;
+    qs.forEach(function(q){
+        var name = q.dataset.q;
+        var correct = q.dataset.answer;
+        var chosen = q.querySelector('input[name="'+name+'"]:checked');
+        var expl = q.querySelector('.explanation');
+        var data = QUIZ_EXPLAIN[name];
+        expl.hidden = false;
+        expl.className = 'explanation';
+        if (chosen && chosen.value === correct) {
+            score++;
+            expl.classList.add('correct-box');
+            expl.innerHTML = '<strong>✓ Correct!</strong> ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:var(--text-dim);"><b>💡</b> ' + data.tip + '</div>';
+        } else {
+            expl.classList.add('wrong-box');
+            var cv = chosen ? chosen.value : '—';
+            expl.innerHTML = '<strong>✗ Answer: ' + correct + '</strong> You chose ' + cv + '. ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:var(--text-dim);"><b>💡</b> ' + data.tip + '</div>';
+        }
+    });
+    var pct = Math.round(score/qs.length*100);
+    beep(pct>=78?880:440,0.15,'sine',0.1);
+    var r = $('quiz-result');
+    r.style.display = 'block';
+    r.innerHTML = '<div style="font-size:1.4rem;color:var(--primary);">' + score + '/' + qs.length + ' · ' + pct + '%</div>';
+}
+function resetQuiz(){
+    document.querySelectorAll('.quiz-q').forEach(function(q){
+        q.querySelectorAll('input[type=radio]').forEach(function(r){ r.checked = false; });
+        var e = q.querySelector('.explanation');
+        e.hidden = true; e.innerHTML = ''; e.className = 'explanation';
+    });
+    $('quiz-result').style.display = 'none';
+}
+
+// ============ CHALLENGES ============
+function applyChallenge(id){
+    var note = $('challenge-note'), cres = $('challenge-result');
+    note.innerText = ''; cres.innerText = '';
+    if (id === 'red') {
+        S.source = 'mono'; $('source').value = 'mono';
+        S.wl = 632; $('wl').value = 632; $('v-wl').innerText = '632';
+        $('wlrow').style.display = 'block';
+        note.innerText = 'Red He-Ne laser (632 nm) through grating.';
+        cres.innerText = 'λ = 632 nm';
+    } else if (id === 'green') {
+        S.source = 'mono'; $('source').value = 'mono';
+        S.wl = 532; $('wl').value = 532; $('v-wl').innerText = '532';
+        $('wlrow').style.display = 'block';
+        note.innerText = 'Green laser pointer (532 nm).';
+        cres.innerText = 'λ = 532 nm';
+    } else if (id === 'hydrogen') {
+        S.source = 'hydrogen'; $('source').value = 'hydrogen';
+        $('wlrow').style.display = 'none';
+        note.innerText = 'Hydrogen discharge lamp: 4 emission lines (H-δ, H-γ, H-β, H-α) diffract at different angles.';
+        cres.innerText = '410, 434, 486, 656 nm — each at different θ';
+    } else if (id === 'white') {
+        S.source = 'whitelight'; $('source').value = 'whitelight';
+        $('wlrow').style.display = 'none';
+        note.innerText = 'White light diffracts into full rainbow order. Red spreads widest, violet stays closest to center.';
+        cres.innerText = 'Continuous rainbow from 400 to 700 nm';
+    } else if (id === 'highres') {
+        S.linesPerMM = 2000; $('lines').value = 2000; $('v-lines').innerText = '2000';
+        note.innerText = 'High-resolution grating (2000 lines/mm): tiny slit spacing d = 500 nm. Large diffraction angles, few orders.';
+        cres.innerText = 'd = ' + getD().toFixed(0) + ' nm · max order = ' + getMaxOrder();
+    } else if (id === 'lowres') {
+        S.linesPerMM = 100; $('lines').value = 100; $('v-lines').innerText = '100';
+        note.innerText = 'Low-density grating (100 lines/mm): large slit spacing d = 10,000 nm. Small angles, many orders visible.';
+        cres.innerText = 'd = ' + getD().toFixed(0) + ' nm · max order = ' + getMaxOrder();
+    }
+    fireLaser();
+    updateReadouts();
+}
+
+// ============ NOTEBOOK ============
+function recordMeasurement(){
+    var d = getD();
+    var th1 = getTheta(1, S.wl);
+    var line = new Date().toLocaleTimeString() + ' | ' + S.source + ' | λ=' + S.wl + ' nm | d=' + d.toFixed(1) + ' nm | L=' + S.L + ' m | max_order=' + getMaxOrder() + ' | θ₁=' + (th1 ? (th1 * 180 / Math.PI).toFixed(2) + '°' : '—');
+    S.records.push(line);
+    $('records').value = S.records.join('\n');
+    $('records').scrollTop = $('records').scrollHeight;
+}
+function downloadReport(){
+    var d = getD();
+    var text = 'DIFFRACTION GRATING LAB REPORT\nDate: ' + new Date().toLocaleString() + '\n\n' +
+        'Light source: ' + (S.source === 'mono' ? S.wl + ' nm laser' : SPECTRA[S.source].name) + '\n' +
+        'Grating: ' + S.linesPerMM + ' lines/mm\n' +
+        'Slit spacing d = ' + d.toFixed(2) + ' nm\n' +
+        'Screen distance L = ' + S.L.toFixed(2) + ' m\n\n' +
+        'DIFFRACTION ORDERS (for ' + S.wl + ' nm)\n';
+    for (var m = 1; m <= 3; m++) {
+        var th = getTheta(m, S.wl);
+        if (th !== null) {
+            var y = getY(m, S.wl);
+            text += 'm=' + m + ': θ = ' + (th * 180 / Math.PI).toFixed(2) + '°, y = ' + (y * 100).toFixed(1) + ' cm\n';
+        } else {
+            text += 'm=' + m + ': no solution\n';
+        }
+    }
+    text += '\nMax order m_max = ' + getMaxOrder() + '\n\n' +
+        'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+        'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+        'MEASUREMENTS\n' + $('records').value + '\n\n' +
+        'LIMITATIONS\nIdeal grating with perfectly parallel slits. Assumes monochromatic coherent source. Real gratings have finite width, absorption, and imperfections. Educational use only.\n';
+    var blob = new Blob([text], {type:'text/plain'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'diffraction-report.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+// ============ FIRE ============
+function fireLaser(){
+    S.firing = true;
+    S.fireTime = 0;
+    playLaser();
+}
+
+// ============ ANIMATION ============
+var lastT = 0;
+function animate(now){
+    if (!lastT) lastT = now;
+    var dt = (now - lastT) / 1000;
+    if (dt > 0.2) dt = 0.016;
+    lastT = now;
+    S.time += dt;
+
+    if (S.firing) {
+        S.fireTime += dt;
+        if (S.fireTime > 1.5) {
+            S.firing = false;
+        }
+    }
+
+    drawScene();
+    updateReadouts();
+    requestAnimationFrame(animate);
+}
+
+// ============ EVENTS ============
+$('btn-sound').addEventListener('click', toggleSound);
+
+$('source').addEventListener('change', function(e){
+    S.source = e.target.value;
+    var showWl = (S.source === 'mono');
+    $('wlrow').style.display = showWl ? 'block' : 'none';
+    updateReadouts();
+    fireLaser();
+});
+
+$('wl').addEventListener('input', function(e){
+    S.wl = parseFloat(e.target.value);
+    $('v-wl').innerText = S.wl;
+    S.source = 'mono';
+    $('source').value = 'mono';
+    $('wlrow').style.display = 'block';
+    updateReadouts();
+});
+
+$('lines').addEventListener('input', function(e){
+    S.linesPerMM = parseFloat(e.target.value);
+    $('v-lines').innerText = S.linesPerMM;
+    updateReadouts();
+});
+
+$('dist').addEventListener('input', function(e){
+    S.L = parseFloat(e.target.value);
+    $('v-L').innerText = S.L.toFixed(2);
+    updateReadouts();
+});
+
+$('maxorder').addEventListener('input', function(e){
+    S.maxOrder = parseFloat(e.target.value);
+    $('v-maxorder').innerText = S.maxOrder;
+    updateReadouts();
+});
+
+$('showlabels').addEventListener('change', function(e){
+    S.showLabels = e.target.checked;
+});
+
+$('showformula').addEventListener('change', function(e){
+    S.showFormula = e.target.checked;
+});
+
+$('btn-fire').addEventListener('click', fireLaser);
+
+$('btn-reset').addEventListener('click', function(){
+    S.source = 'mono'; $('source').value = 'mono';
+    S.wl = 550; $('wl').value = 550; $('v-wl').innerText = '550';
+    S.linesPerMM = 500; $('lines').value = 500; $('v-lines').innerText = '500';
+    S.L = 1.0; $('dist').value = 1; $('v-L').innerText = '1.00';
+    S.maxOrder = 3; $('maxorder').value = 3; $('v-maxorder').innerText = '3';
+    S.showLabels = true; $('showlabels').checked = true;
+    S.showFormula = true; $('showformula').checked = true;
+    $('wlrow').style.display = 'block';
+    updateReadouts();
+});
+
+document.querySelectorAll('.tab-btn[data-tab]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+        document.querySelectorAll('.tab-btn[data-tab]').forEach(function(b){ b.classList.remove('active'); });
+        document.getElementById(btn.dataset.tab).classList.add('active');
+        btn.classList.add('active');
+    });
+});
+
+document.querySelectorAll('[data-challenge]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        applyChallenge(btn.dataset.challenge);
+        beep(660, 0.08, 'sine', 0.08);
+    });
+});
+
+$('btn-quiz-check').addEventListener('click', evaluateQuiz);
+$('btn-quiz-reset').addEventListener('click', resetQuiz);
+$('btn-record').addEventListener('click', recordMeasurement);
+$('btn-clear-notes').addEventListener('click', function(){
+    if (!confirm('Clear notebook?')) return;
+    $('hypothesis').value = ''; $('conclusion').value = ''; $('records').value = '';
+    S.records = [];
+});
+$('btn-export').addEventListener('click', downloadReport);
+
+// Splitter
+(function(){
+    var sim = $('sim-area'), splitter = $('splitter');
+    var dragging = false, startY = 0, startH = 0;
+    splitter.addEventListener('pointerdown', function(e){
+        e.preventDefault(); dragging = true; startY = e.clientY;
+        startH = sim.getBoundingClientRect().height;
+        try { splitter.setPointerCapture(e.pointerId); } catch(_){}
+    });
+    window.addEventListener('pointermove', function(e){
+        if (!dragging) return;
+        var dy = e.clientY - startY;
+        var nh = Math.max(180, Math.min(window.innerHeight-240, Math.round(startH + dy)));
+        sim.style.flex = '0 0 ' + nh + 'px';
+    });
+    window.addEventListener('pointerup', function(e){
+        if (!dragging) return;
+        dragging = false;
+        try { splitter.releasePointerCapture(e.pointerId); } catch(_){}
+    });
+})();
+
+window.addEventListener('resize', function(){ lastW = 0; lastH = 0; });
+
+// ============ BOOT ============
+updateReadouts();
+fireLaser();
+requestAnimationFrame(animate);
+
+})();
+</script>
+</body>
+</html>

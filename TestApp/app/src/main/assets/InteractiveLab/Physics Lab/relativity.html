@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Physics: Special Relativity Lab</title>
+    <style>
+        :root {
+            --primary: #6366f1; --secondary: #f43f5e; --dark: #0f172a;
+            --surface: #ffffff; --bg: #f1f5f9; --glass: rgba(255,255,255,0.9);
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        html, body { height: 100%; }
+        body { margin: 0; background: var(--bg); color: var(--dark); display: flex; flex-direction: column; overflow: auto; -webkit-font-smoothing:antialiased; }
+
+        header { background: var(--dark); color: white; padding: 10px; text-align: center; border-bottom: 3px solid var(--primary); }
+        .lab-container { display: flex; flex: 1; overflow: auto; flex-direction: column; }
+
+        #sim-area { flex: 2 1 460px; position: relative; background: #0a0f1f; border-bottom: 2px solid #e2e8f0; overflow: auto; cursor: crosshair; min-height:360px; }
+        canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+        .splitter { height: 10px; background: linear-gradient(90deg, rgba(0,0,0,0.03), rgba(0,0,0,0.06)); cursor: ns-resize; display:block; }
+        .splitter:hover { background: linear-gradient(90deg, rgba(0,0,0,0.05), rgba(0,0,0,0.09)); }
+
+        .bottom-panel { flex: 3; display: flex; flex-direction: row; background: var(--surface); overflow-y: auto; }
+        .controls { flex: 0 0 360px; padding: 18px; border-right: 1px solid #e2e8f0; min-width: 300px; }
+        .analysis { flex: 1 1 720px; padding: 18px; background: #fafafa; min-width: 420px; }
+
+        .card { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        h4 { margin: 0 0 10px 0; font-size: 0.8rem; color: #64748b; text-transform: uppercase; }
+        .input-row { margin-bottom: 12px; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; }
+        input[type="range"] { width: 100%; accent-color: var(--primary); }
+        select, input[type="number"] { width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; font-family: inherit; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        button { padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit; }
+        .btn-fire { background: var(--primary); color: white; }
+        .btn-fire:hover { background: #4f46e5; }
+        .btn-reset { background: #64748b; color: white; }
+        .btn-reset:hover { background: #475569; }
+        .btn-sound { background: #10b981; color: white; }
+        .btn-sound:hover { background: #059669; }
+        .btn-sound.playing { background: #ef4444; }
+        .btn-sound.playing:hover { background: #dc2626; }
+
+        .hud { position: absolute; top: 10px; left: 10px; background: var(--glass); padding: 8px; border-radius: 8px; font-size: 0.75rem; border: 1px solid #ddd; z-index: 20; color: #0f172a; }
+        .hud * { pointer-events: auto; }
+        .hud .metrics { pointer-events: none; line-height: 1.7; }
+        .zoom-controls { display:flex; gap:6px; margin-top:6px; }
+        .zoom-controls button { padding:6px 8px; border-radius:6px; border:1px solid rgba(0,0,0,0.06); background:white; cursor:pointer; }
+        .vector-legend { position: absolute; bottom: 10px; left: 10px; font-size: 0.65rem; background: var(--glass); padding: 5px; border-radius: 4px; color: #0f172a; }
+
+        .tab-btn { padding: 8px 12px; border-radius: 6px; background: #e2e8f0; color: var(--dark); font-weight: 600; font-size: 0.8rem; }
+        .tab-btn:hover { background: #cbd5e1; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        .readouts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+        .readout { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; }
+        .readout span { font-size: 0.7rem; color: #64748b; display: block; }
+        .readout strong { font-size: 1rem; color: var(--dark); }
+        .readout.big strong { font-size: 1.15rem; color: #4f46e5; }
+
+        .quiz-q { padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+        .quiz-q:last-child { border-bottom: none; }
+        .quiz-q > strong { display: block; margin-bottom: 8px; font-size: 0.9rem; }
+        .quiz-q label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; margin: 3px 6px 3px 0; cursor: pointer; font-weight: 500; }
+        .quiz-q label:hover { background: #eef2ff; border-color: #6366f1; }
+        .explanation {
+            margin-top: 8px; padding: 10px 12px; border-radius: 6px; font-size: 0.82rem; line-height: 1.55;
+            background: #eef2ff; border-left: 3px solid #6366f1; color: #1e293b;
+        }
+        .explanation.correct-box { background: #ecfdf5; border-left-color: #10b981; }
+        .explanation.wrong-box { background: #fef2f2; border-left-color: #dc2626; }
+        .explanation strong { display: block; margin-bottom: 3px; }
+
+        .quiz-section { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6366f1; margin: 12px 0 6px 0; }
+        .quiz-section:first-child { margin-top: 0; }
+
+        #quiz-result { margin-top: 10px; padding: 12px; border-radius: 8px; background: #eef2ff; border: 1px solid #c7d2fe; font-weight: 700; text-align: center; }
+
+        table.formulas { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 6px; }
+        table.formulas th, table.formulas td { border: 1px solid #e2e8f0; padding: 6px 8px; text-align: left; }
+        table.formulas th { background: #f1f5f9; font-weight: 600; }
+        .eq { font-family: 'JetBrains Mono', ui-monospace, monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.82rem; }
+        .note { font-size: 0.82rem; color: #475569; margin-top: 8px; line-height: 1.5; }
+        .sound-hint { background: #fef3c7; border-left: 3px solid #f59e0b; padding: 8px 10px; border-radius: 6px; font-size: 0.82rem; margin-top: 8px; }
+
+        textarea { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 0.85rem; min-height: 64px; resize: vertical; }
+
+        @media (max-width: 768px) {
+            .bottom-panel { flex-direction: column; }
+            .controls { border-right: none; border-bottom: 1px solid #eee; min-width: 0; }
+            .analysis { min-width: 0; }
+            .readouts { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">⚡ Special Relativity Interactive Lab</h2>
+    <small>Time Dilation · Length Contraction · Relativistic Mass · E=mc² · Lorentz Factor</small>
+</header>
+
+<div class="lab-container">
+    <div id="sim-area">
+        <div class="hud">
+            <b>LIVE STATE</b><br>
+            <div class="metrics">
+                Velocity v: <span id="hud-v">0.500</span> c<br>
+                Lorentz γ: <span id="hud-g">1.155</span><br>
+                Time dil: <span id="hud-t">1.155×</span><br>
+                Length: <span id="hud-l">0.866×</span>
+            </div>
+            <div style="margin-top:6px; font-size:0.75rem;">
+                <label style="display:inline-flex;align-items:center;gap:6px;"><input id="full-scroll-toggle" type="checkbox"> Enable Full Page Scrolling</label>
+            </div>
+        </div>
+        <div class="vector-legend">
+            <span style="color:#6366f1">● Ship frame</span> | <span style="color:#f43f5e">● Earth frame</span> | <span style="color:#10b981">● Light</span>
+        </div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div id="splitter" class="splitter" title="Drag to resize simulation area"></div>
+
+    <div class="bottom-panel">
+        <div class="controls">
+            <h4>🧪 Lab Settings</h4>
+
+            <div class="input-row">
+                <button class="btn-sound" id="btn-sound" style="width:100%;">🔈 Enable sound</button>
+                <div class="sound-hint" id="sound-hint">Tick sounds as time dilates, warns near c.</div>
+            </div>
+
+            <div class="input-row">
+                <label>Mode</label>
+                <select id="mode">
+                    <option value="dilation" selected>Time dilation</option>
+                    <option value="contraction">Length contraction</option>
+                    <option value="energy">Mass-energy (E=mc²)</option>
+                </select>
+            </div>
+
+            <div class="input-row">
+                <label>Velocity v: <span id="v-beta">0.500</span> c</label>
+                <input type="range" id="beta" min="0" max="0.999" step="0.001" value="0.5">
+            </div>
+
+            <div class="input-row">
+                <label>Proper time Δt₀ (ship clock): <span id="v-t0">1.000</span> s</label>
+                <input type="range" id="t0" min="0.1" max="10" step="0.1" value="1">
+            </div>
+
+            <div class="input-row">
+                <label>Rest length L₀: <span id="v-L0">100</span> m</label>
+                <input type="range" id="L0" min="10" max="1000" step="10" value="100">
+            </div>
+
+            <div class="input-row">
+                <label>Rest mass m₀: <span id="v-m0">1.0</span> kg</label>
+                <input type="range" id="m0" min="0.1" max="10" step="0.1" value="1">
+            </div>
+
+            <div class="btn-grid">
+                <button class="btn-fire" id="btn-launch">🚀 Launch</button>
+                <button class="btn-reset" id="btn-reset">↺ Reset</button>
+            </div>
+        </div>
+
+        <div class="analysis">
+            <h4>📊 Learn &amp; Practice</h4>
+
+            <div class="readouts">
+                <div class="readout big"><span>Lorentz factor γ</span><strong id="ro-g">1.155</strong></div>
+                <div class="readout big"><span>β = v/c</span><strong id="ro-b">0.500</strong></div>
+                <div class="readout"><span>Time dilation factor</span><strong id="ro-td">1.155×</strong></div>
+                <div class="readout"><span>Length contraction</span><strong id="ro-lc">0.866×</strong></div>
+                <div class="readout"><span>Dilated time Δt</span><strong id="ro-t">1.155 s</strong></div>
+                <div class="readout"><span>Contracted length L</span><strong id="ro-L">86.6 m</strong></div>
+                <div class="readout"><span>Relativistic mass m</span><strong id="ro-m">1.155 kg</strong></div>
+                <div class="readout"><span>Total energy E</span><strong id="ro-E">1.04×10¹⁷ J</strong></div>
+                <div class="readout"><span>Kinetic energy K</span><strong id="ro-K">0.04×10¹⁷ J</strong></div>
+                <div class="readout"><span>Momentum p</span><strong id="ro-p">5.20×10⁸ kg·m/s</strong></div>
+                <div class="readout"><span>Rest energy E₀</span><strong id="ro-E0">8.99×10¹⁶ J</strong></div>
+                <div class="readout"><span>Speed of light c</span><strong>2.998×10⁸ m/s</strong></div>
+            </div>
+
+            <div class="card">
+                <div class="tabs" style="display:flex; flex-wrap: wrap; gap:8px; margin-bottom:8px;">
+                    <button class="tab-btn active" data-tab="formulas">Formulas</button>
+                    <button class="tab-btn" data-tab="quiz">Quiz</button>
+                    <button class="tab-btn" data-tab="challenges">Challenges</button>
+                    <button class="tab-btn" data-tab="notebook">Notebook</button>
+                </div>
+
+                <!-- FORMULAS -->
+                <div id="formulas" class="tab-panel active">
+                    <h3 style="margin:6px 0 8px 0;">Core Formulas — Special Relativity</h3>
+                    <ul style="font-size:0.9rem; line-height:1.6; padding-left:1rem; margin:0;">
+                        <li><b>Lorentz factor:</b> γ = 1 / √(1 − v²/c²)</li>
+                        <li><b>Time dilation:</b> Δt = γ · Δt₀</li>
+                        <li><b>Length contraction:</b> L = L₀ / γ</li>
+                        <li><b>Relativistic mass:</b> m = γ · m₀</li>
+                        <li><b>Rest energy:</b> E₀ = m₀ · c²</li>
+                        <li><b>Total energy:</b> E = γ · m₀ · c²</li>
+                        <li><b>Kinetic energy:</b> K = (γ − 1) · m₀ · c²</li>
+                        <li><b>Momentum:</b> p = γ · m₀ · v</li>
+                        <li><b>Energy-momentum relation:</b> E² = (pc)² + (m₀c²)²</li>
+                        <li><b>Velocity addition:</b> u = (u' + v) / (1 + u'v/c²)</li>
+                    </ul>
+                    <p class="note"><b>💡 Quick tips:</b> As v → c, γ → ∞ — nothing with mass can reach c. Time dilation is symmetric: each observer sees the other's clock running slow. At v = 0.866c, γ = 2 (time runs half speed). At v = 0.995c, γ ≈ 10. Length contracts only in the direction of motion. c = 299,792,458 m/s exactly.</p>
+
+                    <table class="formulas" style="margin-top:12px;">
+                        <tr><th>Quantity</th><th>Formula</th><th>Units</th></tr>
+                        <tr><td>Lorentz factor</td><td><span class="eq">γ = 1/√(1−β²)</span></td><td>—</td></tr>
+                        <tr><td>Time dilation</td><td><span class="eq">Δt = γΔt₀</span></td><td>s</td></tr>
+                        <tr><td>Length contraction</td><td><span class="eq">L = L₀/γ</span></td><td>m</td></tr>
+                        <tr><td>Rest energy</td><td><span class="eq">E₀ = m₀c²</span></td><td>J</td></tr>
+                    </table>
+                </div>
+
+                <!-- QUIZ -->
+                <div id="quiz" class="tab-panel" style="max-height:600px; overflow:auto;">
+                    <h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+                    <div class="quiz-section">Basic — Time &amp; Light</div>
+
+                    <div class="quiz-q" data-q="q1" data-answer="B">
+                        <strong>1. The speed of light c is:</strong>
+                        <label><input type="radio" name="q1" value="A"> Different for each observer</label>
+                        <label><input type="radio" name="q1" value="B"> The same for all inertial observers</label>
+                        <label><input type="radio" name="q1" value="C"> Only constant in vacuum at rest</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q2" data-answer="A">
+                        <strong>2. The Lorentz factor γ for v = 0 is:</strong>
+                        <label><input type="radio" name="q2" value="A"> 1</label>
+                        <label><input type="radio" name="q2" value="B"> 0</label>
+                        <label><input type="radio" name="q2" value="C"> ∞</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q3" data-answer="B">
+                        <strong>3. As v approaches c, the Lorentz factor γ:</strong>
+                        <label><input type="radio" name="q3" value="A"> Approaches 0</label>
+                        <label><input type="radio" name="q3" value="B"> Approaches infinity</label>
+                        <label><input type="radio" name="q3" value="C"> Stays 1</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Intermediate — Time Dilation</div>
+
+                    <div class="quiz-q" data-q="q4" data-answer="B">
+                        <strong>4. A clock on a fast spaceship, as seen from Earth, runs:</strong>
+                        <label><input type="radio" name="q4" value="A"> Faster</label>
+                        <label><input type="radio" name="q4" value="B"> Slower</label>
+                        <label><input type="radio" name="q4" value="C"> At the same rate</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q5" data-answer="A">
+                        <strong>5. At v = 0.866c (γ = 2), 1 second on the ship's clock equals:</strong>
+                        <label><input type="radio" name="q5" value="A"> 2 seconds on Earth</label>
+                        <label><input type="radio" name="q5" value="B"> 0.5 seconds on Earth</label>
+                        <label><input type="radio" name="q5" value="C"> 1 second on Earth</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q6" data-answer="A">
+                        <strong>6. Length contraction happens:</strong>
+                        <label><input type="radio" name="q6" value="A"> Only in the direction of motion</label>
+                        <label><input type="radio" name="q6" value="B"> Equally in all directions</label>
+                        <label><input type="radio" name="q6" value="C"> Only for zero mass</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Advanced — E = mc²</div>
+
+                    <div class="quiz-q" data-q="q7" data-answer="B">
+                        <strong>7. A 1 kg object at rest has rest energy:</strong>
+                        <label><input type="radio" name="q7" value="A"> 3×10⁸ J</label>
+                        <label><input type="radio" name="q7" value="B"> ≈ 9×10¹⁶ J</label>
+                        <label><input type="radio" name="q7" value="C"> 1 J</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q8" data-answer="B">
+                        <strong>8. A massive object cannot reach c because:</strong>
+                        <label><input type="radio" name="q8" value="A"> The engine is not powerful enough</label>
+                        <label><input type="radio" name="q8" value="B"> Its relativistic energy and mass would become infinite</label>
+                        <label><input type="radio" name="q8" value="C"> Space is curved</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q9" data-answer="A">
+                        <strong>9. Two spaceships approach each other at 0.6c each (from Earth's view). Their relative speed is:</strong>
+                        <label><input type="radio" name="q9" value="A"> ≈ 0.88c (not 1.2c)</label>
+                        <label><input type="radio" name="q9" value="B"> 1.2c</label>
+                        <label><input type="radio" name="q9" value="C"> 0.6c</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="btn-grid" style="margin-top:12px;">
+                        <button class="btn-fire" id="btn-quiz-check">Submit Quiz</button>
+                        <button class="btn-reset" id="btn-quiz-reset">Reset</button>
+                    </div>
+                    <div id="quiz-result" style="display:none;"></div>
+                </div>
+
+                <!-- CHALLENGES -->
+                <div id="challenges" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Interactive Challenges</h3>
+                    <div style="display:flex; flex-direction:column; gap:8px; font-size:0.9rem;">
+                        <div>
+                            <b>Challenge 1 — Half-speed light</b><br>
+                            <button class="btn-fire" data-challenge="half">v = 0.5c (γ ≈ 1.155)</button>
+                        </div>
+                        <div>
+                            <b>Challenge 2 — Time slows 2×</b><br>
+                            <button class="btn-fire" data-challenge="gamma2">v = 0.866c (γ = 2)</button>
+                        </div>
+                        <div>
+                            <b>Challenge 3 — Time slows 10×</b><br>
+                            <button class="btn-fire" data-challenge="gamma10">v = 0.995c (γ ≈ 10)</button>
+                        </div>
+                        <div>
+                            <b>Challenge 4 — Extreme relativistic</b><br>
+                            <button class="btn-fire" data-challenge="extreme">v = 0.999c (γ ≈ 22.4)</button>
+                        </div>
+                        <div>
+                            <b>Challenge 5 — Rest energy</b><br>
+                            <button class="btn-fire" data-challenge="rest">Show E = mc² for 1 kg</button>
+                        </div>
+                        <div id="challenge-note" style="color:#0f172a; font-size:0.85rem;"></div>
+                        <div id="challenge-result" style="color:#083344; font-weight:600; margin-top:6px;"></div>
+                    </div>
+                </div>
+
+                <!-- NOTEBOOK -->
+                <div id="notebook" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Experiment Notebook</h3>
+                    <label>Prediction / hypothesis</label>
+                    <textarea id="hypothesis" placeholder="What do you expect to happen, and why?"></textarea>
+                    <label style="margin-top:10px; display:block;">Conclusion / evidence</label>
+                    <textarea id="conclusion" placeholder="Explain what your observations show."></textarea>
+                    <label style="margin-top:10px; display:block;">Recorded measurements</label>
+                    <textarea id="records" readonly style="background:#f8fafc; font-family:monospace; font-size:0.75rem; min-height:100px;"></textarea>
+                    <div class="btn-grid" style="margin-top:10px;">
+                        <button class="btn-fire" id="btn-record">📋 Record</button>
+                        <button class="btn-reset" id="btn-clear-notes">Clear</button>
+                    </div>
+                    <button class="btn-fire" style="margin-top:8px; width:100%;" id="btn-export">⬇ Download Report</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <b>Real-world fact:</b> <span id="fact-box" style="font-size:0.85rem;">—</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+"use strict";
+(function () {
+    var C = 299792458; // exact, m/s
+    var C_SQUARED = C * C;
+
+    // === State ===
+    var S = {
+        mode: 'dilation',
+        beta: 0.5,
+        t0: 1.0,     // proper time (s)
+        L0: 100,     // rest length (m)
+        m0: 1.0,     // rest mass (kg)
+        launching: false,
+        launchProgress: 0,
+        soundOn: false,
+        shipPhase: 0,
+        earthTick: 0,
+        shipTick: 0,
+        lastEarthTick: 0,
+        lastShipTick: 0,
+        records: []
+    };
+
+    var $ = function (id) { return document.getElementById(id); };
+
+    // === Canvas ===
+    var canvas = $('canvas');
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var view = { x: 0, y: 0, scale: 1 };
+
+    function resizeCanvas() {
+        var w = canvas.clientWidth, h = canvas.clientHeight;
+        canvas.width = Math.max(1, Math.round(w * dpr));
+        canvas.height = Math.max(1, Math.round(h * dpr));
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function cw() { return canvas.width / dpr; }
+    function ch() { return canvas.height / dpr; }
+
+    // === Web Audio ===
+    var audioCtx = null;
+    function initAudio() {
+        if (audioCtx) return;
+        try {
+            var AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) { $('sound-hint').textContent = '⚠ No Web Audio.'; return; }
+            audioCtx = new AC();
+        } catch (e) { $('sound-hint').textContent = '⚠ Audio init failed.'; }
+    }
+    function beep(freq, dur, type, vol) {
+        if (!audioCtx || !S.soundOn) return;
+        try {
+            var o = audioCtx.createOscillator();
+            var g = audioCtx.createGain();
+            o.type = type || 'sine';
+            o.frequency.value = freq;
+            g.gain.setValueAtTime(vol || 0.08, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+            o.connect(g);
+            g.connect(audioCtx.destination);
+            o.start();
+            o.stop(audioCtx.currentTime + dur);
+        } catch (e) {}
+    }
+    function toggleSound() {
+        initAudio();
+        if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        S.soundOn = !S.soundOn;
+        if (S.soundOn) {
+            $('btn-sound').textContent = '🔊 Sound ON';
+            $('btn-sound').classList.add('playing');
+            $('sound-hint').textContent = 'Clock ticks + speed warnings active.';
+            beep(440, 0.1, 'sine', 0.1);
+        } else {
+            $('btn-sound').textContent = '🔈 Enable sound';
+            $('btn-sound').classList.remove('playing');
+            $('sound-hint').textContent = 'Sound disabled.';
+        }
+    }
+
+    // === Physics ===
+    function getGamma() {
+        var b2 = S.beta * S.beta;
+        if (b2 >= 1) return Infinity;
+        return 1 / Math.sqrt(1 - b2);
+    }
+    function getDilatedTime() {
+        return getGamma() * S.t0;
+    }
+    function getContractedLength() {
+        return S.L0 / getGamma();
+    }
+    function getRelMass() {
+        return S.m0 * getGamma();
+    }
+    function getRestEnergy() {
+        return S.m0 * C_SQUARED;
+    }
+    function getTotalEnergy() {
+        return getGamma() * S.m0 * C_SQUARED;
+    }
+    function getKineticEnergy() {
+        return (getGamma() - 1) * S.m0 * C_SQUARED;
+    }
+    function getMomentum() {
+        return getGamma() * S.m0 * S.beta * C;
+    }
+
+    // === Drawing ===
+    function drawScene() {
+        var w = cw(), h = ch();
+        // Space background — dark with stars
+        var grad = ctx.createLinearGradient(0, 0, 0, h);
+        grad.addColorStop(0, '#0a0f1f');
+        grad.addColorStop(1, '#1e1b4b');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
+
+        // Twinkling stars
+        var t = Date.now() * 0.001;
+        for (var i = 0; i < 80; i++) {
+            var sx = (i * 137 + 50) % w;
+            var sy = (i * 71 + 30) % (h * 0.7);
+            var tw = 0.4 + 0.6 * Math.abs(Math.sin(t * 1.5 + i));
+            ctx.fillStyle = 'rgba(255,255,255,' + tw + ')';
+            ctx.beginPath();
+            ctx.arc(sx, sy, 0.8 + (i % 3) * 0.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        ctx.save();
+        ctx.translate(view.x, view.y);
+        ctx.scale(view.scale, view.scale);
+        var W = w / view.scale, H = h / view.scale;
+
+        var gamma = getGamma();
+        var beta = S.beta;
+
+        if (S.mode === 'dilation') {
+            drawDilation(W, H, gamma);
+        } else if (S.mode === 'contraction') {
+            drawContraction(W, H, gamma);
+        } else {
+            drawEnergy(W, H, gamma);
+        }
+
+        ctx.restore();
+
+        // Bottom caption
+        ctx.fillStyle = 'rgba(203, 213, 225, 0.7)';
+        ctx.font = '11px Inter';
+        ctx.textAlign = 'center';
+        var cap;
+        if (S.mode === 'dilation') cap = 'Earth clock vs. ship clock · ship clock runs slower by factor γ';
+        else if (S.mode === 'contraction') cap = 'Ship length contraction: shorter in direction of motion by factor γ';
+        else cap = 'Mass-energy: E = γ·m₀·c² · more energy needed to accelerate as v → c';
+        ctx.fillText(cap, w / 2, h - 8);
+    }
+
+    function drawDilation(W, H, gamma) {
+        var shipT = S.shipTick;
+        var earthT = S.earthTick;
+
+        // Two clocks side-by-side
+        var clockR = Math.min(W, H) * 0.18;
+        var earthX = W * 0.30;
+        var shipX = W * 0.70;
+        var clockY = H * 0.35;
+
+        // Earth clock
+        drawClock(earthX, clockY, clockR, earthT, '#f43f5e', 'Earth frame', S.t0);
+        // Ship clock
+        drawClock(shipX, clockY, clockR, shipT, '#6366f1', 'Ship frame (moving)', S.t0);
+
+        // Labels showing dilation
+        ctx.fillStyle = '#e0e7ff';
+        ctx.font = 'bold 14px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Earth: ' + earthT.toFixed(2) + ' s', earthX, clockY + clockR + 30);
+        ctx.fillText('Ship: ' + shipT.toFixed(2) + ' s', shipX, clockY + clockR + 30);
+
+        // Dilation factor
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = 'bold 16px Inter';
+        ctx.fillText('Δt_earth = γ × Δt_ship', W / 2, H * 0.72);
+        ctx.fillStyle = '#e0e7ff';
+        ctx.font = '13px Inter';
+        ctx.fillText('γ = ' + (gamma === Infinity ? '∞' : gamma.toFixed(3)) + ' · ' + S.t0.toFixed(1) + ' s ship → ' + (gamma * S.t0).toFixed(3) + ' s Earth', W / 2, H * 0.72 + 22);
+
+        // Ship moving
+        drawShip(W * 0.5, H * 0.9, S.beta, 1.0);
+
+        // If launching, show trail
+        if (S.launching) {
+            var trailLength = 60 + 120 * S.launchProgress;
+            var grad = ctx.createLinearGradient(shipX, H * 0.88, shipX - trailLength, H * 0.88);
+            grad.addColorStop(0, 'rgba(99, 102, 241, 0.9)');
+            grad.addColorStop(1, 'rgba(99, 102, 241, 0)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(shipX - trailLength, H * 0.88, trailLength, 10);
+        }
+    }
+
+    function drawClock(cx, cy, r, time, color, label, period) {
+        // Clock face
+        ctx.fillStyle = 'rgba(255,255,255,0.05)';
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Hour marks (12)
+        for (var i = 0; i < 12; i++) {
+            var angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
+            var x1 = cx + Math.cos(angle) * (r * 0.85);
+            var y1 = cy + Math.sin(angle) * (r * 0.85);
+            var x2 = cx + Math.cos(angle) * (r * 0.95);
+            var y2 = cy + Math.sin(angle) * (r * 0.95);
+            ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+        }
+
+        // Clock hands based on time
+        // seconds hand rotates once per period
+        var secAngle = ((time % period) / period) * Math.PI * 2 - Math.PI / 2;
+        var minAngle = (time / period * 0.1) * Math.PI * 2 - Math.PI / 2;
+
+        // Minute hand (short)
+        ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(minAngle) * (r * 0.6), cy + Math.sin(minAngle) * (r * 0.6));
+        ctx.stroke();
+
+        // Second hand (long)
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(secAngle) * (r * 0.85), cy + Math.sin(secAngle) * (r * 0.85));
+        ctx.stroke();
+
+        // Center dot
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Label below clock
+        ctx.fillStyle = '#e0e7ff';
+        ctx.font = 'bold 12px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText(label, cx, cy + r + 16);
+    }
+
+    function drawShip(cx, cy, beta, gamma) {
+        // Stylized rocket ship
+        var shipW = 40;
+        var shipH = 60;
+        // Rocket pointing up
+        ctx.save();
+        ctx.translate(cx, cy);
+        // Body
+        ctx.fillStyle = '#e2e8f0';
+        ctx.beginPath();
+        ctx.moveTo(-shipW / 2, shipH / 2);
+        ctx.lineTo(-shipW / 2, -shipH / 2);
+        ctx.lineTo(0, -shipH / 2 - 15);
+        ctx.lineTo(shipW / 2, -shipH / 2);
+        ctx.lineTo(shipW / 2, shipH / 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        // Nose red
+        ctx.fillStyle = '#dc2626';
+        ctx.beginPath();
+        ctx.moveTo(-shipW / 2, -shipH / 2);
+        ctx.lineTo(0, -shipH / 2 - 15);
+        ctx.lineTo(shipW / 2, -shipH / 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        // Fins
+        ctx.fillStyle = '#dc2626';
+        ctx.beginPath();
+        ctx.moveTo(-shipW / 2, shipH / 2 - 10);
+        ctx.lineTo(-shipW / 2 - 10, shipH / 2 + 5);
+        ctx.lineTo(-shipW / 2, shipH / 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(shipW / 2, shipH / 2 - 10);
+        ctx.lineTo(shipW / 2 + 10, shipH / 2 + 5);
+        ctx.lineTo(shipW / 2, shipH / 2);
+        ctx.closePath();
+        ctx.fill();
+        // Window
+        ctx.fillStyle = '#1e40af';
+        ctx.beginPath();
+        ctx.arc(0, -shipH / 4, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#0f172a';
+        ctx.stroke();
+        // Flame
+        if (S.launching) {
+            var flicker = Math.sin(Date.now() * 0.02) * 3;
+            var flameLen = 20 + beta * 40;
+            var grad = ctx.createLinearGradient(0, shipH / 2, 0, shipH / 2 + flameLen);
+            grad.addColorStop(0, 'rgba(255,255,200,1)');
+            grad.addColorStop(0.4, 'rgba(255,180,40,0.9)');
+            grad.addColorStop(1, 'rgba(244,63,94,0)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.moveTo(-10, shipH / 2);
+            ctx.quadraticCurveTo(-5 + flicker, shipH / 2 + flameLen * 0.5, 0, shipH / 2 + flameLen);
+            ctx.quadraticCurveTo(5 + flicker, shipH / 2 + flameLen * 0.5, 10, shipH / 2);
+            ctx.closePath();
+            ctx.fill();
+        }
+        ctx.restore();
+    }
+
+    function drawContraction(W, H, gamma) {
+        // Ship at rest
+        var L0 = 200;
+        var x1 = W / 2 - L0 / 2;
+        var y = H * 0.3;
+
+        ctx.fillStyle = '#e0e7ff';
+        ctx.font = 'bold 14px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Rest length L₀ = ' + S.L0.toFixed(0) + ' m (as seen from ship)', W / 2, y - 20);
+
+        // Rest ship (transparent outline)
+        drawShipBar(x1, y, L0, 40, true, 'Rest', '#94a3b8');
+
+        // Contracted ship
+        var Lc = L0 / gamma;
+        var x2 = W / 2 - Lc / 2;
+        var y2 = H * 0.55;
+        ctx.fillStyle = '#e0e7ff';
+        ctx.font = 'bold 14px Inter';
+        ctx.fillText('Contracted L = L₀/γ = ' + (S.L0 / gamma).toFixed(1) + ' m (as seen from Earth)', W / 2, y2 - 20);
+
+        drawShipBar(x2, y2, Lc, 40, false, 'Contracted', '#6366f1');
+
+        // Show ratio
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = 'bold 16px Inter';
+        ctx.fillText('L = L₀ × (1/γ) = ' + S.L0.toFixed(0) + ' m × ' + (1 / gamma).toFixed(3) + ' = ' + (S.L0 / gamma).toFixed(2) + ' m', W / 2, H * 0.8);
+
+        // Motion arrow
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(W * 0.75, H * 0.55);
+        ctx.lineTo(W * 0.85, H * 0.55);
+        ctx.stroke();
+        // Arrowhead
+        ctx.fillStyle = '#10b981';
+        ctx.beginPath();
+        ctx.moveTo(W * 0.85, H * 0.55);
+        ctx.lineTo(W * 0.83, H * 0.55 - 6);
+        ctx.lineTo(W * 0.83, H * 0.55 + 6);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#10b981';
+        ctx.font = '12px Inter';
+        ctx.fillText('v = ' + (S.beta * 100).toFixed(1) + '% c', W * 0.80, H * 0.55 - 15);
+    }
+
+    function drawShipBar(x, y, len, height, ghost, label, color) {
+        if (ghost) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 4]);
+            ctx.strokeRect(x, y - height / 2, len, height);
+            ctx.setLineDash([]);
+            return;
+        }
+        // Solid ship bar
+        ctx.fillStyle = color;
+        ctx.fillRect(x, y - height / 2, len, height);
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, y - height / 2, len, height);
+
+        // Windows
+        ctx.fillStyle = '#1e40af';
+        var winCount = Math.max(1, Math.floor(len / 30));
+        for (var i = 0; i < winCount; i++) {
+            var wx = x + 15 + i * (len / winCount);
+            if (wx + 8 > x + len - 5) break;
+            ctx.beginPath();
+            ctx.arc(wx, y, 5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    function drawEnergy(W, H, gamma) {
+        // Show rest energy and total energy as bars
+        var E0 = getRestEnergy();
+        var E = getTotalEnergy();
+        var K = getKineticEnergy();
+
+        var maxE = Math.max(E, E0) * 1.1;
+        var barMaxW = W * 0.5;
+
+        // Rest energy bar (yellow)
+        var e0W = (E0 / maxE) * barMaxW;
+        var x0 = W * 0.25;
+        var y0 = H * 0.30;
+        ctx.fillStyle = '#fbbf24';
+        ctx.fillRect(x0, y0 - 20, e0W, 40);
+        ctx.strokeStyle = '#78350f';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x0, y0 - 20, e0W, 40);
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 14px Inter';
+        ctx.textAlign = 'left';
+        ctx.fillText('Rest energy E₀ = m₀c² = ' + (E0 / 1e16).toFixed(2) + '×10¹⁶ J', x0 + 10, y0 + 5);
+
+        // Total energy bar (gradient)
+        var eW = (E / maxE) * barMaxW;
+        var y1 = H * 0.50;
+        var grad = ctx.createLinearGradient(x0, 0, x0 + eW, 0);
+        grad.addColorStop(0, '#6366f1');
+        grad.addColorStop(1, '#ec4899');
+        ctx.fillStyle = grad;
+        ctx.fillRect(x0, y1 - 20, eW, 40);
+        ctx.strokeStyle = '#4338ca';
+        ctx.strokeRect(x0, y1 - 20, eW, 40);
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 14px Inter';
+        ctx.fillText('Total energy E = γm₀c² = ' + (E / 1e16).toFixed(2) + '×10¹⁶ J', x0 + 10, y1 + 5);
+
+        // Kinetic energy bar (green)
+        var kW = (K / maxE) * barMaxW;
+        var y2 = H * 0.70;
+        ctx.fillStyle = '#10b981';
+        ctx.fillRect(x0, y2 - 20, Math.max(2, kW), 40);
+        ctx.strokeStyle = '#065f46';
+        ctx.strokeRect(x0, y2 - 20, Math.max(2, kW), 40);
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 14px Inter';
+        ctx.fillText('Kinetic energy K = (γ−1)m₀c² = ' + (K / 1e16).toFixed(3) + '×10¹⁶ J', x0 + 10, y2 + 5);
+
+        // Gamma readout
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#e0e7ff';
+        ctx.font = 'bold 16px Inter';
+        ctx.fillText('γ = ' + (gamma === Infinity ? '∞' : gamma.toFixed(4)) + ' at β = ' + S.beta.toFixed(3), W / 2, H * 0.88);
+    }
+
+    // === Readouts ===
+    function updateReadouts() {
+        var gamma = getGamma();
+        var dt = getDilatedTime();
+        var Lc = getContractedLength();
+        var m = getRelMass();
+        var E0 = getRestEnergy();
+        var E = getTotalEnergy();
+        var K = getKineticEnergy();
+        var p = getMomentum();
+
+        $('ro-g').innerText = gamma === Infinity ? '∞' : gamma.toFixed(4);
+        $('ro-b').innerText = S.beta.toFixed(3);
+        $('ro-td').innerText = gamma === Infinity ? '∞' : gamma.toFixed(3) + '×';
+        $('ro-lc').innerText = gamma === Infinity ? '0' : (1 / gamma).toFixed(3) + '×';
+        $('ro-t').innerText = dt === Infinity ? '∞' : dt.toFixed(4) + ' s';
+        $('ro-L').innerText = Lc.toFixed(3) + ' m';
+        $('ro-m').innerText = m === Infinity ? '∞' : m.toFixed(4) + ' kg';
+        $('ro-E').innerText = E === Infinity ? '∞' : (E / 1e16).toFixed(4) + '×10¹⁶ J';
+        $('ro-K').innerText = K === Infinity ? '∞' : (K / 1e16).toFixed(4) + '×10¹⁶ J';
+        $('ro-p').innerText = p === Infinity ? '∞' : p.toExponential(3) + ' kg·m/s';
+        $('ro-E0').innerText = (E0 / 1e16).toFixed(3) + '×10¹⁶ J';
+
+        $('hud-v').innerText = S.beta.toFixed(3);
+        $('hud-g').innerText = gamma === Infinity ? '∞' : gamma.toFixed(3);
+        $('hud-t').innerText = gamma === Infinity ? '∞' : gamma.toFixed(3) + '×';
+        $('hud-l').innerText = gamma === Infinity ? '0' : (1 / gamma).toFixed(3) + '×';
+
+        // Fact
+        var fact;
+        if (S.beta < 0.01) {
+            fact = 'At low speeds (v << c), relativity reduces to Newtonian physics — γ ≈ 1. That is why we do not notice it in daily life.';
+        } else if (S.beta < 0.5) {
+            fact = 'At half light speed, γ ≈ 1.155 — clocks run only 15% slower. Relativistic effects are already noticeable, but small.';
+        } else if (S.beta < 0.9) {
+            fact = 'At 0.866c, γ = 2 — time passes half as fast on the ship. At 0.9c, γ ≈ 2.29. Relativity is now dominant.';
+        } else if (S.beta < 0.99) {
+            fact = 'At 0.99c, γ ≈ 7.09. Every kilogram requires γ×m₀ of energy to accelerate — this is why particle accelerators need huge power.';
+        } else {
+            fact = 'Near light speed, γ → ∞. It would take infinite energy to reach c exactly. The LHC accelerates protons to 0.999999991c, where γ ≈ 7,500.';
+        }
+        $('fact-box').innerText = fact;
+    }
+
+    // === Quiz ===
+    var QUIZ_EXPLAIN = {
+        q1: { correct: 'B', why: 'Einstein\'s second postulate: the speed of light in vacuum is the <b>same for all inertial observers</b>, regardless of source or observer motion. c = 299,792,458 m/s exactly.', tip: 'This is the foundation of all of special relativity — everything else follows from it.' },
+        q2: { correct: 'A', why: 'At v = 0, γ = 1/√(1−0) = 1. The Lorentz factor is 1 when at rest, meaning no dilation or contraction.', tip: 'γ is 1 in Newtonian physics (v << c) and grows as v → c.' },
+        q3: { correct: 'B', why: 'γ = 1/√(1−v²/c²). As v → c, the denominator → 0, so γ → ∞. This is why nothing with mass can reach c.', tip: 'At v = 0.99c, γ ≈ 7.09; at v = 0.999c, γ ≈ 22.4.' },
+        q4: { correct: 'B', why: 'A moving clock ticks <b>slower</b> as seen from Earth. This is time dilation: Δt = γ·Δt₀ where Δt₀ is proper (ship) time.', tip: 'Each observer sees the other\'s clock slow — this is the relativity of simultaneity at work.' },
+        q5: { correct: 'A', why: 'Δt = γ·Δt₀ = 2 × 1 s = <b>2 s</b>. At γ = 2, one second on the ship equals 2 seconds on Earth.', tip: 'Time dilation factor 2 requires β = √3/2 ≈ 0.866c.' },
+        q6: { correct: 'A', why: 'Length contraction happens only along the <b>direction of motion</b>. Perpendicular dimensions are unchanged.', tip: 'That is why a fast-moving sphere is seen as an oblate spheroid, not a smaller sphere.' },
+        q7: { correct: 'B', why: 'E₀ = m·c² = 1 × (2.998×10⁸)² ≈ <b>8.99×10¹⁶ J</b>. That is roughly the energy of a 20-megaton nuclear bomb in one kilogram.', tip: 'This is why a tiny amount of mass can release enormous energy.' },
+        q8: { correct: 'B', why: 'At v = c, γ = ∞. The object\'s relativistic mass, momentum, and kinetic energy would all become infinite — needing infinite energy to accelerate.', tip: 'Only massless particles (photons) can travel at c — they have no rest frame.' },
+        q9: { correct: 'A', why: 'Velocities do not simply add. u = (0.6c + 0.6c)/(1 + 0.6·0.6) = 1.2c / 1.36 ≈ <b>0.882c</b> — still less than c.', tip: 'Relativistic velocity addition guarantees no combination of speeds exceeds c.' }
+    };
+
+    function evaluateQuiz() {
+        var qs = document.querySelectorAll('.quiz-q');
+        var score = 0, total = qs.length;
+        qs.forEach(function (q) {
+            var name = q.dataset.q;
+            var correct = q.dataset.answer;
+            var chosen = q.querySelector('input[name="' + name + '"]:checked');
+            var expl = q.querySelector('.explanation');
+            var data = QUIZ_EXPLAIN[name];
+            expl.hidden = false;
+            expl.className = 'explanation';
+            if (chosen && chosen.value === correct) {
+                score++;
+                expl.classList.add('correct-box');
+                expl.innerHTML = '<strong>✓ Correct!</strong>' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            } else {
+                expl.classList.add('wrong-box');
+                var chosenVal = chosen ? chosen.value : '—';
+                expl.innerHTML = '<strong>✗ Correct answer is ' + correct + '</strong>You chose ' + chosenVal + '. ' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            }
+        });
+        var pct = Math.round(score / total * 100);
+        var msg = '💪 Keep exploring!';
+        if (pct === 100) msg = '🌟 Perfect score! Relativity master!';
+        else if (pct >= 78) msg = '🎉 Excellent work!';
+        else if (pct >= 55) msg = '👍 Good effort! Review the explanations.';
+        beep(pct >= 78 ? 880 : 440, 0.15, 'sine', 0.1);
+        var result = $('quiz-result');
+        result.style.display = 'block';
+        result.innerHTML = '<div style="font-size:1.4rem; color:#4338ca;">' + score + '/' + total + ' · ' + pct + '%</div><div style="font-size:0.85rem; color:#334155; margin-top:4px; font-weight:500;">' + msg + '</div>';
+    }
+
+    function resetQuiz() {
+        document.querySelectorAll('.quiz-q').forEach(function (q) {
+            q.querySelectorAll('input[type=radio]').forEach(function (r) { r.checked = false; });
+            var expl = q.querySelector('.explanation');
+            expl.hidden = true;
+            expl.innerHTML = '';
+            expl.className = 'explanation';
+        });
+        $('quiz-result').style.display = 'none';
+        $('quiz-result').innerHTML = '';
+    }
+
+    // === Challenges ===
+    function applyChallenge(id) {
+        var note = $('challenge-note');
+        var cres = $('challenge-result');
+        note.innerText = '';
+        cres.innerText = '';
+
+        if (id === 'half') {
+            S.beta = 0.5;
+            $('beta').value = 0.5;
+            $('v-beta').innerText = '0.500';
+            var g = getGamma();
+            note.innerText = 'At β = 0.5 (half light speed), γ ≈ 1.155. Relativistic effects are mild.';
+            cres.innerText = 'γ = ' + g.toFixed(4) + ' · 1 s ship = ' + g.toFixed(3) + ' s Earth · L = L₀/' + g.toFixed(3);
+        } else if (id === 'gamma2') {
+            S.beta = 0.866;
+            $('beta').value = 0.866;
+            $('v-beta').innerText = '0.866';
+            var g2 = getGamma();
+            note.innerText = 'At β = 0.866, γ = 2 exactly — time dilation by factor 2. 1 s on ship = 2 s on Earth.';
+            cres.innerText = 'γ = ' + g2.toFixed(4) + ' · factor-2 dilation';
+        } else if (id === 'gamma10') {
+            S.beta = 0.995;
+            $('beta').value = 0.995;
+            $('v-beta').innerText = '0.995';
+            var g10 = getGamma();
+            note.innerText = 'At β = 0.995, γ ≈ 10. A 1-hour ship trip takes 10 hours on Earth. Extreme relativity.';
+            cres.innerText = 'γ = ' + g10.toFixed(3) + ' · 1 s ship = ' + g10.toFixed(2) + ' s Earth';
+        } else if (id === 'extreme') {
+            S.beta = 0.999;
+            $('beta').value = 0.999;
+            $('v-beta').innerText = '0.999';
+            var ge = getGamma();
+            note.innerText = 'At β = 0.999, γ ≈ 22.4. Even higher precision needed to go closer to c.';
+            cres.innerText = 'γ = ' + ge.toFixed(3) + ' · enormous energy required';
+        } else if (id === 'rest') {
+            S.mode = 'energy';
+            $('mode').value = 'energy';
+            S.beta = 0;
+            $('beta').value = 0;
+            $('v-beta').innerText = '0.000';
+            var E0 = getRestEnergy();
+            note.innerText = 'Rest energy of 1 kg mass: E = mc² ≈ 8.99×10¹⁶ J. That is ~21 megatons of TNT.';
+            cres.innerText = 'E₀ = ' + E0.toExponential(3) + ' J (for m₀ = 1 kg)';
+        }
+        updateReadouts();
+    }
+
+    // === Notebook ===
+    function recordMeasurement() {
+        var g = getGamma();
+        var line = new Date().toLocaleTimeString() + ' | mode=' + S.mode + ' | β=' + S.beta.toFixed(3) + ' | γ=' + (g === Infinity ? '∞' : g.toFixed(4)) + ' | Δt=' + (g === Infinity ? '∞' : getDilatedTime().toFixed(4)) + ' s | L=' + getContractedLength().toFixed(3) + ' m | m=' + (g === Infinity ? '∞' : getRelMass().toFixed(3)) + ' kg | E=' + (g === Infinity ? '∞' : getTotalEnergy().toExponential(3)) + ' J';
+        S.records.push(line);
+        $('records').value = S.records.join('\n');
+        $('records').scrollTop = $('records').scrollHeight;
+    }
+
+    function downloadReport() {
+        var g = getGamma();
+        var text = 'LEARNIFY - SPECIAL RELATIVITY - LAB REPORT\n' +
+            'Date: ' + new Date().toLocaleString() + '\n\n' +
+            'CURRENT STATE\n' +
+            'Mode: ' + S.mode + '\n' +
+            'Velocity β = v/c = ' + S.beta.toFixed(4) + '\n' +
+            'v = ' + (S.beta * C).toExponential(4) + ' m/s\n' +
+            'Lorentz factor γ = ' + (g === Infinity ? '∞' : g.toFixed(6)) + '\n' +
+            'Proper time Δt₀ = ' + S.t0.toFixed(4) + ' s\n' +
+            'Dilated time Δt = ' + (g === Infinity ? '∞' : getDilatedTime().toFixed(6)) + ' s\n' +
+            'Rest length L₀ = ' + S.L0.toFixed(2) + ' m\n' +
+            'Contracted length L = ' + getContractedLength().toFixed(4) + ' m\n' +
+            'Rest mass m₀ = ' + S.m0.toFixed(3) + ' kg\n' +
+            'Relativistic mass m = ' + (g === Infinity ? '∞' : getRelMass().toFixed(4)) + ' kg\n' +
+            'Rest energy E₀ = ' + getRestEnergy().toExponential(4) + ' J\n' +
+            'Total energy E = ' + (g === Infinity ? '∞' : getTotalEnergy().toExponential(4)) + ' J\n' +
+            'Kinetic energy K = ' + (g === Infinity ? '∞' : getKineticEnergy().toExponential(4)) + ' J\n' +
+            'Momentum p = ' + (g === Infinity ? '∞' : getMomentum().toExponential(4)) + ' kg·m/s\n\n' +
+            'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+            'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+            'MEASUREMENTS\n' + $('records').value + '\n\n' +
+            'LIMITATIONS\nIdeal special relativity in flat spacetime. Does not include General Relativity (gravity/curvature), acceleration effects, or quantum interactions. Assumes inertial frames. Educational use only.\n';
+        var blob = new Blob([text], { type: 'text/plain' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'special-relativity-report.txt';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    // === Animation ===
+    var lastTime = 0;
+    function animate(now) {
+        var dt = (now - lastTime) / 1000;
+        if (dt > 0.2) dt = 0.016;
+        if (dt > 0) {
+            var g = getGamma();
+            // Earth tick advances at real time
+            S.earthTick += dt;
+            // Ship tick advances slower by 1/γ (proper time)
+            if (g !== Infinity) {
+                S.shipTick += dt / g;
+            }
+            // Sound: tick every 0.5 s of Earth or ship time — subtle metronome
+            if (Math.floor(S.earthTick / 0.5) > S.lastEarthTick) {
+                S.lastEarthTick = Math.floor(S.earthTick / 0.5);
+                beep(660, 0.02, 'sine', 0.03);  // soft earth tick
+            }
+            if (Math.floor(S.shipTick / 0.5) > S.lastShipTick) {
+                S.lastShipTick = Math.floor(S.shipTick / 0.5);
+                beep(440, 0.02, 'triangle', 0.03); // lower ship tick
+            }
+            if (S.launching) {
+                S.launchProgress += dt / 3;
+                if (S.launchProgress >= 1) {
+                    S.launchProgress = 1;
+                    S.launching = false;
+                }
+            }
+        }
+        lastTime = now;
+        drawScene();
+        requestAnimationFrame(animate);
+    }
+
+    // === Event wiring ===
+    $('btn-sound').addEventListener('click', toggleSound);
+    $('mode').addEventListener('change', function (e) {
+        S.mode = e.target.value;
+        updateReadouts();
+    });
+    $('beta').addEventListener('input', function (e) {
+        S.beta = parseFloat(e.target.value);
+        $('v-beta').innerText = S.beta.toFixed(3);
+        updateReadouts();
+        // Warn beep near c
+        if (S.beta > 0.95) {
+            var now = Date.now();
+            if (!S._lastWarnBeep || now - S._lastWarnBeep > 500) {
+                beep(330, 0.08, 'square', 0.06);
+                S._lastWarnBeep = now;
+            }
+        }
+    });
+    $('t0').addEventListener('input', function (e) {
+        S.t0 = parseFloat(e.target.value);
+        $('v-t0').innerText = S.t0.toFixed(3);
+        updateReadouts();
+    });
+    $('L0').addEventListener('input', function (e) {
+        S.L0 = parseFloat(e.target.value);
+        $('v-L0').innerText = S.L0;
+        updateReadouts();
+    });
+    $('m0').addEventListener('input', function (e) {
+        S.m0 = parseFloat(e.target.value);
+        $('v-m0').innerText = S.m0.toFixed(1);
+        updateReadouts();
+    });
+    $('btn-launch').addEventListener('click', function () {
+        S.launching = true;
+        S.launchProgress = 0;
+        S.shipTick = 0;
+        S.earthTick = 0;
+        S.lastEarthTick = 0;
+        S.lastShipTick = 0;
+        beep(220, 0.3, 'sawtooth', 0.08);
+    });
+    $('btn-reset').addEventListener('click', function () {
+        S.mode = 'dilation';
+        S.beta = 0.5;
+        S.t0 = 1.0;
+        S.L0 = 100;
+        S.m0 = 1.0;
+        S.launching = false;
+        S.launchProgress = 0;
+        S.shipTick = 0;
+        S.earthTick = 0;
+        $('mode').value = 'dilation';
+        $('beta').value = '0.5'; $('v-beta').innerText = '0.500';
+        $('t0').value = '1'; $('v-t0').innerText = '1.000';
+        $('L0').value = '100'; $('v-L0').innerText = '100';
+        $('m0').value = '1'; $('v-m0').innerText = '1.0';
+        updateReadouts();
+    });
+
+    document.querySelectorAll('.tab-btn[data-tab]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+            document.querySelectorAll('.tab-btn[data-tab]').forEach(function (b) { b.classList.remove('active'); });
+            document.getElementById(btn.dataset.tab).classList.add('active');
+            btn.classList.add('active');
+        });
+    });
+
+    document.querySelectorAll('[data-challenge]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            applyChallenge(btn.dataset.challenge);
+            beep(660, 0.08, 'sine', 0.08);
+        });
+    });
+
+    $('btn-quiz-check').addEventListener('click', evaluateQuiz);
+    $('btn-quiz-reset').addEventListener('click', resetQuiz);
+
+    $('btn-record').addEventListener('click', recordMeasurement);
+    $('btn-clear-notes').addEventListener('click', function () {
+        if (!confirm('Clear all notebook fields?')) return;
+        $('hypothesis').value = '';
+        $('conclusion').value = '';
+        $('records').value = '';
+        S.records = [];
+    });
+    $('btn-export').addEventListener('click', downloadReport);
+
+    // Zoom & pan
+    var fullScroll = false;
+    var pointers = new Map();
+    var pinch = null;
+
+    $('full-scroll-toggle').addEventListener('change', function (e) {
+        fullScroll = e.target.checked;
+        canvas.style.touchAction = fullScroll ? 'auto' : 'none';
+        pointers.clear();
+        pinch = null;
+    });
+
+    function getPos(e) {
+        var r = canvas.getBoundingClientRect();
+        return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+
+    canvas.addEventListener('wheel', function (e) {
+        if (fullScroll) return;
+        e.preventDefault();
+        var cx = e.offsetX, cy = e.offsetY;
+        var wx = (cx - view.x) / view.scale;
+        var wy = (cy - view.y) / view.scale;
+        var factor = Math.exp(-e.deltaY * 0.0015);
+        view.scale = Math.max(0.3, Math.min(5, view.scale * factor));
+        view.x = cx - wx * view.scale;
+        view.y = cy - wy * view.scale;
+    }, { passive: false });
+
+    canvas.addEventListener('pointerdown', function (e) {
+        if (fullScroll) return;
+        canvas.setPointerCapture(e.pointerId);
+        pointers.set(e.pointerId, getPos(e));
+        if (pointers.size === 2) {
+            var pts = Array.from(pointers.values());
+            pinch = { dist: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y), startScale: view.scale };
+        }
+    });
+    canvas.addEventListener('pointermove', function (e) {
+        if (fullScroll || !pointers.has(e.pointerId)) return;
+        var prev = pointers.get(e.pointerId);
+        var pos = getPos(e);
+        pointers.set(e.pointerId, pos);
+        if (pointers.size === 1 && !pinch) {
+            view.x += pos.x - prev.x;
+            view.y += pos.y - prev.y;
+        } else if (pointers.size === 2 && pinch) {
+            var pts = Array.from(pointers.values());
+            var d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+            view.scale = Math.max(0.3, Math.min(5, pinch.startScale * d / pinch.dist));
+        }
+    });
+    canvas.addEventListener('pointerup', function (e) {
+        if (fullScroll) return;
+        pointers.delete(e.pointerId);
+        try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
+        if (pointers.size < 2) pinch = null;
+    });
+    canvas.addEventListener('pointercancel', function (e) {
+        pointers.delete(e.pointerId);
+        pinch = null;
+    });
+
+    (function () {
+        var hud = document.querySelector('.hud');
+        if (!hud) return;
+        var z = document.createElement('div');
+        z.className = 'zoom-controls';
+        z.innerHTML = '<button id="zoom-out">-</button><button id="zoom-reset">Reset</button><button id="zoom-in">+</button>';
+        hud.appendChild(z);
+        $('zoom-in').addEventListener('click', function () { view.scale = Math.min(5, view.scale * 1.25); });
+        $('zoom-out').addEventListener('click', function () { view.scale = Math.max(0.3, view.scale / 1.25); });
+        $('zoom-reset').addEventListener('click', function () { view.x = 0; view.y = 0; view.scale = 1; });
+    })();
+
+    (function () {
+        var sim = $('sim-area'), splitter = $('splitter');
+        if (!sim || !splitter) return;
+        var dragging = false, startY = 0, startH = 0;
+        var minH = 180, maxH = window.innerHeight - 240;
+
+        splitter.addEventListener('pointerdown', function (e) {
+            e.preventDefault();
+            dragging = true;
+            startY = e.clientY;
+            startH = sim.getBoundingClientRect().height;
+            try { splitter.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+        window.addEventListener('pointermove', function (e) {
+            if (!dragging) return;
+            var dy = e.clientY - startY;
+            var nh = Math.max(minH, Math.min(maxH, Math.round(startH + dy)));
+            sim.style.flex = '0 0 ' + nh + 'px';
+            resizeCanvas();
+        });
+        window.addEventListener('pointerup', function (e) {
+            if (!dragging) return;
+            dragging = false;
+            try { splitter.releasePointerCapture(e.pointerId); } catch (err) {}
+        });
+        splitter.addEventListener('dblclick', function () {
+            sim.style.flex = '';
+            resizeCanvas();
+        });
+    })();
+
+    window.addEventListener('resize', function () { resizeCanvas(); });
+
+    // === Boot ===
+    resizeCanvas();
+    lastTime = performance.now();
+    updateReadouts();
+    requestAnimationFrame(animate);
+})();
+</script>
+</body>
+</html>

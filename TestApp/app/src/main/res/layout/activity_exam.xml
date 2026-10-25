@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -45,7 +45,8 @@
                     android:text="Grade 10 – Physics"
                     android:textColor="#333333"
                     android:textSize="24sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:accessibilityHeading="true" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -108,6 +109,7 @@
                     android:layout_height="60dp"
                     android:layout_marginTop="40dp"
                     android:text="START EXAM"
+                    android:contentDescription="@string/acc_start_exam"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     app:cornerRadius="12dp" />
@@ -137,10 +139,14 @@
                     android:id="@+id/tvTimer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="⏱ 15:00"
+                    android:text="15:00"
                     android:textColor="#4CAF50"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:minHeight="48dp"
+                    android:gravity="center_vertical"
+                    android:accessibilityLiveRegion="none"
+                    android:contentDescription="@string/acc_exam_timer" />
 
                 <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
 
@@ -151,7 +157,10 @@
                     android:text="Question 1/10"
                     android:textColor="#757575"
                     android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:minHeight="48dp"
+                    android:gravity="center_vertical"
+                    android:accessibilityHeading="true" />
             </LinearLayout>
 
             <ScrollView
@@ -244,7 +253,9 @@
                     style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:layout_weight="1"
+                    android:contentDescription="@string/acc_previous_question"
                     android:text="Previous" />
 
                 <com.google.android.material.button.MaterialButton
@@ -252,8 +263,10 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:layout_weight="1"
                     android:layout_marginHorizontal="8dp"
+                    android:contentDescription="@string/acc_mark_for_review"
                     android:text="Mark"
                     app:strokeColor="?attr/colorPrimary" />
 
@@ -261,7 +274,9 @@
                     android:id="@+id/btnNext"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:minHeight="48dp"
                     android:layout_weight="1"
+                    android:contentDescription="@string/acc_next_question"
                     android:text="Next" />
             </LinearLayout>
 

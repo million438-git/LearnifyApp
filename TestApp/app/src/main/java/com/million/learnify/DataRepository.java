@@ -2,6 +2,7 @@ package com.million.learnify;
 
 import android.content.Context;
 import android.database.Cursor;
+import org.json.JSONObject;
 import java.util.List;
 
 /**
@@ -63,8 +64,24 @@ public class DataRepository {
         return dbHelper.updateUserProfileFull(username, name, email, phone, uni, year, major, xp, subjects, vis, showLead, notify, img);
     }
 
-    public void updatePassword(String identifier, String newPassword) {
-        dbHelper.updatePassword(identifier, newPassword);
+    public boolean updateUserProfileImage(String identifier, String imageUri) {
+        return dbHelper.updateUserProfileImage(identifier, imageUri);
+    }
+
+    public boolean deleteUserAccount(String identifier) {
+        return dbHelper.deleteUserAccount(identifier);
+    }
+
+    public JSONObject exportUserData(String identifier) {
+        return dbHelper.exportUserData(identifier);
+    }
+
+    public boolean updatePassword(String identifier, String newPassword) {
+        return dbHelper.updatePassword(identifier, newPassword);
+    }
+
+    public boolean verifyUserPassword(String identifier, String candidatePassword) {
+        return dbHelper.verifyUserPassword(identifier, candidatePassword);
     }
 
     // --- 2. STUDENT PORTAL DATA ---

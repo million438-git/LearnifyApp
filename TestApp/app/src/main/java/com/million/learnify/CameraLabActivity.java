@@ -92,6 +92,12 @@ public class CameraLabActivity extends AppCompatActivity {
     private List<String> detectedVisuals;
     private TextToSpeech tts;
     
+    // Bridge Actions: Spaced-Repetition Flashcards & 3D Interactive Lab
+    private MaterialButton btnCreateFlashcard;
+    private MaterialButton btnOpenVisualizer;
+    private boolean isFlashcardSaved = false;
+    private boolean isSavingFlashcard = false;
+
     // 10.4 Multi-page Support
     private final List<String> accumulatedPages = new ArrayList<>();
     private static final int MAX_PAGES = 5;
@@ -153,6 +159,14 @@ public class CameraLabActivity extends AppCompatActivity {
         setupButtons();
         setupZoomAndFocus();
         showProgressRecommendations();
+        applyCameraSettings();
+
+        if (getIntent().hasExtra("IMAGE_URI")) {
+            String uriStr = getIntent().getStringExtra("IMAGE_URI");
+            if (uriStr != null && !uriStr.isEmpty()) {
+                showReview(Uri.parse(uriStr));
+            }
+        }
 
         cameraExecutor = Executors.newSingleThreadExecutor();
         checkPermissionsAndStartCamera();
@@ -187,6 +201,8 @@ public class CameraLabActivity extends AppCompatActivity {
         analysisProgress = findViewById(R.id.analysisProgress);
         zoomSlider = findViewById(R.id.zoomSlider);
         chipPageCount = findViewById(R.id.chipPageCount);
+        btnCreateFlashcard = findViewById(R.id.btnCreateFlashcard);
+        btnOpenVisualizer = findViewById(R.id.btnOpenVisualizer);
     }
 
     private void setupToolbar() {
@@ -334,6 +350,13 @@ public class CameraLabActivity extends AppCompatActivity {
 
         findViewById(R.id.btnSimilar).setOnClickListener(v -> generateSimilarProblem());
         
+        if (btnCreateFlashcard != null) {
+            btnCreateFlashcard.setOnClickListener(v -> handleCreateFlashcard());
+        }
+        if (btnOpenVisualizer != null) {
+            btnOpenVisualizer.setOnClickListener(v -> handleOpenVisualizer());
+        }
+
         // Accessibility: Tap to speak result
         tvResultBody.setOnClickListener(v -> speak(tvResultBody.getText().toString()));
     }
@@ -406,7 +429,8 @@ public class CameraLabActivity extends AppCompatActivity {
         if (camera != null && camera.getCameraInfo().hasFlashUnit()) {
             isFlashOn = !isFlashOn;
             camera.getCameraControl().enableTorch(isFlashOn);
-            btn.setImageResource(isFlashOn ? android.R.drawable.stat_sys_warning : android.R.drawable.ic_menu_mylocation);
+            btn.setImageResource(R.drawable.ic_bolt);
+            btn.setColorFilter(isFlashOn ? 0xFFF59E0B : 0xFFFFFFFF);
         }
     }
 
@@ -499,6 +523,14 @@ public class CameraLabActivity extends AppCompatActivity {
         resultPanel.setVisibility(View.GONE);
         analysisProgress.setVisibility(View.VISIBLE);
         
+        isFlashcardSaved = false;
+        isSavingFlashcard = false;
+        if (btnCreateFlashcard != null) {
+            btnCreateFlashcard.setEnabled(true);
+            btnCreateFlashcard.setText("CREATE FLASHCARD");
+            btnCreateFlashcard.setIconResource(R.drawable.ic_flashcard);
+        }
+
         // 11.3 Admin Solver Parameters
         int maxSteps = Integer.parseInt(dbHelper.getSetting("lab_max_steps", "10"));
 
@@ -516,13 +548,27 @@ public class CameraLabActivity extends AppCompatActivity {
                     case GEOMETRY: solution = solverMod.callAttr("solve_geometry", text, detectedVisuals != null ? detectedVisuals.toArray() : new String[0], currentLangCode).toString(); break;
                     default: solution = "Solver module not configured.";
                 }
-                
+
+                // Auto-save scan to lab history if enabled in CameraSettings
+                SharedPreferences camPrefs = getSharedPreferences("CameraSettings", MODE_PRIVATE);
+                if (camPrefs.getBoolean("save_history", true)) {
+                    dbHelper.saveLabResult(currentUsername, currentMode.name(), text, solution, false, currentCourseContext);
+                }
+
                 runOnUiThread(() -> {
                     analysisProgress.setVisibility(View.GONE);
                     tvResultHeader.setText(currentMode.name() + " Laboratory Engine");
                     tvResultBody.setText(solution);
                     resultPanel.setVisibility(View.VISIBLE);
                     speak("Analysis complete. Review steps below.");
+
+                    isFlashcardSaved = false;
+                    isSavingFlashcard = false;
+                    if (btnCreateFlashcard != null) {
+                        btnCreateFlashcard.setEnabled(true);
+                        btnCreateFlashcard.setText("CREATE FLASHCARD");
+                        btnCreateFlashcard.setIconResource(R.drawable.ic_flashcard);
+                    }
                 });
             } catch (Exception e) {
                 runOnUiThread(() -> {
@@ -531,6 +577,158 @@ public class CameraLabActivity extends AppCompatActivity {
                 });
             }
         }).start();
+    }
+
+    private String resolveAuthenticatedStudentUsername() {
+        SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String username = session.getString("username", null);
+        if (username != null) {
+            username = username.trim();
+        }
+        if (username == null || username.isEmpty() 
+                || "Guest".equalsIgnoreCase(username) 
+                || "Student".equalsIgnoreCase(username)) {
+            try {
+                SecurePreferencesHelper secHelper = new SecurePreferencesHelper(this);
+                String secUser = secHelper.getString("username", null);
+                if (secUser != null) {
+                    secUser = secUser.trim();
+                    if (!secUser.isEmpty() 
+                            && !"Guest".equalsIgnoreCase(secUser) 
+                            && !"Student".equalsIgnoreCase(secUser)) {
+                        username = secUser;
+                    }
+                }
+            } catch (Exception ignored) {}
+        }
+
+        if (username == null || username.isEmpty() 
+                || "Guest".equalsIgnoreCase(username) 
+                || "Student".equalsIgnoreCase(username)) {
+            return null;
+        }
+        return username;
+    }
+
+    public static boolean isGenuineSolution(String question, String solution) {
+        if (question == null || solution == null) {
+            return false;
+        }
+        String q = question.trim();
+        String s = solution.trim();
+
+        // 1. Question must contain meaningful content (at least one alphanumeric character)
+        if (q.isEmpty() || !q.matches(".*[a-zA-Z0-9].*")) {
+            return false;
+        }
+
+        // 2. Reject basic stubs and common non-answers
+        if (s.isEmpty() || s.equalsIgnoreCase("Error") || s.equalsIgnoreCase("NaN") 
+                || s.equalsIgnoreCase("null") || s.equals("[]") || s.equals("{}")) {
+            return false;
+        }
+
+        // 3. Reject solver engine errors and pipeline failure messages
+        String sLower = s.toLowerCase(Locale.ROOT);
+        if (sLower.contains("mathematical engine error") 
+                || s.contains("የሂሳብ ሞተር ስህተት")
+                || sLower.contains("solver module not configured")
+                || sLower.contains("processing...")
+                || sLower.contains("pipeline fault")
+                || sLower.contains("solver engine error")
+                || sLower.contains("failed to solve")
+                || sLower.contains("syntax error")) {
+            return false;
+        }
+
+        // 4. Must contain substantive solved content:
+        boolean hasStructure = s.contains("FINAL ANSWER") 
+                || s.contains("SOLUTION STEPS") 
+                || s.contains("EXTRACTED PROBLEM")
+                || s.contains("የመጨረሻ መልስ")
+                || s.contains("Molar Mass")
+                || s.contains("Calculation:")
+                || s.contains("Solutions:")
+                || s.contains("Derivative:")
+                || s.contains("Simplified:")
+                || s.contains("Result:");
+
+        boolean hasSubstance = s.matches(".*[a-zA-Z0-9].*") && s.length() >= 3;
+
+        return hasStructure || hasSubstance;
+    }
+
+    private void handleCreateFlashcard() {
+        if (isSavingFlashcard || isFlashcardSaved) {
+            return;
+        }
+
+        // 1. Resolve student username
+        String username = resolveAuthenticatedStudentUsername();
+        if (username == null) {
+            Toast.makeText(this, "Please log in with a student account to save flashcards.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // 2. Validate question and solution
+        String question = etExtractedText != null ? etExtractedText.getText().toString().trim() : "";
+        String solution = tvResultBody != null ? tvResultBody.getText().toString().trim() : "";
+
+        if (!isGenuineSolution(question, solution)) {
+            Toast.makeText(this, "Cannot create flashcard: No genuine solution available to save.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // 3. Temporarily disable button to prevent repeated clicks while inserting
+        isSavingFlashcard = true;
+        if (btnCreateFlashcard != null) {
+            btnCreateFlashcard.setEnabled(false);
+        }
+
+        // 4. Save to database using existing flashcard schema and SM-2 method
+        String subject = currentMode.name();
+        boolean inserted = dbHelper.insertFlashcard(username, question, solution, subject);
+
+        isSavingFlashcard = false;
+
+        if (inserted) {
+            isFlashcardSaved = true;
+            if (btnCreateFlashcard != null) {
+                btnCreateFlashcard.setEnabled(false);
+                btnCreateFlashcard.setText("FLASHCARD SAVED");
+                btnCreateFlashcard.setIconResource(R.drawable.ic_verified_check);
+            }
+            Toast.makeText(this, "Flashcard created! Ready for spaced repetition in " + subject + ".", Toast.LENGTH_SHORT).show();
+        } else {
+            // Insertion failed: re-enable button so student can retry
+            isFlashcardSaved = false;
+            if (btnCreateFlashcard != null) {
+                btnCreateFlashcard.setEnabled(true);
+            }
+            Toast.makeText(this, "Failed to save flashcard to database. Please try again.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void handleOpenVisualizer() {
+        Intent intent = new Intent(this, VisualizerActivity.class);
+        intent.putExtra("SUBJECT", currentMode.name());
+        intent.putExtra("TARGET_TAB", VisualizerActivity.mapSubjectToTabIndex(currentMode.name()));
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        applyCameraSettings();
+    }
+
+    private void applyCameraSettings() {
+        SharedPreferences camPrefs = getSharedPreferences(CameraSettingsActivity.PREFS_NAME, MODE_PRIVATE);
+        boolean showGrid = camPrefs.getBoolean(CameraSettingsActivity.KEY_GRID, false);
+        View gridView = findViewById(R.id.viewFinderGrid);
+        if (gridView != null) {
+            gridView.setVisibility(showGrid ? View.VISIBLE : View.GONE);
+        }
     }
 
     @Override protected void onDestroy() {

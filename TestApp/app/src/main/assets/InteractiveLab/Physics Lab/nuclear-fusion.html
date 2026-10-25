@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Physics: Nuclear Fusion Laboratory</title>
+<style>
+:root{--primary:#6366f1;--dark:#0f172a;--surface:#fff;--bg:#f1f5f9;--glass:rgba(255,255,255,0.92);}
+*{box-sizing:border-box;font-family:'Inter',system-ui,sans-serif;}
+html,body{height:100%;}
+body{margin:0;background:var(--bg);color:var(--dark);display:flex;flex-direction:column;overflow:hidden;}
+header{background:var(--dark);color:#fff;padding:10px;text-align:center;border-bottom:3px solid var(--primary);flex-shrink:0;}
+.lab-container{display:flex;flex:1;overflow:hidden;flex-direction:column;min-height:0;}
+#sim-area{flex:2 1 0;min-height:360px;position:relative;background:#05080f;border-bottom:2px solid #e2e8f0;overflow:hidden;}
+canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;}
+.splitter{height:10px;background:linear-gradient(90deg,rgba(0,0,0,.03),rgba(0,0,0,.06));cursor:ns-resize;flex-shrink:0;}
+.bottom-panel{flex:3 1 0;min-height:0;display:flex;flex-direction:row;background:var(--surface);overflow-y:auto;}
+.controls{flex:0 0 360px;padding:18px;border-right:1px solid #e2e8f0;min-width:300px;}
+.analysis{flex:1 1 720px;padding:18px;background:#fafafa;min-width:420px;}
+.card{background:#fff;border:1px solid #e2e8f0;padding:12px;border-radius:8px;margin-bottom:10px;}
+h4{margin:0 0 10px 0;font-size:.8rem;color:#64748b;text-transform:uppercase;}
+.input-row{margin-bottom:12px;}
+label{display:block;font-size:.8rem;font-weight:600;margin-bottom:4px;}
+input[type=range]{width:100%;accent-color:var(--primary);}
+select{width:100%;padding:6px;border-radius:6px;border:1px solid #cbd5e1;background:#fff;font-family:inherit;}
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+button{padding:10px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;transition:.2s;font-family:inherit;}
+.btn-fire{background:var(--primary);color:#fff;}.btn-fire:hover{background:#4f46e5;}
+.btn-reset{background:#64748b;color:#fff;}.btn-reset:hover{background:#475569;}
+.btn-ignite{background:linear-gradient(135deg,#f59e0b,#dc2626);color:#fff;}.btn-ignite:hover{background:linear-gradient(135deg,#d97706,#b91c1c);}
+.btn-sound{background:#10b981;color:#fff;}.btn-sound.playing{background:#ef4444;}
+.hud{position:absolute;top:10px;left:10px;background:var(--glass);padding:8px 10px;border-radius:8px;font-size:.75rem;border:1px solid #ddd;z-index:20;color:#0f172a;pointer-events:none;}
+.hud .metrics{line-height:1.7;}
+.hud span.val{color:#dc2626;font-weight:700;font-variant-numeric:tabular-nums;}
+.vector-legend{position:absolute;bottom:10px;left:10px;font-size:.65rem;background:var(--glass);padding:5px 8px;border-radius:4px;color:#0f172a;pointer-events:none;}
+.vector-legend span{margin-right:8px;}
+.tab-btn{padding:8px 12px;border-radius:6px;background:#e2e8f0;color:var(--dark);font-weight:600;font-size:.8rem;border:none;cursor:pointer;}
+.tab-btn.active{background:var(--primary);color:#fff;}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+.readouts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;}
+.readout{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;}
+.readout span{font-size:.7rem;color:#64748b;display:block;}
+.readout strong{font-size:1rem;color:var(--dark);font-variant-numeric:tabular-nums;}
+.readout.hl strong{color:#dc2626;}
+.readout.good strong{color:#10b981;}
+.readout.warn strong{color:#f59e0b;}
+.quiz-q{padding:10px 0;border-bottom:1px solid #e2e8f0;}
+.quiz-q>strong{display:block;margin-bottom:8px;font-size:.9rem;}
+.quiz-q label{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;margin:3px 6px 3px 0;cursor:pointer;font-weight:500;}
+.quiz-q label:hover{background:#eef2ff;border-color:#6366f1;}
+.explanation{margin-top:8px;padding:10px;border-radius:6px;font-size:.82rem;line-height:1.55;background:#eef2ff;border-left:3px solid #6366f1;}
+.explanation.correct-box{background:#ecfdf5;border-left-color:#10b981;}
+.explanation.wrong-box{background:#fef2f2;border-left-color:#dc2626;}
+.quiz-section{font-size:.72rem;font-weight:700;text-transform:uppercase;color:#6366f1;margin:12px 0 6px 0;letter-spacing:.05em;}
+#quiz-result{margin-top:10px;padding:12px;border-radius:8px;background:#eef2ff;border:1px solid #c7d2fe;font-weight:700;text-align:center;}
+table.formulas{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:6px;}
+table.formulas th,table.formulas td{border:1px solid #e2e8f0;padding:6px 8px;text-align:left;}
+table.formulas th{background:#f1f5f9;font-weight:600;}
+.eq{font-family:'JetBrains Mono',monospace;background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:.82rem;}
+.note{font-size:.82rem;color:#475569;margin-top:8px;line-height:1.5;}
+.sound-hint{background:#fef3c7;border-left:3px solid #f59e0b;padding:8px;border-radius:6px;font-size:.82rem;margin-top:8px;}
+textarea{width:100%;padding:8px;border-radius:6px;border:1px solid #cbd5e1;font-family:inherit;font-size:.85rem;min-height:64px;resize:vertical;}
+@media(max-width:768px){.bottom-panel{flex-direction:column;}.controls{border-right:none;border-bottom:1px solid #eee;min-width:0;}.analysis{min-width:0;}.readouts{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header>
+<h2 style="margin:0;font-size:1.1rem;">☢️ Nuclear Fusion Laboratory</h2>
+<small>D-T reaction · Coulomb barrier · Lawson criterion · Mass defect · Net energy gain</small>
+</header>
+
+<div class="lab-container">
+<div id="sim-area">
+<div class="hud">
+<b>LIVE STATE</b><br>
+<div class="metrics">
+Fuel: <span class="val" id="hud-fuel">D-T</span><br>
+Plasma T: <span class="val" id="hud-T">150</span> M K<br>
+Density n: <span class="val" id="hud-n">1.0</span>×10²⁰ m⁻³<br>
+Confinement τ: <span class="val" id="hud-tau">3.0</span> s<br>
+Status: <span class="val" id="hud-status">Ignition</span>
+</div>
+</div>
+<div class="vector-legend">
+<span style="color:#fbbf24">● Deuterium</span>
+<span style="color:#a5f3fc">● Tritium</span>
+<span style="color:#f43f5e">● Fusion event</span>
+</div>
+<canvas id="canvas"></canvas>
+</div>
+
+<div id="splitter" class="splitter"></div>
+
+<div class="bottom-panel">
+<div class="controls">
+<h4>🧪 Fusion Reactor Controls</h4>
+
+<div class="input-row">
+<button class="btn-sound" id="btn-sound" style="width:100%;">🔈 Enable sound</button>
+<div class="sound-hint" id="sound-hint">Fusion pops + warning alarms.</div>
+</div>
+
+<div class="input-row">
+<label>Fuel reaction</label>
+<select id="reaction">
+<option value="dt" selected>D-T: ²H + ³H → ⁴He + n + 17.6 MeV</option>
+<option value="dd">D-D: ²H + ²H → ³He + n + 3.3 MeV</option>
+<option value="dhe3">D-He³: ²H + ³He → ⁴He + p + 18.3 MeV</option>
+<option value="pp">p-p: ¹H + ¹H → ²H + e⁺ + ν + 1.44 MeV</option>
+</select>
+</div>
+
+<div class="input-row">
+<label>Plasma temperature T: <span id="v-T">150</span> million K</label>
+<input type="range" id="temp" min="10" max="500" step="5" value="150">
+</div>
+
+<div class="input-row">
+<label>Plasma density n: <span id="v-n">1.0</span>×10²⁰ m⁻³</label>
+<input type="range" id="density" min="0.1" max="10" step="0.1" value="1">
+</div>
+
+<div class="input-row">
+<label>Confinement time τ: <span id="v-tau">3.0</span> s</label>
+<input type="range" id="tau" min="0.1" max="10" step="0.1" value="3">
+</div>
+
+<div class="input-row">
+<label>Magnetic field B: <span id="v-B">5.0</span> T</label>
+<input type="range" id="B" min="0.5" max="15" step="0.1" value="5">
+</div>
+
+<div class="input-row">
+<label style="display:inline-flex;align-items:center;gap:6px;">
+<input type="checkbox" id="collisions-toggle" checked> Show particle collisions
+</label>
+</div>
+
+<div class="btn-grid">
+<button class="btn-ignite" id="btn-ignite">🔥 IGNITE PLASMA</button>
+<button class="btn-reset" id="btn-reset">↺ Reset</button>
+</div>
+</div>
+
+<div class="analysis">
+<h4>📊 Learn &amp; Practice</h4>
+
+<div class="readouts">
+<div class="readout hl"><span>Q-value (energy per event)</span><strong id="ro-Q">17.6 MeV</strong></div>
+<div class="readout"><span>Mass defect Δm</span><strong id="ro-dm">3.14×10⁻²⁹ kg</strong></div>
+<div class="readout"><span>Temperature (keV)</span><strong id="ro-Tkev">12.9 keV</strong></div>
+<div class="readout"><span>Coulomb barrier</span><strong id="ro-coul">1.4 MeV</strong></div>
+<div class="readout"><span>Barrier probability</span><strong id="ro-pcoul">0.0%</strong></div>
+<div class="readout good"><span>Fusion rate ⟨σv⟩</span><strong id="ro-rate">—</strong></div>
+<div class="readout"><span>Power density</span><strong id="ro-P">—</strong></div>
+<div class="readout"><span>Triple product nTτ</span><strong id="ro-triple">—</strong></div>
+<div class="readout"><span>Lawson criterion</span><strong id="ro-lawson">Fails</strong></div>
+<div class="readout good"><span>Q factor</span><strong id="ro-Qfac">—</strong></div>
+<div class="readout"><span>Plasma β</span><strong id="ro-beta">—</strong></div>
+<div class="readout"><span>Ignition status</span><strong id="ro-status">—</strong></div>
+</div>
+
+<div class="card">
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+<button class="tab-btn active" data-tab="formulas">Formulas</button>
+<button class="tab-btn" data-tab="quiz">Quiz</button>
+<button class="tab-btn" data-tab="challenges">Challenges</button>
+<button class="tab-btn" data-tab="notebook">Notebook</button>
+</div>
+
+<div id="formulas" class="tab-panel active">
+<h3 style="margin:6px 0 8px 0;">Core Fusion Formulas</h3>
+<ul style="font-size:.9rem;line-height:1.6;padding-left:1rem;margin:0;">
+<li><b>Mass-energy:</b> E = Δm·c²</li>
+<li><b>Q-value:</b> Q = (m_reactants − m_products)·c²</li>
+<li><b>Coulomb barrier:</b> E_c = k·Z₁·Z₂·e²/r ≈ 1.4 MeV for D-T</li>
+<li><b>Gamow factor (tunneling):</b> P ~ exp(−2π·Z₁·Z₂·e²/(ℏ·v))</li>
+<li><b>Reaction rate:</b> R = n_D·n_T·⟨σv⟩</li>
+<li><b>Power density:</b> P = R · Q = n_D·n_T·⟨σv⟩·Q</li>
+<li><b>Lawson criterion:</b> n·T·τ ≥ 3×10²¹ keV·s/m³ (for D-T)</li>
+<li><b>Triple product:</b> n·T·τ = density × temperature × confinement time</li>
+<li><b>Q factor:</b> Q = P_fusion / P_input (Q > 1 means net positive)</li>
+<li><b>Plasma beta:</b> β = 2·μ₀·n·k·T / B² (pressure / magnetic pressure)</li>
+</ul>
+<p class="note"><b>💡 Quick tips:</b> D-T is the easiest fusion reaction because it has the largest cross-section at achievable temperatures (~150 million K, ten times hotter than the Sun's core). Even so, D-T has a Coulomb barrier of ~1.4 MeV — but quantum tunneling allows fusion to occur at temperatures ten times lower. The <b>Lawson triple product</b> n·T·τ defines when fusion becomes self-sustaining: if it exceeds ~3×10²¹ keV·s/m³, the alpha particles alone can heat the plasma. The National Ignition Facility achieved Q>1 in December 2022 — the first-ever net-positive fusion reaction.</p>
+
+<table class="formulas" style="margin-top:12px;">
+<tr><th>Quantity</th><th>Formula</th><th>Value</th></tr>
+<tr><td>Speed of light</td><td><span class="eq">c</span></td><td>2.998×10⁸ m/s</td></tr>
+<tr><td>Atomic mass unit</td><td><span class="eq">u</span></td><td>1.6605×10⁻²⁷ kg</td></tr>
+<tr><td>1 eV to J</td><td><span class="eq">e</span></td><td>1.602×10⁻¹⁹ J</td></tr>
+</table>
+</div>
+
+<div id="quiz" class="tab-panel" style="max-height:600px;overflow:auto;">
+<h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+<div class="quiz-section">Basic — Fusion Fundamentals</div>
+<div class="quiz-q" data-q="q1" data-answer="B">
+<strong>1. Nuclear fusion is:</strong>
+<label><input type="radio" name="q1" value="A"> Splitting a heavy nucleus</label>
+<label><input type="radio" name="q1" value="B"> Combining light nuclei into a heavier one</label>
+<label><input type="radio" name="q1" value="C"> Radioactive decay</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q2" data-answer="A">
+<strong>2. The Sun produces energy mainly by:</strong>
+<label><input type="radio" name="q2" value="A"> The p-p chain (hydrogen fusion)</label>
+<label><input type="radio" name="q2" value="B"> D-T fusion</label>
+<label><input type="radio" name="q2" value="C"> Fission of uranium</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q3" data-answer="B">
+<strong>3. Energy released in fusion comes from:</strong>
+<label><input type="radio" name="q3" value="A"> Chemical bonds</label>
+<label><input type="radio" name="q3" value="B"> Mass defect (Δm·c²) — products weigh less than reactants</label>
+<label><input type="radio" name="q3" value="C"> Electron transitions</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Intermediate — Conditions</div>
+<div class="quiz-q" data-q="q4" data-answer="A">
+<strong>4. Fusion requires extremely high temperatures because:</strong>
+<label><input type="radio" name="q4" value="A"> Nuclei must overcome their Coulomb repulsion</label>
+<label><input type="radio" name="q4" value="B"> High temperature makes the fuel radioactive</label>
+<label><input type="radio" name="q4" value="C"> It's needed to melt the reactor</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q5" data-answer="B">
+<strong>5. The Lawson criterion (n·T·τ) determines:</strong>
+<label><input type="radio" name="q5" value="A"> How hot the plasma looks</label>
+<label><input type="radio" name="q5" value="B"> Whether fusion can become self-sustaining (net positive energy)</label>
+<label><input type="radio" name="q5" value="C"> Color of the plasma</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q6" data-answer="A">
+<strong>6. The D-T reaction releases approximately:</strong>
+<label><input type="radio" name="q6" value="A"> 17.6 MeV per reaction</label>
+<label><input type="radio" name="q6" value="B"> 200 MeV per reaction</label>
+<label><input type="radio" name="q6" value="C"> 1 eV per reaction</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Advanced — Deep Understanding</div>
+<div class="quiz-q" data-q="q7" data-answer="B">
+<strong>7. Quantum tunneling is crucial to fusion because:</strong>
+<label><input type="radio" name="q7" value="A"> It makes the plasma magnetic</label>
+<label><input type="radio" name="q7" value="B"> It lets nuclei fuse even when below the Coulomb barrier</label>
+<label><input type="radio" name="q7" value="C"> It cools the plasma</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q8" data-answer="B">
+<strong>8. The NIF fusion experiment in December 2022 achieved:</strong>
+<label><input type="radio" name="q8" value="A"> Breakeven with fuel only</label>
+<label><input type="radio" name="q8" value="B"> Q>1 with the laser energy input, marking the first-ever net-positive fusion</label>
+<label><input type="radio" name="q8" value="C"> Cold fusion</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q9" data-answer="A">
+<strong>9. The plasma beta parameter β = 2μ₀·n·k·T/B² tells you:</strong>
+<label><input type="radio" name="q9" value="A"> How much plasma pressure is contained by magnetic pressure (β<1 is stable)</label>
+<label><input type="radio" name="q9" value="B"> How radioactive the plasma is</label>
+<label><input type="radio" name="q9" value="C"> The temperature of the plasma</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="btn-grid" style="margin-top:12px;">
+<button class="btn-fire" id="btn-quiz-check">Submit Quiz</button>
+<button class="btn-reset" id="btn-quiz-reset">Reset</button>
+</div>
+<div id="quiz-result" style="display:none;"></div>
+</div>
+
+<div id="challenges" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Challenges</h3>
+<div style="display:flex;flex-direction:column;gap:8px;font-size:.9rem;">
+<div><b>1. Solar core conditions</b><br><button class="btn-ignite" data-challenge="solar">T=15 MK, n=10²⁵, τ=unlimited</button></div>
+<div><b>2. ITER conditions</b><br><button class="btn-ignite" data-challenge="iter">T=150 MK, n=10²⁰, τ=3.5s (Q=10 target)</button></div>
+<div><b>3. Below threshold</b><br><button class="btn-ignite" data-challenge="cold">T=10 MK — barely any fusion</button></div>
+<div><b>4. Ignition</b><br><button class="btn-ignite" data-challenge="ignite">Exceed Lawson — self-sustaining</button></div>
+<div><b>5. D-D reaction</b><br><button class="btn-ignite" data-challenge="dd">Compare D-D vs D-T</button></div>
+<div id="challenge-note" style="color:#0f172a;font-size:.85rem;"></div>
+<div id="challenge-result" style="color:#083344;font-weight:600;margin-top:6px;"></div>
+</div>
+</div>
+
+<div id="notebook" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Notebook</h3>
+<label>Hypothesis</label>
+<textarea id="hypothesis" placeholder="What do you expect?"></textarea>
+<label style="margin-top:10px;display:block;">Conclusion</label>
+<textarea id="conclusion" placeholder="What did you observe?"></textarea>
+<label style="margin-top:10px;display:block;">Measurements</label>
+<textarea id="records" readonly style="background:#f8fafc;font-family:monospace;font-size:.75rem;min-height:100px;"></textarea>
+<div class="btn-grid" style="margin-top:10px;">
+<button class="btn-fire" id="btn-record">📋 Record</button>
+<button class="btn-reset" id="btn-clear-notes">Clear</button>
+</div>
+<button class="btn-fire" style="margin-top:8px;width:100%;" id="btn-export">⬇ Report</button>
+</div>
+</div>
+
+<div class="card">
+<b>Real fact:</b> <span id="fact-box" style="font-size:.85rem;">—</span>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+"use strict";
+(function(){
+
+// ============ CONSTANTS ============
+var C = 2.998e8;
+var U_KG = 1.66054e-27;   // atomic mass unit in kg
+var EV_J = 1.602176634e-19;
+var K_B = 1.380649e-23;    // Boltzmann constant
+var MU_0 = 1.2566e-6;
+var K_COUL = 8.988e9;      // Coulomb constant
+
+// ============ REACTIONS (real nuclear data) ============
+var REACTIONS = {
+    dt: {
+        name: 'D-T fusion',
+        equation: '²H + ³H → ⁴He + n + 17.6 MeV',
+        Q: 17.6,           // MeV per reaction
+        mReactant_u: 2.014102 + 3.016049,   // D + T
+        mProduct_u: 4.002603 + 1.008665,    // He + n
+        Z1: 1, Z2: 1,                        // D and T are both Z=1
+        color: '#f43f5e',
+        fact: 'D-T is the easiest fusion reaction. The 17.6 MeV output is split: 14.1 MeV to the neutron (escapes, used to breed tritium), 3.5 MeV to the alpha particle (confined, heats the plasma). ITER and NIF both use D-T.'
+    },
+    dd: {
+        name: 'D-D fusion',
+        equation: '²H + ²H → ³He + n + 3.3 MeV',
+        Q: 3.3,
+        mReactant_u: 2.014102 + 2.014102,
+        mProduct_u: 3.016029 + 1.008665,
+        Z1: 1, Z2: 1,
+        color: '#8b5cf6',
+        fact: 'D-D fusion produces only 3.3 MeV (or 4.0 MeV in the tritium-producing branch). It is harder to achieve because the Coulomb barrier is similar but the Q-value is much smaller. Deuterium is abundant in seawater, though!'
+    },
+    dhe3: {
+        name: 'D-He³ fusion',
+        equation: '²H + ³He → ⁴He + p + 18.3 MeV',
+        Q: 18.3,
+        mReactant_u: 2.014102 + 3.016029,
+        mProduct_u: 4.002603 + 1.007825,
+        Z1: 1, Z2: 2,
+        color: '#10b981',
+        fact: 'D-He³ is an "aneutronic" reaction — it produces a proton, not a neutron. That means less neutron activation of the reactor walls. But He-3 is extremely rare on Earth (only trace amounts from tritium decay).'
+    },
+    pp: {
+        name: 'p-p chain',
+        equation: '¹H + ¹H → ²H + e⁺ + ν + 1.44 MeV',
+        Q: 1.44,
+        mReactant_u: 1.007825 + 1.007825,
+        mProduct_u: 2.014102,
+        Z1: 1, Z2: 1,
+        color: '#fbbf24',
+        fact: 'The p-p chain powers the Sun. It is extremely slow because two protons must quantum-tunnel through their Coulomb barrier at only 15 million K. Despite this, the Sun fuses 600 million tons of hydrogen per second!'
+    }
+};
+
+// ============ STATE ============
+var S = {
+    reaction: 'dt',
+    temp_MK: 150,        // million K
+    density: 1.0e20,     // particles/m³
+    tau: 3.0,            // seconds
+    B: 5.0,              // Tesla
+    collisions: true,
+    running: false,
+    soundOn: false,
+    time: 0,
+    fusionCount: 0,
+    particleCount: 200,
+    particles: [],
+    fusionBursts: [],
+    debugCount: 0,
+    records: []
+};
+
+var $ = function(id){ return document.getElementById(id); };
+var canvas = $('canvas');
+var ctx = canvas.getContext('2d');
+var dpr = window.devicePixelRatio || 1;
+var view = { x:0, y:0, scale:1 };
+var lastW = 0, lastH = 0;
+
+// ============ CANVAS ============
+function resizeCanvas(){
+    var rect = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(rect.width));
+    var h = Math.max(1, Math.round(rect.height));
+    if (w === lastW && h === lastH) return;
+    lastW = w; lastH = h;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function cw(){ return canvas.width / dpr; }
+function ch(){ return canvas.height / dpr; }
+
+// ============ AUDIO ============
+var audioCtx = null;
+var plasmaHum = null, plasmaGain = null;
+function initAudio(){
+    if (audioCtx) return;
+    try {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        audioCtx = new AC();
+    } catch(e){}
+}
+function beep(freq, dur, type, vol){
+    if (!audioCtx || !S.soundOn) return;
+    try {
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = type || 'sine';
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(vol || 0.06, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + dur);
+    } catch(e){}
+}
+function playFusion(){
+    if (!audioCtx || !S.soundOn) return;
+    // Short high-pitched pop (fusion event)
+    beep(800 + Math.random() * 400, 0.03, 'sine', 0.02);
+}
+function playIgnition(){
+    if (!audioCtx || !S.soundOn) return;
+    // Low rumble
+    beep(80, 0.6, 'sawtooth', 0.1);
+    setTimeout(function(){ beep(120, 0.4, 'sawtooth', 0.08); }, 200);
+    setTimeout(function(){ beep(160, 0.3, 'sawtooth', 0.06); }, 500);
+}
+function startPlasmaHum(){
+    if (!audioCtx || !S.soundOn) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (plasmaHum) return;
+    try {
+        plasmaHum = audioCtx.createOscillator();
+        plasmaGain = audioCtx.createGain();
+        plasmaHum.type = 'sawtooth';
+        plasmaHum.frequency.value = 60;
+        plasmaGain.gain.setValueAtTime(0, audioCtx.currentTime);
+        plasmaGain.gain.linearRampToValueAtTime(0.04, audioCtx.currentTime + 0.5);
+        var filter = audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 400;
+        plasmaHum.connect(filter);
+        filter.connect(plasmaGain);
+        plasmaGain.connect(audioCtx.destination);
+        plasmaHum.start();
+    } catch(e){}
+}
+function stopPlasmaHum(){
+    if (plasmaHum) {
+        try {
+            plasmaGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+            plasmaHum.stop(audioCtx.currentTime + 0.4);
+        } catch(e){}
+        plasmaHum = null;
+        plasmaGain = null;
+    }
+}
+function toggleSound(){
+    initAudio();
+    if (!audioCtx) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    S.soundOn = !S.soundOn;
+    if (S.soundOn) {
+        $('btn-sound').textContent = '🔊 Sound ON';
+        $('btn-sound').classList.add('playing');
+        beep(440, 0.1, 'sine', 0.1);
+        if (S.running) startPlasmaHum();
+    } else {
+        stopPlasmaHum();
+        $('btn-sound').textContent = '🔈 Enable sound';
+        $('btn-sound').classList.remove('playing');
+    }
+}
+
+// ============ PHYSICS ============
+function getReaction(){ return REACTIONS[S.reaction]; }
+
+function getMassDefect(){
+    var r = getReaction();
+    var delta_m_u = r.mReactant_u - r.mProduct_u;
+    return delta_m_u * U_KG;
+}
+
+function getCoulombBarrier(){
+    // E_c = k·Z₁·Z₂·e²/r_nuclear
+    // For nuclear distances r ~ 1.2 fm × (A1^(1/3) + A2^(1/3))
+    // For D-T: A1=2, A2=3, r ≈ 1.2e-15 × (1.26 + 1.44) = 3.24e-15 m
+    var r = getReaction();
+    var rNuclear = 3.0e-15;  // ~3 fm
+    var E_c_J = K_COUL * r.Z1 * r.Z2 * EV_J * EV_J / rNuclear;
+    var E_c_eV = E_c_J / EV_J;
+    return E_c_eV / 1e6;  // in MeV
+}
+
+function getTempKeV(){
+    // T in million K → keV: 1 MK corresponds to k·T = 1.38e-23 × 1e6 = 1.38e-17 J = 86.2 eV = 0.0862 keV
+    return S.temp_MK * 0.0862;  // keV
+}
+
+function getGamowFactor(){
+    // Gamow factor for D-T: exp(-2π·Z1·Z2·α·c/(v))
+    // For D-T: b = 31.29 · Z1 · Z2 · √(A1·A2/(A1+A2)) keV^(1/2)  [astrophysics formula]
+    // Simpler approximation: P ≈ exp(-b/√E) with E = kT in keV
+    var E_keV = getTempKeV();
+    var r = getReaction();
+    var A1 = r.mReactant_u > 0 ? 2 : 2;
+    var A2 = r.mReactant_u > 0 ? 3 : 3;
+    if (S.reaction === 'dd') { A1 = 2; A2 = 2; }
+    if (S.reaction === 'dhe3') { A1 = 2; A2 = 3; }
+    if (S.reaction === 'pp') { A1 = 1; A2 = 1; }
+    var b = 31.29 * r.Z1 * r.Z2 * Math.sqrt(A1 * A2 / (A1 + A2));
+    if (E_keV <= 0) return 0;
+    return Math.exp(-b / Math.sqrt(E_keV));
+}
+
+function getCrossSectionFactor(){
+    // Simplified: ⟨σv⟩ peaks strongly near optimal temperature
+    // For D-T: peak at ~64 keV (T ≈ 700 MK in plasma K)
+    // We use a Gaussian-ish shape for illustration
+    var E_keV = getTempKeV();
+    var gamow = getGamowFactor();
+    // Resonance at ~50 keV
+    var resonance = Math.exp(-Math.pow((E_keV - 50) / 40, 2));
+    // σv roughly scales with Gamow × resonance
+    // Normalized so ⟨σv⟩ ~ 10⁻²² m³/s at optimum for D-T
+    var sigmaV = 1e-22 * gamow * resonance * 5;
+    return sigmaV;
+}
+
+function getFusionRate(){
+    // R = n²/4 · ⟨σv⟩ for D-T (assuming equal D and T density)
+    // In our simplified model: R = n² · ⟨σv⟩ × 0.25 (relative)
+    var n = S.density;  // per m³
+    var sigmaV = getCrossSectionFactor();
+    return n * n * sigmaV * 0.25;  // reactions per m³ per second
+}
+
+function getPowerDensity(){
+    // P = R × Q × 1.602e-13 J/MeV
+    var Q_MeV = getReaction().Q;
+    var rate = getFusionRate();
+    return rate * Q_MeV * 1.602e-13;  // W/m³
+}
+
+function getTripleProduct(){
+    // nTτ in keV·s/m³
+    return S.density * getTempKeV() * S.tau;
+}
+
+function getLawsonThreshold(){
+    // For D-T: nTτ ≥ 3×10²¹ keV·s/m³
+    return 3e21;
+}
+
+function getQFactor(){
+    // Q = P_fusion / P_input
+    // P_input = 3n k T / τ (heating power to maintain plasma)
+    // Q = P_fusion × τ / (3 n k T)
+    var P_fusion = getPowerDensity();
+    var P_input = 3 * S.density * getTempKeV() * 1000 * EV_J / S.tau;
+    if (P_input <= 0) return 0;
+    return P_fusion / P_input;
+}
+
+function getPlasmaBeta(){
+    // β = 2 μ₀ n k T / B²
+    var T_K = S.temp_MK * 1e6;
+    var p = S.density * K_B * T_K;
+    var pMag = S.B * S.B / (2 * MU_0);
+    return p / pMag;
+}
+
+// ============ PARTICLES ============
+function initParticles(){
+    S.particles = [];
+    var w = 100, h = 100;  // placeholder, will be scaled to canvas
+    for (var i = 0; i < S.particleCount; i++) {
+        S.particles.push({
+            x: Math.random(),
+            y: Math.random(),
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            type: Math.random() < 0.5 ? 'D' : 'T',
+            alive: true,
+            glow: 0
+        });
+    }
+}
+
+// ============ DRAW ============
+function drawScene(){
+    resizeCanvas();
+    var w = cw(), h = ch();
+    if (w < 10 || h < 10) return;
+
+    // Deep dark background
+    var bg = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w,h)/1.3);
+    bg.addColorStop(0, '#1a0a0a');
+    bg.addColorStop(1, '#050208');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+
+    // Compute plasma intensity based on conditions
+    var rate = getFusionRate();
+    var rateNorm = Math.min(1, rate / 1e20);  // normalized 0-1
+    var tempNorm = Math.min(1, S.temp_MK / 300);
+    var intensity = (rateNorm * 0.5 + tempNorm * 0.5);
+
+    // --- PLASMA TORUS / CONTAINMENT ---
+    ctx.save();
+    ctx.translate(w/2, h/2);
+    var torusR = Math.min(w, h) * 0.32;
+    var torusW = Math.min(w, h) * 0.06;
+
+    // Glow around torus (intensity based)
+    if (intensity > 0.1) {
+        var glowGrad = ctx.createRadialGradient(0, 0, torusR - torusW * 2, 0, 0, torusR + torusW * 3);
+        var glowColor = S.running ? 'rgba(244,63,94,' + (0.4 * intensity) + ')' : 'rgba(100,100,100,0.1)';
+        glowGrad.addColorStop(0, glowColor);
+        glowGrad.addColorStop(0.5, S.running ? 'rgba(251,191,36,' + (0.3 * intensity) + ')' : 'rgba(100,100,100,0.05)');
+        glowGrad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = glowGrad;
+        ctx.beginPath();
+        ctx.arc(0, 0, torusR + torusW * 3, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // Magnetic field lines (circles)
+    ctx.strokeStyle = 'rgba(99,102,241,' + (0.2 + 0.3 * intensity) + ')';
+    ctx.lineWidth = 1;
+    for (var ring = 0; ring < 5; ring++) {
+        var rr = torusR - torusW * 2 + ring * torusW;
+        if (rr < 0) continue;
+        ctx.beginPath();
+        ctx.arc(0, 0, rr, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+
+    // Torus ring
+    ctx.strokeStyle = 'rgba(244,63,94,' + (0.4 + 0.6 * intensity) + ')';
+    ctx.lineWidth = torusW;
+    ctx.beginPath();
+    ctx.arc(0, 0, torusR, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Inner glow
+    ctx.strokeStyle = 'rgba(251,191,36,' + (0.3 + 0.7 * intensity) + ')';
+    ctx.lineWidth = torusW * 0.4;
+    ctx.beginPath();
+    ctx.arc(0, 0, torusR, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // --- PARTICLES ---
+    if (S.running) {
+        S.particles.forEach(function(p, idx){
+            // Physics: random walk with drift
+            p.x += p.vx * 0.005;
+            p.y += p.vy * 0.005;
+            // Wrap
+            if (p.x < 0) p.x = 1;
+            if (p.x > 1) p.x = 0;
+            if (p.y < 0) p.y = 1;
+            if (p.y > 1) p.y = 0;
+            // Temperature: vibrate more
+            p.vx += (Math.random() - 0.5) * 0.001 * tempNorm;
+            p.vy += (Math.random() - 0.5) * 0.001 * tempNorm;
+            // Friction
+            p.vx *= 0.999;
+            p.vy *= 0.999;
+
+            // Convert to canvas coords (inside torus)
+            var angle = p.x * Math.PI * 2;
+            var radius = torusR + (p.y - 0.5) * torusW * 1.5;
+            var px = Math.cos(angle) * radius;
+            var py = Math.sin(angle) * radius;
+
+            // Draw particle
+            var color = p.type === 'D' ? '#fbbf24' : '#a5f3fc';
+            ctx.shadowColor = color;
+            ctx.shadowBlur = 8;
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        });
+    }
+
+    // --- FUSION BURSTS (expanding rings) ---
+    for (var i = S.fusionBursts.length - 1; i >= 0; i--) {
+        var b = S.fusionBursts[i];
+        b.life -= 0.02;
+        if (b.life <= 0) {
+            S.fusionBursts.splice(i, 1);
+            continue;
+        }
+        var r = (1 - b.life) * 40;
+        var alpha = b.life;
+        ctx.strokeStyle = 'rgba(251,191,36,' + alpha + ')';
+        ctx.lineWidth = 3;
+        ctx.shadowColor = '#fbbf24';
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, r, 0, Math.PI * 2);
+        ctx.stroke();
+        // Inner white flash
+        ctx.fillStyle = 'rgba(255,255,255,' + (alpha * 0.5) + ')';
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, r * 0.3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    }
+
+    ctx.restore();
+
+    // --- FUEL LABEL ---
+    ctx.fillStyle = '#cbd5e1';
+    ctx.font = 'bold 13px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText(getReaction().name, w/2, 30);
+    ctx.font = '11px Inter';
+    ctx.fillStyle = '#94a3b8';
+    ctx.fillText(getReaction().equation, w/2, 48);
+
+    // --- STATUS ---
+    var status = getStatus();
+    ctx.fillStyle = status.bg;
+    ctx.fillRect(w/2 - 140, h - 60, 280, 32);
+    ctx.strokeStyle = status.color;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(w/2 - 140, h - 60, 280, 32);
+    ctx.fillStyle = status.color;
+    ctx.font = 'bold 14px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText(status.text, w/2, h - 39);
+
+    // Live pulse
+    var pulseR = 5 + 3 * Math.sin(S.time * 4);
+    ctx.fillStyle = 'rgba(16,185,129,0.9)';
+    ctx.beginPath();
+    ctx.arc(w - 25, 25, pulseR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#10b981';
+    ctx.font = 'bold 9px Inter';
+    ctx.textAlign = 'right';
+    ctx.fillText('LIVE', w - 38, 28);
+}
+
+function getStatus(){
+    if (!S.running) return { text: '⏸ Press IGNITE to start fusion', color:'#64748b', bg:'rgba(100,116,139,0.15)' };
+    var triple = getTripleProduct();
+    var lawson = getLawsonThreshold();
+    var Q = getQFactor();
+    if (triple > lawson && Q > 1) return { text: '🔥 IGNITION — Net positive fusion! Q=' + Q.toFixed(1), color:'#10b981', bg:'rgba(16,185,129,0.15)' };
+    if (Q > 0.1) return { text: '⚡ BURNING PLASMA — Q=' + Q.toFixed(2), color:'#f59e0b', bg:'rgba(245,158,11,0.15)' };
+    if (triple > lawson * 0.5) return { text: '⚠️ APPROACHING LAWSON — Q=' + Q.toFixed(3), color:'#f97316', bg:'rgba(249,115,22,0.15)' };
+    return { text: '❄️ SUB-IGNITION — Q=' + Q.toFixed(4), color:'#64748b', bg:'rgba(100,116,139,0.15)' };
+}
+
+// ============ READOUTS ============
+function updateReadouts(){
+    var r = getReaction();
+    var dm = getMassDefect();
+    var Tkev = getTempKeV();
+    var coul = getCoulombBarrier();
+    var gamow = getGamowFactor();
+    var rate = getFusionRate();
+    var P = getPowerDensity();
+    var triple = getTripleProduct();
+    var lawson = getLawsonThreshold();
+    var Q = getQFactor();
+    var beta = getPlasmaBeta();
+
+    $('ro-Q').innerText = r.Q.toFixed(2) + ' MeV';
+    $('ro-dm').innerText = dm.toExponential(2) + ' kg';
+    $('ro-Tkev').innerText = Tkev.toFixed(1) + ' keV';
+    $('ro-coul').innerText = coul.toFixed(2) + ' MeV';
+    $('ro-pcoul').innerText = (gamow * 100).toFixed(gamow < 0.01 ? 4 : 2) + '%';
+    $('ro-rate').innerText = rate.toExponential(2) + ' /m³·s';
+    $('ro-P').innerText = P.toExponential(2) + ' W/m³';
+    $('ro-triple').innerText = triple.toExponential(2) + ' keV·s/m³';
+    $('ro-lawson').innerText = triple > lawson ? '✓ PASSED' : '✗ FAILS';
+    $('ro-lawson').style.color = triple > lawson ? '#10b981' : '#dc2626';
+    $('ro-Qfac').innerText = Q.toFixed(Q < 0.01 ? 6 : 3);
+    $('ro-Qfac').style.color = Q > 1 ? '#10b981' : Q > 0.1 ? '#f59e0b' : '#64748b';
+    $('ro-beta').innerText = beta.toFixed(4) + (beta > 1 ? ' ⚠' : '');
+    $('ro-beta').style.color = beta > 1 ? '#dc2626' : '#10b981';
+    $('ro-status').innerText = getStatus().text.replace(/^[^ ]+ /, '');
+
+    $('hud-fuel').innerText = r.name.split(' ')[0];
+    $('hud-T').innerText = S.temp_MK;
+    $('hud-n').innerText = (S.density / 1e20).toFixed(1);
+    $('hud-tau').innerText = S.tau.toFixed(1);
+    $('hud-status').innerText = triple > lawson ? 'Ignition' : 'Sub-ignition';
+    $('hud-status').style.color = triple > lawson ? '#10b981' : '#dc2626';
+
+    $('fact-box').innerText = r.fact;
+}
+
+// ============ QUIZ ============
+var QUIZ_EXPLAIN = {
+    q1:{correct:'B',why:'Nuclear fusion combines light nuclei into a heavier one, releasing energy. This is how stars shine. Fission (splitting) is the opposite process, used in current nuclear power plants.',tip:'Fusion: ²H + ³H → ⁴He + n. Fission: ²³⁵U + n → ¹⁴¹Ba + ⁹²Kr + 3n.'},
+    q2:{correct:'A',why:'The Sun primarily uses the <b>proton-proton (p-p) chain</b>: 4 protons fuse to form helium-4, releasing 26.7 MeV. This is extremely slow but the Sun has enormous mass.',tip:'D-T fusion requires 150 million K; the Sun\'s core is only 15 million K. Different reaction, different conditions.'},
+    q3:{correct:'B',why:'Fusion releases energy via the <b>mass defect</b>: the products weigh slightly less than the reactants, and the lost mass becomes energy via E = mc².',tip:'D-T: 17.6 MeV released, corresponding to Δm ≈ 3.14×10⁻²⁹ kg per reaction.'},
+    q4:{correct:'A',why:'Both deuterium and tritium are positively charged nuclei. To fuse, they must overcome the electrostatic (Coulomb) repulsion that pushes them apart. Only at very high kinetic energies (temperatures ~100 million K) do nuclei get close enough for the strong force to take over.',tip:'The Coulomb barrier for D-T is ~1.4 MeV.'},
+    q5:{correct:'B',why:'The <b>Lawson criterion</b> (or triple product nTτ) defines when fusion becomes self-sustaining. If n·T·τ exceeds ~3×10²¹ keV·s/m³, alpha particles from the fusion reaction can heat the plasma enough to sustain it.',tip:'ITER targets Q=10 — producing 10× more power than input.'},
+    q6:{correct:'A',why:'The D-T reaction releases <b>17.6 MeV</b> per event — split 14.1 MeV to the neutron (escapes) and 3.5 MeV to the alpha particle (heats the plasma).',tip:'That\'s about 4 million times more energy than burning a molecule of methane.'},
+    q7:{correct:'B',why:'Quantum tunneling lets particles pass through energy barriers they classically couldn\'t cross. In fusion, it lets nuclei fuse even when their temperature (kinetic energy) is below the Coulomb barrier.',tip:'Without tunneling, the Sun could not shine, and no fusion reactor would ever work.'},
+    q8:{correct:'B',why:'On 5 December 2022, the National Ignition Facility (NIF) achieved <b>Q&gt;1</b> for the first time — 3.15 MJ of fusion energy from 2.05 MJ of laser energy. This was a historic milestone.',tip:'Note: Q was >1 for the laser input, but <1 if you count all the electricity the laser used.'},
+    q9:{correct:'A',why:'The <b>plasma beta</b> β measures the ratio of plasma pressure to magnetic pressure. If β &lt; 1, the magnetic field can confine the plasma (stable). If β &gt; 1, the plasma pressure exceeds the field\'s ability to hold it, and the plasma escapes.',tip:'Tokamaks operate at β ~ 0.05. Spherical tokamaks can reach β ~ 0.4.'}
+};
+
+function evaluateQuiz(){
+    var qs = document.querySelectorAll('.quiz-q');
+    var score = 0;
+    qs.forEach(function(q){
+        var name = q.dataset.q;
+        var correct = q.dataset.answer;
+        var chosen = q.querySelector('input[name="'+name+'"]:checked');
+        var expl = q.querySelector('.explanation');
+        var data = QUIZ_EXPLAIN[name];
+        expl.hidden = false;
+        expl.className = 'explanation';
+        if (chosen && chosen.value === correct) {
+            score++;
+            expl.classList.add('correct-box');
+            expl.innerHTML = '<strong>✓ Correct!</strong> ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:#475569;"><b>💡</b> ' + data.tip + '</div>';
+        } else {
+            expl.classList.add('wrong-box');
+            var cv = chosen ? chosen.value : '—';
+            expl.innerHTML = '<strong>✗ Answer: ' + correct + '</strong> You chose ' + cv + '. ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:#475569;"><b>💡</b> ' + data.tip + '</div>';
+        }
+    });
+    var pct = Math.round(score/qs.length*100);
+    beep(pct>=78?880:440,0.15,'sine',0.1);
+    var r = $('quiz-result');
+    r.style.display = 'block';
+    r.innerHTML = '<div style="font-size:1.4rem;color:#4338ca;">' + score + '/' + qs.length + ' · ' + pct + '%</div>';
+}
+function resetQuiz(){
+    document.querySelectorAll('.quiz-q').forEach(function(q){
+        q.querySelectorAll('input[type=radio]').forEach(function(r){ r.checked = false; });
+        var e = q.querySelector('.explanation');
+        e.hidden = true; e.innerHTML = ''; e.className = 'explanation';
+    });
+    $('quiz-result').style.display = 'none';
+}
+
+// ============ CHALLENGES ============
+function applyChallenge(id){
+    var note = $('challenge-note'), cres = $('challenge-result');
+    note.innerText = ''; cres.innerText = '';
+    if (id === 'solar') {
+        S.reaction = 'pp'; $('reaction').value = 'pp';
+        S.temp_MK = 15; $('temp').value = 15; $('v-T').innerText = '15';
+        S.density = 10 * 1e20; $('density').value = 10; $('v-n').innerText = '10.0';
+        S.tau = 10; $('tau').value = 10; $('v-tau').innerText = '10.0';
+        note.innerText = 'Solar core: T=15 MK, n≈10²⁵/m³ (density 10⁵× here for display). p-p chain dominates.';
+        cres.innerText = 'The Sun fuses 600 million tons of H per second!';
+    } else if (id === 'iter') {
+        S.reaction = 'dt'; $('reaction').value = 'dt';
+        S.temp_MK = 150; $('temp').value = 150; $('v-T').innerText = '150';
+        S.density = 1.0 * 1e20; $('density').value = 1.0; $('v-n').innerText = '1.0';
+        S.tau = 3.5; $('tau').value = 3.5; $('v-tau').innerText = '3.5';
+        S.B = 5.3; $('B').value = 5.3; $('v-B').innerText = '5.3';
+        note.innerText = 'ITER design parameters: T=150 MK, n≈10²⁰/m³, τ≈3.5s. Target Q=10.';
+        cres.innerText = 'ITER is being built in France, first plasma target 2025.';
+    } else if (id === 'cold') {
+        S.reaction = 'dt'; $('reaction').value = 'dt';
+        S.temp_MK = 10; $('temp').value = 10; $('v-T').innerText = '10';
+        note.innerText = 'T=10 MK — way below D-T optimum (~150 MK). Very little fusion.';
+        cres.innerText = 'Fusion rate is exponentially suppressed at low temperature.';
+    } else if (id === 'ignite') {
+        S.reaction = 'dt'; $('reaction').value = 'dt';
+        S.temp_MK = 200; $('temp').value = 200; $('v-T').innerText = '200';
+        S.density = 5.0 * 1e20; $('density').value = 5.0; $('v-n').innerText = '5.0';
+        S.tau = 8.0; $('tau').value = 8.0; $('v-tau').innerText = '8.0';
+        S.B = 8.0; $('B').value = 8.0; $('v-B').innerText = '8.0';
+        note.innerText = 'Designed to exceed Lawson triple product. Should reach Q>1.';
+        cres.innerText = 'Real engineering: this is the goal of ITER, SPARC, and other reactors.';
+    } else if (id === 'dd') {
+        S.reaction = 'dd'; $('reaction').value = 'dd';
+        S.temp_MK = 200; $('temp').value = 200; $('v-T').innerText = '200';
+        note.innerText = 'D-D requires much higher temperature for the same rate — its Q is 5× lower.';
+        cres.innerText = 'D-D releases 3.3 MeV (vs 17.6 for D-T) but uses abundant deuterium.';
+    }
+    updateReadouts();
+}
+
+// ============ NOTEBOOK ============
+function recordMeasurement(){
+    var r = getReaction();
+    var line = new Date().toLocaleTimeString() + ' | ' + r.name + ' | T=' + S.temp_MK + 'MK (' + getTempKeV().toFixed(1) + 'keV) | n=' + S.density.toExponential(1) + ' | τ=' + S.tau + 's | nTτ=' + getTripleProduct().toExponential(2) + ' | Q=' + getQFactor().toFixed(3) + ' | rate=' + getFusionRate().toExponential(2) + ' | P=' + getPowerDensity().toExponential(2) + 'W/m³';
+    S.records.push(line);
+    $('records').value = S.records.join('\n');
+    $('records').scrollTop = $('records').scrollHeight;
+}
+function downloadReport(){
+    var r = getReaction();
+    var text = 'NUCLEAR FUSION LAB REPORT\nDate: ' + new Date().toLocaleString() + '\n\n' +
+        'Reaction: ' + r.name + '\n' + r.equation + '\n' +
+        'Q-value = ' + r.Q + ' MeV\n' +
+        'Mass defect = ' + getMassDefect().toExponential(3) + ' kg\n\n' +
+        'PLASMA PARAMETERS\n' +
+        'Temperature T = ' + S.temp_MK + ' MK (' + getTempKeV().toFixed(2) + ' keV)\n' +
+        'Density n = ' + S.density.toExponential(3) + ' m⁻³\n' +
+        'Confinement τ = ' + S.tau + ' s\n' +
+        'Magnetic field B = ' + S.B + ' T\n' +
+        'Coulomb barrier = ' + getCoulombBarrier().toFixed(2) + ' MeV\n' +
+        'Gamow tunneling probability = ' + (getGamowFactor() * 100).toExponential(2) + '%\n\n' +
+        'PERFORMANCE\n' +
+        'Fusion rate ⟨σv⟩·n² = ' + getFusionRate().toExponential(3) + ' /m³/s\n' +
+        'Power density = ' + getPowerDensity().toExponential(3) + ' W/m³\n' +
+        'Triple product nTτ = ' + getTripleProduct().toExponential(3) + ' keV·s/m³\n' +
+        'Lawson threshold = 3×10²¹ keV·s/m³\n' +
+        'Lawson status: ' + (getTripleProduct() > getLawsonThreshold() ? 'PASSED' : 'FAILED') + '\n' +
+        'Q factor = ' + getQFactor().toFixed(3) + '\n' +
+        'Plasma beta = ' + getPlasmaBeta().toFixed(4) + '\n' +
+        'Status: ' + getStatus().text + '\n\n' +
+        'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+        'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+        'MEASUREMENTS\n' + $('records').value + '\n\n' +
+        'LIMITATIONS\nSimplified semi-empirical model. Real fusion rates use measured cross-sections (e.g. Bosch-Hale) with detailed plasma physics. Simplified Gamow factor only. Does not include bremsstrahlung losses, impurity radiation, or transport. Educational use only.\n';
+    var blob = new Blob([text], {type:'text/plain'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'fusion-report.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+// ============ ANIMATION LOOP ============
+var lastT = 0;
+function animate(now){
+    if (!lastT) lastT = now;
+    var dt = (now - lastT) / 1000;
+    if (dt > 0.2) dt = 0.016;
+    lastT = now;
+    S.time += dt;
+    S.debugCount++;
+
+    // Fusion events: spawn bursts based on fusion rate
+    if (S.running) {
+        var rate = getFusionRate();
+        var rateNorm = Math.min(1, rate / 1e19);
+        var spawnRate = rateNorm * 30;  // bursts per second
+        // Accumulate
+        S.accum = (S.accum || 0) + dt * spawnRate;
+        while (S.accum > 1) {
+            S.accum -= 1;
+            if (Math.random() < rateNorm) {
+                var angle = Math.random() * Math.PI * 2;
+                var torusR = Math.min(cw(), ch()) * 0.32;
+                S.fusionBursts.push({
+                    x: Math.cos(angle) * torusR,
+                    y: Math.sin(angle) * torusR,
+                    life: 1.0
+                });
+                S.fusionCount++;
+                if (Math.random() < 0.1) playFusion();
+            }
+        }
+    }
+
+    drawScene();
+    updateReadouts();
+    requestAnimationFrame(animate);
+}
+
+// ============ EVENTS ============
+$('btn-sound').addEventListener('click', toggleSound);
+$('reaction').addEventListener('change', function(e){ S.reaction = e.target.value; updateReadouts(); });
+$('temp').addEventListener('input', function(e){
+    S.temp_MK = parseFloat(e.target.value);
+    $('v-T').innerText = S.temp_MK;
+    updateReadouts();
+});
+$('density').addEventListener('input', function(e){
+    S.density = parseFloat(e.target.value) * 1e20;
+    $('v-n').innerText = parseFloat(e.target.value).toFixed(1);
+    updateReadouts();
+});
+$('tau').addEventListener('input', function(e){
+    S.tau = parseFloat(e.target.value);
+    $('v-tau').innerText = S.tau.toFixed(1);
+    updateReadouts();
+});
+$('B').addEventListener('input', function(e){
+    S.B = parseFloat(e.target.value);
+    $('v-B').innerText = S.B.toFixed(1);
+    updateReadouts();
+});
+$('collisions-toggle').addEventListener('change', function(e){ S.collisions = e.target.checked; });
+$('btn-ignite').addEventListener('click', function(){
+    S.running = !S.running;
+    $('btn-ignite').textContent = S.running ? '⏸ Quench plasma' : '🔥 IGNITE PLASMA';
+    if (S.running) {
+        playIgnition();
+        startPlasmaHum();
+    } else {
+        stopPlasmaHum();
+    }
+});
+$('btn-reset').addEventListener('click', function(){
+    S.running = false;
+    S.temp_MK = 150; $('temp').value = 150; $('v-T').innerText = '150';
+    S.density = 1.0 * 1e20; $('density').value = 1.0; $('v-n').innerText = '1.0';
+    S.tau = 3.0; $('tau').value = 3.0; $('v-tau').innerText = '3.0';
+    S.B = 5.0; $('B').value = 5.0; $('v-B').innerText = '5.0';
+    S.reaction = 'dt'; $('reaction').value = 'dt';
+    $('btn-ignite').textContent = '🔥 IGNITE PLASMA';
+    S.fusionBursts = [];
+    S.fusionCount = 0;
+    stopPlasmaHum();
+    updateReadouts();
+});
+
+document.querySelectorAll('.tab-btn[data-tab]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+        document.querySelectorAll('.tab-btn[data-tab]').forEach(function(b){ b.classList.remove('active'); });
+        document.getElementById(btn.dataset.tab).classList.add('active');
+        btn.classList.add('active');
+    });
+});
+document.querySelectorAll('[data-challenge]').forEach(function(btn){
+    btn.addEventListener('click', function(){ applyChallenge(btn.dataset.challenge); beep(660,0.08,'sine',0.08); });
+});
+$('btn-quiz-check').addEventListener('click', evaluateQuiz);
+$('btn-quiz-reset').addEventListener('click', resetQuiz);
+$('btn-record').addEventListener('click', recordMeasurement);
+$('btn-clear-notes').addEventListener('click', function(){
+    if (!confirm('Clear notebook?')) return;
+    $('hypothesis').value = ''; $('conclusion').value = ''; $('records').value = '';
+    S.records = [];
+});
+$('btn-export').addEventListener('click', downloadReport);
+
+// Zoom
+var pointers = new Map(), pinch = null;
+function getPos(e){ var r = canvas.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
+canvas.addEventListener('wheel', function(e){
+    e.preventDefault();
+    var cx = e.offsetX, cy = e.offsetY;
+    var wx = (cx - view.x)/view.scale, wy = (cy - view.y)/view.scale;
+    var factor = Math.exp(-e.deltaY * 0.0015);
+    view.scale = Math.max(0.3, Math.min(5, view.scale * factor));
+    view.x = cx - wx * view.scale;
+    view.y = cy - wy * view.scale;
+}, {passive:false});
+canvas.addEventListener('pointerdown', function(e){
+    canvas.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, getPos(e));
+    if (pointers.size === 2) {
+        var pts = Array.from(pointers.values());
+        pinch = {dist: Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y), startScale: view.scale};
+    }
+});
+canvas.addEventListener('pointermove', function(e){
+    if (!pointers.has(e.pointerId)) return;
+    var prev = pointers.get(e.pointerId), pos = getPos(e);
+    pointers.set(e.pointerId, pos);
+    if (pointers.size === 1 && !pinch) {
+        view.x += pos.x - prev.x; view.y += pos.y - prev.y;
+    } else if (pointers.size === 2 && pinch) {
+        var pts = Array.from(pointers.values());
+        var d = Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
+        view.scale = Math.max(0.3, Math.min(5, pinch.startScale * d / pinch.dist));
+    }
+});
+canvas.addEventListener('pointerup', function(e){
+    pointers.delete(e.pointerId);
+    try { canvas.releasePointerCapture(e.pointerId); } catch(_){}
+    if (pointers.size < 2) pinch = null;
+});
+canvas.addEventListener('pointercancel', function(e){ pointers.delete(e.pointerId); pinch = null; });
+
+// Splitter
+(function(){
+    var sim = $('sim-area'), splitter = $('splitter');
+    var dragging = false, startY = 0, startH = 0;
+    splitter.addEventListener('pointerdown', function(e){
+        e.preventDefault(); dragging = true; startY = e.clientY;
+        startH = sim.getBoundingClientRect().height;
+        try { splitter.setPointerCapture(e.pointerId); } catch(_){}
+    });
+    window.addEventListener('pointermove', function(e){
+        if (!dragging) return;
+        var dy = e.clientY - startY;
+        var nh = Math.max(180, Math.min(window.innerHeight-240, Math.round(startH + dy)));
+        sim.style.flex = '0 0 ' + nh + 'px';
+    });
+    window.addEventListener('pointerup', function(e){
+        if (!dragging) return;
+        dragging = false;
+        try { splitter.releasePointerCapture(e.pointerId); } catch(_){}
+    });
+})();
+
+window.addEventListener('resize', function(){ lastW = 0; lastH = 0; });
+
+// ============ BOOT ============
+initParticles();
+updateReadouts();
+requestAnimationFrame(animate);
+
+})();
+</script>
+</body>
+</html>

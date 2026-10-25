@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Physics: Resonance Tube Lab</title>
+    <style>
+        :root {
+            --primary: #6366f1; --secondary: #f43f5e; --dark: #0f172a;
+            --surface: #ffffff; --bg: #f1f5f9; --glass: rgba(255,255,255,0.9);
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        html, body { height: 100%; }
+        body { margin: 0; background: var(--bg); color: var(--dark); display: flex; flex-direction: column; overflow: auto; -webkit-font-smoothing:antialiased; }
+
+        header { background: var(--dark); color: white; padding: 10px; text-align: center; border-bottom: 3px solid var(--primary); }
+        .lab-container { display: flex; flex: 1; overflow: auto; flex-direction: column; }
+
+        #sim-area { flex: 2 1 460px; position: relative; background: white; border-bottom: 2px solid #e2e8f0; overflow: auto; cursor: crosshair; min-height:360px; }
+        canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+        .splitter { height: 10px; background: linear-gradient(90deg, rgba(0,0,0,0.03), rgba(0,0,0,0.06)); cursor: ns-resize; display:block; }
+        .splitter:hover { background: linear-gradient(90deg, rgba(0,0,0,0.05), rgba(0,0,0,0.09)); }
+
+        .bottom-panel { flex: 3; display: flex; flex-direction: row; background: var(--surface); overflow-y: auto; }
+        .controls { flex: 0 0 360px; padding: 18px; border-right: 1px solid #e2e8f0; min-width: 300px; }
+        .analysis { flex: 1 1 720px; padding: 18px; background: #fafafa; min-width: 420px; }
+
+        .card { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        h4 { margin: 0 0 10px 0; font-size: 0.8rem; color: #64748b; text-transform: uppercase; }
+        .input-row { margin-bottom: 12px; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; }
+        input[type="range"] { width: 100%; accent-color: var(--primary); }
+        select, input[type="number"] { width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; font-family: inherit; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        button { padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit; }
+        .btn-fire { background: var(--primary); color: white; }
+        .btn-fire:hover { background: #4f46e5; }
+        .btn-sweep { background: linear-gradient(135deg, #f59e0b, #f97316); color: white; }
+        .btn-sweep:hover { background: linear-gradient(135deg, #d97706, #ea580c); }
+        .btn-reset { background: #64748b; color: white; }
+        .btn-reset:hover { background: #475569; }
+        .btn-sound { background: #10b981; color: white; }
+        .btn-sound:hover { background: #059669; }
+        .btn-sound.playing { background: #ef4444; }
+        .btn-sound.playing:hover { background: #dc2626; }
+
+        .hud { position: absolute; top: 10px; left: 10px; background: var(--glass); padding: 8px; border-radius: 8px; font-size: 0.75rem; border: 1px solid #ddd; z-index: 20; }
+        .hud * { pointer-events: auto; }
+        .hud .metrics { pointer-events: none; line-height: 1.7; }
+        .zoom-controls { display:flex; gap:6px; margin-top:6px; }
+        .zoom-controls button { padding:6px 8px; border-radius:6px; border:1px solid rgba(0,0,0,0.06); background:white; cursor:pointer; }
+        .vector-legend { position: absolute; bottom: 10px; left: 10px; font-size: 0.65rem; background: var(--glass); padding: 5px; border-radius: 4px; }
+
+        .tab-btn { padding: 8px 12px; border-radius: 6px; background: #e2e8f0; color: var(--dark); font-weight: 600; font-size: 0.8rem; }
+        .tab-btn:hover { background: #cbd5e1; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        .readouts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+        .readout { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; }
+        .readout span { font-size: 0.7rem; color: #64748b; display: block; }
+        .readout strong { font-size: 1rem; color: var(--dark); }
+        .readout.resonant { border-color: #10b981; background: #ecfdf5; }
+        .readout.resonant strong { color: #065f46; }
+
+        .quiz-q { padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+        .quiz-q:last-child { border-bottom: none; }
+        .quiz-q > strong { display: block; margin-bottom: 8px; font-size: 0.9rem; }
+        .quiz-q label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; margin: 3px 6px 3px 0; cursor: pointer; font-weight: 500; }
+        .quiz-q label:hover { background: #eef2ff; border-color: #6366f1; }
+        .explanation {
+            margin-top: 8px; padding: 10px 12px; border-radius: 6px; font-size: 0.82rem; line-height: 1.55;
+            background: #eef2ff; border-left: 3px solid #6366f1; color: #1e293b;
+        }
+        .explanation.correct-box { background: #ecfdf5; border-left-color: #10b981; }
+        .explanation.wrong-box { background: #fef2f2; border-left-color: #dc2626; }
+        .explanation strong { display: block; margin-bottom: 3px; }
+
+        .quiz-section { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6366f1; margin: 12px 0 6px 0; }
+        .quiz-section:first-child { margin-top: 0; }
+
+        #quiz-result { margin-top: 10px; padding: 12px; border-radius: 8px; background: #eef2ff; border: 1px solid #c7d2fe; font-weight: 700; text-align: center; }
+
+        table.formulas { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 6px; }
+        table.formulas th, table.formulas td { border: 1px solid #e2e8f0; padding: 6px 8px; text-align: left; }
+        table.formulas th { background: #f1f5f9; font-weight: 600; }
+        .eq { font-family: 'JetBrains Mono', ui-monospace, monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.82rem; }
+        .note { font-size: 0.82rem; color: #475569; margin-top: 8px; line-height: 1.5; }
+        .sound-hint { background: #fef3c7; border-left: 3px solid #f59e0b; padding: 8px 10px; border-radius: 6px; font-size: 0.82rem; margin-top: 8px; }
+
+        textarea { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 0.85rem; min-height: 64px; resize: vertical; }
+
+        @media (max-width: 768px) {
+            .bottom-panel { flex-direction: column; }
+            .controls { border-right: none; border-bottom: 1px solid #eee; min-width: 0; }
+            .analysis { min-width: 0; }
+            .readouts { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">🎵 Resonance Tube Interactive Lab</h2>
+    <small>Standing Waves in Air Columns · Resonance · Speed of Sound · Harmonics</small>
+</header>
+
+<div class="lab-container">
+    <div id="sim-area">
+        <div class="hud">
+            <b>LIVE STATE</b><br>
+            <div class="metrics">
+                Length L: <span id="hud-L">0.500</span> m<br>
+                Frequency f: <span id="hud-f">340</span> Hz<br>
+                Harmonic n: <span id="hud-n">1</span><br>
+                Resonance: <span id="hud-res">Off</span>
+            </div>
+            <div style="margin-top:6px; font-size:0.75rem;">
+                <label style="display:inline-flex;align-items:center;gap:6px;"><input id="full-scroll-toggle" type="checkbox"> Enable Full Page Scrolling</label>
+            </div>
+        </div>
+        <div class="vector-legend">
+            <span style="color:#6366f1">● Wave</span> | <span style="color:#10b981">● Node</span> | <span style="color:#f43f5e">● Antinode</span>
+        </div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div id="splitter" class="splitter" title="Drag to resize simulation area"></div>
+
+    <div class="bottom-panel">
+        <div class="controls">
+            <h4>🧪 Lab Settings</h4>
+
+            <div class="input-row">
+                <button class="btn-sound" id="btn-sound" style="width:100%;">🔈 Enable sound</button>
+                <div class="sound-hint" id="sound-hint">Enable the driving tone + resonance feedback beep.</div>
+            </div>
+
+            <div class="input-row">
+                <label>Tube type</label>
+                <select id="tube-type">
+                    <option value="closed" selected>Closed at one end (closed tube)</option>
+                    <option value="open">Open at both ends (open tube)</option>
+                </select>
+            </div>
+
+            <div class="input-row">
+                <label>Air temperature: <span id="v-temp">20</span> °C</label>
+                <input type="range" id="temp" min="0" max="40" step="1" value="20">
+            </div>
+
+            <div class="input-row">
+                <label>Tube length L: <span id="v-L">0.500</span> m</label>
+                <input type="range" id="L" min="0.1" max="1.5" step="0.005" value="0.5">
+            </div>
+
+            <div class="input-row">
+                <label>Frequency f: <span id="v-f">340</span> Hz</label>
+                <input type="range" id="f" min="50" max="2000" step="1" value="340">
+            </div>
+
+            <div class="input-row">
+                <button class="btn-sweep" id="btn-sweep" style="width:100%;">🎚️ Auto-sweep frequency</button>
+            </div>
+
+            <div class="input-row">
+                <label style="display:inline-flex;align-items:center;gap:6px;">
+                    <input type="checkbox" id="show-labels" checked> Show node/antinode labels
+                </label>
+            </div>
+
+            <div class="btn-grid">
+                <button class="btn-fire" id="btn-snap">🎯 Snap to resonance</button>
+                <button class="btn-reset" id="btn-reset">↺ Reset</button>
+            </div>
+        </div>
+
+        <div class="analysis">
+            <h4>📊 Learn &amp; Practice</h4>
+
+            <div class="readouts">
+                <div class="readout" id="ro-res-box"><span>Resonance</span><strong id="ro-res">—</strong></div>
+                <div class="readout"><span>Harmonic n</span><strong id="ro-n">—</strong></div>
+                <div class="readout"><span>Wavelength λ</span><strong id="ro-lambda">—</strong></div>
+                <div class="readout"><span>Speed of sound v</span><strong id="ro-v">343 m/s</strong></div>
+                <div class="readout"><span>Fundamental f₁</span><strong id="ro-f1">—</strong></div>
+                <div class="readout"><span>Next resonance</span><strong id="ro-fnext">—</strong></div>
+                <div class="readout"><span>Resonance length L_n</span><strong id="ro-Ln">—</strong></div>
+                <div class="readout"><span>End correction e</span><strong id="ro-e">—</strong></div>
+            </div>
+
+            <div class="card">
+                <div class="tabs" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                    <button class="tab-btn active" data-tab="formulas">Formulas</button>
+                    <button class="tab-btn" data-tab="quiz">Quiz</button>
+                    <button class="tab-btn" data-tab="challenges">Challenges</button>
+                    <button class="tab-btn" data-tab="notebook">Notebook</button>
+                </div>
+
+                <!-- FORMULAS -->
+                <div id="formulas" class="tab-panel active">
+                    <h3 style="margin:6px 0 8px 0;">Core Formulas — Resonance in Air Columns</h3>
+                    <ul style="font-size:0.9rem; line-height:1.6; padding-left:1rem; margin:0;">
+                        <li><b>Speed of sound in air:</b> v = 331 + 0.6·T(°C) m/s</li>
+                        <li><b>Wavelength:</b> λ = v / f</li>
+                        <li><b>Closed tube (one end closed):</b> L = (2n−1)·λ/4 for n = 1, 2, 3, ...</li>
+                        <li><b>Closed tube frequencies:</b> f_n = (2n−1)·v/(4L) — only ODD harmonics</li>
+                        <li><b>Open tube (both ends open):</b> L = n·λ/2 for n = 1, 2, 3, ...</li>
+                        <li><b>Open tube frequencies:</b> f_n = n·v/(2L) — ALL harmonics</li>
+                        <li><b>End correction:</b> e ≈ 0.6·r (r = tube radius)</li>
+                        <li><b>Successive resonance spacing:</b> λ/2 (closed tube)</li>
+                    </ul>
+                    <p class="note"><b>💡 Quick tips:</b> A closed tube (one end capped) resonates at odd multiples of its fundamental — f₁, 3f₁, 5f₁, ... An open tube resonates at all integer multiples — f₁, 2f₁, 3f₁, ... Standing waves have nodes (zero displacement) and antinodes (maximum displacement). A closed end is always a displacement node; an open end is an antinode.</p>
+
+                    <table class="formulas" style="margin-top:12px;">
+                        <tr><th>Quantity</th><th>Formula</th><th>Units</th></tr>
+                        <tr><td>Speed of sound</td><td><span class="eq">v = 331 + 0.6T</span></td><td>m/s</td></tr>
+                        <tr><td>Closed tube resonant f</td><td><span class="eq">f_n = (2n−1)·v/(4L)</span></td><td>Hz</td></tr>
+                        <tr><td>Open tube resonant f</td><td><span class="eq">f_n = n·v/(2L)</span></td><td>Hz</td></tr>
+                        <tr><td>Wavelength</td><td><span class="eq">λ = v/f</span></td><td>m</td></tr>
+                    </table>
+                </div>
+
+                <!-- QUIZ -->
+                <div id="quiz" class="tab-panel" style="max-height:600px; overflow:auto;">
+                    <h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+                    <div class="quiz-section">Basic — Standing Waves</div>
+
+                    <div class="quiz-q" data-q="q1" data-answer="B">
+                        <strong>1. A standing wave is formed by:</strong>
+                        <label><input type="radio" name="q1" value="A"> A single traveling wave</label>
+                        <label><input type="radio" name="q1" value="B"> Two identical waves traveling in opposite directions</label>
+                        <label><input type="radio" name="q1" value="C"> A wave that stops moving</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q2" data-answer="A">
+                        <strong>2. A node in a standing wave is a point of:</strong>
+                        <label><input type="radio" name="q2" value="A"> Zero displacement (always)</label>
+                        <label><input type="radio" name="q2" value="B"> Maximum displacement</label>
+                        <label><input type="radio" name="q2" value="C"> Maximum velocity</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q3" data-answer="B">
+                        <strong>3. A closed end of a tube is always a:</strong>
+                        <label><input type="radio" name="q3" value="A"> Antinode (displacement)</label>
+                        <label><input type="radio" name="q3" value="B"> Node (displacement)</label>
+                        <label><input type="radio" name="q3" value="C"> Neither</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Intermediate — Tube Physics</div>
+
+                    <div class="quiz-q" data-q="q4" data-answer="A">
+                        <strong>4. A tube closed at one end resonates at frequencies that are:</strong>
+                        <label><input type="radio" name="q4" value="A"> Odd multiples of f₁ (f₁, 3f₁, 5f₁, ...)</label>
+                        <label><input type="radio" name="q4" value="B"> All integer multiples (f₁, 2f₁, 3f₁, ...)</label>
+                        <label><input type="radio" name="q4" value="C"> Only f₁</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q5" data-answer="B">
+                        <strong>5. A tube open at both ends resonates at frequencies that are:</strong>
+                        <label><input type="radio" name="q5" value="A"> Odd multiples only</label>
+                        <label><input type="radio" name="q5" value="B"> All integer multiples (f₁, 2f₁, 3f₁, ...)</label>
+                        <label><input type="radio" name="q5" value="C"> Only even multiples</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q6" data-answer="A">
+                        <strong>6. As air temperature increases, the speed of sound:</strong>
+                        <label><input type="radio" name="q6" value="A"> Increases (~0.6 m/s per °C)</label>
+                        <label><input type="radio" name="q6" value="B"> Decreases</label>
+                        <label><input type="radio" name="q6" value="C"> Stays the same</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Advanced — Deep Understanding</div>
+
+                    <div class="quiz-q" data-q="q7" data-answer="B">
+                        <strong>7. A closed tube of length 0.5 m (v=343 m/s) has fundamental frequency:</strong>
+                        <label><input type="radio" name="q7" value="A"> 343 Hz</label>
+                        <label><input type="radio" name="q7" value="B"> 171.5 Hz</label>
+                        <label><input type="radio" name="q7" value="C"> 686 Hz</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q8" data-answer="B">
+                        <strong>8. In a closed tube, the distance between two successive resonance lengths is:</strong>
+                        <label><input type="radio" name="q8" value="A"> λ/4</label>
+                        <label><input type="radio" name="q8" value="B"> λ/2</label>
+                        <label><input type="radio" name="q8" value="C"> λ</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q9" data-answer="A">
+                        <strong>9. When you increase the frequency above a resonance, the sound becomes quieter because:</strong>
+                        <label><input type="radio" name="q9" value="A"> The wave is no longer a standing-wave resonance (destructive interference)</label>
+                        <label><input type="radio" name="q9" value="B"> Air molecules stop moving</label>
+                        <label><input type="radio" name="q9" value="C"> The tube absorbs all the sound</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="btn-grid" style="margin-top:12px;">
+                        <button class="btn-fire" id="btn-quiz-check">Submit Quiz</button>
+                        <button class="btn-reset" id="btn-quiz-reset">Reset</button>
+                    </div>
+                    <div id="quiz-result" style="display:none;"></div>
+                </div>
+
+                <!-- CHALLENGES -->
+                <div id="challenges" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Interactive Challenges</h3>
+                    <div style="display:flex; flex-direction:column; gap:8px; font-size:0.9rem;">
+                        <div>
+                            <b>Challenge 1 — First resonance</b><br>
+                            <button class="btn-fire" data-challenge="first">Snap to 1st harmonic (closed tube)</button>
+                        </div>
+                        <div>
+                            <b>Challenge 2 — Third harmonic</b><br>
+                            <button class="btn-fire" data-challenge="third">Snap to 3rd harmonic (closed tube)</button>
+                        </div>
+                        <div>
+                            <b>Challenge 3 — Open tube</b><br>
+                            <button class="btn-fire" data-challenge="open2">Open tube, 2nd harmonic</button>
+                        </div>
+                        <div>
+                            <b>Challenge 4 — Hot air</b><br>
+                            <button class="btn-fire" data-challenge="hot">30 °C air — find f₁</button>
+                        </div>
+                        <div>
+                            <b>Challenge 5 — Long tube</b><br>
+                            <button class="btn-fire" data-challenge="long">1.5 m tube, first resonance</button>
+                        </div>
+                        <div id="challenge-note" style="color:#0f172a; font-size:0.85rem;"></div>
+                        <div id="challenge-result" style="color:#083344; font-weight:600; margin-top:6px;"></div>
+                    </div>
+                </div>
+
+                <!-- NOTEBOOK -->
+                <div id="notebook" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Experiment Notebook</h3>
+                    <label>Prediction / hypothesis</label>
+                    <textarea id="hypothesis" placeholder="What do you expect to happen, and why?"></textarea>
+                    <label style="margin-top:10px; display:block;">Conclusion / evidence</label>
+                    <textarea id="conclusion" placeholder="Explain what your observations show."></textarea>
+                    <label style="margin-top:10px; display:block;">Recorded measurements</label>
+                    <textarea id="records" readonly style="background:#f8fafc; font-family:monospace; font-size:0.75rem; min-height:100px;"></textarea>
+                    <div class="btn-grid" style="margin-top:10px;">
+                        <button class="btn-fire" id="btn-record">📋 Record</button>
+                        <button class="btn-reset" id="btn-clear-notes">Clear</button>
+                    </div>
+                    <button class="btn-fire" style="margin-top:8px; width:100%;" id="btn-export">⬇ Download Report</button>
+                </div>
+
+            </div>
+
+            <div class="card">
+                <b>Real-world fact:</b> <span id="fact-box" style="font-size:0.85rem;">—</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+"use strict";
+(function () {
+    // === State ===
+    var S = {
+        tubeType: 'closed',
+        temp: 20,
+        L: 0.500,
+        f: 340,
+        showLabels: true,
+        sweeping: false,
+        soundOn: false,
+        time: 0,
+        records: []
+    };
+
+    var $ = function (id) { return document.getElementById(id); };
+
+    // === Canvas ===
+    var canvas = $('canvas');
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var view = { x: 0, y: 0, scale: 1 };
+
+    function resizeCanvas() {
+        var w = canvas.clientWidth, h = canvas.clientHeight;
+        canvas.width = Math.max(1, Math.round(w * dpr));
+        canvas.height = Math.max(1, Math.round(h * dpr));
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function cw() { return canvas.width / dpr; }
+    function ch() { return canvas.height / dpr; }
+
+    // === Physics ===
+    function getSpeedOfSound() {
+        // v = 331 + 0.6*T  (m/s), valid ~0-40 °C
+        return 331 + 0.6 * S.temp;
+    }
+
+    function getFundamental() {
+        var v = getSpeedOfSound();
+        if (S.tubeType === 'closed') {
+            return v / (4 * S.L);      // f1 = v / (4L)
+        } else {
+            return v / (2 * S.L);      // f1 = v / (2L)
+        }
+    }
+
+    function getHarmonicNumber() {
+        var f1 = getFundamental();
+        if (f1 <= 0) return 0;
+        if (S.tubeType === 'closed') {
+            // harmonics are 1, 3, 5, 7, ...
+            return Math.round(S.f / f1);
+        } else {
+            return Math.round(S.f / f1);
+        }
+    }
+
+    // How close is current f to a resonance?
+    function getResonanceInfo() {
+        var f1 = getFundamental();
+        if (f1 <= 0) return { onResonance: false, n: 0, f_res: 0, percentOff: 100 };
+
+        var n, f_res;
+        if (S.tubeType === 'closed') {
+            // Find nearest odd harmonic
+            n = Math.max(1, Math.round(S.f / f1));
+            if (n % 2 === 0) {
+                // pick closer odd
+                var lo = n - 1, hi = n + 1;
+                n = Math.abs(S.f - lo * f1) < Math.abs(S.f - hi * f1) ? lo : hi;
+            }
+            f_res = n * f1;
+        } else {
+            n = Math.max(1, Math.round(S.f / f1));
+            f_res = n * f1;
+        }
+
+        var off = Math.abs(S.f - f_res) / f_res * 100;
+        return {
+            onResonance: off < 2,   // within 2% = "on resonance"
+            n: n,
+            f_res: f_res,
+            percentOff: off
+        };
+    }
+
+    function getResonanceLengths() {
+        // Given f, what lengths resonate?
+        var v = getSpeedOfSound();
+        var out = [];
+        if (S.tubeType === 'closed') {
+            for (var n = 1; n < 20; n += 2) {
+                var L = n * v / (4 * S.f);
+                if (L <= 2) out.push({ n: n, L: L });
+            }
+        } else {
+            for (var n2 = 1; n2 < 20; n2++) {
+                var L2 = n2 * v / (2 * S.f);
+                if (L2 <= 2) out.push({ n: n2, L: L2 });
+            }
+        }
+        return out;
+    }
+
+    // === Web Audio ===
+    var audioCtx = null;
+    var toneOsc = null;
+    var toneGain = null;
+    var vibLfo = null;
+
+    function initAudio() {
+        if (audioCtx) return;
+        try {
+            var AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) {
+                $('sound-hint').textContent = '⚠ No Web Audio support.';
+                return;
+            }
+            audioCtx = new AC();
+        } catch (e) {
+            $('sound-hint').textContent = '⚠ Audio init failed.';
+        }
+    }
+
+    function startTone() {
+        if (!audioCtx || !S.soundOn) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        if (toneOsc) return;
+        try {
+            toneOsc = audioCtx.createOscillator();
+            toneGain = audioCtx.createGain();
+            toneOsc.type = 'sine';
+            toneOsc.frequency.value = S.f;
+            // Volume scaled by resonance — near resonance, louder
+            var res = getResonanceInfo();
+            var vol = res.onResonance ? 0.22 : 0.06;
+            toneGain.gain.setValueAtTime(vol, audioCtx.currentTime);
+            toneOsc.connect(toneGain);
+            toneGain.connect(audioCtx.destination);
+            toneOsc.start();
+        } catch (e) {}
+    }
+
+    function stopTone() {
+        if (toneOsc) {
+            try { toneOsc.stop(); toneOsc.disconnect(); } catch (e) {}
+            toneOsc = null;
+            toneGain = null;
+        }
+    }
+
+    function updateToneFrequency() {
+        if (!toneOsc || !audioCtx) return;
+        var res = getResonanceInfo();
+        var vol = res.onResonance ? 0.22 : 0.06;
+        toneOsc.frequency.setTargetAtTime(S.f, audioCtx.currentTime, 0.03);
+        toneGain.gain.setTargetAtTime(vol, audioCtx.currentTime, 0.03);
+    }
+
+    function playResonanceBeep() {
+        if (!audioCtx || !S.soundOn) return;
+        try {
+            var o = audioCtx.createOscillator();
+            var g = audioCtx.createGain();
+            o.type = 'sine';
+            o.frequency.value = 880;
+            g.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+            o.connect(g);
+            g.connect(audioCtx.destination);
+            o.start();
+            o.stop(audioCtx.currentTime + 0.15);
+        } catch (e) {}
+    }
+
+    function toggleSound() {
+        initAudio();
+        if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        S.soundOn = !S.soundOn;
+        if (S.soundOn) {
+            $('btn-sound').textContent = '🔊 Sound ON';
+            $('btn-sound').classList.add('playing');
+            $('sound-hint').textContent = 'Driving tone playing. Louder when on resonance.';
+            startTone();
+        } else {
+            stopTone();
+            $('btn-sound').textContent = '🔈 Enable sound';
+            $('btn-sound').classList.remove('playing');
+            $('sound-hint').textContent = 'Sound disabled.';
+        }
+    }
+
+    // === Drawing ===
+    function drawScene() {
+        var w = cw(), h = ch();
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.save();
+        ctx.translate(view.x, view.y);
+        ctx.scale(view.scale, view.scale);
+        var W = w / view.scale, H = h / view.scale;
+
+        // grid
+        ctx.strokeStyle = '#f1f5f9';
+        ctx.lineWidth = 1;
+        for (var gx = 0; gx < W; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
+        for (var gy = 0; gy < H; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+
+        var v = getSpeedOfSound();
+        var lambda = v / S.f;
+        var res = getResonanceInfo();
+
+        // Layout: horizontal tube with wave inside
+        var tubeX = W * 0.10;
+        var tubeW = W * 0.80;
+        var tubeH = 90;
+        var tubeY = H * 0.35;
+        var tubeCenterY = tubeY + tubeH / 2;
+
+        // Tube body
+        ctx.fillStyle = 'rgba(226, 232, 240, 0.5)';
+        ctx.fillRect(tubeX, tubeY, tubeW, tubeH);
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(tubeX, tubeY);
+        ctx.lineTo(tubeX + tubeW, tubeY);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(tubeX, tubeY + tubeH);
+        ctx.lineTo(tubeX + tubeW, tubeY + tubeH);
+        ctx.stroke();
+
+        // Close the ends depending on type
+        if (S.tubeType === 'closed') {
+            // Left end closed
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(tubeX - 4, tubeY, 8, tubeH);
+            // Right end open (leave it open)
+        } else {
+            // Both ends open — draw vertical markers
+            ctx.strokeStyle = '#0f172a';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(tubeX, tubeY - 8);
+            ctx.lineTo(tubeX, tubeY + tubeH + 8);
+            ctx.moveTo(tubeX + tubeW, tubeY - 8);
+            ctx.lineTo(tubeX + tubeW, tubeY + tubeH + 8);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        // Labels: open / closed
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 12px Inter';
+        ctx.textAlign = 'center';
+        if (S.tubeType === 'closed') {
+            ctx.fillText('CLOSED (node)', tubeX + 40, tubeY - 14);
+            ctx.fillStyle = '#10b981';
+            ctx.fillText('OPEN (antinode)', tubeX + tubeW - 55, tubeY - 14);
+        } else {
+            ctx.fillStyle = '#10b981';
+            ctx.fillText('OPEN (antinode)', tubeX + 55, tubeY - 14);
+            ctx.fillText('OPEN (antinode)', tubeX + tubeW - 55, tubeY - 14);
+        }
+
+        // Wave inside the tube (standing wave)
+        // Node at closed end (x = tubeX), antinode at open end (x = tubeX + tubeW)
+        // For a closed tube: displacement y = A*sin(k*x)  where k chosen so k*L = n*π/2 for odd n
+        // For visual: use L = tubeW in pixels, and match n harmonics based on resonance
+        // If NOT on resonance, show a slightly detuned wave (traveling component makes it messy)
+        var harmonics = res.n;
+        if (S.tubeType === 'closed' && harmonics % 2 === 0) harmonics -= 1;
+        if (harmonics < 1) harmonics = 1;
+        // For closed: k*L = n * π / 2 where n is odd → k = n*π / (2L)
+        // For open: k*L = n * π → k = n*π / L
+        var kFactor;
+        if (S.tubeType === 'closed') {
+            kFactor = harmonics * Math.PI / (2 * tubeW);
+        } else {
+            kFactor = harmonics * Math.PI / tubeW;
+        }
+
+        // Amplitude scales with resonance — near resonance bigger
+        var ampScale = res.onResonance ? 1.0 : 0.35;
+        var maxAmp = tubeH * 0.38 * ampScale;
+
+        var t = S.time * 2 * Math.PI;
+        // Time-varying standing wave: y(x,t) = A * sin(k*x) * cos(ωt)
+        ctx.strokeStyle = '#6366f1';
+        ctx.lineWidth = 3;
+        ctx.shadowColor = '#6366f1';
+        ctx.shadowBlur = res.onResonance ? 10 : 4;
+        ctx.beginPath();
+        for (var px = 0; px <= tubeW; px += 2) {
+            var y = tubeCenterY - maxAmp * Math.sin(kFactor * px) * Math.cos(t);
+            if (px === 0) ctx.moveTo(tubeX + px, y);
+            else ctx.lineTo(tubeX + px, y);
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Envelope (max extent)
+        ctx.strokeStyle = 'rgba(99, 102, 241, 0.25)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        for (var px2 = 0; px2 <= tubeW; px2 += 2) {
+            var yA = tubeCenterY - maxAmp * Math.sin(kFactor * px2);
+            if (px2 === 0) ctx.moveTo(tubeX + px2, yA);
+            else ctx.lineTo(tubeX + px2, yA);
+        }
+        ctx.stroke();
+        ctx.beginPath();
+        for (var px3 = 0; px3 <= tubeW; px3 += 2) {
+            var yB = tubeCenterY + maxAmp * Math.sin(kFactor * px3);
+            if (px3 === 0) ctx.moveTo(tubeX + px3, yB);
+            else ctx.lineTo(tubeX + px3, yB);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Nodes & antinodes markers
+        if (S.showLabels) {
+            // Nodes at sin(k*x) = 0 → x = m*π/k
+            var nodes = [];
+            var antinodes = [];
+            var stepX = Math.PI / kFactor;
+            for (var x = 0; x <= tubeW + 0.5; x += stepX) {
+                nodes.push(x);
+            }
+            for (var x2 = stepX / 2; x2 <= tubeW; x2 += stepX) {
+                antinodes.push(x2);
+            }
+            // Draw nodes (green)
+            nodes.forEach(function (nx) {
+                if (nx > tubeW) return;
+                ctx.fillStyle = '#10b981';
+                ctx.beginPath();
+                ctx.arc(tubeX + nx, tubeCenterY, 5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#065f46';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            });
+            // Draw antinodes (red)
+            antinodes.forEach(function (ax) {
+                if (ax > tubeW) return;
+                ctx.fillStyle = '#f43f5e';
+                ctx.beginPath();
+                ctx.arc(tubeX + ax, tubeCenterY, 5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#9f1239';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            });
+            // Labels
+            ctx.fillStyle = '#64748b';
+            ctx.font = '10px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText('N', tubeX + (nodes[0] || 0), tubeCenterY - tubeH / 2 - 8);
+            if (antinodes[0] !== undefined) {
+                ctx.fillStyle = '#dc2626';
+                ctx.fillText('A', tubeX + antinodes[0], tubeCenterY - tubeH / 2 - 8);
+            }
+        }
+
+        // Dimension line L
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 1;
+        var dimY = tubeY + tubeH + 30;
+        ctx.beginPath();
+        ctx.moveTo(tubeX, dimY);
+        ctx.lineTo(tubeX + tubeW, dimY);
+        ctx.moveTo(tubeX, dimY - 5);
+        ctx.lineTo(tubeX, dimY + 5);
+        ctx.moveTo(tubeX + tubeW, dimY - 5);
+        ctx.lineTo(tubeX + tubeW, dimY + 5);
+        ctx.stroke();
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 12px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('L = ' + S.L.toFixed(3) + ' m', tubeX + tubeW / 2, dimY + 18);
+
+        // Info panel
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 13px Inter';
+        ctx.fillText((S.tubeType === 'closed' ? 'Closed tube (odd harmonics)' : 'Open tube (all harmonics)'), 20, 28);
+        ctx.font = '11px Inter';
+        ctx.fillStyle = '#64748b';
+        ctx.fillText('v = ' + v.toFixed(1) + ' m/s (at ' + S.temp + ' °C)', 20, 46);
+        ctx.fillText('λ = ' + lambda.toFixed(3) + ' m', 20, 62);
+        ctx.fillText('f₁ = ' + getFundamental().toFixed(1) + ' Hz', 20, 78);
+
+        // Resonance status box
+        var statusColor = res.onResonance ? '#10b981' : '#94a3b8';
+        var statusText = res.onResonance ? '✓ RESONANCE (harmonic ' + res.n + ')' : 'Off resonance';
+        var sW = 220, sH = 32;
+        var sx = W - sW - 20, sy = 20;
+        ctx.fillStyle = res.onResonance ? '#ecfdf5' : '#f8fafc';
+        ctx.fillRect(sx, sy, sW, sH);
+        ctx.strokeStyle = statusColor;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(sx, sy, sW, sH);
+        ctx.fillStyle = res.onResonance ? '#065f46' : '#475569';
+        ctx.font = 'bold 12px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText(statusText, sx + sW / 2, sy + 21);
+
+        // Resonance pitch pipe (visual speaker on left)
+        var spkX = tubeX - 60;
+        var spkY = tubeCenterY;
+        var spkR = 22;
+        // Speaker box
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(spkX - 30, spkY - 30, 30, 60);
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(spkX - 30, spkY - 30, 30, 60);
+        // Speaker cone
+        ctx.fillStyle = '#1e293b';
+        ctx.beginPath();
+        ctx.arc(spkX - 5, spkY, 15, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#64748b';
+        ctx.beginPath();
+        ctx.arc(spkX - 5, spkY, 8, 0, Math.PI * 2);
+        ctx.fill();
+        // Sound rings
+        if (S.soundOn && !S.paused) {
+            var tt = (S.time * 3) % 1;
+            for (var r = 0; r < 2; r++) {
+                ctx.strokeStyle = 'rgba(244, 63, 94, ' + (1 - tt) * 0.6 + ')';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.arc(spkX + 10, spkY, 10 + (tt + r * 0.3) * 30, -0.5, 0.5);
+                ctx.stroke();
+            }
+        }
+        ctx.fillStyle = '#64748b';
+        ctx.font = '10px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Speaker', spkX - 15, spkY + 45);
+        ctx.fillText(S.f + ' Hz', spkX - 15, spkY + 58);
+
+        ctx.restore();
+
+        // Caption
+        ctx.fillStyle = '#475569';
+        ctx.font = '11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Standing wave inside the resonant tube · adjust L or f to find resonance · louder on resonance', w / 2, h - 8);
+    }
+
+    // === Readouts ===
+    function updateReadouts() {
+        var v = getSpeedOfSound();
+        var lambda = v / S.f;
+        var res = getResonanceInfo();
+        var f1 = getFundamental();
+        var lens = getResonanceLengths();
+
+        $('ro-res').innerText = res.onResonance ? 'ON (' + res.n + ')' : 'off';
+        $('ro-n').innerText = res.onResonance ? res.n : '—';
+        $('ro-lambda').innerText = lambda.toFixed(3) + ' m';
+        $('ro-v').innerText = v.toFixed(1) + ' m/s';
+        $('ro-f1').innerText = f1.toFixed(1) + ' Hz';
+        // next resonance
+        var nextF, nextN;
+        if (S.tubeType === 'closed') {
+            var currentN = res.n;
+            nextN = currentN + 2; // next odd
+            nextF = nextN * f1;
+        } else {
+            nextN = res.n + 1;
+            nextF = nextN * f1;
+        }
+        $('ro-fnext').innerText = nextF.toFixed(1) + ' Hz';
+        // resonance length for current n
+        if (S.tubeType === 'closed') {
+            var nOdd = Math.max(1, Math.round(S.f / f1));
+            if (nOdd % 2 === 0) nOdd = nOdd - 1;
+            $('ro-Ln').innerText = (nOdd * v / (4 * S.f)).toFixed(3) + ' m (n=' + nOdd + ')';
+        } else {
+            var nInt = Math.max(1, Math.round(S.f / f1));
+            $('ro-Ln').innerText = (nInt * v / (2 * S.f)).toFixed(3) + ' m (n=' + nInt + ')';
+        }
+        // end correction e ≈ 0.6*r, assume r = 2 cm = 0.02 m
+        $('ro-e').innerText = '≈ 12 mm (for r=2cm)';
+
+        // Highlight resonance box
+        var box = $('ro-res-box');
+        if (res.onResonance) box.classList.add('resonant');
+        else box.classList.remove('resonant');
+
+        $('hud-L').innerText = S.L.toFixed(3);
+        $('hud-f').innerText = S.f;
+        $('hud-n').innerText = res.onResonance ? res.n : '—';
+        $('hud-res').innerText = res.onResonance ? '✓' : 'off';
+        $('hud-res').style.color = res.onResonance ? '#10b981' : '#94a3b8';
+
+        // Fact
+        var fact;
+        if (res.onResonance) {
+            fact = 'RESONANCE! At harmonic ' + res.n + ', a standing wave is established in the tube. The sound is much louder because energy builds up between the tube walls.';
+        } else if (S.tubeType === 'closed') {
+            fact = 'A tube closed at one end resonates only at ODD harmonics (f₁, 3f₁, 5f₁...). This is because a closed end must be a displacement node and an open end an antinode.';
+        } else {
+            fact = 'An open tube (both ends open) resonates at ALL harmonics (f₁, 2f₁, 3f₁...). This is why open pipes like flutes have richer tones.';
+        }
+        $('fact-box').innerText = fact;
+    }
+
+    // === Quiz ===
+    var QUIZ_EXPLAIN = {
+        q1: { correct: 'B', why: 'A standing wave is created when two identical waves travel in opposite directions and superimpose. In a tube, the incident wave from the speaker reflects from the closed end and interferes with itself.', tip: 'That is why a resonant tube must have a reflecting surface — usually a closed end or water surface.' },
+        q2: { correct: 'A', why: 'A <b>node</b> is a point of zero displacement — the wave never moves there. This is why a closed end (which cannot move) is always a node.', tip: 'Anti-node = maximum displacement (opposite of node).' },
+        q3: { correct: 'B', why: 'A closed end has no particle motion, so it must be a <b>displacement node</b>. The open end is free to move, so it becomes a displacement antinode.', tip: 'Actually the closed end is a pressure antinode — pressure and displacement are 90° out of phase.' },
+        q4: { correct: 'A', why: 'Because the closed end is a node and open end is an antinode, only <b>odd multiples</b> of the fundamental fit: L = λ/4, 3λ/4, 5λ/4... → f₁, 3f₁, 5f₁...', tip: 'This is why clarinets (closed at mouthpiece) sound different from flutes (open).' },
+        q5: { correct: 'B', why: 'Both ends are antinodes, so the tube fits <b>all integer multiples</b> of half a wavelength: L = λ/2, λ, 3λ/2... → f₁, 2f₁, 3f₁...', tip: 'Open tubes have richer sound because they support all harmonics.' },
+        q6: { correct: 'A', why: 'Speed of sound in air increases ~0.6 m/s per °C: v = 331 + 0.6T. At 20 °C, v = 343 m/s; at 0 °C, v = 331 m/s.', tip: 'Hot air is less dense, so sound travels faster through it.' },
+        q7: { correct: 'B', why: 'Closed tube fundamental: f₁ = v/(4L) = 343 / (4·0.5) = 343/2 = <b>171.5 Hz</b>.', tip: 'Sanity: doubling the tube length halves the fundamental frequency.' },
+        q8: { correct: 'B', why: 'Successive resonances occur at L = λ/4, 3λ/4, 5λ/4 — so the <b>spacing is λ/2</b>. This is the standard way to measure λ in a resonance-tube experiment.', tip: 'L₂ − L₁ = λ/2. This is a very common physics lab technique.' },
+        q9: { correct: 'A', why: 'When f is off-resonance, the incident and reflected waves do not align to build up a standing wave. Destructive interference keeps the sound quiet. Only at specific frequencies does constructive interference amplify the wave.', tip: 'This is why resonance is so sharp — small frequency error gives large amplitude drop.' }
+    };
+
+    function evaluateQuiz() {
+        var qs = document.querySelectorAll('.quiz-q');
+        var score = 0, total = qs.length;
+        qs.forEach(function (q) {
+            var name = q.dataset.q;
+            var correct = q.dataset.answer;
+            var chosen = q.querySelector('input[name="' + name + '"]:checked');
+            var expl = q.querySelector('.explanation');
+            var data = QUIZ_EXPLAIN[name];
+            expl.hidden = false;
+            expl.className = 'explanation';
+            if (chosen && chosen.value === correct) {
+                score++;
+                expl.classList.add('correct-box');
+                expl.innerHTML = '<strong>✓ Correct!</strong>' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            } else {
+                expl.classList.add('wrong-box');
+                var chosenVal = chosen ? chosen.value : '—';
+                expl.innerHTML = '<strong>✗ Correct answer is ' + correct + '</strong>You chose ' + chosenVal + '. ' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            }
+        });
+        var pct = Math.round(score / total * 100);
+        var msg = '💪 Keep exploring!';
+        if (pct === 100) msg = '🌟 Perfect score!';
+        else if (pct >= 78) msg = '🎉 Excellent work!';
+        else if (pct >= 55) msg = '👍 Good effort! Review the explanations.';
+
+        if (S.soundOn) {
+            playResonanceBeep();
+            if (pct >= 78) setTimeout(playResonanceBeep, 200);
+        }
+
+        var result = $('quiz-result');
+        result.style.display = 'block';
+        result.innerHTML = '<div style="font-size:1.4rem; color:#4338ca;">' + score + '/' + total + ' · ' + pct + '%</div><div style="font-size:0.85rem; color:#334155; margin-top:4px; font-weight:500;">' + msg + '</div>';
+    }
+
+    function resetQuiz() {
+        document.querySelectorAll('.quiz-q').forEach(function (q) {
+            q.querySelectorAll('input[type=radio]').forEach(function (r) { r.checked = false; });
+            var expl = q.querySelector('.explanation');
+            expl.hidden = true;
+            expl.innerHTML = '';
+            expl.className = 'explanation';
+        });
+        $('quiz-result').style.display = 'none';
+        $('quiz-result').innerHTML = '';
+    }
+
+    // === Challenges ===
+    function applyChallenge(id) {
+        var note = $('challenge-note');
+        var cres = $('challenge-result');
+        note.innerText = '';
+        cres.innerText = '';
+
+        if (id === 'first') {
+            S.tubeType = 'closed'; $('tube-type').value = 'closed';
+            S.L = 0.5; $('L').value = 0.5; $('v-L').innerText = '0.500';
+            S.f = 171.5; $('f').value = 171.5; $('v-f').innerText = '171.5';
+            note.innerText = 'Closed tube, L = 0.5 m: first harmonic at f₁ = v/(4L) = 343/2 ≈ 171.5 Hz.';
+            cres.innerText = 'Fundamental f₁ = ' + getFundamental().toFixed(1) + ' Hz';
+        } else if (id === 'third') {
+            S.tubeType = 'closed'; $('tube-type').value = 'closed';
+            S.L = 0.5; $('L').value = 0.5; $('v-L').innerText = '0.500';
+            S.f = 3 * 171.5; $('f').value = S.f; $('v-f').innerText = S.f.toFixed(1);
+            note.innerText = 'Third harmonic: 3f₁ = 3 × 171.5 ≈ 514.5 Hz — closed tube odd harmonic.';
+            cres.innerText = 'f₃ = ' + S.f.toFixed(1) + ' Hz (3rd harmonic, odd only)';
+        } else if (id === 'open2') {
+            S.tubeType = 'open'; $('tube-type').value = 'open';
+            S.L = 0.5; $('L').value = 0.5; $('v-L').innerText = '0.500';
+            var f1open = 343 / (2 * 0.5);
+            S.f = 2 * f1open; $('f').value = S.f; $('v-f').innerText = S.f;
+            note.innerText = 'Open tube, 2nd harmonic: 2f₁ = 2 × 343 = 686 Hz.';
+            cres.innerText = '2nd harmonic f₂ = ' + S.f + ' Hz (all harmonics available in open tube)';
+        } else if (id === 'hot') {
+            S.tubeType = 'closed'; $('tube-type').value = 'closed';
+            S.temp = 30; $('temp').value = 30; $('v-temp').innerText = '30';
+            S.L = 0.5; $('L').value = 0.5; $('v-L').innerText = '0.500';
+            var v30 = 331 + 0.6 * 30;
+            var f1hot = v30 / (4 * 0.5);
+            S.f = f1hot; $('f').value = f1hot; $('v-f').innerText = f1hot.toFixed(1);
+            note.innerText = 'At 30 °C: v = 349 m/s, f₁ = 349/(4·0.5) = 174.5 Hz (vs 171.5 Hz at 20 °C).';
+            cres.innerText = 'v(30°C) = ' + v30.toFixed(1) + ' m/s · f₁ = ' + f1hot.toFixed(1) + ' Hz';
+        } else if (id === 'long') {
+            S.tubeType = 'closed'; $('tube-type').value = 'closed';
+            S.temp = 20; $('temp').value = 20; $('v-temp').innerText = '20';
+            S.L = 1.5; $('L').value = 1.5; $('v-L').innerText = '1.500';
+            var f1L = 343 / (4 * 1.5);
+            S.f = f1L; $('f').value = f1L; $('v-f').innerText = f1L.toFixed(2);
+            note.innerText = 'Long tube (1.5 m): fundamental drops to f₁ = 343/(4·1.5) ≈ 57.2 Hz.';
+            cres.innerText = 'f₁ = ' + f1L.toFixed(2) + ' Hz — longer tube = lower pitch';
+        }
+        updateReadouts();
+        updateToneFrequency();
+    }
+
+    // === Notebook ===
+    function recordMeasurement() {
+        var v = getSpeedOfSound();
+        var res = getResonanceInfo();
+        var line = new Date().toLocaleTimeString() + ' | ' + S.tubeType + ' | L=' + S.L.toFixed(3) + ' m | f=' + S.f + ' Hz | T=' + S.temp + '°C | v=' + v.toFixed(1) + ' m/s | res=' + (res.onResonance ? 'ON n=' + res.n : 'off') + ' | λ=' + (v / S.f).toFixed(3) + ' m';
+        S.records.push(line);
+        $('records').value = S.records.join('\n');
+        $('records').scrollTop = $('records').scrollHeight;
+    }
+
+    function downloadReport() {
+        var v = getSpeedOfSound();
+        var res = getResonanceInfo();
+        var text = 'LEARNIFY - RESONANCE TUBE - LAB REPORT\n' +
+            'Date: ' + new Date().toLocaleString() + '\n\n' +
+            'CURRENT STATE\n' +
+            'Tube type: ' + (S.tubeType === 'closed' ? 'closed at one end' : 'open at both ends') + '\n' +
+            'Air temperature = ' + S.temp + ' °C\n' +
+            'Speed of sound v = ' + v.toFixed(2) + ' m/s\n' +
+            'Tube length L = ' + S.L.toFixed(4) + ' m\n' +
+            'Driving frequency f = ' + S.f + ' Hz\n' +
+            'Wavelength λ = ' + (v / S.f).toFixed(4) + ' m\n' +
+            'Fundamental f₁ = ' + getFundamental().toFixed(2) + ' Hz\n' +
+            'Resonance status: ' + (res.onResonance ? 'ON (harmonic n = ' + res.n + ')' : 'OFF') + '\n\n' +
+            'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+            'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+            'MEASUREMENTS\n' + $('records').value + '\n\n' +
+            'LIMITATIONS\nIdeal tube model — ignores end correction, viscosity, and tube-wall damping. Real tubes have end correction ≈ 0.6r. Higher harmonics have broader resonance peaks. Educational use only.\n';
+        var blob = new Blob([text], { type: 'text/plain' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'resonance-tube-report.txt';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    // === Sweep ===
+    var sweepInterval = null;
+    function toggleSweep() {
+        if (S.sweeping) {
+            stopSweep();
+        } else {
+            startSweep();
+        }
+    }
+    function startSweep() {
+        S.sweeping = true;
+        $('btn-sweep').textContent = '⏸ Stop sweep';
+        var f1 = getFundamental();
+        var sweepStart = f1 * 0.5;
+        var sweepEnd = f1 * 10;
+        var step = (sweepEnd - sweepStart) / 200;
+        S.f = sweepStart;
+        $('f').value = S.f;
+        $('v-f').innerText = S.f.toFixed(0);
+        var lastResN = 0;
+        sweepInterval = setInterval(function () {
+            S.f += step;
+            if (S.f > sweepEnd) {
+                S.f = sweepStart;
+            }
+            $('f').value = S.f;
+            $('v-f').innerText = S.f.toFixed(0);
+            updateReadouts();
+            updateToneFrequency();
+            var res = getResonanceInfo();
+            if (res.onResonance && res.n !== lastResN) {
+                playResonanceBeep();
+                lastResN = res.n;
+            } else if (!res.onResonance) {
+                lastResN = 0;
+            }
+        }, 60);
+    }
+    function stopSweep() {
+        S.sweeping = false;
+        $('btn-sweep').textContent = '🎚️ Auto-sweep frequency';
+        if (sweepInterval) {
+            clearInterval(sweepInterval);
+            sweepInterval = null;
+        }
+    }
+
+    // === Animation ===
+    function animate() {
+        S.time += 0.02;
+        drawScene();
+        requestAnimationFrame(animate);
+    }
+
+    // === Event wiring ===
+    $('btn-sound').addEventListener('click', toggleSound);
+    $('tube-type').addEventListener('change', function (e) {
+        S.tubeType = e.target.value;
+        updateReadouts();
+        updateToneFrequency();
+    });
+    $('temp').addEventListener('input', function (e) {
+        S.temp = parseFloat(e.target.value);
+        $('v-temp').innerText = S.temp;
+        updateReadouts();
+        updateToneFrequency();
+    });
+    $('L').addEventListener('input', function (e) {
+        S.L = parseFloat(e.target.value);
+        $('v-L').innerText = S.L.toFixed(3);
+        updateReadouts();
+    });
+    $('f').addEventListener('input', function (e) {
+        S.f = parseFloat(e.target.value);
+        $('v-f').innerText = S.f;
+        updateReadouts();
+        updateToneFrequency();
+        // Beep when crossing resonance
+        var res = getResonanceInfo();
+        if (res.onResonance && S.soundOn) {
+            // rate-limited beep
+            var now = Date.now();
+            if (!S._lastBeep || now - S._lastBeep > 300) {
+                playResonanceBeep();
+                S._lastBeep = now;
+            }
+        }
+    });
+    $('show-labels').addEventListener('change', function (e) {
+        S.showLabels = e.target.checked;
+    });
+    $('btn-sweep').addEventListener('click', toggleSweep);
+    $('btn-snap').addEventListener('click', function () {
+        var res = getResonanceInfo();
+        S.f = res.f_res;
+        $('f').value = S.f;
+        $('v-f').innerText = S.f.toFixed(0);
+        updateReadouts();
+        updateToneFrequency();
+        playResonanceBeep();
+    });
+    $('btn-reset').addEventListener('click', function () {
+        stopSweep();
+        S.tubeType = 'closed';
+        S.temp = 20;
+        S.L = 0.5;
+        S.f = 340;
+        $('tube-type').value = 'closed';
+        $('temp').value = '20'; $('v-temp').innerText = '20';
+        $('L').value = '0.5'; $('v-L').innerText = '0.500';
+        $('f').value = '340'; $('v-f').innerText = '340';
+        updateReadouts();
+        updateToneFrequency();
+    });
+
+    document.querySelectorAll('.tab-btn[data-tab]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+            document.querySelectorAll('.tab-btn[data-tab]').forEach(function (b) { b.classList.remove('active'); });
+            document.getElementById(btn.dataset.tab).classList.add('active');
+            btn.classList.add('active');
+        });
+    });
+
+    document.querySelectorAll('[data-challenge]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            applyChallenge(btn.dataset.challenge);
+            if (S.soundOn) playResonanceBeep();
+        });
+    });
+
+    $('btn-quiz-check').addEventListener('click', evaluateQuiz);
+    $('btn-quiz-reset').addEventListener('click', resetQuiz);
+
+    $('btn-record').addEventListener('click', recordMeasurement);
+    $('btn-clear-notes').addEventListener('click', function () {
+        if (!confirm('Clear all notebook fields?')) return;
+        $('hypothesis').value = '';
+        $('conclusion').value = '';
+        $('records').value = '';
+        S.records = [];
+    });
+    $('btn-export').addEventListener('click', downloadReport);
+
+    // Zoom & pan
+    var fullScroll = false;
+    var pointers = new Map();
+    var pinch = null;
+
+    $('full-scroll-toggle').addEventListener('change', function (e) {
+        fullScroll = e.target.checked;
+        canvas.style.touchAction = fullScroll ? 'auto' : 'none';
+        pointers.clear();
+        pinch = null;
+    });
+
+    function getPos(e) {
+        var r = canvas.getBoundingClientRect();
+        return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+
+    canvas.addEventListener('wheel', function (e) {
+        if (fullScroll) return;
+        e.preventDefault();
+        var cx = e.offsetX, cy = e.offsetY;
+        var wx = (cx - view.x) / view.scale;
+        var wy = (cy - view.y) / view.scale;
+        var factor = Math.exp(-e.deltaY * 0.0015);
+        view.scale = Math.max(0.3, Math.min(5, view.scale * factor));
+        view.x = cx - wx * view.scale;
+        view.y = cy - wy * view.scale;
+    }, { passive: false });
+
+    canvas.addEventListener('pointerdown', function (e) {
+        if (fullScroll) return;
+        canvas.setPointerCapture(e.pointerId);
+        pointers.set(e.pointerId, getPos(e));
+        if (pointers.size === 2) {
+            var pts = Array.from(pointers.values());
+            pinch = { dist: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y), startScale: view.scale };
+        }
+    });
+    canvas.addEventListener('pointermove', function (e) {
+        if (fullScroll || !pointers.has(e.pointerId)) return;
+        var prev = pointers.get(e.pointerId);
+        var pos = getPos(e);
+        pointers.set(e.pointerId, pos);
+        if (pointers.size === 1 && !pinch) {
+            view.x += pos.x - prev.x;
+            view.y += pos.y - prev.y;
+        } else if (pointers.size === 2 && pinch) {
+            var pts = Array.from(pointers.values());
+            var d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+            view.scale = Math.max(0.3, Math.min(5, pinch.startScale * d / pinch.dist));
+        }
+    });
+    canvas.addEventListener('pointerup', function (e) {
+        if (fullScroll) return;
+        pointers.delete(e.pointerId);
+        try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
+        if (pointers.size < 2) pinch = null;
+    });
+    canvas.addEventListener('pointercancel', function (e) {
+        pointers.delete(e.pointerId);
+        pinch = null;
+    });
+
+    (function () {
+        var hud = document.querySelector('.hud');
+        if (!hud) return;
+        var z = document.createElement('div');
+        z.className = 'zoom-controls';
+        z.innerHTML = '<button id="zoom-out">-</button><button id="zoom-reset">Reset</button><button id="zoom-in">+</button>';
+        hud.appendChild(z);
+        $('zoom-in').addEventListener('click', function () { view.scale = Math.min(5, view.scale * 1.25); });
+        $('zoom-out').addEventListener('click', function () { view.scale = Math.max(0.3, view.scale / 1.25); });
+        $('zoom-reset').addEventListener('click', function () { view.x = 0; view.y = 0; view.scale = 1; });
+    })();
+
+    (function () {
+        var sim = $('sim-area'), splitter = $('splitter');
+        if (!sim || !splitter) return;
+        var dragging = false, startY = 0, startH = 0;
+        var minH = 160, maxH = window.innerHeight - 220;
+
+        splitter.addEventListener('pointerdown', function (e) {
+            e.preventDefault();
+            dragging = true;
+            startY = e.clientY;
+            startH = sim.getBoundingClientRect().height;
+            try { splitter.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+        window.addEventListener('pointermove', function (e) {
+            if (!dragging) return;
+            var dy = e.clientY - startY;
+            var nh = Math.max(minH, Math.min(maxH, Math.round(startH + dy)));
+            sim.style.flex = '0 0 ' + nh + 'px';
+            resizeCanvas();
+        });
+        window.addEventListener('pointerup', function (e) {
+            if (!dragging) return;
+            dragging = false;
+            try { splitter.releasePointerCapture(e.pointerId); } catch (err) {}
+        });
+        splitter.addEventListener('dblclick', function () {
+            sim.style.flex = '';
+            resizeCanvas();
+        });
+    })();
+
+    window.addEventListener('resize', function () { resizeCanvas(); });
+
+    // === Boot ===
+    resizeCanvas();
+    updateReadouts();
+    animate();
+})();
+</script>
+</body>
+</html>

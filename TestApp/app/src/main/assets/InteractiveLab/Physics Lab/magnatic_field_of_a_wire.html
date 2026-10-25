@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Magnetic Field of a Wire Laboratory</title>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0a0f1f;--sf:#141b2e;--ln:#26304a;--tx:#e5e9f5;--mu:#93a0bd;
+  --pr:#818cf8;--pr-deep:#6366f1;--ok:#34d399;--bad:#f87171;--wa:#fbbf24;
+  --red:#f43f5e;--blue:#4fa8ff;--green:#10d982;--violet:#a78bfa;
+  box-sizing:border-box;
+}
+*{box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;margin:0;overflow:hidden;}
+body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column;}
+
+header{background:var(--bg);color:#fff;padding:8px 10px;text-align:center;border-bottom:2px solid var(--pr);flex:none;}
+header h2{margin:0;font-size:clamp(.95rem, 2.5vw, 1.05rem);}
+header small{display:block;color:var(--mu);font-size:clamp(.68rem, 1.8vw, .75rem);margin-top:2px;}
+#xp{font-size:.72rem;color:#c7d2fe;margin-top:2px;}
+
+.lab{display:flex;flex:1;flex-direction:column;min-height:0;}
+
+#sim{flex:0 0 46%;min-height:200px;max-height:75vh;position:relative;background:#05080f;overflow:hidden;cursor:crosshair;}
+canvas{display:block;touch-action:none;}
+#cv{position:absolute;inset:0;width:100%;height:100%;}
+
+.hud{
+  position:absolute;top:8px;left:8px;
+  background:rgba(20,27,46,.92);padding:6px 9px;border-radius:8px;
+  font-size:clamp(.65rem, 1.8vw, .72rem);line-height:1.55;
+  border:1px solid var(--ln);pointer-events:none;z-index:2;
+  max-width:min(260px, 55vw);backdrop-filter:blur(6px);
+}
+.lg{
+  position:absolute;bottom:8px;left:8px;
+  font-size:clamp(.58rem, 1.6vw, .64rem);
+  background:rgba(20,27,46,.92);padding:4px 7px;border-radius:4px;
+  color:var(--mu);border:1px solid var(--ln);pointer-events:none;z-index:2;
+}
+.lg span{margin-right:8px;}
+
+.splitter{
+  height:14px;flex:none;
+  background:linear-gradient(90deg,rgba(0,0,0,.2),rgba(129,140,248,.2),rgba(0,0,0,.2));
+  cursor:ns-resize;border-block:1px solid var(--ln);position:relative;
+}
+.splitter::after{
+  content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:40px;height:3px;border-radius:2px;background:rgba(129,140,248,.5);
+}
+.splitter:hover, .splitter:active{
+  background:linear-gradient(90deg,rgba(129,140,248,.2),rgba(129,140,248,.4),rgba(129,140,248,.2));
+}
+
+.bp{flex:1;min-height:0;display:flex;background:var(--sf);overflow:hidden;}
+.ctl{
+  flex:0 0 330px;padding:12px;border-right:1px solid var(--ln);
+  overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
+}
+.an{
+  flex:1;min-width:0;padding:12px;background:var(--bg);
+  overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
+}
+
+h4{margin:0 0 8px;font-size:.75rem;color:var(--mu);text-transform:uppercase;letter-spacing:.05em;font-weight:700;}
+.row{margin-bottom:9px;}
+label{display:block;font-size:.77rem;font-weight:600;margin-bottom:3px;}
+input[type=range]{width:100%;accent-color:var(--pr);height:6px;}
+select,input[type=number],textarea{
+  width:100%;padding:8px;border-radius:6px;border:1px solid var(--ln);
+  background:var(--bg);color:var(--tx);font-family:inherit;font-size:.85rem;
+}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--pr);}
+textarea{min-height:60px;resize:vertical;}
+
+button{
+  padding:9px;border:1px solid var(--ln);border-radius:6px;font-weight:700;
+  cursor:pointer;font-size:.8rem;background:var(--sf);color:var(--tx);
+  font-family:inherit;transition:.2s;touch-action:manipulation;
+}
+button:hover{background:#1a2340;border-color:var(--pr);}
+button:active{transform:scale(.98);}
+button.go, button.on{background:var(--pr);color:#0b1020;border-color:var(--pr);}
+button.gr{background:linear-gradient(135deg,#34d399,#059669);color:#fff;border:0;text-align:left;}
+button.pause{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000;border:0;font-weight:800;}
+button.snd.on{background:linear-gradient(135deg,#f43f5e,#dc2626);color:#fff;}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.tabs button{flex:1 1 auto;}
+
+.card{
+  background:var(--sf);border:1px solid var(--ln);padding:10px;border-radius:8px;
+  margin-bottom:10px;font-size:.84rem;line-height:1.55;
+}
+.rd{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));
+  gap:8px;margin-bottom:10px;
+}
+.rd > div{
+  background:var(--sf);border:1px solid var(--ln);border-radius:6px;
+  padding:7px 9px;min-width:0;
+}
+.rd span{font-size:.66rem;color:var(--mu);display:block;font-weight:600;}
+.rd strong{font-size:.9rem;font-variant-numeric:tabular-nums;word-break:break-word;}
+.mu{color:var(--mu);}
+.ok{color:var(--ok);}
+.bad{color:var(--bad);}
+.pn{display:none;}
+.pn.on{display:block;}
+.opt{
+  display:block;width:100%;text-align:left;margin:4px 0;font-weight:500;
+  padding:8px 10px;
+}
+.opt.c{border-color:var(--ok);color:var(--ok);background:rgba(52,211,153,.08);}
+.opt.w{border-color:var(--bad);color:var(--bad);background:rgba(248,113,113,.08);}
+#pf{width:100%;height:130px;background:#05080f;border-radius:6px;display:block;}
+
+/* Responsive */
+@media(max-width:900px){
+  .ctl{flex:0 0 300px;}
+  .rd{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));}
+}
+
+@media(max-width:768px){
+  .bp{flex-direction:column;overflow-y:auto;}
+  .ctl{flex:none;border-right:0;border-bottom:1px solid var(--ln);overflow:visible;max-height:35vh;overflow-y:auto;}
+  .an{overflow:visible;flex:none;}
+  #sim{flex-basis:40%;min-height:180px;}
+  .hud{font-size:.65rem;padding:5px 8px;max-width:min(200px, 55vw);}
+}
+
+@media(max-width:480px){
+  header{padding:6px 8px;}
+  #sim{flex-basis:45%;min-height:160px;}
+  .ctl{padding:10px;max-height:38vh;}
+  .an{padding:10px;}
+  .hud{font-size:.6rem;padding:4px 7px;max-width:45vw;}
+  .lg{font-size:.56rem;padding:3px 6px;}
+  .lg span{margin-right:5px;}
+  .rd{grid-template-columns:repeat(2, 1fr);gap:5px;}
+  .rd > div{padding:6px 8px;}
+  .rd span{font-size:.58rem;}
+  .rd strong{font-size:.78rem;}
+  .g2{gap:6px;}
+  button{padding:8px;font-size:.76rem;}
+  .tabs{gap:4px;}
+  .tabs button{flex:1 1 calc(50% - 4px);font-size:.72rem;padding:6px 8px;}
+  #pf{height:110px;}
+}
+
+@media(max-width:360px){
+  .rd{grid-template-columns:1fr;}
+  .tabs button{flex:1 1 100%;}
+}
+
+@media(max-height:500px) and (orientation:landscape){
+  #sim{flex:0 0 50%;min-height:140px;}
+  .ctl{max-height:42vh;}
+  .hud{font-size:.6rem;}
+  header{padding:4px 8px;}
+  header small{display:none;}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *, *::before, *::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+<header>
+  <h2>🧲 Magnetic Field of a Wire Laboratory</h2>
+  <small>Biot–Savart · Ampère's law · Right-hand rule · Superposition · Earth's field</small>
+  <div id="xp"></div>
+</header>
+
+<div class="lab">
+  <div id="sim">
+    <div class="hud" id="hud"></div>
+    <div class="lg">
+      <span style="color:#fbbf24">● Field lines</span>
+      <span style="color:#4fa8ff">● Current out (•)</span>
+      <span style="color:#ff5c8a">● Current in (×)</span>
+      <span style="color:#10d982">● Force</span>
+    </div>
+    <canvas id="cv"></canvas>
+  </div>
+  <div class="splitter" id="spl" title="Drag to resize"></div>
+  <div class="bp">
+    <div class="ctl">
+      <h4>🧲 Setup</h4>
+
+      <div class="row">
+        <button class="gr" id="snd" style="width:100%;text-align:center">🔈 Enable sound</button>
+      </div>
+
+      <div class="row">
+        <label>Display mode</label>
+        <select id="disp">
+          <option value="lines">Field lines (streamlines)</option>
+          <option value="vectors">Vector field</option>
+          <option value="mag">Magnitude heatmap</option>
+          <option value="compass">Compass needles (with Earth)</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label>Wire configuration</label>
+        <select id="cfg">
+          <option value="single">Single straight wire</option>
+          <option value="two">Two wires (independent)</option>
+          <option value="par">Two parallel currents</option>
+          <option value="anti">Two antiparallel currents</option>
+        </select>
+      </div>
+
+      <div id="sl"></div>
+
+      <label style="display:flex;gap:6px;align-items:center">
+        <input type="checkbox" id="anim" checked> Animate field direction
+      </label>
+
+      <div class="g2" style="margin-top:8px">
+        <button class="gr" id="start" style="text-align:center">▶ Running</button>
+        <button class="pause" id="pause">⏸ Pause</button>
+      </div>
+      <div class="g2" style="margin-top:8px">
+        <button id="reset">↺ Reset</button>
+        <button class="go" id="rec">📋 Record</button>
+      </div>
+
+      <p class="mu" style="font-size:.72rem">
+        Cross-section view: wires run through the screen. Click or drag on the canvas to move the probe, or drag a wire sideways. Distances in cm.
+      </p>
+    </div>
+
+    <div class="an">
+      <h4>📊 Learn &amp; Practice</h4>
+      <div class="rd" id="rd"></div>
+
+      <div class="card">
+        <b>📈 Field profile</b>
+        <span class="mu">|B| along the horizontal line through the probe (log scale; dashed = Earth's field)</span>
+        <canvas id="pf"></canvas>
+      </div>
+
+      <div class="card">
+        <div class="tabs" id="tabs"></div>
+
+        <div class="pn on" id="p-rw">
+          <b>🌍 Real-world cases</b>
+          <div id="rwl" style="display:grid;gap:6px;margin:8px 0"></div>
+          <div id="rwo"></div>
+        </div>
+
+        <div class="pn" id="p-pr">
+          <b>🎯 Predict, then test</b><br>
+          <span class="mu">Use B = μ₀I/(2πr) and check your answer.</span><br><br>
+          <button class="go" id="np" style="width:100%">🎲 New problem</button>
+          <div id="pq" style="margin:8px 0"></div>
+          <div class="g2">
+            <div><label>B at r (µT)</label><input type="number" id="pa" step="0.01"></div>
+            <div><label>B at 2r (µT)</label><input type="number" id="pb" step="0.01"></div>
+          </div>
+          <button class="go" id="pc" style="width:100%;margin-top:8px">Check</button>
+          <div id="pr2" style="margin-top:8px"></div>
+        </div>
+
+        <div class="pn" id="p-qz">
+          <b>🧠 Quiz</b> <span id="qs" class="mu"></span>
+          <div id="qb"></div>
+        </div>
+
+        <div class="pn" id="p-ch">
+          <b>🏆 Challenges</b>
+          <div id="chl" style="display:grid;gap:6px;margin:8px 0"></div>
+          <div id="chn"></div>
+        </div>
+
+        <div class="pn" id="p-nb">
+          <b>📓 Notebook</b>
+          <label style="margin-top:8px">Hypothesis</label>
+          <textarea id="hyp"></textarea>
+          <label style="margin-top:8px">Conclusion</label>
+          <textarea id="con"></textarea>
+          <label style="margin-top:8px">Measurements</label>
+          <textarea id="recs" readonly style="font-family:monospace;font-size:.72rem;min-height:90px"></textarea>
+          <div class="g2" style="margin-top:8px">
+            <button class="go" id="rep">📄 Build report</button>
+            <button id="clr">Clear</button>
+          </div>
+          <textarea id="rpt" readonly style="display:none;margin-top:8px;font-family:monospace;font-size:.72rem;min-height:150px"></textarea>
+        </div>
+
+        <div class="pn" id="p-fm">
+          <b>📐 Core formulas</b><br>
+          Long straight wire: <b>B = μ₀I/(2πr)</b>, μ₀ = 4π×10⁻⁷ T·m/A, so <b>B(µT) = 20·I(A)/r(cm)</b><br>
+          Direction: right-hand rule, thumb along I, fingers curl along B (• out of page gives counter-clockwise)<br>
+          Ampère's law: <b>∮B·dl = μ₀I_enclosed</b> · Inside a wire of radius a: <b>B = μ₀Ir/(2πa²)</b><br>
+          Superposition: <b>B = B₁ + B₂</b> (vector sum) · Force per length: <b>F/L = μ₀I₁I₂/(2πd)</b> (same direction attract)<br>
+          Compass: <b>tan(deflection) = B_wire / B_Earth</b> when perpendicular.<br>
+          <span class="mu">Real values: Earth's field is roughly 25–65 µT; horizontal part about 30–40 µT near Ethiopia. Model limits: infinitely long wires, DC currents, no iron.</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <b>Real fact:</b> <span id="fact" class="mu"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){"use strict";
+
+var $ = function(i){ return document.getElementById(i); };
+var MU = 4e-7 * Math.PI;
+var RA = 0.3;   // wire radius in cm
+var XM = 23, YM = 17;
+
+var S = {
+  disp:'lines', cfg:'single',
+  I1:5, I2:5, x1:0, x2:6,
+  E:35, dens:5, spd:1,
+  run:true, pause:false, t:0,
+  pr:{x:6, y:3},
+  rec:[], rw:null
+};
+
+var SL = [
+  ['I1', 'Current I₁ (A)', -100, 100, .5, ''],
+  ['I2', 'Current I₂ (A)', -100, 100, .5, 'w'],
+  ['x1', 'Wire 1 position (cm)', -15, 15, .5, ''],
+  ['x2', 'Wire 2 position (cm)', -15, 15, .5, 'w'],
+  ['E', "Earth's horizontal field (µT)", 0, 60, 1, ''],
+  ['dens', 'Field-line density', 2, 10, 1, ''],
+  ['spd', 'Animation speed ×', .1, 3, .1, '']
+];
+
+var cv = $('cv'), ctx = cv.getContext('2d');
+var pc = $('pf'), px = pc.getContext('2d');
+var dpr = window.devicePixelRatio || 1;
+var W = 1, H = 1, U = 1;
+
+// Progress / XP
+var P = { xp:0, done:{}, preds:0, best:0 };
+try {
+  var raw = localStorage.getItem('wireLabP');
+  if (raw) P = Object.assign(P, JSON.parse(raw));
+} catch(e){}
+function save(){ try { localStorage.setItem('wireLabP', JSON.stringify(P)); } catch(e){} }
+function toast(m){
+  var d = document.createElement('div');
+  d.textContent = m;
+  d.style.cssText = 'position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#6366f1;color:#fff;padding:9px 14px;border-radius:8px;z-index:9;font-size:.85rem;font-weight:700;box-shadow:0 6px 20px rgba(99,102,241,.5);opacity:0;transition:opacity .3s';
+  document.body.appendChild(d);
+  requestAnimationFrame(function(){ d.style.opacity = 1; });
+  setTimeout(function(){ d.style.opacity = 0; setTimeout(function(){ d.remove(); }, 300); }, 2400);
+}
+function addXP(n, m){ P.xp += n; save(); toast('+' + n + ' XP · ' + m); xpbar(); }
+function award(k, n, m){ if (P.done[k]) return; P.done[k] = 1; addXP(n, m); }
+function xpbar(){
+  var lv = P.xp < 25 ? 'Beginner' : P.xp < 75 ? 'Apprentice' : P.xp < 150 ? 'Physicist' : 'Expert';
+  var b = [];
+  if (P.done.probe) b.push('🔍 Prober');
+  if (P.preds >= 3) b.push('🎯 Predictor');
+  if (P.best >= 9) b.push('🧠 Quiz master');
+  if (RW.every(function(_, i){ return P.done['rw' + i]; })) b.push('🌍 Explorer');
+  $('xp').textContent = '⭐ ' + P.xp + ' XP · ' + lv + (b.length ? ' · ' + b.join(' ') : '');
+}
+function f(n, d){ return (+n).toLocaleString(undefined, {maximumFractionDigits: d === undefined ? 2 : d}); }
+
+// Audio
+var AC = null, hO = null, hG = null, snd = false;
+function hum(){
+  if (!hO) return;
+  try {
+    var i = Math.abs(S.I1) + (S.cfg === 'single' ? 0 : Math.abs(S.I2));
+    hO.frequency.setTargetAtTime(60 + Math.min(400, i * 6), AC.currentTime, .05);
+    hG.gain.setTargetAtTime(Math.min(.04, .004 + i * .0004), AC.currentTime, .05);
+  } catch(e){}
+}
+$('snd').onclick = function(){
+  if (!AC) {
+    var C = window.AudioContext || window.webkitAudioContext;
+    if (!C) { this.textContent = '⚠ No Web Audio'; return; }
+    AC = new C();
+  }
+  if (AC.state === 'suspended') AC.resume();
+  snd = !snd;
+  this.textContent = snd ? '🔊 Sound ON' : '🔈 Enable sound';
+  this.classList.toggle('on', snd);
+  if (snd) {
+    hO = AC.createOscillator();
+    hG = AC.createGain();
+    hG.gain.value = 0;
+    hO.connect(hG);
+    hG.connect(AC.destination);
+    hO.start();
+  } else if (hO) {
+    try { hO.stop(); } catch(e){}
+    hO = null;
+  }
+};
+
+// Sliders
+SL.forEach(function(s){
+  var d = document.createElement('div');
+  d.className = 'row';
+  d.id = 'r-' + s[0];
+  d.innerHTML = '<label>' + s[1] + ': <span id="l-' + s[0] + '"></span></label>' +
+    '<input type="range" id="' + s[0] + '" min="' + s[2] + '" max="' + s[3] + '" step="' + s[4] + '" value="' + S[s[0]] + '">';
+  $('sl').appendChild(d);
+  $('l-' + s[0]).textContent = S[s[0]];
+  $(s[0]).addEventListener('input', function(e){
+    setV(s[0], parseFloat(e.target.value));
+    S.rw = null;
+  });
+});
+
+function setV(k, v){
+  S[k] = v;
+  $(k).value = v;
+  $('l-' + k).textContent = v;
+  if (k === 'I1') {
+    if (S.cfg === 'par') setV('I2', v);
+    if (S.cfg === 'anti') setV('I2', -v);
+  }
+}
+
+function sync(){
+  var two = S.cfg !== 'single';
+  $('r-I2').style.display = two ? '' : 'none';
+  $('r-x2').style.display = two ? '' : 'none';
+  $('I2').disabled = (S.cfg === 'par' || S.cfg === 'anti');
+}
+
+function setP(p){
+  Object.keys(p).forEach(function(k){
+    if (k === 'pr') { S.pr = {x:p.pr[0], y:p.pr[1]}; }
+    else if (k === 'cfg' || k === 'disp') { S[k] = p[k]; $(k).value = p[k]; }
+    else setV(k, p[k]);
+  });
+  sync();
+  S.rw = null;
+}
+
+// Physics
+function wires(){
+  var w = [{ x:S.x1, I:S.I1 }];
+  if (S.cfg !== 'single') w.push({ x:S.x2, I:S.I2 });
+  return w;
+}
+
+function bw(w, x, y){
+  var dx = x - w.x, dy = y;
+  var r = Math.hypot(dx, dy);
+  if (r < 1e-6 || !w.I) return [0, 0, 0];
+  var rm = r / 100, am = RA / 100;
+  var m = MU * w.I / (2 * Math.PI) * (r < RA ? rm / (am * am) : 1 / rm);
+  return [-m * dy / r, m * dx / r, m];
+}
+
+function field(x, y, earth){
+  var bx = 0, by = 0;
+  wires().forEach(function(w){
+    var b = bw(w, x, y);
+    bx += b[0];
+    by += b[1];
+  });
+  if (earth) by += S.E * 1e-6;
+  return [bx, by, Math.hypot(bx, by)];
+}
+
+function FL(){
+  if (S.cfg === 'single') return null;
+  var d = Math.max(.3, Math.abs(S.x2 - S.x1)) / 100;
+  return MU * S.I1 * S.I2 / (2 * Math.PI * d);
+}
+
+// Screen transform
+function sc(x, y){ return [W/2 + x * U, H/2 - y * U]; }
+function wp(e){
+  var r = cv.getBoundingClientRect();
+  return { x:(e.clientX - r.left - W/2) / U, y:-(e.clientY - r.top - H/2) / U };
+}
+
+// Draw helpers
+function arrow(x1, y1, x2, y2, col, hd){
+  ctx.strokeStyle = col;
+  ctx.fillStyle = col;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+  var a = Math.atan2(y2 - y1, x2 - x1);
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - hd * Math.cos(a - .45), y2 - hd * Math.sin(a - .45));
+  ctx.lineTo(x2 - hd * Math.cos(a + .45), y2 - hd * Math.sin(a + .45));
+  ctx.closePath();
+  ctx.fill();
+}
+
+// Trace a streamline
+function trace(x, y, dir){
+  var pts = [[x, y]], ds = .35, x0 = x, y0 = y;
+  for (var i = 0; i < 900; i++) {
+    var b = field(x, y, false);
+    if (b[2] < 1e-12) break;
+    var sgn = dir || 1;
+    var mx = x + sgn * b[0] / b[2] * ds / 2;
+    var my = y + sgn * b[1] / b[2] * ds / 2;
+    var c = field(mx, my, false);
+    if (c[2] < 1e-12) break;
+    x += sgn * c[0] / c[2] * ds;
+    y += sgn * c[1] / c[2] * ds;
+    pts.push([x, y]);
+    if (Math.abs(x) > XM + 2 || Math.abs(y) > YM + 2) break;
+    if (i > 30 && Math.hypot(x - x0, y - y0) < ds * .8) break;
+  }
+  return pts;
+}
+
+// Main draw
+function draw(){
+  var r = cv.getBoundingClientRect();
+  var w = Math.max(1, Math.round(r.width));
+  var h = Math.max(1, Math.round(r.height));
+  if (w !== W || h !== H || cv.width !== Math.round(w * dpr)) {
+    W = w; H = h;
+    cv.width = Math.round(w * dpr);
+    cv.height = Math.round(h * dpr);
+  }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  U = Math.min(W / (2 * XM), H / (2 * YM));
+
+  // Background
+  var bg = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W, H) / 1.4);
+  bg.addColorStop(0, '#0a1428');
+  bg.addColorStop(1, '#020408');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(129,140,248,.12)';
+  ctx.lineWidth = 1;
+  for (var g = -20; g <= 20; g += 5) {
+    var a = sc(g, 0), b = sc(0, g);
+    ctx.beginPath();
+    ctx.moveTo(a[0], 0); ctx.lineTo(a[0], H);
+    ctx.moveTo(0, b[1]); ctx.lineTo(W, b[1]);
+    ctx.stroke();
+  }
+
+  // Axis labels
+  ctx.fillStyle = 'rgba(147,160,189,.5)';
+  ctx.font = '10px system-ui';
+  ctx.textAlign = 'center';
+  for (var ax = -20; ax <= 20; ax += 5) {
+    if (ax === 0) continue;
+    var p = sc(ax, 0);
+    ctx.fillText(ax + '', p[0], H/2 + 14);
+  }
+  ctx.textAlign = 'right';
+  for (var ay = -15; ay <= 15; ay += 5) {
+    if (ay === 0) continue;
+    var p2 = sc(0, ay);
+    ctx.fillText(ay + '', W/2 - 6, p2[1] + 3);
+  }
+
+  var ws = wires();
+  var i, j;
+
+  if (S.disp === 'lines') {
+    ctx.lineWidth = 1.6;
+    ctx.setLineDash([9, 6]);
+    ctx.lineDashOffset = S.anim ? -S.t * 40 : 0;
+    ws.forEach(function(wi, k){
+      if (!wi.I) return;
+      for (i = 1; i <= S.dens; i++) {
+        var rr = 1.1 * i + .6;
+        var dir = wi.I > 0 ? 1 : -1;
+        var pts = trace(wi.x, rr, dir);
+        ctx.strokeStyle = 'rgba(251,191,36,' + Math.max(.25, .85 - i * .07) + ')';
+        ctx.beginPath();
+        pts.forEach(function(q, m){
+          var s = sc(q[0], q[1]);
+          m ? ctx.lineTo(s[0], s[1]) : ctx.moveTo(s[0], s[1]);
+        });
+        ctx.stroke();
+      }
+    });
+    ctx.setLineDash([]);
+    ctx.lineDashOffset = 0;
+  } else if (S.disp === 'vectors') {
+    ctx.lineWidth = 1.4;
+    for (i = -XM + 1; i < XM; i += 2) {
+      for (j = -YM + 1; j < YM; j += 2) {
+        var b2 = field(i, j, false);
+        if (b2[2] < 1e-10) continue;
+        var t = Math.max(0, Math.min(1, Math.log10(b2[2] * 1e6) / 3));
+        var p = sc(i, j);
+        var L = Math.min(U * 1.5, 16);
+        arrow(p[0], p[1], p[0] + b2[0] / b2[2] * L, p[1] - b2[1] / b2[2] * L,
+          'rgb(' + Math.round(90 + 165 * t) + ',' + Math.round(160 - 90 * t) + ',' + Math.round(255 - 190 * t) + ')', 4);
+      }
+    }
+  } else if (S.disp === 'mag') {
+    var st = 5;
+    for (var X = 0; X < W; X += st) {
+      for (var Y = 0; Y < H; Y += st) {
+        var b3 = field((X - W/2) / U, -(Y - H/2) / U, false);
+        var tt = Math.max(0, Math.min(1, (Math.log10(Math.max(b3[2], 1e-9) * 1e6) + 1) / 4));
+        ctx.fillStyle = 'hsl(' + (250 - 250 * tt) + ',90%,' + (10 + 45 * tt) + '%)';
+        ctx.fillRect(X, Y, st, st);
+      }
+    }
+    ctx.fillStyle = '#fff';
+    ctx.font = '11px system-ui';
+    ctx.textAlign = 'left';
+    ctx.fillText('log colour: dark blue 0.1 µT → red 1000 µT', 10, H - 34);
+  } else {
+    // Compass
+    for (i = -XM + 2; i < XM; i += 4) {
+      for (j = -YM + 1; j < YM; j += 4) {
+        var b4 = field(i, j, true);
+        var p2c = sc(i, j);
+        var a2 = Math.atan2(b4[1], b4[0]);
+        ctx.fillStyle = 'rgba(20,27,46,.92)';
+        ctx.strokeStyle = 'rgba(129,140,248,.4)';
+        ctx.beginPath();
+        ctx.arc(p2c[0], p2c[1], 13, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#ff5c8a';
+        ctx.beginPath();
+        ctx.moveTo(p2c[0], p2c[1]);
+        ctx.lineTo(p2c[0] + Math.cos(a2) * 11, p2c[1] - Math.sin(a2) * 11);
+        ctx.stroke();
+        ctx.strokeStyle = '#e5e9f5';
+        ctx.beginPath();
+        ctx.moveTo(p2c[0], p2c[1]);
+        ctx.lineTo(p2c[0] - Math.cos(a2) * 11, p2c[1] + Math.sin(a2) * 11);
+        ctx.stroke();
+        ctx.fillStyle = '#818cf8';
+        ctx.beginPath();
+        ctx.arc(p2c[0], p2c[1], 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    ctx.fillStyle = '#fff';
+    ctx.font = '11px system-ui';
+    ctx.textAlign = 'left';
+    ctx.fillText("Red end = needle's north pole. Earth's field (" + S.E + ' µT) points up.', 10, H - 34);
+  }
+
+  // Draw wires
+  ws.forEach(function(wi, k){
+    var p = sc(wi.x, 0);
+    var R = Math.max(8, RA * U * 2);
+    var col = k ? '#ff5c8a' : '#4fa8ff';
+    var gr = ctx.createRadialGradient(p[0], p[1], 0, p[0], p[1], R * 3);
+    gr.addColorStop(0, col + '88');
+    gr.addColorStop(1, col + '00');
+    ctx.fillStyle = gr;
+    ctx.beginPath();
+    ctx.arc(p[0], p[1], R * 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.arc(p[0], p[1], R, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    if (wi.I > 0) {
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(p[0], p[1], R * .3, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (wi.I < 0) {
+      var s = R * .5;
+      ctx.strokeStyle = '#fff';
+      ctx.beginPath();
+      ctx.moveTo(p[0] - s, p[1] - s);
+      ctx.lineTo(p[0] + s, p[1] + s);
+      ctx.moveTo(p[0] - s, p[1] + s);
+      ctx.lineTo(p[0] + s, p[1] - s);
+      ctx.stroke();
+    }
+    ctx.fillStyle = col;
+    ctx.font = 'bold 11px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('I' + (k + 1) + ' = ' + f(wi.I, 1) + ' A', p[0], p[1] + R + 16);
+  });
+
+  // Force arrows between wires
+  var fl = FL();
+  if (fl !== null && fl !== 0) {
+    var p1 = sc(S.x1, 0);
+    var p2b = sc(S.x2, 0);
+    var dir = Math.sign(S.x2 - S.x1) || 1;
+    var at = fl > 0;
+    var len = 34;
+    ctx.lineWidth = 3;
+    arrow(p1[0], p1[1] - 26, p1[0] + dir * (at ? 1 : -1) * len, p1[1] - 26, '#34d399', 9);
+    arrow(p2b[0], p2b[1] - 26, p2b[0] - dir * (at ? 1 : -1) * len, p2b[1] - 26, '#34d399', 9);
+    ctx.fillStyle = '#34d399';
+    ctx.font = '11px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText((at ? 'attract' : 'repel') + '  F/L = ' + f(Math.abs(fl) * 1e6, 2) + ' µN/m',
+      (p1[0] + p2b[0]) / 2, p1[1] - 40);
+  }
+
+  // Probe
+  var pp = sc(S.pr.x, S.pr.y);
+  var fb = field(S.pr.x, S.pr.y, false);
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(pp[0], pp[1], 9, 0, Math.PI * 2);
+  ctx.moveTo(pp[0] - 14, pp[1]);
+  ctx.lineTo(pp[0] + 14, pp[1]);
+  ctx.moveTo(pp[0], pp[1] - 14);
+  ctx.lineTo(pp[0], pp[1] + 14);
+  ctx.stroke();
+
+  if (fb[2] > 1e-12) {
+    ctx.lineWidth = 3;
+    arrow(pp[0], pp[1], pp[0] + fb[0] / fb[2] * 42, pp[1] - fb[1] / fb[2] * 42, '#fbbf24', 10);
+  }
+
+  // Probe readout box
+  var tx = Math.min(W - 150, pp[0] + 18);
+  var ty = Math.max(60, Math.min(H - 50, pp[1]));
+  ctx.fillStyle = 'rgba(0,0,0,.8)';
+  ctx.fillRect(tx, ty - 28, 140, 40);
+  ctx.strokeStyle = '#fbbf24';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(tx, ty - 28, 140, 40);
+  ctx.fillStyle = '#fbbf24';
+  ctx.font = 'bold 11px system-ui';
+  ctx.textAlign = 'left';
+  ctx.fillText('|B| = ' + f(fb[2] * 1e6, 2) + ' µT', tx + 6, ty - 12);
+  ctx.fillStyle = '#e5e9f5';
+  ctx.fillText('at (' + f(S.pr.x, 1) + ', ' + f(S.pr.y, 1) + ') cm', tx + 6, ty + 4);
+
+  // Title
+  ctx.fillStyle = '#e5e9f5';
+  ctx.font = 'bold 13px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText('Cross-section: wires run through the screen', W/2, 22);
+
+  // Running pulse
+  var pulseR = 4 + 2 * Math.sin(performance.now() * 0.004);
+  ctx.fillStyle = S.run && !S.pause ? 'rgba(52,211,153,1)' : S.pause ? 'rgba(251,191,36,1)' : 'rgba(100,116,139,.6)';
+  ctx.shadowColor = S.run && !S.pause ? '#34d399' : S.pause ? '#fbbf24' : 'transparent';
+  ctx.shadowBlur = (S.run || S.pause) ? 10 : 0;
+  ctx.beginPath();
+  ctx.arc(W - 24, 24, pulseR, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+}
+
+// Profile chart
+function profile(){
+  var r = pc.getBoundingClientRect();
+  var w = Math.max(1, Math.round(r.width));
+  var h = Math.max(1, Math.round(r.height));
+  if (pc.width !== Math.round(w * dpr) || pc.height !== Math.round(h * dpr)) {
+    pc.width = Math.round(w * dpr);
+    pc.height = Math.round(h * dpr);
+  }
+  px.setTransform(dpr, 0, 0, dpr, 0, 0);
+  px.fillStyle = '#05080f';
+  px.fillRect(0, 0, w, h);
+
+  var lo = -1, hi = 3;
+  var Y = function(b){ return h - 6 - (Math.log10(Math.max(b * 1e6, .01)) - lo) / (hi - lo) * (h - 12); };
+
+  px.strokeStyle = 'rgba(38,48,74,.8)';
+  [0, 1, 2].forEach(function(e){
+    px.beginPath();
+    px.moveTo(0, Y(Math.pow(10, e) * 1e-6));
+    px.lineTo(w, Y(Math.pow(10, e) * 1e-6));
+    px.stroke();
+  });
+
+  if (S.E > 0) {
+    px.setLineDash([5, 4]);
+    px.strokeStyle = '#34d399';
+    px.beginPath();
+    px.moveTo(0, Y(S.E * 1e-6));
+    px.lineTo(w, Y(S.E * 1e-6));
+    px.stroke();
+    px.setLineDash([]);
+  }
+
+  px.strokeStyle = '#fbbf24';
+  px.lineWidth = 2;
+  px.beginPath();
+  for (var i = 0; i <= w; i += 2) {
+    var x = (i / w * 2 - 1) * XM;
+    var b = field(x, S.pr.y, false)[2];
+    i ? px.lineTo(i, Y(b)) : px.moveTo(i, Y(b));
+  }
+  px.stroke();
+
+  var X = (S.pr.x / XM + 1) / 2 * w;
+  px.strokeStyle = '#fff';
+  px.lineWidth = 1;
+  px.beginPath();
+  px.moveTo(X, 0);
+  px.lineTo(X, h);
+  px.stroke();
+
+  px.fillStyle = '#93a0bd';
+  px.font = '10px system-ui';
+  px.textAlign = 'left';
+  px.fillText('1000 µT', 2, Y(1e-3) + 10);
+  px.fillText('1 µT', 2, Y(1e-6) - 3);
+}
+
+// Readouts
+var RD = [
+  ['B', 'B at probe'],
+  ['r', 'Distance to nearest wire'],
+  ['dir', 'Field direction'],
+  ['B1', 'B from wire 1'],
+  ['B2', 'B from wire 2'],
+  ['ratio', 'Compared with Earth'],
+  ['defl', 'Compass deflection'],
+  ['fl', 'Force between wires'],
+  ['b1', 'B at 1 cm (I₁)'],
+  ['b10', 'B at 10 cm (I₁)'],
+  ['bi', 'B inside wire'],
+  ['rhr', 'Right-hand rule']
+];
+RD.forEach(function(q){
+  var d = document.createElement('div');
+  d.innerHTML = '<span>' + q[1] + '</span><strong id="ro-' + q[0] + '">—</strong>';
+  $('rd').appendChild(d);
+});
+
+function show(){
+  var ws = wires();
+  var t = field(S.pr.x, S.pr.y, false);
+  var te = field(S.pr.x, S.pr.y, true);
+  var r = Math.min.apply(null, ws.map(function(w){ return Math.hypot(S.pr.x - w.x, S.pr.y); }));
+  var set = function(i, v){ $('ro-' + i).textContent = v; };
+  var b1 = bw(ws[0], S.pr.x, S.pr.y)[2];
+
+  set('B', f(t[2] * 1e6, 3) + ' µT');
+  set('r', f(r, 2) + ' cm');
+  set('dir', t[2] > 1e-12 ? f(Math.atan2(t[1], t[0]) * 180 / Math.PI, 0) + '°' : '—');
+  set('B1', f(b1 * 1e6, 3) + ' µT');
+  set('B2', ws[1] ? f(bw(ws[1], S.pr.x, S.pr.y)[2] * 1e6, 3) + ' µT' : '—');
+  set('ratio', S.E > 0 ? f(t[2] * 1e6 / S.E, 2) + '× Earth' : 'set field > 0');
+  set('defl', S.E > 0 ? f(Math.abs(Math.atan2(te[0], te[1]) * 180 / Math.PI), 1) + '°' : '—');
+
+  var fl = FL();
+  set('fl', fl === null ? '—' : f(Math.abs(fl) * 1e6, 2) + ' µN/m ' + (fl > 0 ? '(attract)' : fl < 0 ? '(repel)' : ''));
+  set('b1', f(20 * Math.abs(S.I1) / 1, 1) + ' µT');
+  set('b10', f(20 * Math.abs(S.I1) / 10, 2) + ' µT');
+  set('bi', f(bw({ x:0, I:S.I1 }, RA/2, 0)[2] * 1e6, 2) + ' µT');
+  set('rhr', S.I1 > 0 ? '• out → CCW' : S.I1 < 0 ? '× in → CW' : 'no current');
+
+  $('hud').innerHTML =
+    '<b style="color:#818cf8">LIVE</b><br>' +
+    'Probe r = ' + f(r, 2) + ' cm<br>' +
+    '|B| = ' + f(t[2] * 1e6, 2) + ' µT<br>' +
+    'I₁ = ' + f(S.I1, 1) + ' A · wires: ' + ws.length;
+
+  $('fact').textContent = ws.length > 1
+    ? (S.I1 * S.I2 > 0
+        ? 'Currents in the same direction: the wires attract. '
+        : 'Opposite currents: the wires repel. ') +
+      'The force per metre is μ₀I₁I₂/(2πd).'
+    : 'B falls as 1/r: doubling the distance halves the field. At 1 cm from 5 A the field is 100 µT, about three times Earth\'s field. Inside the wire it drops linearly to zero.';
+
+  $('rwo').innerHTML = rwText();
+}
+
+// Real-world cases
+var RW = [
+  { n:'🧭 Oersted\'s compass (1820)', p:{cfg:'single', disp:'compass', I1:10, x1:0, E:35, pr:[0,5]},
+    note:"Oersted noticed a compass twitch near a current-carrying wire — the first link between electricity and magnetism. The wire's field is perpendicular to Earth's horizontal field.",
+    t:function(){ var b = 20*10/5; return 'Wire field at 5 cm: ' + f(b,0) + ' µT vs Earth\'s ' + S.E + ' µT → needle turns by arctan(' + f(b,0) + '/' + S.E + ') = ' + f(Math.atan(b/S.E)*180/Math.PI,1) + '°.'; }
+  },
+  { n:'🏠 Mains cable (live + neutral)', p:{cfg:'anti', disp:'lines', I1:10, x1:-.5, x2:.5, pr:[10,0]},
+    note:'Live and neutral carry equal opposite currents 1 cm apart, so their fields nearly cancel a short distance away. This is why twisted pairs reduce interference.',
+    t:function(){ var one = 20*10/10; return 'A single 10 A wire would give ' + f(one,1) + ' µT at 10 cm. The pair gives ' + f(field(S.pr.x, S.pr.y, false)[2]*1e6,2) + ' µT: about ' + f(one/Math.max(.001, field(S.pr.x, S.pr.y, false)[2]*1e6),0) + '× weaker.'; }
+  },
+  { n:'⚡ Overhead power line (1000 A)', p:null,
+    note:'A heavily loaded line carrying 1000 A at 10 m height. Computed from the same law (too far for the picture).',
+    t:function(){ var b = 20*1000/1000; return 'B = μ₀I/(2πr) = ' + f(b,0) + ' µT. That is about ' + f(b/50,1) + '× Earth\'s field (~50 µT). The ICNIRP public guideline for 50 Hz fields is 200 µT.'; }
+  },
+  { n:'📏 Force between two wires', p:{cfg:'par', disp:'lines', I1:10, x1:-2.5, x2:2.5, pr:[0,6]},
+    note:'Until 2019 the ampere was defined by this force: 1 A in two parallel wires 1 m apart gives 2×10⁻⁷ N per metre.',
+    t:function(){ return 'Here F/L = μ₀·10·10/(2π·0.05) = ' + f(MU*100/(2*Math.PI*.05)*1e6,0) + ' µN/m (attractive). For 1 A at 1 m: 2×10⁻⁷ N/m.'; }
+  },
+  { n:'🔧 Current clamp meter', p:{cfg:'single', disp:'vectors', I1:15, x1:0, pr:[3,0]},
+    note:'Clamp meters sense B around a cable and convert it to current with I = 2πrB/μ₀, without touching the metal.',
+    t:function(){ var b = field(S.pr.x, S.pr.y, false)[2]; return 'Measured B = ' + f(b*1e6,1) + ' µT at ' + f(S.pr.x,0) + ' cm, so I = 2πrB/μ₀ = ' + f(2*Math.PI*S.pr.x/100*b/MU,1) + ' A.'; }
+  }
+];
+
+RW.forEach(function(r, i){
+  var b = document.createElement('button');
+  b.className = 'gr';
+  b.textContent = r.n;
+  b.onclick = function(){ if (r.p) setP(r.p); S.rw = r; award('rw' + i, 10, 'Real case'); };
+  $('rwl').appendChild(b);
+});
+
+function rwText(){
+  var r = S.rw;
+  return r ? '<b>' + r.n + '</b><br>' + r.t() + '<br><span class="mu">' + r.note + '</span>'
+           : '<span class="mu">Pick a real case to see the numbers.</span>';
+}
+
+// Predict
+var act = false, ex = null;
+$('np').onclick = function(){
+  var Is = [2,4,5,8,10,12,15,20], Rs = [2,3,4,5,8,10,15];
+  var I = Is[Math.floor(Math.random()*8)];
+  var r = Rs[Math.floor(Math.random()*7)];
+  ex = { a: 20*I/r, b: 20*I/(2*r) };
+  setP({ cfg:'single', disp:'lines', I1:I, x1:0, pr:[r,0] });
+  act = true;
+  $('pa').value = '';
+  $('pb').value = '';
+  $('pr2').innerHTML = '';
+  $('pq').innerHTML = 'A long straight wire carries <b>' + I + ' A</b>. Find |B| at <b>r = ' + r + ' cm</b> and at <b>2r = ' + 2*r + ' cm</b>.';
+};
+
+$('pc').onclick = function(){
+  if (!act) { $('pr2').textContent = 'Press "New problem" first.'; return; }
+  var a = parseFloat($('pa').value), b = parseFloat($('pb').value);
+  if (isNaN(a) || isNaN(b)) { $('pr2').textContent = 'Enter both values.'; return; }
+  var ok = Math.abs(a - ex.a) <= .03*ex.a && Math.abs(b - ex.b) <= .03*ex.b;
+  $('pr2').innerHTML = (ok ? '<span class="ok">✅ Correct!</span> ' : '<span class="bad">❌ Not quite.</span> ') +
+    'B = μ₀I/(2πr) = <b>' + f(ex.a,2) + ' µT</b> at r and <b>' + f(ex.b,2) + ' µT</b> at 2r (half, because B ∝ 1/r).';
+  if (ok) { P.preds++; addXP(20, 'Correct prediction'); }
+  act = false;
+};
+
+// Quiz
+var Q = [
+  ['Magnetic field lines around a long straight wire are…', ['Straight lines outward','Circles around the wire','Random curves'], 1, 'Oersted and Ampère showed the field curls around the current in closed circles.'],
+  ['If you double the distance from a long wire, B…', ['Halves','Doubles','Falls to a quarter'], 0, 'B = μ₀I/(2πr) is proportional to 1/r. Slower than 1/r² of a point charge.'],
+  ['The right-hand rule says the fingers curl…', ['Along the current','Along B when the thumb points along I','Against the force'], 1, 'Thumb along current, fingers curl in direction of B.'],
+  ['A wire carries 10 A. What is B at 10 cm?', ['20 µT','2 µT','200 µT'], 0, 'B = 2×10⁻⁷ × 10 / 0.1 = 2×10⁻⁵ T = 20 µT.'],
+  ['You double the current. At same distance, B…', ['Halves','Doubles','Stays the same'], 1, 'B is directly proportional to I.'],
+  ['Two parallel wires carry current in same direction. They…', ['Attract','Repel','Do not interact'], 0, 'Each wire sits in the other\'s field and is pulled toward it.'],
+  ['Ampère\'s law states that…', ['B = 0 outside a wire','∮B·dl = μ₀I_enclosed','B = I/R'], 1, 'Line integral of B around closed loop equals μ₀ times enclosed current.'],
+  ['Wires 0.5 m apart carry 2 A and 4 A same direction. F/L is…', ['3.2 µN/m attractive','3.2 µN/m repulsive','16 µN/m attractive'], 0, 'F/L = 2×10⁻⁷ × 2 × 4 / 0.5 = 3.2×10⁻⁶ N/m.'],
+  ['A live and neutral wire lie side by side. Far away their fields…', ['Add up','Almost cancel','Are random'], 1, 'Equal and opposite currents give opposite fields that cancel at distance.'],
+  ['Which is closest to Earth\'s magnetic field?', ['About 50 µT','About 50 mT','About 50 T'], 0, 'Earth\'s field is roughly 25–65 µT.']
+];
+
+var qsc = 0, qn = 0;
+Q.forEach(function(q, qi){
+  var d = document.createElement('div');
+  d.style.margin = '10px 0';
+  d.innerHTML = '<b>' + (qi+1) + '. ' + q[0] + '</b>';
+  var e2 = document.createElement('div');
+  e2.className = 'mu';
+  e2.style.marginTop = '6px';
+  e2.style.fontSize = '.78rem';
+  var bs = q[1].map(function(t, oi){
+    var b = document.createElement('button');
+    b.className = 'opt';
+    b.textContent = t;
+    b.onclick = function(){
+      if (d.dataset.done) return;
+      d.dataset.done = 1;
+      qn++;
+      bs.forEach(function(x, i){
+        x.disabled = true;
+        if (i === q[2]) x.classList.add('c');
+        else if (i === oi) x.classList.add('w');
+      });
+      e2.textContent = (oi === q[2] ? '✓ ' : '✗ ') + q[3];
+      if (oi === q[2]) { qsc++; award('q' + qi, 5, 'Quiz answer'); }
+      $('qs').textContent = '· ' + qsc + '/' + qn;
+      if (qsc > P.best) { P.best = qsc; save(); xpbar(); }
+    };
+    d.appendChild(b);
+    return b;
+  });
+  d.appendChild(e2);
+  $('qb').appendChild(d);
+});
+
+// Challenges
+var CH = [
+  ['1. Right-hand rule', 'Flip the current to −10 A', {cfg:'single', disp:'lines', I1:-10, x1:0, pr:[6,3]}, 'With current into page (×) the field circles clockwise.'],
+  ['2. Attract', 'Two parallel currents', {cfg:'par', disp:'lines', I1:8, x1:-4, x2:4, pr:[0,6]}, 'Streamlines enclose both wires and the wires are pulled together.'],
+  ['3. Repel', 'Two antiparallel currents', {cfg:'anti', disp:'lines', I1:8, x1:-4, x2:4, pr:[0,0]}, 'Between the wires fields add — strongest at center. Wires push apart.'],
+  ['4. 1/r law', 'Heatmap of one wire', {cfg:'single', disp:'mag', I1:10, x1:0, pr:[5,0]}, 'B at 5 cm is 40 µT; at 10 cm 20 µT. Inside wire field drops to zero.'],
+  ['5. Compass', 'See needles follow B + Earth', {cfg:'single', disp:'compass', I1:10, x1:0, E:35, pr:[0,5]}, 'Near wire needles circle it; far away they all point north (up).']
+];
+
+CH.forEach(function(c, i){
+  var b = document.createElement('button');
+  b.className = 'gr';
+  b.innerHTML = '<b>' + c[0] + '</b><br><span style="font-weight:500">' + c[1] + '</span>';
+  b.onclick = function(){
+    setP(c[2]);
+    $('chn').innerHTML = '<div class="mu">' + c[3] + '</div>';
+    award('ch' + i, 5, 'Challenge');
+  };
+  $('chl').appendChild(b);
+});
+
+// Notebook
+$('rec').onclick = function(){
+  var t = field(S.pr.x, S.pr.y, false);
+  S.rec.push(new Date().toLocaleTimeString() + ' | ' + S.cfg + ' | I1=' + S.I1 + ' A' + (S.cfg !== 'single' ? ' I2=' + S.I2 + ' A' : '') + ' | probe (' + f(S.pr.x,1) + ',' + f(S.pr.y,1) + ') cm | B=' + f(t[2]*1e6,3) + ' µT');
+  $('recs').value = S.rec.join('\n');
+  award('rec', 5, 'Measurement recorded');
+};
+$('clr').onclick = function(){
+  $('hyp').value = '';
+  $('con').value = '';
+  $('recs').value = '';
+  $('rpt').style.display = 'none';
+  S.rec = [];
+};
+$('rep').onclick = function(){
+  var t = field(S.pr.x, S.pr.y, false);
+  var s = 'MAGNETIC FIELD OF A WIRE — LAB REPORT\n' + new Date().toLocaleString() + '\n\n' +
+    'Configuration: ' + S.cfg + '\n' +
+    'I1 = ' + S.I1 + ' A at x = ' + S.x1 + ' cm' + (S.cfg !== 'single' ? '\nI2 = ' + S.I2 + ' A at x = ' + S.x2 + ' cm' : '') +
+    '\nProbe: (' + f(S.pr.x,1) + ', ' + f(S.pr.y,1) + ') cm, |B| = ' + f(t[2]*1e6,3) + ' µT\n\n' +
+    'HYPOTHESIS\n' + $('hyp').value + '\n\n' +
+    'CONCLUSION\n' + $('con').value + '\n\n' +
+    'MEASUREMENTS\n' + $('recs').value + '\n\n' +
+    'LIMITATIONS\nInfinitely long straight wires, DC current, no magnetic materials. Educational use only.\n';
+  var r = $('rpt');
+  r.value = s;
+  r.style.display = 'block';
+  r.select();
+  try { navigator.clipboard.writeText(s); } catch(e){}
+  toast('Report ready — copy from the box');
+  award('rep', 10, 'Report built');
+};
+
+// Tabs
+[['p-rw','🌍 Real'], ['p-pr','🎯 Predict'], ['p-qz','🧠 Quiz'], ['p-ch','🏆 Challenges'], ['p-nb','📓 Notebook'], ['p-fm','📐 Formulas']].forEach(function(t, i){
+  var b = document.createElement('button');
+  b.textContent = t[1];
+  if (!i) b.className = 'on';
+  b.onclick = function(){
+    document.querySelectorAll('.pn').forEach(function(p){ p.classList.remove('on'); });
+    document.querySelectorAll('#tabs button').forEach(function(x){ x.classList.remove('on'); });
+    $(t[0]).classList.add('on');
+    b.classList.add('on');
+  };
+  $('tabs').appendChild(b);
+});
+
+// Events
+$('disp').onchange = function(e){ S.disp = e.target.value; };
+$('cfg').onchange = function(e){
+  S.cfg = e.target.value;
+  if (S.cfg === 'par') setV('I2', S.I1);
+  if (S.cfg === 'anti') setV('I2', -S.I1);
+  S.rw = null;
+  sync();
+};
+$('anim').onchange = function(e){ S.anim = e.target.checked; };
+S.anim = true;
+
+$('start').onclick = function(){
+  S.run = true;
+  S.pause = false;
+  this.textContent = '▶ Running';
+  $('pause').textContent = '⏸ Pause';
+};
+$('pause').onclick = function(){
+  S.pause = !S.pause;
+  this.textContent = S.pause ? '▶ Resume' : '⏸ Pause';
+  $('start').textContent = S.pause ? '▶ Start' : '▶ Running';
+};
+$('reset').onclick = function(){
+  S.t = 0;
+  S.pause = false;
+  S.run = true;
+  $('pause').textContent = '⏸ Pause';
+  $('start').textContent = '▶ Running';
+};
+
+// Probe / wire drag
+var dr = null;
+cv.addEventListener('pointerdown', function(e){
+  var q = wp(e);
+  var ws = wires();
+  var k = -1;
+  ws.forEach(function(w, i){
+    if (Math.hypot(q.x - w.x, q.y) < Math.max(1.2, 12/U)) k = i;
+  });
+  dr = k;
+  if (k < 0) { S.pr = {x:q.x, y:q.y}; award('probe', 5, 'Probe moved'); }
+  try { cv.setPointerCapture(e.pointerId); } catch(_){}
+});
+cv.addEventListener('pointermove', function(e){
+  if (dr === null || !(e.buttons || e.pointerType === 'touch')) return;
+  var q = wp(e);
+  if (dr < 0) {
+    S.pr = { x:Math.max(-XM, Math.min(XM, q.x)), y:Math.max(-YM, Math.min(YM, q.y)) };
+  } else {
+    var x = Math.round(Math.max(-15, Math.min(15, q.x)) * 2) / 2;
+    setV(dr ? 'x2' : 'x1', x);
+    S.rw = null;
+  }
+});
+cv.addEventListener('pointerup', function(){ dr = null; });
+cv.addEventListener('pointercancel', function(){ dr = null; });
+
+// Splitter
+(function(){
+  var sim = $('sim'), sp = $('spl');
+  var dragging = false, y0 = 0, h0 = 0;
+  var containerH = 0;
+  sp.addEventListener('pointerdown', function(e){
+    e.preventDefault();
+    dragging = true;
+    y0 = e.clientY;
+    h0 = sim.getBoundingClientRect().height;
+    containerH = sim.parentElement.getBoundingClientRect().height;
+    try { sp.setPointerCapture(e.pointerId); } catch(_){}
+    document.body.style.cursor = 'ns-resize';
+    document.body.style.userSelect = 'none';
+  });
+  window.addEventListener('pointermove', function(e){
+    if (!dragging) return;
+    var newH = h0 + (e.clientY - y0);
+    var minH = Math.max(140, containerH * 0.15);
+    var maxH = Math.min(window.innerHeight * 0.75, containerH * 0.75);
+    newH = Math.max(minH, Math.min(maxH, newH));
+    sim.style.flex = '0 0 ' + Math.round(newH) + 'px';
+    W = 1; H = 1;
+  });
+  window.addEventListener('pointerup', function(){
+    if (!dragging) return;
+    dragging = false;
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  });
+  sp.addEventListener('dblclick', function(){
+    sim.style.flex = '0 0 46%';
+    W = 1; H = 1;
+  });
+})();
+
+// Animation loop
+var last = 0;
+function loop(now){
+  var dt = Math.min(.05, (now - (last || now)) / 1000);
+  last = now;
+  if (S.run && !S.pause) {
+    S.t += dt * S.spd;
+    hum();
+  }
+  draw();
+  profile();
+  show();
+  requestAnimationFrame(loop);
+}
+
+sync();
+xpbar();
+requestAnimationFrame(loop);
+
+})();
+</script>
+</body>
+</html>

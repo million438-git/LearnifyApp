@@ -13,11 +13,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -192,11 +194,13 @@ public class AdminUserManagementActivity extends BaseActivity {
         TextView tvStatus = row.findViewById(R.id.tvUserStatus);
         
         if (u.status.equalsIgnoreCase("Active")) {
-            tvStatus.setText("🟢 ACTIVE");
-            tvStatus.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+            tvStatus.setText("ACTIVE");
+            tvStatus.setTextColor(ContextCompat.getColor(this, R.color.emerald_accent));
+            tvStatus.setBackgroundResource(R.drawable.bg_badge_active);
         } else {
-            tvStatus.setText("🔴 BLOCKED");
-            tvStatus.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+            tvStatus.setText("BLOCKED");
+            tvStatus.setTextColor(ContextCompat.getColor(this, R.color.rose_accent));
+            tvStatus.setBackgroundResource(R.drawable.bg_badge_blocked);
         }
         
         ImageView ivAvatar = row.findViewById(R.id.ivUserAvatar);
@@ -224,8 +228,9 @@ public class AdminUserManagementActivity extends BaseActivity {
         Cursor enc = repository.getStudentEnrollments(u.username);
         while (enc.moveToNext()) {
             TextView tv = new TextView(this);
-            tv.setText("📖 " + enc.getString(enc.getColumnIndexOrThrow("course_name")));
-            tv.setTextColor(getResources().getColor(R.color.primary_indigo));
+            tv.setText("• " + enc.getString(enc.getColumnIndexOrThrow("course_name")));
+            tv.setTextColor(ContextCompat.getColor(this, R.color.admin_sapphire_primary));
+            tv.setTextSize(13);
             tv.setPadding(0, 4, 0, 4);
             enrollmentsContainer.addView(tv);
         }
@@ -238,7 +243,9 @@ public class AdminUserManagementActivity extends BaseActivity {
             String sub = examc.getString(examc.getColumnIndexOrThrow("subject"));
             String score = examc.getString(examc.getColumnIndexOrThrow("score"));
             String date = examc.getString(examc.getColumnIndexOrThrow("date"));
-            tv.setText("🏆 " + sub + ": " + score + " (Certificate Issued: " + date + ")");
+            tv.setText("• " + sub + ": " + score + " (Certificate: " + date + ")");
+            tv.setTextColor(ContextCompat.getColor(this, R.color.admin_text_primary));
+            tv.setTextSize(13);
             tv.setPadding(0, 4, 0, 4);
             examsContainer.addView(tv);
         }
@@ -248,7 +255,9 @@ public class AdminUserManagementActivity extends BaseActivity {
         Cursor payc = repository.getStudentPayments(u.username);
         while (payc.moveToNext()) {
             TextView tv = new TextView(this);
-            tv.setText("💰 " + payc.getString(payc.getColumnIndexOrThrow("amount")) + " ETB [" + payc.getString(payc.getColumnIndexOrThrow("status")) + "]");
+            tv.setText("• " + payc.getString(payc.getColumnIndexOrThrow("amount")) + " ETB [" + payc.getString(payc.getColumnIndexOrThrow("status")) + "]");
+            tv.setTextColor(ContextCompat.getColor(this, R.color.emerald_accent));
+            tv.setTextSize(13);
             tv.setPadding(0, 4, 0, 4);
             paymentsContainer.addView(tv);
         }
@@ -266,7 +275,7 @@ public class AdminUserManagementActivity extends BaseActivity {
         TextView tv = new TextView(this);
         tv.setText(text);
         tv.setTextSize(12);
-        tv.setTextColor(getResources().getColor(android.R.color.darker_gray));
+        tv.setTextColor(ContextCompat.getColor(this, R.color.admin_text_muted));
         return tv;
     }
 
@@ -281,7 +290,7 @@ public class AdminUserManagementActivity extends BaseActivity {
             actionsList.add("Unenroll from Course");
         }
         
-        actionsList.add("Reset Password (123456)");
+        actionsList.add("Send Password Reset Email");
         actionsList.add("Impersonate Student (Support)");
         actionsList.add("Delete Account Permanently");
 
@@ -297,13 +306,32 @@ public class AdminUserManagementActivity extends BaseActivity {
                 else if (action.contains("Send Personal Info/File")) sendPersonalInfo(u);
                 else if (action.contains("Manual Enrollment")) showEnrollDialog(u);
                 else if (action.contains("Unenroll")) showUnenrollDialog(u);
-                else if (action.contains("Reset Password")) repository.updatePassword(u.username, "123456");
+                else if (action.contains("Send Password Reset")) sendPasswordResetEmail(u);
                 else if (action.contains("Impersonate")) impersonateUser(u);
                 else if (action.contains("Delete")) deleteUser(u);
                 
                 if (action.contains("Suspend") || action.contains("Activate")) loadAllUsers();
             })
             .show();
+    }
+
+    private void sendPasswordResetEmail(User user) {
+        FirebaseAuth auth = FirebaseAuthSupport.getConfiguredAuth(this);
+        if (auth == null) {
+            Toast.makeText(this, "Firebase is not configured for this app.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (user.email == null || user.email.trim().isEmpty()) {
+            Toast.makeText(this, "This account has no valid email address.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        auth.sendPasswordResetEmail(user.email.trim()).addOnCompleteListener(this, task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(this, "Password-reset instructions sent to the user.", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, FirebaseAuthSupport.messageFor(task.getException()), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void openCertificateIssuer(User u) {

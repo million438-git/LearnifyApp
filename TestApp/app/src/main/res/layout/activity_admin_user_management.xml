@@ -4,19 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8FAFC"
+    android:background="@color/admin_bg"
     tools:context=".AdminUserManagementActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary">
+        android:background="@drawable/bg_admin_hero_banner"
+        app:elevation="2dp">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/userMgmtToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:navigationIcon="@drawable/ic_back_white"
             app:title="User Administration"
             app:titleTextColor="@color/white" />
 
@@ -24,33 +25,57 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="12dp">
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="12dp">
 
-            <com.google.android.material.textfield.TextInputLayout
+            <!-- Search Card -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:hintEnabled="false"
-                app:startIconDrawable="@android:drawable/ic_menu_search"
-                app:startIconTint="@color/white">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etSearchUser"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Search name, ID, or email..."
-                    android:textColor="@color/white"
-                    android:background="@drawable/bg_chat_bubble_user"
-                    android:padding="12dp"
-                    android:textSize="14sp" />
-            </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="48dp"
+                app:cardBackgroundColor="#26FFFFFF"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#33FFFFFF"
+                app:strokeWidth="1dp">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="12dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_search"
+                        app:tint="@color/white" />
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etSearchUser"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:hint="Search by name, ID, or email..."
+                        android:paddingHorizontal="10dp"
+                        android:singleLine="true"
+                        android:textColor="@color/white"
+                        android:textColorHint="#B3FFFFFF"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Status and Filter Chips -->
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:scrollbars="none">
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <com.google.android.material.chip.ChipGroup
@@ -58,28 +83,45 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:singleSelection="true">
+
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipAll"
                             style="@style/Widget.MaterialComponents.Chip.Choice"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:checked="true"
                             android:text="All Status"
-                            android:checked="true" />
+                            android:textColor="@color/chip_admin_text_color"
+                            app:chipBackgroundColor="@color/chip_admin_bg_color"
+                            app:chipStrokeColor="@color/chip_admin_stroke_color"
+                            app:chipStrokeWidth="1dp" />
+
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipActive"
                             style="@style/Widget.MaterialComponents.Chip.Choice"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Active" />
+                            android:text="Active"
+                            android:textColor="@color/chip_admin_text_color"
+                            app:chipBackgroundColor="@color/chip_admin_bg_color"
+                            app:chipStrokeColor="@color/chip_admin_stroke_color"
+                            app:chipStrokeWidth="1dp" />
+
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipBlocked"
                             style="@style/Widget.MaterialComponents.Chip.Choice"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Blocked" />
+                            android:text="Blocked"
+                            android:textColor="@color/chip_admin_text_color"
+                            app:chipBackgroundColor="@color/chip_admin_bg_color"
+                            app:chipStrokeColor="@color/chip_admin_stroke_color"
+                            app:chipStrokeWidth="1dp" />
                     </com.google.android.material.chip.ChipGroup>
 
-                    <View android:layout_width="16dp" android:layout_height="1dp" />
+                    <View
+                        android:layout_width="12dp"
+                        android:layout_height="1dp" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipCourseFilter"
@@ -87,9 +129,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="By Course: All"
-                        app:chipIcon="@android:drawable/ic_menu_agenda" />
+                        android:textColor="@color/white"
+                        app:chipBackgroundColor="#1E3A8A"
+                        app:chipIcon="@drawable/ic_courses"
+                        app:chipIconTint="@color/white"
+                        app:chipStrokeColor="#3B82F6"
+                        app:chipStrokeWidth="1dp" />
 
-                    <View android:layout_width="8dp" android:layout_height="1dp" />
+                    <View
+                        android:layout_width="8dp"
+                        android:layout_height="1dp" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipDateFilter"
@@ -97,7 +146,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Date: All Time"
-                        app:chipIcon="@android:drawable/ic_menu_today" />
+                        android:textColor="@color/white"
+                        app:chipBackgroundColor="#1E3A8A"
+                        app:chipIcon="@drawable/ic_calendar"
+                        app:chipIconTint="@color/white"
+                        app:chipStrokeColor="#3B82F6"
+                        app:chipStrokeWidth="1dp" />
                 </LinearLayout>
             </HorizontalScrollView>
         </LinearLayout>
@@ -114,35 +168,43 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- Management Control Subheader -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginBottom="12dp"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="16dp">
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/tvUserCount"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Managing STUDENTS: 0"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="#1E293B"
                     android:background="?attr/selectableItemBackground"
-                    android:padding="4dp"/>
+                    android:paddingVertical="4dp"
+                    android:text="Managing STUDENTS: 0"
+                    android:textColor="@color/admin_text_primary"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnExportData"
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:text="Export"
-                    app:icon="@android:drawable/ic_menu_save"
-                    app:cornerRadius="8dp"/>
+                    android:textColor="@color/admin_sapphire_primary"
+                    android:textSize="12sp"
+                    app:cornerRadius="8dp"
+                    app:icon="@drawable/ic_download"
+                    app:iconPadding="4dp"
+                    app:iconSize="16dp"
+                    app:iconTint="@color/admin_sapphire_primary"
+                    app:strokeColor="@color/admin_card_stroke" />
             </LinearLayout>
 
+            <!-- Dynamic User List Container -->
             <LinearLayout
                 android:id="@+id/userListContainer"
                 android:layout_width="match_parent"

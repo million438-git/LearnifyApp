@@ -4,21 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_reports_mix"
+    android:background="@color/admin_bg"
     tools:context=".AdminReportsActivity">
 
     <!-- 1. TOP BAR (ADMIN HEADER) -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
+        android:background="@drawable/bg_admin_hero_banner"
+        app:elevation="4dp">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/reportsToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:navigationIconTint="@android:color/white">
+            app:navigationIconTint="@color/white"
+            app:title="System Reports"
+            app:titleTextColor="@color/white">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -29,9 +31,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:text="📊 System Reports"
-                    android:textColor="@android:color/white"
-                    android:textSize="20sp"
+                    android:text="System Reports"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -46,23 +48,58 @@
                         android:id="@+id/tvAdminNameHeader"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
                         android:text="System Admin"
                         android:textColor="#E2E8F0"
-                        android:textSize="14sp"
-                        android:layout_marginEnd="12dp" />
+                        android:textSize="13sp" />
 
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/ivAdminProfileHeader"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:src="@android:drawable/ic_menu_myplaces"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_user_person"
                         app:shapeAppearanceOverlay="@style/CircleImageView"
-                        app:strokeColor="@android:color/white"
-                        app:strokeWidth="1dp"
-                        android:scaleType="centerCrop" />
+                        app:strokeColor="@color/white"
+                        app:strokeWidth="1.5dp" />
                 </LinearLayout>
             </RelativeLayout>
         </androidx.appcompat.widget.Toolbar>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="EXECUTIVE AUDIT &amp; TELEMETRY"
+                android:textColor="@color/sky_400"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Real-Time Analytics Suite"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Live overview of student engagement, platform infrastructure, and academic performance."
+                android:textColor="#BFDBFE"
+                android:textSize="13sp" />
+        </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -81,20 +118,20 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Real-time Performance"
-                android:textColor="#94A3B8"
-                android:textSize="14sp"
+                android:text="Real-Time Platform Performance"
+                android:textColor="@color/admin_text_tertiary"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 android:textAllCaps="true"
-                android:letterSpacing="0.1"
-                android:layout_marginBottom="12dp" />
+                android:letterSpacing="0.08"
+                android:layout_marginBottom="8dp" />
 
             <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:alignmentMode="alignMargins"
                 android:columnCount="2"
-                android:layout_marginBottom="24dp">
+                android:layout_marginBottom="16dp">
 
                 <include layout="@layout/item_admin_widget" android:id="@+id/widgetTotalStudents" />
                 <include layout="@layout/item_admin_widget" android:id="@+id/widgetTotalAdmins" />
@@ -105,77 +142,256 @@
             </GridLayout>
 
             <!-- 3. DETAILED REPORT SECTIONS -->
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="System Insights"
-                android:textColor="#94A3B8"
-                android:textSize="14sp"
+                android:text="Academic Intelligence &amp; Diagnostics"
+                android:textColor="@color/admin_text_tertiary"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 android:textAllCaps="true"
-                android:letterSpacing="0.1"
-                android:layout_marginBottom="12dp" />
+                android:letterSpacing="0.08"
+                android:layout_marginBottom="8dp" />
 
             <!-- A. STUDENT PERFORMANCE -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="#1AFFFFFF"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="0dp"
-                app:strokeColor="#33FFFFFF"
+                app:cardBackgroundColor="@color/admin_card_bg"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeColor="@color/admin_card_stroke"
                 app:strokeWidth="1dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="20dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="📘 Student Performance Report"
-                        android:textColor="@android:color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-                    <TextView
+
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        android:gravity="center"
-                        android:text="Avg Score: 82% | Top: Mathematics"
-                        android:textColor="#CBD5E1" />
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <FrameLayout
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:background="@drawable/bg_icon_container_sapphire">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_trophy"
+                                app:tint="@color/admin_sapphire_primary" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Student Performance Index"
+                                android:textColor="@color/admin_text_primary"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Curriculum mastery across active grades"
+                                android:textColor="@color/admin_text_secondary"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_badge_active"
+                            android:paddingStart="8dp"
+                            android:paddingTop="3dp"
+                            android:paddingEnd="8dp"
+                            android:paddingBottom="3dp"
+                            android:text="+4.8% MOM"
+                            android:textColor="@color/emerald_accent"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="14dp"
+                        android:layout_marginBottom="14dp"
+                        android:background="@color/admin_border" />
+
+                    <!-- METRICS ROW -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="AVERAGE SCORE"
+                                android:textColor="@color/admin_text_tertiary"
+                                android:textSize="10sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="82.4%"
+                                android:textColor="@color/admin_text_primary"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="PASS RATE"
+                                android:textColor="@color/admin_text_tertiary"
+                                android:textSize="10sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="91.2%"
+                                android:textColor="@color/emerald_primary"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.2"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="TOP DOMAIN"
+                                android:textColor="@color/admin_text_tertiary"
+                                android:textSize="10sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="Mathematics"
+                                android:textColor="@color/admin_sapphire_primary"
+                                android:textSize="17sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- E. SYSTEM HEALTH & LOGS -->
+            <!-- B. SYSTEM HEALTH & LIVE LOGS -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="#1AFFFFFF"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="0dp"
-                app:strokeColor="#33FFFFFF"
+                android:layout_marginBottom="20dp"
+                app:cardBackgroundColor="@color/admin_card_bg"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeColor="@color/admin_card_stroke"
                 app:strokeWidth="1dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="20dp">
-                    <TextView
-                        android:layout_width="wrap_content"
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="⚙️ System Health &amp; Logs"
-                        android:textColor="#10B981"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <FrameLayout
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:background="@drawable/bg_icon_container_emerald">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_database"
+                                app:tint="@color/emerald_primary" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="System Health &amp; Live Logs"
+                                android:textColor="@color/admin_text_primary"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Real-time telemetry and infrastructure status"
+                                android:textColor="@color/admin_text_secondary"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_badge_active"
+                            android:paddingStart="8dp"
+                            android:paddingTop="3dp"
+                            android:paddingEnd="8dp"
+                            android:paddingBottom="3dp"
+                            android:text="OPERATIONAL"
+                            android:textColor="@color/emerald_accent"
+                            android:textSize="10sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/logsContainer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="14dp"
                         android:orientation="vertical" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -184,41 +400,53 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
                 android:orientation="horizontal">
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnExportReport"
+                    style="@style/Widget.MaterialComponents.Button"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
-                    android:text="📥 Export"
-                    android:textColor="@android:color/white"
-                    app:backgroundTint="#2563EB"
-                    app:cornerRadius="12dp" />
-                <View android:layout_width="12dp" android:layout_height="0dp" />
+                    android:backgroundTint="@color/admin_sapphire_primary"
+                    android:text="Export PDF"
+                    android:textColor="@color/white"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/ic_download"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/white" />
+
+                <View
+                    android:layout_width="12dp"
+                    android:layout_height="0dp" />
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnRefreshReport"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
-                    android:text="🔄 Refresh"
-                    android:textColor="@android:color/white"
-                    app:backgroundTint="#475569"
-                    app:cornerRadius="12dp" />
+                    android:text="Refresh Telemetry"
+                    android:textColor="@color/admin_sapphire_primary"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/ic_refresh"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/admin_sapphire_primary"
+                    app:strokeColor="@color/admin_sapphire_primary" />
             </LinearLayout>
 
             <!-- 5. FOOTER -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginBottom="32dp"
-                android:text="v1.0.5 • Last Updated: Just Now\nAceGrade Professional Edition"
-                android:textColor="#475569"
-                android:textSize="11sp"
                 android:gravity="center"
+                android:letterSpacing="0.05"
+                android:text="Learnify Executive Portal • v2.4 Enterprise Edition\nContinuous Monitoring Active"
                 android:textAllCaps="true"
-                android:letterSpacing="0.05" />
+                android:textColor="@color/admin_text_tertiary"
+                android:textSize="11sp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Newton's Cradle Laboratory</title>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0a0f1f;
+  --sf:#141b2e;
+  --ln:#26304a;
+  --tx:#e5e9f5;
+  --mu:#93a0bd;
+  --pr:#818cf8;
+  --pr-deep:#6366f1;
+  --ok:#34d399;
+  --bad:#f87171;
+  --wa:#fbbf24;
+  --red:#f43f5e;
+  --blue:#4fa8ff;
+  --green:#10d982;
+  box-sizing:border-box;
+}
+*{box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;margin:0;overflow:hidden;}
+body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column;}
+
+header{background:var(--bg);color:#fff;padding:8px 10px;text-align:center;border-bottom:2px solid var(--pr);flex-shrink:0;}
+header h2{margin:0;font-size:clamp(.95rem, 2.5vw, 1.1rem);}
+header small{display:block;color:var(--mu);font-size:clamp(.7rem, 1.8vw, .8rem);margin-top:2px;}
+
+.lab-container{display:flex;flex:1;overflow:hidden;flex-direction:column;min-height:0;}
+
+#sim-area{
+  flex:0 0 50%;
+  min-height:240px;
+  max-height:75vh;
+  position:relative;
+  background:#05080f;
+  border-bottom:2px solid var(--ln);
+  overflow:hidden;
+  cursor:grab;
+}
+canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;touch-action:none;}
+
+.hud{
+  position:absolute;top:8px;left:8px;
+  background:rgba(20,27,46,0.92);
+  padding:6px 9px;border-radius:8px;
+  font-size:clamp(.65rem, 1.8vw, .75rem);
+  border:1px solid var(--ln);z-index:20;color:var(--tx);
+  pointer-events:none;backdrop-filter:blur(6px);
+  max-width:min(280px, 60vw);
+}
+.hud b{color:var(--pr);font-size:.7rem;letter-spacing:.08em;}
+.hud .metrics{line-height:1.6;}
+.hud span.val{color:var(--wa);font-weight:700;font-variant-numeric:tabular-nums;}
+
+.vector-legend{
+  position:absolute;bottom:8px;left:8px;
+  font-size:clamp(.6rem, 1.6vw, .65rem);
+  background:rgba(20,27,46,0.92);
+  padding:4px 7px;border-radius:4px;
+  color:var(--mu);pointer-events:none;border:1px solid var(--ln);
+}
+.vector-legend span{margin-right:8px;}
+
+.splitter{
+  height:14px;
+  background:linear-gradient(90deg, rgba(0,0,0,.2), rgba(129,140,248,.15), rgba(0,0,0,.2));
+  cursor:ns-resize;flex-shrink:0;
+  border-top:1px solid var(--ln);border-bottom:1px solid var(--ln);
+  position:relative;
+}
+.splitter::after{
+  content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:40px;height:3px;border-radius:2px;background:rgba(129,140,248,.5);
+}
+.splitter:hover, .splitter:active{
+  background:linear-gradient(90deg, rgba(129,140,248,.2), rgba(129,140,248,.4), rgba(129,140,248,.2));
+}
+
+.bottom-panel{
+  flex:1;
+  min-height:0;
+  display:flex;
+  flex-direction:row;
+  background:var(--sf);
+  overflow:hidden;
+}
+.controls{
+  flex:0 0 340px;
+  padding:12px;
+  border-right:1px solid var(--ln);
+  background:var(--sf);
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+}
+.analysis{
+  flex:1 1 0;
+  min-width:0;
+  padding:12px;
+  background:var(--bg);
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+}
+
+.card{background:var(--sf);border:1px solid var(--ln);padding:10px;border-radius:8px;margin-bottom:10px;font-size:.84rem;line-height:1.55;}
+h4{margin:0 0 8px 0;font-size:.75rem;color:var(--mu);text-transform:uppercase;letter-spacing:.05em;font-weight:700;}
+.input-row{margin-bottom:9px;}
+label{display:block;font-size:.78rem;font-weight:600;margin-bottom:3px;}
+input[type=range]{width:100%;accent-color:var(--pr);height:6px;}
+select,input[type=number],textarea{width:100%;padding:8px;border-radius:6px;border:1px solid var(--ln);background:var(--bg);color:var(--tx);font-family:inherit;font-size:.85rem;}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--pr);}
+
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+button{
+  padding:10px;border:1px solid var(--ln);border-radius:6px;
+  font-weight:700;cursor:pointer;font-size:.82rem;
+  background:var(--sf);color:var(--tx);font-family:inherit;
+  transition:.2s;touch-action:manipulation;
+}
+button:hover{background:#1a2340;border-color:var(--pr);}
+button:active{transform:scale(.98);}
+button.go{background:var(--pr);color:#0b1020;border-color:var(--pr);}
+button.go:hover{background:#a5b4fc;box-shadow:0 4px 14px rgba(129,140,248,.4);}
+button.launch{background:linear-gradient(135deg,#34d399,#059669);color:#fff;border-color:transparent;}
+button.launch:hover{box-shadow:0 4px 14px rgba(52,211,153,.4);}
+button.pause{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000;border-color:transparent;font-weight:800;}
+button.pause:hover{box-shadow:0 4px 14px rgba(251,191,36,.4);}
+button.sound{background:linear-gradient(135deg,#34d399,#059669);color:#fff;border-color:transparent;}
+button.sound.playing{background:linear-gradient(135deg,#f43f5e,#dc2626);}
+
+.readouts{display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:8px;margin-bottom:10px;}
+.readout{background:var(--sf);border:1px solid var(--ln);border-radius:6px;padding:8px 10px;}
+.readout span{font-size:.68rem;color:var(--mu);display:block;}
+.readout strong{font-size:.92rem;color:var(--tx);font-variant-numeric:tabular-nums;word-break:break-word;}
+.readout.hl strong{color:var(--pr);}
+.readout.good strong{color:var(--ok);}
+.readout.warn strong{color:var(--wa);}
+
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.tab-btn{
+  padding:8px 12px;border-radius:6px;background:var(--sf);color:var(--mu);
+  font-weight:600;font-size:.78rem;border:1px solid var(--ln);cursor:pointer;
+  transition:.2s;flex:1 1 auto;min-width:0;touch-action:manipulation;
+}
+.tab-btn:hover{background:#242e4d;color:var(--tx);}
+.tab-btn.active{background:var(--pr);color:#0b1020;border-color:var(--pr);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+.quiz-q{padding:10px 0;border-bottom:1px solid var(--ln);}
+.quiz-q>strong{display:block;margin-bottom:8px;font-size:.88rem;}
+.quiz-q label{
+  display:flex;align-items:center;gap:6px;
+  padding:9px 11px;background:var(--sf);border:1px solid var(--ln);
+  border-radius:6px;margin:4px 0;cursor:pointer;
+  font-weight:500;font-size:.82rem;width:100%;
+  touch-action:manipulation;
+}
+.quiz-q label:hover{background:#1a2340;border-color:var(--pr);}
+.quiz-q input[type=radio]{accent-color:var(--pr);flex-shrink:0;margin:0;}
+.explanation{
+  margin-top:8px;padding:10px;border-radius:6px;
+  font-size:.82rem;line-height:1.55;
+  background:rgba(129,140,248,.1);
+  border-left:3px solid var(--pr);
+  word-wrap:break-word;overflow-wrap:break-word;
+}
+.explanation.correct-box{background:rgba(52,211,153,.12);border-left-color:var(--ok);}
+.explanation.wrong-box{background:rgba(248,113,113,.12);border-left-color:var(--bad);}
+.quiz-section{font-size:.72rem;font-weight:700;text-transform:uppercase;color:var(--pr);margin:12px 0 6px 0;letter-spacing:.05em;}
+#quiz-result{margin-top:10px;padding:12px;border-radius:8px;background:rgba(129,140,248,.15);border:1px solid rgba(129,140,248,.4);font-weight:700;text-align:center;}
+
+table.formulas{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:6px;table-layout:fixed;}
+table.formulas th,table.formulas td{border:1px solid var(--ln);padding:6px 8px;text-align:left;word-wrap:break-word;overflow-wrap:break-word;}
+table.formulas th{background:var(--bg);font-weight:600;color:var(--pr);}
+.eq{font-family:'JetBrains Mono',monospace;background:var(--bg);padding:2px 6px;border-radius:4px;font-size:.78rem;color:var(--wa);border:1px solid var(--ln);display:inline-block;word-break:break-all;}
+.note{font-size:.82rem;color:var(--mu);margin-top:8px;line-height:1.55;}
+ul{color:var(--tx);padding-left:1.1rem;}
+ul li{line-height:1.7;word-wrap:break-word;}
+
+#challenge-note{color:var(--tx);font-size:.85rem;word-wrap:break-word;}
+#challenge-result{color:var(--ok);font-weight:600;margin-top:6px;word-wrap:break-word;}
+
+textarea{width:100%;padding:8px;border-radius:6px;border:1px solid var(--ln);font-family:inherit;font-size:.85rem;min-height:64px;resize:vertical;background:var(--bg);color:var(--tx);}
+textarea:focus{outline:none;border-color:var(--pr);}
+
+@media (max-width: 900px){
+  .controls{flex:0 0 300px;}
+  .readouts{grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));}
+}
+
+@media (max-width: 768px){
+  .bottom-panel{flex-direction:column;}
+  .controls{
+    flex:0 0 auto;
+    border-right:none;
+    border-bottom:1px solid var(--ln);
+    max-height:35vh;
+  }
+  .analysis{
+    flex:1 1 0;
+    min-height:0;
+  }
+  #sim-area{flex:0 0 42%;min-height:200px;}
+  .hud{font-size:.68rem;padding:5px 8px;max-width:min(220px, 55vw);}
+  .readouts{grid-template-columns:repeat(auto-fit, minmax(120px, 1fr));gap:6px;}
+  .tab-btn{font-size:.74rem;padding:7px 10px;}
+}
+
+@media (max-width: 480px){
+  header{padding:6px 8px;}
+  header h2{font-size:.95rem;}
+  header small{font-size:.68rem;}
+  #sim-area{flex:0 0 45%;min-height:180px;}
+  .controls{padding:10px;max-height:38vh;}
+  .analysis{padding:10px;}
+  .hud{font-size:.62rem;padding:4px 7px;max-width:50vw;}
+  .vector-legend{font-size:.58rem;padding:3px 6px;}
+  .vector-legend span{margin-right:5px;}
+  .readouts{grid-template-columns:repeat(2, 1fr);gap:5px;}
+  .readout{padding:6px 8px;}
+  .readout span{font-size:.6rem;}
+  .readout strong{font-size:.8rem;}
+  .btn-grid{grid-template-columns:1fr 1fr;gap:6px;}
+  button{padding:9px;font-size:.76rem;}
+  .tabs{gap:4px;}
+  .tab-btn{font-size:.7rem;padding:6px 8px;flex:1 1 calc(50% - 4px);}
+  table.formulas{font-size:.74rem;}
+  .eq{font-size:.7rem;}
+  .quiz-q label{padding:8px;font-size:.78rem;}
+  .explanation{font-size:.78rem;padding:8px;}
+}
+
+@media (max-width: 360px){
+  .readouts{grid-template-columns:1fr;}
+  .tab-btn{flex:1 1 100%;}
+}
+
+@media (max-height: 500px) and (orientation: landscape){
+  #sim-area{flex:0 0 50%;min-height:140px;}
+  .controls{max-height:42vh;}
+  .hud{font-size:.6rem;}
+  header{padding:4px 8px;}
+  header small{display:none;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+<h2>🔔 Newton's Cradle Laboratory</h2>
+<small>Elastic collisions · Momentum &amp; energy conservation · Pendulum motion</small>
+</header>
+
+<div class="lab-container">
+<div id="sim-area">
+<div class="hud">
+<b>LIVE STATE</b><br>
+<div class="metrics">
+Time: <span class="val" id="hud-t">0.00</span> s<br>
+Balls moving: <span class="val" id="hud-moving">1</span><br>
+Collisions: <span class="val" id="hud-coll">0</span><br>
+Total momentum: <span class="val" id="hud-p">0.00</span> kg·m/s<br>
+Status: <span class="val" id="hud-status">Idle</span>
+</div>
+</div>
+<div class="vector-legend">
+<span style="color:#fbbf24">● Ball 1</span>
+<span style="color:#10d982">● Ball 5</span>
+<span style="color:#ff5c8a">● Velocity</span>
+</div>
+<canvas id="canvas"></canvas>
+</div>
+
+<div class="splitter" id="splitter" title="Drag to resize simulation area"></div>
+
+<div class="bottom-panel">
+<div class="controls">
+<h4>🔔 Cradle Setup</h4>
+
+<div class="input-row">
+<button class="sound" id="btn-sound" style="width:100%;">🔈 Enable sound</button>
+</div>
+
+<div class="input-row">
+<label>Launch mode</label>
+<select id="mode">
+<option value="one" selected>1 ball (classic)</option>
+<option value="two">2 balls</option>
+<option value="three">3 balls</option>
+<option value="both">Both ends</option>
+</select>
+</div>
+
+<div class="input-row">
+<label>Number of balls: <span id="v-num">5</span></label>
+<input type="range" id="num" min="3" max="7" step="1" value="5">
+</div>
+
+<div class="input-row">
+<label>Ball mass m: <span id="v-mass">0.05</span> kg</label>
+<input type="range" id="mass" min="0.01" max="0.5" step="0.01" value="0.05">
+</div>
+
+<div class="input-row">
+<label>Pendulum length L: <span id="v-len">0.20</span> m</label>
+<input type="range" id="len" min="0.10" max="0.40" step="0.01" value="0.20">
+</div>
+
+<div class="input-row">
+<label>Launch angle θ: <span id="v-angle">30</span>°</label>
+<input type="range" id="angle" min="10" max="60" step="1" value="30">
+</div>
+
+<div class="input-row">
+<label>Restitution (bounciness): <span id="v-e">0.98</span></label>
+<input type="range" id="e" min="0.5" max="1.00" step="0.01" value="0.98">
+</div>
+
+<div class="input-row">
+<label>Gravity g: <span id="v-g">9.81</span> m/s²</label>
+<select id="g">
+<option value="9.81" selected>Earth (9.81)</option>
+<option value="1.62">Moon (1.62)</option>
+<option value="3.71">Mars (3.71)</option>
+<option value="24.79">Jupiter (24.79)</option>
+</select>
+</div>
+
+<div class="input-row">
+<label>Sim speed: <span id="v-speed">1.0</span>×</label>
+<input type="range" id="speed" min="0.1" max="3" step="0.1" value="1">
+</div>
+
+<div class="btn-grid">
+<button class="launch" id="btn-start">▶ Release</button>
+<button class="pause" id="btn-pause">⏸ Pause</button>
+</div>
+
+<div class="btn-grid" style="margin-top:8px;">
+<button id="btn-reset">↺ Reset</button>
+<button class="go" id="btn-record">📋 Record</button>
+</div>
+</div>
+
+<div class="analysis">
+<h4>📊 Learn &amp; Practice</h4>
+
+<div class="readouts">
+<div class="readout hl"><span>Balls moving</span><strong id="ro-nm">1</strong></div>
+<div class="readout"><span>Launch angle</span><strong id="ro-angle">30°</strong></div>
+<div class="readout"><span>Max ball 1 speed</span><strong id="ro-vmax1">0.00 m/s</strong></div>
+<div class="readout good"><span>Max ball 5 speed</span><strong id="ro-vmax5">0.00 m/s</strong></div>
+<div class="readout"><span>Total momentum</span><strong id="ro-p">0.00 kg·m/s</strong></div>
+<div class="readout"><span>Total kinetic energy</span><strong id="ro-ke">0.00 J</strong></div>
+<div class="readout"><span>Total potential E</span><strong id="ro-pe">0.00 J</strong></div>
+<div class="readout"><span>Total energy E</span><strong id="ro-total">0.00 J</strong></div>
+<div class="readout"><span>Initial energy E₀</span><strong id="ro-e0">0.00 J</strong></div>
+<div class="readout"><span>Efficiency (E/E₀)</span><strong id="ro-eff">100.0%</strong></div>
+<div class="readout"><span>Collisions</span><strong id="ro-coll">0</strong></div>
+<div class="readout"><span>Period T = 2π√(L/g)</span><strong id="ro-T">0.90 s</strong></div>
+</div>
+
+<div class="card">
+<div class="tabs">
+<button class="tab-btn active" data-tab="formulas">Formulas</button>
+<button class="tab-btn" data-tab="quiz">Quiz</button>
+<button class="tab-btn" data-tab="challenges">Challenges</button>
+<button class="tab-btn" data-tab="notebook">Notebook</button>
+</div>
+
+<div id="formulas" class="tab-panel active">
+<h3 style="margin:6px 0 8px 0;">Core Formulas — Newton's Cradle</h3>
+<ul style="font-size:.88rem;">
+<li><b style="color:var(--pr)">Pendulum period:</b> T = 2π√(L/g)</li>
+<li><b style="color:var(--pr)">Potential energy:</b> PE = mgh = mgL(1 − cosθ)</li>
+<li><b style="color:var(--pr)">Kinetic energy:</b> KE = ½mv²</li>
+<li><b style="color:var(--pr)">Speed at bottom:</b> v = √(2gh)</li>
+<li><b style="color:var(--pr)">Max speed from angle:</b> v = √(2gL(1 − cosθ))</li>
+<li><b style="color:var(--pr)">Momentum:</b> p = mv</li>
+<li><b style="color:var(--pr)">Elastic collision (equal mass):</b> velocities swap</li>
+<li><b style="color:var(--pr)">Momentum conservation:</b> m₁v₁ + m₂v₂ = m₁v₁' + m₂v₂'</li>
+<li><b style="color:var(--pr)">Energy conservation:</b> KE + PE = constant (if e = 1)</li>
+</ul>
+<p class="note"><b style="color:var(--wa)">💡 Key insights:</b> Newton's cradle demonstrates <b>conservation of momentum</b> and <b>conservation of kinetic energy</b> through a chain of equal-mass elastic collisions. When you lift one ball and release it, the collision cascades through the middle balls and one ball on the other end shoots out at almost the same speed. Lift two and two fly out. This works because in a perfectly elastic collision between equal masses, the velocities simply exchange. Real cradles have restitution e &lt; 1, so the motion slowly dies down.</p>
+
+<table class="formulas">
+<tr><th>Quantity</th><th>Formula</th></tr>
+<tr><td>Max speed</td><td><span class="eq">v = √(2gL(1 − cosθ))</span></td></tr>
+<tr><td>Period</td><td><span class="eq">T = 2π√(L/g)</span></td></tr>
+<tr><td>Energy at angle</td><td><span class="eq">PE = mgL(1 − cosθ)</span></td></tr>
+</table>
+</div>
+
+<div id="quiz" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+<div class="quiz-section">Basic — Newton's Cradle</div>
+<div class="quiz-q" data-q="q1" data-answer="B">
+<strong>1. If you lift one ball and release it, how many balls move on the other end?</strong>
+<label><input type="radio" name="q1" value="A"> None</label>
+<label><input type="radio" name="q1" value="B"> One</label>
+<label><input type="radio" name="q1" value="C"> All five</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q2" data-answer="A">
+<strong>2. If you lift two balls and release them, how many swing out on the other end?</strong>
+<label><input type="radio" name="q2" value="A"> Two</label>
+<label><input type="radio" name="q2" value="B"> One</label>
+<label><input type="radio" name="q2" value="C"> Three</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q3" data-answer="B">
+<strong>3. Which quantities are conserved in a Newton's cradle collision?</strong>
+<label><input type="radio" name="q3" value="A"> Only momentum</label>
+<label><input type="radio" name="q3" value="B"> Both momentum and kinetic energy (ideal)</label>
+<label><input type="radio" name="q3" value="C"> Only kinetic energy</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Intermediate — Pendulum Physics</div>
+<div class="quiz-q" data-q="q4" data-answer="A">
+<strong>4. The speed of a pendulum at the bottom is:</strong>
+<label><input type="radio" name="q4" value="A"> v = √(2gL(1 − cosθ))</label>
+<label><input type="radio" name="q4" value="B"> v = gL</label>
+<label><input type="radio" name="q4" value="C"> v = 2gL</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q5" data-answer="B">
+<strong>5. The period of a pendulum depends on:</strong>
+<label><input type="radio" name="q5" value="A"> Mass and amplitude</label>
+<label><input type="radio" name="q5" value="B"> Length and gravity</label>
+<label><input type="radio" name="q5" value="C"> Only mass</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q6" data-answer="A">
+<strong>6. If you double the mass of one ball but keep lengths and angles the same:</strong>
+<label><input type="radio" name="q6" value="A"> Momentum changes but speeds remain similar</label>
+<label><input type="radio" name="q6" value="B"> The ball falls faster</label>
+<label><input type="radio" name="q6" value="C"> Nothing works</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Advanced — Energy &amp; Restitution</div>
+<div class="quiz-q" data-q="q7" data-answer="B">
+<strong>7. Restitution e = 1 means:</strong>
+<label><input type="radio" name="q7" value="A"> Perfectly inelastic</label>
+<label><input type="radio" name="q7" value="B"> Perfectly elastic (no energy lost)</label>
+<label><input type="radio" name="q7" value="C"> Half-energy lost</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q8" data-answer="A">
+<strong>8. In a real Newton's cradle, why does the motion eventually stop?</strong>
+<label><input type="radio" name="q8" value="A"> Restitution is slightly less than 1, so energy is lost as sound and heat</label>
+<label><input type="radio" name="q8" value="B"> Gravity disappears</label>
+<label><input type="radio" name="q8" value="C"> Mass decreases</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q9" data-answer="B">
+<strong>9. What happens if you launch three balls?</strong>
+<label><input type="radio" name="q9" value="A"> One ball flies out</label>
+<label><input type="radio" name="q9" value="B"> Three balls fly out on the other side</label>
+<label><input type="radio" name="q9" value="C"> All five fly out</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q10" data-answer="A">
+<strong>10. Total energy of a frictionless pendulum is:</strong>
+<label><input type="radio" name="q10" value="A"> Constant (PE + KE)</label>
+<label><input type="radio" name="q10" value="B"> Zero always</label>
+<label><input type="radio" name="q10" value="C"> Always increasing</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="btn-grid" style="margin-top:12px;">
+<button class="go" id="btn-quiz-check">Submit Quiz</button>
+<button id="btn-quiz-reset">Reset</button>
+</div>
+<div id="quiz-result" style="display:none;"></div>
+</div>
+
+<div id="challenges" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Challenges</h3>
+<div style="display:flex;flex-direction:column;gap:8px;font-size:.88rem;">
+<div><b style="color:var(--pr)">1. Classic 1-ball</b><br><button class="launch" data-challenge="classic">Lift 1 ball, watch it transfer</button></div>
+<div><b style="color:var(--pr)">2. 2-ball cascade</b><br><button class="launch" data-challenge="two">Two balls in, two balls out</button></div>
+<div><b style="color:var(--pr)">3. 3-ball cascade</b><br><button class="launch" data-challenge="three">Three in, three out</button></div>
+<div><b style="color:var(--pr)">4. Both ends</b><br><button class="launch" data-challenge="both">Lift from both sides at once</button></div>
+<div><b style="color:var(--pr)">5. Low restitution</b><br><button class="launch" data-challenge="damp">e = 0.7, watch the motion die</button></div>
+<div><b style="color:var(--pr)">6. Moon gravity</b><br><button class="launch" data-challenge="moon">Same setup on the Moon</button></div>
+<div id="challenge-note"></div>
+<div id="challenge-result"></div>
+</div>
+</div>
+
+<div id="notebook" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Notebook</h3>
+<label>Hypothesis</label>
+<textarea id="hypothesis" placeholder="What do you expect?"></textarea>
+<label style="margin-top:10px;display:block;">Conclusion</label>
+<textarea id="conclusion" placeholder="What did you observe?"></textarea>
+<label style="margin-top:10px;display:block;">Measurements</label>
+<textarea id="records" readonly style="background:var(--bg);font-family:monospace;font-size:.75rem;min-height:100px;"></textarea>
+<div class="btn-grid" style="margin-top:10px;">
+<button class="go" id="btn-export">⬇ Download Report</button>
+<button id="btn-clear-notes">Clear</button>
+</div>
+</div>
+</div>
+
+<div class="card">
+<b style="color:var(--pr)">Real fact:</b> <span id="fact-box" style="color:var(--mu);font-size:.85rem;">—</span>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+"use strict";
+(function(){
+
+var $ = function(id){ return document.getElementById(id); };
+var canvas = $('canvas');
+var ctx = canvas.getContext('2d');
+var dpr = window.devicePixelRatio || 1;
+var lastW = 0, lastH = 0;
+
+function resizeCanvas(){
+    var rect = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(rect.width));
+    var h = Math.max(1, Math.round(rect.height));
+    if (w === lastW && h === lastH) return;
+    lastW = w; lastH = h;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function cw(){ return canvas.width / dpr; }
+function ch(){ return canvas.height / dpr; }
+
+// ============ AUDIO ============
+var audioCtx = null;
+function initAudio(){
+    if (audioCtx) return;
+    try {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        audioCtx = new AC();
+    } catch(e){}
+}
+function beep(freq, dur, type, vol){
+    if (!audioCtx) return;
+    try {
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = type || 'sine';
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(vol || 0.06, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + dur);
+    } catch(e){}
+}
+function clickSound(){
+    if (!audioCtx) return;
+    // Sharp click like a ball impact
+    try {
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = 'square';
+        o.frequency.setValueAtTime(1200 + Math.random() * 400, audioCtx.currentTime);
+        o.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.03);
+        g.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + 0.05);
+    } catch(e){}
+    try {
+        var bufSize = audioCtx.sampleRate * 0.05;
+        var buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+        var data = buf.getChannelData(0);
+        for (var i = 0; i < bufSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufSize, 4);
+        }
+        var noise = audioCtx.createBufferSource();
+        noise.buffer = buf;
+        var ng = audioCtx.createGain();
+        ng.gain.value = 0.08;
+        var filter = audioCtx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.value = 1500;
+        noise.connect(filter);
+        filter.connect(ng);
+        ng.connect(audioCtx.destination);
+        noise.start();
+    } catch(e){}
+}
+
+// ============ STATE ============
+var S = {
+    mode: 'one',
+    numBalls: 5,
+    mass: 0.05,
+    length: 0.20,
+    angle: 30,
+    restitution: 0.98,
+    g: 9.81,
+    speed: 1.0,
+    running: false,
+    paused: false,
+    time: 0,
+    collisions: 0,
+    initialEnergy: 0,
+    balls: [],
+    vmaxBall1: 0,
+    vmaxBall5: 0,
+    records: []
+};
+
+var BALL_RADIUS = 0.022;  // 2.2 cm
+var BALL_SPACING = 0.05;  // 5 cm apart center-to-center
+
+function resetCradle(){
+    S.time = 0;
+    S.collisions = 0;
+    S.running = false;
+    S.paused = false;
+    S.balls = [];
+    S.vmaxBall1 = 0;
+    S.vmaxBall5 = 0;
+
+    var centerX = 0;
+    var totalWidth = (S.numBalls - 1) * BALL_SPACING;
+    var startX = -totalWidth / 2;
+
+    for (var i = 0; i < S.numBalls; i++) {
+        S.balls.push({
+            x: startX + i * BALL_SPACING,
+            y: 0,
+            vx: 0,
+            vy: 0,
+            angle: 0,
+            angularVel: 0,
+            pivotX: startX + i * BALL_SPACING,
+            moving: false,
+            index: i
+        });
+    }
+
+    // Initial conditions based on launch mode
+    var launchAngles = getLaunchAngles();
+    launchAngles.forEach(function(item){
+        var b = S.balls[item.index];
+        b.angle = item.angle;
+        b.angularVel = 0;
+        b.moving = true;
+    });
+
+    // Compute initial energy
+    var theta = Math.abs(S.angle) * Math.PI / 180;
+    S.initialEnergy = launchAngles.length * S.mass * S.g * S.length * (1 - Math.cos(theta));
+
+    $('btn-start').textContent = '▶ Release';
+    $('btn-pause').textContent = '⏸ Pause';
+    updateReadouts();
+}
+
+function getLaunchAngles(){
+    var result = [];
+    var angle = S.angle;
+    if (S.mode === 'one') {
+        result.push({ index: 0, angle: angle });
+    } else if (S.mode === 'two') {
+        result.push({ index: 0, angle: angle });
+        result.push({ index: 1, angle: angle });
+    } else if (S.mode === 'three') {
+        result.push({ index: 0, angle: angle });
+        result.push({ index: 1, angle: angle });
+        result.push({ index: 2, angle: angle });
+    } else if (S.mode === 'both') {
+        result.push({ index: 0, angle: angle });
+        result.push({ index: S.numBalls - 1, angle: -angle });
+    }
+    return result;
+}
+
+// ============ PHYSICS ============
+function stepPhysics(dt){
+    if (!S.running || S.paused) return;
+
+    var simDt = dt * S.speed;
+
+    // Pendulum motion for each ball
+    for (var i = 0; i < S.balls.length; i++) {
+        var b = S.balls[i];
+        if (!b.moving) continue;
+
+        // Angular acceleration: α = -(g/L) * sin(θ)
+        var alpha = -(S.g / S.length) * Math.sin(b.angle);
+        b.angularVel += alpha * simDt;
+        b.angle += b.angularVel * simDt;
+
+        // Apply small damping (friction + air resistance)
+        b.angularVel *= (1 - 0.001 * simDt * 60);
+
+        // Convert angle to position
+        b.x = b.pivotX + S.length * Math.sin(b.angle);
+        b.y = -S.length * (1 - Math.cos(b.angle));
+    }
+
+    // Detect collisions between adjacent balls
+    // Check from right to left to handle cascade
+    for (var j = S.balls.length - 1; j > 0; j--) {
+        var left = S.balls[j - 1];
+        var right = S.balls[j];
+
+        // Distance between centers (in x direction, since pendulums move mostly horizontally near bottom)
+        var dx = right.x - left.x;
+        var restDist = BALL_SPACING;
+
+        // Collision when they get closer than rest distance (with small tolerance)
+        if (dx < restDist - 0.001) {
+            // Relative velocity (approximately horizontal near the bottom)
+            var vLeft = left.moving ? (S.length * Math.cos(left.angle) * left.angularVel) : 0;
+            var vRight = right.moving ? (S.length * Math.cos(right.angle) * right.angularVel) : 0;
+            var vRel = vLeft - vRight;
+
+            // Only collide if approaching
+            if (vRel > 0) {
+                // Elastic collision between equal masses
+                // With restitution e: v1' = v1 - (1+e)/2 * (v1 - v2), v2' = v2 + (1+e)/2 * (v1 - v2)
+                var e = S.restitution;
+                var vLeftNew = vLeft - (1 + e) / 2 * (vLeft - vRight);
+                var vRightNew = vRight + (1 + e) / 2 * (vLeft - vRight);
+
+                // Convert back to angular velocities
+                left.angularVel = left.moving ? vLeftNew / (S.length * Math.max(0.1, Math.cos(left.angle))) : 0;
+                right.angularVel = right.moving ? vRightNew / (S.length * Math.max(0.1, Math.cos(right.angle))) : 0;
+
+                // Set moving flag
+                if (Math.abs(left.angularVel) > 0.01) left.moving = true;
+                if (Math.abs(right.angularVel) > 0.01) right.moving = true;
+
+                // Reposition to rest position
+                right.x = left.x + restDist;
+
+                S.collisions++;
+                clickSound();
+            }
+        }
+    }
+
+    // Update max velocity tracking
+    if (S.balls.length > 0) {
+        var b0 = S.balls[0];
+        var v0 = Math.abs(S.length * Math.cos(b0.angle) * b0.angularVel);
+        if (v0 > S.vmaxBall1) S.vmaxBall1 = v0;
+
+        var bLast = S.balls[S.balls.length - 1];
+        var vLast = Math.abs(S.length * Math.cos(bLast.angle) * bLast.angularVel);
+        if (vLast > S.vmaxBall5) S.vmaxBall5 = vLast;
+    }
+
+    // Stop balls with very small motion
+    for (var k = 0; k < S.balls.length; k++) {
+        var bb = S.balls[k];
+        if (bb.moving && Math.abs(bb.angle) < 0.001 && Math.abs(bb.angularVel) < 0.01) {
+            bb.moving = false;
+            bb.angularVel = 0;
+        }
+    }
+}
+
+// ============ DRAW ============
+function drawScene(){
+    resizeCanvas();
+    var w = cw(), h = ch();
+    if (w < 10 || h < 10) return;
+
+    // Background
+    var bg = ctx.createRadialGradient(w/2, 0, 0, w/2, h, Math.max(w, h) * 1.2);
+    bg.addColorStop(0, '#0a1428');
+    bg.addColorStop(1, '#020408');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+
+    // Scale: fit cradle in view
+    var totalWidth = (S.numBalls - 1) * BALL_SPACING;
+    var scaledWidth = Math.max(0.4, totalWidth + 2 * BALL_RADIUS + 0.1);
+    var scaleX = (w * 0.7) / scaledWidth;
+    var scaleY = Math.min(scaleX, (h * 0.7) / (S.length + BALL_RADIUS * 2));
+    var scale = Math.min(scaleX, scaleY);
+
+    var cx = w / 2;
+    var pivotY = h * 0.12;  // top of the frame
+
+    // Draw frame (top bar)
+    var frameWidth = scaledWidth * scale + 40;
+    var frameLeft = cx - frameWidth / 2;
+    var frameRight = cx + frameWidth / 2;
+
+    // Top support bar
+    ctx.fillStyle = '#475569';
+    ctx.fillRect(frameLeft, pivotY - 15, frameWidth, 10);
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(frameLeft, pivotY - 15, frameWidth, 10);
+
+    // Side supports
+    ctx.fillStyle = '#475569';
+    ctx.fillRect(frameLeft - 5, pivotY - 15, 5, h * 0.6);
+    ctx.fillRect(frameRight, pivotY - 15, 5, h * 0.6);
+    ctx.strokeStyle = '#1e293b';
+    ctx.strokeRect(frameLeft - 5, pivotY - 15, 5, h * 0.6);
+    ctx.strokeRect(frameRight, pivotY - 15, 5, h * 0.6);
+
+    // Draw each ball
+    for (var i = 0; i < S.balls.length; i++) {
+        var b = S.balls[i];
+        var pivotX = cx + b.pivotX * scale;
+        var ballX = cx + b.x * scale;
+        var ballY = pivotY + 15 + (S.length + b.y) * scale;
+
+        // String (line from pivot to ball)
+        ctx.strokeStyle = 'rgba(200,210,230,0.6)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(pivotX, pivotY - 5);
+        ctx.lineTo(ballX, ballY);
+        ctx.stroke();
+
+        // Pivot point
+        ctx.fillStyle = '#94a3b8';
+        ctx.beginPath();
+        ctx.arc(pivotX, pivotY - 5, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Ball
+        var ballRadius = BALL_RADIUS * scale;
+        var ballColor = (i === 0) ? '#fbbf24' : (i === S.balls.length - 1) ? '#10d982' : '#cbd5e1';
+
+        // Glow
+        var glow = ctx.createRadialGradient(ballX, ballY, 0, ballX, ballY, ballRadius * 2.5);
+        glow.addColorStop(0, ballColor + '99');
+        glow.addColorStop(1, ballColor + '00');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(ballX, ballY, ballRadius * 2.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Ball body with radial gradient (metallic sphere look)
+        var grad = ctx.createRadialGradient(
+            ballX - ballRadius * 0.35,
+            ballY - ballRadius * 0.35,
+            0,
+            ballX, ballY, ballRadius
+        );
+        grad.addColorStop(0, 'rgba(255,255,255,0.95)');
+        grad.addColorStop(0.3, ballColor);
+        grad.addColorStop(1, shadeColor(ballColor, -40));
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Border
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Ball label
+        ctx.fillStyle = '#000';
+        ctx.font = 'bold ' + Math.max(9, Math.round(ballRadius * 0.9)) + 'px system-ui';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(String(i + 1), ballX, ballY);
+        ctx.textBaseline = 'alphabetic';
+
+        // Velocity indicator
+        if (b.moving && Math.abs(b.angularVel) > 0.1) {
+            var v = S.length * Math.cos(b.angle) * b.angularVel;
+            var vLen = Math.min(ballRadius * 2, Math.abs(v) * 30);
+            var vDir = Math.sign(v);
+            ctx.strokeStyle = '#ff5c8a';
+            ctx.fillStyle = '#ff5c8a';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(ballX, ballY - ballRadius - 6);
+            ctx.lineTo(ballX + vDir * vLen, ballY - ballRadius - 6);
+            ctx.stroke();
+            // Arrowhead
+            ctx.beginPath();
+            ctx.moveTo(ballX + vDir * vLen, ballY - ballRadius - 6);
+            ctx.lineTo(ballX + vDir * (vLen - 5), ballY - ballRadius - 10);
+            ctx.lineTo(ballX + vDir * (vLen - 5), ballY - ballRadius - 2);
+            ctx.closePath();
+            ctx.fill();
+        }
+    }
+
+    // Title
+    ctx.fillStyle = '#e5e9f5';
+    ctx.font = 'bold 13px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText("Newton's Cradle — " + S.numBalls + ' balls', w/2, 25);
+
+    // Status indicator
+    var pulseR = 5 + 3 * Math.sin(performance.now() * 0.004);
+    ctx.fillStyle = S.running && !S.paused ? 'rgba(52,211,153,1)' : S.paused ? 'rgba(251,191,36,1)' : 'rgba(100,116,139,.6)';
+    ctx.shadowColor = S.running && !S.paused ? '#34d399' : S.paused ? '#fbbf24' : 'transparent';
+    ctx.shadowBlur = (S.running || S.paused) ? 12 : 0;
+    ctx.beginPath();
+    ctx.arc(w - 25, 25, pulseR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = S.running && !S.paused ? '#34d399' : S.paused ? '#fbbf24' : '#64748b';
+    ctx.font = 'bold 10px system-ui';
+    ctx.textAlign = 'right';
+    ctx.fillText(S.running && !S.paused ? 'RUNNING' : S.paused ? 'PAUSED' : 'READY', w - 40, 29);
+}
+
+function shadeColor(hex, percent){
+    var num = parseInt(hex.replace('#',''),16);
+    var amt = Math.round(2.55 * percent);
+    var R = Math.max(0, Math.min(255, (num >> 16) + amt));
+    var G = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) + amt));
+    var B = Math.max(0, Math.min(255, (num & 0x0000FF) + amt));
+    return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+}
+
+// ============ READOUTS ============
+function updateReadouts(){
+    var movingCount = 0;
+    var totalP = 0;
+    var totalKE = 0;
+    var totalPE = 0;
+
+    for (var i = 0; i < S.balls.length; i++) {
+        var b = S.balls[i];
+        if (b.moving) movingCount++;
+        var v = S.length * Math.cos(b.angle) * b.angularVel;
+        totalP += S.mass * v;
+        totalKE += 0.5 * S.mass * v * v;
+        var h = S.length * (1 - Math.cos(b.angle));
+        totalPE += S.mass * S.g * h;
+    }
+
+    var totalE = totalKE + totalPE;
+
+    $('ro-nm').innerText = movingCount;
+    $('ro-angle').innerText = S.angle + '°';
+    $('ro-vmax1').innerText = S.vmaxBall1.toFixed(2) + ' m/s';
+    $('ro-vmax5').innerText = S.vmaxBall5.toFixed(2) + ' m/s';
+    $('ro-p').innerText = totalP.toFixed(3) + ' kg·m/s';
+    $('ro-ke').innerText = totalKE.toFixed(3) + ' J';
+    $('ro-pe').innerText = totalPE.toFixed(3) + ' J';
+    $('ro-total').innerText = totalE.toFixed(3) + ' J';
+    $('ro-e0').innerText = S.initialEnergy.toFixed(3) + ' J';
+    $('ro-eff').innerText = S.initialEnergy > 0 ? ((totalE / S.initialEnergy) * 100).toFixed(1) + '%' : '—';
+    $('ro-coll').innerText = S.collisions;
+
+    var T = 2 * Math.PI * Math.sqrt(S.length / S.g);
+    $('ro-T').innerText = T.toFixed(3) + ' s';
+
+    $('hud-t').innerText = S.time.toFixed(2);
+    $('hud-moving').innerText = movingCount;
+    $('hud-coll').innerText = S.collisions;
+    $('hud-p').innerText = totalP.toFixed(2);
+    $('hud-status').innerText = S.running && !S.paused ? 'Running' : S.paused ? 'Paused' : 'Ready';
+
+    var fact;
+    if (S.mode === 'one') {
+        fact = 'Classic Newton\'s cradle: lift one ball → one ball flies out the other side at almost the same speed. Velocities exchange between equal masses in an elastic collision. The middle balls stay still because the momentum passes through.';
+    } else if (S.mode === 'two') {
+        fact = 'Lifting two balls → two fly out. Momentum and energy are both conserved, so the number of balls in must equal the number out.';
+    } else if (S.mode === 'three') {
+        fact = 'Three balls in → three out. The chain of collisions propagates through the middle balls, transferring momentum ball by ball.';
+    } else {
+        fact = 'Both ends lifted → they collide in the middle and rebound symmetrically. This demonstrates simultaneous bidirectional momentum transfer.';
+    }
+    $('fact-box').innerText = fact;
+}
+
+// ============ QUIZ ============
+var QUIZ_EXPLAIN = {
+    q1:{correct:'B',why:'Lifting one ball → one ball on the other side flies out at the same speed. This is because in an elastic collision between equal masses, velocities exchange.',tip:'The momentum and energy both pass through the chain.'},
+    q2:{correct:'A',why:'Two in → two out. Number of balls in = number of balls out, because both momentum and energy are conserved.',tip:'This only works for near-perfect elasticity.'},
+    q3:{correct:'B',why:'A Newton\'s cradle is designed for <b>elastic</b> collisions: both momentum AND kinetic energy are conserved. Momentum is always conserved, but kinetic energy is only conserved if e = 1.',tip:'Real cradles have e ≈ 0.95–0.98, so it slowly dies down.'},
+    q4:{correct:'A',why:'Conservation of energy: PE at top = KE at bottom. mgh = ½mv². With h = L(1 − cos θ), v = √(2gL(1 − cos θ)).',tip:'Mass cancels out! Heavy and light pendulums have same speed.'},
+    q5:{correct:'B',why:'T = 2π√(L/g). The period depends only on length and gravity, not on mass or (for small angles) amplitude.',tip:'This is why pendulum clocks need length adjustment.'},
+    q6:{correct:'A',why:'Heavier balls have more momentum (p = mv) but the same speeds because gravity accelerates all masses equally. Total momentum scales with mass.',tip:'This is the equivalence principle.'},
+    q7:{correct:'B',why:'e = 1 means perfectly elastic: relative speed of approach equals relative speed of separation. No kinetic energy lost.',tip:'e = 0 means perfectly inelastic: they stick.'},
+    q8:{correct:'A',why:'Real cradles have e slightly less than 1, plus air resistance and friction. Each collision loses a tiny bit of energy as heat and sound.',tip:'Eventual stop is inevitable in any real system.'},
+    q9:{correct:'B',why:'Three balls in → three balls out. Momentum and energy conservation require equal numbers to transfer.',tip:'Sometimes you can get partial transfer if balls have different masses.'},
+    q10:{correct:'A',why:'Without friction or air resistance, a pendulum\'s total energy PE + KE stays constant. It converts back and forth continuously.',tip:'This is the essence of a conservative system.'}
+};
+
+function evaluateQuiz(){
+    var qs = document.querySelectorAll('.quiz-q');
+    var score = 0;
+    qs.forEach(function(q){
+        var name = q.dataset.q;
+        var correct = q.dataset.answer;
+        var chosen = q.querySelector('input[name="'+name+'"]:checked');
+        var expl = q.querySelector('.explanation');
+        var data = QUIZ_EXPLAIN[name];
+        expl.hidden = false;
+        expl.className = 'explanation';
+        if (chosen && chosen.value === correct) {
+            score++;
+            expl.classList.add('correct-box');
+            expl.innerHTML = '<strong>✓ Correct!</strong> ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:var(--mu);"><b>💡</b> ' + data.tip + '</div>';
+        } else {
+            expl.classList.add('wrong-box');
+            var cv = chosen ? chosen.value : '—';
+            expl.innerHTML = '<strong>✗ Answer: ' + correct + '</strong> You chose ' + cv + '. ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:var(--mu);"><b>💡</b> ' + data.tip + '</div>';
+        }
+    });
+    var pct = Math.round(score/qs.length*100);
+    beep(pct>=78?880:440,0.15,'sine',0.1);
+    var r = $('quiz-result');
+    r.style.display = 'block';
+    r.innerHTML = '<div style="font-size:1.4rem;color:var(--pr);">' + score + '/' + qs.length + ' · ' + pct + '%</div>';
+}
+function resetQuiz(){
+    document.querySelectorAll('.quiz-q').forEach(function(q){
+        q.querySelectorAll('input[type=radio]').forEach(function(r){ r.checked = false; });
+        var e = q.querySelector('.explanation');
+        e.hidden = true; e.innerHTML = ''; e.className = 'explanation';
+    });
+    $('quiz-result').style.display = 'none';
+}
+
+// ============ CHALLENGES ============
+function applyChallenge(id){
+    var note = $('challenge-note'), cres = $('challenge-result');
+    note.innerText = ''; cres.innerText = '';
+    if (id === 'classic') {
+        S.mode = 'one'; $('mode').value = 'one';
+        S.angle = 30; $('angle').value = 30; $('v-angle').innerText = '30';
+        S.restitution = 0.98; $('e').value = 0.98; $('v-e').innerText = '0.98';
+        resetCradle(); S.running = true;
+        note.innerText = 'Classic: 1 ball in, 1 ball out. Velocities swap through the chain.';
+        cres.innerText = 'Watch ball 1 hit and ball 5 shoot out at the same speed.';
+    } else if (id === 'two') {
+        S.mode = 'two'; $('mode').value = 'two';
+        resetCradle(); S.running = true;
+        note.innerText = 'Two balls in, two balls out. Momentum and energy both conserved.';
+        cres.innerText = 'Watch balls 1 & 2 fall together, balls 4 & 5 fly out.';
+    } else if (id === 'three') {
+        S.mode = 'three'; $('mode').value = 'three';
+        resetCradle(); S.running = true;
+        note.innerText = 'Three balls in, three balls out.';
+        cres.innerText = 'Watch balls 1, 2, 3 in and balls 3, 4, 5 out.';
+    } else if (id === 'both') {
+        S.mode = 'both'; $('mode').value = 'both';
+        S.angle = 20; $('angle').value = 20; $('v-angle').innerText = '20';
+        resetCradle(); S.running = true;
+        note.innerText = 'Both ends lifted → symmetric collision in the middle.';
+        cres.innerText = 'Watch outer balls swing in, hit middle, and rebound.';
+    } else if (id === 'damp') {
+        S.restitution = 0.7; $('e').value = 0.7; $('v-e').innerText = '0.70';
+        resetCradle(); S.running = true;
+        note.innerText = 'e = 0.7: each collision loses 30% relative velocity — motion dies quickly.';
+        cres.innerText = 'Watch the amplitude shrink with each collision.';
+    } else if (id === 'moon') {
+        S.g = 1.62; $('g').value = '1.62'; $('v-g').innerText = '1.62';
+        resetCradle(); S.running = true;
+        note.innerText = 'Moon gravity: slower pendulum, longer period.';
+        var T = 2 * Math.PI * Math.sqrt(S.length / 1.62);
+        cres.innerText = 'Period T = ' + T.toFixed(2) + ' s (vs ' + (2 * Math.PI * Math.sqrt(S.length / 9.81)).toFixed(2) + ' s on Earth)';
+    }
+    updateReadouts();
+}
+
+// ============ NOTEBOOK ============
+function recordMeasurement(){
+    var line = new Date().toLocaleTimeString() + ' | ' + S.mode + ' | n=' + S.numBalls + ' | m=' + S.mass + ' kg | L=' + S.length + ' m | θ=' + S.angle + '° | e=' + S.restitution + ' | g=' + S.g + ' | E₀=' + S.initialEnergy.toFixed(3) + ' J | collisions=' + S.collisions;
+    S.records.push(line);
+    $('records').value = S.records.join('\n');
+    $('records').scrollTop = $('records').scrollHeight;
+}
+function downloadReport(){
+    var text = 'NEWTON\'S CRADLE — LAB REPORT\nDate: ' + new Date().toLocaleString() + '\n\n' +
+        'SETUP\n' +
+        'Mode: ' + S.mode + '\n' +
+        'Number of balls: ' + S.numBalls + '\n' +
+        'Ball mass: ' + S.mass + ' kg\n' +
+        'Pendulum length: ' + S.length + ' m\n' +
+        'Launch angle: ' + S.angle + '°\n' +
+        'Restitution: ' + S.restitution + '\n' +
+        'Gravity: ' + S.g + ' m/s²\n\n' +
+        'RESULTS\n' +
+        'Initial energy E₀: ' + S.initialEnergy.toFixed(3) + ' J\n' +
+        'Total collisions: ' + S.collisions + '\n' +
+        'Max ball 1 speed: ' + S.vmaxBall1.toFixed(3) + ' m/s\n' +
+        'Max ball 5 speed: ' + S.vmaxBall5.toFixed(3) + ' m/s\n\n' +
+        'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+        'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+        'MEASUREMENTS\n' + S.records.join('\n') + '\n\n' +
+        'LIMITATIONS\nIdealized model: equal masses, equal lengths, small angles approximated, no air resistance beyond damping factor, no coupling between strings. Educational use only.\n';
+    var blob = new Blob([text], {type:'text/plain'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'newtons-cradle-report.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+// ============ EVENTS ============
+$('mode').addEventListener('change', function(e){
+    S.mode = e.target.value;
+    resetCradle();
+});
+$('num').addEventListener('input', function(e){
+    S.numBalls = parseInt(e.target.value);
+    $('v-num').innerText = S.numBalls;
+    resetCradle();
+});
+$('mass').addEventListener('input', function(e){
+    S.mass = parseFloat(e.target.value);
+    $('v-mass').innerText = S.mass.toFixed(2);
+    resetCradle();
+});
+$('len').addEventListener('input', function(e){
+    S.length = parseFloat(e.target.value);
+    $('v-len').innerText = S.length.toFixed(2);
+    resetCradle();
+});
+$('angle').addEventListener('input', function(e){
+    S.angle = parseFloat(e.target.value);
+    $('v-angle').innerText = S.angle;
+    resetCradle();
+});
+$('e').addEventListener('input', function(e){
+    S.restitution = parseFloat(e.target.value);
+    $('v-e').innerText = S.restitution.toFixed(2);
+});
+$('g').addEventListener('change', function(e){
+    S.g = parseFloat(e.target.value);
+    $('v-g').innerText = S.g.toFixed(2);
+    resetCradle();
+});
+$('speed').addEventListener('input', function(e){
+    S.speed = parseFloat(e.target.value);
+    $('v-speed').innerText = S.speed.toFixed(1);
+});
+
+$('btn-start').addEventListener('click', function(){
+    initAudio();
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    if (!S.running || S.paused) {
+        if (S.paused) {
+            S.paused = false;
+            S.running = true;
+            $('btn-pause').textContent = '⏸ Pause';
+            $('btn-start').textContent = '▶ Running';
+        } else {
+            resetCradle();
+            S.running = true;
+            $('btn-start').textContent = '▶ Running';
+        }
+    }
+    beep(660, 0.15, 'sine', 0.08);
+});
+
+$('btn-pause').addEventListener('click', function(){
+    if (S.paused) {
+        S.paused = false;
+        S.running = true;
+        $('btn-pause').textContent = '⏸ Pause';
+        $('btn-start').textContent = '▶ Running';
+    } else if (S.running) {
+        S.paused = true;
+        S.running = false;
+        $('btn-pause').textContent = '▶ Resume';
+        $('btn-start').textContent = '▶ Start';
+    }
+});
+
+$('btn-reset').addEventListener('click', function(){
+    resetCradle();
+});
+
+$('btn-record').addEventListener('click', function(){
+    recordMeasurement();
+    beep(880, 0.08, 'sine', 0.06);
+});
+
+$('btn-sound').addEventListener('click', function(){
+    initAudio();
+    if (!audioCtx) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    var on = $('btn-sound').classList.contains('playing');
+    if (on) {
+        $('btn-sound').classList.remove('playing');
+        $('btn-sound').textContent = '🔈 Enable sound';
+    } else {
+        $('btn-sound').classList.add('playing');
+        $('btn-sound').textContent = '🔊 Sound ON';
+        beep(440, 0.15, 'sine', 0.1);
+    }
+});
+
+document.querySelectorAll('.tab-btn[data-tab]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+        document.querySelectorAll('.tab-btn[data-tab]').forEach(function(b){ b.classList.remove('active'); });
+        document.getElementById(btn.dataset.tab).classList.add('active');
+        btn.classList.add('active');
+    });
+});
+
+document.querySelectorAll('[data-challenge]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        applyChallenge(btn.dataset.challenge);
+        beep(660, 0.08, 'sine', 0.08);
+    });
+});
+
+$('btn-quiz-check').addEventListener('click', evaluateQuiz);
+$('btn-quiz-reset').addEventListener('click', resetQuiz);
+$('btn-clear-notes').addEventListener('click', function(){
+    if (!confirm('Clear notebook?')) return;
+    $('hypothesis').value = ''; $('conclusion').value = ''; $('records').value = '';
+    S.records = [];
+});
+$('btn-export').addEventListener('click', downloadReport);
+
+// ============ SPLITTER ============
+(function(){
+    var sim = $('sim-area'), splitter = $('splitter');
+    if (!sim || !splitter) return;
+    var dragging = false, startY = 0, startH = 0;
+    var containerH = 0;
+    splitter.addEventListener('pointerdown', function(e){
+        e.preventDefault();
+        dragging = true;
+        startY = e.clientY;
+        startH = sim.getBoundingClientRect().height;
+        containerH = sim.parentElement.getBoundingClientRect().height;
+        try { splitter.setPointerCapture(e.pointerId); } catch(_){}
+        document.body.style.cursor = 'ns-resize';
+        document.body.style.userSelect = 'none';
+    });
+    window.addEventListener('pointermove', function(e){
+        if (!dragging) return;
+        var dy = e.clientY - startY;
+        var newH = startH + dy;
+        var minH = Math.max(140, containerH * 0.15);
+        var maxH = Math.min(window.innerHeight * 0.75, containerH * 0.75);
+        newH = Math.max(minH, Math.min(maxH, newH));
+        sim.style.flex = '0 0 ' + Math.round(newH) + 'px';
+        lastW = 0; lastH = 0;
+        resizeCanvas();
+    });
+    window.addEventListener('pointerup', function(e){
+        if (!dragging) return;
+        dragging = false;
+        try { splitter.releasePointerCapture(e.pointerId); } catch(_){}
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+    });
+    splitter.addEventListener('dblclick', function(){
+        sim.style.flex = '0 0 50%';
+        lastW = 0; lastH = 0;
+        resizeCanvas();
+    });
+})();
+
+// ============ ANIMATION LOOP ============
+var lastT = 0;
+function animate(now){
+    if (!lastT) lastT = now;
+    var dt = (now - lastT) / 1000;
+    if (dt > 0.1) dt = 0.016;
+    lastT = now;
+
+    if (S.running && !S.paused) {
+        S.time += dt * S.speed;
+        stepPhysics(dt);
+    }
+
+    drawScene();
+    updateReadouts();
+    requestAnimationFrame(animate);
+}
+
+window.addEventListener('resize', function(){
+    lastW = 0; lastH = 0;
+    resizeCanvas();
+});
+
+// ============ BOOT ============
+resizeCanvas();
+resetCradle();
+updateReadouts();
+requestAnimationFrame(animate);
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Mirror Ray Diagram Laboratory</title>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0a0f1f;--sf:#141b2e;--ln:#26304a;--tx:#e5e9f5;--mu:#93a0bd;
+  --pr:#818cf8;--pr-deep:#6366f1;--ok:#34d399;--bad:#f87171;--wa:#fbbf24;
+  --red:#f43f5e;--blue:#4fa8ff;--green:#10d982;--violet:#a78bfa;
+  box-sizing:border-box;
+}
+*{box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;margin:0;overflow:hidden;}
+body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column;}
+
+header{background:var(--bg);color:#fff;padding:8px 10px;text-align:center;border-bottom:2px solid var(--pr);flex-shrink:0;}
+header h2{margin:0;font-size:clamp(.95rem, 2.5vw, 1.1rem);}
+header small{display:block;color:var(--mu);font-size:clamp(.7rem, 1.8vw, .8rem);margin-top:2px;}
+
+.lab-container{display:flex;flex:1;overflow:hidden;flex-direction:column;min-height:0;}
+
+#sim-area{
+  flex:0 0 55%;
+  min-height:260px;
+  max-height:75vh;
+  position:relative;
+  background:#05080f;
+  border-bottom:2px solid var(--ln);
+  overflow:hidden;
+  cursor:crosshair;
+}
+canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;touch-action:none;}
+
+.hud{
+  position:absolute;top:8px;left:8px;
+  background:rgba(20,27,46,0.92);
+  padding:6px 9px;border-radius:8px;
+  font-size:clamp(.65rem, 1.8vw, .75rem);
+  border:1px solid var(--ln);z-index:20;color:var(--tx);
+  pointer-events:none;backdrop-filter:blur(6px);
+  max-width:min(280px, 60vw);
+}
+.hud b{color:var(--pr);font-size:.7rem;letter-spacing:.08em;}
+.hud .metrics{line-height:1.6;}
+.hud span.val{color:var(--wa);font-weight:700;font-variant-numeric:tabular-nums;}
+
+.vector-legend{
+  position:absolute;bottom:8px;left:8px;
+  font-size:clamp(.6rem, 1.6vw, .65rem);
+  background:rgba(20,27,46,0.92);
+  padding:4px 7px;border-radius:4px;
+  color:var(--mu);pointer-events:none;border:1px solid var(--ln);
+}
+.vector-legend span{margin-right:8px;}
+
+.splitter{
+  height:14px;
+  background:linear-gradient(90deg, rgba(0,0,0,.2), rgba(129,140,248,.15), rgba(0,0,0,.2));
+  cursor:ns-resize;flex-shrink:0;
+  border-top:1px solid var(--ln);border-bottom:1px solid var(--ln);
+  position:relative;
+}
+.splitter::after{
+  content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:40px;height:3px;border-radius:2px;background:rgba(129,140,248,.5);
+}
+.splitter:hover, .splitter:active{
+  background:linear-gradient(90deg, rgba(129,140,248,.2), rgba(129,140,248,.4), rgba(129,140,248,.2));
+}
+
+.bottom-panel{
+  flex:1;
+  min-height:0;
+  display:flex;
+  flex-direction:row;
+  background:var(--sf);
+  overflow:hidden;
+}
+.controls{
+  flex:0 0 340px;
+  padding:12px;
+  border-right:1px solid var(--ln);
+  background:var(--sf);
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+}
+.analysis{
+  flex:1 1 0;
+  min-width:0;
+  padding:12px;
+  background:var(--bg);
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+}
+
+.card{background:var(--sf);border:1px solid var(--ln);padding:10px;border-radius:8px;margin-bottom:10px;font-size:.84rem;line-height:1.55;}
+h4{margin:0 0 8px 0;font-size:.75rem;color:var(--mu);text-transform:uppercase;letter-spacing:.05em;font-weight:700;}
+.input-row{margin-bottom:9px;}
+label{display:block;font-size:.78rem;font-weight:600;margin-bottom:3px;}
+input[type=range]{width:100%;accent-color:var(--pr);height:6px;}
+select,input[type=number],textarea{width:100%;padding:8px;border-radius:6px;border:1px solid var(--ln);background:var(--bg);color:var(--tx);font-family:inherit;font-size:.85rem;}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--pr);}
+
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+button{
+  padding:10px;border:1px solid var(--ln);border-radius:6px;
+  font-weight:700;cursor:pointer;font-size:.82rem;
+  background:var(--sf);color:var(--tx);font-family:inherit;
+  transition:.2s;touch-action:manipulation;
+}
+button:hover{background:#1a2340;border-color:var(--pr);}
+button:active{transform:scale(.98);}
+button.go{background:var(--pr);color:#0b1020;border-color:var(--pr);}
+button.go:hover{background:#a5b4fc;box-shadow:0 4px 14px rgba(129,140,248,.4);}
+button.launch{background:linear-gradient(135deg,#34d399,#059669);color:#fff;border-color:transparent;font-weight:800;}
+button.launch:hover{box-shadow:0 4px 14px rgba(52,211,153,.5);}
+button.pause{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000;border-color:transparent;font-weight:800;}
+button.pause:hover{box-shadow:0 4px 14px rgba(251,191,36,.5);}
+button.sound{background:linear-gradient(135deg,#34d399,#059669);color:#fff;border-color:transparent;}
+button.sound.playing{background:linear-gradient(135deg,#f43f5e,#dc2626);}
+
+.readouts{display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:8px;margin-bottom:10px;}
+.readout{background:var(--sf);border:1px solid var(--ln);border-radius:6px;padding:8px 10px;}
+.readout span{font-size:.68rem;color:var(--mu);display:block;}
+.readout strong{font-size:.92rem;color:var(--tx);font-variant-numeric:tabular-nums;word-break:break-word;}
+.readout.hl strong{color:var(--pr);}
+.readout.good strong{color:var(--ok);}
+.readout.warn strong{color:var(--wa);}
+
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.tab-btn{
+  padding:8px 12px;border-radius:6px;background:var(--sf);color:var(--mu);
+  font-weight:600;font-size:.78rem;border:1px solid var(--ln);cursor:pointer;
+  transition:.2s;flex:1 1 auto;min-width:0;touch-action:manipulation;
+}
+.tab-btn:hover{background:#242e4d;color:var(--tx);}
+.tab-btn.active{background:var(--pr);color:#0b1020;border-color:var(--pr);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+.quiz-q{padding:10px 0;border-bottom:1px solid var(--ln);}
+.quiz-q>strong{display:block;margin-bottom:8px;font-size:.88rem;}
+.quiz-q label{
+  display:flex;align-items:center;gap:6px;
+  padding:9px 11px;background:var(--sf);border:1px solid var(--ln);
+  border-radius:6px;margin:4px 0;cursor:pointer;
+  font-weight:500;font-size:.82rem;width:100%;
+  touch-action:manipulation;
+}
+.quiz-q label:hover{background:#1a2340;border-color:var(--pr);}
+.quiz-q input[type=radio]{accent-color:var(--pr);flex-shrink:0;margin:0;}
+.explanation{
+  margin-top:8px;padding:10px;border-radius:6px;
+  font-size:.82rem;line-height:1.55;
+  background:rgba(129,140,248,.1);
+  border-left:3px solid var(--pr);
+  word-wrap:break-word;overflow-wrap:break-word;
+}
+.explanation.correct-box{background:rgba(52,211,153,.12);border-left-color:var(--ok);}
+.explanation.wrong-box{background:rgba(248,113,113,.12);border-left-color:var(--bad);}
+.quiz-section{font-size:.72rem;font-weight:700;text-transform:uppercase;color:var(--pr);margin:12px 0 6px 0;letter-spacing:.05em;}
+#quiz-result{margin-top:10px;padding:12px;border-radius:8px;background:rgba(129,140,248,.15);border:1px solid rgba(129,140,248,.4);font-weight:700;text-align:center;}
+
+table.formulas{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:6px;table-layout:fixed;}
+table.formulas th,table.formulas td{border:1px solid var(--ln);padding:6px 8px;text-align:left;word-wrap:break-word;overflow-wrap:break-word;}
+table.formulas th{background:var(--bg);font-weight:600;color:var(--pr);}
+.eq{font-family:'JetBrains Mono',monospace;background:var(--bg);padding:2px 6px;border-radius:4px;font-size:.78rem;color:var(--wa);border:1px solid var(--ln);display:inline-block;word-break:break-all;}
+.note{font-size:.82rem;color:var(--mu);margin-top:8px;line-height:1.55;}
+ul{color:var(--tx);padding-left:1.1rem;}
+ul li{line-height:1.7;word-wrap:break-word;}
+
+#challenge-note{color:var(--tx);font-size:.85rem;word-wrap:break-word;}
+#challenge-result{color:var(--ok);font-weight:600;margin-top:6px;word-wrap:break-word;}
+
+textarea{width:100%;padding:8px;border-radius:6px;border:1px solid var(--ln);font-family:inherit;font-size:.85rem;min-height:64px;resize:vertical;background:var(--bg);color:var(--tx);}
+textarea:focus{outline:none;border-color:var(--pr);}
+
+@media (max-width: 900px){
+  .controls{flex:0 0 300px;}
+  .readouts{grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));}
+}
+
+@media (max-width: 768px){
+  .bottom-panel{flex-direction:column;}
+  .controls{
+    flex:0 0 auto;
+    border-right:none;
+    border-bottom:1px solid var(--ln);
+    max-height:35vh;
+  }
+  .analysis{
+    flex:1 1 0;
+    min-height:0;
+  }
+  #sim-area{flex:0 0 42%;min-height:220px;}
+  .hud{font-size:.68rem;padding:5px 8px;max-width:min(220px, 55vw);}
+  .readouts{grid-template-columns:repeat(auto-fit, minmax(120px, 1fr));gap:6px;}
+  .tab-btn{font-size:.74rem;padding:7px 10px;}
+}
+
+@media (max-width: 480px){
+  header{padding:6px 8px;}
+  header h2{font-size:.95rem;}
+  header small{font-size:.68rem;}
+  #sim-area{flex:0 0 45%;min-height:200px;}
+  .controls{padding:10px;max-height:38vh;}
+  .analysis{padding:10px;}
+  .hud{font-size:.62rem;padding:4px 7px;max-width:50vw;}
+  .vector-legend{font-size:.58rem;padding:3px 6px;}
+  .vector-legend span{margin-right:5px;}
+  .readouts{grid-template-columns:repeat(2, 1fr);gap:5px;}
+  .readout{padding:6px 8px;}
+  .readout span{font-size:.6rem;}
+  .readout strong{font-size:.8rem;}
+  .btn-grid{grid-template-columns:1fr 1fr;gap:6px;}
+  button{padding:9px;font-size:.76rem;}
+  .tabs{gap:4px;}
+  .tab-btn{font-size:.7rem;padding:6px 8px;flex:1 1 calc(50% - 4px);}
+  table.formulas{font-size:.74rem;}
+  .eq{font-size:.7rem;}
+  .quiz-q label{padding:8px;font-size:.78rem;}
+  .explanation{font-size:.78rem;padding:8px;}
+}
+
+@media (max-width: 360px){
+  .readouts{grid-template-columns:1fr;}
+  .tab-btn{flex:1 1 100%;}
+}
+
+@media (max-height: 500px) and (orientation: landscape){
+  #sim-area{flex:0 0 50%;min-height:160px;}
+  .controls{max-height:42vh;}
+  .hud{font-size:.6rem;}
+  header{padding:4px 8px;}
+  header small{display:none;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+<h2>🪞 Mirror Ray Diagram Laboratory</h2>
+<small>Animated light rays · Spherical mirrors · Real-time ray tracing</small>
+</header>
+
+<div class="lab-container">
+<div id="sim-area">
+<div class="hud">
+<b>LIVE STATE</b><br>
+<div class="metrics">
+Mirror: <span class="val" id="hud-type">Concave</span><br>
+f: <span class="val" id="hud-f">20.0</span> cm<br>
+d₀: <span class="val" id="hud-do">40.0</span> cm<br>
+dᵢ: <span class="val" id="hud-di">40.0</span> cm<br>
+Status: <span class="val" id="hud-status">Running</span>
+</div>
+</div>
+<div class="vector-legend">
+<span style="color:#fbbf24">● Object</span>
+<span style="color:#10d982">● Image</span>
+<span style="color:#ff5c8a">● Ray 1</span>
+<span style="color:#4fa8ff">● Ray 2</span>
+<span style="color:#b79bff">● Ray 3</span>
+</div>
+<canvas id="canvas"></canvas>
+</div>
+
+<div class="splitter" id="splitter" title="Drag to resize simulation area"></div>
+
+<div class="bottom-panel">
+<div class="controls">
+<h4>🪞 Mirror Setup</h4>
+
+<div class="input-row">
+<button class="sound" id="btn-sound" style="width:100%;">🔈 Enable sound</button>
+</div>
+
+<div class="input-row">
+<label>Mirror type</label>
+<select id="type">
+<option value="concave" selected>Concave (converging)</option>
+<option value="convex">Convex (diverging)</option>
+<option value="plane">Plane</option>
+</select>
+</div>
+
+<div class="input-row">
+<label>Focal length |f|: <span id="v-f">20.0</span> cm</label>
+<input type="range" id="f" min="5" max="60" step="1" value="20">
+</div>
+
+<div class="input-row">
+<label>Object distance d₀: <span id="v-do">40.0</span> cm</label>
+<input type="range" id="do" min="3" max="200" step="1" value="40">
+</div>
+
+<div class="input-row">
+<label>Object height h₀: <span id="v-ho">10.0</span> cm</label>
+<input type="range" id="ho" min="2" max="30" step="1" value="10">
+</div>
+
+<div class="input-row">
+<label style="display:inline-flex;align-items:center;gap:6px;">
+<input type="checkbox" id="show-rays" checked> Show principal rays
+</label>
+</div>
+
+<div class="input-row">
+<label style="display:inline-flex;align-items:center;gap:6px;">
+<input type="checkbox" id="show-markers" checked> Show F and C markers
+</label>
+</div>
+
+<div class="input-row">
+<label style="display:inline-flex;align-items:center;gap:6px;">
+<input type="checkbox" id="show-grid" checked> Show measurement grid
+</label>
+</div>
+
+<div class="input-row">
+<label>Animation speed: <span id="v-speed">1.0</span>×</label>
+<input type="range" id="speed" min="0.1" max="3" step="0.1" value="1">
+</div>
+
+<div class="btn-grid" style="margin-top:10px;">
+<button class="launch" id="btn-start">▶ Start</button>
+<button class="pause" id="btn-pause">⏸ Pause</button>
+</div>
+
+<div class="btn-grid" style="margin-top:8px;">
+<button id="btn-reset">↺ Reset</button>
+<button class="go" id="btn-record">📋 Record</button>
+</div>
+</div>
+
+<div class="analysis">
+<h4>📊 Learn &amp; Practice</h4>
+
+<div class="readouts">
+<div class="readout hl"><span>Image distance dᵢ</span><strong id="ro-di">40.0 cm</strong></div>
+<div class="readout good"><span>Image height hᵢ</span><strong id="ro-hi">−10.0 cm</strong></div>
+<div class="readout"><span>Magnification m</span><strong id="ro-m">−1.00</strong></div>
+<div class="readout"><span>Focal length f</span><strong id="ro-f">20.0 cm</strong></div>
+<div class="readout"><span>Object distance d₀</span><strong id="ro-do">40.0 cm</strong></div>
+<div class="readout warn"><span>Image type</span><strong id="ro-imgtype">Real, inverted</strong></div>
+<div class="readout"><span>Radius R</span><strong id="ro-R">40.0 cm</strong></div>
+<div class="readout"><span>Mirror equation</span><strong id="ro-check">✓</strong></div>
+<div class="readout"><span>Object position</span><strong id="ro-pos">Beyond C</strong></div>
+<div class="readout"><span>Image size</span><strong id="ro-nature">Diminished</strong></div>
+<div class="readout"><span>Application</span><strong id="ro-app">Camera</strong></div>
+<div class="readout"><span>Ray convergence</span><strong id="ro-conv">Converging</strong></div>
+</div>
+
+<div class="card">
+<div class="tabs">
+<button class="tab-btn active" data-tab="formulas">Formulas</button>
+<button class="tab-btn" data-tab="quiz">Quiz</button>
+<button class="tab-btn" data-tab="challenges">Challenges</button>
+<button class="tab-btn" data-tab="notebook">Notebook</button>
+</div>
+
+<div id="formulas" class="tab-panel active">
+<h3 style="margin:6px 0 8px 0;">Core Formulas — Spherical Mirrors</h3>
+<ul style="font-size:.88rem;">
+<li><b style="color:var(--pr)">Mirror equation:</b> 1/f = 1/d₀ + 1/dᵢ</li>
+<li><b style="color:var(--pr)">Magnification:</b> m = −dᵢ/d₀ = hᵢ/h₀</li>
+<li><b style="color:var(--pr)">Radius relation:</b> R = 2f</li>
+<li><b style="color:var(--pr)">Sign convention:</b> concave f &gt; 0, convex f &lt; 0</li>
+<li><b style="color:var(--pr)">Real image:</b> dᵢ &gt; 0 (in front of mirror)</li>
+<li><b style="color:var(--pr)">Virtual image:</b> dᵢ &lt; 0 (behind mirror)</li>
+</ul>
+<p class="note"><b style="color:var(--wa)">💡 Key insights:</b> A concave mirror converges parallel light rays toward its focal point F, halfway between the mirror surface and center of curvature C. A convex mirror diverges rays. Three principal rays define the image: (1) Parallel to axis → reflects through F, (2) Through F → reflects parallel, (3) Through C → reflects back on itself. The image is real and inverted if the object is beyond F; virtual and upright if the object is inside F.</p>
+
+<table class="formulas">
+<tr><th>Quantity</th><th>Formula</th></tr>
+<tr><td>Mirror equation</td><td><span class="eq">1/f = 1/d₀ + 1/dᵢ</span></td></tr>
+<tr><td>Magnification</td><td><span class="eq">m = −dᵢ/d₀</span></td></tr>
+<tr><td>Radius</td><td><span class="eq">R = 2f</span></td></tr>
+</table>
+</div>
+
+<div id="quiz" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+<div class="quiz-section">Basic — Mirror Types</div>
+<div class="quiz-q" data-q="q1" data-answer="B">
+<strong>1. A concave mirror is:</strong>
+<label><input type="radio" name="q1" value="A"> Diverging</label>
+<label><input type="radio" name="q1" value="B"> Converging</label>
+<label><input type="radio" name="q1" value="C"> Flat</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q2" data-answer="A">
+<strong>2. A convex mirror produces images that are always:</strong>
+<label><input type="radio" name="q2" value="A"> Virtual, upright, diminished</label>
+<label><input type="radio" name="q2" value="B"> Real, inverted, enlarged</label>
+<label><input type="radio" name="q2" value="C"> Real, upright, same size</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q3" data-answer="B">
+<strong>3. The focal length of a mirror is:</strong>
+<label><input type="radio" name="q3" value="A"> Equal to R</label>
+<label><input type="radio" name="q3" value="B"> Half the radius of curvature (f = R/2)</label>
+<label><input type="radio" name="q3" value="C"> Twice R</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Intermediate — Mirror Equation</div>
+<div class="quiz-q" data-q="q4" data-answer="A">
+<strong>4. The mirror equation is:</strong>
+<label><input type="radio" name="q4" value="A"> 1/f = 1/d₀ + 1/dᵢ</label>
+<label><input type="radio" name="q4" value="B"> f = d₀ + dᵢ</label>
+<label><input type="radio" name="q4" value="C"> f = d₀·dᵢ</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q5" data-answer="B">
+<strong>5. Object 10 cm tall at 30 cm from concave mirror (f=15 cm). What is dᵢ?</strong>
+<label><input type="radio" name="q5" value="A"> 10 cm</label>
+<label><input type="radio" name="q5" value="B"> 30 cm</label>
+<label><input type="radio" name="q5" value="C"> 15 cm</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q6" data-answer="A">
+<strong>6. If d₀ &gt; 2f (object beyond C), the image is:</strong>
+<label><input type="radio" name="q6" value="A"> Real, inverted, smaller</label>
+<label><input type="radio" name="q6" value="B"> Real, inverted, larger</label>
+<label><input type="radio" name="q6" value="C"> Virtual, upright, larger</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Advanced — Image Formation</div>
+<div class="quiz-q" data-q="q7" data-answer="B">
+<strong>7. A real image from a spherical mirror:</strong>
+<label><input type="radio" name="q7" value="A"> Cannot be projected on a screen</label>
+<label><input type="radio" name="q7" value="B"> Can be projected on a screen</label>
+<label><input type="radio" name="q7" value="C"> Is always upright</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q8" data-answer="A">
+<strong>8. When object is placed exactly at C, the image is:</strong>
+<label><input type="radio" name="q8" value="A"> Same size, real, inverted, at C</label>
+<label><input type="radio" name="q8" value="B"> Enlarged, real</label>
+<label><input type="radio" name="q8" value="C"> Virtual, upright</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q9" data-answer="B">
+<strong>9. Magnification is:</strong>
+<label><input type="radio" name="q9" value="A"> m = d₀/dᵢ</label>
+<label><input type="radio" name="q9" value="B"> m = −dᵢ/d₀</label>
+<label><input type="radio" name="q9" value="C"> m = f/d₀</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q10" data-answer="A">
+<strong>10. If dᵢ comes out negative, the image is:</strong>
+<label><input type="radio" name="q10" value="A"> Virtual (behind mirror)</label>
+<label><input type="radio" name="q10" value="B"> Real</label>
+<label><input type="radio" name="q10" value="C"> At infinity</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="btn-grid" style="margin-top:12px;">
+<button class="go" id="btn-quiz-check">Submit Quiz</button>
+<button id="btn-quiz-reset">Reset</button>
+</div>
+<div id="quiz-result" style="display:none;"></div>
+</div>
+
+<div id="challenges" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Challenges</h3>
+<div style="display:flex;flex-direction:column;gap:8px;font-size:.88rem;">
+<div><b style="color:var(--pr)">1. Object at C</b><br><button class="go" data-challenge="atC">Same size, real, inverted</button></div>
+<div><b style="color:var(--pr)">2. Object at F</b><br><button class="go" data-challenge="atF">Image at infinity</button></div>
+<div><b style="color:var(--pr)">3. Between F and C</b><br><button class="go" data-challenge="between">Enlarged, real image</button></div>
+<div><b style="color:var(--pr)">4. Inside F</b><br><button class="go" data-challenge="inside">Virtual, enlarged</button></div>
+<div><b style="color:var(--pr)">5. Convex mirror</b><br><button class="go" data-challenge="convex">Virtual behind mirror</button></div>
+<div><b style="color:var(--pr)">6. Beyond C</b><br><button class="go" data-challenge="beyond">Diminished real image</button></div>
+<div id="challenge-note"></div>
+<div id="challenge-result"></div>
+</div>
+</div>
+
+<div id="notebook" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Notebook</h3>
+<label>Hypothesis</label>
+<textarea id="hypothesis" placeholder="What do you expect?"></textarea>
+<label style="margin-top:10px;display:block;">Conclusion</label>
+<textarea id="conclusion" placeholder="What did you observe?"></textarea>
+<label style="margin-top:10px;display:block;">Measurements</label>
+<textarea id="records" readonly style="background:var(--bg);font-family:monospace;font-size:.75rem;min-height:100px;"></textarea>
+<div class="btn-grid" style="margin-top:10px;">
+<button class="go" id="btn-export">⬇ Download Report</button>
+<button id="btn-clear-notes">Clear</button>
+</div>
+</div>
+</div>
+
+<div class="card">
+<b style="color:var(--pr)">Real fact:</b> <span id="fact-box" style="color:var(--mu);font-size:.85rem;">—</span>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+"use strict";
+(function(){
+
+var $ = function(id){ return document.getElementById(id); };
+var canvas = $('canvas');
+var ctx = canvas.getContext('2d');
+var dpr = window.devicePixelRatio || 1;
+var lastW = 0, lastH = 0;
+
+function resizeCanvas(){
+    var rect = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(rect.width));
+    var h = Math.max(1, Math.round(rect.height));
+    if (w === lastW && h === lastH) return;
+    lastW = w; lastH = h;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function cw(){ return canvas.width / dpr; }
+function ch(){ return canvas.height / dpr; }
+
+// ============ AUDIO ============
+var audioCtx = null;
+function initAudio(){
+    if (audioCtx) return;
+    try {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        audioCtx = new AC();
+    } catch(e){}
+}
+function beep(freq, dur, type, vol){
+    if (!audioCtx) return;
+    try {
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = type || 'sine';
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(vol || 0.06, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + dur);
+    } catch(e){}
+}
+
+// ============ STATE ============
+var S = {
+    type: 'concave',
+    fAbs: 20,
+    d0: 40,
+    h0: 10,
+    showRays: true,
+    showMarkers: true,
+    showGrid: true,
+    speed: 1.0,
+    running: true,
+    paused: false,
+    time: 0,
+    records: []
+};
+
+// ============ PHYSICS ============
+function getFocalLength(){
+    if (S.type === 'plane') return Infinity;
+    return S.type === 'concave' ? S.fAbs : -S.fAbs;
+}
+
+function computeImage(){
+    var f = getFocalLength();
+    if (!isFinite(f)) {
+        return { di: -S.d0, hi: S.h0, m: 1, real: false, inverted: false, f: Infinity };
+    }
+    var d0 = S.d0;
+    if (Math.abs(d0 - f) < 0.001) {
+        return { di: Infinity, hi: Infinity, m: Infinity, real: true, inverted: true, f: f };
+    }
+    var di = (f * d0) / (d0 - f);
+    var m = -di / d0;
+    var hi = m * S.h0;
+    return { di: di, hi: hi, m: m, real: di > 0, inverted: m < 0, f: f };
+}
+
+function getImageNature(){
+    var img = computeImage();
+    if (S.type === 'plane') return 'Virtual, upright, same size';
+    if (!isFinite(img.di)) return 'At infinity';
+    if (!img.real) return 'Virtual, upright, ' + (Math.abs(img.m) > 1 ? 'enlarged' : 'diminished');
+    if (Math.abs(img.m) > 1.001) return 'Real, inverted, enlarged';
+    if (Math.abs(img.m) < 0.999) return 'Real, inverted, diminished';
+    return 'Real, inverted, same size';
+}
+
+function getObjectPosition(){
+    if (S.type === 'plane') return 'In front of plane mirror';
+    if (S.d0 < S.fAbs - 0.1) return 'Between mirror and F';
+    if (Math.abs(S.d0 - S.fAbs) < 0.5) return 'At focal point F';
+    if (Math.abs(S.d0 - 2*S.fAbs) < 0.5) return 'At center C';
+    if (S.d0 < 2*S.fAbs) return 'Between F and C';
+    return 'Beyond C';
+}
+
+function getApplication(){
+    var pos = getObjectPosition();
+    if (S.type === 'plane') return 'Regular mirror';
+    if (S.type === 'convex') return 'Car side mirror, security mirror';
+    if (pos === 'At focal point F') return 'Searchlight, headlight';
+    if (pos === 'At center C') return 'Photocopier, telescope';
+    if (pos === 'Between mirror and F') return 'Shaving/makeup mirror';
+    if (pos === 'Between F and C') return 'Projector, film projector';
+    return 'Camera, telescope primary';
+}
+
+// ============ DRAW ============
+function drawScene(){
+    resizeCanvas();
+    var w = cw(), h = ch();
+    if (w < 10 || h < 10) return;
+
+    // Background
+    var bg = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w, h) * 1.2);
+    bg.addColorStop(0, '#0a1428');
+    bg.addColorStop(1, '#020408');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+
+    // Coordinate system
+    var cx = w * 0.62;
+    var cy = h / 2;
+    var maxDim = Math.max(S.d0 * 1.4, S.fAbs * 4, 80);
+    var scale = Math.min((w * 0.55) / maxDim, (h * 0.4) / (S.h0 * 2.2));
+
+    // Grid
+    if (S.showGrid) drawGrid(w, h, cx, cy, scale);
+
+    // Optical axis
+    ctx.strokeStyle = 'rgba(147,160,189,0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([8, 5]);
+    ctx.beginPath();
+    ctx.moveTo(0, cy);
+    ctx.lineTo(w, cy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Mirror
+    drawMirror(cx, cy, scale);
+
+    // Markers F, C
+    if (S.showMarkers && S.type !== 'plane') {
+        var f = getFocalLength();
+        var fX = cx - f * scale;
+        var cX = cx - 2 * f * scale;
+        drawMarker(fX, cy, 'F', '#34d399');
+        drawMarker(cX, cy, 'C', '#a78bfa');
+    }
+
+    // Object
+    var objX = cx - S.d0 * scale;
+    var objTop = cy - S.h0 * scale;
+    drawObject(objX, cy, objTop, '#fbbf24', 'Object');
+
+    // Image
+    var img = computeImage();
+    if (isFinite(img.di) && Math.abs(img.di) < 500) {
+        var imgX = cx - img.di * scale;
+        var imgTop = cy - img.hi * scale;
+        var imgColor = img.real ? '#10d982' : '#ff5c8a';
+        drawImage(imgX, cy, imgTop, imgColor, img.real ? 'Real image' : 'Virtual image', !img.real);
+    }
+
+    // Rays (animated)
+    if (S.showRays) drawRays(cx, cy, scale, objX, objTop);
+
+    // Title
+    ctx.fillStyle = '#e5e9f5';
+    ctx.font = 'bold 13px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('Ray Diagram — ' + S.type.charAt(0).toUpperCase() + S.type.slice(1) + ' Mirror', w/2, 22);
+
+    // Status indicator
+    var pulseR = 5 + 3 * Math.sin(performance.now() * 0.004);
+    ctx.fillStyle = S.running && !S.paused ? 'rgba(52,211,153,1)' : S.paused ? 'rgba(251,191,36,1)' : 'rgba(100,116,139,.6)';
+    ctx.shadowColor = S.running && !S.paused ? '#34d399' : S.paused ? '#fbbf24' : 'transparent';
+    ctx.shadowBlur = (S.running || S.paused) ? 12 : 0;
+    ctx.beginPath();
+    ctx.arc(w - 30, 30, pulseR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = S.running && !S.paused ? '#34d399' : S.paused ? '#fbbf24' : '#64748b';
+    ctx.font = 'bold 10px system-ui';
+    ctx.textAlign = 'right';
+    ctx.fillText(S.running && !S.paused ? 'RUNNING' : S.paused ? 'PAUSED' : 'IDLE', w - 45, 34);
+}
+
+function drawGrid(w, h, cx, cy, scale){
+    ctx.strokeStyle = 'rgba(129,140,248,0.08)';
+    ctx.lineWidth = 1;
+    for (var x = -10; x <= 10; x++) {
+        var px = cx - x * 10 * scale;
+        if (px < 0 || px > w) continue;
+        ctx.beginPath();
+        ctx.moveTo(px, 0);
+        ctx.lineTo(px, h);
+        ctx.stroke();
+        if (x !== 0 && x % 2 === 0) {
+            ctx.fillStyle = 'rgba(147,160,189,0.4)';
+            ctx.font = '10px system-ui';
+            ctx.textAlign = 'center';
+            ctx.fillText(x * 10 + ' cm', px, h - 8);
+        }
+    }
+    for (var y = -5; y <= 5; y++) {
+        var py = cy - y * 10 * scale;
+        if (py < 0 || py > h) continue;
+        ctx.beginPath();
+        ctx.moveTo(0, py);
+        ctx.lineTo(w, py);
+        ctx.stroke();
+    }
+}
+
+function drawMirror(cx, cy, scale){
+    var mirrorHeightPx = Math.max(100, Math.min(ch() * 0.6, S.h0 * scale * 2.5));
+
+    if (S.type === 'plane') {
+        ctx.strokeStyle = '#e5e9f5';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - mirrorHeightPx / 2);
+        ctx.lineTo(cx, cy + mirrorHeightPx / 2);
+        ctx.stroke();
+        ctx.strokeStyle = 'rgba(147,160,189,0.5)';
+        ctx.lineWidth = 1;
+        for (var y = cy - mirrorHeightPx / 2; y < cy + mirrorHeightPx / 2; y += 8) {
+            ctx.beginPath();
+            ctx.moveTo(cx, y);
+            ctx.lineTo(cx + 8, y + 8);
+            ctx.stroke();
+        }
+    } else {
+        var arcRadius = mirrorHeightPx * 1.5;
+        ctx.strokeStyle = '#e5e9f5';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        if (S.type === 'concave') {
+            ctx.arc(cx + arcRadius, cy, arcRadius, Math.PI - 0.35, Math.PI + 0.35);
+        } else {
+            ctx.arc(cx - arcRadius, cy, arcRadius, -0.35, 0.35);
+        }
+        ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(147,160,189,0.4)';
+        ctx.lineWidth = 1;
+        for (var i = -mirrorHeightPx / 2; i <= mirrorHeightPx / 2; i += 8) {
+            ctx.beginPath();
+            if (S.type === 'concave') {
+                ctx.moveTo(cx + 2, cy + i);
+                ctx.lineTo(cx + 8, cy + i + 4);
+            } else {
+                ctx.moveTo(cx - 2, cy + i);
+                ctx.lineTo(cx - 8, cy + i + 4);
+            }
+            ctx.stroke();
+        }
+    }
+}
+
+function drawMarker(x, y, label, color){
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.font = 'bold 12px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x, y - 10);
+    ctx.restore();
+}
+
+function drawObject(x, baseY, topY, color, label){
+    ctx.save();
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 15;
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x, baseY);
+    ctx.lineTo(x, topY);
+    ctx.stroke();
+    var dir = topY < baseY ? -1 : 1;
+    var arrowSize = 10;
+    ctx.beginPath();
+    ctx.moveTo(x, topY);
+    ctx.lineTo(x - 6, topY - dir * arrowSize);
+    ctx.lineTo(x + 6, topY - dir * arrowSize);
+    ctx.closePath();
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.font = 'bold 11px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x, baseY + 20);
+    ctx.restore();
+}
+
+function drawImage(x, baseY, topY, color, label, dashed){
+    ctx.save();
+    if (dashed) {
+        ctx.setLineDash([5, 4]);
+        ctx.globalAlpha = 0.85;
+    }
+    ctx.shadowColor = color;
+    ctx.shadowBlur = dashed ? 8 : 15;
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = dashed ? 2.5 : 3;
+    ctx.beginPath();
+    ctx.moveTo(x, baseY);
+    ctx.lineTo(x, topY);
+    ctx.stroke();
+    var dir = topY < baseY ? -1 : 1;
+    var arrowSize = 10;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(x, topY);
+    ctx.lineTo(x - 6, topY - dir * arrowSize);
+    ctx.lineTo(x + 6, topY - dir * arrowSize);
+    ctx.closePath();
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.font = 'bold 11px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x, baseY + 20);
+    ctx.restore();
+}
+
+// ============ ANIMATED RAYS ============
+function drawRays(cx, cy, scale, objX, objTop){
+    var img = computeImage();
+    var f = getFocalLength();
+    var t = S.time * S.speed;
+
+    // Ray 1: parallel → through F
+    var ray1Color = '#ff5c8a';
+    if (S.type !== 'plane') {
+        ctx.strokeStyle = ray1Color;
+        ctx.lineWidth = 2;
+        ctx.shadowColor = ray1Color;
+        ctx.shadowBlur = 8;
+
+        // Incident ray (horizontal from object top to mirror)
+        ctx.beginPath();
+        ctx.moveTo(objX, objTop);
+        ctx.lineTo(cx, objTop);
+        ctx.stroke();
+
+        // Reflected ray through F
+        var fX = cx - f * scale;
+        if (S.type === 'concave') {
+            // Extend through F and beyond
+            var dx = fX - cx;
+            var dy = cy - objTop;
+            var len = Math.hypot(dx, dy);
+            var ux = dx / len, uy = dy / len;
+            var extendLen = cw() * 1.5;
+            ctx.beginPath();
+            ctx.moveTo(cx, objTop);
+            ctx.lineTo(cx + ux * extendLen, objTop + uy * extendLen);
+            ctx.stroke();
+        } else {
+            // Convex — diverge as if from F behind mirror
+            var len2 = Math.hypot(fX - cx, cy - objTop);
+            var ux2 = (fX - cx) / len2, uy2 = (cy - objTop) / len2;
+            ctx.beginPath();
+            ctx.moveTo(cx, objTop);
+            ctx.lineTo(cx + Math.abs(ux2) * cw() * 1.2, objTop + Math.abs(uy2) * ch());
+            ctx.stroke();
+        }
+        ctx.shadowBlur = 0;
+
+        // Animated photon
+        var prog = (t * 0.5) % 1;
+        var px1 = objX + (cx - objX) * Math.min(1, prog * 2);
+        var py1 = objTop;
+        ctx.fillStyle = ray1Color;
+        ctx.shadowColor = ray1Color;
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(px1, py1, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    }
+
+    // Ray 2: through F → parallel
+    var ray2Color = '#4fa8ff';
+    if (S.type !== 'plane') {
+        var fX2 = cx - f * scale;
+        ctx.strokeStyle = ray2Color;
+        ctx.lineWidth = 2;
+        ctx.shadowColor = ray2Color;
+        ctx.shadowBlur = 8;
+
+        // Incident ray from object through F to mirror
+        // Line from (objX, objTop) through (fX2, cy) extended to x=cx
+        var slope = (cy - objTop) / (fX2 - objX);
+        var yAtMirror = objTop + slope * (cx - objX);
+        ctx.beginPath();
+        ctx.moveTo(objX, objTop);
+        ctx.lineTo(cx, yAtMirror);
+        ctx.stroke();
+
+        // Reflected ray parallel to axis
+        ctx.beginPath();
+        ctx.moveTo(cx, yAtMirror);
+        ctx.lineTo(0, yAtMirror);
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Animated photon on incident ray
+        var prog2 = (t * 0.5 + 0.3) % 1;
+        var px2 = objX + (cx - objX) * Math.min(1, prog2 * 2);
+        var py2 = objTop + (yAtMirror - objTop) * Math.min(1, prog2 * 2);
+        ctx.fillStyle = ray2Color;
+        ctx.shadowColor = ray2Color;
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(px2, py2, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    }
+
+    // Ray 3: through C → reflects back
+    var ray3Color = '#b79bff';
+    if (S.type === 'concave') {
+        var cX = cx - 2 * f * scale;
+        ctx.strokeStyle = ray3Color;
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        ctx.shadowColor = ray3Color;
+        ctx.shadowBlur = 8;
+        // Incident through C to mirror
+        var slope3 = (cy - objTop) / (cX - objX);
+        var yAtMirror3 = objTop + slope3 * (cx - objX);
+        ctx.beginPath();
+        ctx.moveTo(objX, objTop);
+        ctx.lineTo(cx, yAtMirror3);
+        ctx.stroke();
+        // Reflected back on itself
+        ctx.beginPath();
+        ctx.moveTo(cx, yAtMirror3);
+        ctx.lineTo(objX, objTop);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.shadowBlur = 0;
+    }
+}
+
+// ============ READOUTS ============
+function updateReadouts(){
+    var img = computeImage();
+    var f = getFocalLength();
+
+    $('ro-di').innerText = isFinite(img.di) ? img.di.toFixed(2) + ' cm' : '∞';
+    $('ro-hi').innerText = isFinite(img.hi) ? img.hi.toFixed(2) + ' cm' : '∞';
+    $('ro-m').innerText = isFinite(img.m) ? img.m.toFixed(3) : '∞';
+    $('ro-f').innerText = isFinite(f) ? f.toFixed(1) + ' cm' : '∞';
+    $('ro-do').innerText = S.d0.toFixed(1) + ' cm';
+    $('ro-imgtype').innerText = getImageNature();
+    $('ro-R').innerText = isFinite(f) ? (2 * f).toFixed(1) + ' cm' : '∞';
+    $('ro-check').innerText = isFinite(img.di) ? '✓ Verified' : '—';
+    $('ro-pos').innerText = getObjectPosition();
+    $('ro-nature').innerText = isFinite(img.m) ? (Math.abs(img.m) > 1.001 ? 'Enlarged' : Math.abs(img.m) < 0.999 ? 'Diminished' : 'Same size') : '—';
+    $('ro-app').innerText = getApplication();
+    $('ro-conv').innerText = img.real ? 'Converging (real)' : 'Diverging (virtual)';
+
+    $('hud-type').innerText = S.type.charAt(0).toUpperCase() + S.type.slice(1);
+    $('hud-f').innerText = isFinite(f) ? f.toFixed(1) : '∞';
+    $('hud-do').innerText = S.d0.toFixed(1);
+    $('hud-di').innerText = isFinite(img.di) ? img.di.toFixed(1) : '∞';
+    $('hud-status').innerText = S.running && !S.paused ? 'Running' : S.paused ? 'Paused' : 'Idle';
+
+    var fact;
+    if (S.type === 'plane') {
+        fact = 'Plane mirror: image is virtual, upright, same size, located as far behind the mirror as the object is in front. Used in regular household mirrors.';
+    } else if (S.type === 'concave') {
+        if (S.d0 > 2 * S.fAbs) {
+            fact = 'Concave mirror, object beyond C: image is real, inverted, diminished. Used in cameras and telescope primaries.';
+        } else if (Math.abs(S.d0 - 2 * S.fAbs) < 0.5) {
+            fact = 'Concave mirror, object at C: image is real, inverted, same size, at C. Used in photocopiers and telescopes.';
+        } else if (S.d0 < S.fAbs) {
+            fact = 'Concave mirror, object inside F: image is virtual, upright, enlarged behind mirror. Used in shaving/makeup mirrors.';
+        } else {
+            fact = 'Concave mirror, object between F and C: image is real, inverted, enlarged. Used in projectors.';
+        }
+    } else {
+        fact = 'Convex mirror: image is always virtual, upright, diminished, located between F and mirror. Used in car side mirrors and security mirrors.';
+    }
+    $('fact-box').innerText = fact;
+}
+
+// ============ QUIZ ============
+var QUIZ_EXPLAIN = {
+    q1:{correct:'B',why:'A concave mirror converges parallel light rays toward its focal point.',tip:'Used in headlights, telescopes.'},
+    q2:{correct:'A',why:'Convex mirrors always produce virtual, upright, diminished images.',tip:'Wide-angle car mirrors.'},
+    q3:{correct:'B',why:'f = R/2, where R is radius of curvature.',tip:'F is halfway between mirror and C.'},
+    q4:{correct:'A',why:'Mirror equation: 1/f = 1/d₀ + 1/dᵢ.',tip:'Same form as lens equation.'},
+    q5:{correct:'B',why:'1/15 = 1/30 + 1/dᵢ → 1/dᵢ = 1/30 → dᵢ = 30 cm.',tip:'When d₀ = 2f, dᵢ = 2f too.'},
+    q6:{correct:'A',why:'Object beyond C (d₀ > 2f) → real, inverted, diminished.',tip:'Like a camera.'},
+    q7:{correct:'B',why:'Real images form where rays actually converge — they can be projected on a screen.',tip:'Virtual images cannot.'},
+    q8:{correct:'A',why:'Object at C (d₀ = 2f) → image at C too, same size.',tip:'1:1 imaging.'},
+    q9:{correct:'B',why:'m = −dᵢ/d₀. Negative m means inverted.',tip:'|m| > 1 → enlarged.'},
+    q10:{correct:'A',why:'Negative dᵢ means the image is virtual (behind mirror).',tip:'Sign convention.'}
+};
+
+function evaluateQuiz(){
+    var qs = document.querySelectorAll('.quiz-q');
+    var score = 0;
+    qs.forEach(function(q){
+        var name = q.dataset.q;
+        var correct = q.dataset.answer;
+        var chosen = q.querySelector('input[name="'+name+'"]:checked');
+        var expl = q.querySelector('.explanation');
+        var data = QUIZ_EXPLAIN[name];
+        expl.hidden = false;
+        expl.className = 'explanation';
+        if (chosen && chosen.value === correct) {
+            score++;
+            expl.classList.add('correct-box');
+            expl.innerHTML = '<strong>✓ Correct!</strong> ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:var(--mu);"><b>💡</b> ' + data.tip + '</div>';
+        } else {
+            expl.classList.add('wrong-box');
+            var cv = chosen ? chosen.value : '—';
+            expl.innerHTML = '<strong>✗ Answer: ' + correct + '</strong> You chose ' + cv + '. ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:var(--mu);"><b>💡</b> ' + data.tip + '</div>';
+        }
+    });
+    var pct = Math.round(score/qs.length*100);
+    beep(pct>=78?880:440,0.15,'sine',0.1);
+    var r = $('quiz-result');
+    r.style.display = 'block';
+    r.innerHTML = '<div style="font-size:1.4rem;color:var(--pr);">' + score + '/' + qs.length + ' · ' + pct + '%</div>';
+}
+function resetQuiz(){
+    document.querySelectorAll('.quiz-q').forEach(function(q){
+        q.querySelectorAll('input[type=radio]').forEach(function(r){ r.checked = false; });
+        var e = q.querySelector('.explanation');
+        e.hidden = true; e.innerHTML = ''; e.className = 'explanation';
+    });
+    $('quiz-result').style.display = 'none';
+}
+
+// ============ CHALLENGES ============
+function applyChallenge(id){
+    var note = $('challenge-note'), cres = $('challenge-result');
+    note.innerText = ''; cres.innerText = '';
+    if (id === 'atC') {
+        S.type = 'concave'; $('type').value = 'concave';
+        S.fAbs = 20; $('f').value = 20; $('v-f').innerText = '20.0';
+        S.d0 = 40; $('do').value = 40; $('v-do').innerText = '40.0';
+        note.innerText = 'Object at C: image at C, same size, real, inverted.';
+    } else if (id === 'atF') {
+        S.type = 'concave'; $('type').value = 'concave';
+        S.fAbs = 20; $('f').value = 20; $('v-f').innerText = '20.0';
+        S.d0 = 20; $('do').value = 20; $('v-do').innerText = '20.0';
+        note.innerText = 'Object at F: reflected rays are parallel, image at infinity.';
+    } else if (id === 'between') {
+        S.type = 'concave'; $('type').value = 'concave';
+        S.fAbs = 20; $('f').value = 20; $('v-f').innerText = '20.0';
+        S.d0 = 30; $('do').value = 30; $('v-do').innerText = '30.0';
+        note.innerText = 'Object between F and C: real, inverted, enlarged.';
+    } else if (id === 'inside') {
+        S.type = 'concave'; $('type').value = 'concave';
+        S.fAbs = 20; $('f').value = 20; $('v-f').innerText = '20.0';
+        S.d0 = 10; $('do').value = 10; $('v-do').innerText = '10.0';
+        note.innerText = 'Object inside F: virtual, upright, enlarged behind mirror.';
+    } else if (id === 'convex') {
+        S.type = 'convex'; $('type').value = 'convex';
+        S.fAbs = 20; $('f').value = 20; $('v-f').innerText = '20.0';
+        S.d0 = 30; $('do').value = 30; $('v-do').innerText = '30.0';
+        note.innerText = 'Convex mirror: virtual, upright, diminished behind mirror.';
+    } else if (id === 'beyond') {
+        S.type = 'concave'; $('type').value = 'concave';
+        S.fAbs = 20; $('f').value = 20; $('v-f').innerText = '20.0';
+        S.d0 = 60; $('do').value = 60; $('v-do').innerText = '60.0';
+        note.innerText = 'Object beyond C: real, inverted, diminished between F and C.';
+    }
+    updateReadouts();
+    beep(660, 0.08, 'sine', 0.08);
+}
+
+// ============ NOTEBOOK ============
+function recordMeasurement(){
+    var img = computeImage();
+    var line = new Date().toLocaleTimeString() + ' | ' + S.type + ' | f=' + getFocalLength().toFixed(1) + ' cm | d₀=' + S.d0.toFixed(1) + ' cm | dᵢ=' + (isFinite(img.di) ? img.di.toFixed(2) : '∞') + ' cm | m=' + (isFinite(img.m) ? img.m.toFixed(3) : '∞') + ' | ' + getImageNature();
+    S.records.push(line);
+    $('records').value = S.records.join('\n');
+    $('records').scrollTop = $('records').scrollHeight;
+    beep(880, 0.08, 'sine', 0.06);
+}
+function downloadReport(){
+    var img = computeImage();
+    var text = 'MIRROR RAY DIAGRAM — LAB REPORT\nDate: ' + new Date().toLocaleString() + '\n\n' +
+        'SETUP\nMirror type: ' + S.type + '\n' +
+        'Focal length f = ' + (isFinite(getFocalLength()) ? getFocalLength().toFixed(2) + ' cm' : '∞') + '\n' +
+        'Object distance d₀ = ' + S.d0.toFixed(1) + ' cm\n' +
+        'Object height h₀ = ' + S.h0.toFixed(1) + ' cm\n\n' +
+        'IMAGE\n' +
+        'Image distance dᵢ = ' + (isFinite(img.di) ? img.di.toFixed(3) + ' cm' : '∞') + '\n' +
+        'Image height hᵢ = ' + (isFinite(img.hi) ? img.hi.toFixed(3) + ' cm' : '∞') + '\n' +
+        'Magnification m = ' + (isFinite(img.m) ? img.m.toFixed(4) : '∞') + '\n' +
+        'Nature: ' + getImageNature() + '\n' +
+        'Position: ' + getObjectPosition() + '\n\n' +
+        'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+        'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+        'MEASUREMENTS\n' + S.records.join('\n') + '\n\n' +
+        'LIMITATIONS\nParaxial approximation. Educational use only.\n';
+    var blob = new Blob([text], {type:'text/plain'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'mirror-report.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+// ============ EVENTS ============
+$('type').addEventListener('change', function(e){
+    S.type = e.target.value;
+    updateReadouts();
+});
+$('f').addEventListener('input', function(e){
+    S.fAbs = parseFloat(e.target.value);
+    $('v-f').innerText = S.fAbs.toFixed(1);
+    updateReadouts();
+});
+$('do').addEventListener('input', function(e){
+    S.d0 = parseFloat(e.target.value);
+    $('v-do').innerText = S.d0.toFixed(1);
+    updateReadouts();
+});
+$('ho').addEventListener('input', function(e){
+    S.h0 = parseFloat(e.target.value);
+    $('v-ho').innerText = S.h0.toFixed(1);
+    updateReadouts();
+});
+$('show-rays').addEventListener('change', function(e){ S.showRays = e.target.checked; });
+$('show-markers').addEventListener('change', function(e){ S.showMarkers = e.target.checked; });
+$('show-grid').addEventListener('change', function(e){ S.showGrid = e.target.checked; });
+$('speed').addEventListener('input', function(e){
+    S.speed = parseFloat(e.target.value);
+    $('v-speed').innerText = S.speed.toFixed(1);
+});
+
+// START button — actually starts animation
+$('btn-start').addEventListener('click', function(){
+    initAudio();
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    S.running = true;
+    S.paused = false;
+    this.textContent = '▶ Running';
+    $('btn-pause').textContent = '⏸ Pause';
+    beep(660, 0.15, 'sine', 0.08);
+});
+
+// PAUSE button
+$('btn-pause').addEventListener('click', function(){
+    if (S.paused) {
+        S.paused = false;
+        S.running = true;
+        this.textContent = '⏸ Pause';
+        $('btn-start').textContent = '▶ Running';
+    } else if (S.running) {
+        S.paused = true;
+        S.running = false;
+        this.textContent = '▶ Resume';
+        $('btn-start').textContent = '▶ Start';
+    }
+});
+
+// RESET button
+$('btn-reset').addEventListener('click', function(){
+    S.type = 'concave'; $('type').value = 'concave';
+    S.fAbs = 20; $('f').value = 20; $('v-f').innerText = '20.0';
+    S.d0 = 40; $('do').value = 40; $('v-do').innerText = '40.0';
+    S.h0 = 10; $('ho').value = 10; $('v-ho').innerText = '10.0';
+    S.time = 0;
+    S.paused = false;
+    S.running = true;
+    $('btn-pause').textContent = '⏸ Pause';
+    $('btn-start').textContent = '▶ Running';
+    updateReadouts();
+});
+
+$('btn-record').addEventListener('click', recordMeasurement);
+
+$('btn-sound').addEventListener('click', function(){
+    initAudio();
+    if (!audioCtx) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    var on = $('btn-sound').classList.contains('playing');
+    if (on) {
+        $('btn-sound').classList.remove('playing');
+        $('btn-sound').textContent = '🔈 Enable sound';
+    } else {
+        $('btn-sound').classList.add('playing');
+        $('btn-sound').textContent = '🔊 Sound ON';
+        beep(440, 0.15, 'sine', 0.1);
+    }
+});
+
+document.querySelectorAll('.tab-btn[data-tab]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+        document.querySelectorAll('.tab-btn[data-tab]').forEach(function(b){ b.classList.remove('active'); });
+        document.getElementById(btn.dataset.tab).classList.add('active');
+        btn.classList.add('active');
+    });
+});
+
+document.querySelectorAll('[data-challenge]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        applyChallenge(btn.dataset.challenge);
+    });
+});
+
+$('btn-quiz-check').addEventListener('click', evaluateQuiz);
+$('btn-quiz-reset').addEventListener('click', resetQuiz);
+$('btn-clear-notes').addEventListener('click', function(){
+    if (!confirm('Clear notebook?')) return;
+    $('hypothesis').value = ''; $('conclusion').value = ''; $('records').value = '';
+    S.records = [];
+});
+$('btn-export').addEventListener('click', downloadReport);
+
+// SPLITTER
+(function(){
+    var sim = $('sim-area'), splitter = $('splitter');
+    if (!sim || !splitter) return;
+    var dragging = false, startY = 0, startH = 0;
+    var containerH = 0;
+    splitter.addEventListener('pointerdown', function(e){
+        e.preventDefault();
+        dragging = true;
+        startY = e.clientY;
+        startH = sim.getBoundingClientRect().height;
+        containerH = sim.parentElement.getBoundingClientRect().height;
+        try { splitter.setPointerCapture(e.pointerId); } catch(_){}
+        document.body.style.cursor = 'ns-resize';
+        document.body.style.userSelect = 'none';
+    });
+    window.addEventListener('pointermove', function(e){
+        if (!dragging) return;
+        var dy = e.clientY - startY;
+        var newH = startH + dy;
+        var minH = Math.max(140, containerH * 0.15);
+        var maxH = Math.min(window.innerHeight * 0.75, containerH * 0.75);
+        newH = Math.max(minH, Math.min(maxH, newH));
+        sim.style.flex = '0 0 ' + Math.round(newH) + 'px';
+        lastW = 0; lastH = 0;
+        resizeCanvas();
+    });
+    window.addEventListener('pointerup', function(e){
+        if (!dragging) return;
+        dragging = false;
+        try { splitter.releasePointerCapture(e.pointerId); } catch(_){}
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+    });
+    splitter.addEventListener('dblclick', function(){
+        sim.style.flex = '0 0 55%';
+        lastW = 0; lastH = 0;
+        resizeCanvas();
+    });
+})();
+
+// ============ ANIMATION LOOP — REAL MOTION ============
+var lastT = 0;
+function animate(now){
+    if (!lastT) lastT = now;
+    var dt = (now - lastT) / 1000;
+    if (dt > 0.1) dt = 0.016;
+    lastT = now;
+
+    // Advance animation time when running (this drives photon motion)
+    if (S.running && !S.paused) {
+        S.time += dt;
+    }
+
+    drawScene();
+    updateReadouts();
+    requestAnimationFrame(animate);
+}
+
+window.addEventListener('resize', function(){
+    lastW = 0; lastH = 0;
+    resizeCanvas();
+});
+
+// ============ BOOT ============
+resizeCanvas();
+updateReadouts();
+requestAnimationFrame(animate);
+
+})();
+</script>
+</body>
+</html>

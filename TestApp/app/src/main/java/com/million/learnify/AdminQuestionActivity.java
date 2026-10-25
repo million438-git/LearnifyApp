@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.button.MaterialButton;
@@ -28,6 +30,21 @@ public class AdminQuestionActivity extends BaseActivity {
     private RadioButton rbA, rbB, rbC, rbD;
     private String currentUsername;
     private DrawerLayout drawerLayout;
+
+    private final ActivityResultLauncher<Intent> filePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Uri uri = result.getData().getData();
+                    if (uri != null) {
+                        try {
+                            getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        } catch (Exception e) { /* ignore */ }
+                        Toast.makeText(this, "Attachment linked successfully", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,13 +87,24 @@ public class AdminQuestionActivity extends BaseActivity {
             ivMenu.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
         }
 
+        TextView tvAdminHeaderName = findViewById(R.id.tvAdminHeaderName);
+        if (tvAdminHeaderName != null) {
+            SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
+            String fullName = pref.getString("full_name", "Administrator");
+            tvAdminHeaderName.setText(fullName.isEmpty() ? "Administrator" : fullName);
+        }
+
         findViewById(R.id.btnCancel).setOnClickListener(v -> finish());
         
         MaterialButton btnPublish = findViewById(R.id.btnPublishQuestion);
         btnPublish.setOnClickListener(v -> handlePublish());
 
-        findViewById(R.id.btnUploadFile).setOnClickListener(v -> 
-            Toast.makeText(this, "Opening File Gallery...", Toast.LENGTH_SHORT).show());
+        findViewById(R.id.btnUploadFile).setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("*/*");
+            filePickerLauncher.launch(intent);
+        });
 
         View.OnClickListener rbListener = v -> {
             rbA.setChecked(v.getId() == R.id.rbA);
@@ -173,7 +201,7 @@ public class AdminQuestionActivity extends BaseActivity {
         
         if (success) {
             repository.getLocalDb().addAnnouncement("New Exam Question Added: " + title, "Question on " + cat, "EXAM");
-            Toast.makeText(this, "✅ Question Saved and Published!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Question Saved and Published.", Toast.LENGTH_LONG).show();
             finish();
         } else {
             Toast.makeText(this, "Database Error", Toast.LENGTH_SHORT).show();

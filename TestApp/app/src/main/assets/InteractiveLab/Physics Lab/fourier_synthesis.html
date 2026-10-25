@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fourier Synthesis Laboratory</title>
+<style>
+:root{color-scheme:dark;--bg:#0a0f1f;--panel:#141b2e;--line:#26304a;--text:#e5e9f5;--muted:#93a0bd;--accent:#818cf8;--green:#34d399;--yellow:#fbbf24}
+*{box-sizing:border-box;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+body{margin:0;background:var(--bg);color:var(--text);padding:16px}
+main{max-width:1050px;margin:auto}
+header{text-align:center;border-bottom:3px solid var(--accent);padding:8px 0 14px}
+h1{font-size:1.35rem;margin:0 0 5px}header p,.note{color:var(--muted);margin:4px 0}
+.grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,1fr);gap:14px;margin-top:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+canvas{display:block;width:100%;height:300px;background:#05080f;border-radius:8px}
+.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+.metric{background:#0d1425;border:1px solid var(--line);border-radius:8px;padding:9px}
+.metric span{display:block;color:var(--muted);font-size:.75rem}.metric strong{font-size:1rem;color:var(--yellow)}
+.control{margin:12px 0}.control label{display:flex;justify-content:space-between;gap:10px;font-size:.9rem;font-weight:600}
+input,select,button{accent-color:var(--accent)}input[type=range]{width:100%;margin-top:8px}
+select{width:100%;padding:9px;border-radius:7px;background:#0d1425;color:var(--text);border:1px solid var(--line)}
+button{border:1px solid var(--line);border-radius:7px;padding:10px 14px;background:#202943;color:var(--text);font-weight:700;cursor:pointer}
+button.primary{background:var(--accent);color:#101426;border-color:var(--accent)}
+.buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.status{min-height:1.5em;color:var(--green)}.formula{line-height:1.6}.formula code{color:var(--yellow)}
+@media(max-width:700px){body{padding:10px}.grid{grid-template-columns:1fr}canvas{height:240px}}
+</style>
+</head>
+<body>
+<main>
+<header><h1>Fourier Synthesis Laboratory</h1><p>Build periodic waveforms by adding sinusoidal harmonics.</p></header>
+<div class="grid">
+<section class="card" aria-label="Synthesized waveform">
+<canvas id="wave" role="img" aria-label="Graph of the synthesized waveform over one period"></canvas>
+<div class="metrics" aria-live="polite">
+<div class="metric"><span>Harmonics included</span><strong id="countOut">1</strong></div>
+<div class="metric"><span>RMS amplitude</span><strong id="rmsOut">0.71</strong></div>
+<div class="metric"><span>Estimated peak</span><strong id="peakOut">1.00</strong></div>
+<div class="metric"><span>Fundamental period</span><strong id="periodOut">1.00 s</strong></div>
+</div>
+<p class="note">The graph shows one period; the marker sweeps through phase while the simulation runs.</p>
+</section>
+<section class="card" aria-label="Waveform controls">
+<div class="control"><label for="shape">Target waveform</label><select id="shape"><option value="sine">Sine wave</option><option value="square">Square wave</option><option value="triangle">Triangle wave</option><option value="sawtooth">Sawtooth wave</option></select></div>
+<div class="control"><label for="harmonics">Harmonics <output id="harmonicsLabel">9</output></label><input id="harmonics" type="range" min="1" max="15" step="1" value="9" aria-label="Number of harmonics"></div>
+<div class="control"><label for="amplitude">Peak target amplitude <output id="amplitudeLabel">1.00</output></label><input id="amplitude" type="range" min="0.2" max="2" step="0.05" value="1" aria-label="Target amplitude"></div>
+<div class="control"><label for="frequency">Fundamental frequency <output id="frequencyLabel">1.00 Hz</output></label><input id="frequency" type="range" min="0.25" max="4" step="0.05" value="1" aria-label="Fundamental frequency in hertz"></div>
+<div class="buttons"><button id="runButton" class="primary" type="button">Start</button><button id="resetButton" type="button">Reset</button></div>
+<p id="status" class="status" aria-live="polite">Ready. Choose a waveform and adjust its harmonic content.</p>
+<div class="formula"><strong>Fourier model</strong><br><code>y(t) = Σ Aₙ sin(2π n f₀ t)</code><br>Square wave: odd harmonics with amplitude proportional to 1/n. Triangle wave: odd harmonics proportional to 1/n² with alternating signs. Sawtooth: all harmonics proportional to 1/n. Harmonics are idealized; truncating the sum creates the visible edge ripple.</div>
+</section>
+</div>
+</main>
+<script>
+(function(){
+  var canvas=document.getElementById('wave'),ctx=canvas.getContext('2d');
+  var shape=document.getElementById('shape'),harmonics=document.getElementById('harmonics'),amplitude=document.getElementById('amplitude'),frequency=document.getElementById('frequency');
+  var running=false,phase=0,lastTime=0,raf=0;
+  function coefficients(){
+    var count=+harmonics.value,peak=+amplitude.value,result=[];
+    for(var n=1;n<=count;n++){
+      var a=0;
+      if(shape.value==='sine')a=n===1?peak:0;
+      else if(shape.value==='square')a=n%2?4*peak/(Math.PI*n):0;
+      else if(shape.value==='triangle')a=n%2?8*peak/(Math.PI*Math.PI*n*n)*(((n-1)/2)%2?-1:1):0;
+      else a=2*peak/Math.PI*((n%2)?1:-1)/n;
+      if(a!==0)result.push({n:n,a:a});
+    }
+    return result;
+  }
+  function valueAt(x,terms){var y=0;for(var i=0;i<terms.length;i++)y+=terms[i].a*Math.sin(terms[i].n*x);return y;}
+  function resize(){var dpr=Math.max(1,window.devicePixelRatio||1),r=canvas.getBoundingClientRect();canvas.width=Math.max(1,Math.round(r.width*dpr));canvas.height=Math.max(1,Math.round(r.height*dpr));ctx.setTransform(dpr,0,0,dpr,0,0);draw();}
+  function draw(){
+    var w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;
+    var terms=coefficients(),samples=320,peak=0,sumSq=0;
+    for(var k=0;k<samples;k++){var y=valueAt(k*2*Math.PI/samples,terms);peak=Math.max(peak,Math.abs(y));sumSq+=y*y;}
+    ctx.clearRect(0,0,w,h);ctx.fillStyle='#05080f';ctx.fillRect(0,0,w,h);
+    var mid=h/2,scale=(h*.38)/Math.max(1,peak);
+    ctx.strokeStyle='#26304a';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(32,mid);ctx.lineTo(w-12,mid);ctx.moveTo(32,12);ctx.lineTo(32,h-24);ctx.stroke();
+    ctx.fillStyle='#93a0bd';ctx.font='12px system-ui';ctx.fillText('amplitude',8,16);ctx.fillText('phase →',w-64,h-7);
+    ctx.strokeStyle='#818cf8';ctx.lineWidth=2.5;ctx.beginPath();
+    for(var i=0;i<=samples;i++){var x=i/samples*2*Math.PI,px=32+i/samples*(w-46),py=mid-valueAt(x,terms)*scale;if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}ctx.stroke();
+    var mx=32+(phase%(2*Math.PI))/(2*Math.PI)*(w-46),my=mid-valueAt(phase,terms)*scale;
+    ctx.strokeStyle='#fbbf24';ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(mx,14);ctx.lineTo(mx,h-24);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(mx,my,5,0,2*Math.PI);ctx.fill();
+    document.getElementById('countOut').textContent=terms.length;
+    document.getElementById('rmsOut').textContent=Math.sqrt(sumSq/samples).toFixed(3);
+    document.getElementById('peakOut').textContent=peak.toFixed(3);
+    document.getElementById('periodOut').textContent=(1/(+frequency.value)).toFixed(2)+' s';
+    document.getElementById('harmonicsLabel').textContent=harmonics.value;
+    document.getElementById('amplitudeLabel').textContent=(+amplitude.value).toFixed(2);
+    document.getElementById('frequencyLabel').textContent=(+frequency.value).toFixed(2)+' Hz';
+  }
+  function tick(t){if(!running)return;if(lastTime)phase+=(t-lastTime)/1000*(+frequency.value)*2*Math.PI;lastTime=t;draw();raf=requestAnimationFrame(tick);}
+  function toggle(){running=!running;lastTime=0;document.getElementById('runButton').textContent=running?'Pause':'Resume';document.getElementById('status').textContent=running?'Waveform phase is advancing.':'Simulation paused.';if(running)raf=requestAnimationFrame(tick);else cancelAnimationFrame(raf);}
+  [shape,harmonics,amplitude,frequency].forEach(function(el){el.addEventListener('input',draw);el.addEventListener('change',draw);});
+  document.getElementById('runButton').addEventListener('click',toggle);
+  document.getElementById('resetButton').addEventListener('click',function(){running=false;cancelAnimationFrame(raf);shape.value='sine';harmonics.value='9';amplitude.value='1';frequency.value='1';phase=0;lastTime=0;document.getElementById('runButton').textContent='Start';document.getElementById('status').textContent='Reset to the default sine wave.';draw();});
+  window.addEventListener('resize',resize);resize();
+})();
+</script>
+</body>
+</html>

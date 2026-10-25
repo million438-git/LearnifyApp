@@ -44,10 +44,17 @@ public class SettingsService {
     // Privacy
     private static final String KEY_2FA = "two_factor_enabled";
 
-    private SharedPreferences sharedPreferences;
+    // Inclusive Learning Mode
+    public static final String KEY_INCLUSIVE_MODE = "inclusive_mode";
+    public static final String KEY_SPEECH_RATE = "speech_rate";
+    public static final String KEY_AUTO_READ = "auto_read_content";
+
+    private final SharedPreferences sharedPreferences;
+    private final Context context;
 
     public SettingsService(Context context) {
-        sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        this.context = context.getApplicationContext();
+        this.sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
 
     public void saveSettings(StudentSettings settings) {
@@ -85,8 +92,24 @@ public class SettingsService {
         editor.putBoolean(KEY_NOTIFY_ANNOUNCEMENTS, settings.isNotifyAnnouncements());
         editor.putBoolean(KEY_PUSH_ENABLED, settings.isPushEnabled());
         editor.putBoolean(KEY_2FA, settings.isTwoFactorEnabled());
+
+        editor.putBoolean(KEY_INCLUSIVE_MODE, settings.isInclusiveMode());
+        editor.putFloat(KEY_SPEECH_RATE, settings.getSpeechRate());
+        editor.putBoolean(KEY_AUTO_READ, settings.isAutoReadContent());
         
         editor.apply();
+
+        // Synchronize with centralized InclusiveModeManager
+        try {
+            InclusiveModeManager imm = InclusiveModeManager.getInstance(context);
+            imm.setInclusiveModeEnabled(settings.isInclusiveMode());
+            imm.setTextToSpeechEnabled(settings.isTextToSpeech());
+            imm.setSpeechRate(settings.getSpeechRate());
+            imm.setHighContrastEnabled(settings.isHighContrastMode());
+            imm.setReducedMotionEnabled(settings.isReduceMotion());
+            imm.setAutoReadContentEnabled(settings.isAutoReadContent());
+        } catch (Exception ignored) {
+        }
     }
 
     public StudentSettings loadSettings() {
@@ -125,6 +148,10 @@ public class SettingsService {
         settings.setNotifyAnnouncements(sharedPreferences.getBoolean(KEY_NOTIFY_ANNOUNCEMENTS, true));
         settings.setPushEnabled(sharedPreferences.getBoolean(KEY_PUSH_ENABLED, true));
         settings.setTwoFactorEnabled(sharedPreferences.getBoolean(KEY_2FA, false));
+
+        settings.setInclusiveMode(sharedPreferences.getBoolean(KEY_INCLUSIVE_MODE, false));
+        settings.setSpeechRate(sharedPreferences.getFloat(KEY_SPEECH_RATE, 1.0f));
+        settings.setAutoReadContent(sharedPreferences.getBoolean(KEY_AUTO_READ, false));
         
         return settings;
     }

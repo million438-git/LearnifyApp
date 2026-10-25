@@ -1,114 +1,962 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/welcomeScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#020617"
-    tools:context=".WelcomeActivity">
+    android:background="@color/learnify_void_navy"
+    android:fillViewport="true"
+    android:scrollbars="none"
+    tools:context=".WelcomeActivity"
+    tools:theme="@style/Theme.TestApp">
 
-    <!-- Glowing Background Accents -->
-    <View
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_marginTop="-100dp"
-        android:layout_marginEnd="-100dp"
-        android:alpha="0.3"
-        android:background="@android:drawable/screen_background_dark_transparent"
-        android:backgroundTint="#3B82F6"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_marginBottom="-50dp"
-        android:layout_marginStart="-50dp"
-        android:alpha="0.2"
-        android:background="@android:drawable/screen_background_dark_transparent"
-        android:backgroundTint="#8B5CF6"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <!-- Main Content Container -->
+    <!-- Outer responsive wrapper -->
     <LinearLayout
-        android:id="@+id/welcomeContent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="32dp">
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
-        <!-- Top Illustration/Image Area -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/welcomeLogoCard"
-            android:layout_width="240dp"
-            android:layout_height="240dp"
-            app:cardBackgroundColor="#111827"
-            app:cardCornerRadius="40dp"
-            app:cardElevation="0dp"
-            app:strokeColor="#1E293B"
-            app:strokeWidth="1dp">
+        <!-- Constrained container to look balanced on wide phones and tablets -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxWidth="640dp"
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="28dp"
+            android:paddingBottom="48dp">
 
-            <ImageView
+            <!-- ===================================================== -->
+            <!-- SECTION A: Premium Brand Header                       -->
+            <!-- ===================================================== -->
+            <RelativeLayout
+                android:id="@+id/headerContainer"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="20dp"
-                android:src="@drawable/stdlogo"
-                android:scaleType="fitCenter" />
-        </com.google.android.material.card.MaterialCardView>
+                android:layout_height="wrap_content">
 
-        <!-- Simple Understanding Text -->
-        <TextView
-            android:id="@+id/welcomeTitleText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
-            android:text="Learn Smarter,\nNot Harder"
-            android:textColor="@android:color/white"
-            android:textSize="36sp"
-            android:textStyle="bold"
-            android:textAlignment="center"
-            android:lineSpacingMultiplier="1.1" />
+                <LinearLayout
+                    android:id="@+id/brandIdentityGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/welcomeDescText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Study lessons, practice questions, and get AI help anytime."
-            android:textColor="#94A3B8"
-            android:textSize="17sp"
-            android:textAlignment="center"
-            android:paddingHorizontal="16dp"
-            android:lineSpacingExtra="4dp" />
+                    <!-- Brand Symbol -->
+                    <ImageView
+                        android:id="@+id/ivBrandSymbol"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:contentDescription="Learnify Brand Symbol"
+                        android:src="@drawable/ic_learnify_brand_logo" />
 
-        <!-- Main Action Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnGetStarted"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:layout_marginTop="64dp"
-            android:text="Get Started"
-            android:textAllCaps="false"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:backgroundTint="#2563EB"
-            app:cornerRadius="32dp"
-            app:elevation="8dp" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:orientation="vertical">
 
-        <!-- Footer Text -->
-        <TextView
-            android:id="@+id/welcomeFooterText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
-            android:text="Designed for students • Simple • Smart"
-            android:textColor="#475569"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            android:letterSpacing="0.05" />
+                        <!-- Learnify Wordmark -->
+                        <TextView
+                            android:id="@+id/tvBrandWordmark"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-black"
+                            android:text="Learnify"
+                            android:textColor="@color/learnify_ice_white"
+                            android:textSize="22sp" />
 
+                        <!-- Tagline -->
+                        <TextView
+                            android:id="@+id/tvBrandTagline"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:letterSpacing="0.14"
+                            android:text="INTELLIGENCE MEETS CURIOSITY"
+                            android:textColor="@color/learnify_neon_cyan"
+                            android:textSize="9sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Access to Dual Portal Selector (MainActivity) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPortalHubTop"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:minWidth="0dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="0dp"
+                    android:text="Portals"
+                    android:textAllCaps="false"
+                    android:textColor="@color/learnify_text_secondary"
+                    android:textSize="12sp"
+                    app:cornerRadius="18dp"
+                    app:strokeColor="@color/learnify_card_stroke"
+                    app:strokeWidth="1dp" />
+            </RelativeLayout>
+
+            <!-- ===================================================== -->
+            <!-- SECTION B: Cinematic Hero Introduction                -->
+            <!-- ===================================================== -->
+            <LinearLayout
+                android:id="@+id/heroIntroContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="36dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvHeroHeadline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-black"
+                    android:lineSpacingMultiplier="1.15"
+                    android:text="Your curiosity\nhas no limits."
+                    android:textColor="@color/learnify_ice_white"
+                    android:textSize="38sp" />
+
+                <TextView
+                    android:id="@+id/tvHeroSupporting"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="sans-serif"
+                    android:lineSpacingMultiplier="1.25"
+                    android:text="Step into a new dimension of learning. Explore science, discover ideas, and build the confidence to shape your future."
+                    android:textColor="@color/learnify_text_secondary"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- ===================================================== -->
+            <!-- SECTION C: Immersive Science Artwork                  -->
+            <!-- ===================================================== -->
+            <FrameLayout
+                android:id="@+id/heroArtContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:gravity="center">
+
+                <!-- Ambient Radial Glow Layer -->
+                <View
+                    android:layout_width="220dp"
+                    android:layout_height="220dp"
+                    android:layout_gravity="center"
+                    android:alpha="0.25"
+                    android:background="@drawable/bg_welcome_card"
+                    android:backgroundTint="@color/learnify_electric_violet" />
+
+                <!-- Native Science Composition -->
+                <ImageView
+                    android:id="@+id/ivScienceHeroArt"
+                    android:layout_width="260dp"
+                    android:layout_height="260dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="Intelligent Learning Universe Artwork"
+                    android:src="@drawable/ic_science_hero_art" />
+            </FrameLayout>
+
+            <!-- ===================================================== -->
+            <!-- SECTION D: Subject Universe                           -->
+            <!-- ===================================================== -->
+            <LinearLayout
+                android:id="@+id/subjectUniverseContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.12"
+                    android:text="SUBJECT UNIVERSE"
+                    android:textColor="@color/learnify_neon_cyan"
+                    android:textSize="11sp" />
+
+                <!-- Row 1: Physics and Biology -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <!-- Physics Card -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_welcome_card"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:contentDescription="Physics Icon"
+                            android:src="@drawable/ic_subject_physics" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:fontFamily="sans-serif-bold"
+                            android:text="Physics"
+                            android:textColor="@color/learnify_neon_cyan"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="sans-serif"
+                            android:text="Understand the universe"
+                            android:textColor="@color/learnify_text_secondary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- Biology Card -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_welcome_card"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:contentDescription="Biology Icon"
+                            android:src="@drawable/ic_subject_biology" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:fontFamily="sans-serif-bold"
+                            android:text="Biology"
+                            android:textColor="@color/learnify_electric_violet"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="sans-serif"
+                            android:text="Explore life itself"
+                            android:textColor="@color/learnify_text_secondary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Row 2: Chemistry and AI Learning -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal">
+
+                    <!-- Chemistry Card -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_welcome_card"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:contentDescription="Chemistry Icon"
+                            android:src="@drawable/ic_subject_chemistry" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:fontFamily="sans-serif-bold"
+                            android:text="Chemistry"
+                            android:textColor="@color/learnify_science_mint"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="sans-serif"
+                            android:text="Reveal hidden reactions"
+                            android:textColor="@color/learnify_text_secondary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <!-- AI Learning Card -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_welcome_card"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:contentDescription="AI Learning Icon"
+                            android:src="@drawable/ic_subject_ai" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:fontFamily="sans-serif-bold"
+                            android:text="AI learning"
+                            android:textColor="@color/learnify_neon_cyan"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:fontFamily="sans-serif"
+                            android:text="Ask. Understand. Grow."
+                            android:textColor="@color/learnify_text_secondary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ===================================================== -->
+            <!-- SECTION E: Primary Navigation Actions                 -->
+            <!-- ===================================================== -->
+            <LinearLayout
+                android:id="@+id/primaryActionsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="36dp"
+                android:orientation="vertical">
+
+                <!-- Primary Button: Get Started (RegisterActivity directly) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGetStarted"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_btn_primary_gradient"
+                    android:elevation="6dp"
+                    android:fontFamily="sans-serif-bold"
+                    android:text="Get Started"
+                    android:textAllCaps="false"
+                    android:textColor="@color/learnify_void_navy"
+                    android:textSize="17sp"
+                    app:backgroundTint="@null"
+                    app:cornerRadius="28dp" />
+
+                <!-- Secondary Action: I already have an account · Sign In (StudentLoginActivity directly) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSignIn"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_btn_secondary_outline"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="I already have an account  ·  Sign In"
+                    android:textAllCaps="false"
+                    android:textColor="@color/learnify_ice_white"
+                    android:textSize="14sp"
+                    app:backgroundTint="@null"
+                    app:cornerRadius="28dp"
+                    app:strokeColor="@color/learnify_card_stroke"
+                    app:strokeWidth="1.2dp" />
+            </LinearLayout>
+
+            <!-- ===================================================== -->
+            <!-- SECTION F: Learning Advantages                        -->
+            <!-- ===================================================== -->
+            <LinearLayout
+                android:id="@+id/advantagesContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.14"
+                    android:text="YOUR LEARNING ADVANTAGE"
+                    android:textColor="@color/learnify_neon_cyan"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="sans-serif-black"
+                    android:lineSpacingMultiplier="1.2"
+                    android:text="More than lessons.\nA new way to think."
+                    android:textColor="@color/learnify_ice_white"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="sans-serif"
+                    android:lineSpacingMultiplier="1.25"
+                    android:text="Everything you need to move from memorizing facts to understanding how things work."
+                    android:textColor="@color/learnify_text_secondary"
+                    android:textSize="14sp" />
+
+                <!-- Advantage 1: AI Learning Assistant -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/bg_welcome_card"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:contentDescription="AI Assistant"
+                            android:src="@drawable/ic_adv_ai" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:fontFamily="sans-serif-bold"
+                            android:text="AI Learning Assistant"
+                            android:textColor="@color/learnify_ice_white"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingMultiplier="1.25"
+                        android:text="Ask questions, explore difficult concepts, and get help understanding your lessons with an AI learning companion."
+                        android:textColor="@color/learnify_text_secondary"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <!-- Advantage 2: Made for Grades 9-12 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_welcome_card"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:contentDescription="Grades 9 to 12"
+                            android:src="@drawable/ic_adv_grades" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:fontFamily="sans-serif-bold"
+                            android:text="Made for Grades 9–12"
+                            android:textColor="@color/learnify_ice_white"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingMultiplier="1.25"
+                        android:text="Explore Biology, Physics, and Chemistry resources designed around your high-school learning journey."
+                        android:textColor="@color/learnify_text_secondary"
+                        android:textSize="13sp" />
+
+                    <!-- Compact Grade Chips Presentation -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="32dp"
+                            android:layout_marginEnd="6dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_grade_badge"
+                            android:fontFamily="sans-serif-bold"
+                            android:gravity="center"
+                            android:text="Grade 9"
+                            android:textColor="@color/learnify_neon_cyan"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="32dp"
+                            android:layout_marginHorizontal="3dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_grade_badge"
+                            android:fontFamily="sans-serif-bold"
+                            android:gravity="center"
+                            android:text="Grade 10"
+                            android:textColor="@color/learnify_electric_violet"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="32dp"
+                            android:layout_marginHorizontal="3dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_grade_badge"
+                            android:fontFamily="sans-serif-bold"
+                            android:gravity="center"
+                            android:text="Grade 11"
+                            android:textColor="@color/learnify_science_mint"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="32dp"
+                            android:layout_marginStart="6dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_grade_badge"
+                            android:fontFamily="sans-serif-bold"
+                            android:gravity="center"
+                            android:text="Grade 12"
+                            android:textColor="@color/learnify_ice_white"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Advantage 3: Interactive Science Labs -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_welcome_card"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:contentDescription="Science Labs"
+                            android:src="@drawable/ic_adv_labs" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:fontFamily="sans-serif-bold"
+                            android:text="Interactive Science Labs"
+                            android:textColor="@color/learnify_science_mint"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingMultiplier="1.25"
+                        android:text="Go beyond reading. Investigate scientific ideas through interactive visualizers and supported simulations."
+                        android:textColor="@color/learnify_text_secondary"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <!-- Advantage 4: Learn Beyond the Internet -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_welcome_card"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:contentDescription="Offline Support"
+                            android:src="@drawable/ic_adv_offline" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:fontFamily="sans-serif-bold"
+                            android:text="Learn Beyond the Internet"
+                            android:textColor="@color/learnify_electric_violet"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingMultiplier="1.25"
+                        android:text="Return to supported downloaded or locally stored learning materials when you are offline. Online-dependent features may still require connectivity."
+                        android:textColor="@color/learnify_text_secondary"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ===================================================== -->
+            <!-- SECTION G: Learning Journey                           -->
+            <!-- ===================================================== -->
+            <LinearLayout
+                android:id="@+id/journeyContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.14"
+                    android:text="YOUR JOURNEY"
+                    android:textColor="@color/learnify_electric_violet"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="sans-serif-black"
+                    android:text="From curious to confident."
+                    android:textColor="@color/learnify_ice_white"
+                    android:textSize="24sp" />
+
+                <!-- Vertical Sequence -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical">
+
+                    <!-- Step 1: Discover -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <!-- Icon Column with Connecting Line -->
+                        <LinearLayout
+                            android:layout_width="36dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:contentDescription="Step 1 Discover"
+                                android:src="@drawable/ic_journey_step1" />
+
+                            <View
+                                android:layout_width="2dp"
+                                android:layout_height="40dp"
+                                android:layout_marginTop="6dp"
+                                android:background="@color/learnify_card_stroke_bright" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-bold"
+                                android:text="1. Discover"
+                                android:textColor="@color/learnify_ice_white"
+                                android:textSize="16sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:fontFamily="sans-serif"
+                                android:text="Find your subjects and learning resources."
+                                android:textColor="@color/learnify_text_secondary"
+                                android:textSize="13sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Step 2: Understand -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="36dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:contentDescription="Step 2 Understand"
+                                android:src="@drawable/ic_journey_step2" />
+
+                            <View
+                                android:layout_width="2dp"
+                                android:layout_height="40dp"
+                                android:layout_marginTop="6dp"
+                                android:background="@color/learnify_card_stroke_bright" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-bold"
+                                android:text="2. Understand"
+                                android:textColor="@color/learnify_ice_white"
+                                android:textSize="16sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:fontFamily="sans-serif"
+                                android:text="Use explanations, AI support, and practical exploration."
+                                android:textColor="@color/learnify_text_secondary"
+                                android:textSize="13sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Step 3: Grow -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="36dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:contentDescription="Step 3 Grow"
+                                android:src="@drawable/ic_journey_step3" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-bold"
+                                android:text="3. Grow"
+                                android:textColor="@color/learnify_ice_white"
+                                android:textSize="16sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:fontFamily="sans-serif"
+                                android:text="Keep practicing and build confidence over time."
+                                android:textColor="@color/learnify_text_secondary"
+                                android:textSize="13sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ===================================================== -->
+            <!-- SECTION H: Final Call to Action                       -->
+            <!-- ===================================================== -->
+            <LinearLayout
+                android:id="@+id/finalCtaContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
+                android:background="@drawable/bg_welcome_cta_card"
+                android:orientation="vertical"
+                android:padding="28dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-black"
+                    android:lineSpacingMultiplier="1.2"
+                    android:text="Your next chapter\nstarts now."
+                    android:textColor="@color/learnify_ice_white"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="sans-serif"
+                    android:lineSpacingMultiplier="1.25"
+                    android:text="Bring your questions. Bring your ambition. Let’s discover what you can do."
+                    android:textColor="@color/learnify_text_secondary"
+                    android:textSize="14sp" />
+
+                <!-- Bottom Get Started Action (RegisterActivity directly) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGetStartedBottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/bg_btn_primary_gradient"
+                    android:elevation="6dp"
+                    android:fontFamily="sans-serif-bold"
+                    android:text="Get Started"
+                    android:textAllCaps="false"
+                    android:textColor="@color/learnify_void_navy"
+                    android:textSize="16sp"
+                    app:backgroundTint="@null"
+                    app:cornerRadius="27dp" />
+
+                <!-- Bottom Sign In Action (StudentLoginActivity directly) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSignInBottom"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="I already have an account  ·  Sign In"
+                    android:textAllCaps="false"
+                    android:textColor="@color/learnify_ice_white"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- ===================================================== -->
+            <!-- SECTION I: Footer                                     -->
+            <!-- ===================================================== -->
+            <LinearLayout
+                android:id="@+id/footerContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:alpha="0.8"
+                    android:contentDescription="Learnify Logo Small"
+                    android:src="@drawable/ic_learnify_brand_logo" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="sans-serif-bold"
+                    android:text="Learnify"
+                    android:textColor="@color/learnify_ice_white"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:letterSpacing="0.14"
+                    android:text="INTELLIGENCE MEETS CURIOSITY"
+                    android:textColor="@color/learnify_neon_cyan"
+                    android:textSize="9sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="sans-serif"
+                    android:text="A smarter learning journey starts here."
+                    android:textColor="@color/learnify_text_muted"
+                    android:textSize="12sp" />
+
+                <!-- Portal Selector / Admin Hub Footer Link -->
+                <TextView
+                    android:id="@+id/tvPortalHubBottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="sans-serif-medium"
+                    android:padding="8dp"
+                    android:text="Choose Portal  •  Student &amp; Administrator Hub"
+                    android:textColor="@color/learnify_text_secondary"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+        </LinearLayout>
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

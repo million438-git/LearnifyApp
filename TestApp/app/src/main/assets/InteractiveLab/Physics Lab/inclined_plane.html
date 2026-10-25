@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inclined Plane Laboratory</title>
+<style>
+:root{color-scheme:dark;--bg:#0a0f1f;--panel:#141b2e;--line:#26304a;--text:#e5e9f5;--muted:#93a0bd;--accent:#818cf8;--green:#34d399;--yellow:#fbbf24}
+*{box-sizing:border-box;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}body{margin:0;padding:16px;background:var(--bg);color:var(--text)}main{max-width:1000px;margin:auto}
+header{text-align:center;border-bottom:3px solid var(--accent);padding:8px 0 14px}h1{font-size:1.35rem;margin:0 0 5px}header p,.note{color:var(--muted);margin:4px 0}
+.grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,1fr);gap:14px;margin-top:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+canvas{width:100%;height:300px;display:block;border-radius:8px;background:#05080f}.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}.metric{padding:9px;background:#0d1425;border:1px solid var(--line);border-radius:8px}.metric span{display:block;color:var(--muted);font-size:.75rem}.metric strong{color:var(--yellow)}
+.control{margin:12px 0}.control label{display:flex;justify-content:space-between;gap:8px;font-size:.9rem;font-weight:600}input[type=range]{width:100%;accent-color:var(--accent);margin-top:8px}
+button{border:1px solid var(--line);border-radius:7px;padding:10px 14px;background:#202943;color:var(--text);font-weight:700;cursor:pointer}.primary{background:var(--accent);color:#101426;border-color:var(--accent)}.buttons{display:flex;gap:8px;margin-top:14px}.status{min-height:1.5em;color:var(--green)}.formula{line-height:1.65}.formula code{color:var(--yellow)}
+@media(max-width:700px){body{padding:10px}.grid{grid-template-columns:1fr}canvas{height:240px}}
+</style>
+</head>
+<body>
+<main>
+<header><h1>Inclined Plane Laboratory</h1><p>Compare gravity, normal force, static friction and sliding acceleration.</p></header>
+<div class="grid">
+<section class="card" aria-label="Free-body diagram">
+<canvas id="plane" role="img" aria-label="Block on an inclined plane with weight, normal and friction force vectors"></canvas>
+<div class="metrics" aria-live="polite">
+<div class="metric"><span>Normal force N</span><strong id="normalOut">88.8 N</strong></div>
+<div class="metric"><span>Gravity along plane</span><strong id="gravityOut">41.4 N</strong></div>
+<div class="metric"><span>Friction force</span><strong id="frictionOut">26.6 N</strong></div>
+<div class="metric"><span>Acceleration down slope</span><strong id="accelOut">1.47 m/s²</strong></div>
+</div><p id="motionOut" class="note" aria-live="polite">Block slides down the plane.</p>
+</section>
+<section class="card" aria-label="Inclined plane controls">
+<div class="control"><label for="mass">Mass <output id="massLabel">10.0 kg</output></label><input id="mass" type="range" min="1" max="30" step="0.5" value="10" aria-label="Block mass in kilograms"></div>
+<div class="control"><label for="angle">Incline angle <output id="angleLabel">25°</output></label><input id="angle" type="range" min="0" max="60" step="1" value="25" aria-label="Incline angle in degrees"></div>
+<div class="control"><label for="muS">Static friction coefficient μs <output id="muSLabel">0.40</output></label><input id="muS" type="range" min="0" max="1.2" step="0.01" value="0.40" aria-label="Coefficient of static friction"></div>
+<div class="control"><label for="muK">Kinetic friction coefficient μk <output id="muKLabel">0.30</output></label><input id="muK" type="range" min="0" max="1.2" step="0.01" value="0.30" aria-label="Coefficient of kinetic friction"></div>
+<div class="buttons"><button id="run" class="primary" type="button">Start block</button><button id="reset" type="button">Reset</button></div>
+<p id="status" class="status" aria-live="polite">Ready. The model uses g = 9.81 m/s².</p>
+<div class="formula"><strong>Force model</strong><br><code>N = mg cos θ</code><br><code>Fg,∥ = mg sin θ</code><br>If mg sinθ ≤ μsN, static friction balances the downslope force and a = 0. Otherwise fk = μkN and <code>a = g(sin θ − μk cos θ)</code>. Assumes a rigid block, straight plane, and no rolling or air resistance.</div>
+</section>
+</div>
+</main>
+<script>
+(function(){
+  var c=document.getElementById('plane'),ctx=c.getContext('2d'),mass=document.getElementById('mass'),angle=document.getElementById('angle'),muS=document.getElementById('muS'),muK=document.getElementById('muK');
+  var g=9.81,running=false,raf=0,last=0,time=0,position=0,state={};
+  function calculate(){
+    var m=+mass.value,degrees=+angle.value,ms=+muS.value,mk=+muK.value,theta=degrees*Math.PI/180;
+    var normal=m*g*Math.cos(theta),down=m*g*Math.sin(theta),maxStatic=ms*normal,stays=down<=maxStatic+1e-9,friction=stays?down:mk*normal,acceleration=stays?0:g*(Math.sin(theta)-mk*Math.cos(theta));
+    state={m:m,theta:theta,degrees:degrees,normal:normal,down:down,friction:friction,acceleration:acceleration,stays:stays};
+    document.getElementById('massLabel').textContent=m.toFixed(1)+' kg';document.getElementById('angleLabel').textContent=degrees+'°';document.getElementById('muSLabel').textContent=ms.toFixed(2);document.getElementById('muKLabel').textContent=mk.toFixed(2);
+    document.getElementById('normalOut').textContent=normal.toFixed(2)+' N';document.getElementById('gravityOut').textContent=down.toFixed(2)+' N';document.getElementById('frictionOut').textContent=friction.toFixed(2)+' N';document.getElementById('accelOut').textContent=acceleration.toFixed(3)+' m/s²';
+    document.getElementById('motionOut').textContent=stays?'Static friction holds; the block remains at rest.':'Block slides down the plane.';
+    document.getElementById('status').textContent=stays?'Static equilibrium: friction matches the component of weight along the plane.':'Sliding: kinetic friction opposes motion down the plane.';
+    position=0;time=0;draw();
+  }
+  function resize(){var d=Math.max(1,window.devicePixelRatio||1),r=c.getBoundingClientRect();c.width=Math.max(1,Math.round(r.width*d));c.height=Math.max(1,Math.round(r.height*d));ctx.setTransform(d,0,0,d,0,0);draw();}
+  function arrow(x1,y1,x2,y2,color,label){var a=Math.atan2(y2-y1,x2-x1);ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-9*Math.cos(a-.45),y2-9*Math.sin(a-.45));ctx.lineTo(x2-9*Math.cos(a+.45),y2-9*Math.sin(a+.45));ctx.closePath();ctx.fill();ctx.font='12px system-ui';ctx.fillText(label,x2+5,y2-5);}
+  function draw(){
+    var w=c.clientWidth,h=c.clientHeight;if(!w||!h)return;ctx.clearRect(0,0,w,h);ctx.fillStyle='#05080f';ctx.fillRect(0,0,w,h);
+    var theta=state.theta||0,baseX=w*.18,baseY=h*.78,len=Math.min(w*.60,h*.56),topX=baseX+len*Math.cos(theta),topY=baseY-len*Math.sin(theta);
+    ctx.strokeStyle='#64748b';ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(baseX,baseY);ctx.lineTo(topX,topY);ctx.lineTo(topX,h*.84);ctx.lineTo(baseX,h*.84);ctx.closePath();ctx.stroke();
+    ctx.strokeStyle='#818cf8';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(baseX,baseY);ctx.lineTo(topX,topY);ctx.stroke();
+    var s=position, bx=baseX+(len*.7-s)*Math.cos(theta),by=baseY-(len*.7-s)*Math.sin(theta)-20*Math.cos(theta),size=34;
+    ctx.save();ctx.translate(bx,by);ctx.rotate(-theta);ctx.fillStyle='#fbbf24';ctx.fillRect(-size/2,-size/2,size,size);ctx.strokeStyle='#fff';ctx.strokeRect(-size/2,-size/2,size,size);ctx.restore();
+    var cx=bx,cy=by,scale=1.15;arrow(cx,cy,cx,cy+62,'#f87171','mg');arrow(cx,cy,cx-50*Math.sin(theta),cy-50*Math.cos(theta),'#60a5fa','N');
+    if(state.friction>0)arrow(cx,cy,cx+55*Math.cos(theta),cy-55*Math.sin(theta),'#34d399','f');arrow(cx,cy,cx-55*Math.cos(theta),cy+55*Math.sin(theta),'#fbbf24','mg sinθ');
+    ctx.fillStyle='#93a0bd';ctx.font='12px system-ui';ctx.fillText(state.degrees+'°',baseX+28,baseY-8);ctx.fillText('Force-vector lengths are schematic.',10,h-10);
+  }
+  function tick(ts){if(!running)return;if(last){var dt=Math.min((ts-last)/1000,.05);if(!state.stays){time+=dt;position=Math.min(c.clientWidth*.48,Math.max(0,.5*state.acceleration*time*time*8));}draw();}last=ts;raf=requestAnimationFrame(tick);}
+  document.getElementById('run').addEventListener('click',function(){running=!running;last=0;this.textContent=running?'Pause':'Resume';document.getElementById('status').textContent=running?(state.stays?'Block remains at rest because static friction is sufficient.':'Block animation running.'):'Simulation paused.';if(running)raf=requestAnimationFrame(tick);else cancelAnimationFrame(raf);});
+  document.getElementById('reset').addEventListener('click',function(){running=false;cancelAnimationFrame(raf);mass.value='10';angle.value='25';muS.value='0.40';muK.value='0.30';document.getElementById('run').textContent='Start block';calculate();});
+  [mass,angle].forEach(function(el){el.addEventListener('input',calculate);el.addEventListener('change',calculate);});
+  muS.addEventListener('input',function(){if(+muK.value>+muS.value)muK.value=muS.value;calculate();});
+  muK.addEventListener('input',function(){if(+muK.value>+muS.value)muS.value=muK.value;calculate();});
+  [muS,muK].forEach(function(el){el.addEventListener('change',calculate);});window.addEventListener('resize',resize);resize();calculate();
+})();
+</script>
+</body>
+</html>

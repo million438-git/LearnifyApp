@@ -98,10 +98,10 @@ public class OfflineAiEngine {
         String bestMatch = scanAllAssetsRecursively("subjects", keywords.toArray(new String[0]));
         
         if (bestMatch != null) {
-            return "Offline AI Tutor 🤖\n\n" + bestMatch;
+            return "Offline Academic Tutor\n\n" + bestMatch;
         }
 
-        return "Offline Partner:\nI couldn't find a direct explanation for '" + query + "' in your current offline packs. " +
+        return "Offline Study Partner:\nI couldn't find a direct explanation for '" + query + "' in your current offline packs. " +
                "Try downloading the relevant Subject Pack from the Library to unlock full offline intelligence.";
     }
 
@@ -122,7 +122,7 @@ public class OfflineAiEngine {
             content = findContentForKeywords(keywords.toArray(new String[0]));
         }
 
-        if (content == null) return "Offline AI Partner: I'm ready to quiz you, but I need to know which subject! Try 'Quiz me on Biology'.";
+        if (content == null) return "Offline Study Partner: I'm ready to quiz you, but I need to know which subject. For example, try 'Quiz me on Biology'.";
 
         return createQuestionsFromContent(content);
     }
@@ -131,7 +131,7 @@ public class OfflineAiEngine {
         String text = html.replaceAll("<[^>]*>", " ").replaceAll("\\s+", " ").trim();
         String[] sentences = text.split("(?<=[.!?])\\s+");
         
-        StringBuilder quiz = new StringBuilder("Offline AI Challenge 🏆\n\n");
+        StringBuilder quiz = new StringBuilder("Offline Practice Challenge\n\n");
         quiz.append("I've analyzed your lesson. Can you answer these?\n\n");
         
         int questionCount = 0;

@@ -9,18 +9,17 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * ChatViewModel - THE BRAIN OF EduAI
- * Updated with Hybrid Offline AI support.
+ * ChatViewModel - The Central Controller for EduAI.
+ * Features:
+ * - SQLite persistent conversation history
+ * - Student & curriculum context propagation (Grade, Subject, Topic)
+ * - Offline study engine fallback (OfflineAiEngine)
+ * - Live service readiness observation
  */
 public class ChatViewModel extends AndroidViewModel {
 
@@ -33,79 +32,159 @@ public class ChatViewModel extends AndroidViewModel {
     private final MutableLiveData<String> _error = new MutableLiveData<>(null);
     public final LiveData<String> error = _error;
 
-    private final AIChatActivity.OpenAIService openAIService;
+    private final MutableLiveData<String> _serviceStatus = new MutableLiveData<>("Ready to help");
+    public final LiveData<String> serviceStatus = _serviceStatus;
+
+    private final AIChatActivity.AssistantService assistantService;
     private final OfflineAiEngine offlineAiEngine;
+    private final DatabaseHelper dbHelper;
+    private final String assistantConfigurationError;
 
     public ChatViewModel(@NonNull Application application) {
         super(application);
-        offlineAiEngine = new OfflineAiEngine(application);
+        this.offlineAiEngine = new OfflineAiEngine(application);
+        this.dbHelper = new DatabaseHelper(application);
 
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.openai.com/")
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        openAIService = retrofit.create(AIChatActivity.OpenAIService.class);
+        AIChatActivity.AssistantService configuredService = null;
+        String configurationError = null;
+        try {
+            configuredService = AssistantApiClient.create(
+                    BuildConfig.LEARNIFY_API_BASE_URL,
+                    BuildConfig.DEBUG,
+                    new FirebaseBackendTokenProvider(application));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            configurationError = e.getMessage();
+        }
+        assistantService = configuredService;
+        assistantConfigurationError = configurationError;
     }
 
-    public void sendMessage(String query) {
-        if (query == null || query.trim().isEmpty()) return;
+    public void loadHistory(String username) {
+        if (username == null) return;
+        List<ChatMessage> saved = dbHelper.getChatHistory(username);
+        _messages.setValue(saved != null ? saved : new ArrayList<>());
+    }
 
-        List<ChatMessage> currentMessages = new ArrayList<>(_messages.getValue());
-        currentMessages.add(new ChatMessage(query, true));
+    public void clearHistory(String username) {
+        if (username != null) {
+            dbHelper.clearChatHistory(username);
+        }
+        _messages.setValue(new ArrayList<>());
+    }
+
+    public boolean sendMessage(String query) {
+        return sendMessage(query, "Student", null, null, null);
+    }
+
+    public boolean sendMessage(String query, String username, String grade, String subject, String topic) {
+        if (query == null || query.trim().isEmpty()) return false;
+
+        String safeUser = (username != null && !username.isBlank()) ? username : "Student";
+
+        List<ChatMessage> currentMessages = new ArrayList<>(_messages.getValue() != null ? _messages.getValue() : new ArrayList<>());
+        ChatMessage userMsg = new ChatMessage(query, true);
+        currentMessages.add(userMsg);
         _messages.setValue(currentMessages);
+
+        // Persist student message in SQLite
+        dbHelper.saveChatMessage(safeUser, query, true);
 
         _isLoading.setValue(true);
         _error.setValue(null);
+        _serviceStatus.setValue("EduAI is researching...");
 
         // Add "Thinking..." placeholder
-        currentMessages.add(new ChatMessage("EduAI is researching...", false, true));
+        currentMessages.add(new ChatMessage("EduAI is analyzing your question...", false, true));
         _messages.setValue(currentMessages);
 
-        String rawKey = BuildConfig.OPENAI_API_KEY;
-        String apiKey = "Bearer " + rawKey;
+        if (assistantService == null) {
+            fallbackToOffline(query, safeUser, assistantConfigurationError != null ? assistantConfigurationError : "Cloud AI service unconfigured.");
+            return true;
+        }
 
-        List<AIChatActivity.OpenAIMessage> apiMessages = new ArrayList<>();
-        apiMessages.add(new AIChatActivity.OpenAIMessage("system", "You are a professional academic assistant. Provide structured, helpful answers for students."));
-        apiMessages.add(new AIChatActivity.OpenAIMessage("user", query));
+        AIChatActivity.AssistantRequest request = new AIChatActivity.AssistantRequest(query.trim(), grade, subject, topic);
 
-        AIChatActivity.ChatRequest request = new AIChatActivity.ChatRequest("gpt-4o-mini", apiMessages);
-
-        openAIService.getChatCompletion(apiKey, request).enqueue(new Callback<AIChatActivity.ChatResponse>() {
+        assistantService.ask(request).enqueue(new Callback<AIChatActivity.AssistantResponse>() {
             @Override
-            public void onResponse(Call<AIChatActivity.ChatResponse> call, Response<AIChatActivity.ChatResponse> response) {
+            public void onResponse(Call<AIChatActivity.AssistantResponse> call, Response<AIChatActivity.AssistantResponse> response) {
                 _isLoading.postValue(false);
-                List<ChatMessage> updatedMessages = new ArrayList<>(_messages.getValue());
-                if (!updatedMessages.isEmpty()) updatedMessages.remove(updatedMessages.size() - 1);
+                _serviceStatus.postValue("Ready to help");
 
-                if (response.isSuccessful() && response.body() != null) {
-                    String answer = response.body().choices.get(0).message.content;
-                    updatedMessages.add(new ChatMessage(answer, false));
+                List<ChatMessage> updatedMessages = new ArrayList<>(_messages.getValue());
+                if (!updatedMessages.isEmpty() && updatedMessages.get(updatedMessages.size() - 1).isThinking()) {
+                    updatedMessages.remove(updatedMessages.size() - 1);
+                }
+
+                if (response.isSuccessful() && response.body() != null && response.body().answer != null && !response.body().answer.isBlank()) {
+                    String answer = AIResponseNormalizer.normalize(response.body().answer);
+                    if (isServiceStatusMessage(answer)) {
+                        _error.postValue(answer);
+                        // Also show helpful fallback content so student is not stranded
+                        String offlineAnswer = AIResponseNormalizer.normalize(offlineAiEngine.searchLocalKnowledge(query));
+                        ChatMessage aiMsg = new ChatMessage(offlineAnswer + "\n\n(Note: Cloud AI reported: " + answer + ". Showing offline lesson notes.)", false);
+                        updatedMessages.add(aiMsg);
+                        dbHelper.saveChatMessage(safeUser, aiMsg.getMessage(), false);
+                    } else {
+                        ChatMessage aiMsg = new ChatMessage(answer, false);
+                        updatedMessages.add(aiMsg);
+                        dbHelper.saveChatMessage(safeUser, answer, false);
+                    }
                 } else {
-                    // FALLBACK TO OFFLINE AI ENGINE
-                    String offlineAnswer = offlineAiEngine.searchLocalKnowledge(query);
-                    updatedMessages.add(new ChatMessage(offlineAnswer + "\n\n(Note: Using Offline Tutor Lite as Cloud AI is currently unavailable)", false));
+                    String reason;
+                    if (response.code() == 401) {
+                        reason = "Your secure session could not be verified. Sign in again for online AI.";
+                        _error.postValue(reason);
+                    } else if (response.code() == 403) {
+                        reason = "Verify your email before using online AI.";
+                        _error.postValue(reason);
+                    } else {
+                        reason = "Server response was empty or invalid.";
+                    }
+                    fallbackToOffline(query, safeUser, reason);
+                    return;
                 }
                 _messages.postValue(updatedMessages);
             }
 
             @Override
-            public void onFailure(Call<AIChatActivity.ChatResponse> call, Throwable t) {
-                _isLoading.postValue(false);
-                List<ChatMessage> updatedMessages = new ArrayList<>(_messages.getValue());
-                if (!updatedMessages.isEmpty()) updatedMessages.remove(updatedMessages.size() - 1);
-                
-                // FALLBACK TO OFFLINE AI ENGINE ON NETWORK FAILURE
-                String offlineAnswer = offlineAiEngine.searchLocalKnowledge(query);
-                updatedMessages.add(new ChatMessage(offlineAnswer + "\n\n(Note: You are currently offline. Using Local Study Partner)", false));
-
-                _messages.postValue(updatedMessages);
+            public void onFailure(Call<AIChatActivity.AssistantResponse> call, Throwable t) {
+                Throwable cause = t;
+                while (cause.getCause() != null && cause.getCause() != cause) {
+                    cause = cause.getCause();
+                }
+                String reason = cause instanceof SessionAuthenticationException
+                        ? cause.getMessage()
+                        : "Network connection unavailable.";
+                if (cause instanceof SessionAuthenticationException) {
+                    _error.postValue(reason);
+                }
+                fallbackToOffline(query, safeUser, reason);
             }
         });
+        return true;
+    }
+
+    private void fallbackToOffline(String query, String safeUser, String reason) {
+        _isLoading.postValue(false);
+        _serviceStatus.postValue("Offline Study Mode");
+
+        List<ChatMessage> updatedMessages = new ArrayList<>(_messages.getValue() != null ? _messages.getValue() : new ArrayList<>());
+        if (!updatedMessages.isEmpty() && updatedMessages.get(updatedMessages.size() - 1).isThinking()) {
+            updatedMessages.remove(updatedMessages.size() - 1);
+        }
+
+        String offlineAnswer = AIResponseNormalizer.normalize(offlineAiEngine.searchLocalKnowledge(query));
+        String fullMessage = offlineAnswer + "\n\n(Note: Offline Study Mode active — " + reason + ")";
+        ChatMessage offlineMsg = new ChatMessage(fullMessage, false);
+        updatedMessages.add(offlineMsg);
+        dbHelper.saveChatMessage(safeUser, fullMessage, false);
+
+        _messages.postValue(updatedMessages);
+    }
+
+    private boolean isServiceStatusMessage(String answer) {
+        return answer.startsWith("EduAI Error:")
+                || answer.startsWith("EduAI Notice:")
+                || answer.startsWith("EduAI Configuration Notice:");
     }
 }

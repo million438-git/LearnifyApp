@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Physics: RC Circuit Lab</title>
+    <style>
+        :root {
+            --primary: #6366f1; --secondary: #f43f5e; --dark: #0f172a;
+            --surface: #ffffff; --bg: #f1f5f9; --glass: rgba(255,255,255,0.9);
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        html, body { height: 100%; }
+        body { margin: 0; background: var(--bg); color: var(--dark); display: flex; flex-direction: column; overflow: auto; -webkit-font-smoothing:antialiased; }
+
+        header { background: var(--dark); color: white; padding: 10px; text-align: center; border-bottom: 3px solid var(--primary); }
+        .lab-container { display: flex; flex: 1; overflow: auto; flex-direction: column; }
+
+        #sim-area { flex: 2 1 460px; position: relative; background: white; border-bottom: 2px solid #e2e8f0; overflow: auto; cursor: crosshair; min-height:360px; }
+        canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+        .splitter { height: 10px; background: linear-gradient(90deg, rgba(0,0,0,0.03), rgba(0,0,0,0.06)); cursor: ns-resize; display:block; }
+        .splitter:hover { background: linear-gradient(90deg, rgba(0,0,0,0.05), rgba(0,0,0,0.09)); }
+
+        .bottom-panel { flex: 3; display: flex; flex-direction: row; background: var(--surface); overflow-y: auto; }
+        .controls { flex: 0 0 360px; padding: 18px; border-right: 1px solid #e2e8f0; min-width: 300px; }
+        .analysis { flex: 1 1 720px; padding: 18px; background: #fafafa; min-width: 420px; }
+
+        .card { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        h4 { margin: 0 0 10px 0; font-size: 0.8rem; color: #64748b; text-transform: uppercase; }
+        .input-row { margin-bottom: 12px; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; }
+        input[type="range"] { width: 100%; accent-color: var(--primary); }
+        select, input[type="number"] { width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; font-family: inherit; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        button { padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit; }
+        .btn-fire { background: var(--primary); color: white; }
+        .btn-fire:hover { background: #4f46e5; }
+        .btn-charge { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .btn-charge:hover { background: linear-gradient(135deg, #059669, #047857); }
+        .btn-discharge { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+        .btn-discharge:hover { background: linear-gradient(135deg, #d97706, #b45309); }
+        .btn-reset { background: #64748b; color: white; }
+        .btn-reset:hover { background: #475569; }
+        .btn-sound { background: #10b981; color: white; }
+        .btn-sound:hover { background: #059669; }
+        .btn-sound.playing { background: #ef4444; }
+        .btn-sound.playing:hover { background: #dc2626; }
+
+        .hud { position: absolute; top: 10px; left: 10px; background: var(--glass); padding: 8px; border-radius: 8px; font-size: 0.75rem; border: 1px solid #ddd; z-index: 20; }
+        .hud * { pointer-events: auto; }
+        .hud .metrics { pointer-events: none; line-height: 1.7; }
+        .zoom-controls { display:flex; gap:6px; margin-top:6px; }
+        .zoom-controls button { padding:6px 8px; border-radius:6px; border:1px solid rgba(0,0,0,0.06); background:white; cursor:pointer; }
+        .vector-legend { position: absolute; bottom: 10px; left: 10px; font-size: 0.65rem; background: var(--glass); padding: 5px; border-radius: 4px; }
+
+        .tab-btn { padding: 8px 12px; border-radius: 6px; background: #e2e8f0; color: var(--dark); font-weight: 600; font-size: 0.8rem; }
+        .tab-btn:hover { background: #cbd5e1; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        .readouts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+        .readout { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; }
+        .readout span { font-size: 0.7rem; color: #64748b; display: block; }
+        .readout strong { font-size: 1rem; color: var(--dark); }
+        .readout.big strong { font-size: 1.15rem; color: #4f46e5; }
+
+        .quiz-q { padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+        .quiz-q:last-child { border-bottom: none; }
+        .quiz-q > strong { display: block; margin-bottom: 8px; font-size: 0.9rem; }
+        .quiz-q label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; margin: 3px 6px 3px 0; cursor: pointer; font-weight: 500; }
+        .quiz-q label:hover { background: #eef2ff; border-color: #6366f1; }
+        .explanation {
+            margin-top: 8px; padding: 10px 12px; border-radius: 6px; font-size: 0.82rem; line-height: 1.55;
+            background: #eef2ff; border-left: 3px solid #6366f1; color: #1e293b;
+        }
+        .explanation.correct-box { background: #ecfdf5; border-left-color: #10b981; }
+        .explanation.wrong-box { background: #fef2f2; border-left-color: #dc2626; }
+        .explanation strong { display: block; margin-bottom: 3px; }
+
+        .quiz-section { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6366f1; margin: 12px 0 6px 0; }
+        .quiz-section:first-child { margin-top: 0; }
+
+        #quiz-result { margin-top: 10px; padding: 12px; border-radius: 8px; background: #eef2ff; border: 1px solid #c7d2fe; font-weight: 700; text-align: center; }
+
+        table.formulas { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 6px; }
+        table.formulas th, table.formulas td { border: 1px solid #e2e8f0; padding: 6px 8px; text-align: left; }
+        table.formulas th { background: #f1f5f9; font-weight: 600; }
+        .eq { font-family: 'JetBrains Mono', ui-monospace, monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.82rem; }
+        .note { font-size: 0.82rem; color: #475569; margin-top: 8px; line-height: 1.5; }
+        .sound-hint { background: #fef3c7; border-left: 3px solid #f59e0b; padding: 8px 10px; border-radius: 6px; font-size: 0.82rem; margin-top: 8px; }
+
+        textarea { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 0.85rem; min-height: 64px; resize: vertical; }
+
+        @media (max-width: 768px) {
+            .bottom-panel { flex-direction: column; }
+            .controls { border-right: none; border-bottom: 1px solid #eee; min-width: 0; }
+            .analysis { min-width: 0; }
+            .readouts { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">⚡ RC Circuit Interactive Lab</h2>
+    <small>Capacitor Charging &amp; Discharging · Time Constant τ = RC · Exponential Curves</small>
+</header>
+
+<div class="lab-container">
+    <div id="sim-area">
+        <div class="hud">
+            <b>LIVE STATE</b><br>
+            <div class="metrics">
+                State: <span id="hud-state">Idle</span><br>
+                t: <span id="hud-t">0.00</span> s<br>
+                V_C: <span id="hud-vc">0.00</span> V<br>
+                I: <span id="hud-i">0.00</span> mA
+            </div>
+            <div style="margin-top:6px; font-size:0.75rem;">
+                <label style="display:inline-flex;align-items:center;gap:6px;"><input id="full-scroll-toggle" type="checkbox"> Enable Full Page Scrolling</label>
+            </div>
+        </div>
+        <div class="vector-legend">
+            <span style="color:#10b981">● Charging</span> | <span style="color:#f59e0b">● Discharging</span> | <span style="color:#6366f1">● Current</span>
+        </div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div id="splitter" class="splitter" title="Drag to resize simulation area"></div>
+
+    <div class="bottom-panel">
+        <div class="controls">
+            <h4>🧪 Lab Settings</h4>
+
+            <div class="input-row">
+                <button class="btn-sound" id="btn-sound" style="width:100%;">🔈 Enable sound</button>
+                <div class="sound-hint" id="sound-hint">Charge beeps + discharge whoosh.</div>
+            </div>
+
+            <div class="input-row">
+                <label>Source voltage V₀: <span id="v-V">10</span> V</label>
+                <input type="range" id="V" min="1" max="24" step="0.5" value="10">
+            </div>
+
+            <div class="input-row">
+                <label>Resistance R: <span id="v-R">1000</span> Ω</label>
+                <input type="range" id="R" min="100" max="100000" step="100" value="1000">
+            </div>
+
+            <div class="input-row">
+                <label>Capacitance C: <span id="v-C">100</span> µF</label>
+                <input type="range" id="C" min="1" max="2000" step="1" value="100">
+            </div>
+
+            <div class="input-row">
+                <label>Sim speed: <span id="v-speed">1.0</span>×</label>
+                <input type="range" id="speed" min="0.1" max="10" step="0.1" value="1">
+            </div>
+
+            <div class="btn-grid">
+                <button class="btn-charge" id="btn-charge">🔋 Charge</button>
+                <button class="btn-discharge" id="btn-discharge">🔌 Discharge</button>
+            </div>
+            <div class="btn-grid" style="margin-top:8px;">
+                <button class="btn-reset" id="btn-reset">↺ Reset</button>
+                <button class="btn-fire" id="btn-record">📋 Record</button>
+            </div>
+        </div>
+
+        <div class="analysis">
+            <h4>📊 Learn &amp; Practice</h4>
+
+            <div class="readouts">
+                <div class="readout big"><span>Time constant τ = RC</span><strong id="ro-tau">0.100 s</strong></div>
+                <div class="readout big"><span>State</span><strong id="ro-state">Idle</strong></div>
+                <div class="readout"><span>Elapsed time t</span><strong id="ro-t">0.000 s</strong></div>
+                <div class="readout"><span>Capacitor voltage V_C</span><strong id="ro-vc">0.00 V</strong></div>
+                <div class="readout"><span>Current I</span><strong id="ro-i">0.00 mA</strong></div>
+                <div class="readout"><span>Charge Q = C·V_C</span><strong id="ro-q">0.00 µC</strong></div>
+                <div class="readout"><span>Resistor voltage V_R</span><strong id="ro-vr">0.00 V</strong></div>
+                <div class="readout"><span>Energy stored E = ½CV²</span><strong id="ro-e">0.00 mJ</strong></div>
+                <div class="readout"><span>Percent of V₀</span><strong id="ro-pct">0.0%</strong></div>
+                <div class="readout"><span>t / τ</span><strong id="ro-ratio">0.00</strong></div>
+            </div>
+
+            <div class="card">
+                <div class="tabs" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                    <button class="tab-btn active" data-tab="formulas">Formulas</button>
+                    <button class="tab-btn" data-tab="quiz">Quiz</button>
+                    <button class="tab-btn" data-tab="challenges">Challenges</button>
+                    <button class="tab-btn" data-tab="notebook">Notebook</button>
+                </div>
+
+                <!-- FORMULAS -->
+                <div id="formulas" class="tab-panel active">
+                    <h3 style="margin:6px 0 8px 0;">Core Formulas — RC Circuits</h3>
+                    <ul style="font-size:0.9rem; line-height:1.6; padding-left:1rem; margin:0;">
+                        <li><b>Time constant:</b> τ = R · C</li>
+                        <li><b>Charging — voltage:</b> V_C(t) = V₀ · (1 − e<sup>−t/τ</sup>)</li>
+                        <li><b>Charging — current:</b> I(t) = (V₀/R) · e<sup>−t/τ</sup></li>
+                        <li><b>Discharging — voltage:</b> V_C(t) = V₀ · e<sup>−t/τ</sup></li>
+                        <li><b>Discharging — current:</b> I(t) = (V₀/R) · e<sup>−t/τ</sup></li>
+                        <li><b>Charge:</b> Q = C · V_C</li>
+                        <li><b>Energy stored:</b> E = ½ · C · V²</li>
+                        <li><b>Resistor voltage:</b> V_R = I · R (charges linear with current)</li>
+                    </ul>
+                    <p class="note"><b>💡 Quick tips:</b> At t = τ, the capacitor reaches 63% of V₀. At t = 5τ, it's considered fully charged (99.3%). The current starts maximum and decays exponentially. Doubling R or C doubles τ — the capacitor charges twice as slowly. Discharging is the mirror image: V_C drops to 37% at t = τ.</p>
+
+                    <table class="formulas" style="margin-top:12px;">
+                        <tr><th>Quantity</th><th>Formula</th><th>Units</th></tr>
+                        <tr><td>Time constant</td><td><span class="eq">τ = R·C</span></td><td>s</td></tr>
+                        <tr><td>Charging voltage</td><td><span class="eq">V_C = V₀(1−e<sup>−t/τ</sup>)</span></td><td>V</td></tr>
+                        <tr><td>Discharging voltage</td><td><span class="eq">V_C = V₀·e<sup>−t/τ</sup></span></td><td>V</td></tr>
+                        <tr><td>Stored energy</td><td><span class="eq">E = ½CV²</span></td><td>J</td></tr>
+                    </table>
+                </div>
+
+                <!-- QUIZ -->
+                <div id="quiz" class="tab-panel" style="max-height:600px; overflow:auto;">
+                    <h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+                    <div class="quiz-section">Basic — RC Foundations</div>
+
+                    <div class="quiz-q" data-q="q1" data-answer="B">
+                        <strong>1. The time constant τ of an RC circuit equals:</strong>
+                        <label><input type="radio" name="q1" value="A"> R / C</label>
+                        <label><input type="radio" name="q1" value="B"> R · C</label>
+                        <label><input type="radio" name="q1" value="C"> C / R</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q2" data-answer="B">
+                        <strong>2. In a charging RC circuit, the capacitor voltage is:</strong>
+                        <label><input type="radio" name="q2" value="A"> Constant</label>
+                        <label><input type="radio" name="q2" value="B"> Increases exponentially toward V₀</label>
+                        <label><input type="radio" name="q2" value="C"> Decreases exponentially</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q3" data-answer="A">
+                        <strong>3. In a charging RC circuit, the current:</strong>
+                        <label><input type="radio" name="q3" value="A"> Starts at V₀/R and decays exponentially</label>
+                        <label><input type="radio" name="q3" value="B"> Starts at 0 and rises</label>
+                        <label><input type="radio" name="q3" value="C"> Stays constant</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Intermediate — τ Behavior</div>
+
+                    <div class="quiz-q" data-q="q4" data-answer="B">
+                        <strong>4. After one time constant (t = τ), the capacitor has charged to:</strong>
+                        <label><input type="radio" name="q4" value="A"> 50% of V₀</label>
+                        <label><input type="radio" name="q4" value="B"> ≈ 63% of V₀</label>
+                        <label><input type="radio" name="q4" value="C"> 100% of V₀</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q5" data-answer="A">
+                        <strong>5. In a discharging RC circuit, after t = τ the voltage is:</strong>
+                        <label><input type="radio" name="q5" value="A"> ≈ 37% of V₀</label>
+                        <label><input type="radio" name="q5" value="B"> 50% of V₀</label>
+                        <label><input type="radio" name="q5" value="C"> 0 V</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q6" data-answer="B">
+                        <strong>6. If you double R (keeping C constant), the time constant:</strong>
+                        <label><input type="radio" name="q6" value="A"> Halves</label>
+                        <label><input type="radio" name="q6" value="B"> Doubles</label>
+                        <label><input type="radio" name="q6" value="C"> Stays the same</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Advanced — Deep Understanding</div>
+
+                    <div class="quiz-q" data-q="q7" data-answer="B">
+                        <strong>7. R = 1 kΩ, C = 100 µF. Time constant τ is:</strong>
+                        <label><input type="radio" name="q7" value="A"> 0.001 s</label>
+                        <label><input type="radio" name="q7" value="B"> 0.100 s</label>
+                        <label><input type="radio" name="q7" value="C"> 10 s</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q8" data-answer="A">
+                        <strong>8. Energy stored in a fully charged capacitor (C = 100 µF, V = 10 V) is:</strong>
+                        <label><input type="radio" name="q8" value="A"> 5 mJ</label>
+                        <label><input type="radio" name="q8" value="B"> 10 mJ</label>
+                        <label><input type="radio" name="q8" value="C"> 1 J</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q9" data-answer="B">
+                        <strong>9. Why is a capacitor "fully charged" after about 5τ?</strong>
+                        <label><input type="radio" name="q9" value="A"> Because current reaches zero exactly at 5τ</label>
+                        <label><input type="radio" name="q9" value="B"> Because e<sup>−5</sup> ≈ 0.007, so it's ≈ 99.3% charged — close enough to 100%</label>
+                        <label><input type="radio" name="q9" value="C"> Because the battery runs out</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="btn-grid" style="margin-top:12px;">
+                        <button class="btn-fire" id="btn-quiz-check">Submit Quiz</button>
+                        <button class="btn-reset" id="btn-quiz-reset">Reset</button>
+                    </div>
+                    <div id="quiz-result" style="display:none;"></div>
+                </div>
+
+                <!-- CHALLENGES -->
+                <div id="challenges" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Interactive Challenges</h3>
+                    <div style="display:flex; flex-direction:column; gap:8px; font-size:0.9rem;">
+                        <div>
+                            <b>Challenge 1 — Fast charge</b><br>
+                            <button class="btn-charge" data-challenge="fast">R = 1 kΩ, C = 100 µF, τ = 0.1 s</button>
+                        </div>
+                        <div>
+                            <b>Challenge 2 — Slow charge</b><br>
+                            <button class="btn-charge" data-challenge="slow">R = 10 kΩ, C = 100 µF, τ = 1 s</button>
+                        </div>
+                        <div>
+                            <b>Challenge 3 — Huge capacitor</b><br>
+                            <button class="btn-charge" data-challenge="huge">C = 2000 µF, τ = 2 s</button>
+                        </div>
+                        <div>
+                            <b>Challenge 4 — High voltage</b><br>
+                            <button class="btn-charge" data-challenge="highV">V₀ = 24 V charge</button>
+                        </div>
+                        <div>
+                            <b>Challenge 5 — Discharge test</b><br>
+                            <button class="btn-discharge" data-challenge="discharge">Fully charge then discharge</button>
+                        </div>
+                        <div id="challenge-note" style="color:#0f172a; font-size:0.85rem;"></div>
+                        <div id="challenge-result" style="color:#083344; font-weight:600; margin-top:6px;"></div>
+                    </div>
+                </div>
+
+                <!-- NOTEBOOK -->
+                <div id="notebook" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Experiment Notebook</h3>
+                    <label>Prediction / hypothesis</label>
+                    <textarea id="hypothesis" placeholder="What do you expect to happen, and why?"></textarea>
+                    <label style="margin-top:10px; display:block;">Conclusion / evidence</label>
+                    <textarea id="conclusion" placeholder="Explain what your observations show."></textarea>
+                    <label style="margin-top:10px; display:block;">Recorded measurements</label>
+                    <textarea id="records" readonly style="background:#f8fafc; font-family:monospace; font-size:0.75rem; min-height:100px;"></textarea>
+                    <div class="btn-grid" style="margin-top:10px;">
+                        <button class="btn-fire" id="btn-export">⬇ Download Report</button>
+                        <button class="btn-reset" id="btn-clear-notes">Clear</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <b>Real-world fact:</b> <span id="fact-box" style="font-size:0.85rem;">—</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+"use strict";
+(function () {
+    // === State ===
+    var S = {
+        V: 10,
+        R: 1000,
+        C: 100e-6,
+        speed: 1.0,
+        mode: 'idle',       // idle | charging | discharging | charged
+        time: 0,            // simulation time (s)
+        V_C: 0,             // capacitor voltage
+        I: 0,               // current (A)
+        soundOn: false,
+        chargeHistory: [],  // for graph
+        dischargeHistory: [],
+        showCharge: true,   // show charge curve on graph
+        showDischarge: true,
+        records: []
+    };
+
+    var $ = function (id) { return document.getElementById(id); };
+
+    // === Canvas ===
+    var canvas = $('canvas');
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var view = { x: 0, y: 0, scale: 1 };
+
+    function resizeCanvas() {
+        var w = canvas.clientWidth, h = canvas.clientHeight;
+        canvas.width = Math.max(1, Math.round(w * dpr));
+        canvas.height = Math.max(1, Math.round(h * dpr));
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function cw() { return canvas.width / dpr; }
+    function ch() { return canvas.height / dpr; }
+
+    // === Web Audio ===
+    var audioCtx = null;
+    function initAudio() {
+        if (audioCtx) return;
+        try {
+            var AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) { $('sound-hint').textContent = '⚠ No Web Audio support.'; return; }
+            audioCtx = new AC();
+        } catch (e) { $('sound-hint').textContent = '⚠ Audio init failed.'; }
+    }
+    function beep(freq, dur, type, vol) {
+        if (!audioCtx || !S.soundOn) return;
+        try {
+            var o = audioCtx.createOscillator();
+            var g = audioCtx.createGain();
+            o.type = type || 'sine';
+            o.frequency.value = freq;
+            g.gain.setValueAtTime(vol || 0.08, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+            o.connect(g);
+            g.connect(audioCtx.destination);
+            o.start();
+            o.stop(audioCtx.currentTime + dur);
+        } catch (e) {}
+    }
+    function playChargeTick() {
+        // Rising beep — pitch proportional to charge %
+        var pct = S.V_C / S.V;
+        var freq = 300 + pct * 700;
+        beep(freq, 0.04, 'sine', 0.04);
+    }
+    function playDischargeWhoosh() {
+        if (!audioCtx || !S.soundOn) return;
+        try {
+            var bufferSize = audioCtx.sampleRate * 0.5;
+            var buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            var data = buffer.getChannelData(0);
+            for (var i = 0; i < bufferSize; i++) {
+                data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2);
+            }
+            var noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            var gain = audioCtx.createGain();
+            gain.gain.value = 0.12;
+            var filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(2000, audioCtx.currentTime);
+            filter.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.5);
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            noise.start();
+        } catch (e) {}
+    }
+    function toggleSound() {
+        initAudio();
+        if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        S.soundOn = !S.soundOn;
+        if (S.soundOn) {
+            $('btn-sound').textContent = '🔊 Sound ON';
+            $('btn-sound').classList.add('playing');
+            $('sound-hint').textContent = 'Charge ticks + discharge whoosh enabled.';
+            beep(440, 0.1, 'sine', 0.1);
+        } else {
+            $('btn-sound').textContent = '🔈 Enable sound';
+            $('btn-sound').classList.remove('playing');
+            $('sound-hint').textContent = 'Sound disabled.';
+        }
+    }
+
+    // === Physics ===
+    function getTau() {
+        return S.R * S.C;
+    }
+
+    function computeVc(t) {
+        var tau = getTau();
+        if (S.mode === 'charging') {
+            return S.V * (1 - Math.exp(-t / tau));
+        } else if (S.mode === 'discharging') {
+            // Start from whatever V_C was when discharge began
+            return S.V_C_start * Math.exp(-t / tau);
+        } else if (S.mode === 'charged') {
+            return S.V;
+        }
+        return 0;
+    }
+
+    function computeI(t) {
+        var tau = getTau();
+        if (S.mode === 'charging') {
+            return (S.V / S.R) * Math.exp(-t / tau);
+        } else if (S.mode === 'discharging') {
+            return (S.V_C_start / S.R) * Math.exp(-t / tau);
+        }
+        return 0;
+    }
+
+    S.V_C_start = 0; // capacitor voltage at start of discharge
+
+    // === Drawing ===
+    function drawScene() {
+        var w = cw(), h = ch();
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.save();
+        ctx.translate(view.x, view.y);
+        ctx.scale(view.scale, view.scale);
+        var W = w / view.scale, H = h / view.scale;
+
+        // grid
+        ctx.strokeStyle = '#f1f5f9';
+        ctx.lineWidth = 1;
+        for (var gx = 0; gx < W; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
+        for (var gy = 0; gy < H; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+
+        // === Circuit layout (top half) ===
+        var cx = W * 0.5;
+        var circuitTop = H * 0.08;
+        var circuitH = H * 0.38;
+
+        // Circuit rectangle corners
+        var left = W * 0.15;
+        var right = W * 0.85;
+        var top = circuitTop + 30;
+        var bottom = circuitTop + circuitH - 20;
+
+        // Wires (rectangle)
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(left, top);
+        ctx.lineTo(right, top);
+        ctx.lineTo(right, bottom);
+        ctx.lineTo(left, bottom);
+        ctx.lineTo(left, top);
+        ctx.stroke();
+
+        // Battery on top wire (left-center)
+        var batX = W * 0.30;
+        // clear gap
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(batX - 25, top - 8, 50, 16);
+        // battery symbol
+        ctx.strokeStyle = '#f43f5e';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(batX - 20, top - 20);
+        ctx.lineTo(batX - 20, top + 20);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(batX + 20, top - 12);
+        ctx.lineTo(batX + 20, top + 12);
+        ctx.stroke();
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 3;
+        // reconnect wires
+        ctx.beginPath();
+        ctx.moveTo(left, top);
+        ctx.lineTo(batX - 20, top);
+        ctx.moveTo(batX + 20, top);
+        ctx.lineTo(right, top);
+        ctx.stroke();
+        // Battery label
+        ctx.fillStyle = '#f43f5e';
+        ctx.font = 'bold 11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('V₀ = ' + S.V + ' V', batX, top - 26);
+
+        // Resistor on top wire (right)
+        var resX = W * 0.55;
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(resX - 35, top - 10, 70, 20);
+        // Zigzag resistor
+        ctx.strokeStyle = '#6366f1';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(resX - 30, top);
+        for (var i = 0; i < 6; i++) {
+            ctx.lineTo(resX - 30 + (i + 0.5) * 60 / 6, top + (i % 2 === 0 ? -10 : 10));
+        }
+        ctx.lineTo(resX + 30, top);
+        ctx.stroke();
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(left, top);
+        ctx.lineTo(batX - 20, top);
+        ctx.moveTo(batX + 20, top);
+        ctx.lineTo(resX - 30, top);
+        ctx.moveTo(resX + 30, top);
+        ctx.lineTo(right, top);
+        ctx.stroke();
+        // Label
+        ctx.fillStyle = '#6366f1';
+        ctx.font = 'bold 11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('R = ' + S.R + ' Ω', resX, top - 22);
+
+        // Capacitor on right wire
+        var capY = (top + bottom) / 2;
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(right - 15, capY - 25, 30, 50);
+        // Parallel plates
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(right - 15, capY - 15);
+        ctx.lineTo(right - 15, capY + 15);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(right + 15, capY - 15);
+        ctx.lineTo(right + 15, capY + 15);
+        ctx.stroke();
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(right, top);
+        ctx.lineTo(right, capY - 15);
+        ctx.moveTo(right, capY + 15);
+        ctx.lineTo(right, bottom);
+        ctx.stroke();
+        // Label
+        ctx.fillStyle = '#10b981';
+        ctx.font = 'bold 11px Inter';
+        ctx.fillText('C = ' + (S.C * 1e6).toFixed(0) + ' µF', right + 55, capY);
+        // Charge indicator bar
+        var pct = S.V_C / S.V;
+        ctx.fillStyle = '#e2e8f0';
+        ctx.fillRect(right + 30, capY - 40, 15, 80);
+        ctx.fillStyle = '#10b981';
+        ctx.fillRect(right + 30, capY + 40 - pct * 80, 15, pct * 80);
+        // Polarities
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 14px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('+', right - 28, capY - 18);
+        ctx.fillText('−', right + 28, capY + 25);
+
+        // Current arrows (animated) — clockwise when charging
+        if (S.I > 0.001) {
+            var phase = (S.time * 3) % 1;
+            var paths = [
+                // top wire left→right
+                { x1: left, y1: top, x2: right, y2: top },
+                // right wire top→bottom
+                { x1: right, y1: top, x2: right, y2: bottom },
+                // bottom wire right→left
+                { x1: right, y1: bottom, x2: left, y2: bottom },
+                // left wire bottom→top
+                { x1: left, y1: bottom, x2: left, y2: top }
+            ];
+            var totalLen = (right - left) * 2 + (bottom - top) * 2;
+            var dotCount = 20;
+            for (var d = 0; d < dotCount; d++) {
+                var pos = (phase + d / dotCount) % 1;
+                var px, py;
+                if (S.mode === 'discharging') {
+                    // Reverse direction (counter-clockwise)
+                    pos = (1 - pos) % 1;
+                }
+                var targetDist = pos * totalLen;
+                if (targetDist < (right - left)) {
+                    px = left + targetDist;
+                    py = top;
+                } else if (targetDist < (right - left) + (bottom - top)) {
+                    px = right;
+                    py = top + (targetDist - (right - left));
+                } else if (targetDist < (right - left) * 2 + (bottom - top)) {
+                    px = right - (targetDist - (right - left) - (bottom - top));
+                    py = bottom;
+                } else {
+                    px = left;
+                    py = bottom - (targetDist - (right - left) * 2 - (bottom - top));
+                }
+                // Skip dots near components
+                var dx1 = Math.abs(px - resX);
+                var dx2 = Math.abs(px - batX);
+                var dy3 = Math.abs(py - capY);
+                if ((py < top + 5 && (dx1 < 35 || dx2 < 25)) || (px > right - 25 && dy3 < 20)) continue;
+                ctx.fillStyle = S.mode === 'charging' ? '#10b981' : '#f59e0b';
+                ctx.beginPath();
+                ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // === Graph (bottom half) ===
+        drawGraph(W, H);
+
+        ctx.restore();
+
+        // Caption
+        ctx.fillStyle = '#475569';
+        ctx.font = '11px Inter';
+        ctx.textAlign = 'center';
+        var cap = 'RC circuit · τ = RC = ' + (getTau()).toFixed(3) + ' s · ' + (S.mode === 'charging' ? 'charging (green)' : S.mode === 'discharging' ? 'discharging (orange)' : 'idle');
+        ctx.fillText(cap, w / 2, h - 8);
+    }
+
+    function drawGraph(W, H) {
+        var graphX = W * 0.08;
+        var graphW = W * 0.84;
+        var graphY = H * 0.55;
+        var graphH = H * 0.35;
+
+        // Graph background
+        ctx.fillStyle = '#f8fafc';
+        ctx.fillRect(graphX, graphY, graphW, graphH);
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(graphX, graphY, graphW, graphH);
+
+        // Grid
+        var tau = getTau();
+        var maxT = Math.max(tau * 6, S.time * 1.2);
+        var steps = 6;
+        ctx.strokeStyle = '#e2e8f0';
+        for (var i = 0; i <= steps; i++) {
+            var x = graphX + (i / steps) * graphW;
+            ctx.beginPath();
+            ctx.moveTo(x, graphY);
+            ctx.lineTo(x, graphY + graphH);
+            ctx.stroke();
+            // time labels
+            ctx.fillStyle = '#64748b';
+            ctx.font = '9px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText((maxT * i / steps).toFixed(2) + 's', x, graphY + graphH + 12);
+        }
+        for (var j = 0; j <= 4; j++) {
+            var y = graphY + (j / 4) * graphH;
+            ctx.beginPath();
+            ctx.moveTo(graphX, y);
+            ctx.lineTo(graphX + graphW, y);
+            ctx.stroke();
+            // voltage labels
+            ctx.fillStyle = '#64748b';
+            ctx.font = '9px Inter';
+            ctx.textAlign = 'right';
+            ctx.fillText((S.V * (1 - j / 4)).toFixed(1) + 'V', graphX - 4, y + 3);
+        }
+
+        // Axes labels
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 10px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('time t (s)', graphX + graphW / 2, graphY + graphH + 26);
+        ctx.save();
+        ctx.translate(graphX - 30, graphY + graphH / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText('V_C (V)', 0, 0);
+        ctx.restore();
+
+        // Draw theoretical charge curve (green) as reference
+        ctx.strokeStyle = 'rgba(16, 185, 129, 0.35)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        for (var k = 0; k <= 100; k++) {
+            var t = (k / 100) * maxT;
+            var vc = S.V * (1 - Math.exp(-t / tau));
+            var px = graphX + (k / 100) * graphW;
+            var py = graphY + graphH - (vc / S.V) * graphH;
+            if (k === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Draw theoretical discharge curve (orange) as reference
+        ctx.strokeStyle = 'rgba(245, 158, 11, 0.35)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        for (var k2 = 0; k2 <= 100; k2++) {
+            var t2 = (k2 / 100) * maxT;
+            var vc2 = S.V * Math.exp(-t2 / tau);
+            var px2 = graphX + (k2 / 100) * graphW;
+            var py2 = graphY + graphH - (vc2 / S.V) * graphH;
+            if (k2 === 0) ctx.moveTo(px2, py2);
+            else ctx.lineTo(px2, py2);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Draw actual measured curve
+        if (S.mode === 'charging' || S.mode === 'charged') {
+            ctx.strokeStyle = '#10b981';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            for (var k3 = 0; k3 <= 100; k3++) {
+                var t3 = (k3 / 100) * S.time;
+                var vc3 = S.V * (1 - Math.exp(-t3 / tau));
+                var px3 = graphX + (t3 / maxT) * graphW;
+                var py3 = graphY + graphH - (vc3 / S.V) * graphH;
+                if (k3 === 0) ctx.moveTo(px3, py3);
+                else ctx.lineTo(px3, py3);
+            }
+            ctx.stroke();
+        } else if (S.mode === 'discharging') {
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            for (var k4 = 0; k4 <= 100; k4++) {
+                var t4 = (k4 / 100) * S.time;
+                var vc4 = S.V_C_start * Math.exp(-t4 / tau);
+                var px4 = graphX + (t4 / maxT) * graphW;
+                var py4 = graphY + graphH - (vc4 / S.V) * graphH;
+                if (k4 === 0) ctx.moveTo(px4, py4);
+                else ctx.lineTo(px4, py4);
+            }
+            ctx.stroke();
+        }
+
+        // Current position dot
+        var curVc = S.V_C;
+        var curX = graphX + (S.time / maxT) * graphW;
+        var curY = graphY + graphH - (curVc / S.V) * graphH;
+        ctx.fillStyle = '#dc2626';
+        ctx.beginPath();
+        ctx.arc(curX, curY, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // τ marker (dashed vertical line at t=τ)
+        var tauX = graphX + (tau / maxT) * graphW;
+        if (tauX < graphX + graphW) {
+            ctx.strokeStyle = '#8b5cf6';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.moveTo(tauX, graphY);
+            ctx.lineTo(tauX, graphY + graphH);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#8b5cf6';
+            ctx.font = 'bold 10px Inter';
+            ctx.textAlign = 'left';
+            ctx.fillText('τ', tauX + 4, graphY + 12);
+        }
+
+        // Legend
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 10px Inter';
+        ctx.textAlign = 'left';
+        ctx.fillText('V_C vs t', graphX + 8, graphY + 16);
+    }
+
+    // === Readouts ===
+    function updateReadouts() {
+        var tau = getTau();
+        var pct = S.V > 0 ? S.V_C / S.V : 0;
+        var Q = S.C * S.V_C;
+        var Vr = S.I * S.R;
+        var E = 0.5 * S.C * S.V_C * S.V_C;
+
+        $('ro-tau').innerText = tau.toFixed(4) + ' s (' + (tau * 1000).toFixed(1) + ' ms)';
+        $('ro-state').innerText = S.mode.charAt(0).toUpperCase() + S.mode.slice(1);
+        $('ro-t').innerText = S.time.toFixed(3) + ' s';
+        $('ro-vc').innerText = S.V_C.toFixed(2) + ' V';
+        $('ro-i').innerText = (S.I * 1000).toFixed(3) + ' mA';
+        $('ro-q').innerText = (Q * 1e6).toFixed(2) + ' µC';
+        $('ro-vr').innerText = Vr.toFixed(2) + ' V';
+        $('ro-e').innerText = (E * 1000).toFixed(3) + ' mJ';
+        $('ro-pct').innerText = (pct * 100).toFixed(1) + '%';
+        $('ro-ratio').innerText = (S.time / tau).toFixed(2);
+
+        $('hud-state').innerText = S.mode;
+        $('hud-t').innerText = S.time.toFixed(2);
+        $('hud-vc').innerText = S.V_C.toFixed(2);
+        $('hud-i').innerText = (S.I * 1000).toFixed(2);
+
+        // Real fact
+        var fact;
+        if (S.mode === 'idle') {
+            fact = 'Set R, C, and V₀, then click Charge. The time constant τ = RC determines how fast the capacitor fills. Larger R or larger C → slower charge.';
+        } else if (S.mode === 'charging') {
+            var ratio = S.time / tau;
+            if (ratio < 1) {
+                fact = 'Charging: after t = τ = ' + tau.toFixed(3) + ' s, V_C reaches ' + (100 * (1 - Math.exp(-1))).toFixed(1) + '% of V₀. Currently at t/τ = ' + ratio.toFixed(2) + '.';
+            } else if (ratio < 5) {
+                fact = 'Charging well underway. Current is decaying exponentially — at t = τ, I has fallen to 37% of its initial value V₀/R.';
+            } else {
+                fact = 'Capacitor is essentially fully charged (99% at 5τ). Current is nearly zero. The steady state is V_C = V₀ with no further current flow.';
+            }
+        } else if (S.mode === 'discharging') {
+            fact = 'Discharging: V_C drops as V₀ · e^(−t/τ). At t = τ it is 36.8% of starting voltage. Energy is dissipated in the resistor as heat.';
+        } else if (S.mode === 'charged') {
+            fact = 'Fully charged. Energy stored E = ½CV² = ' + (0.5 * S.C * S.V * S.V * 1000).toFixed(2) + ' mJ. No current flows (open circuit as far as DC is concerned).';
+        }
+        $('fact-box').innerText = fact;
+    }
+
+    // === Quiz ===
+    var QUIZ_EXPLAIN = {
+        q1: { correct: 'B', why: 'The time constant is τ = R·C, in seconds when R is in ohms and C in farads. It represents the time for V_C to reach 63% (charging) or drop to 37% (discharging).', tip: '1 kΩ × 100 µF = 1000 × 0.0001 = 0.1 s.' },
+        q2: { correct: 'B', why: 'Charging: V_C(t) = V₀·(1 − e<sup>−t/τ</sup>). Starts at 0, rises steeply, then asymptotically approaches V₀. The curve is concave down (slowing down).', tip: 'Never exceeds V₀ — asymptote is the source voltage.' },
+        q3: { correct: 'A', why: 'Current starts at maximum (V₀/R — when C is empty, it is a short) and decays exponentially as the capacitor charges. This is why a capacitor seems like a short at t=0.', tip: 'I(t) = (V₀/R)·e<sup>−t/τ</sup>. At t=0, I = V₀/R.' },
+        q4: { correct: 'B', why: 'At t = τ, V_C = V₀(1 − e<sup>−1</sup>) = V₀(1 − 0.368) = 0.632 V₀ → 63.2%.', tip: 'This is the "one time constant" rule — 63% not 50%.' },
+        q5: { correct: 'A', why: 'At t = τ during discharge, V_C = V₀·e<sup>−1</sup> ≈ 0.368 V₀ → 36.8%.', tip: 'Note the complementary relationship: charge 63%, discharge 37%.' },
+        q6: { correct: 'B', why: 'τ = R·C, so doubling R doubles τ. Charge takes twice as long.', tip: 'Same goes for C: doubling C doubles τ.' },
+        q7: { correct: 'B', why: 'τ = R·C = 1000 Ω × 100×10⁻⁶ F = 0.100 s.', tip: 'Units check: Ω × F = Ω × C/V = s.' },
+        q8: { correct: 'A', why: 'E = ½·C·V² = 0.5 × 100×10⁻⁶ × 100 = 0.005 J = 5 mJ.', tip: 'Note: it is ½CV², not CV².' },
+        q9: { correct: 'B', why: 'e<sup>−5</sup> ≈ 0.0067, so V_C reaches 99.3% of V₀ at t = 5τ. For all practical purposes, that is "fully charged" — the remaining 0.7% takes essentially forever.', tip: 'It never reaches exactly 100% — the asymptote is at infinity.' }
+    };
+
+    function evaluateQuiz() {
+        var qs = document.querySelectorAll('.quiz-q');
+        var score = 0, total = qs.length;
+        qs.forEach(function (q) {
+            var name = q.dataset.q;
+            var correct = q.dataset.answer;
+            var chosen = q.querySelector('input[name="' + name + '"]:checked');
+            var expl = q.querySelector('.explanation');
+            var data = QUIZ_EXPLAIN[name];
+            expl.hidden = false;
+            expl.className = 'explanation';
+            if (chosen && chosen.value === correct) {
+                score++;
+                expl.classList.add('correct-box');
+                expl.innerHTML = '<strong>✓ Correct!</strong>' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            } else {
+                expl.classList.add('wrong-box');
+                var chosenVal = chosen ? chosen.value : '—';
+                expl.innerHTML = '<strong>✗ Correct answer is ' + correct + '</strong>You chose ' + chosenVal + '. ' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            }
+        });
+        var pct = Math.round(score / total * 100);
+        var msg = '💪 Keep exploring!';
+        if (pct === 100) msg = '🌟 Perfect score! RC master!';
+        else if (pct >= 78) msg = '🎉 Excellent work!';
+        else if (pct >= 55) msg = '👍 Good effort! Review the explanations.';
+        beep(pct >= 78 ? 880 : 440, 0.15, 'sine', 0.1);
+        var result = $('quiz-result');
+        result.style.display = 'block';
+        result.innerHTML = '<div style="font-size:1.4rem; color:#4338ca;">' + score + '/' + total + ' · ' + pct + '%</div><div style="font-size:0.85rem; color:#334155; margin-top:4px; font-weight:500;">' + msg + '</div>';
+    }
+
+    function resetQuiz() {
+        document.querySelectorAll('.quiz-q').forEach(function (q) {
+            q.querySelectorAll('input[type=radio]').forEach(function (r) { r.checked = false; });
+            var expl = q.querySelector('.explanation');
+            expl.hidden = true;
+            expl.innerHTML = '';
+            expl.className = 'explanation';
+        });
+        $('quiz-result').style.display = 'none';
+        $('quiz-result').innerHTML = '';
+    }
+
+    // === Challenges ===
+    function applyChallenge(id) {
+        var note = $('challenge-note');
+        var cres = $('challenge-result');
+        note.innerText = '';
+        cres.innerText = '';
+
+        if (id === 'fast') {
+            S.R = 1000; $('R').value = 1000; $('v-R').innerText = '1000';
+            S.C = 100e-6; $('C').value = 100; $('v-C').innerText = '100';
+            S.V = 10; $('V').value = 10; $('v-V').innerText = '10';
+            note.innerText = 'Fast charge: τ = 0.1 s. Watch it charge in under a second.';
+            cres.innerText = 'τ = ' + getTau().toFixed(4) + ' s · click Charge';
+        } else if (id === 'slow') {
+            S.R = 10000; $('R').value = 10000; $('v-R').innerText = '10000';
+            S.C = 100e-6; $('C').value = 100; $('v-C').innerText = '100';
+            S.V = 10; $('V').value = 10; $('v-V').innerText = '10';
+            note.innerText = 'Slow charge: τ = 1.0 s — takes 5 seconds to reach 99%.';
+            cres.innerText = 'τ = ' + getTau().toFixed(4) + ' s · try it';
+        } else if (id === 'huge') {
+            S.R = 1000; $('R').value = 1000; $('v-R').innerText = '1000';
+            S.C = 2000e-6; $('C').value = 2000; $('v-C').innerText = '2000';
+            S.V = 10; $('V').value = 10; $('v-V').innerText = '10';
+            note.innerText = 'Huge capacitor: C = 2000 µF, τ = 2 s. Real supercapacitors have even more (100+ F).';
+            cres.innerText = 'τ = ' + getTau().toFixed(4) + ' s';
+        } else if (id === 'highV') {
+            S.V = 24; $('V').value = 24; $('v-V').innerText = '24';
+            note.innerText = 'Higher voltage charges to a higher final V_C, and stores more energy (E ∝ V²).';
+            cres.innerText = 'V₀ = 24 V · energy stored at full = ' + (0.5 * S.C * 24 * 24 * 1000).toFixed(2) + ' mJ';
+        } else if (id === 'discharge') {
+            // First charge fully (simulate), then discharge
+            S.mode = 'charged';
+            S.V_C = S.V;
+            S.time = 5 * getTau();
+            setTimeout(function () {
+                S.mode = 'discharging';
+                S.V_C_start = S.V;
+                S.time = 0;
+                playDischargeWhoosh();
+                updateReadouts();
+            }, 300);
+            note.innerText = 'Capacitor pre-charged to ' + S.V + ' V, then discharge begins. Watch V_C drop exponentially.';
+            cres.innerText = 'V_C starts at ' + S.V + ' V, drops to ' + (S.V * Math.exp(-1)).toFixed(2) + ' V after 1τ';
+        }
+        updateReadouts();
+    }
+
+    // === Notebook ===
+    function recordMeasurement() {
+        var tau = getTau();
+        var line = new Date().toLocaleTimeString() + ' | ' + S.mode + ' | R=' + S.R + ' Ω | C=' + (S.C * 1e6).toFixed(0) + ' µF | τ=' + tau.toFixed(4) + ' s | t=' + S.time.toFixed(3) + ' s | V_C=' + S.V_C.toFixed(3) + ' V | I=' + (S.I * 1000).toFixed(3) + ' mA';
+        S.records.push(line);
+        $('records').value = S.records.join('\n');
+        $('records').scrollTop = $('records').scrollHeight;
+    }
+
+    function downloadReport() {
+        var tau = getTau();
+        var text = 'LEARNIFY - RC CIRCUIT - LAB REPORT\n' +
+            'Date: ' + new Date().toLocaleString() + '\n\n' +
+            'CURRENT STATE\n' +
+            'Source voltage V₀ = ' + S.V + ' V\n' +
+            'Resistance R = ' + S.R + ' Ω\n' +
+            'Capacitance C = ' + (S.C * 1e6).toFixed(1) + ' µF\n' +
+            'Time constant τ = RC = ' + tau.toFixed(5) + ' s\n' +
+            'Mode: ' + S.mode + '\n' +
+            'Elapsed time t = ' + S.time.toFixed(4) + ' s\n' +
+            'Capacitor voltage V_C = ' + S.V_C.toFixed(4) + ' V\n' +
+            'Current I = ' + (S.I * 1000).toFixed(4) + ' mA\n' +
+            'Charge Q = ' + (S.C * S.V_C * 1e6).toFixed(3) + ' µC\n' +
+            'Stored energy E = ' + (0.5 * S.C * S.V_C * S.V_C * 1000).toFixed(4) + ' mJ\n\n' +
+            'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+            'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+            'MEASUREMENTS\n' + $('records').value + '\n\n' +
+            'LIMITATIONS\nIdeal RC model — no leakage, no internal resistance in capacitor, no inductance. Real circuits have leakage currents and equivalent series resistance (ESR). Educational use only.\n';
+        var blob = new Blob([text], { type: 'text/plain' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'rc-circuit-report.txt';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    // === Animation loop ===
+    var lastTickTime = 0;
+    function animate(now) {
+        var dt = (now - lastTickTime) / 1000;
+        if (dt > 0.2) dt = 0.016;
+        if (dt <= 0) dt = 0.016;
+        lastTickTime = now;
+
+        if (S.mode === 'charging' || S.mode === 'discharging') {
+            var simDt = dt * S.speed;
+            S.time += simDt;
+            var tau = getTau();
+            if (S.mode === 'charging') {
+                S.V_C = S.V * (1 - Math.exp(-S.time / tau));
+                S.I = (S.V / S.R) * Math.exp(-S.time / tau);
+                if (S.V_C >= S.V * 0.999) {
+                    S.mode = 'charged';
+                    S.I = 0;
+                    beep(880, 0.2, 'sine', 0.08);
+                }
+                // Charge tick
+                var now2 = Date.now();
+                if (!S._lastChargeTick || now2 - S._lastChargeTick > 200) {
+                    playChargeTick();
+                    S._lastChargeTick = now2;
+                }
+            } else {
+                S.V_C = S.V_C_start * Math.exp(-S.time / tau);
+                S.I = (S.V_C_start / S.R) * Math.exp(-S.time / tau);
+                if (S.V_C <= 0.001) {
+                    S.mode = 'idle';
+                    S.V_C = 0;
+                    S.I = 0;
+                    beep(220, 0.2, 'triangle', 0.06);
+                }
+            }
+        }
+
+        drawScene();
+        updateReadouts();
+        requestAnimationFrame(animate);
+    }
+
+    // === Event wiring ===
+    $('btn-sound').addEventListener('click', toggleSound);
+    $('V').addEventListener('input', function (e) {
+        S.V = parseFloat(e.target.value);
+        $('v-V').innerText = S.V.toFixed(1);
+        updateReadouts();
+    });
+    $('R').addEventListener('input', function (e) {
+        S.R = parseFloat(e.target.value);
+        $('v-R').innerText = S.R;
+        updateReadouts();
+    });
+    $('C').addEventListener('input', function (e) {
+        S.C = parseFloat(e.target.value) * 1e-6;
+        $('v-C').innerText = e.target.value;
+        updateReadouts();
+    });
+    $('speed').addEventListener('input', function (e) {
+        S.speed = parseFloat(e.target.value);
+        $('v-speed').innerText = S.speed.toFixed(1);
+    });
+    $('btn-charge').addEventListener('click', function () {
+        S.mode = 'charging';
+        S.time = 0;
+        S.V_C = 0;
+        S.I = S.V / S.R;
+        beep(440, 0.1, 'sine', 0.08);
+        beep(660, 0.1, 'sine', 0.08);
+    });
+    $('btn-discharge').addEventListener('click', function () {
+        if (S.V_C <= 0.01) {
+            // Pre-charge if empty
+            S.V_C = S.V;
+        }
+        S.V_C_start = S.V_C;
+        S.mode = 'discharging';
+        S.time = 0;
+        S.I = S.V_C_start / S.R;
+        playDischargeWhoosh();
+    });
+    $('btn-reset').addEventListener('click', function () {
+        S.mode = 'idle';
+        S.time = 0;
+        S.V_C = 0;
+        S.I = 0;
+        updateReadouts();
+    });
+    $('btn-record').addEventListener('click', recordMeasurement);
+
+    document.querySelectorAll('.tab-btn[data-tab]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+            document.querySelectorAll('.tab-btn[data-tab]').forEach(function (b) { b.classList.remove('active'); });
+            document.getElementById(btn.dataset.tab).classList.add('active');
+            btn.classList.add('active');
+        });
+    });
+
+    document.querySelectorAll('[data-challenge]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            applyChallenge(btn.dataset.challenge);
+            beep(660, 0.08, 'sine', 0.08);
+        });
+    });
+
+    $('btn-quiz-check').addEventListener('click', evaluateQuiz);
+    $('btn-quiz-reset').addEventListener('click', resetQuiz);
+
+    $('btn-clear-notes').addEventListener('click', function () {
+        if (!confirm('Clear all notebook fields?')) return;
+        $('hypothesis').value = '';
+        $('conclusion').value = '';
+        $('records').value = '';
+        S.records = [];
+    });
+    $('btn-export').addEventListener('click', downloadReport);
+
+    // Zoom & pan
+    var fullScroll = false;
+    var pointers = new Map();
+    var pinch = null;
+
+    $('full-scroll-toggle').addEventListener('change', function (e) {
+        fullScroll = e.target.checked;
+        canvas.style.touchAction = fullScroll ? 'auto' : 'none';
+        pointers.clear();
+        pinch = null;
+    });
+
+    function getPos(e) {
+        var r = canvas.getBoundingClientRect();
+        return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+
+    canvas.addEventListener('wheel', function (e) {
+        if (fullScroll) return;
+        e.preventDefault();
+        var cx = e.offsetX, cy = e.offsetY;
+        var wx = (cx - view.x) / view.scale;
+        var wy = (cy - view.y) / view.scale;
+        var factor = Math.exp(-e.deltaY * 0.0015);
+        view.scale = Math.max(0.3, Math.min(5, view.scale * factor));
+        view.x = cx - wx * view.scale;
+        view.y = cy - wy * view.scale;
+    }, { passive: false });
+
+    canvas.addEventListener('pointerdown', function (e) {
+        if (fullScroll) return;
+        canvas.setPointerCapture(e.pointerId);
+        pointers.set(e.pointerId, getPos(e));
+        if (pointers.size === 2) {
+            var pts = Array.from(pointers.values());
+            pinch = { dist: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y), startScale: view.scale };
+        }
+    });
+    canvas.addEventListener('pointermove', function (e) {
+        if (fullScroll || !pointers.has(e.pointerId)) return;
+        var prev = pointers.get(e.pointerId);
+        var pos = getPos(e);
+        pointers.set(e.pointerId, pos);
+        if (pointers.size === 1 && !pinch) {
+            view.x += pos.x - prev.x;
+            view.y += pos.y - prev.y;
+        } else if (pointers.size === 2 && pinch) {
+            var pts = Array.from(pointers.values());
+            var d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+            view.scale = Math.max(0.3, Math.min(5, pinch.startScale * d / pinch.dist));
+        }
+    });
+    canvas.addEventListener('pointerup', function (e) {
+        if (fullScroll) return;
+        pointers.delete(e.pointerId);
+        try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
+        if (pointers.size < 2) pinch = null;
+    });
+    canvas.addEventListener('pointercancel', function (e) {
+        pointers.delete(e.pointerId);
+        pinch = null;
+    });
+
+    (function () {
+        var hud = document.querySelector('.hud');
+        if (!hud) return;
+        var z = document.createElement('div');
+        z.className = 'zoom-controls';
+        z.innerHTML = '<button id="zoom-out">-</button><button id="zoom-reset">Reset</button><button id="zoom-in">+</button>';
+        hud.appendChild(z);
+        $('zoom-in').addEventListener('click', function () { view.scale = Math.min(5, view.scale * 1.25); });
+        $('zoom-out').addEventListener('click', function () { view.scale = Math.max(0.3, view.scale / 1.25); });
+        $('zoom-reset').addEventListener('click', function () { view.x = 0; view.y = 0; view.scale = 1; });
+    })();
+
+    (function () {
+        var sim = $('sim-area'), splitter = $('splitter');
+        if (!sim || !splitter) return;
+        var dragging = false, startY = 0, startH = 0;
+        var minH = 180, maxH = window.innerHeight - 240;
+
+        splitter.addEventListener('pointerdown', function (e) {
+            e.preventDefault();
+            dragging = true;
+            startY = e.clientY;
+            startH = sim.getBoundingClientRect().height;
+            try { splitter.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+        window.addEventListener('pointermove', function (e) {
+            if (!dragging) return;
+            var dy = e.clientY - startY;
+            var nh = Math.max(minH, Math.min(maxH, Math.round(startH + dy)));
+            sim.style.flex = '0 0 ' + nh + 'px';
+            resizeCanvas();
+        });
+        window.addEventListener('pointerup', function (e) {
+            if (!dragging) return;
+            dragging = false;
+            try { splitter.releasePointerCapture(e.pointerId); } catch (err) {}
+        });
+        splitter.addEventListener('dblclick', function () {
+            sim.style.flex = '';
+            resizeCanvas();
+        });
+    })();
+
+    window.addEventListener('resize', function () { resizeCanvas(); });
+
+    // === Boot ===
+    resizeCanvas();
+    lastTickTime = performance.now();
+    updateReadouts();
+    requestAnimationFrame(animate);
+})();
+</script>
+</body>
+</html>

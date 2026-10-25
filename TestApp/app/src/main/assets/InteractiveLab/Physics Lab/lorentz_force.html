@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lorentz Force Laboratory</title>
+<style>
+:root{--bg:#f4f6fa;--sf:#fff;--tx:#0f172a;--mu:#64748b;--ln:#dde3ee;--ac:#7c3aed;--ok:#059669;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1020;--sf:#141b30;--tx:#e6eaf5;--mu:#93a0bd;--ln:#27304a;--ac:#a78bfa;--ok:#34d399;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b1020;--sf:#141b30;--tx:#e6eaf5;--mu:#93a0bd;--ln:#27304a;--ac:#a78bfa;--ok:#34d399;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+header{padding:14px 16px;border-bottom:1px solid var(--ln);background:var(--sf)}
+h1{margin:0;font-size:1.15rem}header p{margin:2px 0 0;color:var(--mu);font-size:.8rem}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px;padding:14px;max-width:1300px;margin:auto}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:10px;padding:12px}
+#stage{position:relative;height:min(62vh,560px);min-height:320px;background:#05080f;border-radius:10px;overflow:hidden}
+canvas{width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+.views{position:absolute;top:8px;right:8px;display:flex;gap:6px}
+.views button,.tag{font-size:.72rem;padding:4px 9px;border-radius:6px;border:1px solid #334155;background:rgba(15,23,42,.85);color:#e2e8f0;cursor:pointer}
+.tag{position:absolute;left:8px;top:8px;cursor:default}
+label{display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--mu);margin:10px 0 3px}
+label b{float:right;color:var(--ac);text-transform:none;font-size:.8rem}
+input[type=range]{width:100%;accent-color:var(--ac)}
+select{width:100%;padding:7px;border-radius:6px;border:1px solid var(--ln);background:var(--bg);color:var(--tx)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+button.b{padding:10px;border:0;border-radius:8px;font-weight:700;cursor:pointer;background:var(--ac);color:#fff}
+button.b.g{background:var(--mu)}
+.ro{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:14px}
+.ro div{background:var(--sf);border:1px solid var(--ln);border-radius:8px;padding:7px 10px}
+.ro span{display:block;font-size:.65rem;color:var(--mu);text-transform:uppercase;font-weight:700;letter-spacing:.04em}
+.ro strong{font-variant-numeric:tabular-nums;font-size:.9rem}
+.pre{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.pre button{padding:7px 10px;border-radius:6px;border:1px solid var(--ln);background:var(--bg);color:var(--tx);cursor:pointer;font-size:.78rem;font-weight:600}
+.pre button:hover{border-color:var(--ac)}
+#note{margin-top:8px;color:var(--mu);font-size:.82rem;min-height:2.6em}
+code{font-family:ui-monospace,Menlo,monospace;font-size:.8rem;color:var(--ac)}
+ul{padding-left:18px;margin:6px 0}small{color:var(--mu)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.tabs button{flex:1;padding:8px;border:1px solid var(--ln);background:var(--bg);color:var(--tx);border-radius:6px;font-weight:600;cursor:pointer}.tabs button.on{background:var(--ac);color:#fff;border-color:var(--ac)}.tp{display:none}.tp.on{display:block}
+.st{padding:7px 0;border-bottom:1px solid var(--ln);font-size:.83rem;word-break:break-word}.st b{display:block;color:var(--ac)}.q{padding:9px 0;border-bottom:1px solid var(--ln)}.q label{display:flex;gap:6px;text-transform:none;letter-spacing:0;font-size:.82rem;color:var(--tx);font-weight:500;margin:3px 0;align-items:center}
+.ex{font-size:.78rem;margin-top:4px;padding:6px 8px;border-radius:6px}.ex.y{background:rgba(5,150,105,.14);color:var(--ok)}.ex.n{background:rgba(239,68,68,.14);color:#ef4444}textarea{width:100%;min-height:64px;padding:8px;border-radius:6px;border:1px solid var(--ln);background:var(--bg);color:var(--tx);font:inherit;font-size:.82rem}
+</style></head><body>
+<header><h1>⚛️ Lorentz Force Laboratory</h1><p>F = q(E + v × B) · relativistic Boris integrator · CODATA 2018 constants · SI units</p></header>
+<div class="wrap">
+<div>
+ <div id="stage"><canvas id="cv"></canvas><div class="tag" id="tag"></div>
+  <div class="views"><button data-v="3d">3D</button><button data-v="top">Top</button><button data-v="side">Side</button></div></div>
+ <div class="ro" id="ro"></div>
+ <div class="card" style="margin-top:14px"><b>Experiments</b>
+  <div class="pre" id="pre"></div><div id="note">Drag the scene to rotate. B points along +z (out of the xy plane).</div></div>
+ <div class="card" style="margin-top:14px"><div class="tabs" id="tabs"><button data-t="t1" class="on">Solutions</button><button data-t="t2">Quiz</button><button data-t="t3">Challenges</button><button data-t="t4">Notebook</button></div><div class="tp on" id="t1"></div><div class="tp" id="t2"></div><div class="tp" id="t3"></div><div class="tp" id="t4"></div></div>
+</div>
+<div>
+ <div class="card">
+  <label>Particle</label>
+  <select id="pk"><option value="proton">Proton p⁺</option><option value="electron">Electron e⁻</option><option value="positron">Positron e⁺</option><option value="alpha">Alpha α²⁺</option><option value="deuteron">Deuteron d⁺</option><option value="muon">Muon µ⁻</option><option value="custom">Custom particle…</option></select><div id="cu" style="display:none"><label>Charge q <b id="vq"></b></label><input type="range" id="cq" min="-5" max="5" step="0.5" value="1"><label>Mass m <b id="vm"></b></label><input type="range" id="cm" min="0.0005" max="20" step="0.0005" value="1"></div>
+  <label>Kinetic energy <b id="vks"></b></label><input type="range" id="ks" min="0" max="100" step="1" value="50">
+  <label>Magnetic field B (+z) <b id="vB"></b></label><input type="range" id="B" min="0" max="3" step="0.01" value="0.5">
+  <label>Angle θ between v and B <b id="vth"></b></label><input type="range" id="th" min="0" max="180" step="1" value="90">
+  <label>Electric field E <b id="vE"></b></label><input type="range" id="E" min="-200" max="200" step="0.1" value="0">
+  <label>E direction</label><select id="ed"><option value="x">+x (⊥ B)</option><option value="y">+y (⊥ B)</option><option value="z">+z (∥ B)</option></select>
+  <label>Simulation speed <b id="vsp"></b></label><input type="range" id="sp" min="0.1" max="4" step="0.1" value="1">
+  <div class="row"><button class="b" id="go">⏸ Pause</button><button class="b g" id="rs">↺ Reset</button></div><div class="row"><button class="b g" id="snd">🔈 Sound off</button><button class="b g" id="rec">📝 Record data</button></div>
+ </div>
+ <div class="card" style="margin-top:14px"><b>Physics used</b>
+  <ul><li><code>F = q(E + v×B)</code></li><li><code>r = γm v⊥ / (|q|B)</code></li><li><code>T = 2πγm / (|q|B)</code></li><li><code>pitch = v∥ T</code></li><li><code>v_drift = E×B / B²</code></li></ul>
+  <small>Magnetic force does no work, so speed is constant when E = 0. Integration uses the relativistic Boris scheme, which conserves energy in a pure B field. Limits: point particle, uniform static fields, no radiation loss, no collisions.</small></div>
+</div></div>
+<script>
+"use strict";
+(function(){
+var $=function(i){return document.getElementById(i)},C=299792458,QE=1.602176634e-19;
+var P={proton:[1,1.67262192369e-27],electron:[-1,9.1093837015e-31],positron:[1,9.1093837015e-31],alpha:[2,6.6446573357e-27],deuteron:[1,3.3435837724e-27],muon:[-1,1.883531627e-28]};
+function si(x,u,d){if(x===0)return '0 '+u;if(!isFinite(x))return '∞ '+u;var p=['f','p','n','µ','m','','k','M','G'],i=Math.floor(Math.log10(Math.abs(x))/3);i=Math.max(-5,Math.min(3,i));return (x/Math.pow(10,i*3)).toPrecision(d||4)+' '+p[i+5]+u}
+var g={pk:'proton',ks:50,B:.5,th:90,E:0,ed:'x',sp:1,run:true},s={};
+var yaw=-0.5,pit=1.0,cen={x:0,y:0,z:0},sc=null;
+var keys=[['F','|F| now'],['Fd','F direction'],['r','Radius r'],['T','Period T'],['f','Gyrofrequency f'],['gam','Lorentz γ'],['bt','v / c'],['ke','Kinetic energy'],['p','Momentum p'],['vp','v⊥ (initial)'],['vl','v∥ (initial)'],['pi','Pitch'],['dr','E×B drift speed'],['en','Energy check'],['mr','Measured r'],['t','Time t']];
+$('ro').innerHTML=keys.map(function(k){return '<div><span>'+k[1]+'</span><strong id="r_'+k[0]+'">—</strong></div>'}).join('');
+function R(k,v){$('r_'+k).textContent=v}
+function KE(){return Math.pow(10,1+g.ks*.06)*QE}
+function Evec(){var e=g.E*1e3;return [g.ed==='x'?e:0,g.ed==='y'?e:0,g.ed==='z'?e:0]}
+function init(){
+ var d=pd(),q=d[0]*QE,m=d[1],k=KE(),gm=1+k/(m*C*C),b=Math.sqrt(1-1/(gm*gm)),v=b*C,u=gm*v,th=g.th*Math.PI/180;
+ s={q:q,m:m,ux:u*Math.sin(th),uy:0,uz:u*Math.cos(th),x:0,y:0,z:0,t:0,g0:gm,v0:v,e0:k,dmax:0,
+  tr:[[0,0,0]],bb:[0,0,0,0,0,0]};
+ var B=g.B,Tg=B>0&&q!==0?2*Math.PI*gm*m/(Math.abs(q)*B):2*Math.PI*0.03/v;s.Tc=Tg;
+}
+function step(h){
+ var q=s.q,m=s.m,E=Evec(),qm=q/m,hh=h/2;
+ var ux=s.ux+qm*E[0]*hh,uy=s.uy+qm*E[1]*hh,uz=s.uz+qm*E[2]*hh;
+ var gm=Math.sqrt(1+(ux*ux+uy*uy+uz*uz)/(C*C)),tz=qm*g.B*hh/gm,sz=2*tz/(1+tz*tz);
+ var px=ux+uy*tz,py=uy-ux*tz;
+ ux=ux+py*sz;uy=uy-px*sz;
+ ux+=qm*E[0]*hh;uy+=qm*E[1]*hh;uz+=qm*E[2]*hh;
+ gm=Math.sqrt(1+(ux*ux+uy*uy+uz*uz)/(C*C));
+ s.ux=ux;s.uy=uy;s.uz=uz;s.x+=ux/gm*h;s.y+=uy/gm*h;s.z+=uz/gm*h;s.t+=h;
+ var b=s.bb,p=[s.x,s.y,s.z];
+ for(var i=0;i<3;i++){if(p[i]<b[i])b[i]=p[i];if(p[i]>b[i+3])b[i+3]=p[i]}
+ var d=Math.hypot(s.x,s.y);if(d>s.dmax)s.dmax=d;
+ s.gam=gm;
+}
+function sample(){var L=s.tr[s.tr.length-1];if(Math.hypot(s.x-L[0],s.y-L[1],s.z-L[2])>0){s.tr.push([s.x,s.y,s.z]);if(s.tr.length>8000)s.tr.splice(1,2)}}
+function readouts(){
+ var gm=s.gam||s.g0,u=Math.hypot(s.ux,s.uy,s.uz),v=u/gm,vx=s.ux/gm,vy=s.uy/gm,E=Evec(),B=g.B,q=s.q,m=s.m;
+ var F=[q*(E[0]+vy*B),q*(E[1]-vx*B),q*E[2]],Fm=Math.hypot(F[0],F[1],F[2]);
+ var th=g.th*Math.PI/180,vp0=s.v0*Math.sin(th),vl0=s.v0*Math.cos(th),qB=Math.abs(q)*B;
+ var r=qB>0?s.g0*m*vp0/qB:Infinity,T=qB>0?s.Tc:Infinity;
+ R('F',si(Fm,'N'));
+ R('Fd',Fm>0?'('+(F[0]/Fm).toFixed(2)+', '+(F[1]/Fm).toFixed(2)+', '+(F[2]/Fm).toFixed(2)+')':'none');
+ R('r',vp0<1e-9*C||qB===0?'∞':si(r,'m'));R('T',isFinite(T)?si(T,'s'):'—');R('f',isFinite(T)?si(1/T,'Hz'):'—');
+ R('gam',gm.toFixed(6));R('bt',(v/C).toPrecision(4));
+ var ke=(gm-1)*m*C*C;R('ke',si(ke/QE,'eV'));R('p',si(m*u,'N·s',3));
+ R('vp',si(vp0,'m/s'));R('vl',si(vl0,'m/s'));
+ R('pi',isFinite(T)&&E[2]===0?si(Math.abs(vl0)*T,'m'):'—');
+ R('dr',B>0?si(Math.hypot(E[0],E[1])/B,'m/s'):'—');
+ if(g.E===0){R('en',Math.abs(ke-s.e0)/s.e0<1e-12?'ΔKE/KE < 1e-12':'ΔKE/KE = '+(Math.abs(ke-s.e0)/s.e0).toExponential(1));
+  R('mr',s.t>s.Tc*.5&&isFinite(r)&&g.th>1&&g.th<179?si(s.dmax/2,'m'):'—')}
+ else{R('en',si((ke-s.e0)/QE,'eV')+' from E');R('mr','n/a (E≠0)')}
+ R('t',si(s.t,'s'));
+ $('tag').textContent=(g.run?'● RUNNING':'❚❚ PAUSED')+' · B = '+g.B.toFixed(2)+' T';if((fc=(fc|0)+1)%6===0)sol();
+}
+var cv=$('cv'),cx=cv.getContext('2d');
+function proj(x,y,z,w,h){
+ x-=cen.x;y-=cen.y;z-=cen.z;
+ var a=x*Math.cos(yaw)-y*Math.sin(yaw),b=x*Math.sin(yaw)+y*Math.cos(yaw);
+ return [w/2+a*sc,h/2-(b*Math.sin(pit)+z*Math.cos(pit))*sc]}
+function nice(x){var p=Math.pow(10,Math.floor(Math.log10(x))),n=x/p;return (n<2?1:n<5?2:5)*p}
+function arrow(a,b,col,lw){cx.strokeStyle=cx.fillStyle=col;cx.lineWidth=lw||2;cx.beginPath();cx.moveTo(a[0],a[1]);cx.lineTo(b[0],b[1]);cx.stroke();
+ var an=Math.atan2(b[1]-a[1],b[0]-a[0]);cx.beginPath();cx.moveTo(b[0],b[1]);cx.lineTo(b[0]-9*Math.cos(an-.4),b[1]-9*Math.sin(an-.4));cx.lineTo(b[0]-9*Math.cos(an+.4),b[1]-9*Math.sin(an+.4));cx.fill()}
+function draw(){
+ var d=window.devicePixelRatio||1,r=cv.getBoundingClientRect(),w=Math.round(r.width),h=Math.round(r.height);
+ if(cv.width!==w*d||cv.height!==h*d){cv.width=w*d;cv.height=h*d}
+ cx.setTransform(d,0,0,d,0,0);cx.fillStyle='#05080f';cx.fillRect(0,0,w,h);
+ var b=s.bb,ex=Math.max(b[3]-b[0],b[4]-b[1],b[5]-b[2])/2*1.2,ref=s.v0*s.Tc/(2*Math.PI)*.5,ext=Math.max(ex,ref,1e-12);
+ var tgt=Math.min(w,h)*.38/ext;sc=sc===null?tgt:Math.exp(Math.log(sc)+(Math.log(tgt)-Math.log(sc))*.12);
+ var c=[(b[0]+b[3])/2,(b[1]+b[4])/2,(b[2]+b[5])/2];
+ cen.x+=(c[0]-cen.x)*.12;cen.y+=(c[1]-cen.y)*.12;cen.z+=(c[2]-cen.z)*.12;
+ var half=w/2/sc,gs=nice(half/3),gx=Math.round(cen.x/gs)*gs,gy=Math.round(cen.y/gs)*gs,n=Math.ceil(half*1.6/gs)+1;
+ cx.strokeStyle='rgba(148,163,184,.14)';cx.lineWidth=1;
+ for(var i=-n;i<=n;i++){var a=proj(gx+i*gs,gy-n*gs,0,w,h),a2=proj(gx+i*gs,gy+n*gs,0,w,h);cx.beginPath();cx.moveTo(a[0],a[1]);cx.lineTo(a2[0],a2[1]);cx.stroke();
+  a=proj(gx-n*gs,gy+i*gs,0,w,h);a2=proj(gx+n*gs,gy+i*gs,0,w,h);cx.beginPath();cx.moveTo(a[0],a[1]);cx.lineTo(a2[0],a2[1]);cx.stroke()}
+ if(g.B>0){for(var ix=-1;ix<=1;ix++)for(var iy=-1;iy<=1;iy++){var X=gx+ix*gs*2,Y=gy+iy*gs*2;arrow(proj(X,Y,0,w,h),proj(X,Y,gs*.9,w,h),'rgba(96,165,250,.45)',1.5)}}
+ var o=[0,0,0];[[1,0,0,'#f87171','x'],[0,1,0,'#4ade80','y'],[0,0,1,'#60a5fa','z (B)']].forEach(function(A){
+  var e=proj(A[0]*gs,A[1]*gs,A[2]*gs,w,h);arrow(proj(0,0,0,w,h),e,A[3],1.5);cx.font='11px system-ui';cx.fillText(A[4],e[0]+6,e[1]-4)});
+ if(s.tr.length>1){cx.lineWidth=2;cx.lineJoin='round';var L=s.tr.length,split=Math.max(1,L-200);
+  cx.strokeStyle='rgba(167,139,250,.55)';cx.beginPath();for(var j=0;j<L;j++){var p=proj(s.tr[j][0],s.tr[j][1],s.tr[j][2],w,h);j?cx.lineTo(p[0],p[1]):cx.moveTo(p[0],p[1])}cx.stroke();
+  cx.strokeStyle='#c4b5fd';cx.beginPath();for(var j2=split;j2<L;j2++){var p2=proj(s.tr[j2][0],s.tr[j2][1],s.tr[j2][2],w,h);j2>split?cx.lineTo(p2[0],p2[1]):cx.moveTo(p2[0],p2[1])}cx.stroke()}
+ var pp=proj(s.x,s.y,s.z,w,h),col=s.q>0?'#f43f5e':'#3b82f6';
+ cx.fillStyle=col;cx.shadowColor=col;cx.shadowBlur=16;cx.beginPath();cx.arc(pp[0],pp[1],7,0,7);cx.fill();cx.shadowBlur=0;
+ cx.fillStyle='#fff';cx.font='bold 11px system-ui';cx.textAlign='center';cx.fillText(s.q>0?'+':'−',pp[0],pp[1]+4);cx.textAlign='left';
+ var gm=s.gam||s.g0,vx=s.ux/gm,vy=s.uy/gm,vz=s.uz/gm,vm=Math.hypot(vx,vy,vz),L2=gs*.8;
+ if(vm>0)arrow(pp,proj(s.x+vx/vm*L2,s.y+vy/vm*L2,s.z+vz/vm*L2,w,h),'#fbbf24',2.5);
+ var E=Evec(),F=[s.q*(E[0]+vy*g.B),s.q*(E[1]-vx*g.B),s.q*E[2]],Fm=Math.hypot(F[0],F[1],F[2]);
+ if(Fm>0)arrow(pp,proj(s.x+F[0]/Fm*L2,s.y+F[1]/Fm*L2,s.z+F[2]/Fm*L2,w,h),'#34d399',2.5);
+ cx.font='11px system-ui';cx.fillStyle='#fbbf24';cx.fillText('● v',12,h-34);cx.fillStyle='#34d399';cx.fillText('● F',48,h-34);cx.fillStyle='#60a5fa';cx.fillText('● B',84,h-34);
+ var bl=nice(half*.3),a1=[w-24-bl*sc,h-20],a2=[w-24,h-20];cx.strokeStyle='#e2e8f0';cx.lineWidth=2;cx.beginPath();cx.moveTo(a1[0],a1[1]);cx.lineTo(a2[0],a2[1]);cx.stroke();
+ cx.fillStyle='#e2e8f0';cx.textAlign='right';cx.fillText(si(bl,'m',1),a2[0],a2[1]-6);cx.textAlign='left';
+}
+var last=performance.now();
+function loop(now){
+ var dt=Math.min((now-last)/1000,.05);last=now;
+ if(g.run){var sim=dt*g.sp*s.Tc/4,h0=s.Tc/400,n=Math.min(400,Math.max(1,Math.ceil(sim/h0))),h=sim/n;for(var i=0;i<n;i++)step(h);sample();var rv=Math.floor(s.t/s.Tc);if(rv!==lastRev){if(rv>lastRev)beep(520,.05);lastRev=rv}}
+ draw();readouts();requestAnimationFrame(loop)}
+function labels(){
+ $('vks').textContent=si(KE()/QE,'eV',3);$('vq').textContent=g.cq+' e';$('vm').textContent=g.cm.toFixed(4)+' u';$('vB').textContent=g.B.toFixed(2)+' T';$('vth').textContent=g.th+'°';
+ $('vE').textContent=g.E.toFixed(1)+' kV/m';$('vsp').textContent=g.sp.toFixed(1)+'×'}
+function apply(){
+ g.pk=$('pk').value;g.cq=+$('cq').value;g.cm=+$('cm').value;$('cu').style.display=g.pk==='custom'?'block':'none';g.ks=+$('ks').value;g.B=+$('B').value;g.th=+$('th').value;g.E=+$('E').value;g.ed=$('ed').value;g.sp=+$('sp').value;
+ labels();init();sc=null;cen={x:0,y:0,z:0}}
+['pk','ks','B','th','E','ed','cq','cm'].forEach(function(i){$(i).addEventListener('input',apply)});
+$('sp').addEventListener('input',function(){g.sp=+this.value;labels()});
+$('go').addEventListener('click',function(){g.run=!g.run;this.textContent=g.run?'⏸ Pause':'▶ Start'});
+$('rs').addEventListener('click',apply);
+function set(o){for(var k in o)$(k).value=o[k];apply()}
+function vOf(pk,ks){var d=P[pk],k=Math.pow(10,1+ks*.06)*QE,gm=1+k/(d[1]*C*C);return Math.sqrt(1-1/(gm*gm))*C}
+var PRE=[
+ ['Cyclotron circle',function(){set({pk:'proton',ks:50,B:.5,th:90,E:0});return 'θ = 90°: pure circle. Radius r = γmv/(|q|B); compare with the measured value after half a turn.'}],
+ ['Helix',function(){set({pk:'proton',ks:50,B:.5,th:45,E:0});return 'θ = 45°: v⊥ circles, v∥ drifts along B. Pitch = v∥ T.'}],
+ ['Electron vs proton',function(){set({pk:'electron',ks:50,B:.5,th:90,E:0});return 'Same energy, opposite curvature. Electron radius is smaller by about √(m_e/m_p) ≈ 1/43 at equal energy.'}],
+ ['Velocity selector',function(){var v=vOf('proton',30);set({pk:'proton',ks:30,B:.1,th:90,E:+(v*.1/1e3).toFixed(1),ed:'y'});return 'E = vB along +y cancels the magnetic force: the proton travels straight. Nudge E or B and it bends.'}],
+ ['E×B drift',function(){set({pk:'proton',ks:40,B:.5,th:90,E:5,ed:'y'});return 'Crossed fields: the orbit drifts at E/B, independent of charge and mass.'}],
+ ['Relativistic',function(){set({pk:'electron',ks:100,B:1,th:90,E:0});return '10 MeV electron: γ ≈ 20, v ≈ 0.9988c. Radius and period are larger than the classical value by γ.'}],
+ ['Zero force',function(){set({pk:'proton',ks:50,B:.5,th:0,E:0});return 'v ∥ B: sin θ = 0, so no magnetic force. Straight line.'}]];
+$('pre').innerHTML='';PRE.forEach(function(p){var b=document.createElement('button');b.textContent=p[0];b.onclick=function(){$('note').textContent=p[1]()};$('pre').appendChild(b)});
+document.querySelectorAll('[data-v]').forEach(function(b){b.onclick=function(){var v=b.dataset.v;yaw=v==='3d'?-.5:0;pit=v==='3d'?1:v==='top'?Math.PI/2:0}});
+var drag=null;
+cv.addEventListener('pointerdown',function(e){drag=[e.clientX,e.clientY];cv.setPointerCapture(e.pointerId)});
+cv.addEventListener('pointermove',function(e){if(!drag)return;yaw+=(e.clientX-drag[0])*.008;pit=Math.max(0,Math.min(Math.PI/2,pit+(e.clientY-drag[1])*.008));drag=[e.clientX,e.clientY]});
+cv.addEventListener('pointerup',function(){drag=null});
+var fc=0,lastRev=0,snd=false,ac=null,rows=[];
+function pd(){return g.pk==='custom'?[g.cq,g.cm*1.66053906660e-27]:P[g.pk]}
+function beep(f,d){if(!snd)return;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();var o=ac.createOscillator(),gn=ac.createGain();o.frequency.value=f;gn.gain.setValueAtTime(.05,ac.currentTime);gn.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.connect(gn);gn.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}catch(e){}}
+$('snd').onclick=function(){snd=!snd;this.textContent=snd?'🔊 Sound on':'🔈 Sound off';beep(880,.1)};
+document.querySelectorAll('#tabs button').forEach(function(b){b.onclick=function(){document.querySelectorAll('#tabs button,.tp').forEach(function(x){x.classList.remove('on')});b.classList.add('on');$(b.dataset.t).classList.add('on')}});
+function sol(){
+ var gm=s.gam||s.g0,th=g.th*Math.PI/180,q=Math.abs(s.q),B=g.B,m=s.m,vp=s.v0*Math.sin(th),vl=s.v0*Math.cos(th),e=function(x){return x.toExponential(3)};
+ var ok=q*B>0,r=ok?s.g0*m*vp/(q*B):Infinity,T=ok?s.Tc:Infinity;
+ var dir=(vp<1||!ok)?'No magnetic force at start.':(s.q>0?'−y':'+y')+' at start. RHR: v×B points −y; reversed for negative q.';
+ $('t1').innerHTML=[
+ ['1. Energy → speed','γ = 1 + KE/(mc²) = '+s.g0.toFixed(6)+'; v = c√(1 − 1/γ²) = '+e(s.v0)+' m/s'],
+ ['2. Components','v⊥ = v sinθ = '+e(vp)+' m/s; v∥ = v cosθ = '+e(vl)+' m/s'],
+ ['3. Magnetic force','F = |q| v⊥ B = '+e(q)+' × '+e(vp)+' × '+B+' = '+e(q*vp*B)+' N'],
+ ['4. Radius','r = γ m v⊥ / (|q| B) = '+(ok&&vp>0?e(r)+' m':'∞')],
+ ['5. Period','T = 2π γ m / (|q| B) = '+(ok?e(T)+' s':'∞')+(ok?'; f = 1/T = '+e(1/T)+' Hz':'')],
+ ['6. Pitch','p = v∥ T = '+(ok?e(Math.abs(vl)*T)+' m':'—')+(g.E!==0&&g.ed==='z'?' (E∥B accelerates v∥, so pitch grows)':'')],
+ ['7. Kinetic energy','KE = (γ − 1) m c² = '+e((s.g0-1)*m*C*C/QE)+' eV — unchanged by B alone'],
+ ['8. Drift',B>0?'v_d = |E⊥|/B = '+e(Math.hypot(Evec()[0],Evec()[1])/B)+' m/s':'B = 0, no drift'],
+ ['9. Direction',dir]
+ ].map(function(x){return '<div class="st"><b>'+x[0]+'</b>'+x[1]+'</div>'}).join('');
+}
+var QZ=[
+['The magnetic part of the Lorentz force is:',['F = qE','F = q(v × B)','F = ma'],1,'The full law is F = q(E + v×B); the magnetic term is q v×B.'],
+['The magnetic force is perpendicular to:',['Only v','Only B','Both v and B'],2,'A cross product is perpendicular to both factors.'],
+['If v ∥ B (θ = 0°) the magnetic force is:',['Zero','Maximum','Half of maximum'],0,'F = |q|vB sinθ and sin 0° = 0.'],
+['A charge moving ⊥ to a uniform B traces:',['A straight line','A circle','A parabola'],1,'The force is always ⊥ v with constant size, so it acts as a centripetal force.'],
+['r = γmv/(|q|B) increases when:',['B increases','q increases','v increases'],2,'r ∝ v/B and r ∝ m/|q|.'],
+['The magnetic force on a moving charge does:',['No work','Positive work','Negative work'],0,'F ⊥ v, so F·v = 0 and kinetic energy is constant.'],
+['At low energy the cyclotron period depends on:',['Speed','m, q and B only','Speed only'],1,'T = 2πm/(|q|B), independent of speed, which is why cyclotrons work. At high energy γ makes T grow.'],
+['At 45° to B the path is:',['A circle','A straight line','A helix'],2,'v⊥ circles while v∥ is unchanged.'],
+['Same speed and same B: which has the smaller radius?',['Electron','Proton','Equal'],0,'r ∝ m/|q|; the electron is about 1836× lighter.'],
+['A charge passes straight through crossed E and B when:',['v = E/B','v = B/E','v = EB'],0,'qE = qvB balances the two forces: the velocity selector.'],
+['In crossed E and B the guiding centre drifts at:',['E/B','qE/m','B/E'],0,'v_d = E×B/B², independent of charge and mass.']];
+$('t2').innerHTML=QZ.map(function(z,i){return '<div class="q"><b>'+(i+1)+'. '+z[0]+'</b>'+z[1].map(function(o,j){return '<label><input type="radio" name="q'+i+'" value="'+j+'"> '+o+'</label>'}).join('')+'<div class="ex" id="x'+i+'" style="display:none"></div></div>'}).join('')+'<div class="row"><button class="b" id="qs">Submit</button><button class="b g" id="qr">Reset</button></div><div id="qres" style="margin-top:8px;font-weight:700"></div>';
+$('qs').onclick=function(){var sc2=0;QZ.forEach(function(z,i){var c=document.querySelector('input[name="q'+i+'"]:checked'),x=$('x'+i),good=c&&+c.value===z[2];if(good)sc2++;x.style.display='block';x.className='ex '+(good?'y':'n');x.textContent=(good?'✓ Correct. ':'✗ Answer: '+z[1][z[2]]+'. ')+z[3]});var pc=Math.round(sc2/QZ.length*100);$('qres').textContent='Score '+sc2+'/'+QZ.length+' ('+pc+'%)';beep(pc>=70?880:440,.15)};
+$('qr').onclick=function(){document.querySelectorAll('#t2 input').forEach(function(r){r.checked=false});document.querySelectorAll('.ex').forEach(function(x){x.style.display='none'});$('qres').textContent=''};
+function rn(m,q,v,B){return m*v/Math.sqrt(1-v*v/(C*C))/(q*B)}
+function Tn(m,q,v,B){return 2*Math.PI*m/Math.sqrt(1-v*v/(C*C))/(q*B)}
+var CHL=[['Double the speed → radius',function(m,q,v,B){return rn(m,q,2*v,B)/rn(m,q,v,B)}],['Double B → radius',function(m,q,v,B){return rn(m,q,v,2*B)/rn(m,q,v,B)}],['Double the mass → radius',function(m,q,v,B){return rn(2*m,q,v,B)/rn(m,q,v,B)}],['Double the charge → radius',function(m,q,v,B){return rn(m,2*q,v,B)/rn(m,q,v,B)}],['Double the speed → period',function(m,q,v,B){return Tn(m,q,2*v,B)/Tn(m,q,v,B)}]];
+$('t3').innerHTML='<small>Baseline: proton, 1.38×10⁶ m/s, B = 0.5 T, θ = 90°. Predict the effect, then check against the exact formulas.</small><label>Change</label><select id="cs">'+CHL.map(function(c,i){return '<option value="'+i+'">'+c[0]+'</option>'}).join('')+'</select><label>Your prediction</label><select id="cp"><option value="2">× 2</option><option value="1">× 1 (unchanged)</option><option value="0.5">× ½</option></select><div class="row"><button class="b" id="cc">Check</button><button class="b g" id="cb">Load baseline</button></div><div id="cr" style="margin-top:8px;font-weight:600;font-size:.85rem"></div>';
+$('cc').onclick=function(){var d=P.proton,rt=CHL[+$('cs').value][1](d[1],d[0]*QE,vOf('proton',50),.5),sn=[.5,1,2].reduce(function(a,b){return Math.abs(Math.log(b/rt))<Math.abs(Math.log(a/rt))?b:a}),pr=+$('cp').value;$('cr').textContent='Computed ratio = '+rt.toFixed(4)+' (≈ × '+sn+'). '+(pr===sn?'✓ Correct!':'✗ Not quite — think about r = γmv/(|q|B).');beep(pr===sn?880:440,.12)};
+$('cb').onclick=function(){set({pk:'proton',ks:50,B:.5,th:90,E:0})};
+$('t4').innerHTML='<label>Hypothesis</label><textarea id="hy" placeholder="What do you expect?"></textarea><label>Conclusion</label><textarea id="co" placeholder="What did you observe?"></textarea><label>Measurements</label><textarea id="rc" readonly style="font:11px ui-monospace,monospace;min-height:90px"></textarea><div class="row"><button class="b" id="rp">📄 Build report</button><button class="b g" id="cl">Clear</button></div><label>Report</label><textarea id="rep" readonly style="min-height:130px;font:11px ui-monospace,monospace"></textarea><button class="b" id="cp2" style="margin-top:8px;width:100%">Copy report</button>';
+function tx(k){return $('r_'+k).textContent}
+$('rec').onclick=function(){rows.push((rows.length+1)+' | '+g.pk+' | KE '+si(KE()/QE,'eV',3)+' | B '+g.B+' T | θ '+g.th+'° | E '+g.E+' kV/m '+g.ed+' | r '+tx('r')+' | T '+tx('T')+' | |F| '+tx('F'));$('rc').value=rows.join('\n');$('note').textContent='Measurement '+rows.length+' recorded (see Notebook tab).';beep(660,.06)};
+$('rp').onclick=function(){$('rep').value='LORENTZ FORCE LAB REPORT\n'+new Date().toLocaleString()+'\n\nSETUP\nParticle: '+g.pk+' (q = '+(s.q/QE).toFixed(3)+' e, m = '+s.m.toExponential(4)+' kg)\nKE = '+si(KE()/QE,'eV',4)+', B = '+g.B+' T (+z), θ = '+g.th+'°, E = '+g.E+' kV/m along '+g.ed+'\n\nRESULTS\n'+keys.map(function(k){return k[1]+': '+tx(k[0])}).join('\n')+'\n\nHYPOTHESIS\n'+$('hy').value+'\n\nCONCLUSION\n'+$('co').value+'\n\nMEASUREMENTS\n'+rows.join('\n')+'\n\nLIMITS: classical point particle, uniform static fields, no radiation loss or collisions.'};
+$('cl').onclick=function(){rows=[];['hy','co','rc','rep'].forEach(function(i){$(i).value=''})};
+$('cp2').onclick=function(){var t=$('rep'),b=this;t.select();try{navigator.clipboard.writeText(t.value)}catch(e){try{document.execCommand('copy')}catch(e2){}}b.textContent='Copied ✓';setTimeout(function(){b.textContent='Copy report'},1500)};
+apply();sol();requestAnimationFrame(loop);
+})();
+</script></body></html>

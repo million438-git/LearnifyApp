@@ -60,6 +60,8 @@ public class AdminRegisterActivity extends BaseActivity {
         etConfirmPassword = findViewById(R.id.etAdminConfirmPassword);
         btnRegister = findViewById(R.id.btnAdminRegister);
         tvUsernameFeedback = findViewById(R.id.tvAdminUsernameFeedback);
+        btnRegister.setEnabled(false);
+        btnRegister.setText("PROVISIONING IS SERVER-MANAGED");
         
         etRole.setOnClickListener(v -> {
             Toast.makeText(this, "Default Role: Normal Admin selected.", Toast.LENGTH_SHORT).show();
@@ -143,23 +145,10 @@ public class AdminRegisterActivity extends BaseActivity {
     }
 
     private void handleRegistration() {
-        if (validateInputs()) {
-            String name = etFullName.getText().toString().trim();
-            String uid = etUniqueId.getText().toString().trim();
-            String email = etEmail.getText().toString().trim();
-            String user = etUsername.getText().toString().trim();
-            String pass = etPassword.getText().toString().trim();
-            String role = etRole.getText().toString().trim();
-            String imageUri = adminProfileImage.getTag() != null ? adminProfileImage.getTag().toString() : "";
-
-            if (repository.register(name, uid, role, user, email, pass, imageUri, "ADMIN")) {
-                repository.logSystemAction("Admin", "REGISTER_NEW_ADMIN", "Registered new admin: " + user);
-                Toast.makeText(this, "Admin Registration Successful!", Toast.LENGTH_LONG).show();
-                finish();
-            } else {
-                Toast.makeText(this, "Registration failed. Try again.", Toast.LENGTH_SHORT).show();
-            }
-        }
+        Toast.makeText(
+                this,
+                "Administrator accounts and claims must be provisioned by Learnify security staff.",
+                Toast.LENGTH_LONG).show();
     }
 
     private boolean validateInputs() {

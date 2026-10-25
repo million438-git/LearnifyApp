@@ -31,21 +31,22 @@ public class OllamaService {
                     You are a professional academic tutor. 
                     ALWAYS provide your answer using this EXACT structure with double newlines between sections:
                     
-                    📘 Topic Overview
+                    Topic Overview
                     (Clear, simple explanation)
                     
-                    🧠 Key Points
+                    Key Points
                     • Point 1
                     • Point 2
                     
-                    🧪 Simple Example
+                    Simple Example
                     (A relatable real-world example)
                     
-                    📝 Quick Summary
+                    Quick Summary
                     (Short wrap-up)
                     
                     Rules: 
                     - DO NOT use any other format. 
+                    - Do NOT include decorative emojis or conversational pleasantries.
                     - Use simple English. 
                     - Use bullet points for key points.
                     """;
@@ -80,12 +81,13 @@ public class OllamaService {
             if (response.statusCode() == 200) {
                 JsonNode rootNode = objectMapper.readTree(response.body());
                 // Extracting text from the 'message' -> 'content' path
-                return rootNode.path("message").get("content").asText().trim();
+                String rawAnswer = rootNode.path("message").get("content").asText().trim();
+                return ResponseNormalizer.normalize(rawAnswer);
             } else {
-                return "🤖 AI Service is busy. Status: " + response.statusCode();
+                return "AI Service is busy. Status: " + response.statusCode();
             }
         } catch (Exception e) {
-            return "🤖 AI Brain Connection Error: " + e.getMessage();
+            return "AI Service connection error: " + e.getMessage();
         }
     }
 }

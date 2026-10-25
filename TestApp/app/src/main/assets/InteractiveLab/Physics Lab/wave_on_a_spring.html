@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Physics: Wave on a String Lab</title>
+    <style>
+        :root {
+            --primary: #6366f1; --secondary: #f43f5e; --dark: #0f172a;
+            --surface: #ffffff; --bg: #f1f5f9; --glass: rgba(255,255,255,0.9);
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        html, body { height: 100%; }
+        body { margin: 0; background: var(--bg); color: var(--dark); display: flex; flex-direction: column; overflow: auto; -webkit-font-smoothing:antialiased; }
+
+        /* Layout Sections */
+        header { background: var(--dark); color: white; padding: 10px; text-align: center; border-bottom: 3px solid var(--primary); }
+        .lab-container { display: flex; flex: 1; overflow: auto; flex-direction: column; }
+
+        /* 1. Simulation Area */
+        #sim-area { flex: 2 1 420px; position: relative; background: white; border-bottom: 2px solid #e2e8f0; overflow: auto; cursor: crosshair; min-height:320px; }
+        canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+        .splitter { height: 10px; background: linear-gradient(90deg, rgba(0,0,0,0.03), rgba(0,0,0,0.06)); cursor: ns-resize; display:block; }
+        .splitter:hover { background: linear-gradient(90deg, rgba(0,0,0,0.05), rgba(0,0,0,0.09)); }
+
+        /* 2. Controls & Results Panel */
+        .bottom-panel { flex: 3; display: flex; flex-direction: row; background: var(--surface); overflow-y: auto; }
+        .controls { flex: 0 0 360px; padding: 18px; border-right: 1px solid #e2e8f0; min-width: 300px; }
+        .analysis { flex: 1 1 720px; padding: 18px; background: #fafafa; min-width: 420px; }
+
+        /* UI Elements */
+        .card { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        h4 { margin: 0 0 10px 0; font-size: 0.8rem; color: #64748b; text-transform: uppercase; }
+        .input-row { margin-bottom: 12px; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; }
+        input[type="range"] { width: 100%; accent-color: var(--primary); }
+        select, input[type="number"] { width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; font-family: inherit; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        button { padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit; }
+        .btn-fire { background: var(--primary); color: white; }
+        .btn-fire:hover { background: #4f46e5; }
+        .btn-reset { background: #64748b; color: white; }
+        .btn-reset:hover { background: #475569; }
+
+        /* Overlay HUD */
+        .hud { position: absolute; top: 10px; left: 10px; background: var(--glass); padding: 8px; border-radius: 8px; font-size: 0.75rem; border: 1px solid #ddd; z-index: 20; }
+        .hud * { pointer-events: auto; }
+        .hud .metrics { pointer-events: none; line-height: 1.7; }
+        .zoom-controls { display:flex; gap:6px; margin-top:6px; }
+        .zoom-controls button { padding:6px 8px; border-radius:6px; border:1px solid rgba(0,0,0,0.06); background:white; cursor:pointer; }
+        .vector-legend { position: absolute; bottom: 10px; left: 10px; font-size: 0.65rem; background: var(--glass); padding: 5px; border-radius: 4px; }
+
+        /* Tabs */
+        .tab-btn { padding: 8px 12px; border-radius: 6px; background: #e2e8f0; color: var(--dark); font-weight: 600; font-size: 0.8rem; }
+        .tab-btn:hover { background: #cbd5e1; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* Readouts */
+        .readouts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+        .readout { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; }
+        .readout span { font-size: 0.7rem; color: #64748b; display: block; }
+        .readout strong { font-size: 1rem; color: var(--dark); }
+
+        /* Quiz */
+        .quiz-q { padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+        .quiz-q:last-child { border-bottom: none; }
+        .quiz-q > strong { display: block; margin-bottom: 8px; font-size: 0.9rem; }
+        .quiz-q label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; margin: 3px 6px 3px 0; cursor: pointer; font-weight: 500; }
+        .quiz-q label:hover { background: #eef2ff; border-color: #6366f1; }
+        .q-res { font-size: 0.75rem; font-weight: 700; margin-left: 6px; }
+        .correct { color: #16a34a; }
+        .wrong { color: #dc2626; }
+        .explanation {
+            margin-top: 8px; padding: 10px 12px; border-radius: 6px; font-size: 0.82rem; line-height: 1.55;
+            background: #eef2ff; border-left: 3px solid #6366f1; color: #1e293b;
+        }
+        .explanation.correct-box { background: #ecfdf5; border-left-color: #10b981; }
+        .explanation.wrong-box { background: #fef2f2; border-left-color: #dc2626; }
+        .explanation strong { display: block; margin-bottom: 3px; }
+
+        .quiz-section { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6366f1; margin: 12px 0 6px 0; }
+        .quiz-section:first-child { margin-top: 0; }
+
+        #quiz-result { margin-top: 10px; padding: 12px; border-radius: 8px; background: #eef2ff; border: 1px solid #c7d2fe; font-weight: 700; text-align: center; }
+
+        table.formulas { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 6px; }
+        table.formulas th, table.formulas td { border: 1px solid #e2e8f0; padding: 6px 8px; text-align: left; }
+        table.formulas th { background: #f1f5f9; font-weight: 600; }
+        .eq { font-family: 'JetBrains Mono', ui-monospace, monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.82rem; }
+        .note { font-size: 0.82rem; color: #475569; margin-top: 8px; line-height: 1.5; }
+        .warn { color: #92400e; background: #fef3c7; padding: 8px 10px; border-radius: 6px; border-left: 3px solid #f59e0b; font-size: 0.85rem; margin: 8px 0; }
+
+        textarea { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 0.85rem; min-height: 64px; resize: vertical; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .bottom-panel { flex-direction: column; }
+            .controls { border-right: none; border-bottom: 1px solid #eee; min-width: 0; }
+            .analysis { min-width: 0; }
+            .readouts { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">🌊 Wave on a String Interactive Lab</h2>
+    <small>Explore Frequency, Wavelength, Speed, Standing Waves &amp; Resonance</small>
+</header>
+
+<div class="lab-container">
+    <div id="sim-area">
+        <div class="hud">
+            <b>LIVE METRICS</b><br>
+            <div class="metrics">
+                Time: <span id="hud-t">0.00</span> s<br>
+                Wavelength λ: <span id="hud-l">1.00</span> m<br>
+                Wave speed v: <span id="hud-v">2.00</span> m/s<br>
+                Amplitude A: <span id="hud-a">0.50</span> m
+            </div>
+            <div style="margin-top:6px; font-size:0.75rem;">
+                <label style="display:inline-flex;align-items:center;gap:6px;"><input id="full-scroll-toggle" type="checkbox"> Enable Full Page Scrolling</label>
+            </div>
+        </div>
+        <div class="vector-legend">
+            <span style="color:#6366f1">— Wave</span> | <span style="color:#94a3b8">○ Equilibrium</span> | <span style="color:#f43f5e">● Source</span>
+        </div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div id="splitter" class="splitter" title="Drag to resize simulation area"></div>
+
+    <div class="bottom-panel">
+        <div class="controls">
+            <h4>🧪 Lab Settings</h4>
+
+            <div class="input-row">
+                <label>Wave mode</label>
+                <select id="mode">
+                    <option value="traveling" selected>Traveling wave</option>
+                    <option value="standing">Standing wave (resonance)</option>
+                    <option value="pulse">Single pulse</option>
+                </select>
+            </div>
+
+            <div class="input-row">
+                <label>Frequency (f): <span id="v-f">1.00</span> Hz</label>
+                <input type="range" id="f" min="0.1" max="5" step="0.1" value="1">
+            </div>
+            <div class="input-row">
+                <label>Amplitude (A): <span id="v-a">0.50</span> m</label>
+                <input type="range" id="amp" min="0.1" max="1.5" step="0.05" value="0.5">
+            </div>
+            <div class="input-row">
+                <label>Wave speed (v): <span id="v-s">2.00</span> m/s</label>
+                <input type="range" id="speed" min="0.5" max="6" step="0.1" value="2">
+            </div>
+            <div class="input-row">
+                <label>Animation speed: <span id="v-an">1.0×</span></label>
+                <input type="range" id="anim" min="0" max="2" step="0.1" value="1">
+            </div>
+
+            <div class="btn-grid">
+                <button class="btn-fire" id="btn-play">⏸ Pause</button>
+                <button class="btn-reset" id="btn-reset">↺ Reset</button>
+            </div>
+        </div>
+
+        <div class="analysis">
+            <h4>📊 Learn &amp; Practice</h4>
+
+            <div class="readouts">
+                <div class="readout"><span>Frequency f</span><strong id="ro-f">1.00 Hz</strong></div>
+                <div class="readout"><span>Wavelength λ</span><strong id="ro-l">2.00 m</strong></div>
+                <div class="readout"><span>Wave speed v</span><strong id="ro-v">2.00 m/s</strong></div>
+                <div class="readout"><span>Period T</span><strong id="ro-t">1.00 s</strong></div>
+                <div class="readout"><span>Angular frequency ω</span><strong id="ro-w">6.28 rad/s</strong></div>
+                <div class="readout"><span>Wave number k</span><strong id="ro-k">3.14 rad/m</strong></div>
+            </div>
+
+            <div class="card">
+                <div class="tabs" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                    <button class="tab-btn active" data-tab="formulas">Formulas</button>
+                    <button class="tab-btn" data-tab="quiz">Quiz</button>
+                    <button class="tab-btn" data-tab="challenges">Challenges</button>
+                    <button class="tab-btn" data-tab="notebook">Notebook</button>
+                </div>
+
+                <!-- FORMULAS -->
+                <div id="formulas" class="tab-panel active">
+                    <h3 style="margin:6px 0 8px 0;">Core Formulas — Waves on a String</h3>
+                    <ul style="font-size:0.9rem; line-height:1.6; padding-left:1rem; margin:0;">
+                        <li><b>Wave equation:</b> y(x,t) = A·sin(kx − ωt + φ)</li>
+                        <li><b>Wave speed:</b> v = f·λ = λ/T</li>
+                        <li><b>Angular frequency:</b> ω = 2π·f = 2π/T</li>
+                        <li><b>Wave number:</b> k = 2π/λ</li>
+                        <li><b>Period:</b> T = 1/f</li>
+                        <li><b>String wave speed:</b> v = √(T_ension / μ) where μ = m/L is linear mass density</li>
+                        <li><b>Standing waves (fixed ends):</b> λ_n = 2L/n, f_n = n·v/(2L)</li>
+                        <li><b>Fundamental frequency:</b> f₁ = v/(2L)</li>
+                        <li><b>Wave energy ∝ A²</b> (intensity scales with amplitude squared)</li>
+                    </ul>
+                    <p class="note"><b>💡 Quick tips:</b> Doubling frequency halves wavelength (since v is fixed). For a standing wave, each harmonic has a whole number of half-wavelengths fitting between the fixed ends.</p>
+
+                    <table class="formulas" style="margin-top:12px;">
+                        <tr><th>Quantity</th><th>Formula</th><th>Units</th></tr>
+                        <tr><td>Wave speed</td><td><span class="eq">v = f·λ</span></td><td>m/s</td></tr>
+                        <tr><td>Period</td><td><span class="eq">T = 1/f</span></td><td>s</td></tr>
+                        <tr><td>Wavelength</td><td><span class="eq">λ = v/f</span></td><td>m</td></tr>
+                        <tr><td>Angular frequency</td><td><span class="eq">ω = 2πf</span></td><td>rad/s</td></tr>
+                        <tr><td>Wave number</td><td><span class="eq">k = 2π/λ</span></td><td>rad/m</td></tr>
+                        <tr><td>Standing wave modes</td><td><span class="eq">f_n = n·v/(2L)</span></td><td>Hz</td></tr>
+                    </table>
+                </div>
+
+                <!-- QUIZ -->
+                <div id="quiz" class="tab-panel" style="max-height:600px; overflow:auto;">
+                    <h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+                    <div class="quiz-section">Basic — Wave Properties</div>
+
+                    <div class="quiz-q" data-q="q1" data-answer="B">
+                        <strong>1. The wavelength λ is the distance between:</strong>
+                        <label><input type="radio" name="q1" value="A"> Zero and maximum</label>
+                        <label><input type="radio" name="q1" value="B"> Two consecutive crests (or troughs)</label>
+                        <label><input type="radio" name="q1" value="C"> The two ends of the string</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q2" data-answer="B">
+                        <strong>2. If frequency doubles while wave speed stays constant, wavelength:</strong>
+                        <label><input type="radio" name="q2" value="A"> Doubles</label>
+                        <label><input type="radio" name="q2" value="B"> Halves</label>
+                        <label><input type="radio" name="q2" value="C"> Stays the same</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q3" data-answer="A">
+                        <strong>3. Wave speed v on a string depends on:</strong>
+                        <label><input type="radio" name="q3" value="A"> Tension and linear mass density</label>
+                        <label><input type="radio" name="q3" value="B"> Frequency only</label>
+                        <label><input type="radio" name="q3" value="C"> Amplitude only</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Intermediate — Standing Waves</div>
+
+                    <div class="quiz-q" data-q="q4" data-answer="B">
+                        <strong>4. In a standing wave on a string with fixed ends, the number of antinodes equals:</strong>
+                        <label><input type="radio" name="q4" value="A"> n − 1</label>
+                        <label><input type="radio" name="q4" value="B"> n (the harmonic number)</label>
+                        <label><input type="radio" name="q4" value="C"> 2n</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q5" data-answer="B">
+                        <strong>5. The fundamental frequency of a string of length L (both ends fixed) is:</strong>
+                        <label><input type="radio" name="q5" value="A"> v / L</label>
+                        <label><input type="radio" name="q5" value="B"> v / (2L)</label>
+                        <label><input type="radio" name="q5" value="C"> 2v / L</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q6" data-answer="A">
+                        <strong>6. When you double the frequency on the same string, the wave becomes:</strong>
+                        <label><input type="radio" name="q6" value="A"> The 2nd harmonic (one octave higher)</label>
+                        <label><input type="radio" name="q6" value="B"> The same harmonic</label>
+                        <label><input type="radio" name="q6" value="C"> A traveling wave</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Advanced — Deep Understanding</div>
+
+                    <div class="quiz-q" data-q="q7" data-answer="B">
+                        <strong>7. If you quadruple the tension in a string (μ constant), wave speed:</strong>
+                        <label><input type="radio" name="q7" value="A"> Quadruples</label>
+                        <label><input type="radio" name="q7" value="B"> Doubles</label>
+                        <label><input type="radio" name="q7" value="C"> Halves</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q8" data-answer="A">
+                        <strong>8. Wave energy transported by a string wave is proportional to:</strong>
+                        <label><input type="radio" name="q8" value="A"> Amplitude squared (A²)</label>
+                        <label><input type="radio" name="q8" value="B"> Amplitude (A)</label>
+                        <label><input type="radio" name="q8" value="C"> Wavelength (λ)</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q9" data-answer="B">
+                        <strong>9. The distance between two adjacent nodes in a standing wave is:</strong>
+                        <label><input type="radio" name="q9" value="A"> λ</label>
+                        <label><input type="radio" name="q9" value="B"> λ/2</label>
+                        <label><input type="radio" name="q9" value="C"> λ/4</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="btn-grid" style="margin-top:12px;">
+                        <button class="btn-fire" id="btn-quiz-check">Submit Quiz</button>
+                        <button class="btn-reset" id="btn-quiz-reset">Reset</button>
+                    </div>
+                    <div id="quiz-result" style="display:none;"></div>
+                </div>
+
+                <!-- CHALLENGES -->
+                <div id="challenges" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Interactive Challenges</h3>
+                    <div style="display:flex; flex-direction:column; gap:8px; font-size:0.9rem;">
+                        <div>
+                            <b>Challenge 1 — Standing Wave</b><br>
+                            <button onclick="applyChallenge('standing')">Set standing wave mode</button>
+                        </div>
+                        <div>
+                            <b>Challenge 2 — 2nd Harmonic</b><br>
+                            <button onclick="applyChallenge('harmonic2')">Set 2nd harmonic</button>
+                        </div>
+                        <div>
+                            <b>Challenge 3 — 3rd Harmonic</b><br>
+                            <button onclick="applyChallenge('harmonic3')">Set 3rd harmonic</button>
+                        </div>
+                        <div>
+                            <b>Challenge 4 — Double the Wavelength</b><br>
+                            <button onclick="applyChallenge('doubleWave')">Halve frequency → double λ</button>
+                        </div>
+                        <div>
+                            <b>Challenge 5 — Higher Amplitude Energy</b><br>
+                            <button onclick="applyChallenge('amplitude')">Double amplitude — see energy change</button>
+                        </div>
+                        <div id="challenge-note" style="color:#0f172a; font-size:0.85rem;"></div>
+                        <div id="challenge-result" style="color:#083344; font-weight:600; margin-top:6px;"></div>
+                    </div>
+                </div>
+
+                <!-- NOTEBOOK -->
+                <div id="notebook" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Experiment Notebook</h3>
+                    <label>Prediction / hypothesis</label>
+                    <textarea id="hypothesis" placeholder="What do you expect to happen, and why?"></textarea>
+                    <label style="margin-top:10px; display:block;">Conclusion / evidence</label>
+                    <textarea id="conclusion" placeholder="Explain what your observations show."></textarea>
+                    <label style="margin-top:10px; display:block;">Recorded measurements</label>
+                    <textarea id="records" readonly style="background:#f8fafc; font-family:monospace; font-size:0.75rem; min-height:100px;"></textarea>
+                    <div class="btn-grid" style="margin-top:10px;">
+                        <button class="btn-fire" id="btn-record">📋 Record</button>
+                        <button class="btn-reset" id="btn-clear-notes">Clear</button>
+                    </div>
+                    <button class="btn-fire" style="margin-top:8px; width:100%;" id="btn-export">⬇ Download Report</button>
+                </div>
+
+            </div>
+
+            <div class="card">
+                <b>Energy view:</b> <span id="out-e">0.0</span> J (relative)<br>
+                <small>Energy ∝ A² — doubling amplitude quadruples energy</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+"use strict";
+(() => {
+    // === State ===
+    const S = {
+        mode: 'traveling',
+        f: 1.0,
+        A: 0.5,
+        v: 2.0,
+        animSpeed: 1.0,
+        paused: false,
+        time: 0,
+        records: []
+    };
+
+    const $ = id => document.getElementById(id);
+
+    // === Canvas ===
+    const canvas = $('canvas');
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const view = { x: 0, y: 0, scale: 1 };
+
+    function resizeCanvas() {
+        const w = canvas.clientWidth, h = canvas.clientHeight;
+        canvas.width = Math.max(1, Math.round(w * dpr));
+        canvas.height = Math.max(1, Math.round(h * dpr));
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    const cw = () => canvas.width / dpr;
+    const ch = () => canvas.height / dpr;
+
+    // === Wave drawing ===
+    function drawScene() {
+        const w = cw(), h = ch();
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.save();
+        ctx.translate(view.x, view.y);
+        ctx.scale(view.scale, view.scale);
+
+        const W = w / view.scale;
+        const H = h / view.scale;
+        const midY = H / 2;
+
+        // Grid
+        ctx.strokeStyle = '#f1f5f9';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+        for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+        // Equilibrium line
+        ctx.strokeStyle = '#94a3b8';
+        ctx.setLineDash([6, 4]);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, midY);
+        ctx.lineTo(W, midY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Wave parameters
+        const omega = 2 * Math.PI * S.f;
+        const k = 2 * Math.PI / (S.v / S.f);
+        const ampPixels = Math.min(midY * 0.7, S.A * 100);
+
+        // For standing wave: fit harmonics based on current frequency
+        // Base length matches canvas width; fundamental f1 = v / (2L) where L = W/pixels per meter
+        const L = 4; // meters of string across canvas width
+        const f1 = S.v / (2 * L);
+
+        // Draw wave path
+        ctx.strokeStyle = '#6366f1';
+        ctx.lineWidth = 3;
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+
+        if (S.mode === 'traveling') {
+            for (let px = 0; px <= W; px += 2) {
+                const xM = (px / W) * L;
+                const y = midY - ampPixels * Math.sin(k * xM - omega * S.time);
+                px === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
+            }
+        } else if (S.mode === 'standing') {
+            // Fixed ends: standing wave y = A·sin(kx)·cos(ωt)
+            // k = nπ/L with n = harmonic number
+            // Choose n based on f close to n-th harmonic
+            const targetN = Math.round(S.f / f1);
+            const n = Math.max(1, targetN);
+            for (let px = 0; px <= W; px += 2) {
+                const xM = (px / W) * L;
+                const kk = n * Math.PI / L;
+                const y = midY - ampPixels * Math.sin(kk * xM) * Math.cos(omega * S.time);
+                px === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
+            }
+        } else { // pulse
+            for (let px = 0; px <= W; px += 2) {
+                const xM = (px / W) * L;
+                const center = ((S.time * S.v) % (L * 2)) - L * 0.5;
+                const y = midY - ampPixels * Math.exp(-Math.pow((xM - center) * 2.5, 2)) * Math.cos(k * (xM - center));
+                px === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
+            }
+        }
+        ctx.stroke();
+
+        // Source marker at left end
+        ctx.fillStyle = '#f43f5e';
+        ctx.beginPath();
+        ctx.arc(8, midY, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 8px Inter';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('S', 8, midY);
+        ctx.textBaseline = 'alphabetic';
+
+        // Draw fixed-end walls for standing mode
+        if (S.mode === 'standing') {
+            ctx.fillStyle = '#475569';
+            ctx.fillRect(0, midY - ampPixels - 20, 6, ampPixels * 2 + 40);
+            ctx.fillRect(W - 6, midY - ampPixels - 20, 6, ampPixels * 2 + 40);
+            ctx.fillStyle = '#64748b';
+            ctx.font = 'bold 11px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText('fixed', 20, midY - ampPixels - 30);
+            ctx.fillText('fixed', W - 20, midY - ampPixels - 30);
+        }
+
+        ctx.restore();
+
+        // Caption
+        ctx.fillStyle = '#475569';
+        ctx.font = '11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Schematic view — wave is displayed across a 4 m string segment', w / 2, h - 8);
+    }
+
+    // === Readouts ===
+    function updateReadouts() {
+        const lambda = S.v / S.f;
+        const T = 1 / S.f;
+        const omega = 2 * Math.PI * S.f;
+        const k = 2 * Math.PI / lambda;
+
+        $('ro-f').innerText = S.f.toFixed(2) + ' Hz';
+        $('ro-l').innerText = lambda.toFixed(2) + ' m';
+        $('ro-v').innerText = S.v.toFixed(2) + ' m/s';
+        $('ro-t').innerText = T.toFixed(2) + ' s';
+        $('ro-w').innerText = omega.toFixed(2) + ' rad/s';
+        $('ro-k').innerText = k.toFixed(2) + ' rad/m';
+
+        $('hud-t').innerText = S.time.toFixed(2);
+        $('hud-l').innerText = lambda.toFixed(2);
+        $('hud-v').innerText = S.v.toFixed(2);
+        $('hud-a').innerText = S.A.toFixed(2);
+
+        // Energy ∝ A²
+        $('out-e').innerText = (S.A * S.A * 10).toFixed(2);
+    }
+
+    // === Quiz ===
+    const QUIZ_EXPLAIN = {
+        q1: { correct: 'B', why: 'Wavelength λ is the distance over which the wave repeats — measured between <b>two consecutive crests</b> (or two consecutive troughs, or any two points in phase).', tip: 'λ is the "spatial period" of the wave; T = 1/f is the "temporal period".' },
+        q2: { correct: 'B', why: 'Since <b>v = f·λ</b>, if v stays constant and f doubles, then λ must <b>halve</b>: λ = v/f.', tip: 'Higher pitch (higher f) on a fixed string means shorter waves.' },
+        q3: { correct: 'A', why: 'Wave speed on a string is determined by the medium: <b>v = √(T_ension/μ)</b>. Frequency and amplitude do not change wave speed.', tip: 'Tighter string → faster wave. Heavier (denser) string → slower wave.' },
+        q4: { correct: 'B', why: 'For the n-th harmonic on a string with fixed ends, there are exactly <b>n antinodes</b> and n+1 nodes (the two ends are always nodes).', tip: 'Fundamental (n=1) has 1 antinode in the middle; 2nd harmonic (n=2) has 2 antinodes, etc.' },
+        q5: { correct: 'B', why: 'The fundamental wavelength for a string fixed at both ends is λ₁ = 2L. Since <b>v = f·λ</b>, the fundamental frequency is <b>f₁ = v/(2L)</b>.', tip: 'Think of it as half a wave fitting on the string.' },
+        q6: { correct: 'A', why: 'Doubling frequency doubles the harmonic number. Starting from f₁, 2·f₁ is the <b>2nd harmonic</b> — one octave higher, twice the pitch.', tip: 'f₂ = 2f₁ (octave), f₃ = 3f₁, etc. Each harmonic is n × the fundamental.' },
+        q7: { correct: 'B', why: 'Wave speed v = √(T_ension/μ). Quadrupling tension multiplies the square root by √4 = <b>2</b>, so speed doubles.', tip: 'Speed scales as √T — 4× tension = 2× speed; 9× tension = 3× speed.' },
+        q8: { correct: 'A', why: 'Wave power and energy are proportional to <b>amplitude squared (A²)</b> for a given frequency and medium. Doubling A carries 4× the energy.', tip: 'This is why loud sounds (big A) carry far more energy than quiet ones.' },
+        q9: { correct: 'B', why: 'Adjacent nodes in a standing wave are separated by half a wavelength: <b>λ/2</b>. Node to node = λ/2; node to antinode = λ/4.', tip: 'A full wavelength spans from one node, through 2 antinodes, to the next same-phase node.' }
+    };
+
+    function evaluateQuiz() {
+        const qs = document.querySelectorAll('.quiz-q');
+        let score = 0, total = qs.length;
+
+        qs.forEach(q => {
+            const name = q.dataset.q;
+            const correct = q.dataset.answer;
+            const chosen = q.querySelector(`input[name="${name}"]:checked`);
+            const expl = q.querySelector('.explanation');
+            const data = QUIZ_EXPLAIN[name];
+
+            expl.hidden = false;
+            expl.className = 'explanation';
+
+            if (chosen && chosen.value === correct) {
+                score++;
+                expl.classList.add('correct-box');
+                expl.innerHTML = `<strong>✓ Correct!</strong>${data.why}<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ${data.tip}</div>`;
+            } else {
+                expl.classList.add('wrong-box');
+                const chosenVal = chosen ? chosen.value : '—';
+                expl.innerHTML = `<strong>✗ Not quite — correct answer is ${correct}</strong>You chose ${chosenVal}. ${data.why}<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ${data.tip}</div>`;
+            }
+        });
+
+        const pct = Math.round(score / total * 100);
+        const msg = pct === 100 ? '🌟 Perfect score! Wave master!'
+                  : pct >= 78 ? '🎉 Excellent work!'
+                  : pct >= 55 ? '👍 Good effort! Review the explanations.'
+                  : '💪 Keep exploring — try the Challenges tab!';
+
+        const result = $('quiz-result');
+        result.style.display = 'block';
+        result.innerHTML = `<div style="font-size:1.4rem; color:#4338ca;">${score}/${total} · ${pct}%</div><div style="font-size:0.85rem; color:#334155; margin-top:4px; font-weight:500;">${msg}</div>`;
+    }
+
+    function resetQuiz() {
+        document.querySelectorAll('.quiz-q').forEach(q => {
+            q.querySelectorAll('input[type=radio]').forEach(r => r.checked = false);
+            const expl = q.querySelector('.explanation');
+            expl.hidden = true;
+            expl.innerHTML = '';
+            expl.className = 'explanation';
+        });
+        $('quiz-result').style.display = 'none';
+        $('quiz-result').innerHTML = '';
+    }
+
+    // === Challenges ===
+    function applyChallenge(id) {
+        const note = $('challenge-note');
+        const cres = $('challenge-result');
+        note.innerText = ''; cres.innerText = '';
+
+        if (id === 'standing') {
+            $('mode').value = 'standing';
+            S.mode = 'standing';
+            $('f').value = 0.5;
+            $('v-f').innerText = '0.50';
+            S.f = 0.5;
+            note.innerText = 'Standing wave mode enabled. Frequencies near f_n = n·v/(2L) create visible resonance patterns.';
+            updateReadouts();
+        } else if (id === 'harmonic2') {
+            $('mode').value = 'standing'; S.mode = 'standing';
+            const f1 = S.v / (2 * 4); // L=4
+            const f2 = 2 * f1;
+            $('f').value = f2.toFixed(2);
+            $('v-f').innerText = f2.toFixed(2);
+            S.f = f2;
+            note.innerText = `2nd harmonic: f₂ = 2·f₁ = ${f2.toFixed(2)} Hz. Two antinodes visible.`;
+            updateReadouts();
+        } else if (id === 'harmonic3') {
+            $('mode').value = 'standing'; S.mode = 'standing';
+            const f1 = S.v / (2 * 4);
+            const f3 = 3 * f1;
+            $('f').value = f3.toFixed(2);
+            $('v-f').innerText = f3.toFixed(2);
+            S.f = f3;
+            note.innerText = `3rd harmonic: f₃ = 3·f₁ = ${f3.toFixed(2)} Hz. Three antinodes visible.`;
+            updateReadouts();
+        } else if (id === 'doubleWave') {
+            const newF = S.f / 2;
+            $('f').value = newF.toFixed(2);
+            $('v-f').innerText = newF.toFixed(2);
+            S.f = newF;
+            note.innerText = `Frequency halved → wavelength doubled. λ was ${(S.v / (S.f * 2)).toFixed(2)} m, now ${(S.v / S.f).toFixed(2)} m.`;
+            updateReadouts();
+        } else if (id === 'amplitude') {
+            const newA = Math.min(1.5, S.A * 2);
+            $('amp').value = newA;
+            $('v-a').innerText = newA.toFixed(2);
+            S.A = newA;
+            const oldE = (S.A / 2) * (S.A / 2) * 10;
+            const newE = S.A * S.A * 10;
+            note.innerText = `Amplitude doubled. Energy ∝ A², so it quadrupled: ${oldE.toFixed(1)} → ${newE.toFixed(1)} J (relative).`;
+            cres.innerText = `New amplitude: ${S.A.toFixed(2)} m · New energy: ${newE.toFixed(1)} J`;
+            updateReadouts();
+        }
+    }
+
+    // === Notebook ===
+    function recordMeasurement() {
+        const lambda = S.v / S.f;
+        const T = 1 / S.f;
+        const line = `${new Date().toLocaleTimeString()} | ${S.mode} | f=${S.f.toFixed(2)} Hz | A=${S.A.toFixed(2)} m | v=${S.v.toFixed(2)} m/s | λ=${lambda.toFixed(2)} m | T=${T.toFixed(2)} s`;
+        S.records.push(line);
+        $('records').value = S.records.join('\n');
+        $('records').scrollTop = $('records').scrollHeight;
+    }
+
+    function downloadReport() {
+        const lambda = S.v / S.f;
+        const T = 1 / S.f;
+        const text = `LEARNIFY — WAVE ON A STRING · LAB REPORT
+Date: ${new Date().toLocaleString()}
+
+CURRENT STATE
+Mode: ${S.mode}
+Frequency f = ${S.f.toFixed(3)} Hz
+Amplitude A = ${S.A.toFixed(3)} m
+Wave speed v = ${S.v.toFixed(3)} m/s
+Wavelength λ = ${lambda.toFixed(3)} m
+Period T = ${T.toFixed(3)} s
+Angular frequency ω = ${(2 * Math.PI * S.f).toFixed(3)} rad/s
+Wave number k = ${(2 * Math.PI / lambda).toFixed(3)} rad/m
+
+HYPOTHESIS
+${$('hypothesis').value}
+
+CONCLUSION
+${$('conclusion').value}
+
+MEASUREMENTS
+${$('records').value}
+
+LIMITATIONS
+Idealized wave on a massless elastic string. Real strings have damping, stiffness, and non-ideal boundary conditions. Educational use only.`;
+        const blob = new Blob([text], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'wave-on-string-report.txt';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    // === Animation ===
+    function animate() {
+        if (!S.paused) S.time += 0.016 * S.animSpeed;
+        drawScene();
+        updateReadouts();
+        requestAnimationFrame(animate);
+    }
+
+    // === Events ===
+    $('mode').addEventListener('change', e => { S.mode = e.target.value; });
+    $('f').addEventListener('input', e => {
+        S.f = parseFloat(e.target.value);
+        $('v-f').innerText = S.f.toFixed(2);
+    });
+    $('amp').addEventListener('input', e => {
+        S.A = parseFloat(e.target.value);
+        $('v-a').innerText = S.A.toFixed(2);
+    });
+    $('speed').addEventListener('input', e => {
+        S.v = parseFloat(e.target.value);
+        $('v-s').innerText = S.v.toFixed(2);
+    });
+    $('anim').addEventListener('input', e => {
+        S.animSpeed = parseFloat(e.target.value);
+        $('v-an').innerText = S.animSpeed.toFixed(1) + '×';
+    });
+    $('btn-play').addEventListener('click', () => {
+        S.paused = !S.paused;
+        $('btn-play').innerText = S.paused ? '▶ Play' : '⏸ Pause';
+    });
+    $('btn-reset').addEventListener('click', () => {
+        S.mode = 'traveling'; S.f = 1; S.A = 0.5; S.v = 2; S.animSpeed = 1; S.time = 0; S.paused = false;
+        $('mode').value = 'traveling';
+        $('f').value = '1'; $('v-f').innerText = '1.00';
+        $('amp').value = '0.5'; $('v-a').innerText = '0.50';
+        $('speed').value = '2'; $('v-s').innerText = '2.00';
+        $('anim').value = '1'; $('v-an').innerText = '1.0×';
+        $('btn-play').innerText = '⏸ Pause';
+        updateReadouts();
+    });
+
+    document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn[data-tab]').forEach(b => b.classList.remove('active'));
+            document.getElementById(btn.dataset.tab).classList.add('active');
+            btn.classList.add('active');
+        });
+    });
+
+    $('btn-quiz-check').addEventListener('click', evaluateQuiz);
+    $('btn-quiz-reset').addEventListener('click', resetQuiz);
+
+    $('btn-record').addEventListener('click', recordMeasurement);
+    $('btn-clear-notes').addEventListener('click', () => {
+        if (!confirm('Clear all notebook fields?')) return;
+        $('hypothesis').value = ''; $('conclusion').value = ''; $('records').value = '';
+        S.records = [];
+    });
+    $('btn-export').addEventListener('click', downloadReport);
+
+    // Zoom & pan
+    let fullScroll = false;
+    $('full-scroll-toggle').addEventListener('change', e => {
+        fullScroll = e.target.checked;
+        canvas.style.touchAction = fullScroll ? 'auto' : 'none';
+        pointers.clear(); pinch = null;
+    });
+    const pointers = new Map();
+    let pinch = null;
+    function getPos(e) { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+    canvas.addEventListener('wheel', e => {
+        if (fullScroll) return;
+        e.preventDefault();
+        const cx = e.offsetX, cy = e.offsetY;
+        const wx = (cx - view.x) / view.scale, wy = (cy - view.y) / view.scale;
+        const factor = Math.exp(-e.deltaY * 0.0015);
+        view.scale = Math.max(0.3, Math.min(5, view.scale * factor));
+        view.x = cx - wx * view.scale; view.y = cy - wy * view.scale;
+    }, { passive: false });
+    canvas.addEventListener('pointerdown', e => {
+        if (fullScroll) return;
+        canvas.setPointerCapture(e.pointerId);
+        pointers.set(e.pointerId, getPos(e));
+        if (pointers.size === 2) {
+            const pts = Array.from(pointers.values());
+            pinch = { dist: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y), startScale: view.scale };
+        }
+    });
+    canvas.addEventListener('pointermove', e => {
+        if (fullScroll || !pointers.has(e.pointerId)) return;
+        const prev = pointers.get(e.pointerId);
+        const pos = getPos(e);
+        pointers.set(e.pointerId, pos);
+        if (pointers.size === 1 && !pinch) {
+            view.x += pos.x - prev.x; view.y += pos.y - prev.y;
+        } else if (pointers.size === 2 && pinch) {
+            const pts = Array.from(pointers.values());
+            const d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+            view.scale = Math.max(0.3, Math.min(5, pinch.startScale * d / pinch.dist));
+        }
+    });
+    canvas.addEventListener('pointerup', e => {
+        if (fullScroll) return;
+        pointers.delete(e.pointerId);
+        try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
+        if (pointers.size < 2) pinch = null;
+    });
+    canvas.addEventListener('pointercancel', e => { pointers.delete(e.pointerId); pinch = null; });
+
+    (function () {
+        const hud = document.querySelector('.hud');
+        if (!hud) return;
+        const z = document.createElement('div');
+        z.className = 'zoom-controls';
+        z.innerHTML = '<button id="zoom-out">−</button><button id="zoom-reset">Reset</button><button id="zoom-in">+</button>';
+        hud.appendChild(z);
+        $('zoom-in').addEventListener('click', () => { view.scale = Math.min(5, view.scale * 1.25); });
+        $('zoom-out').addEventListener('click', () => { view.scale = Math.max(0.3, view.scale / 1.25); });
+        $('zoom-reset').addEventListener('click', () => { view.x = 0; view.y = 0; view.scale = 1; });
+    })();
+
+    // Splitter
+    (function () {
+        const sim = $('sim-area'), splitter = $('splitter');
+        if (!sim || !splitter) return;
+        let dragging = false, startY = 0, startH = 0;
+        const minH = 160, maxH = window.innerHeight - 220;
+        splitter.addEventListener('pointerdown', e => {
+            e.preventDefault(); dragging = true; startY = e.clientY;
+            startH = sim.getBoundingClientRect().height;
+            try { splitter.setPointerCapture(e.pointerId); } catch (_) {}
+        });
+        window.addEventListener('pointermove', e => {
+            if (!dragging) return;
+            const dy = e.clientY - startY;
+            const nh = Math.max(minH, Math.min(maxH, Math.round(startH + dy)));
+            sim.style.flex = `0 0 ${nh}px`;
+            resizeCanvas();
+        });
+        window.addEventListener('pointerup', e => {
+            if (!dragging) return;
+            dragging = false;
+            try { splitter.releasePointerCapture(e.pointerId); } catch (_) {}
+        });
+        splitter.addEventListener('dblclick', () => { sim.style.flex = ''; resizeCanvas(); });
+    })();
+
+    window.addEventListener('resize', () => { resizeCanvas(); });
+
+    // === Boot ===
+    resizeCanvas();
+    updateReadouts();
+    animate();
+})();
+</script>
+</body>
+</html>

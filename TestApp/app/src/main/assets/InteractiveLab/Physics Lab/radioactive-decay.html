@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Physics: Radioactive Decay Lab</title>
+    <style>
+        :root {
+            --primary: #6366f1; --secondary: #f43f5e; --dark: #0f172a;
+            --surface: #ffffff; --bg: #f1f5f9; --glass: rgba(255,255,255,0.9);
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        html, body { height: 100%; }
+        body { margin: 0; background: var(--bg); color: var(--dark); display: flex; flex-direction: column; overflow: auto; -webkit-font-smoothing:antialiased; }
+
+        header { background: var(--dark); color: white; padding: 10px; text-align: center; border-bottom: 3px solid var(--primary); }
+        .lab-container { display: flex; flex: 1; overflow: auto; flex-direction: column; }
+
+        #sim-area { flex: 2 1 460px; position: relative; background: white; border-bottom: 2px solid #e2e8f0; overflow: auto; cursor: crosshair; min-height:360px; }
+        canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+        .splitter { height: 10px; background: linear-gradient(90deg, rgba(0,0,0,0.03), rgba(0,0,0,0.06)); cursor: ns-resize; display:block; }
+        .splitter:hover { background: linear-gradient(90deg, rgba(0,0,0,0.05), rgba(0,0,0,0.09)); }
+
+        .bottom-panel { flex: 3; display: flex; flex-direction: row; background: var(--surface); overflow-y: auto; }
+        .controls { flex: 0 0 360px; padding: 18px; border-right: 1px solid #e2e8f0; min-width: 300px; }
+        .analysis { flex: 1 1 720px; padding: 18px; background: #fafafa; min-width: 420px; }
+
+        .card { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        h4 { margin: 0 0 10px 0; font-size: 0.8rem; color: #64748b; text-transform: uppercase; }
+        .input-row { margin-bottom: 12px; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; }
+        input[type="range"] { width: 100%; accent-color: var(--primary); }
+        select, input[type="number"] { width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; font-family: inherit; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        button { padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit; }
+        .btn-fire { background: var(--primary); color: white; }
+        .btn-fire:hover { background: #4f46e5; }
+        .btn-play { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .btn-play:hover { background: linear-gradient(135deg, #059669, #047857); }
+        .btn-reset { background: #64748b; color: white; }
+        .btn-reset:hover { background: #475569; }
+        .btn-sound { background: #10b981; color: white; }
+        .btn-sound:hover { background: #059669; }
+        .btn-sound.playing { background: #ef4444; }
+        .btn-sound.playing:hover { background: #dc2626; }
+
+        .hud { position: absolute; top: 10px; left: 10px; background: var(--glass); padding: 8px; border-radius: 8px; font-size: 0.75rem; border: 1px solid #ddd; z-index: 20; }
+        .hud * { pointer-events: auto; }
+        .hud .metrics { pointer-events: none; line-height: 1.7; }
+        .zoom-controls { display:flex; gap:6px; margin-top:6px; }
+        .zoom-controls button { padding:6px 8px; border-radius:6px; border:1px solid rgba(0,0,0,0.06); background:white; cursor:pointer; }
+        .vector-legend { position: absolute; bottom: 10px; left: 10px; font-size: 0.65rem; background: var(--glass); padding: 5px; border-radius: 4px; }
+
+        .tab-btn { padding: 8px 12px; border-radius: 6px; background: #e2e8f0; color: var(--dark); font-weight: 600; font-size: 0.8rem; }
+        .tab-btn:hover { background: #cbd5e1; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        .readouts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+        .readout { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; }
+        .readout span { font-size: 0.7rem; color: #64748b; display: block; }
+        .readout strong { font-size: 1rem; color: var(--dark); }
+        .readout.big strong { font-size: 1.15rem; color: #4f46e5; }
+
+        .quiz-q { padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+        .quiz-q:last-child { border-bottom: none; }
+        .quiz-q > strong { display: block; margin-bottom: 8px; font-size: 0.9rem; }
+        .quiz-q label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; margin: 3px 6px 3px 0; cursor: pointer; font-weight: 500; }
+        .quiz-q label:hover { background: #eef2ff; border-color: #6366f1; }
+        .explanation {
+            margin-top: 8px; padding: 10px 12px; border-radius: 6px; font-size: 0.82rem; line-height: 1.55;
+            background: #eef2ff; border-left: 3px solid #6366f1; color: #1e293b;
+        }
+        .explanation.correct-box { background: #ecfdf5; border-left-color: #10b981; }
+        .explanation.wrong-box { background: #fef2f2; border-left-color: #dc2626; }
+        .explanation strong { display: block; margin-bottom: 3px; }
+
+        .quiz-section { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6366f1; margin: 12px 0 6px 0; }
+        .quiz-section:first-child { margin-top: 0; }
+
+        #quiz-result { margin-top: 10px; padding: 12px; border-radius: 8px; background: #eef2ff; border: 1px solid #c7d2fe; font-weight: 700; text-align: center; }
+
+        table.formulas { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 6px; }
+        table.formulas th, table.formulas td { border: 1px solid #e2e8f0; padding: 6px 8px; text-align: left; }
+        table.formulas th { background: #f1f5f9; font-weight: 600; }
+        .eq { font-family: 'JetBrains Mono', ui-monospace, monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.82rem; }
+        .note { font-size: 0.82rem; color: #475569; margin-top: 8px; line-height: 1.5; }
+        .sound-hint { background: #fef3c7; border-left: 3px solid #f59e0b; padding: 8px 10px; border-radius: 6px; font-size: 0.82rem; margin-top: 8px; }
+
+        textarea { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 0.85rem; min-height: 64px; resize: vertical; }
+
+        @media (max-width: 768px) {
+            .bottom-panel { flex-direction: column; }
+            .controls { border-right: none; border-bottom: 1px solid #eee; min-width: 0; }
+            .analysis { min-width: 0; }
+            .readouts { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">☢️ Radioactive Decay Interactive Lab</h2>
+    <small>Half-Life · Exponential Decay · Activity · Real Isotopes</small>
+</header>
+
+<div class="lab-container">
+    <div id="sim-area">
+        <div class="hud">
+            <b>LIVE STATE</b><br>
+            <div class="metrics">
+                Isotope: <span id="hud-iso">C-14</span><br>
+                t: <span id="hud-t">0.0</span> yr<br>
+                N/N₀: <span id="hud-ratio">1.000</span><br>
+                Activity: <span id="hud-A">100.0</span>%
+            </div>
+            <div style="margin-top:6px; font-size:0.75rem;">
+                <label style="display:inline-flex;align-items:center;gap:6px;"><input id="full-scroll-toggle" type="checkbox"> Enable Full Page Scrolling</label>
+            </div>
+        </div>
+        <div class="vector-legend">
+            <span style="color:#f43f5e">● Parent nuclei</span> | <span style="color:#10b981">● Decayed (daughter)</span> | <span style="color:#6366f1">● Decay event</span>
+        </div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div id="splitter" class="splitter" title="Drag to resize simulation area"></div>
+
+    <div class="bottom-panel">
+        <div class="controls">
+            <h4>🧪 Lab Settings</h4>
+
+            <div class="input-row">
+                <button class="btn-sound" id="btn-sound" style="width:100%;">🔈 Enable Geiger clicks</button>
+                <div class="sound-hint" id="sound-hint">Real Geiger counter clicks while decay runs.</div>
+            </div>
+
+            <div class="input-row">
+                <label>Isotope</label>
+                <select id="isotope">
+                    <option value="C14" selected>C-14 (5730 yr) — archaeology</option>
+                    <option value="U238">U-238 (4.47 Gyr) — uranium</option>
+                    <option value="K40">K-40 (1.25 Gyr) — geology</option>
+                    <option value="I131">I-131 (8.02 days) — medical</option>
+                    <option value="Rn222">Rn-222 (3.82 days) — radon gas</option>
+                    <option value="Tc99m">Tc-99m (6.0 hr) — medical imaging</option>
+                    <option value="F18">F-18 (109.7 min) — PET scan</option>
+                    <option value="Ra226">Ra-226 (1600 yr) — historical</option>
+                </select>
+            </div>
+
+            <div class="input-row">
+                <label>Initial nuclei N₀: <span id="v-N0">200</span></label>
+                <input type="range" id="N0" min="20" max="500" step="10" value="200">
+            </div>
+
+            <div class="input-row">
+                <label>Simulation speed: <span id="v-speed">1.0</span>×</label>
+                <input type="range" id="speed" min="0.1" max="10" step="0.1" value="1">
+            </div>
+
+            <div class="input-row">
+                <label style="display:inline-flex;align-items:center;gap:6px;">
+                    <input type="checkbox" id="geiger-toggle" checked> Geiger counter clicks
+                </label>
+            </div>
+
+            <div class="input-row">
+                <label style="display:inline-flex;align-items:center;gap:6px;">
+                    <input type="checkbox" id="stats-toggle" checked> Show statistics
+                </label>
+            </div>
+
+            <div class="btn-grid">
+                <button class="btn-play" id="btn-start">▶ Start decay</button>
+                <button class="btn-reset" id="btn-reset">↺ Reset</button>
+            </div>
+        </div>
+
+        <div class="analysis">
+            <h4>📊 Learn &amp; Practice</h4>
+
+            <div class="readouts">
+                <div class="readout big"><span>Remaining N / N₀</span><strong id="ro-n">200 / 200</strong></div>
+                <div class="readout big"><span>Fraction remaining</span><strong id="ro-frac">100.0%</strong></div>
+                <div class="readout"><span>Half-life T½</span><strong id="ro-hl">5730 yr</strong></div>
+                <div class="readout"><span>Elapsed time t</span><strong id="ro-t">0.0 yr</strong></div>
+                <div class="readout"><span>Number of half-lives</span><strong id="ro-nhl">0.00</strong></div>
+                <div class="readout"><span>Decay constant λ</span><strong id="ro-lambda">1.21×10⁻⁴ /yr</strong></div>
+                <div class="readout"><span>Decayed nuclei</span><strong id="ro-d">0</strong></div>
+                <div class="readout"><span>Activity A</span><strong id="ro-A">100.0%</strong></div>
+                <div class="readout"><span>Time to 50%</span><strong id="ro-t50">5730 yr</strong></div>
+                <div class="readout"><span>Time to 1%</span><strong id="ro-t1">38072 yr</strong></div>
+            </div>
+
+            <div class="card">
+                <div class="tabs" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                    <button class="tab-btn active" data-tab="formulas">Formulas</button>
+                    <button class="tab-btn" data-tab="quiz">Quiz</button>
+                    <button class="tab-btn" data-tab="challenges">Challenges</button>
+                    <button class="tab-btn" data-tab="notebook">Notebook</button>
+                </div>
+
+                <!-- FORMULAS -->
+                <div id="formulas" class="tab-panel active">
+                    <h3 style="margin:6px 0 8px 0;">Core Formulas — Radioactive Decay</h3>
+                    <ul style="font-size:0.9rem; line-height:1.6; padding-left:1rem; margin:0;">
+                        <li><b>Decay law:</b> N(t) = N₀ · e<sup>−λt</sup></li>
+                        <li><b>Half-life relation:</b> T½ = ln(2) / λ ≈ 0.693 / λ</li>
+                        <li><b>Decay constant:</b> λ = ln(2) / T½</li>
+                        <li><b>Number of half-lives:</b> n = t / T½</li>
+                        <li><b>Alternative form:</b> N(t) = N₀ · (½)<sup>t/T½</sup></li>
+                        <li><b>Activity:</b> A(t) = λ · N(t)</li>
+                        <li><b>Activity ratio:</b> A/A₀ = N/N₀ = e<sup>−λt</sup></li>
+                        <li><b>Mean lifetime:</b> τ = 1/λ = T½ / ln(2) ≈ 1.443 · T½</li>
+                    </ul>
+                    <p class="note"><b>💡 Quick tips:</b> After 1 half-life, 50% remains. After 2 half-lives, 25%. After 10 half-lives, only 0.1%. Radioactive decay is a <b>random</b> process — we can only predict averages. Each individual nucleus is equally likely to decay per unit time, but we cannot predict which one or when. Geiger counters click when they detect individual decay events — a real random signature of quantum physics.</p>
+
+                    <table class="formulas" style="margin-top:12px;">
+                        <tr><th>Quantity</th><th>Formula</th><th>Units</th></tr>
+                        <tr><td>Decay law</td><td><span class="eq">N(t) = N₀e<sup>−λt</sup></span></td><td>nuclei</td></tr>
+                        <tr><td>Half-life</td><td><span class="eq">T½ = ln2 / λ</span></td><td>s, yr</td></tr>
+                        <tr><td>Activity</td><td><span class="eq">A = λN</span></td><td>Bq (decays/s)</td></tr>
+                        <tr><td>Mean lifetime</td><td><span class="eq">τ = 1/λ</span></td><td>s, yr</td></tr>
+                    </table>
+                </div>
+
+                <!-- QUIZ -->
+                <div id="quiz" class="tab-panel" style="max-height:600px; overflow:auto;">
+                    <h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+                    <div class="quiz-section">Basic — Radioactivity</div>
+
+                    <div class="quiz-q" data-q="q1" data-answer="B">
+                        <strong>1. Radioactive decay is a ______ process:</strong>
+                        <label><input type="radio" name="q1" value="A"> Deterministic</label>
+                        <label><input type="radio" name="q1" value="B"> Random (probabilistic)</label>
+                        <label><input type="radio" name="q1" value="C"> Reversible</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q2" data-answer="B">
+                        <strong>2. After one half-life, the fraction of parent nuclei remaining is:</strong>
+                        <label><input type="radio" name="q2" value="A"> 0%</label>
+                        <label><input type="radio" name="q2" value="B"> 50%</label>
+                        <label><input type="radio" name="q2" value="C"> 100%</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q3" data-answer="A">
+                        <strong>3. Half-life is defined as the time for:</strong>
+                        <label><input type="radio" name="q3" value="A"> Half the nuclei to decay</label>
+                        <label><input type="radio" name="q3" value="B"> All nuclei to decay</label>
+                        <label><input type="radio" name="q3" value="C"> The sample to cool down</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Intermediate — Calculations</div>
+
+                    <div class="quiz-q" data-q="q4" data-answer="B">
+                        <strong>4. After 3 half-lives, the fraction remaining is:</strong>
+                        <label><input type="radio" name="q4" value="A"> 50%</label>
+                        <label><input type="radio" name="q4" value="B"> 12.5%</label>
+                        <label><input type="radio" name="q4" value="C"> 25%</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q5" data-answer="A">
+                        <strong>5. Carbon-14 has a half-life of 5730 years. If a wooden sample has 25% of its original C-14, the sample is:</strong>
+                        <label><input type="radio" name="q5" value="A"> About 11,460 years old</label>
+                        <label><input type="radio" name="q5" value="B"> About 5,730 years old</label>
+                        <label><input type="radio" name="q5" value="C"> About 2865 years old</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q6" data-answer="A">
+                        <strong>6. The decay constant λ and half-life T½ are related by:</strong>
+                        <label><input type="radio" name="q6" value="A"> λ = ln(2) / T½</label>
+                        <label><input type="radio" name="q6" value="B"> λ = T½ / ln(2)</label>
+                        <label><input type="radio" name="q6" value="C"> λ = 2 / T½</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Advanced — Deep Understanding</div>
+
+                    <div class="quiz-q" data-q="q7" data-answer="B">
+                        <strong>7. A radioactive sample's activity is:</strong>
+                        <label><input type="radio" name="q7" value="A"> Constant forever</label>
+                        <label><input type="radio" name="q7" value="B"> Proportional to the number of remaining parent nuclei</label>
+                        <label><input type="radio" name="q7" value="C"> Proportional to elapsed time</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q8" data-answer="B">
+                        <strong>8. After 10 half-lives, what fraction of parent nuclei remains?</strong>
+                        <label><input type="radio" name="q8" value="A"> 10%</label>
+                        <label><input type="radio" name="q8" value="B"> ≈ 0.1%</label>
+                        <label><input type="radio" name="q8" value="C"> 1%</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q9" data-answer="A">
+                        <strong>9. A Geiger counter clicks randomly because:</strong>
+                        <label><input type="radio" name="q9" value="A"> Each nuclear decay is a discrete quantum-random event</label>
+                        <label><input type="radio" name="q9" value="B"> The detector is faulty</label>
+                        <label><input type="radio" name="q9" value="C"> Radioactivity varies with weather</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="btn-grid" style="margin-top:12px;">
+                        <button class="btn-fire" id="btn-quiz-check">Submit Quiz</button>
+                        <button class="btn-reset" id="btn-quiz-reset">Reset</button>
+                    </div>
+                    <div id="quiz-result" style="display:none;"></div>
+                </div>
+
+                <!-- CHALLENGES -->
+                <div id="challenges" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Interactive Challenges</h3>
+                    <div style="display:flex; flex-direction:column; gap:8px; font-size:0.9rem;">
+                        <div>
+                            <b>Challenge 1 — C-14 dating</b><br>
+                            <button class="btn-fire" data-challenge="c14">C-14: watch 5730-year half-life</button>
+                        </div>
+                        <div>
+                            <b>Challenge 2 — Medical isotope</b><br>
+                            <button class="btn-fire" data-challenge="tc99m">Tc-99m: 6-hour half-life</button>
+                        </div>
+                        <div>
+                            <b>Challenge 3 — Fast decay</b><br>
+                            <button class="btn-fire" data-challenge="f18">F-18 (PET): 110 min</button>
+                        </div>
+                        <div>
+                            <b>Challenge 4 — Very slow</b><br>
+                            <button class="btn-fire" data-challenge="u238">U-238: 4.5 Gyr half-life</button>
+                        </div>
+                        <div>
+                            <b>Challenge 5 — Compare 1 vs 10 half-lives</b><br>
+                            <button class="btn-fire" data-challenge="compare">Show decay curve after 10 half-lives</button>
+                        </div>
+                        <div id="challenge-note" style="color:#0f172a; font-size:0.85rem;"></div>
+                        <div id="challenge-result" style="color:#083344; font-weight:600; margin-top:6px;"></div>
+                    </div>
+                </div>
+
+                <!-- NOTEBOOK -->
+                <div id="notebook" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Experiment Notebook</h3>
+                    <label>Prediction / hypothesis</label>
+                    <textarea id="hypothesis" placeholder="What do you expect to happen, and why?"></textarea>
+                    <label style="margin-top:10px; display:block;">Conclusion / evidence</label>
+                    <textarea id="conclusion" placeholder="Explain what your observations show."></textarea>
+                    <label style="margin-top:10px; display:block;">Recorded measurements</label>
+                    <textarea id="records" readonly style="background:#f8fafc; font-family:monospace; font-size:0.75rem; min-height:100px;"></textarea>
+                    <div class="btn-grid" style="margin-top:10px;">
+                        <button class="btn-fire" id="btn-export">⬇ Download Report</button>
+                        <button class="btn-reset" id="btn-clear-notes">Clear</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <b>Real-world fact:</b> <span id="fact-box" style="font-size:0.85rem;">—</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+"use strict";
+(function () {
+    // === Real isotope data ===
+    // half-life in years (converted for short-lived ones)
+    var YEAR = 365.25 * 24 * 3600; // seconds
+    var ISOTOPES = {
+        C14:   { name: 'Carbon-14',  halfLife: 5730,       unit: 'yr',  symbol: '¹⁴C',  color: '#f43f5e', fact: 'C-14 is used in radiocarbon dating of organic matter. Living things constantly replenish C-14; after death it decays with T½ = 5730 years.' },
+        U238:  { name: 'Uranium-238',halfLife: 4.468e9,    unit: 'yr',  symbol: '²³⁸U', color: '#94a3b8', fact: 'U-238 has a half-life of 4.5 billion years — roughly the age of Earth. It is used in geological dating and as nuclear fuel.' },
+        K40:   { name: 'Potassium-40',halfLife: 1.248e9,   unit: 'yr',  symbol: '⁴⁰K',  color: '#8b5cf6', fact: 'K-40 (T½ = 1.25 Gyr) is used in K-Ar dating of rocks. It decays to Ar-40, which is trapped in volcanic rocks.' },
+        I131:  { name: 'Iodine-131',  halfLife: 8.02 / 365.25, unit: 'yr', symbol: '¹³¹I', color: '#fbbf24', fact: 'I-131 (T½ = 8.02 days) is used to treat thyroid cancer. It concentrates in the thyroid and its beta radiation kills tumor cells.' },
+        Rn222: { name: 'Radon-222',   halfLife: 3.823 / 365.25, unit: 'yr', symbol: '²²²Rn', color: '#10b981', fact: 'Radon (T½ = 3.82 days) is a radioactive gas that seeps from soil. It is the second leading cause of lung cancer after smoking.' },
+        Tc99m: { name: 'Technetium-99m', halfLife: 6.0 / (365.25 * 24), unit: 'yr', symbol: '⁹⁹ᵐTc', color: '#06b6d4', fact: 'Tc-99m (T½ = 6 hours) is the most-used medical isotope. It emits a gamma ray and clears from the body in hours — perfect for imaging.' },
+        F18:   { name: 'Fluorine-18',  halfLife: 109.7 / (365.25 * 24 * 60), unit: 'yr', symbol: '¹⁸F', color: '#ec4899', fact: 'F-18 (T½ = 110 min) is used in PET scans. It is attached to glucose (FDG) and lights up metabolically active tumors.' },
+        Ra226: { name: 'Radium-226',  halfLife: 1600,       unit: 'yr',  symbol: '²²⁶Ra', color: '#a78bfa', fact: 'Ra-226 (T½ = 1600 yr) was discovered by Marie and Pierre Curie. It glows faintly because its radiation excites the surrounding air.' }
+    };
+
+    // === State ===
+    var S = {
+        isotope: 'C14',
+        N0: 200,
+        speed: 1.0,
+        running: false,
+        time: 0,
+        remaining: 200,    // current N
+        decayed: 0,
+        nuclei: [],        // particles: {decayed: bool}
+        history: [],       // {t, frac}
+        lastGeigerClick: 0,
+        soundOn: false,
+        showStats: true,
+        decayParticles: [], // pulses for animation
+        records: []
+    };
+
+    var $ = function (id) { return document.getElementById(id); };
+
+    // === Canvas ===
+    var canvas = $('canvas');
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var view = { x: 0, y: 0, scale: 1 };
+
+    function resizeCanvas() {
+        var w = canvas.clientWidth, h = canvas.clientHeight;
+        canvas.width = Math.max(1, Math.round(w * dpr));
+        canvas.height = Math.max(1, Math.round(h * dpr));
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function cw() { return canvas.width / dpr; }
+    function ch() { return canvas.height / dpr; }
+
+    // === Web Audio (Geiger clicks) ===
+    var audioCtx = null;
+    function initAudio() {
+        if (audioCtx) return;
+        try {
+            var AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) { $('sound-hint').textContent = '⚠ No Web Audio support.'; return; }
+            audioCtx = new AC();
+        } catch (e) { $('sound-hint').textContent = '⚠ Audio init failed.'; }
+    }
+    function geigerClick() {
+        if (!audioCtx || !S.soundOn) return;
+        try {
+            var o = audioCtx.createOscillator();
+            var g = audioCtx.createGain();
+            // Short sharp click - characteristic Geiger sound
+            o.type = 'square';
+            o.frequency.setValueAtTime(1500 + Math.random() * 500, audioCtx.currentTime);
+            o.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.02);
+            g.gain.setValueAtTime(0.06, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
+            o.connect(g);
+            g.connect(audioCtx.destination);
+            o.start();
+            o.stop(audioCtx.currentTime + 0.03);
+        } catch (e) {}
+    }
+    function beep(freq, dur, type, vol) {
+        if (!audioCtx || !S.soundOn) return;
+        try {
+            var o = audioCtx.createOscillator();
+            var g = audioCtx.createGain();
+            o.type = type || 'sine';
+            o.frequency.value = freq;
+            g.gain.setValueAtTime(vol || 0.08, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+            o.connect(g);
+            g.connect(audioCtx.destination);
+            o.start();
+            o.stop(audioCtx.currentTime + dur);
+        } catch (e) {}
+    }
+    function toggleSound() {
+        initAudio();
+        if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        S.soundOn = !S.soundOn;
+        if (S.soundOn) {
+            $('btn-sound').textContent = '🔊 Geiger ON';
+            $('btn-sound').classList.add('playing');
+            $('sound-hint').textContent = 'Real Geiger counter clicks each decay.';
+            geigerClick();
+        } else {
+            $('btn-sound').textContent = '🔈 Enable Geiger clicks';
+            $('btn-sound').classList.remove('playing');
+            $('sound-hint').textContent = 'Sound disabled.';
+        }
+    }
+
+    // === Physics ===
+    function getIsotope() { return ISOTOPES[S.isotope]; }
+    function getHalfLife() { return getIsotope().halfLife; }
+    function getLambda() { return Math.log(2) / getHalfLife(); }
+    function getFraction() { return Math.exp(-getLambda() * S.time); }
+
+    // === Nuclei layout (grid) ===
+    function initNuclei() {
+        S.nuclei = [];
+        var n = S.N0;
+        for (var i = 0; i < n; i++) {
+            S.nuclei.push({ decayed: false, pulse: 0 });
+        }
+        S.remaining = n;
+        S.decayed = 0;
+    }
+
+    // === Drawing ===
+    function drawScene() {
+        var w = cw(), h = ch();
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.save();
+        ctx.translate(view.x, view.y);
+        ctx.scale(view.scale, view.scale);
+        var W = w / view.scale, H = h / view.scale;
+
+        ctx.strokeStyle = '#f1f5f9';
+        ctx.lineWidth = 1;
+        for (var gx = 0; gx < W; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
+        for (var gy = 0; gy < H; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+
+        // Sample container area (top-left)
+        drawSampleBox(W * 0.32, H * 0.28, W * 0.24, H * 0.42);
+
+        // Graph area (right)
+        drawGraph(W * 0.62, H * 0.12, W * 0.34, H * 0.5);
+
+        // Legend
+        drawLegend(W * 0.62, H * 0.7);
+
+        // Isotope label
+        var iso = getIsotope();
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 14px Inter';
+        ctx.textAlign = 'left';
+        ctx.fillText(iso.symbol + ' ' + iso.name, 20, 28);
+        ctx.font = '11px Inter';
+        ctx.fillStyle = '#64748b';
+        ctx.fillText('Half-life T½ = ' + formatTime(iso.halfLife, iso.unit), 20, 46);
+        ctx.fillText('λ = ' + getLambda().toExponential(3) + ' /yr', 20, 62);
+
+        ctx.restore();
+
+        ctx.fillStyle = '#475569';
+        ctx.font = '11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Each dot = one nucleus · red = parent · green = daughter · clicks = real random decays', w / 2, h - 8);
+    }
+
+    function drawSampleBox(x, y, w, h) {
+        // Container outline
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        ctx.strokeRect(x, y, w, h);
+        ctx.setLineDash([]);
+
+        // Grid of nuclei
+        var cols = Math.ceil(Math.sqrt(S.nuclei.length * (w / h)));
+        var rows = Math.ceil(S.nuclei.length / cols);
+        var cellW = w / cols;
+        var cellH = h / rows;
+        var r = Math.min(cellW, cellH) * 0.32;
+
+        for (var i = 0; i < S.nuclei.length; i++) {
+            var nuc = S.nuclei[i];
+            var col = i % cols;
+            var row = Math.floor(i / cols);
+            var cx = x + col * cellW + cellW / 2;
+            var cy = y + row * cellH + cellH / 2;
+
+            if (nuc.decayed) {
+                ctx.fillStyle = 'rgba(16, 185, 129, 0.5)';
+                ctx.beginPath();
+                ctx.arc(cx, cy, r * 0.7, 0, Math.PI * 2);
+                ctx.fill();
+            } else {
+                ctx.fillStyle = '#f43f5e';
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Pulse animation when just decayed
+            if (nuc.pulse > 0) {
+                var pulseR = r * (1 + nuc.pulse * 3);
+                var alpha = nuc.pulse;
+                ctx.strokeStyle = 'rgba(99, 102, 241, ' + alpha + ')';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(cx, cy, pulseR, 0, Math.PI * 2);
+                ctx.stroke();
+                nuc.pulse -= 0.03;
+                if (nuc.pulse < 0) nuc.pulse = 0;
+            }
+        }
+
+        // Sample label
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 12px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Sample (' + S.remaining + ' parent left)', x + w / 2, y - 10);
+    }
+
+    function drawGraph(x, y, w, h) {
+        // Graph background
+        ctx.fillStyle = '#f8fafc';
+        ctx.fillRect(x, y, w, h);
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x, y, w, h);
+
+        // Axes
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x, y + h);
+        ctx.lineTo(x + w, y + h);
+        ctx.stroke();
+
+        // Grid
+        var halfLives = 8; // show up to 8 half-lives
+        ctx.strokeStyle = '#e2e8f0';
+        for (var i = 0; i <= 4; i++) {
+            var py = y + (i / 4) * h;
+            ctx.beginPath();
+            ctx.moveTo(x, py);
+            ctx.lineTo(x + w, py);
+            ctx.stroke();
+            ctx.fillStyle = '#64748b';
+            ctx.font = '9px Inter';
+            ctx.textAlign = 'right';
+            ctx.fillText((100 - i * 25) + '%', x - 4, py + 3);
+        }
+        for (var j = 0; j <= halfLives; j++) {
+            var px = x + (j / halfLives) * w;
+            ctx.beginPath();
+            ctx.moveTo(px, y);
+            ctx.lineTo(px, y + h);
+            ctx.stroke();
+            ctx.fillStyle = '#64748b';
+            ctx.font = '9px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText(j + 'T½', px, y + h + 12);
+        }
+
+        // Theoretical decay curve (dashed blue)
+        ctx.strokeStyle = 'rgba(99, 102, 241, 0.4)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        for (var k = 0; k <= 100; k++) {
+            var tFrac = (k / 100) * halfLives;
+            var N = Math.pow(0.5, tFrac);
+            var px2 = x + (tFrac / halfLives) * w;
+            var py2 = y + h - N * h;
+            if (k === 0) ctx.moveTo(px2, py2);
+            else ctx.lineTo(px2, py2);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Current point
+        var currentHalfLives = S.time / getHalfLife();
+        var currentFrac = getFraction();
+        if (currentHalfLives <= halfLives) {
+            var curX = x + (currentHalfLives / halfLives) * w;
+            var curY = y + h - currentFrac * h;
+            ctx.fillStyle = '#dc2626';
+            ctx.beginPath();
+            ctx.arc(curX, curY, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        // Axis labels
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Half-lives elapsed', x + w / 2, y + h + 26);
+        ctx.save();
+        ctx.translate(x - 28, y + h / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText('Fraction remaining', 0, 0);
+        ctx.restore();
+
+        // Title
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 12px Inter';
+        ctx.textAlign = 'left';
+        ctx.fillText('Decay curve N/N₀ vs t/T½', x, y - 8);
+    }
+
+    function drawLegend(x, y) {
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 11px Inter';
+        ctx.textAlign = 'left';
+        ctx.fillText('Legend', x, y);
+        ctx.fillStyle = '#f43f5e';
+        ctx.beginPath();
+        ctx.arc(x + 8, y + 18, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#334155';
+        ctx.font = '10px Inter';
+        ctx.fillText('Parent nucleus (undecayed)', x + 22, y + 21);
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.7)';
+        ctx.beginPath();
+        ctx.arc(x + 8, y + 36, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#334155';
+        ctx.fillText('Daughter nucleus (decayed)', x + 22, y + 39);
+    }
+
+    // === Readouts ===
+    function formatTime(t, unit) {
+        // t is in the isotope's unit (from halfLife data)
+        // Convert to readable string
+        if (unit === 'yr') {
+            if (t >= 1e9) return (t / 1e9).toFixed(2) + ' Gyr';
+            if (t >= 1e6) return (t / 1e6).toFixed(2) + ' Myr';
+            if (t >= 1000) return t.toFixed(0) + ' yr';
+            if (t >= 1) return t.toFixed(2) + ' yr';
+            if (t >= 1 / 365.25) return (t * 365.25).toFixed(1) + ' d';
+            return (t * 365.25 * 24).toFixed(2) + ' hr';
+        }
+        return t + ' ' + unit;
+    }
+    function updateReadouts() {
+        var iso = getIsotope();
+        var frac = getFraction();
+        var halfLives = S.time / getHalfLife();
+        var lambda = getLambda();
+        var t50 = getHalfLife();
+        var t1 = Math.log(100) / lambda;
+        var A = frac * 100;
+
+        $('ro-n').innerText = S.remaining + ' / ' + S.N0;
+        $('ro-frac').innerText = (frac * 100).toFixed(2) + '%';
+        $('ro-hl').innerText = formatTime(getHalfLife(), iso.unit);
+        $('ro-t').innerText = formatTime(S.time, iso.unit);
+        $('ro-nhl').innerText = halfLives.toFixed(3);
+        $('ro-lambda').innerText = lambda.toExponential(3) + ' /' + iso.unit;
+        $('ro-d').innerText = S.decayed;
+        $('ro-A').innerText = A.toFixed(2) + '%';
+        $('ro-t50').innerText = formatTime(t50, iso.unit);
+        $('ro-t1').innerText = formatTime(t1, iso.unit);
+
+        $('hud-iso').innerText = iso.name;
+        $('hud-t').innerText = formatTime(S.time, iso.unit);
+        $('hud-ratio').innerText = frac.toFixed(3);
+        $('hud-A').innerText = A.toFixed(1);
+
+        // Fact
+        var fact = iso.fact;
+        var factBox = $('fact-box');
+        if (S.running) {
+            if (halfLives < 1) {
+                factBox.innerText = fact + ' · currently at ' + halfLives.toFixed(2) + ' half-lives, ' + (frac * 100).toFixed(1) + '% remaining.';
+            } else {
+                factBox.innerText = fact + ' · ' + halfLives.toFixed(2) + ' half-lives elapsed — ' + (frac * 100).toFixed(2) + '% of parent nuclei remain.';
+            }
+        } else {
+            factBox.innerText = fact;
+        }
+    }
+
+    // === Quiz ===
+    var QUIZ_EXPLAIN = {
+        q1: { correct: 'B', why: 'Radioactive decay is <b>probabilistic</b> — for a single nucleus, you cannot predict when it will decay. Only the <i>average</i> behavior of many nuclei follows the exponential decay law.', tip: 'This is why the decay curve is smooth for millions of atoms but random for any single one.' },
+        q2: { correct: 'B', why: 'By definition, after one half-life, <b>exactly half</b> of the parent nuclei have decayed. So 50% remain.', tip: 'After 2 half-lives: 25%. After 3: 12.5%. After n: (1/2)ⁿ.' },
+        q3: { correct: 'A', why: 'Half-life is <b>the time for half the nuclei to decay</b> — a physical constant for each isotope. It does not depend on N₀, temperature, or chemistry.', tip: 'Half-life is unique to each isotope — it cannot be changed.' },
+        q4: { correct: 'B', why: 'After 3 half-lives: (1/2)³ = <b>1/8 = 12.5%</b> remaining.', tip: '1 T½: 50%, 2 T½: 25%, 3 T½: 12.5%, 4 T½: 6.25%.' },
+        q5: { correct: 'A', why: '25% = 1/4 of the original, so 2 half-lives have passed. 2 × 5730 = <b>11,460 years</b>.', tip: 'Recognize the pattern: 50%→1 T½, 25%→2 T½, 12.5%→3 T½.' },
+        q6: { correct: 'A', why: 'Half-life formula: N(T½) = N₀/2, so e<sup>−λT½</sup> = 1/2, giving <b>λ = ln(2)/T½ ≈ 0.693/T½</b>.', tip: 'This is the fundamental relation between decay constant and half-life.' },
+        q7: { correct: 'B', why: 'Activity A = λ·N. Since λ is constant for a given isotope, activity is <b>proportional to the number of remaining nuclei</b> — so it also decays exponentially.', tip: 'That is why old radioactive sources become less dangerous over time.' },
+        q8: { correct: 'B', why: 'After 10 half-lives: (1/2)¹⁰ = 1/1024 ≈ <b>0.098%</b>, approximately 0.1%.', tip: 'Even 10 half-lives still leaves a tiny fraction — never exactly zero.' },
+        q9: { correct: 'A', why: 'Each decay is a <b>discrete quantum-random event</b> — the exact timing of a single nuclear decay cannot be predicted. Geiger clicks are the audible signature of individual quantum randomness.', tip: 'This is the same randomness you see in the simulation — each click is one nucleus decaying.' }
+    };
+    function evaluateQuiz() {
+        var qs = document.querySelectorAll('.quiz-q');
+        var score = 0, total = qs.length;
+        qs.forEach(function (q) {
+            var name = q.dataset.q;
+            var correct = q.dataset.answer;
+            var chosen = q.querySelector('input[name="' + name + '"]:checked');
+            var expl = q.querySelector('.explanation');
+            var data = QUIZ_EXPLAIN[name];
+            expl.hidden = false;
+            expl.className = 'explanation';
+            if (chosen && chosen.value === correct) {
+                score++;
+                expl.classList.add('correct-box');
+                expl.innerHTML = '<strong>✓ Correct!</strong>' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            } else {
+                expl.classList.add('wrong-box');
+                var cv = chosen ? chosen.value : '—';
+                expl.innerHTML = '<strong>✗ Correct answer is ' + correct + '</strong>You chose ' + cv + '. ' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            }
+        });
+        var pct = Math.round(score / total * 100);
+        var msg = '💪 Keep exploring!';
+        if (pct === 100) msg = '🌟 Perfect score!';
+        else if (pct >= 78) msg = '🎉 Excellent work!';
+        else if (pct >= 55) msg = '👍 Good effort! Review the explanations.';
+        beep(pct >= 78 ? 880 : 440, 0.15, 'sine', 0.1);
+        var result = $('quiz-result');
+        result.style.display = 'block';
+        result.innerHTML = '<div style="font-size:1.4rem; color:#4338ca;">' + score + '/' + total + ' · ' + pct + '%</div><div style="font-size:0.85rem; color:#334155; margin-top:4px; font-weight:500;">' + msg + '</div>';
+    }
+    function resetQuiz() {
+        document.querySelectorAll('.quiz-q').forEach(function (q) {
+            q.querySelectorAll('input[type=radio]').forEach(function (r) { r.checked = false; });
+            var expl = q.querySelector('.explanation');
+            expl.hidden = true;
+            expl.innerHTML = '';
+            expl.className = 'explanation';
+        });
+        $('quiz-result').style.display = 'none';
+        $('quiz-result').innerHTML = '';
+    }
+
+    // === Challenges ===
+    function applyChallenge(id) {
+        var note = $('challenge-note');
+        var cres = $('challenge-result');
+        note.innerText = '';
+        cres.innerText = '';
+
+        if (id === 'c14') {
+            S.isotope = 'C14';
+            $('isotope').value = 'C14';
+            S.speed = 1.0; $('speed').value = 1; $('v-speed').innerText = '1.0';
+            note.innerText = 'C-14: half-life 5730 yr. Used for radiocarbon dating up to ~50,000 years.';
+            cres.innerText = 'T½ = 5730 yr · λ = ' + getLambda().toExponential(3) + ' /yr';
+        } else if (id === 'tc99m') {
+            S.isotope = 'Tc99m';
+            $('isotope').value = 'Tc99m';
+            S.speed = 5.0; $('speed').value = 5; $('v-speed').innerText = '5.0';
+            note.innerText = 'Tc-99m: 6-hour half-life. Fast-decaying medical isotope.';
+            cres.innerText = 'T½ = 6 hr · λ = ' + getLambda().toExponential(3) + ' /yr';
+        } else if (id === 'f18') {
+            S.isotope = 'F18';
+            $('isotope').value = 'F18';
+            S.speed = 3.0; $('speed').value = 3; $('v-speed').innerText = '3.0';
+            note.innerText = 'F-18: half-life 110 min. Used in PET scans — you must use it quickly.';
+            cres.innerText = 'T½ ≈ 110 min';
+        } else if (id === 'u238') {
+            S.isotope = 'U238';
+            $('isotope').value = 'U238';
+            S.speed = 10; $('speed').value = 10; $('v-speed').innerText = '10.0';
+            note.innerText = 'U-238: half-life 4.5 billion yr. Essentially stable on human timescales — that is why uranium stays radioactive forever.';
+            cres.innerText = 'T½ = 4.47 Gyr · λ ≈ 1.55×10⁻¹⁰ /yr';
+        } else if (id === 'compare') {
+            S.isotope = 'C14';
+            $('isotope').value = 'C14';
+            S.speed = 10; $('speed').value = 10; $('v-speed').innerText = '10.0';
+            note.innerText = 'Press Start and watch as N drops to 50%, 25%, 12.5%, ... After 10 T½, only 0.1% remains.';
+            cres.innerText = 'Prediction: after 10 T½, N/N₀ ≈ 0.098%';
+        }
+        resetSim();
+        updateReadouts();
+    }
+
+    // === Notebook ===
+    function recordMeasurement() {
+        var iso = getIsotope();
+        var line = new Date().toLocaleTimeString() + ' | ' + iso.name + ' | T½=' + formatTime(iso.halfLife, iso.unit) + ' | t=' + formatTime(S.time, iso.unit) + ' | N/N₀=' + (getFraction() * 100).toFixed(2) + '% | N=' + S.remaining + '/' + S.N0 + ' | decayed=' + S.decayed;
+        S.records.push(line);
+        $('records').value = S.records.join('\n');
+        $('records').scrollTop = $('records').scrollHeight;
+    }
+    function downloadReport() {
+        var iso = getIsotope();
+        var frac = getFraction();
+        var text = 'LEARNIFY - RADIOACTIVE DECAY - LAB REPORT\n' +
+            'Date: ' + new Date().toLocaleString() + '\n\n' +
+            'ISOTOPE\n' +
+            iso.name + ' (' + iso.symbol + ')\n' +
+            'Half-life T½ = ' + formatTime(iso.halfLife, iso.unit) + '\n' +
+            'Decay constant λ = ' + getLambda().toExponential(4) + ' /yr\n\n' +
+            'CURRENT STATE\n' +
+            'Initial nuclei N₀ = ' + S.N0 + '\n' +
+            'Elapsed time t = ' + formatTime(S.time, iso.unit) + '\n' +
+            'Half-lives elapsed = ' + (S.time / iso.halfLife).toFixed(4) + '\n' +
+            'Remaining nuclei N = ' + S.remaining + '\n' +
+            'Decayed nuclei = ' + S.decayed + '\n' +
+            'Fraction remaining = ' + (frac * 100).toFixed(4) + '%\n' +
+            'Activity A/A₀ = ' + (frac * 100).toFixed(4) + '%\n\n' +
+            'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+            'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+            'MEASUREMENTS\n' + $('records').value + '\n\n' +
+            'LIMITATIONS\nIdeal single-isotope decay. Real samples may contain multiple isotopes, decay chains, and background radiation. The decay is deterministic only in the statistical average — individual nuclei are unpredictable. Educational use only.\n';
+        var blob = new Blob([text], { type: 'text/plain' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'radioactive-decay-report.txt';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    // === Simulation reset ===
+    function resetSim() {
+        S.running = false;
+        S.time = 0;
+        initNuclei();
+        updateReadouts();
+        $('btn-start').textContent = '▶ Start decay';
+    }
+
+    // === Animation loop ===
+    var lastTick = 0;
+    function animate(now) {
+        var dt = (now - lastTick) / 1000;
+        if (dt > 0.2) dt = 0.016;
+        if (dt <= 0) dt = 0.016;
+        lastTick = now;
+
+        if (S.running) {
+            var iso = getIsotope();
+            // Advance simulation time: 1 real second = 1/speed fraction of half-life (visual)
+            // For slow isotopes like U-238 (4.5 Gyr), even speed 10 wouldn't show anything.
+            // Solution: we advance time by (halfLife / 20) * dt * speed. So 20 real seconds = 1 half-life.
+            var timeStep = iso.halfLife * dt * S.speed / 20;
+            S.time += timeStep;
+
+            // For each nucleus not yet decayed, decide if it decays this step
+            // Probability of decay in time step dt = 1 - exp(-λ dt)
+            // For a smooth visual, use small dt effectively: p = timeStep / halfLife * ln(2) approx
+            var pDecay = 1 - Math.exp(-getLambda() * timeStep);
+            // For visual smoothness, decay in batches if pDecay would be large
+            var decayCount = 0;
+            for (var i = 0; i < S.nuclei.length; i++) {
+                if (!S.nuclei[i].decayed) {
+                    if (Math.random() < pDecay) {
+                        S.nuclei[i].decayed = true;
+                        S.nuclei[i].pulse = 1.0;
+                        S.remaining--;
+                        S.decayed++;
+                        decayCount++;
+                        // Real Geiger click for each decay event
+                        if (S.soundOn && S.geigerToggle !== false) {
+                            var now2 = Date.now();
+                            if (now2 - S.lastGeigerClick > 25) { // rate-limit so it doesn't overload
+                                geigerClick();
+                                S.lastGeigerClick = now2;
+                            }
+                        }
+                    }
+                }
+            }
+            // Stop simulation when very few remain
+            if (S.remaining <= 0 || S.time > 30 * iso.halfLife) {
+                S.running = false;
+                $('btn-start').textContent = '▶ Start decay';
+            }
+        }
+
+        drawScene();
+        updateReadouts();
+        requestAnimationFrame(animate);
+    }
+
+    // === Event wiring ===
+    $('btn-sound').addEventListener('click', toggleSound);
+    $('isotope').addEventListener('change', function (e) {
+        S.isotope = e.target.value;
+        resetSim();
+        updateReadouts();
+    });
+    $('N0').addEventListener('input', function (e) {
+        S.N0 = parseInt(e.target.value, 10);
+        $('v-N0').innerText = S.N0;
+        resetSim();
+        updateReadouts();
+    });
+    $('speed').addEventListener('input', function (e) {
+        S.speed = parseFloat(e.target.value);
+        $('v-speed').innerText = S.speed.toFixed(1);
+    });
+    $('geiger-toggle').addEventListener('change', function (e) {
+        S.geigerToggle = e.target.checked;
+    });
+    $('stats-toggle').addEventListener('change', function (e) {
+        S.showStats = e.target.checked;
+    });
+    $('btn-start').addEventListener('click', function () {
+        if (S.running) {
+            S.running = false;
+            $('btn-start').textContent = '▶ Start decay';
+        } else {
+            S.running = true;
+            $('btn-start').textContent = '⏸ Pause';
+            beep(660, 0.1, 'sine', 0.06);
+        }
+    });
+    $('btn-reset').addEventListener('click', function () {
+        resetSim();
+    });
+
+    document.querySelectorAll('.tab-btn[data-tab]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+            document.querySelectorAll('.tab-btn[data-tab]').forEach(function (b) { b.classList.remove('active'); });
+            document.getElementById(btn.dataset.tab).classList.add('active');
+            btn.classList.add('active');
+        });
+    });
+
+    document.querySelectorAll('[data-challenge]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            applyChallenge(btn.dataset.challenge);
+            beep(660, 0.08, 'sine', 0.08);
+        });
+    });
+
+    $('btn-quiz-check').addEventListener('click', evaluateQuiz);
+    $('btn-quiz-reset').addEventListener('click', resetQuiz);
+
+    $('btn-clear-notes').addEventListener('click', function () {
+        if (!confirm('Clear all notebook fields?')) return;
+        $('hypothesis').value = '';
+        $('conclusion').value = '';
+        $('records').value = '';
+        S.records = [];
+    });
+    $('btn-export').addEventListener('click', downloadReport);
+
+    // Zoom & pan
+    var fullScroll = false;
+    var pointers = new Map();
+    var pinch = null;
+
+    $('full-scroll-toggle').addEventListener('change', function (e) {
+        fullScroll = e.target.checked;
+        canvas.style.touchAction = fullScroll ? 'auto' : 'none';
+        pointers.clear();
+        pinch = null;
+    });
+
+    function getPos(e) {
+        var r = canvas.getBoundingClientRect();
+        return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+    canvas.addEventListener('wheel', function (e) {
+        if (fullScroll) return;
+        e.preventDefault();
+        var cx = e.offsetX, cy = e.offsetY;
+        var wx = (cx - view.x) / view.scale;
+        var wy = (cy - view.y) / view.scale;
+        var factor = Math.exp(-e.deltaY * 0.0015);
+        view.scale = Math.max(0.3, Math.min(5, view.scale * factor));
+        view.x = cx - wx * view.scale;
+        view.y = cy - wy * view.scale;
+    }, { passive: false });
+    canvas.addEventListener('pointerdown', function (e) {
+        if (fullScroll) return;
+        canvas.setPointerCapture(e.pointerId);
+        pointers.set(e.pointerId, getPos(e));
+        if (pointers.size === 2) {
+            var pts = Array.from(pointers.values());
+            pinch = { dist: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y), startScale: view.scale };
+        }
+    });
+    canvas.addEventListener('pointermove', function (e) {
+        if (fullScroll || !pointers.has(e.pointerId)) return;
+        var prev = pointers.get(e.pointerId);
+        var pos = getPos(e);
+        pointers.set(e.pointerId, pos);
+        if (pointers.size === 1 && !pinch) {
+            view.x += pos.x - prev.x;
+            view.y += pos.y - prev.y;
+        } else if (pointers.size === 2 && pinch) {
+            var pts = Array.from(pointers.values());
+            var d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+            view.scale = Math.max(0.3, Math.min(5, pinch.startScale * d / pinch.dist));
+        }
+    });
+    canvas.addEventListener('pointerup', function (e) {
+        if (fullScroll) return;
+        pointers.delete(e.pointerId);
+        try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
+        if (pointers.size < 2) pinch = null;
+    });
+    canvas.addEventListener('pointercancel', function (e) {
+        pointers.delete(e.pointerId);
+        pinch = null;
+    });
+
+    (function () {
+        var hud = document.querySelector('.hud');
+        if (!hud) return;
+        var z = document.createElement('div');
+        z.className = 'zoom-controls';
+        z.innerHTML = '<button id="zoom-out">-</button><button id="zoom-reset">Reset</button><button id="zoom-in">+</button>';
+        hud.appendChild(z);
+        $('zoom-in').addEventListener('click', function () { view.scale = Math.min(5, view.scale * 1.25); });
+        $('zoom-out').addEventListener('click', function () { view.scale = Math.max(0.3, view.scale / 1.25); });
+        $('zoom-reset').addEventListener('click', function () { view.x = 0; view.y = 0; view.scale = 1; });
+    })();
+
+    (function () {
+        var sim = $('sim-area'), splitter = $('splitter');
+        if (!sim || !splitter) return;
+        var dragging = false, startY = 0, startH = 0;
+        var minH = 180, maxH = window.innerHeight - 240;
+        splitter.addEventListener('pointerdown', function (e) {
+            e.preventDefault();
+            dragging = true;
+            startY = e.clientY;
+            startH = sim.getBoundingClientRect().height;
+            try { splitter.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+        window.addEventListener('pointermove', function (e) {
+            if (!dragging) return;
+            var dy = e.clientY - startY;
+            var nh = Math.max(minH, Math.min(maxH, Math.round(startH + dy)));
+            sim.style.flex = '0 0 ' + nh + 'px';
+            resizeCanvas();
+        });
+        window.addEventListener('pointerup', function (e) {
+            if (!dragging) return;
+            dragging = false;
+            try { splitter.releasePointerCapture(e.pointerId); } catch (err) {}
+        });
+        splitter.addEventListener('dblclick', function () {
+            sim.style.flex = '';
+            resizeCanvas();
+        });
+    })();
+
+    window.addEventListener('resize', function () { resizeCanvas(); });
+
+    // === Boot ===
+    resizeCanvas();
+    initNuclei();
+    S.geigerToggle = true;
+    lastTick = performance.now();
+    updateReadouts();
+    requestAnimationFrame(animate);
+})();
+</script>
+</body>
+</html>

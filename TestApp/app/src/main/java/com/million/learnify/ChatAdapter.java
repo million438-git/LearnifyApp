@@ -14,14 +14,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import io.noties.markwon.Markwon;
 import java.util.List;
 
 /**
- * EDUAI REAL ASSISTANT ADAPTER
- * Perfectly handles structured student-friendly academic content.
+ * ChatAdapter - Refined Academic Pedagogical Chat Adapter.
+ * Features:
+ * - Markwon formatting for STEM notation and Markdown
+ * - 4-part academic block styling with Neon Cyan headers
+ * - Read-aloud speech button for Inclusive Accessibility
+ * - One-tap clipboard copy action
  */
 public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -29,14 +34,16 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_AI = 2;
 
     private final List<ChatMessage> chatMessages;
+    private final OnSpeechListener speechListener;
     private Markwon markwon;
 
-    public ChatAdapter(List<ChatMessage> chatMessages, OnRegenerateListener listener) {
-        this.chatMessages = chatMessages;
+    public interface OnSpeechListener {
+        void onSpeak(String text);
     }
 
-    public interface OnRegenerateListener {
-        void onRegenerate();
+    public ChatAdapter(List<ChatMessage> chatMessages, @Nullable OnSpeechListener speechListener) {
+        this.chatMessages = chatMessages;
+        this.speechListener = speechListener;
     }
 
     @Override
@@ -50,13 +57,13 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (markwon == null) {
             markwon = Markwon.create(parent.getContext());
         }
-        
+
         if (viewType == TYPE_USER) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_user, parent, false);
             return new UserViewHolder(view);
         } else {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_ai, parent, false);
-            return new AIViewHolder(view, markwon);
+            return new AIViewHolder(view, markwon, speechListener);
         }
     }
 
@@ -77,10 +84,12 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     static class UserViewHolder extends RecyclerView.ViewHolder {
         TextView tvMessage;
+
         UserViewHolder(@NonNull View itemView) {
             super(itemView);
             tvMessage = itemView.findViewById(R.id.tvMessage);
         }
+
         void bind(ChatMessage message) {
             tvMessage.setText(message.getMessage());
         }
@@ -89,14 +98,19 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     static class AIViewHolder extends RecyclerView.ViewHolder {
         LinearLayout container;
         ImageView ivCopy;
-        TextView tvHelpful, tvRegenerate;
+        ImageView ivSpeak;
+        TextView tvHelpful;
+        TextView tvRegenerate;
         Markwon markwon;
+        OnSpeechListener speechListener;
 
-        AIViewHolder(@NonNull View itemView, Markwon markwon) {
+        AIViewHolder(@NonNull View itemView, Markwon markwon, @Nullable OnSpeechListener speechListener) {
             super(itemView);
             this.markwon = markwon;
+            this.speechListener = speechListener;
             container = itemView.findViewById(R.id.llBlocksContainer);
             ivCopy = itemView.findViewById(R.id.ivCopy);
+            ivSpeak = itemView.findViewById(R.id.ivSpeak);
             tvHelpful = itemView.findViewById(R.id.tvHelpful);
             tvRegenerate = itemView.findViewById(R.id.tvRegenerate);
         }
@@ -104,25 +118,26 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         void bind(ChatMessage message) {
             container.removeAllViews();
             Context context = itemView.getContext();
-            String rawText = message.getMessage();
+            String rawText = AIResponseNormalizer.normalize(message.getMessage());
 
             if (message.isThinking()) {
-                addStatusView(context, message.getMessage());
+                addStatusView(context, rawText);
                 ivCopy.setVisibility(View.GONE);
+                if (ivSpeak != null) ivSpeak.setVisibility(View.GONE);
                 tvHelpful.setVisibility(View.GONE);
                 tvRegenerate.setVisibility(View.GONE);
             } else {
                 ivCopy.setVisibility(View.VISIBLE);
+                if (ivSpeak != null) ivSpeak.setVisibility(View.VISIBLE);
                 tvHelpful.setVisibility(View.VISIBLE);
-                tvRegenerate.setVisibility(View.GONE);
+                tvRegenerate.setVisibility(View.VISIBLE);
 
-                // ENHANCED STRUCTURE PARSING (Support for 📘, 🧠, 🧪, 📝)
+                // Structural academic parsing (Topic Overview, Key Points, Simple Example, Quick Summary)
                 String[] blocks = rawText.split("\n\n");
                 for (String block : blocks) {
                     if (block.trim().isEmpty()) continue;
-                    
-                    if (block.startsWith("📘") || block.startsWith("🧠") || 
-                        block.startsWith("🧪") || block.startsWith("📝")) {
+
+                    if (isAcademicHeader(block)) {
                         addHeaderView(context, block);
                     } else {
                         addSimpleText(context, block);
@@ -134,19 +149,40 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("EduAI Content", rawText);
                 clipboard.setPrimaryClip(clip);
-                Toast.makeText(context, "Copied to clipboard", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Explanation copied to clipboard", Toast.LENGTH_SHORT).show();
             });
+
+            if (ivSpeak != null) {
+                ivSpeak.setOnClickListener(v -> {
+                    if (speechListener != null) {
+                        speechListener.onSpeak(rawText);
+                    }
+                });
+            }
 
             itemView.setAlpha(message.isThinking() ? 0.7f : 1.0f);
         }
 
+        private boolean isAcademicHeader(String block) {
+            String trimmed = block.trim();
+            return trimmed.startsWith("##")
+                    || trimmed.startsWith("Topic Overview")
+                    || trimmed.startsWith("Key Points")
+                    || trimmed.startsWith("Simple Example")
+                    || trimmed.startsWith("Quick Summary")
+                    || trimmed.startsWith("Concept Overview")
+                    || trimmed.startsWith("Practice Problem");
+        }
+
         private void addHeaderView(Context context, String text) {
             TextView tv = new TextView(context);
-            tv.setText(text);
-            tv.setTextSize(17f);
-            tv.setTextColor(Color.parseColor("#1E293B"));
+            String cleanText = text.replaceFirst("^##\\s*", "").trim();
+            cleanText = AIResponseNormalizer.stripDecorativeEmojis(cleanText);
+            tv.setText(cleanText);
+            tv.setTextSize(16f);
+            tv.setTextColor(Color.parseColor("#00D8FF")); // Neon Cyan
             tv.setTypeface(null, Typeface.BOLD);
-            tv.setPadding(0, 16, 0, 8);
+            tv.setPadding(0, 14, 0, 6);
             container.addView(tv);
         }
 
@@ -154,17 +190,17 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             TextView tv = new TextView(context);
             tv.setText(text);
             tv.setTextSize(14f);
-            tv.setTextColor(Color.parseColor("#64748B"));
+            tv.setTextColor(Color.parseColor("#63E7B7")); // Science Mint
             tv.setPadding(0, 8, 0, 8);
             container.addView(tv);
         }
 
         private void addSimpleText(Context context, String text) {
             TextView tv = new TextView(context);
-            tv.setPadding(0, 4, 0, 12);
-            tv.setTextColor(Color.parseColor("#334155"));
-            tv.setTextSize(16f);
-            tv.setLineSpacing(6f, 1.1f);
+            tv.setPadding(0, 4, 0, 10);
+            tv.setTextColor(Color.parseColor("#E2E8F0")); // Ice Slate
+            tv.setTextSize(15f);
+            tv.setLineSpacing(5f, 1.15f);
             markwon.setMarkdown(tv, text);
             container.addView(tv);
         }

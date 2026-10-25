@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_off_white"
+    android:background="@color/surface_light"
     tools:context=".SettingsActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/surface_white"
+        android:background="@color/surface_card"
         app:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
@@ -18,22 +18,24 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="?attr/homeAsUpIndicator"
-            app:navigationIconTint="@color/text_primary_dark"
+            app:navigationIconTint="@color/text_primary_slate"
             app:title="Settings"
             app:titleCentered="true"
-            app:titleTextColor="@color/text_primary_dark">
+            app:titleTextColor="@color/text_primary_slate">
 
             <ImageView
                 android:id="@+id/btnSaveSettings"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:layout_gravity="end"
                 android:layout_marginEnd="16dp"
-                android:src="@android:drawable/ic_menu_save"
-                app:tint="@color/primary_indigo"
+                android:padding="6dp"
+                android:src="@drawable/ic_verified_check"
+                app:tint="@color/sapphire_primary"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?attr/selectableItemBackgroundBorderless" />
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Save Settings" />
         </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -47,7 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="40dp">
+            android:paddingBottom="48dp">
 
             <!-- ACCOUNT SECTION -->
             <TextView style="@style/SettingsSectionHeader" android:text="@string/section_account" />
@@ -55,65 +57,65 @@
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
 
                     <LinearLayout android:id="@+id/llAccountSettings" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_menu_edit" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_user_person" />
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                             <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="@string/settings_account" />
                             <TextView style="@style/SettingsItemDescription" android:text="Manage your personal info and email" />
                         </LinearLayout>
-                        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_media_next" android:alpha="0.3" app:tint="@color/text_secondary_grey" />
+                        <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_chevron_right" app:tint="@color/text_secondary_slate" />
                     </LinearLayout>
 
                     <View style="@style/SettingsDivider" />
 
                     <LinearLayout android:id="@+id/llPrivacySecurity" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_lock_idle_lock" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_lock" />
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                             <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="@string/settings_privacy_security" />
                             <TextView style="@style/SettingsItemDescription" android:text="Passwords and account protection" />
                         </LinearLayout>
-                        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_media_next" android:alpha="0.3" app:tint="@color/text_secondary_grey" />
+                        <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_chevron_right" app:tint="@color/text_secondary_slate" />
                     </LinearLayout>
 
                     <View style="@style/SettingsDivider" />
 
                     <LinearLayout android:id="@+id/llNotificationPrefs" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_popup_reminder" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_bell" />
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                             <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="@string/settings_notifications" />
                             <TextView style="@style/SettingsItemDescription" android:text="Choose what alerts you receive" />
                         </LinearLayout>
-                        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_media_next" android:alpha="0.3" app:tint="@color/text_secondary_grey" />
+                        <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_chevron_right" app:tint="@color/text_secondary_slate" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <!-- GAMEPLAY SECTION -->
-            <TextView style="@style/SettingsSectionHeader" android:text="🎮 GAMEPLAY" />
+            <TextView style="@style/SettingsSectionHeader" android:text="GAMEPLAY &amp; HABITS" />
             <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
                     <LinearLayout android:id="@+id/llReminderTime" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_menu_recent_history" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_timer" />
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                             <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Daily Reminder Time" />
                             <TextView style="@style/SettingsItemDescription" android:text="Keep your study streak active" />
                         </LinearLayout>
-                        <TextView android:id="@+id/tvReminderTime" style="@style/SettingsItemValue" android:text="⏰ 5:00 PM" />
+                        <TextView android:id="@+id/tvReminderTime" style="@style/SettingsItemValue" android:text="5:00 PM" />
                     </LinearLayout>
                     <View style="@style/SettingsDivider" />
                     <LinearLayout style="@style/SettingsItem">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_lock_silent_mode_off" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_volume_up" />
                         <TextView style="@style/SettingsItemText" android:text="Sound Effects" android:layout_weight="1" />
                         <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switchSoundEffects" android:layout_width="wrap_content" android:layout_height="wrap_content" />
                     </LinearLayout>
                     <View style="@style/SettingsDivider" />
                     <LinearLayout style="@style/SettingsItem">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_menu_view" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_vibration" />
                         <TextView style="@style/SettingsItemText" android:text="Haptic Feedback" android:layout_weight="1" />
                         <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switchHapticFeedback" android:layout_width="wrap_content" android:layout_height="wrap_content" />
                     </LinearLayout>
                     <View style="@style/SettingsDivider" />
                     <LinearLayout style="@style/SettingsItem">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_menu_compass" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_flame" />
                         <TextView style="@style/SettingsItemText" android:text="Animated Celebrations" android:layout_weight="1" />
                         <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switchAnimations" android:layout_width="wrap_content" android:layout_height="wrap_content" />
                     </LinearLayout>
@@ -121,23 +123,23 @@
             </com.google.android.material.card.MaterialCardView>
 
             <!-- LANGUAGE & REGION -->
-            <TextView style="@style/SettingsSectionHeader" android:text="🌐 LANGUAGE &amp; REGION" />
+            <TextView style="@style/SettingsSectionHeader" android:text="LANGUAGE &amp; REGION" />
             <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
                     <LinearLayout android:id="@+id/llLanguage" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_menu_mylocation" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_globe" />
                         <TextView style="@style/SettingsItemText" android:text="App Language" />
                         <TextView android:id="@+id/tvLanguage" style="@style/SettingsItemValue" android:text="English ▼" />
                     </LinearLayout>
                     <View style="@style/SettingsDivider" />
                     <LinearLayout android:id="@+id/llRegion" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_menu_mapmode" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_globe" />
                         <TextView style="@style/SettingsItemText" android:text="Region" />
                         <TextView android:id="@+id/tvRegion" style="@style/SettingsItemValue" android:text="United States ▼" />
                     </LinearLayout>
                     <View style="@style/SettingsDivider" />
                     <LinearLayout android:id="@+id/llDateFormat" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_menu_my_calendar" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_calendar" />
                         <TextView style="@style/SettingsItemText" android:text="Date Format" />
                         <TextView android:id="@+id/tvDateFormat" style="@style/SettingsItemValue" android:text="MM/DD/YYYY ▼" />
                     </LinearLayout>
@@ -145,80 +147,165 @@
             </com.google.android.material.card.MaterialCardView>
 
             <!-- APPEARANCE -->
-            <TextView style="@style/SettingsSectionHeader" android:text="🎨 APPEARANCE" />
+            <TextView style="@style/SettingsSectionHeader" android:text="APPEARANCE" />
             <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
                     <LinearLayout android:id="@+id/llTheme" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_menu_today" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_palette" />
                         <TextView style="@style/SettingsItemText" android:text="Theme" />
                         <TextView android:id="@+id/tvTheme" style="@style/SettingsItemValue" android:text="Light ▼" />
                     </LinearLayout>
                     <View style="@style/SettingsDivider" />
                     <LinearLayout android:id="@+id/llFontSize" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_menu_sort_alphabetically" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_bolt" />
                         <TextView style="@style/SettingsItemText" android:text="Font Size" />
                         <TextView android:id="@+id/tvFontSize" style="@style/SettingsItemValue" android:text="Medium ▼" />
                     </LinearLayout>
                     <View style="@style/SettingsDivider" />
                     <LinearLayout style="@style/SettingsItem">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_menu_view" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_timer" />
                         <TextView style="@style/SettingsItemText" android:text="Reduce Motion" android:layout_weight="1" />
                         <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switchReduceMotion" android:layout_width="wrap_content" android:layout_height="wrap_content" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- INCLUSIVE LEARNING & ACCESSIBILITY -->
+            <TextView
+                android:id="@+id/tvAccessibilityHeader"
+                style="@style/SettingsSectionHeader"
+                android:text="INCLUSIVE LEARNING &amp; ACCESSIBILITY" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+
+                    <!-- Master Inclusive Mode -->
+                    <LinearLayout style="@style/SettingsItem">
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_adv_ai" />
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Inclusive Learning Mode" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Optimizes spoken feedback, TalkBack labels &amp; accessible layouts" />
+                        </LinearLayout>
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchInclusiveMode"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="Toggle Inclusive Learning Mode" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
+                    <!-- Read Content Aloud (TTS) -->
+                    <LinearLayout style="@style/SettingsItem">
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_volume_up" />
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Read Content Aloud" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Enable spoken lessons, notes, and question reading" />
+                        </LinearLayout>
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchTextToSpeech"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="Toggle Read Content Aloud" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
+                    <!-- Speech Rate -->
+                    <LinearLayout android:id="@+id/llSpeechRate" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_timer" />
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Speech Rate" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Adjust voice reading pace" />
+                        </LinearLayout>
+                        <TextView android:id="@+id/tvSpeechRate" style="@style/SettingsItemValue" android:text="1.0x Normal ▼" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
+                    <!-- High Contrast Mode -->
+                    <LinearLayout style="@style/SettingsItem">
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_palette" />
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="High Contrast Display" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Increases visual contrast for low-vision readability" />
+                        </LinearLayout>
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchHighContrast"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="Toggle High Contrast Display" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
+                    <!-- Auto-Read Lessons On Open -->
+                    <LinearLayout style="@style/SettingsItem">
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_flashcard" />
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Auto-Read Lessons" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Start reading lesson content aloud when opened" />
+                        </LinearLayout>
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchAutoRead"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="Toggle Auto-Read Lessons" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- DATA & STORAGE -->
-            <TextView style="@style/SettingsSectionHeader" android:text="📲 DATA &amp; STORAGE" />
+            <TextView style="@style/SettingsSectionHeader" android:text="DATA &amp; STORAGE" />
             <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
                     <LinearLayout style="@style/SettingsItem">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_menu_save" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_tasks" />
                         <TextView style="@style/SettingsItemText" android:text="Offline Mode" android:layout_weight="1" />
                         <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switchOfflineMode" android:layout_width="wrap_content" android:layout_height="wrap_content" />
                     </LinearLayout>
                     <View style="@style/SettingsDivider" />
                     <LinearLayout style="@style/SettingsItem">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_menu_info_details" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_database" />
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                             <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Cache Size" />
                             <TextView style="@style/SettingsItemDescription" android:text="Current storage used by app" />
                         </LinearLayout>
-                        <TextView android:id="@+id/tvCacheSize" style="@style/SettingsItemValue" android:text="124 MB" android:textColor="@color/text_secondary_grey" />
+                        <TextView android:id="@+id/tvCacheSize" style="@style/SettingsItemValue" android:text="124 MB" android:textColor="@color/text_secondary_slate" />
                     </LinearLayout>
                     <View style="@style/SettingsDivider" />
                     <LinearLayout android:id="@+id/llClearCache" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_menu_delete" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_trash" app:tint="@color/sapphire_primary" />
                         <TextView style="@style/SettingsItemText" android:text="Clear Cache" />
-                        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_media_next" android:alpha="0.3" app:tint="@color/text_secondary_grey" />
+                        <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_chevron_right" app:tint="@color/text_secondary_slate" />
                     </LinearLayout>
                     <View style="@style/SettingsDivider" />
                     <LinearLayout android:id="@+id/llAutoDownload" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_menu_manage" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_database" />
                         <TextView style="@style/SettingsItemText" android:text="Auto-download media" />
-                        <TextView android:id="@+id/tvAutoDownload" style="@style/SettingsItemValue" android:text="🔘 Wi-Fi only" />
+                        <TextView android:id="@+id/tvAutoDownload" style="@style/SettingsItemValue" android:text="Wi-Fi only" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <!-- CONNECTIONS -->
-            <TextView style="@style/SettingsSectionHeader" android:text="🔗 CONNECTIONS" />
+            <TextView style="@style/SettingsSectionHeader" android:text="CONNECTIONS" />
             <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
 
                     <LinearLayout android:id="@+id/llLinkedAccounts" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_menu_share" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_user_person" />
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                             <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Linked Accounts" />
                             <TextView style="@style/SettingsItemDescription" android:text="Google, Apple, Microsoft" />
                         </LinearLayout>
-                        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_media_next" android:alpha="0.3" app:tint="@color/text_secondary_grey" />
+                        <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_chevron_right" app:tint="@color/text_secondary_slate" />
                     </LinearLayout>
 
                     <View style="@style/SettingsDivider" />
 
                     <LinearLayout style="@style/SettingsItem">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/stat_notify_sync" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_bolt" />
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                             <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Cloud Sync" />
                             <TextView style="@style/SettingsItemDescription" android:text="Keep your data safe across devices" />
@@ -229,40 +316,40 @@
                     <View style="@style/SettingsDivider" />
 
                     <LinearLayout android:id="@+id/llShareProgress" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_menu_send" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_share_nodes" />
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                             <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Share Progress" />
                             <TextView style="@style/SettingsItemDescription" android:text="Show your achievements to the world" />
                         </LinearLayout>
-                        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_media_next" android:alpha="0.3" app:tint="@color/text_secondary_grey" />
+                        <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_chevron_right" app:tint="@color/text_secondary_slate" />
                     </LinearLayout>
 
                     <View style="@style/SettingsDivider" />
 
                     <LinearLayout android:id="@+id/llInviteFriends" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_menu_add" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_user_plus" />
                         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
                             <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Invite Friends" />
                             <TextView style="@style/SettingsItemDescription" android:text="Learn together and earn rewards" />
                         </LinearLayout>
-                        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_media_next" android:alpha="0.3" app:tint="@color/text_secondary_grey" />
+                        <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_chevron_right" app:tint="@color/text_secondary_slate" />
                     </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ABOUT SECTION - UPDATED -->
+            <!-- ABOUT SECTION -->
             <TextView
                 android:id="@+id/tvAboutHeader"
                 style="@style/SettingsSectionHeader"
-                android:text="ℹ️ ABOUT" />
+                android:text="ABOUT LEARNIFY" />
             <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
 
                     <!-- Version Row -->
                     <LinearLayout style="@style/SettingsItem" android:paddingVertical="16dp">
                         <TextView style="@style/SettingsItemText" android:text="Version" android:layout_weight="1" />
-                        <TextView android:id="@+id/tvVersion" style="@style/SettingsItemValue" android:text="1.2.3" android:textColor="#6B7280" />
+                        <TextView android:id="@+id/tvVersion" style="@style/SettingsItemValue" android:text="2.8 Professional" android:textColor="@color/text_secondary_slate" />
                     </LinearLayout>
 
                     <View style="@style/SettingsDivider" />
@@ -270,7 +357,7 @@
                     <!-- Terms of Service Row -->
                     <LinearLayout android:id="@+id/llTerms" style="@style/SettingsItem" android:clickable="true" android:focusable="true" android:paddingVertical="16dp">
                         <TextView style="@style/SettingsItemText" android:text="Terms of Service" android:layout_weight="1" />
-                        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_media_next" android:alpha="0.3" app:tint="@color/text_secondary_grey" />
+                        <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_chevron_right" app:tint="@color/text_secondary_slate" />
                     </LinearLayout>
 
                     <View style="@style/SettingsDivider" />
@@ -278,7 +365,7 @@
                     <!-- Privacy Policy Row -->
                     <LinearLayout android:id="@+id/llPrivacyPolicy" style="@style/SettingsItem" android:clickable="true" android:focusable="true" android:paddingVertical="16dp">
                         <TextView style="@style/SettingsItemText" android:text="Privacy Policy" android:layout_weight="1" />
-                        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_media_next" android:alpha="0.3" app:tint="@color/text_secondary_grey" />
+                        <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_chevron_right" app:tint="@color/text_secondary_slate" />
                     </LinearLayout>
 
                     <View style="@style/SettingsDivider" />
@@ -286,7 +373,7 @@
                     <!-- Rate Us Row -->
                     <LinearLayout android:id="@+id/llRateUs" style="@style/SettingsItem" android:clickable="true" android:focusable="true" android:paddingVertical="16dp">
                         <TextView style="@style/SettingsItemText" android:text="Rate Us" android:layout_weight="1" />
-                        <TextView style="@style/SettingsItemValue" android:text="⭐⭐⭐⭐⭐" android:textColor="#F59E0B" android:textSize="20sp" />
+                        <TextView style="@style/SettingsItemValue" android:text="5.0 / 5.0" android:textColor="#F59E0B" android:textSize="16sp" android:textStyle="bold" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -297,14 +384,13 @@
             <com.google.android.material.card.MaterialCardView style="@style/SettingsCard" app:strokeColor="@color/danger_red">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
                     <LinearLayout android:id="@+id/llDeleteAccount" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
-                        <ImageView style="@style/SettingsItemIcon" android:src="@android:drawable/ic_menu_close_clear_cancel" app:tint="@color/danger_red" />
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_trash" app:tint="@color/danger_red" />
                         <TextView style="@style/SettingsItemText" android:text="@string/action_delete_account" android:textColor="@color/danger_red" />
-                        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_media_next" android:alpha="0.3" app:tint="@color/danger_red" />
+                        <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_chevron_right" app:tint="@color/danger_red" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <View android:layout_width="match_parent" android:layout_height="24dp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

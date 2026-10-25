@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Conservation of Energy Laboratory</title>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0a0f1f;
+  --sf:#141b2e;
+  --ln:#26304a;
+  --tx:#e5e9f5;
+  --mu:#93a0bd;
+  --pr:#818cf8;
+  --pr-deep:#6366f1;
+  --ok:#34d399;
+  --bad:#f87171;
+  --wa:#fbbf24;
+  --red:#f43f5e;
+  --blue:#3b82f6;
+  --green:#10d982;
+  box-sizing:border-box;
+}
+*{box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;}
+html,body{height:100%;margin:0;}
+body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column;overflow:hidden;}
+
+header{background:var(--bg);color:#fff;padding:10px;text-align:center;border-bottom:3px solid var(--pr);flex:none;}
+header h2{margin:0;font-size:1.1rem;}
+header small{display:block;color:var(--mu);font-size:.8rem;margin-top:2px;}
+
+.lab-container{display:flex;flex:1;overflow:hidden;flex-direction:column;min-height:0;}
+#sim-area{flex:2 1 0;min-height:340px;position:relative;background:#05080f;border-bottom:2px solid #e2e8f0;overflow:hidden;}
+canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;touch-action:none;}
+
+.hud{position:absolute;top:10px;left:10px;background:rgba(20,27,46,0.9);padding:8px 10px;border-radius:8px;font-size:.75rem;border:1px solid #26304a;z-index:20;color:var(--tx);pointer-events:none;backdrop-filter:blur(6px);max-width:240px;}
+.hud b{color:var(--pr);font-size:.7rem;letter-spacing:.08em;}
+.hud .metrics{line-height:1.7;}
+.hud span.val{color:var(--wa);font-weight:700;font-variant-numeric:tabular-nums;}
+
+.vector-legend{position:absolute;bottom:10px;left:10px;font-size:.65rem;background:rgba(20,27,46,0.9);padding:5px 8px;border-radius:4px;color:var(--mu);pointer-events:none;border:1px solid #26304a;}
+.vector-legend span{margin-right:10px;}
+
+.splitter{height:10px;background:linear-gradient(90deg,rgba(0,0,0,.03),rgba(0,0,0,.06));cursor:ns-resize;flex-shrink:0;border-top:1px solid #26304a;border-bottom:1px solid #26304a;}
+.splitter:hover{background:linear-gradient(90deg,rgba(129,140,248,.3),rgba(129,140,248,.2));}
+
+.bottom-panel{flex:3 1 0;min-height:0;display:flex;flex-direction:row;background:var(--sf);overflow-y:auto;}
+.controls{flex:0 0 360px;padding:16px;border-right:1px solid var(--ln);min-width:300px;background:var(--sf);}
+.analysis{flex:1 1 720px;padding:16px;background:var(--bg);min-width:420px;}
+
+.card{background:var(--sf);border:1px solid var(--ln);padding:12px;border-radius:8px;margin-bottom:10px;font-size:.84rem;line-height:1.55;}
+h4{margin:0 0 10px 0;font-size:.8rem;color:var(--mu);text-transform:uppercase;letter-spacing:.05em;}
+.input-row{margin-bottom:10px;}
+label{display:block;font-size:.78rem;font-weight:600;margin-bottom:3px;}
+input[type=range]{width:100%;accent-color:var(--pr);height:6px;}
+select,input[type=number],textarea{width:100%;padding:8px;border-radius:6px;border:1px solid var(--ln);background:var(--bg);color:var(--tx);font-family:inherit;font-size:.85rem;}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--pr);}
+
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+button{padding:10px;border:1px solid var(--ln);border-radius:6px;font-weight:700;cursor:pointer;font-size:.82rem;background:var(--sf);color:var(--tx);font-family:inherit;transition:.2s;}
+button:hover{background:#1a2340;border-color:var(--pr);}
+button.go{background:var(--pr);color:#0b1020;border-color:var(--pr);}
+button.go:hover{background:#a5b4fc;box-shadow:0 4px 14px rgba(129,140,248,.4);}
+button.launch{background:linear-gradient(135deg,#34d399,#059669);color:#fff;border-color:transparent;}
+button.launch:hover{box-shadow:0 4px 14px rgba(52,211,153,.4);}
+button.sound{background:linear-gradient(135deg,#34d399,#059669);color:#fff;border-color:transparent;}
+button.sound.playing{background:linear-gradient(135deg,#f43f5e,#dc2626);}
+
+.readouts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;}
+.readout{background:var(--sf);border:1px solid var(--ln);border-radius:6px;padding:8px 10px;}
+.readout span{font-size:.68rem;color:var(--mu);display:block;}
+.readout strong{font-size:.95rem;color:var(--tx);font-variant-numeric:tabular-nums;}
+.readout.hl strong{color:var(--pr);}
+.readout.good strong{color:var(--ok);}
+.readout.warn strong{color:var(--wa);}
+.readout.ke strong{color:#ff5c8a;}
+.readout.pe strong{color:#4fa8ff;}
+.readout.thermal strong{color:#fbbf24;}
+
+.tab-btn{padding:8px 12px;border-radius:6px;background:var(--sf);color:var(--mu);font-weight:600;font-size:.78rem;border:1px solid var(--ln);cursor:pointer;transition:.2s;}
+.tab-btn:hover{background:#242e4d;color:var(--tx);}
+.tab-btn.active{background:var(--pr);color:#0b1020;border-color:var(--pr);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+.quiz-q{padding:10px 0;border-bottom:1px solid var(--ln);}
+.quiz-q>strong{display:block;margin-bottom:8px;font-size:.88rem;}
+.quiz-q label{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;background:var(--sf);border:1px solid var(--ln);border-radius:6px;margin:3px 6px 3px 0;cursor:pointer;font-weight:500;font-size:.8rem;}
+.quiz-q label:hover{background:#1a2340;border-color:var(--pr);}
+.quiz-q input[type=radio]{accent-color:var(--pr);}
+.explanation{margin-top:8px;padding:10px;border-radius:6px;font-size:.82rem;line-height:1.55;background:rgba(129,140,248,.1);border-left:3px solid var(--pr);}
+.explanation.correct-box{background:rgba(52,211,153,.12);border-left-color:var(--ok);}
+.explanation.wrong-box{background:rgba(248,113,113,.12);border-left-color:var(--bad);}
+.quiz-section{font-size:.72rem;font-weight:700;text-transform:uppercase;color:var(--pr);margin:12px 0 6px 0;letter-spacing:.05em;}
+#quiz-result{margin-top:10px;padding:12px;border-radius:8px;background:rgba(129,140,248,.15);border:1px solid rgba(129,140,248,.4);font-weight:700;text-align:center;}
+
+table.formulas{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:6px;}
+table.formulas th,table.formulas td{border:1px solid var(--ln);padding:6px 8px;text-align:left;}
+table.formulas th{background:var(--bg);font-weight:600;color:var(--pr);}
+.eq{font-family:'JetBrains Mono',monospace;background:var(--bg);padding:2px 6px;border-radius:4px;font-size:.8rem;color:var(--wa);border:1px solid var(--ln);}
+.note{font-size:.82rem;color:var(--mu);margin-top:8px;line-height:1.55;}
+ul{color:var(--tx);padding-left:1rem;}
+ul li{line-height:1.7;}
+
+#challenge-note{color:var(--tx);font-size:.85rem;}
+#challenge-result{color:var(--ok);font-weight:600;margin-top:6px;}
+
+textarea{width:100%;padding:8px;border-radius:6px;border:1px solid var(--ln);font-family:inherit;font-size:.85rem;min-height:64px;resize:vertical;background:var(--bg);color:var(--tx);}
+textarea:focus{outline:none;border-color:var(--pr);}
+
+@media(max-width:768px){
+  .bottom-panel{flex-direction:column;}
+  .controls{border-right:none;border-bottom:1px solid var(--ln);min-width:0;}
+  .analysis{min-width:0;}
+  .readouts{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header>
+<h2>🎢 Conservation of Energy Laboratory</h2>
+<small>Kinetic · Potential · Spring · Thermal · Total energy is conserved</small>
+</header>
+
+<div class="lab-container">
+<div id="sim-area">
+<div class="hud">
+<b>LIVE STATE</b><br>
+<div class="metrics">
+Time: <span class="val" id="hud-t">0.00</span> s<br>
+Height: <span class="val" id="hud-h">0.00</span> m<br>
+Speed: <span class="val" id="hud-v">0.00</span> m/s<br>
+Total E: <span class="val" id="hud-E">0.00</span> J<br>
+Status: <span class="val" id="hud-status">Idle</span>
+</div>
+</div>
+<div class="vector-legend">
+<span style="color:#ff5c8a">● Kinetic</span>
+<span style="color:#4fa8ff">● Potential</span>
+<span style="color:#fbbf24">● Total</span>
+</div>
+<canvas id="canvas"></canvas>
+</div>
+
+<div class="splitter" id="splitter"></div>
+
+<div class="bottom-panel">
+<div class="controls">
+<h4>🎢 Setup</h4>
+
+<div class="input-row">
+<button class="sound" id="btn-sound" style="width:100%;">🔈 Enable sound</button>
+</div>
+
+<div class="input-row">
+<label>Scene</label>
+<select id="scene">
+<option value="coaster" selected>Roller coaster (gravity only)</option>
+<option value="spring">Spring launcher (spring PE)</option>
+<option value="pendulum">Pendulum (gravity + swing)</option>
+<option value="skate">Skate park ramp (U-shape)</option>
+</select>
+</div>
+
+<div class="input-row">
+<label>Mass m: <span id="v-m">1.0</span> kg</label>
+<input type="range" id="mass" min="0.5" max="10" step="0.1" value="1">
+</div>
+
+<div class="input-row">
+<label>Initial height h₀: <span id="v-h0">5.0</span> m</label>
+<input type="range" id="h0" min="0.5" max="10" step="0.1" value="5">
+</div>
+
+<div class="input-row" id="springrow" style="display:none;">
+<label>Spring constant k: <span id="v-k">200</span> N/m</label>
+<input type="range" id="k" min="50" max="1000" step="10" value="200">
+</div>
+
+<div class="input-row" id="comprrow" style="display:none;">
+<label>Spring compression x: <span id="v-x">0.5</span> m</label>
+<input type="range" id="x" min="0.1" max="1.5" step="0.05" value="0.5">
+</div>
+
+<div class="input-row">
+<label>Friction (energy loss): <span id="v-fric">0.0</span>%</label>
+<input type="range" id="fric" min="0" max="30" step="1" value="0">
+</div>
+
+<div class="input-row">
+<label>Gravity g: <span id="v-g">9.81</span> m/s²</label>
+<select id="g">
+<option value="9.81" selected>Earth (9.81)</option>
+<option value="1.62">Moon (1.62)</option>
+<option value="3.71">Mars (3.71)</option>
+<option value="24.79">Jupiter (24.79)</option>
+</select>
+</div>
+
+<div class="input-row">
+<label>Sim speed: <span id="v-speed">1.0</span>×</label>
+<input type="range" id="speed" min="0.1" max="3" step="0.1" value="1">
+</div>
+
+<div class="btn-grid">
+<button class="launch" id="btn-launch">▶ Release</button>
+<button id="btn-reset">↺ Reset</button>
+</div>
+</div>
+
+<div class="analysis">
+<h4>📊 Learn &amp; Practice</h4>
+
+<div class="readouts">
+<div class="readout ke"><span>Kinetic energy KE</span><strong id="ro-ke">0.00 J</strong></div>
+<div class="readout pe"><span>Potential energy PE</span><strong id="ro-pe">0.00 J</strong></div>
+<div class="readout warn"><span>Spring energy PE_s</span><strong id="ro-pes">0.00 J</strong></div>
+<div class="readout thermal"><span>Thermal (lost)</span><strong id="ro-thermal">0.00 J</strong></div>
+<div class="readout hl"><span>Total E = KE + PE</span><strong id="ro-total">0.00 J</strong></div>
+<div class="readout good"><span>Initial E</span><strong id="ro-e0">0.00 J</strong></div>
+<div class="readout"><span>Speed v</span><strong id="ro-v">0.00 m/s</strong></div>
+<div class="readout"><span>Height h</span><strong id="ro-h">0.00 m</strong></div>
+<div class="readout"><span>Momentum p</span><strong id="ro-p">0.00 kg·m/s</strong></div>
+<div class="readout"><span>Power (instantaneous)</span><strong id="ro-pw">0.00 W</strong></div>
+<div class="readout"><span>Time elapsed</span><strong id="ro-t">0.00 s</strong></div>
+<div class="readout"><span>Efficiency (E/E₀)</span><strong id="ro-eff">100.0%</strong></div>
+</div>
+
+<div class="card">
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+<button class="tab-btn active" data-tab="formulas">Formulas</button>
+<button class="tab-btn" data-tab="quiz">Quiz</button>
+<button class="tab-btn" data-tab="challenges">Challenges</button>
+<button class="tab-btn" data-tab="notebook">Notebook</button>
+</div>
+
+<div id="formulas" class="tab-panel active">
+<h3 style="margin:6px 0 8px 0;">Core Formulas — Conservation of Energy</h3>
+<ul style="font-size:.88rem;">
+<li><b style="color:var(--pr)">Kinetic energy:</b> KE = ½mv²</li>
+<li><b style="color:var(--pr)">Gravitational PE:</b> PE = mgh</li>
+<li><b style="color:var(--pr)">Spring PE:</b> PE_s = ½kx²</li>
+<li><b style="color:var(--pr)">Conservation:</b> KE + PE + PE_s + Thermal = constant</li>
+<li><b style="color:var(--pr)">Without friction:</b> KE_initial + PE_initial = KE_final + PE_final</li>
+<li><b style="color:var(--pr)">Velocity from height drop:</b> v = √(2gh)</li>
+<li><b style="color:var(--pr)">Height from velocity:</b> h = v²/(2g)</li>
+<li><b style="color:var(--pr)">Thermal energy:</b> E_thermal = f · d (friction × distance)</li>
+<li><b style="color:var(--pr)">Power:</b> P = F·v = dE/dt</li>
+</ul>
+<p class="note"><b style="color:var(--wa)">💡 Key insights:</b> Energy is never created or destroyed — it only changes form. In a frictionless system, KE + PE = constant. When the object falls, PE converts to KE. When it rises, KE converts back to PE. Friction converts mechanical energy to thermal (heat) energy, which is why real systems eventually stop. The total energy (including thermal) is <b>always</b> conserved.</p>
+
+<table class="formulas" style="margin-top:12px;">
+<tr><th>Quantity</th><th>Formula</th></tr>
+<tr><td>Kinetic energy</td><td><span class="eq">KE = ½mv²</span></td></tr>
+<tr><td>Gravitational PE</td><td><span class="eq">PE = mgh</span></td></tr>
+<tr><td>Spring PE</td><td><span class="eq">PE_s = ½kx²</span></td></tr>
+<tr><td>Velocity from height</td><td><span class="eq">v = √(2gh)</span></td></tr>
+<tr><td>Total energy</td><td><span class="eq">E = KE + PE + PE_s + E_th</span></td></tr>
+</table>
+</div>
+
+<div id="quiz" class="tab-panel" style="max-height:600px;overflow:auto;">
+<h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+<div class="quiz-section">Basic — Energy Basics</div>
+<div class="quiz-q" data-q="q1" data-answer="B">
+<strong>1. Energy is:</strong>
+<label><input type="radio" name="q1" value="A"> Created by motion</label>
+<label><input type="radio" name="q1" value="B"> Conserved — never created or destroyed</label>
+<label><input type="radio" name="q1" value="C"> Destroyed by friction</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q2" data-answer="A">
+<strong>2. Kinetic energy depends on:</strong>
+<label><input type="radio" name="q2" value="A"> Mass and velocity squared (½mv²)</label>
+<label><input type="radio" name="q2" value="B"> Only mass</label>
+<label><input type="radio" name="q2" value="C"> Only height</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q3" data-answer="B">
+<strong>3. As a ball falls freely, its potential energy:</strong>
+<label><input type="radio" name="q3" value="A"> Increases</label>
+<label><input type="radio" name="q3" value="B"> Converts to kinetic energy</label>
+<label><input type="radio" name="q3" value="C"> Stays constant</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Intermediate — Applications</div>
+<div class="quiz-q" data-q="q4" data-answer="A">
+<strong>4. A 2 kg ball falls from 5 m. Just before hitting the ground, its KE is:</strong>
+<label><input type="radio" name="q4" value="A"> ≈ 98 J</label>
+<label><input type="radio" name="q4" value="B"> ≈ 10 J</label>
+<label><input type="radio" name="q4" value="C"> ≈ 50 J</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q5" data-answer="B">
+<strong>5. At the highest point of a roller coaster, which is greatest?</strong>
+<label><input type="radio" name="q5" value="A"> Kinetic energy</label>
+<label><input type="radio" name="q5" value="B"> Potential energy</label>
+<label><input type="radio" name="q5" value="C"> Both equal</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q6" data-answer="A">
+<strong>6. If you double the velocity of an object, its kinetic energy becomes:</strong>
+<label><input type="radio" name="q6" value="A"> 4× larger</label>
+<label><input type="radio" name="q6" value="B"> 2× larger</label>
+<label><input type="radio" name="q6" value="C"> Same</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Advanced — Deep Understanding</div>
+<div class="quiz-q" data-q="q7" data-answer="B">
+<strong>7. When friction acts, mechanical energy:</strong>
+<label><input type="radio" name="q7" value="A"> Disappears</label>
+<label><input type="radio" name="q7" value="B"> Converts to thermal energy (heat)</label>
+<label><input type="radio" name="q7" value="C"> Doubles</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q8" data-answer="A">
+<strong>8. A spring compressed by distance x stores energy equal to:</strong>
+<label><input type="radio" name="q8" value="A"> ½kx²</label>
+<label><input type="radio" name="q8" value="B"> kx</label>
+<label><input type="radio" name="q8" value="C"> ½mx²</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q9" data-answer="B">
+<strong>9. If a roller coaster starts at rest from height h, its speed at the bottom (no friction) is:</strong>
+<label><input type="radio" name="q9" value="A"> v = gh</label>
+<label><input type="radio" name="q9" value="B"> v = √(2gh)</label>
+<label><input type="radio" name="q9" value="C"> v = 2gh</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q10" data-answer="A">
+<strong>10. The work-energy theorem states that:</strong>
+<label><input type="radio" name="q10" value="A"> Work done by net force equals change in kinetic energy</label>
+<label><input type="radio" name="q10" value="B"> Work is always zero</label>
+<label><input type="radio" name="q10" value="C"> Energy is lost in every process</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="btn-grid" style="margin-top:12px;">
+<button class="go" id="btn-quiz-check">Submit Quiz</button>
+<button id="btn-quiz-reset">Reset</button>
+</div>
+<div id="quiz-result" style="display:none;"></div>
+</div>
+
+<div id="challenges" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Challenges</h3>
+<div style="display:flex;flex-direction:column;gap:8px;font-size:.88rem;">
+<div><b style="color:var(--pr)">1. Free fall</b><br><button class="launch" data-challenge="fall">5 kg from 10 m — watch PE → KE</button></div>
+<div><b style="color:var(--pr)">2. Spring launcher</b><br><button class="launch" data-challenge="spring">Convert spring PE to kinetic energy</button></div>
+<div><b style="color:var(--pr)">3. Pendulum</b><br><button class="launch" data-challenge="pendulum">Simple pendulum — continuous conversion</button></div>
+<div><b style="color:var(--pr)">4. With friction</b><br><button class="launch" data-challenge="friction">Same coaster + friction — watch energy dissipate</button></div>
+<div><b style="color:var(--pr)">5. Moon gravity</b><br><button class="launch" data-challenge="moon">Same drop on the Moon</button></div>
+<div><b style="color:var(--pr)">6. Double mass</b><br><button class="launch" data-challenge="doublemass">Double mass, same height — energy doubles</button></div>
+<div id="challenge-note" style="color:var(--tx);font-size:.85rem;"></div>
+<div id="challenge-result" style="color:var(--ok);font-weight:600;margin-top:6px;"></div>
+</div>
+</div>
+
+<div id="notebook" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Notebook</h3>
+<label>Hypothesis</label>
+<textarea id="hypothesis" placeholder="What do you expect?"></textarea>
+<label style="margin-top:10px;display:block;">Conclusion</label>
+<textarea id="conclusion" placeholder="What did you observe?"></textarea>
+<label style="margin-top:10px;display:block;">Measurements</label>
+<textarea id="records" readonly style="background:var(--bg);font-family:monospace;font-size:.75rem;min-height:100px;"></textarea>
+<div class="btn-grid" style="margin-top:10px;">
+<button class="go" id="btn-record">📋 Record</button>
+<button id="btn-clear-notes">Clear</button>
+</div>
+<button class="go" style="margin-top:8px;width:100%;" id="btn-export">⬇ Report</button>
+</div>
+</div>
+
+<div class="card">
+<b style="color:var(--pr)">Real fact:</b> <span id="fact-box" style="color:var(--mu);font-size:.85rem;">—</span>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+"use strict";
+(function(){
+
+var $ = function(id){ return document.getElementById(id); };
+var canvas = $('canvas');
+var ctx = canvas.getContext('2d');
+var dpr = window.devicePixelRatio || 1;
+var lastW = 0, lastH = 0;
+
+function resizeCanvas(){
+    var rect = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(rect.width));
+    var h = Math.max(1, Math.round(rect.height));
+    if (w === lastW && h === lastH) return;
+    lastW = w; lastH = h;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function cw(){ return canvas.width / dpr; }
+function ch(){ return canvas.height / dpr; }
+
+// ============ AUDIO ============
+var audioCtx = null;
+var osc = null, gain = null;
+
+function initAudio(){
+    if (audioCtx) return;
+    try {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        audioCtx = new AC();
+    } catch(e){}
+}
+function beep(freq, dur, type, vol){
+    if (!audioCtx) return;
+    try {
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = type || 'sine';
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(vol || 0.06, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + dur);
+    } catch(e){}
+}
+function startTone(){
+    initAudio();
+    if (!audioCtx) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (osc) return;
+    try {
+        osc = audioCtx.createOscillator();
+        gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = 300;
+        gain.gain.setValueAtTime(0, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.03, audioCtx.currentTime + 0.3);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+    } catch(e){}
+}
+function stopTone(){
+    if (osc) {
+        try {
+            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
+            osc.stop(audioCtx.currentTime + 0.25);
+        } catch(e){}
+        osc = null; gain = null;
+    }
+}
+function updateTone(){
+    if (!osc) return;
+    try {
+        // Tone pitch scales with speed
+        var freq = 200 + Math.min(400, S.vel * 30);
+        osc.frequency.setTargetAtTime(freq, audioCtx.currentTime, 0.05);
+    } catch(e){}
+}
+$('btn-sound').addEventListener('click', function(){
+    var on = $('btn-sound').classList.contains('playing');
+    if (on) {
+        stopTone();
+        $('btn-sound').classList.remove('playing');
+        $('btn-sound').textContent = '🔈 Enable sound';
+    } else {
+        startTone();
+        $('btn-sound').classList.add('playing');
+        $('btn-sound').textContent = '🔊 Sound ON';
+    }
+});
+
+// ============ STATE ============
+var S = {
+    scene: 'coaster',
+    mass: 1.0,
+    h0: 5.0,
+    k: 200,
+    x: 0.5,
+    fric: 0,
+    g: 9.81,
+    speed: 1.0,
+    running: false,
+    released: false,
+    time: 0,
+    // Physics state
+    pos: 0,        // position along path (varies by scene)
+    height: 5.0,   // current height
+    vel: 0,        // velocity
+    e0: 0,         // initial energy (should be constant)
+    thermal: 0,    // accumulated thermal energy
+    records: []
+};
+
+function computeInitialEnergy(){
+    if (S.scene === 'spring') {
+        return 0.5 * S.k * S.x * S.x;
+    }
+    return S.mass * S.g * S.h0;
+}
+
+function resetSim(){
+    S.time = 0;
+    S.vel = 0;
+    S.thermal = 0;
+    S.running = false;
+    S.released = false;
+    if (S.scene === 'coaster' || S.scene === 'pendulum' || S.scene === 'skate') {
+        S.height = S.h0;
+        S.pos = 0;
+    } else if (S.scene === 'spring') {
+        S.height = 0;
+        S.pos = -S.x;  // starting at maximum compression
+    }
+    S.e0 = computeInitialEnergy();
+    updateReadouts();
+}
+
+// ============ PHYSICS STEP ============
+var lastT = 0;
+function animate(now){
+    if (!lastT) lastT = now;
+    var dt = (now - lastT) / 1000;
+    if (dt > 0.1) dt = 0.016;
+    lastT = now;
+
+    if (S.running) {
+        var simDt = dt * S.speed;
+        S.time += simDt;
+
+        // Scene-specific physics
+        if (S.scene === 'coaster' || S.scene === 'skate') {
+            // Simple free-fall / U-shape: energy conservation with optional friction
+            // v² = 2g(h0 - h) - friction_loss
+            var ke_current = Math.max(0, 0.5 * S.mass * S.vel * S.vel);
+            var pe_current = S.mass * S.g * S.height;
+            var total_mechanical = ke_current + pe_current;
+
+            // Update: use force approach
+            // a = g (downward), but along slope
+            var accel = -S.g;  // downward acceleration (g)
+            // On U-shape or coaster, height oscillates around 0
+            S.vel += accel * simDt;  // wait, vel is vertical velocity here
+            S.height += S.vel * simDt;
+
+            // Ground bounce
+            if (S.height < 0) {
+                S.height = 0;
+                // Reflect velocity (elastic bounce if no friction)
+                if (S.fric > 0) {
+                    S.vel = -S.vel * (1 - S.fric / 100);
+                } else {
+                    S.vel = -S.vel;
+                }
+                // Record thermal loss on bounce
+                if (S.fric > 0) {
+                    var lost = Math.abs(0.5 * S.mass * S.vel * S.vel * S.fric / 100);
+                    S.thermal += lost;
+                }
+                if (Math.abs(S.vel) < 0.3) {
+                    S.vel = 0;
+                    S.running = false;
+                    playThud();
+                }
+            }
+            // Ceiling (back to top)
+            if (S.height > S.h0) {
+                S.height = S.h0;
+                S.vel = -Math.abs(S.vel);
+            }
+        } else if (S.scene === 'spring') {
+            // Spring-mass harmonic oscillator: x(t) = A·cos(ωt), ω = √(k/m)
+            var omega = Math.sqrt(S.k / S.mass);
+            var amplitude = S.x;
+            var phase = S.time * omega;
+            S.pos = -amplitude * Math.cos(phase);  // starts compressed
+            S.vel = amplitude * omega * Math.sin(phase);
+            S.height = 0;
+        } else if (S.scene === 'pendulum') {
+            // Pendulum: small angle approx θ(t) = θ0·cos(ωt), ω = √(g/L)
+            var L = S.h0;  // use h0 as length
+            var omega2 = Math.sqrt(S.g / L);
+            var theta0 = 0.6;  // ~34° initial angle
+            var theta = theta0 * Math.cos(omega2 * S.time);
+            S.pos = theta;  // angular position
+            S.height = L * (1 - Math.cos(theta));
+            S.vel = -L * omega2 * theta0 * Math.sin(omega2 * S.time);
+        }
+
+        // Update tone pitch
+        updateTone();
+
+        // Ground/collision detection
+        if (S.vel !== 0 && Math.abs(S.vel) < 0.05 && S.scene !== 'pendulum' && S.scene !== 'spring') {
+            S.running = false;
+        }
+    }
+
+    drawScene();
+    updateReadouts();
+    requestAnimationFrame(animate);
+}
+
+function playThud(){
+    initAudio();
+    if (!audioCtx) return;
+    beep(120, 0.3, 'sawtooth', 0.12);
+}
+
+// ============ DRAW ============
+function drawScene(){
+    resizeCanvas();
+    var w = cw(), h = ch();
+    if (w < 10 || h < 10) return;
+
+    // Background gradient
+    var bg = ctx.createRadialGradient(w/2, h, 0, w/2, h, Math.max(w, h) * 1.2);
+    bg.addColorStop(0, '#0a1428');
+    bg.addColorStop(1, '#020408');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+
+    if (S.scene === 'coaster') drawCoaster(w, h);
+    else if (S.scene === 'spring') drawSpring(w, h);
+    else if (S.scene === 'pendulum') drawPendulum(w, h);
+    else if (S.scene === 'skate') drawSkate(w, h);
+
+    drawEnergyBars(w, h);
+
+    // Title
+    ctx.fillStyle = '#e5e9f5';
+    ctx.font = 'bold 13px system-ui';
+    ctx.textAlign = 'center';
+    var label = {coaster: 'Roller Coaster', spring: 'Spring Launcher', pendulum: 'Pendulum', skate: 'Skate Park Ramp'}[S.scene];
+    ctx.fillText(label, w / 2, 25);
+
+    // Status indicator
+    var pulseR = 5 + 3 * Math.sin(performance.now() * 0.004);
+    ctx.fillStyle = S.running ? 'rgba(52,211,153,1)' : 'rgba(100,116,139,.6)';
+    ctx.shadowColor = S.running ? '#34d399' : 'transparent';
+    ctx.shadowBlur = S.running ? 12 : 0;
+    ctx.beginPath();
+    ctx.arc(w - 30, 30, pulseR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = S.running ? '#34d399' : '#64748b';
+    ctx.font = 'bold 10px system-ui';
+    ctx.textAlign = 'right';
+    ctx.fillText(S.running ? 'RUNNING' : 'PAUSED', w - 45, 34);
+}
+
+function drawCoaster(w, h){
+    var groundY = h - 80;
+    var trackTopY = h * 0.2;
+    var scale = (groundY - trackTopY) / S.h0;
+
+    // Draw hills (visible track)
+    ctx.strokeStyle = 'rgba(129,140,248,0.5)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    for (var x = 0; x <= w; x += 5) {
+        var tx = x / w;
+        var terrainH = Math.sin(tx * Math.PI * 1.5) * S.h0 * 0.6 + S.h0 * 0.4;
+        var y = groundY - terrainH * scale;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Draw ball on track at current height
+    var ballX = w * 0.15;
+    var ballY = groundY - S.height * scale;
+    var ballR = Math.max(15, Math.min(30, 10 + S.mass * 3));
+
+    // Ball glow
+    var grad = ctx.createRadialGradient(ballX, ballY, 0, ballX, ballY, ballR * 2);
+    grad.addColorStop(0, 'rgba(255,92,138,0.9)');
+    grad.addColorStop(1, 'rgba(255,92,138,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(ballX, ballY, ballR * 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Ball
+    var hg = ctx.createRadialGradient(ballX - ballR*0.3, ballY - ballR*0.3, 0, ballX, ballY, ballR);
+    hg.addColorStop(0, 'rgba(255,255,255,0.9)');
+    hg.addColorStop(0.4, '#ff5c8a');
+    hg.addColorStop(1, '#dc2626');
+    ctx.fillStyle = hg;
+    ctx.beginPath();
+    ctx.arc(ballX, ballY, ballR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Height ruler
+    drawRuler(w, h, groundY, scale, S.h0);
+
+    // Height indicator
+    ctx.strokeStyle = 'rgba(79,168,255,0.6)';
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.moveTo(ballX + ballR + 10, ballY);
+    ctx.lineTo(w - 30, ballY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#4fa8ff';
+    ctx.font = 'bold 11px system-ui';
+    ctx.textAlign = 'left';
+    ctx.fillText('h = ' + S.height.toFixed(2) + ' m', ballX + ballR + 15, ballY - 5);
+
+    // Velocity arrow
+    if (Math.abs(S.vel) > 0.1) {
+        var arrowLen = Math.min(80, Math.abs(S.vel) * 15);
+        var dir = S.vel > 0 ? 1 : -1;  // +1 means going up
+        var ax = ballX, ay = ballY - ballR;
+        drawArrow(ctx, ax, ay, ax, ay + dir * arrowLen, '#fbbf24');
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = 'bold 11px system-ui';
+        ctx.textAlign = 'left';
+        ctx.fillText('v = ' + Math.abs(S.vel).toFixed(2) + ' m/s', ax + 8, ay + dir * arrowLen / 2);
+    }
+}
+
+function drawSpring(w, h){
+    var groundY = h - 80;
+    var centerX = w / 2;
+    var wallX = centerX - 120;
+    var restX = centerX;
+    var scale = Math.min(200, 400 / Math.max(0.5, S.x));
+
+    // Wall
+    ctx.fillStyle = '#475569';
+    ctx.fillRect(wallX - 10, groundY - 100, 10, 100);
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(wallX - 10, groundY - 100, 10, 100);
+
+    // Spring (zigzag)
+    var springStartX = wallX;
+    var springEndX = restX + S.pos * scale;
+    var springY = groundY - 40;
+    ctx.strokeStyle = '#818cf8';
+    ctx.lineWidth = 3;
+    ctx.shadowColor = '#818cf8';
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.moveTo(springStartX, springY);
+    var coils = 8;
+    for (var i = 0; i < coils * 2; i++) {
+        var t = (i + 0.5) / (coils * 2);
+        var x = springStartX + t * (springEndX - springStartX);
+        var y = springY + (i % 2 === 0 ? -20 : 20);
+        ctx.lineTo(x, y);
+    }
+    ctx.lineTo(springEndX, springY);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Mass block at end of spring
+    var blockSize = Math.max(30, Math.min(60, 20 + S.mass * 5));
+    var blockX = springEndX;
+    var blockY = groundY - blockSize / 2;
+
+    var grad = ctx.createLinearGradient(blockX - blockSize/2, blockY - blockSize/2, blockX + blockSize/2, blockY + blockSize/2);
+    grad.addColorStop(0, 'rgba(255,92,138,0.9)');
+    grad.addColorStop(1, '#dc2626');
+    ctx.fillStyle = grad;
+    ctx.fillRect(blockX - blockSize/2, blockY - blockSize/2, blockSize, blockSize);
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(blockX - blockSize/2, blockY - blockSize/2, blockSize, blockSize);
+    ctx.fillStyle = '#000';
+    ctx.font = 'bold ' + Math.round(blockSize * 0.4) + 'px system-ui';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('m', blockX, blockY);
+    ctx.textBaseline = 'alphabetic';
+
+    // Labels
+    ctx.fillStyle = '#93a0bd';
+    ctx.font = '11px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('k = ' + S.k + ' N/m', centerX, h - 30);
+    ctx.fillText('x = ' + (-S.pos).toFixed(2) + ' m', centerX, h - 14);
+}
+
+function drawPendulum(w, h){
+    var pivotX = w / 2;
+    var pivotY = h * 0.15;
+    var L = S.h0;
+    var scale = (h * 0.65) / Math.max(L, 1);
+    var pivotRadius = 8;
+
+    // Ceiling mount
+    ctx.fillStyle = '#475569';
+    ctx.fillRect(pivotX - 40, pivotY - 15, 80, 15);
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(pivotX - 40, pivotY - 15, 80, 15);
+
+    // Pivot
+    ctx.fillStyle = '#818cf8';
+    ctx.beginPath();
+    ctx.arc(pivotX, pivotY, pivotRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Angle (S.pos is theta)
+    var theta = S.pos;
+    var bobX = pivotX + L * scale * Math.sin(theta);
+    var bobY = pivotY + L * scale * Math.cos(theta);
+
+    // Rod
+    ctx.strokeStyle = '#93a0bd';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(pivotX, pivotY);
+    ctx.lineTo(bobX, bobY);
+    ctx.stroke();
+
+    // Bob
+    var bobR = Math.max(15, Math.min(30, 10 + S.mass * 3));
+    var grad = ctx.createRadialGradient(bobX - bobR*0.3, bobY - bobR*0.3, 0, bobX, bobY, bobR);
+    grad.addColorStop(0, 'rgba(255,255,255,0.9)');
+    grad.addColorStop(0.4, '#ff5c8a');
+    grad.addColorStop(1, '#dc2626');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(bobX, bobY, bobR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Angle arc
+    ctx.strokeStyle = 'rgba(129,140,248,0.4)';
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(pivotX, pivotY);
+    ctx.lineTo(pivotX, pivotY + L * scale);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Angle label
+    ctx.fillStyle = '#818cf8';
+    ctx.font = 'bold 11px system-ui';
+    ctx.textAlign = 'left';
+    ctx.fillText('θ = ' + (theta * 180 / Math.PI).toFixed(1) + '°', pivotX + 20, pivotY + 60);
+}
+
+function drawSkate(w, h){
+    var groundY = h - 80;
+    var centerX = w / 2;
+    var rampWidth = w * 0.6;
+    var scale = (h * 0.5) / S.h0;
+
+    // U-shape ramp
+    ctx.strokeStyle = 'rgba(129,140,248,0.6)';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(centerX - rampWidth / 2, groundY - S.h0 * scale);
+    ctx.quadraticCurveTo(centerX - rampWidth / 4, groundY, centerX, groundY);
+    ctx.quadraticCurveTo(centerX + rampWidth / 4, groundY, centerX + rampWidth / 2, groundY - S.h0 * scale);
+    ctx.stroke();
+
+    // Rider position based on S.height
+    var riderX = centerX;  // simplified - rider oscillates at center
+    // Actually: rider swings between sides
+    var swing = Math.sin(S.time * Math.sqrt(S.g / S.h0)) * rampWidth * 0.4;
+    riderX = centerX + swing;
+
+    // Rider height at that position (U-shape)
+    var u = (riderX - centerX) / (rampWidth / 2);
+    var riderHeight = S.h0 * u * u;
+    var riderY = groundY - riderHeight * scale;
+
+    // Rider
+    var riderR = Math.max(12, Math.min(25, 8 + S.mass * 2));
+    var grad = ctx.createRadialGradient(riderX - riderR*0.3, riderY - riderR*0.3, 0, riderX, riderY, riderR);
+    grad.addColorStop(0, 'rgba(255,255,255,0.9)');
+    grad.addColorStop(0.4, '#ff5c8a');
+    grad.addColorStop(1, '#dc2626');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(riderX, riderY, riderR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Height mark
+    ctx.fillStyle = '#4fa8ff';
+    ctx.font = 'bold 11px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('h = ' + riderHeight.toFixed(2) + ' m', riderX, riderY - riderR - 10);
+}
+
+function drawRuler(w, h, groundY, scale, maxH){
+    ctx.strokeStyle = 'rgba(148,163,184,0.3)';
+    ctx.lineWidth = 1;
+    for (var m = 0; m <= maxH; m += 1) {
+        var y = groundY - m * scale;
+        if (y < 0) break;
+        ctx.beginPath();
+        ctx.moveTo(30, y);
+        ctx.lineTo(40, y);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(148,163,184,0.7)';
+        ctx.font = '10px system-ui';
+        ctx.textAlign = 'right';
+        ctx.fillText(m + 'm', 28, y + 3);
+    }
+}
+
+function drawEnergyBars(w, h){
+    var p = getCurrentEnergies();
+
+    var bx = w - 200;
+    var by = 60;
+    var bw = 40;
+    var bh = 150;
+    var gap = 20;
+
+    // Labels
+    ctx.fillStyle = '#93a0bd';
+    ctx.font = 'bold 10px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('ENERGY', bx + gap + bw, by - 10);
+
+    var total = Math.max(p.total, 1);
+
+    // KE bar (pink)
+    drawBar(bx, by, bw, bh, p.ke / total, '#ff5c8a', 'KE', p.ke);
+    // PE bar (blue)
+    drawBar(bx + bw + gap, by, bw, bh, p.pe / total, '#4fa8ff', 'PE', p.pe);
+    // Thermal bar (yellow)
+    drawBar(bx + (bw + gap) * 2, by, bw, bh, p.thermal / total, '#fbbf24', 'Thermal', p.thermal);
+}
+
+function drawBar(x, y, w, h, pct, color, label, value){
+    // Background
+    ctx.fillStyle = 'rgba(20,27,46,0.9)';
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, 4);
+    ctx.fill();
+    ctx.stroke();
+
+    // Fill
+    var fillH = h * Math.min(1, pct);
+    ctx.fillStyle = color;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 15;
+    ctx.fillRect(x + 2, y + h - fillH + 2, w - 4, Math.max(0, fillH - 4));
+    ctx.shadowBlur = 0;
+
+    // Label
+    ctx.fillStyle = color;
+    ctx.font = 'bold 10px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x + w / 2, y + h + 14);
+    ctx.fillStyle = '#e5e9f5';
+    ctx.font = '9px system-ui';
+    ctx.fillText(value.toFixed(1), x + w / 2, y + h + 26);
+}
+
+function drawArrow(ctx, x1, y1, x2, y2, color){
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = 2.5;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    var ang = Math.atan2(y2 - y1, x2 - x1);
+    var sz = 8;
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - sz * Math.cos(ang - 0.4), y2 - sz * Math.sin(ang - 0.4));
+    ctx.lineTo(x2 - sz * Math.cos(ang + 0.4), y2 - sz * Math.sin(ang + 0.4));
+    ctx.closePath();
+    ctx.fill();
+}
+
+// ============ ENERGY CALCULATIONS ============
+function getCurrentEnergies(){
+    var ke = 0.5 * S.mass * S.vel * S.vel;
+    var pe = S.mass * S.g * S.height;
+    var thermal = S.thermal;
+
+    // Spring PE if applicable
+    var pes = 0;
+    if (S.scene === 'spring') {
+        pes = 0.5 * S.k * S.pos * S.pos;
+    }
+
+    var total = ke + pe + pes + thermal;
+    return { ke: ke, pe: pe, pes: pes, thermal: thermal, total: total };
+}
+
+// ============ READOUTS ============
+function updateReadouts(){
+    var p = getCurrentEnergies();
+    $('ro-ke').innerText = p.ke.toFixed(2) + ' J';
+    $('ro-pe').innerText = p.pe.toFixed(2) + ' J';
+    $('ro-pes').innerText = p.pes.toFixed(2) + ' J';
+    $('ro-thermal').innerText = p.thermal.toFixed(2) + ' J';
+    $('ro-total').innerText = p.total.toFixed(2) + ' J';
+    $('ro-e0').innerText = S.e0.toFixed(2) + ' J';
+    $('ro-v').innerText = Math.abs(S.vel).toFixed(2) + ' m/s';
+    $('ro-h').innerText = S.height.toFixed(2) + ' m';
+    var momentum = S.mass * Math.abs(S.vel);
+    $('ro-p').innerText = momentum.toFixed(2) + ' kg·m/s';
+    // Power = F·v ≈ mg·v (for gravity)
+    var power = S.mass * S.g * Math.abs(S.vel);
+    $('ro-pw').innerText = power.toFixed(2) + ' W';
+    $('ro-t').innerText = S.time.toFixed(2) + ' s';
+    var eff = S.e0 > 0 ? (p.total / S.e0) * 100 : 100;
+    $('ro-eff').innerText = eff.toFixed(1) + '%';
+
+    $('hud-t').innerText = S.time.toFixed(2);
+    $('hud-h').innerText = S.height.toFixed(2);
+    $('hud-v').innerText = Math.abs(S.vel).toFixed(2);
+    $('hud-E').innerText = p.total.toFixed(2);
+    $('hud-status').innerText = S.running ? 'Moving' : (S.released ? 'Stopped' : 'Idle');
+
+    var fact;
+    if (S.scene === 'coaster') {
+        fact = 'Roller coaster: at the top, PE is maximum and KE = 0. As the ball falls, PE converts to KE. At the bottom, KE is maximum. Without friction, total energy is constant.';
+    } else if (S.scene === 'spring') {
+        fact = 'Spring-mass: energy oscillates between spring PE (½kx²) and kinetic energy (½mv²). Total energy is constant. This is a simple harmonic oscillator.';
+    } else if (S.scene === 'pendulum') {
+        fact = 'Pendulum: at the highest point of the swing, PE is maximum and speed is zero. At the lowest point, PE is minimum and speed is maximum. KE + PE = constant.';
+    } else {
+        fact = 'Skate park: a skater in a U-shaped ramp experiences continuous conversion between PE and KE, oscillating back and forth forever (in the ideal case).';
+    }
+    if (S.fric > 0) {
+        fact += ' With ' + S.fric + '% friction, some energy converts to thermal (heat) each cycle.';
+    }
+    $('fact-box').innerText = fact;
+}
+
+// ============ QUIZ ============
+var QUIZ_EXPLAIN = {
+    q1:{correct:'B',why:'The law of conservation of energy states that energy cannot be created or destroyed, only transformed between forms.',tip:'Total energy in the universe is constant.'},
+    q2:{correct:'A',why:'KE = ½mv². Both mass AND velocity (squared) matter. Doubling velocity quadruples KE.',tip:'This is why high speeds are dangerous.'},
+    q3:{correct:'B',why:'As the ball falls, PE = mgh decreases (h gets smaller) and KE = ½mv² increases. Energy converts from PE to KE.',tip:'PE + KE = constant during free fall.'},
+    q4:{correct:'A',why:'At the bottom, all PE → KE: KE = mgh = 2 × 9.81 × 5 = <b>98.1 J</b>.',tip:'Check: v = √(2·9.81·5) = √98.1 ≈ 9.9 m/s.'},
+    q5:{correct:'B',why:'At the highest point, h is maximum, so PE is maximum. Speed is minimum (near zero), so KE is minimum.',tip:'Roller coasters are slowest at the top.'},
+    q6:{correct:'A',why:'KE = ½mv². Doubling v gives KE × 2² = <b>4×</b>.',tip:'This is why a car at 100 km/h has 4× the stopping distance of one at 50 km/h.'},
+    q7:{correct:'B',why:'Friction converts mechanical energy into thermal energy (heat) — this is why surfaces get warm. Energy is still conserved, just converted.',tip:'Thermal energy is still energy, just not "useful" for motion.'},
+    q8:{correct:'A',why:'Spring PE = ½kx², where k is spring constant and x is displacement from equilibrium.',tip:'Doubling compression gives 4× stored energy.'},
+    q9:{correct:'B',why:'mgh = ½mv² → v² = 2gh → v = √(2gh). Mass cancels out!',tip:'A heavy and light ball fall with the same speed (ignoring air resistance).'},
+    q10:{correct:'A',why:'Work-Energy Theorem: W_net = ΔKE. The work done by the net force equals the change in kinetic energy.',tip:'This is equivalent to energy conservation with work as the transfer mechanism.'}
+};
+
+function evaluateQuiz(){
+    var qs = document.querySelectorAll('.quiz-q');
+    var score = 0;
+    qs.forEach(function(q){
+        var name = q.dataset.q;
+        var correct = q.dataset.answer;
+        var chosen = q.querySelector('input[name="'+name+'"]:checked');
+        var expl = q.querySelector('.explanation');
+        var data = QUIZ_EXPLAIN[name];
+        expl.hidden = false;
+        expl.className = 'explanation';
+        if (chosen && chosen.value === correct) {
+            score++;
+            expl.classList.add('correct-box');
+            expl.innerHTML = '<strong>✓ Correct!</strong> ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:var(--mu);"><b>💡</b> ' + data.tip + '</div>';
+        } else {
+            expl.classList.add('wrong-box');
+            var cv = chosen ? chosen.value : '—';
+            expl.innerHTML = '<strong>✗ Answer: ' + correct + '</strong> You chose ' + cv + '. ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:var(--mu);"><b>💡</b> ' + data.tip + '</div>';
+        }
+    });
+    var pct = Math.round(score/qs.length*100);
+    beep(pct>=78?880:440,0.15,'sine',0.1);
+    var r = $('quiz-result');
+    r.style.display = 'block';
+    r.innerHTML = '<div style="font-size:1.4rem;color:var(--pr);">' + score + '/' + qs.length + ' · ' + pct + '%</div>';
+}
+function resetQuiz(){
+    document.querySelectorAll('.quiz-q').forEach(function(q){
+        q.querySelectorAll('input[type=radio]').forEach(function(r){ r.checked = false; });
+        var e = q.querySelector('.explanation');
+        e.hidden = true; e.innerHTML = ''; e.className = 'explanation';
+    });
+    $('quiz-result').style.display = 'none';
+}
+
+// ============ CHALLENGES ============
+function applyChallenge(id){
+    var note = $('challenge-note'), cres = $('challenge-result');
+    note.innerText = ''; cres.innerText = '';
+    if (id === 'fall') {
+        S.scene = 'coaster'; $('scene').value = 'coaster';
+        S.mass = 5; $('mass').value = 5; $('v-m').innerText = '5.0';
+        S.h0 = 10; $('h0').value = 10; $('v-h0').innerText = '10.0';
+        S.fric = 0; $('fric').value = 0; $('v-fric').innerText = '0';
+        note.innerText = 'Free fall from 10 m: watch PE convert to KE as height drops. At ground: KE = PE_initial = mgh.';
+        cres.innerText = 'E_initial = ' + (5 * 9.81 * 10).toFixed(1) + ' J';
+    } else if (id === 'spring') {
+        S.scene = 'spring'; $('scene').value = 'spring';
+        $('springrow').style.display = 'block';
+        $('comprrow').style.display = 'block';
+        note.innerText = 'Spring launcher: spring PE (½kx²) converts to KE of mass. Total oscillates between the two.';
+        cres.innerText = 'PE_spring = ½ × ' + S.k + ' × ' + S.x + '² = ' + (0.5 * S.k * S.x * S.x).toFixed(1) + ' J';
+    } else if (id === 'pendulum') {
+        S.scene = 'pendulum'; $('scene').value = 'pendulum';
+        S.h0 = 3; $('h0').value = 3; $('v-h0').innerText = '3.0';
+        note.innerText = 'Pendulum: continuous conversion between PE and KE. Watch the bob speed up at the bottom, slow at the top.';
+        cres.innerText = 'PE_max at top = mgh = ' + (S.mass * 9.81 * S.h0).toFixed(1) + ' J';
+    } else if (id === 'friction') {
+        S.scene = 'coaster'; $('scene').value = 'coaster';
+        S.fric = 15; $('fric').value = 15; $('v-fric').innerText = '15';
+        note.innerText = 'Same coaster + 15% friction: watch the total energy slowly drop as thermal energy accumulates.';
+        cres.innerText = 'Thermal energy = friction × distance — the missing energy becomes heat.';
+    } else if (id === 'moon') {
+        S.scene = 'coaster'; $('scene').value = 'coaster';
+        S.g = 1.62; $('g').value = '1.62'; $('v-g').innerText = '1.62';
+        note.innerText = 'Same drop on the Moon: less PE (lower g), so lower speed at ground.';
+        cres.innerText = 'PE_moon = ' + (S.mass * 1.62 * S.h0).toFixed(1) + ' J (vs ' + (S.mass * 9.81 * S.h0).toFixed(1) + ' J on Earth)';
+    } else if (id === 'doublemass') {
+        S.scene = 'coaster'; $('scene').value = 'coaster';
+        S.mass = 2; $('mass').value = 2; $('v-m').innerText = '2.0';
+        note.innerText = 'Double mass at same height: PE doubles, and KE at bottom doubles — but velocity at bottom is the same!';
+        cres.innerText = 'PE = 2 × mgh (doubled). v = √(2gh) unchanged.';
+    }
+    resetSim();
+    S.released = true;
+    S.running = true;
+    updateReadouts();
+}
+
+// ============ NOTEBOOK ============
+function recordMeasurement(){
+    var p = getCurrentEnergies();
+    var line = new Date().toLocaleTimeString() + ' | ' + S.scene + ' | m=' + S.mass.toFixed(1) + ' kg | h=' + S.height.toFixed(2) + ' m | v=' + Math.abs(S.vel).toFixed(2) + ' m/s | KE=' + p.ke.toFixed(2) + ' J | PE=' + p.pe.toFixed(2) + ' J | thermal=' + p.thermal.toFixed(2) + ' J | total=' + p.total.toFixed(2) + ' J';
+    S.records.push(line);
+    $('records').value = S.records.join('\n');
+    $('records').scrollTop = $('records').scrollHeight;
+}
+function downloadReport(){
+    var p = getCurrentEnergies();
+    var text = 'CONSERVATION OF ENERGY LAB REPORT\nDate: ' + new Date().toLocaleString() + '\n\n' +
+        'SCENE: ' + S.scene + '\n' +
+        'Mass m = ' + S.mass.toFixed(2) + ' kg\n' +
+        'Initial height h₀ = ' + S.h0.toFixed(2) + ' m\n' +
+        'Gravity g = ' + S.g + ' m/s²\n' +
+        'Friction = ' + S.fric + '%\n' +
+        'Initial energy E₀ = ' + S.e0.toFixed(2) + ' J\n\n' +
+        'CURRENT STATE\n' +
+        'Height h = ' + S.height.toFixed(2) + ' m\n' +
+        'Speed v = ' + Math.abs(S.vel).toFixed(2) + ' m/s\n' +
+        'Kinetic energy = ' + p.ke.toFixed(2) + ' J\n' +
+        'Potential energy = ' + p.pe.toFixed(2) + ' J\n' +
+        'Spring PE = ' + p.pes.toFixed(2) + ' J\n' +
+        'Thermal energy = ' + p.thermal.toFixed(2) + ' J\n' +
+        'Total energy = ' + p.total.toFixed(2) + ' J\n' +
+        'Efficiency (E/E₀) = ' + (S.e0 > 0 ? ((p.total / S.e0) * 100).toFixed(2) : '100') + '%\n\n' +
+        'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+        'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+        'MEASUREMENTS\n' + S.records.join('\n') + '\n\n' +
+        'LIMITATIONS\nIdeal model. Real systems lose energy to air resistance, sound, and internal friction. Total energy INCLUDING all forms is always conserved. Educational use only.\n';
+    var blob = new Blob([text], {type:'text/plain'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'conservation-energy-report.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+// ============ EVENTS ============
+$('scene').addEventListener('change', function(e){
+    S.scene = e.target.value;
+    $('springrow').style.display = (S.scene === 'spring') ? 'block' : 'none';
+    $('comprrow').style.display = (S.scene === 'spring') ? 'block' : 'none';
+    resetSim();
+});
+$('mass').addEventListener('input', function(e){
+    S.mass = parseFloat(e.target.value);
+    $('v-m').innerText = S.mass.toFixed(1);
+    resetSim();
+});
+$('h0').addEventListener('input', function(e){
+    S.h0 = parseFloat(e.target.value);
+    $('v-h0').innerText = S.h0.toFixed(1);
+    resetSim();
+});
+$('k').addEventListener('input', function(e){
+    S.k = parseFloat(e.target.value);
+    $('v-k').innerText = S.k;
+    resetSim();
+});
+$('x').addEventListener('input', function(e){
+    S.x = parseFloat(e.target.value);
+    $('v-x').innerText = S.x.toFixed(2);
+    resetSim();
+});
+$('fric').addEventListener('input', function(e){
+    S.fric = parseFloat(e.target.value);
+    $('v-fric').innerText = S.fric;
+});
+$('g').addEventListener('change', function(e){
+    S.g = parseFloat(e.target.value);
+    $('v-g').innerText = S.g.toFixed(2);
+    resetSim();
+});
+$('speed').addEventListener('input', function(e){
+    S.speed = parseFloat(e.target.value);
+    $('v-speed').innerText = S.speed.toFixed(1);
+});
+
+$('btn-launch').addEventListener('click', function(){
+    resetSim();
+    S.released = true;
+    S.running = true;
+    beep(660, 0.15, 'sine', 0.08);
+});
+$('btn-reset').addEventListener('click', function(){
+    resetSim();
+});
+
+document.querySelectorAll('.tab-btn[data-tab]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+        document.querySelectorAll('.tab-btn[data-tab]').forEach(function(b){ b.classList.remove('active'); });
+        document.getElementById(btn.dataset.tab).classList.add('active');
+        btn.classList.add('active');
+    });
+});
+document.querySelectorAll('[data-challenge]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        applyChallenge(btn.dataset.challenge);
+        beep(660, 0.08, 'sine', 0.08);
+    });
+});
+
+$('btn-quiz-check').addEventListener('click', evaluateQuiz);
+$('btn-quiz-reset').addEventListener('click', resetQuiz);
+$('btn-record').addEventListener('click', recordMeasurement);
+$('btn-clear-notes').addEventListener('click', function(){
+    if (!confirm('Clear notebook?')) return;
+    $('hypothesis').value = ''; $('conclusion').value = ''; $('records').value = '';
+    S.records = [];
+});
+$('btn-export').addEventListener('click', downloadReport);
+
+// Splitter
+(function(){
+    var sim = $('sim-area'), splitter = $('splitter');
+    var dragging = false, startY = 0, startH = 0;
+    splitter.addEventListener('pointerdown', function(e){
+        e.preventDefault(); dragging = true; startY = e.clientY;
+        startH = sim.getBoundingClientRect().height;
+        try { splitter.setPointerCapture(e.pointerId); } catch(_){}
+    });
+    window.addEventListener('pointermove', function(e){
+        if (!dragging) return;
+        var dy = e.clientY - startY;
+        var nh = Math.max(180, Math.min(window.innerHeight-240, Math.round(startH + dy)));
+        sim.style.flex = '0 0 ' + nh + 'px';
+    });
+    window.addEventListener('pointerup', function(e){
+        if (!dragging) return;
+        dragging = false;
+        try { splitter.releasePointerCapture(e.pointerId); } catch(_){}
+    });
+})();
+
+window.addEventListener('resize', function(){ lastW = 0; lastH = 0; });
+
+// ============ BOOT ============
+resetSim();
+updateReadouts();
+requestAnimationFrame(animate);
+
+})();
+</script>
+</body>
+</html>

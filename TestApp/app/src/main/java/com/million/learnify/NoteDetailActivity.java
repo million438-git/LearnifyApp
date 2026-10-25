@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -42,9 +41,10 @@ import java.util.ArrayList;
 
 /**
  * NoteDetailActivity - World-Class Professional Study Interface.
- * Enhanced with: Advanced Note-taking (Text, Audio, Handwriting) and AI Interaction.
+ * Enhanced with: Inclusive Learning Mode, Accessible Audio Lesson Reader,
+ * Note-taking (Text, Audio, Handwriting), and AI Interaction.
  */
-public class NoteDetailActivity extends AppCompatActivity implements VoiceStudyManager.VoiceCallback {
+public class NoteDetailActivity extends BaseActivity implements VoiceStudyManager.VoiceCallback {
 
     private static final String TAG = "NoteDetailActivity";
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
@@ -60,6 +60,11 @@ public class NoteDetailActivity extends AppCompatActivity implements VoiceStudyM
     private BottomAppBar bottomAppBar;
     private LinearProgressIndicator noteProgressBar;
     
+    // Inclusive Audio Reading Bar
+    private View readingBarView;
+    private AccessibleReadingController readingController;
+    private String lessonSpeechContent = "";
+
     private VoiceStudyManager voiceStudyManager;
     private boolean isSpeaking = false;
     private boolean isFullscreen = false;
@@ -101,7 +106,9 @@ public class NoteDetailActivity extends AppCompatActivity implements VoiceStudyM
         topicList = getIntent().getStringArrayListExtra("TOPIC_LIST");
         currentTopicIndex = getIntent().getIntExtra("TOPIC_INDEX", -1);
 
-        audioFileName = getExternalCacheDir().getAbsolutePath() + "/note_audio_" + topic.hashCode() + ".3gp";
+        File cacheDir = getExternalCacheDir();
+        String cachePath = cacheDir != null ? cacheDir.getAbsolutePath() : getCacheDir().getAbsolutePath();
+        audioFileName = cachePath + "/note_audio_" + (topic != null ? topic.hashCode() : 0) + ".3gp";
 
         initViews();
         setupToolbar();
@@ -135,6 +142,12 @@ public class NoteDetailActivity extends AppCompatActivity implements VoiceStudyM
         appBarLayout = findViewById(R.id.appBarLayout);
         bottomAppBar = findViewById(R.id.bottomAppBar);
         noteProgressBar = findViewById(R.id.noteProgressBar);
+
+        // Accessible Reading Bar
+        readingBarView = findViewById(R.id.accessibleReadingBar);
+        if (readingBarView != null) {
+            readingController = new AccessibleReadingController(this, readingBarView, getAccessibilitySpeaker());
+        }
     }
 
     private void setupToolbar() {
@@ -145,6 +158,17 @@ public class NoteDetailActivity extends AppCompatActivity implements VoiceStudyM
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
         toolbar.setNavigationOnClickListener(v -> finish());
+
+        // Semantic heading and accessibility roles
+        AccessibilityUtils.setAsHeading(tvNoteTitle);
+        AccessibilityUtils.setAccessibilityLabel(ivVoiceAssistant, "Open Voice Assistant", "Button");
+        AccessibilityUtils.setAccessibilityLabel(ivRecordAudio, "Record Audio Reflection", "Button");
+        AccessibilityUtils.setAccessibilityLabel(ivHandwrite, "Toggle Handwriting Canvas", "Button");
+        AccessibilityUtils.setAccessibilityLabel(ivHighlight, "Highlight Selected Text", "Button");
+        AccessibilityUtils.setAccessibilityLabel(ivMyNotes, "Open Personal Study Notes", "Button");
+        AccessibilityUtils.setAccessibilityLabel(ivFullscreen, "Toggle Fullscreen", "Button");
+        AccessibilityUtils.setAccessibilityLabel(btnReadAloud, "Read Lesson Aloud", "Button");
+        AccessibilityUtils.setAccessibilityLabel(btnPractice, "Start Practice Quiz", "Button");
     }
 
     private void loadNoteData() {
@@ -166,12 +190,30 @@ public class NoteDetailActivity extends AppCompatActivity implements VoiceStudyM
                 @Override public void onPageFinished(WebView view, String url) { applyHighlights(); }
             });
             wvNoteContent.loadUrl(htmlUrl);
+
+            // Fetch raw HTML for accessible speech extraction
+            String rawHtml = StudyContentProvider.getHtmlContent(this, subject, chapter, topic);
+            lessonSpeechContent = (rawHtml != null && !rawHtml.trim().isEmpty()) ? rawHtml : chapter + ". " + cleanTopicName(topic);
         } else {
             wvNoteContent.setVisibility(View.GONE);
             scrollTextContent.setVisibility(View.VISIBLE);
-            tvNoteContent.setText("Preparing academic content for " + cleanTopicName(topic));
+            String placeholder = "Academic content for " + cleanTopicName(topic) + " in " + chapter + ".";
+            tvNoteContent.setText(placeholder);
+            lessonSpeechContent = placeholder;
         }
+
+        if (readingController != null) {
+            readingController.setContent(lessonSpeechContent);
+        }
+
         noteProgressBar.setProgress(100);
+
+        // Auto-read if student enabled auto-read or navigated with auto-voice
+        boolean autoStart = getIntent().getBooleanExtra("AUTO_START_VOICE", false)
+                || getInclusiveModeManager().isAutoReadContentEnabled();
+        if (autoStart) {
+            triggerReadAloud();
+        }
     }
 
     private String cleanTopicName(String name) {
@@ -202,11 +244,15 @@ public class NoteDetailActivity extends AppCompatActivity implements VoiceStudyM
     }
 
     private void updatePersonalizationUI() {
-        if (ivBookmark != null) ivBookmark.setImageResource(isBookmarked ? android.R.drawable.btn_star_big_on : android.R.drawable.ic_menu_save);
+        if (ivBookmark != null) {
+            ivBookmark.setImageResource(isBookmarked ? android.R.drawable.btn_star_big_on : android.R.drawable.ic_menu_save);
+            AccessibilityUtils.setAccessibilityLabel(ivBookmark, isBookmarked ? "Lesson Saved in Library" : "Bookmark Lesson", "Button");
+        }
         if (ivImportant != null) {
             ivImportant.setImageResource(isImportant ? android.R.drawable.btn_star_big_on : android.R.drawable.btn_star_big_off);
             if (isImportant) ivImportant.setColorFilter(Color.parseColor("#F59E0B")); 
             else ivImportant.clearColorFilter();
+            AccessibilityUtils.setAccessibilityLabel(ivImportant, isImportant ? "Marked as Essential Priority" : "Mark as Important", "Button");
         }
     }
 
@@ -224,14 +270,18 @@ public class NoteDetailActivity extends AppCompatActivity implements VoiceStudyM
             isImportant = !isImportant;
             updatePersonalizationUI();
             savePersonalization();
-            Toast.makeText(this, isImportant ? "Priority: Essential ⭐" : "Priority Cleared", Toast.LENGTH_SHORT).show();
+            String msg = isImportant ? "Priority: Essential" : "Priority Cleared";
+            AccessibilityUtils.announceForAccessibility(v, msg);
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         });
         
         if (ivBookmark != null) ivBookmark.setOnClickListener(v -> {
             isBookmarked = !isBookmarked;
             updatePersonalizationUI();
             savePersonalization();
-            Toast.makeText(this, isBookmarked ? "Lesson Saved 🔖" : "Removed from Library", Toast.LENGTH_SHORT).show();
+            String msg = isBookmarked ? "Lesson Saved" : "Removed from Library";
+            AccessibilityUtils.announceForAccessibility(v, msg);
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         });
 
         if (btnReadAloud != null) btnReadAloud.setOnClickListener(v -> triggerReadAloud());
@@ -243,6 +293,7 @@ public class NoteDetailActivity extends AppCompatActivity implements VoiceStudyM
         drawingView.setVisibility(isHandwritingMode ? View.VISIBLE : View.GONE);
         ivHandwrite.setColorFilter(isHandwritingMode ? Color.CYAN : Color.WHITE);
         if (isHandwritingMode) {
+            AccessibilityUtils.announceForAccessibility(drawingView, "Handwriting Mode Active. Draw directly on screen.");
             Toast.makeText(this, "Handwriting Mode Active. Draw on screen!", Toast.LENGTH_SHORT).show();
         } else {
             new AlertDialog.Builder(this)
@@ -263,10 +314,12 @@ public class NoteDetailActivity extends AppCompatActivity implements VoiceStudyM
         if (!isRecording) {
             startRecording();
             ivRecordAudio.setColorFilter(Color.RED);
+            AccessibilityUtils.announceForAccessibility(ivRecordAudio, "Recording audio reflection started");
             Toast.makeText(this, "Recording audio reflection...", Toast.LENGTH_SHORT).show();
         } else {
             stopRecording();
             ivRecordAudio.clearColorFilter();
+            AccessibilityUtils.announceForAccessibility(ivRecordAudio, "Reflection saved. Tap again to play.");
             Toast.makeText(this, "Reflection saved! Tap again to play.", Toast.LENGTH_SHORT).show();
             playAudio();
         }
@@ -279,12 +332,14 @@ public class NoteDetailActivity extends AppCompatActivity implements VoiceStudyM
         recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         recorder.setOutputFile(audioFileName);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        try { recorder.prepare(); recorder.start(); } catch (IOException e) { Log.e(TAG, "prepare() failed"); }
+        try { recorder.prepare(); recorder.start(); } catch (IOException e) { Log.e(TAG, "prepare() failed", e); }
     }
 
     private void stopRecording() {
         if (recorder != null) {
-            recorder.stop();
+            try {
+                recorder.stop();
+            } catch (Exception ignored) {}
             recorder.release();
             recorder = null;
         }
@@ -292,7 +347,13 @@ public class NoteDetailActivity extends AppCompatActivity implements VoiceStudyM
 
     private void playAudio() {
         player = new MediaPlayer();
-        try { player.setDataSource(audioFileName); player.prepare(); player.start(); } catch (IOException e) { Log.e(TAG, "playAudio() failed"); }
+        try {
+            player.setDataSource(audioFileName);
+            player.prepare();
+            player.start();
+        } catch (IOException e) {
+            Log.e(TAG, "playAudio() failed", e);
+        }
     }
 
     private void performHighlight() {
@@ -302,6 +363,7 @@ public class NoteDetailActivity extends AppCompatActivity implements VoiceStudyM
                 if (text != null && text.length() > 2) {
                     highlightData += text + "||";
                     savePersonalization();
+                    AccessibilityUtils.announceForAccessibility(wvNoteContent, "Highlighted: " + text);
                     Toast.makeText(this, "Highlighted: " + text, Toast.LENGTH_SHORT).show();
                 }
             });
@@ -315,10 +377,12 @@ public class NoteDetailActivity extends AppCompatActivity implements VoiceStudyM
         builder.setTitle("Personal Study Notes");
         final EditText input = new EditText(this);
         input.setText(personalNote);
+        input.setContentDescription("Personal study note input field");
         builder.setView(input);
         builder.setPositiveButton("SAVE", (dialog, which) -> {
             personalNote = input.getText().toString();
             savePersonalization();
+            AccessibilityUtils.announceForAccessibility(this.getWindow().getDecorView(), "Study notes updated");
             Toast.makeText(this, "Notes updated!", Toast.LENGTH_SHORT).show();
         });
         builder.setNegativeButton("CANCEL", null);
@@ -326,8 +390,19 @@ public class NoteDetailActivity extends AppCompatActivity implements VoiceStudyM
     }
 
     private void triggerReadAloud() {
-        if (isSpeaking) { voiceStudyManager.stop(); isSpeaking = false; } 
-        else { voiceStudyManager.speak(tvNoteContent.getText().toString()); isSpeaking = true; }
+        if (readingBarView != null) {
+            readingBarView.setVisibility(View.VISIBLE);
+            if (readingController != null) {
+                if (lessonSpeechContent == null || lessonSpeechContent.isEmpty()) {
+                    lessonSpeechContent = tvNoteContent.getText().toString();
+                    readingController.setContent(lessonSpeechContent);
+                }
+                getAccessibilitySpeaker().speakContent(lessonSpeechContent);
+                AccessibilityUtils.announceForAccessibility(readingBarView, "Starting lesson reading");
+            }
+        } else {
+            getAccessibilitySpeaker().speakContent(lessonSpeechContent);
+        }
     }
 
     @Override public void onCommandRecognized(String text) { Toast.makeText(this, "Heard: " + text, Toast.LENGTH_SHORT).show(); }
@@ -337,6 +412,9 @@ public class NoteDetailActivity extends AppCompatActivity implements VoiceStudyM
     @Override protected void onDestroy() {
         if (recorder != null) recorder.release();
         if (player != null) player.release();
+        if (readingController != null) {
+            getAccessibilitySpeaker().stop();
+        }
         super.onDestroy();
     }
 }

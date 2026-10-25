@@ -81,11 +81,20 @@ public class NotificationPreferencesActivity extends AppCompatActivity {
         setupSwitch(switchXPMilestones, (v, isChecked) -> currentSettings.setNotifyXPMilestones(isChecked));
         setupSwitch(switchStreakAlerts, (v, isChecked) -> currentSettings.setNotifyStreakAlerts(isChecked));
         setupSwitch(switchAnnouncements, (v, isChecked) -> currentSettings.setNotifyAnnouncements(isChecked));
-        setupSwitch(switchPushNotifications, (v, isChecked) -> currentSettings.setPushEnabled(isChecked));
+        setupSwitch(switchPushNotifications, (v, isChecked) -> {
+            currentSettings.setPushEnabled(isChecked);
+            if (isChecked) {
+                NotificationHelper.scheduleStudyReminder(this, currentSettings.getReminderTime());
+            } else {
+                NotificationHelper.cancelStudyReminder(this);
+            }
+        });
 
         if (llReminderTime != null) {
             llReminderTime.setOnClickListener(v -> {
-                String[] parts = currentSettings.getReminderTime().split(":");
+                String reminder = currentSettings.getReminderTime();
+                if (reminder == null || !reminder.contains(":")) reminder = "17:00";
+                String[] parts = reminder.split(":");
                 int hour = Integer.parseInt(parts[0]);
                 int minute = Integer.parseInt(parts[1]);
 
@@ -93,6 +102,7 @@ public class NotificationPreferencesActivity extends AppCompatActivity {
                     String newTime = String.format(Locale.US, "%02d:%02d", hourOfDay, minuteOfHour);
                     currentSettings.setReminderTime(newTime);
                     settingsService.saveSettings(currentSettings);
+                    NotificationHelper.scheduleStudyReminder(this, newTime);
                     updateTimeUI();
                     Toast.makeText(this, "Reminder time updated", Toast.LENGTH_SHORT).show();
                 }, hour, minute, false).show();

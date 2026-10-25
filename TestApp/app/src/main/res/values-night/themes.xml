@@ -1,36 +1,45 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme for Dark Mode. -->
+    <!-- Base application theme for Dark Mode (Modern Material 3) -->
     <style name="Base.Theme.TestApp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- 🌑 Dark Mode Palette: Deep Slate & Cyan -->
-        <item name="colorPrimary">#3B82F6</item>
-        <item name="colorOnPrimary">#FFFFFF</item>
-        <item name="colorPrimaryContainer">#1E293B</item>
-        <item name="colorOnPrimaryContainer">#F8FAFC</item>
+        <!-- Dark Mode Palette: Deep Slate & Academic Sapphire / Sky -->
+        <item name="colorPrimary">@color/blue_500</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/slate_800</item>
+        <item name="colorOnPrimaryContainer">@color/slate_50</item>
 
         <!-- Secondary colors -->
-        <item name="colorSecondary">#38BDF8</item>
-        <item name="colorOnSecondary">#0F172A</item>
+        <item name="colorSecondary">@color/sky_400</item>
+        <item name="colorOnSecondary">@color/slate_900</item>
+        <item name="colorSecondaryContainer">@color/slate_700</item>
+        <item name="colorOnSecondaryContainer">@color/sky_400</item>
 
         <!-- Background and Surface (Deep PC Dark Mode) -->
-        <item name="android:windowBackground">#0F172A</item>
-        <item name="colorSurface">#1E293B</item>
-        <item name="colorOnSurface">#F8FAFC</item>
-        <item name="colorSurfaceVariant">#334155</item>
-        <item name="colorOnSurfaceVariant">#F1F5F9</item>
-        <item name="colorOutline">#475569</item>
+        <item name="android:windowBackground">@color/slate_900</item>
+        <item name="colorSurface">@color/slate_800</item>
+        <item name="colorOnSurface">@color/slate_50</item>
+        <item name="colorSurfaceVariant">@color/slate_700</item>
+        <item name="colorOnSurfaceVariant">@color/slate_100</item>
+        <item name="colorOutline">@color/slate_600</item>
 
         <!-- Status Bar -->
-        <item name="android:statusBarColor">#0F172A</item>
+        <item name="android:statusBarColor">@color/slate_900</item>
         <item name="android:windowLightStatusBar">false</item>
 
-        <!-- Text Colors -->
-        <item name="android:textColorPrimary">#F8FAFC</item>
-        <item name="android:textColorSecondary">#94A3B8</item>
+        <!-- Text Colors: Referenced via @color to guarantee valid resource IDs -->
+        <item name="android:textColorPrimary">@color/slate_50</item>
+        <item name="android:textColorSecondary">@color/slate_400</item>
 
-        <!-- Fix for BottomNavigationView crash (Missing default colors) -->
+        <!-- BottomNavigationView colors -->
         <item name="itemIconTint">@color/nav_item_colors</item>
         <item name="itemTextColor">@color/nav_item_colors</item>
     </style>
 
     <style name="Theme.TestApp" parent="Base.Theme.TestApp" />
+
+    <!-- Dark Splash Screen Theme -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/slate_900</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_app_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.TestApp</item>
+    </style>
 </resources>

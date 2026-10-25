@@ -81,10 +81,10 @@ public class LeaderboardActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             LeaderboardEntry entry = list.get(position);
-            String rank = (position + 1) == 1 ? "🥇 " : (position + 1) == 2 ? "🥈 " : (position + 1) == 3 ? "🥉 " : (position + 1) + ". ";
+            String rank = "#" + (position + 1) + " ";
             holder.text1.setText(rank + entry.username);
             holder.text1.setTextColor(Color.WHITE);
-            holder.text2.setText("Points: " + entry.score + "  |  Best Streak: " + entry.streak + " days 🔥");
+            holder.text2.setText("Points: " + entry.score + "  |  Best Streak: " + entry.streak + " days");
             holder.text2.setTextColor(Color.parseColor("#94A3B8"));
         }
 

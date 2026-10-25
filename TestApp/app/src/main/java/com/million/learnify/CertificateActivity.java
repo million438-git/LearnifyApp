@@ -69,32 +69,65 @@ public class CertificateActivity extends AppCompatActivity {
     }
 
     private void loadCertificateData() {
-        // First, check if there is a FULLY CUSTOM certificate for this user
-        Cursor cursor = dbHelper.getCustomCertificate(currentUsername);
-        if (cursor != null && cursor.moveToFirst()) {
-            tvCertTitle.setText(cursor.getString(cursor.getColumnIndexOrThrow("cert_title")));
-            tvPresentationText.setText(cursor.getString(cursor.getColumnIndexOrThrow("presentation_text")));
-            tvStudentName.setText(cursor.getString(cursor.getColumnIndexOrThrow("student_name")));
-            tvBodyText.setText(cursor.getString(cursor.getColumnIndexOrThrow("body_text")));
-            tvSubjectMastered.setText(cursor.getString(cursor.getColumnIndexOrThrow("course_name")));
-            tvCertificateDate.setText(cursor.getString(cursor.getColumnIndexOrThrow("issue_date")));
-            tvStudentID.setText(cursor.getString(cursor.getColumnIndexOrThrow("student_id")));
-            tvCertificateID.setText(cursor.getString(cursor.getColumnIndexOrThrow("certificate_id")));
-            tvDirectorName.setText(cursor.getString(cursor.getColumnIndexOrThrow("director_name")));
-            tvDirectorRole.setText(cursor.getString(cursor.getColumnIndexOrThrow("director_role")));
-            cursor.close();
-            return;
+        Cursor cursor = null;
+        try {
+            cursor = dbHelper.getCustomCertificate(currentUsername);
+            if (cursor != null && cursor.moveToFirst()) {
+                tvCertTitle.setText(getStringSafe(cursor, "title", "cert_title"));
+                tvPresentationText.setText(getStringSafe(cursor, "presentation", "presentation_text"));
+                tvStudentName.setText(getStringSafe(cursor, "student_name"));
+                tvBodyText.setText(getStringSafe(cursor, "body", "body_text"));
+                tvSubjectMastered.setText(getStringSafe(cursor, "course", "course_name"));
+                tvCertificateDate.setText(getStringSafe(cursor, "date", "issue_date"));
+                tvStudentID.setText(getStringSafe(cursor, "student_id"));
+                tvCertificateID.setText(getStringSafe(cursor, "certificate_id"));
+                tvDirectorName.setText(getStringSafe(cursor, "director", "director_name"));
+                tvDirectorRole.setText(getStringSafe(cursor, "role", "director_role"));
+
+                View btnShare = findViewById(R.id.btnShare);
+                if (btnShare != null) btnShare.setEnabled(true);
+                return;
+            }
+        } catch (Exception e) {
+            android.util.Log.e("CertificateActivity", "Failed to load custom certificate", e);
+        } finally {
+            if (cursor != null) cursor.close();
         }
 
-        // Fallback to standard data if no custom certificate issued yet
-        String studentFullName = getSharedPreferences("UserSession", MODE_PRIVATE).getString("full_name", "MILLION TESHOME");
+        // Honest empty/unavailable state: Do not fabricate credentials or fake UUIDs
+        String studentFullName = getSharedPreferences("UserSession", MODE_PRIVATE).getString("full_name", currentUsername);
+        if (studentFullName == null || studentFullName.trim().isEmpty()) {
+            studentFullName = currentUsername != null ? currentUsername : "STUDENT";
+        }
+        tvCertTitle.setText("NO CERTIFICATE ISSUED");
+        tvPresentationText.setText("Status: Ineligible / Not Yet Issued");
         tvStudentName.setText(studentFullName.toUpperCase());
-        tvStudentID.setText("ID-" + (int)(Math.random() * 90000 + 10000));
-        tvCertificateID.setText("LNYF-" + java.util.UUID.randomUUID().toString().substring(0, 8).toUpperCase());
-        tvCertificateDate.setText(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date()));
+        tvBodyText.setText("You have not been issued an official certificate yet. Complete your enrolled coursework and examinations to become eligible for verified certification by an administrator.");
+        tvSubjectMastered.setText("Pending Completion");
+        tvCertificateDate.setText("—");
+        tvStudentID.setText("—");
+        tvCertificateID.setText("UNISSUED");
+
+        View btnShare = findViewById(R.id.btnShare);
+        if (btnShare != null) btnShare.setEnabled(false);
+        Toast.makeText(this, "No issued certificate found for your account.", Toast.LENGTH_SHORT).show();
+    }
+
+    private String getStringSafe(Cursor c, String... colNames) {
+        for (String col : colNames) {
+            int idx = c.getColumnIndex(col);
+            if (idx != -1 && !c.isNull(idx)) {
+                return c.getString(idx);
+            }
+        }
+        return "";
     }
 
     private void shareCertificate() {
+        if (tvCertificateID != null && "UNISSUED".equals(tvCertificateID.getText().toString())) {
+            Toast.makeText(this, "Certificate has not been issued yet and cannot be shared.", Toast.LENGTH_SHORT).show();
+            return;
+        }
         certificateView.post(() -> {
             Bitmap bitmap = createBitmapFromView(certificateView);
             if (bitmap != null) {

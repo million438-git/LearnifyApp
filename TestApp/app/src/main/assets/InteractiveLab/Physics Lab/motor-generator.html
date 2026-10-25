@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Advanced Physics: Motor &amp; Generator Lab</title>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0a0f1f;
+  --sf:#141b2e;
+  --ln:#26304a;
+  --tx:#e5e9f5;
+  --mu:#93a0bd;
+  --pr:#818cf8;
+  --pr-deep:#6366f1;
+  --ok:#34d399;
+  --bad:#f87171;
+  --wa:#fbbf24;
+  --red:#f43f5e;
+  --blue:#4fa8ff;
+  --green:#10d982;
+  box-sizing:border-box;
+}
+*{box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;margin:0;overflow:hidden;}
+body{background:var(--bg);color:var(--tx);display:flex;flex-direction:column;}
+
+header{background:var(--bg);color:#fff;padding:8px 10px;text-align:center;border-bottom:2px solid var(--pr);flex-shrink:0;}
+header h2{margin:0;font-size:clamp(.95rem, 2.5vw, 1.1rem);}
+header small{display:block;color:var(--mu);font-size:clamp(.7rem, 1.8vw, .8rem);margin-top:2px;}
+
+.lab-container{display:flex;flex:1;overflow:hidden;flex-direction:column;min-height:0;}
+
+#sim-area{
+  flex:0 0 45%;
+  min-height:220px;
+  max-height:75vh;
+  position:relative;
+  background:#05080f;
+  border-bottom:2px solid var(--ln);
+  overflow:hidden;
+  cursor:grab;
+}
+canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;touch-action:none;}
+
+.hud{
+  position:absolute;top:8px;left:8px;
+  background:rgba(20,27,46,0.92);
+  padding:6px 9px;border-radius:8px;
+  font-size:clamp(.65rem, 1.8vw, .75rem);
+  border:1px solid var(--ln);z-index:20;color:var(--tx);
+  pointer-events:none;backdrop-filter:blur(6px);
+  max-width:min(280px, 60vw);
+}
+.hud b{color:var(--pr);font-size:.7rem;letter-spacing:.08em;}
+.hud .metrics{line-height:1.6;}
+.hud span.val{color:var(--wa);font-weight:700;font-variant-numeric:tabular-nums;}
+
+.vector-legend{
+  position:absolute;bottom:8px;left:8px;
+  font-size:clamp(.6rem, 1.6vw, .65rem);
+  background:rgba(20,27,46,0.92);
+  padding:4px 7px;border-radius:4px;
+  color:var(--mu);pointer-events:none;border:1px solid var(--ln);
+}
+.vector-legend span{margin-right:8px;}
+
+.splitter{
+  height:14px;
+  background:linear-gradient(90deg, rgba(0,0,0,.2), rgba(129,140,248,.15), rgba(0,0,0,.2));
+  cursor:ns-resize;flex-shrink:0;
+  border-top:1px solid var(--ln);border-bottom:1px solid var(--ln);
+  position:relative;
+}
+.splitter::after{
+  content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:40px;height:3px;border-radius:2px;background:rgba(129,140,248,.5);
+}
+.splitter:hover, .splitter:active{
+  background:linear-gradient(90deg, rgba(129,140,248,.2), rgba(129,140,248,.4), rgba(129,140,248,.2));
+}
+
+.bottom-panel{
+  flex:1;
+  min-height:0;
+  display:flex;
+  flex-direction:row;
+  background:var(--sf);
+  overflow:hidden;
+}
+.controls{
+  flex:0 0 340px;
+  padding:12px;
+  border-right:1px solid var(--ln);
+  background:var(--sf);
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+}
+.analysis{
+  flex:1 1 0;
+  min-width:0;
+  padding:12px;
+  background:var(--bg);
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+}
+
+.card{background:var(--sf);border:1px solid var(--ln);padding:10px;border-radius:8px;margin-bottom:10px;font-size:.84rem;line-height:1.55;}
+h4{margin:0 0 8px 0;font-size:.75rem;color:var(--mu);text-transform:uppercase;letter-spacing:.05em;font-weight:700;}
+.input-row{margin-bottom:9px;}
+label{display:block;font-size:.78rem;font-weight:600;margin-bottom:3px;}
+input[type=range]{width:100%;accent-color:var(--pr);height:6px;}
+select,input[type=number],textarea{width:100%;padding:8px;border-radius:6px;border:1px solid var(--ln);background:var(--bg);color:var(--tx);font-family:inherit;font-size:.85rem;}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--pr);}
+
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+button{
+  padding:10px;border:1px solid var(--ln);border-radius:6px;
+  font-weight:700;cursor:pointer;font-size:.82rem;
+  background:var(--sf);color:var(--tx);font-family:inherit;
+  transition:.2s;touch-action:manipulation;
+}
+button:hover{background:#1a2340;border-color:var(--pr);}
+button:active{transform:scale(.98);}
+button.go{background:var(--pr);color:#0b1020;border-color:var(--pr);}
+button.go:hover{background:#a5b4fc;box-shadow:0 4px 14px rgba(129,140,248,.4);}
+button.launch{background:linear-gradient(135deg,#34d399,#059669);color:#fff;border-color:transparent;}
+button.launch:hover{box-shadow:0 4px 14px rgba(52,211,153,.4);}
+button.pause{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000;border-color:transparent;font-weight:800;}
+button.pause:hover{box-shadow:0 4px 14px rgba(251,191,36,.4);}
+button.sound{background:linear-gradient(135deg,#34d399,#059669);color:#fff;border-color:transparent;}
+button.sound.playing{background:linear-gradient(135deg,#f43f5e,#dc2626);}
+
+.readouts{display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:8px;margin-bottom:10px;}
+.readout{background:var(--sf);border:1px solid var(--ln);border-radius:6px;padding:8px 10px;}
+.readout span{font-size:.68rem;color:var(--mu);display:block;}
+.readout strong{font-size:.92rem;color:var(--tx);font-variant-numeric:tabular-nums;word-break:break-word;}
+.readout.hl strong{color:var(--pr);}
+.readout.good strong{color:var(--ok);}
+.readout.warn strong{color:var(--wa);}
+.readout.emf strong{color:#ff5c8a;}
+.readout.torque strong{color:#fbbf24;}
+
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.tab-btn{
+  padding:8px 12px;border-radius:6px;background:var(--sf);color:var(--mu);
+  font-weight:600;font-size:.78rem;border:1px solid var(--ln);cursor:pointer;
+  transition:.2s;flex:1 1 auto;min-width:0;touch-action:manipulation;
+}
+.tab-btn:hover{background:#242e4d;color:var(--tx);}
+.tab-btn.active{background:var(--pr);color:#0b1020;border-color:var(--pr);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+.quiz-q{padding:10px 0;border-bottom:1px solid var(--ln);}
+.quiz-q>strong{display:block;margin-bottom:8px;font-size:.88rem;}
+.quiz-q label{
+  display:flex;align-items:center;gap:6px;
+  padding:9px 11px;background:var(--sf);border:1px solid var(--ln);
+  border-radius:6px;margin:4px 0;cursor:pointer;
+  font-weight:500;font-size:.82rem;width:100%;
+  touch-action:manipulation;
+}
+.quiz-q label:hover{background:#1a2340;border-color:var(--pr);}
+.quiz-q input[type=radio]{accent-color:var(--pr);flex-shrink:0;margin:0;}
+.explanation{
+  margin-top:8px;padding:10px;border-radius:6px;
+  font-size:.82rem;line-height:1.55;
+  background:rgba(129,140,248,.1);
+  border-left:3px solid var(--pr);
+  word-wrap:break-word;overflow-wrap:break-word;
+}
+.explanation.correct-box{background:rgba(52,211,153,.12);border-left-color:var(--ok);}
+.explanation.wrong-box{background:rgba(248,113,113,.12);border-left-color:var(--bad);}
+.quiz-section{font-size:.72rem;font-weight:700;text-transform:uppercase;color:var(--pr);margin:12px 0 6px 0;letter-spacing:.05em;}
+#quiz-result{margin-top:10px;padding:12px;border-radius:8px;background:rgba(129,140,248,.15);border:1px solid rgba(129,140,248,.4);font-weight:700;text-align:center;}
+
+table.formulas{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:6px;table-layout:fixed;}
+table.formulas th,table.formulas td{border:1px solid var(--ln);padding:6px 8px;text-align:left;word-wrap:break-word;overflow-wrap:break-word;}
+table.formulas th{background:var(--bg);font-weight:600;color:var(--pr);}
+.eq{font-family:'JetBrains Mono',monospace;background:var(--bg);padding:2px 6px;border-radius:4px;font-size:.78rem;color:var(--wa);border:1px solid var(--ln);display:inline-block;word-break:break-all;}
+.note{font-size:.82rem;color:var(--mu);margin-top:8px;line-height:1.55;}
+ul{color:var(--tx);padding-left:1.1rem;}
+ul li{line-height:1.7;word-wrap:break-word;}
+
+#challenge-note{color:var(--tx);font-size:.85rem;word-wrap:break-word;}
+#challenge-result{color:var(--ok);font-weight:600;margin-top:6px;word-wrap:break-word;}
+
+textarea{width:100%;padding:8px;border-radius:6px;border:1px solid var(--ln);font-family:inherit;font-size:.85rem;min-height:64px;resize:vertical;background:var(--bg);color:var(--tx);}
+textarea:focus{outline:none;border-color:var(--pr);}
+
+@media (max-width: 900px){
+  .controls{flex:0 0 300px;}
+  .readouts{grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));}
+}
+
+@media (max-width: 768px){
+  .bottom-panel{flex-direction:column;}
+  .controls{
+    flex:0 0 auto;
+    border-right:none;
+    border-bottom:1px solid var(--ln);
+    max-height:35vh;
+  }
+  .analysis{
+    flex:1 1 0;
+    min-height:0;
+  }
+  #sim-area{flex:0 0 40%;min-height:200px;}
+  .hud{font-size:.68rem;padding:5px 8px;max-width:min(220px, 55vw);}
+  .readouts{grid-template-columns:repeat(auto-fit, minmax(120px, 1fr));gap:6px;}
+  .tab-btn{font-size:.74rem;padding:7px 10px;}
+}
+
+@media (max-width: 480px){
+  header{padding:6px 8px;}
+  header h2{font-size:.95rem;}
+  header small{font-size:.68rem;}
+  #sim-area{flex:0 0 45%;min-height:180px;}
+  .controls{padding:10px;max-height:38vh;}
+  .analysis{padding:10px;}
+  .hud{font-size:.62rem;padding:4px 7px;max-width:50vw;}
+  .vector-legend{font-size:.58rem;padding:3px 6px;}
+  .vector-legend span{margin-right:5px;}
+  .readouts{grid-template-columns:repeat(2, 1fr);gap:5px;}
+  .readout{padding:6px 8px;}
+  .readout span{font-size:.6rem;}
+  .readout strong{font-size:.8rem;}
+  .btn-grid{grid-template-columns:1fr 1fr;gap:6px;}
+  button{padding:9px;font-size:.76rem;}
+  .tabs{gap:4px;}
+  .tab-btn{font-size:.7rem;padding:6px 8px;flex:1 1 calc(50% - 4px);}
+  table.formulas{font-size:.74rem;}
+  .eq{font-size:.7rem;}
+  .quiz-q label{padding:8px;font-size:.78rem;}
+  .explanation{font-size:.78rem;padding:8px;}
+}
+
+@media (max-width: 360px){
+  .readouts{grid-template-columns:1fr;}
+  .tab-btn{flex:1 1 100%;}
+}
+
+@media (max-height: 500px) and (orientation: landscape){
+  #sim-area{flex:0 0 50%;min-height:140px;}
+  .controls{max-height:42vh;}
+  .hud{font-size:.6rem;}
+  header{padding:4px 8px;}
+  header small{display:none;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+<h2>⚙️ Motor &amp; Generator Laboratory</h2>
+<small>Lorentz force · Electromagnetic induction · Back-EMF · Real rotating armature</small>
+</header>
+
+<div class="lab-container">
+<div id="sim-area">
+<div class="hud">
+<b>LIVE STATE</b><br>
+<div class="metrics">
+Mode: <span class="val" id="hud-mode">Motor</span><br>
+Speed ω: <span class="val" id="hud-omega">0.00</span> rad/s<br>
+EMF: <span class="val" id="hud-emf">0.00</span> V<br>
+Current: <span class="val" id="hud-i">0.00</span> A<br>
+Status: <span class="val" id="hud-status">Idle</span>
+</div>
+</div>
+<div class="vector-legend">
+<span style="color:#fbbf24">● B field</span>
+<span style="color:#4fa8ff">● N pole</span>
+<span style="color:#ff5c8a">● S pole</span>
+</div>
+<canvas id="canvas"></canvas>
+</div>
+
+<div class="splitter" id="splitter" title="Drag to resize simulation area"></div>
+
+<div class="bottom-panel">
+<div class="controls">
+<h4>⚙️ Machine Setup</h4>
+
+<div class="input-row">
+<button class="sound" id="btn-sound" style="width:100%;">🔈 Enable sound</button>
+</div>
+
+<div class="input-row">
+<label>Machine mode</label>
+<select id="mode">
+<option value="motor" selected>Electric Motor (input: current)</option>
+<option value="generator">Electric Generator (input: rotation)</option>
+</select>
+</div>
+
+<div class="input-row">
+<label>Magnetic field B: <span id="v-B">0.5</span> T</label>
+<input type="range" id="magB" min="0.1" max="2" step="0.05" value="0.5">
+</div>
+
+<div class="input-row" id="currentRow">
+<label>Applied current I: <span id="v-I">2.0</span> A</label>
+<input type="range" id="current" min="0" max="10" step="0.1" value="2">
+</div>
+
+<div class="input-row" id="omegaRow" style="display:none;">
+<label>Rotation ω: <span id="v-omega">3.0</span> rad/s</label>
+<input type="range" id="omega" min="0" max="15" step="0.1" value="3">
+</div>
+
+<div class="input-row">
+<label>Coil turns N: <span id="v-N">50</span></label>
+<input type="range" id="turns" min="10" max="200" step="10" value="50">
+</div>
+
+<div class="input-row">
+<label>Coil area A: <span id="v-A">0.02</span> m²</label>
+<input type="range" id="area" min="0.005" max="0.1" step="0.005" value="0.02">
+</div>
+
+<div class="input-row">
+<label>Circuit resistance R: <span id="v-R">5</span> Ω</label>
+<input type="range" id="resistance" min="1" max="50" step="1" value="5">
+</div>
+
+<div class="input-row">
+<label>Moment of inertia J: <span id="v-J">0.02</span> kg·m²</label>
+<input type="range" id="inertia" min="0.005" max="0.2" step="0.005" value="0.02">
+</div>
+
+<div class="input-row">
+<label>Sim speed: <span id="v-speed">1.0</span>×</label>
+<input type="range" id="speed" min="0.1" max="3" step="0.1" value="1">
+</div>
+
+<div class="btn-grid">
+<button class="launch" id="btn-start">▶ Start</button>
+<button class="pause" id="btn-pause">⏸ Pause</button>
+</div>
+
+<div class="btn-grid" style="margin-top:8px;">
+<button id="btn-reset">↺ Reset</button>
+<button class="go" id="btn-record">📋 Record</button>
+</div>
+</div>
+
+<div class="analysis">
+<h4>📊 Learn &amp; Practice</h4>
+
+<div class="readouts">
+<div class="readout hl"><span>Angular speed ω</span><strong id="ro-omega">0.00 rad/s</strong></div>
+<div class="readout emf"><span>EMF ε</span><strong id="ro-emf">0.00 V</strong></div>
+<div class="readout"><span>Current I</span><strong id="ro-i">0.00 A</strong></div>
+<div class="readout torque"><span>Torque τ</span><strong id="ro-torque">0.00 N·m</strong></div>
+<div class="readout"><span>Power P</span><strong id="ro-power">0.00 W</strong></div>
+<div class="readout"><span>Mechanical power P_m</span><strong id="ro-pm">0.00 W</strong></div>
+<div class="readout"><span>Back-EMF ε_b</span><strong id="ro-emfb">0.00 V</strong></div>
+<div class="readout"><span>Flux Φ</span><strong id="ro-flux">0.00 Wb</strong></div>
+<div class="readout"><span>dΦ/dt</span><strong id="ro-rate">0.00 Wb/s</strong></div>
+<div class="readout"><span>Frequency f</span><strong id="ro-f">0.00 Hz</strong></div>
+<div class="readout"><span>Peak EMF ε₀</span><strong id="ro-emf0">0.00 V</strong></div>
+<div class="readout good"><span>Efficiency</span><strong id="ro-eff">—</strong></div>
+</div>
+
+<div class="card">
+<div class="tabs">
+<button class="tab-btn active" data-tab="formulas">Formulas</button>
+<button class="tab-btn" data-tab="quiz">Quiz</button>
+<button class="tab-btn" data-tab="challenges">Challenges</button>
+<button class="tab-btn" data-tab="notebook">Notebook</button>
+</div>
+
+<div id="formulas" class="tab-panel active">
+<h3 style="margin:6px 0 8px 0;">Core Formulas — Motor &amp; Generator</h3>
+<ul style="font-size:.88rem;">
+<li><b style="color:var(--pr)">Force on wire (Lorentz):</b> F = B·I·L</li>
+<li><b style="color:var(--pr)">Torque on coil:</b> τ = N·B·I·A·sin(θ)</li>
+<li><b style="color:var(--pr)">Motor EMF (back-EMF):</b> ε_b = N·B·A·ω·sin(ωt)</li>
+<li><b style="color:var(--pr)">Generator EMF:</b> ε = N·B·A·ω·sin(ωt)</li>
+<li><b style="color:var(--pr)">Peak EMF:</b> ε₀ = N·B·A·ω</li>
+<li><b style="color:var(--pr)">Motor equation:</b> V = ε_b + I·R</li>
+<li><b style="color:var(--pr)">Flux:</b> Φ = N·B·A·cos(ωt)</li>
+<li><b style="color:var(--pr)">Mechanical power:</b> P_m = τ·ω</li>
+<li><b style="color:var(--pr)">Electrical power:</b> P_e = ε·I</li>
+</ul>
+<p class="note"><b style="color:var(--wa)">💡 Key insights:</b> A motor and a generator are the <b>same device</b> — just viewed differently. In <b>motor mode</b>, current through the coil in a magnetic field creates torque, spinning the armature. As it spins, it acts like a generator, producing a <b>back-EMF</b> that opposes the applied voltage. In <b>generator mode</b>, external rotation spins the coil, changing flux and inducing EMF. Real motors have a commutator that keeps torque unidirectional.</p>
+
+<table class="formulas">
+<tr><th>Quantity</th><th>Formula</th></tr>
+<tr><td>Torque on coil</td><td><span class="eq">τ = N·B·I·A·sin(ωt)</span></td></tr>
+<tr><td>Back-EMF</td><td><span class="eq">ε_b = N·B·A·ω·sin(ωt)</span></td></tr>
+<tr><td>Motor equation</td><td><span class="eq">V = ε_b + I·R</span></td></tr>
+<tr><td>Mechanical power</td><td><span class="eq">P_m = τ·ω</span></td></tr>
+</table>
+</div>
+
+<div id="quiz" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+<div class="quiz-section">Basic — Motors &amp; Generators</div>
+<div class="quiz-q" data-q="q1" data-answer="B">
+<strong>1. A motor converts:</strong>
+<label><input type="radio" name="q1" value="A"> Mechanical energy → electrical energy</label>
+<label><input type="radio" name="q1" value="B"> Electrical energy → mechanical energy</label>
+<label><input type="radio" name="q1" value="C"> Heat → light</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q2" data-answer="A">
+<strong>2. A generator converts:</strong>
+<label><input type="radio" name="q2" value="A"> Mechanical energy → electrical energy</label>
+<label><input type="radio" name="q2" value="B"> Electrical energy → mechanical energy</label>
+<label><input type="radio" name="q2" value="C"> Light → heat</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q3" data-answer="B">
+<strong>3. The force on a current-carrying wire in a magnetic field is:</strong>
+<label><input type="radio" name="q3" value="A"> F = mgh</label>
+<label><input type="radio" name="q3" value="B"> F = B·I·L</label>
+<label><input type="radio" name="q3" value="C"> F = ½mv²</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Intermediate — Back-EMF &amp; Torque</div>
+<div class="quiz-q" data-q="q4" data-answer="A">
+<strong>4. The torque on a coil in a magnetic field is:</strong>
+<label><input type="radio" name="q4" value="A"> τ = N·B·I·A·sin(θ)</label>
+<label><input type="radio" name="q4" value="B"> τ = N·B·A</label>
+<label><input type="radio" name="q4" value="C"> τ = I·R</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q5" data-answer="B">
+<strong>5. As the motor speeds up, the back-EMF:</strong>
+<label><input type="radio" name="q5" value="A"> Decreases</label>
+<label><input type="radio" name="q5" value="B"> Increases (opposing the applied voltage)</label>
+<label><input type="radio" name="q5" value="C"> Stays zero</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q6" data-answer="A">
+<strong>6. At start-up of a motor (ω = 0), the current is:</strong>
+<label><input type="radio" name="q6" value="A"> Maximum (V/R)</label>
+<label><input type="radio" name="q6" value="B"> Minimum (zero)</label>
+<label><input type="radio" name="q6" value="C"> Same as steady state</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Advanced — Energy Conservation</div>
+<div class="quiz-q" data-q="q7" data-answer="B">
+<strong>7. In a generator, peak EMF is:</strong>
+<label><input type="radio" name="q7" value="A"> ε₀ = N·B·I·A</label>
+<label><input type="radio" name="q7" value="B"> ε₀ = N·B·A·ω</label>
+<label><input type="radio" name="q7" value="C"> ε₀ = V/R</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q8" data-answer="A">
+<strong>8. The mechanical power into a generator equals:</strong>
+<label><input type="radio" name="q8" value="A"> Electrical power out (minus losses)</label>
+<label><input type="radio" name="q8" value="B"> Zero always</label>
+<label><input type="radio" name="q8" value="C"> Only friction</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q9" data-answer="B">
+<strong>9. When the coil is perpendicular to B (θ = 0), the EMF is:</strong>
+<label><input type="radio" name="q9" value="A"> Maximum</label>
+<label><input type="radio" name="q9" value="B"> Zero (flux is maximum but dΦ/dt = 0)</label>
+<label><input type="radio" name="q9" value="C"> Negative</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q10" data-answer="A">
+<strong>10. If the motor is mechanically overloaded (stops spinning), the current:</strong>
+<label><input type="radio" name="q10" value="A"> Increases to V/R (dangerous)</label>
+<label><input type="radio" name="q10" value="B"> Decreases</label>
+<label><input type="radio" name="q10" value="C"> Stays the same</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="btn-grid" style="margin-top:12px;">
+<button class="go" id="btn-quiz-check">Submit Quiz</button>
+<button id="btn-quiz-reset">Reset</button>
+</div>
+<div id="quiz-result" style="display:none;"></div>
+</div>
+
+<div id="challenges" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Challenges</h3>
+<div style="display:flex;flex-direction:column;gap:8px;font-size:.88rem;">
+<div><b style="color:var(--pr)">1. Motor spin-up</b><br><button class="launch" data-challenge="motor">Watch motor accelerate from rest</button></div>
+<div><b style="color:var(--pr)">2. Generator mode</b><br><button class="launch" data-challenge="gen">Spin the armature, generate EMF</button></div>
+<div><b style="color:var(--pr)">3. Stronger field</b><br><button class="launch" data-challenge="stronger">Bigger B → more torque</button></div>
+<div><b style="color:var(--pr)">4. More turns</b><br><button class="launch" data-challenge="turns">Double N → double EMF</button></div>
+<div><b style="color:var(--pr)">5. Stall the motor</b><br><button class="launch" data-challenge="stall">Loaded motor — no back-EMF</button></div>
+<div><b style="color:var(--pr)">6. High-speed generator</b><br><button class="launch" data-challenge="fastgen">Faster rotation → more EMF</button></div>
+<div id="challenge-note"></div>
+<div id="challenge-result"></div>
+</div>
+</div>
+
+<div id="notebook" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Notebook</h3>
+<label>Hypothesis</label>
+<textarea id="hypothesis" placeholder="What do you expect?"></textarea>
+<label style="margin-top:10px;display:block;">Conclusion</label>
+<textarea id="conclusion" placeholder="What did you observe?"></textarea>
+<label style="margin-top:10px;display:block;">Measurements</label>
+<textarea id="records" readonly style="background:var(--bg);font-family:monospace;font-size:.75rem;min-height:100px;"></textarea>
+<div class="btn-grid" style="margin-top:10px;">
+<button class="go" id="btn-export">⬇ Download Report</button>
+<button id="btn-clear-notes">Clear</button>
+</div>
+</div>
+</div>
+
+<div class="card">
+<b style="color:var(--pr)">Real fact:</b> <span id="fact-box" style="color:var(--mu);font-size:.85rem;">—</span>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+"use strict";
+(function(){
+
+var $ = function(id){ return document.getElementById(id); };
+var canvas = $('canvas');
+var ctx = canvas.getContext('2d');
+var dpr = window.devicePixelRatio || 1;
+var lastW = 0, lastH = 0;
+
+function resizeCanvas(){
+    var rect = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(rect.width));
+    var h = Math.max(1, Math.round(rect.height));
+    if (w === lastW && h === lastH) return;
+    lastW = w; lastH = h;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function cw(){ return canvas.width / dpr; }
+function ch(){ return canvas.height / dpr; }
+
+// ============ AUDIO ============
+var audioCtx = null;
+var humOsc = null, humGain = null;
+
+function initAudio(){
+    if (audioCtx) return;
+    try {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        audioCtx = new AC();
+    } catch(e){}
+}
+function beep(freq, dur, type, vol){
+    if (!audioCtx) return;
+    try {
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = type || 'sine';
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(vol || 0.06, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + dur);
+    } catch(e){}
+}
+function startHum(){
+    initAudio();
+    if (!audioCtx) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (humOsc) return;
+    try {
+        humOsc = audioCtx.createOscillator();
+        humGain = audioCtx.createGain();
+        humOsc.type = 'sawtooth';
+        humOsc.frequency.value = 60;
+        humGain.gain.setValueAtTime(0, audioCtx.currentTime);
+        humGain.gain.linearRampToValueAtTime(0.02, audioCtx.currentTime + 0.5);
+        var filter = audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 400;
+        humOsc.connect(filter);
+        filter.connect(humGain);
+        humGain.connect(audioCtx.destination);
+        humOsc.start();
+    } catch(e){}
+}
+function stopHum(){
+    if (humOsc) {
+        try {
+            humGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
+            humOsc.stop(audioCtx.currentTime + 0.25);
+        } catch(e){}
+        humOsc = null; humGain = null;
+    }
+}
+function updateHum(){
+    if (!humOsc) return;
+    try {
+        var p = getState();
+        var freq = 40 + Math.min(400, Math.abs(p.omega) * 20);
+        humOsc.frequency.setTargetAtTime(freq, audioCtx.currentTime, 0.05);
+        var vol = Math.min(0.06, Math.abs(p.current) * 0.01 + Math.abs(p.omega) * 0.005 + 0.01);
+        humGain.gain.setTargetAtTime(vol, audioCtx.currentTime, 0.05);
+    } catch(e){}
+}
+
+// ============ STATE ============
+var S = {
+    mode: 'motor',
+    B: 0.5,
+    I_applied: 2.0,
+    omega_drive: 3.0,
+    N: 50,
+    A: 0.02,
+    R: 5,
+    J: 0.02,
+    speed: 1.0,
+    running: false,
+    paused: false,
+    time: 0,
+    omega: 0,
+    angle: 0.15,
+    records: []
+};
+
+var START_ANGLE = 0.15;
+
+// ============ PHYSICS ============
+function getState(){
+    var fluxAmp = S.N * S.B * S.A;
+    var emfAmp = fluxAmp * Math.abs(S.omega);
+    var flux = fluxAmp * Math.cos(S.angle);
+    var backEmfEff = emfAmp * Math.abs(Math.sin(S.angle));
+    var emf = 0, current = 0, torque = 0, V_applied = 0;
+
+    if (S.mode === 'motor') {
+        // Motor: applied voltage drives current
+        V_applied = S.I_applied * S.R;  // nominal "stall current" as V/R
+        // Commutator keeps current unidirectional: use |sin| for effective back-EMF
+        current = (V_applied - backEmfEff) / S.R;
+        if (current < 0) current = 0;
+        emf = backEmfEff;
+        // Motor torque is always forward (commutator effect)
+        // Use average of |sin| ≈ 0.9 to keep smooth
+        torque = S.N * S.B * current * S.A * 0.9;
+    } else {
+        // Generator: external rotation drives coil
+        V_applied = 0;
+        emf = emfAmp * Math.sin(S.angle);
+        current = emf / S.R;
+        torque = S.N * S.B * current * S.A * Math.sin(S.angle);
+    }
+
+    return {
+        omega: S.omega,
+        angle: S.angle,
+        flux: flux,
+        rate: -emfAmp * Math.sin(S.angle),
+        emf: emf,
+        current: current,
+        torque: torque,
+        peakEmf: emfAmp,
+        mechanicalPower: Math.abs(torque * S.omega),
+        electricalPower: Math.abs(emf * current),
+        V_applied: V_applied
+    };
+}
+
+// ============ DRAW ============
+function drawScene(){
+    resizeCanvas();
+    var w = cw(), h = ch();
+    if (w < 10 || h < 10) return;
+
+    var bg = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w, h) * 1.2);
+    bg.addColorStop(0, '#0a1428');
+    bg.addColorStop(1, '#020408');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+
+    drawMotorGenerator(w, h);
+
+    ctx.fillStyle = '#e5e9f5';
+    ctx.font = 'bold 13px system-ui';
+    ctx.textAlign = 'center';
+    var modeLabel = S.mode === 'motor' ? 'Electric Motor' : 'Electric Generator';
+    ctx.fillText(modeLabel + ' — Rotating Armature', w/2, 25);
+
+    var pulseR = 5 + 3 * Math.sin(performance.now() * 0.004);
+    ctx.fillStyle = S.running && !S.paused ? 'rgba(52,211,153,1)' : S.paused ? 'rgba(251,191,36,1)' : 'rgba(100,116,139,.6)';
+    ctx.shadowColor = S.running && !S.paused ? '#34d399' : S.paused ? '#fbbf24' : 'transparent';
+    ctx.shadowBlur = (S.running || S.paused) ? 12 : 0;
+    ctx.beginPath();
+    ctx.arc(w - 30, 30, pulseR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = S.running && !S.paused ? '#34d399' : S.paused ? '#fbbf24' : '#64748b';
+    ctx.font = 'bold 10px system-ui';
+    ctx.textAlign = 'right';
+    ctx.fillText(S.running && !S.paused ? 'RUNNING' : S.paused ? 'PAUSED' : 'IDLE', w - 45, 34);
+}
+
+function drawMotorGenerator(w, h){
+    var cx = w / 2;
+    var cy = h / 2;
+    var coilRadius = Math.min(w, h) * 0.22;
+
+    var poleW = coilRadius * 2.4;
+    var poleH = coilRadius * 2;
+    var poleX = cx - poleW / 2;
+    var poleY = cy - poleH / 2;
+
+    ctx.fillStyle = 'rgba(251,191,36,0.05)';
+    ctx.fillRect(poleX, poleY, poleW, poleH);
+
+    var poleGap = coilRadius * 0.3;
+    ctx.fillStyle = 'rgba(255,92,138,0.15)';
+    ctx.fillRect(poleX, poleY, poleGap, poleH);
+    ctx.fillStyle = 'rgba(79,168,255,0.15)';
+    ctx.fillRect(poleX + poleW - poleGap, poleY, poleGap, poleH);
+
+    ctx.fillStyle = '#ff5c8a';
+    ctx.font = 'bold 20px system-ui';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('N', poleX + poleGap / 2, cy);
+    ctx.fillStyle = '#4fa8ff';
+    ctx.fillText('S', poleX + poleW - poleGap / 2, cy);
+    ctx.textBaseline = 'alphabetic';
+
+    ctx.strokeStyle = 'rgba(251,191,36,0.35)';
+    ctx.lineWidth = 1.5;
+    var numLines = 6;
+    for (var i = 0; i < numLines; i++) {
+        var y = poleY + 10 + i * (poleH - 20) / (numLines - 1);
+        ctx.beginPath();
+        ctx.moveTo(poleX + poleGap, y);
+        ctx.lineTo(poleX + poleW - poleGap, y);
+        ctx.stroke();
+        var midX = cx;
+        ctx.beginPath();
+        ctx.moveTo(midX + 6, y);
+        ctx.lineTo(midX - 2, y - 4);
+        ctx.lineTo(midX - 2, y + 4);
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(251,191,36,0.5)';
+        ctx.fill();
+    }
+
+    // Rotating coil
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(S.angle);
+
+    var coilW = coilRadius * 1.4;
+    var coilH = coilRadius * 0.5;
+
+    ctx.shadowColor = '#4fa8ff';
+    ctx.shadowBlur = 25;
+    ctx.fillStyle = 'rgba(79,168,255,0.15)';
+    ctx.fillRect(-coilW / 2, -coilH / 2, coilW, coilH);
+
+    var turnSpacing = coilH / 5;
+    ctx.strokeStyle = '#4fa8ff';
+    ctx.lineWidth = 2.5;
+    for (var t = 0; t < 5; t++) {
+        var ty = -coilH / 2 + (t + 0.5) * turnSpacing;
+        ctx.beginPath();
+        ctx.moveTo(-coilW / 2, ty);
+        ctx.lineTo(coilW / 2, ty);
+        ctx.stroke();
+    }
+
+    ctx.strokeStyle = '#4fa8ff';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(-coilW / 2, -coilH / 2, coilW, coilH);
+
+    var p = getState();
+    if (Math.abs(p.current) > 0.01) {
+        var arrowDir = p.current > 0 ? 1 : -1;
+        ctx.fillStyle = '#ff5c8a';
+        ctx.strokeStyle = '#ff5c8a';
+        ctx.shadowColor = '#ff5c8a';
+        ctx.shadowBlur = 10;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(-coilW / 2, -coilH / 2);
+        ctx.lineTo(-coilW / 2, -coilH / 2 + arrowDir * 15);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(-coilW / 2, -coilH / 2 + arrowDir * 15);
+        ctx.lineTo(-coilW / 2 - 5, -coilH / 2 + arrowDir * 10);
+        ctx.lineTo(-coilW / 2 + 5, -coilH / 2 + arrowDir * 10);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(coilW / 2, coilH / 2);
+        ctx.lineTo(coilW / 2, coilH / 2 - arrowDir * 15);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(coilW / 2, coilH / 2 - arrowDir * 15);
+        ctx.lineTo(coilW / 2 - 5, coilH / 2 - arrowDir * 10);
+        ctx.lineTo(coilW / 2 + 5, coilH / 2 - arrowDir * 10);
+        ctx.closePath();
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    }
+
+    ctx.shadowBlur = 0;
+    ctx.restore();
+
+    ctx.fillStyle = '#64748b';
+    ctx.beginPath();
+    ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    if (Math.abs(S.omega) > 0.1) {
+        ctx.strokeStyle = 'rgba(147,160,189,0.6)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.arc(cx, cy, coilRadius * 1.15, -0.3, S.omega > 0 ? Math.PI + 0.3 : -Math.PI - 0.3, S.omega < 0);
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+
+    ctx.strokeStyle = '#64748b';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy + coilRadius * 1.15);
+    ctx.lineTo(cx - 40, h - 60);
+    ctx.moveTo(cx, cy + coilRadius * 1.15);
+    ctx.lineTo(cx + 40, h - 60);
+    ctx.stroke();
+
+    var circuitY = h - 60;
+    ctx.beginPath();
+    ctx.moveTo(cx - 40, circuitY);
+    ctx.lineTo(cx + 40, circuitY);
+    ctx.stroke();
+
+    ctx.fillStyle = '#ff5c8a';
+    ctx.fillRect(cx - 15, circuitY - 8, 30, 16);
+    ctx.strokeStyle = '#ff5c8a';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(cx - 15, circuitY - 8, 30, 16);
+    ctx.fillStyle = '#000';
+    ctx.font = 'bold 11px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('R', cx, circuitY + 4);
+
+    ctx.fillStyle = '#e5e9f5';
+    ctx.font = 'bold 11px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('Coil (' + S.N + ' turns)', cx, cy + coilRadius * 1.6);
+
+    var state = getState();
+    ctx.fillStyle = '#ff5c8a';
+    ctx.font = 'bold 12px system-ui';
+    ctx.fillText('ε = ' + state.emf.toFixed(3) + ' V', cx, poleY - 15);
+
+    ctx.fillStyle = 'rgba(147,160,189,0.6)';
+    ctx.font = '10px system-ui';
+    ctx.fillText(S.mode === 'motor' ? 'Applied V drives current → torque spins armature' : 'External rotation → changing flux → EMF', cx, h - 25);
+}
+
+// ============ READOUTS ============
+function updateReadouts(){
+    var p = getState();
+
+    $('ro-omega').innerText = p.omega.toFixed(3) + ' rad/s';
+    $('ro-emf').innerText = p.emf.toFixed(3) + ' V';
+    $('ro-i').innerText = p.current.toFixed(3) + ' A';
+    $('ro-torque').innerText = p.torque.toFixed(3) + ' N·m';
+    $('ro-power').innerText = Math.abs(p.emf * p.current).toFixed(3) + ' W';
+    $('ro-pm').innerText = Math.abs(p.torque * p.omega).toFixed(3) + ' W';
+    $('ro-emfb').innerText = Math.abs(p.emf).toFixed(3) + ' V';
+    $('ro-flux').innerText = p.flux.toFixed(4) + ' Wb';
+    $('ro-rate').innerText = p.rate.toFixed(3) + ' Wb/s';
+
+    var freq = Math.abs(S.omega) / (2 * Math.PI);
+    $('ro-f').innerText = freq.toFixed(3) + ' Hz';
+
+    $('ro-emf0').innerText = p.peakEmf.toFixed(3) + ' V';
+
+    if (S.mode === 'motor') {
+        var eff = p.electricalPower > 0.001 ? (p.mechanicalPower / p.electricalPower) * 100 : 0;
+        $('ro-eff').innerText = Math.min(100, eff).toFixed(1) + '%';
+    } else {
+        var eff2 = p.mechanicalPower > 0.001 ? (p.electricalPower / p.mechanicalPower) * 100 : 0;
+        $('ro-eff').innerText = Math.min(100, eff2).toFixed(1) + '%';
+    }
+
+    $('hud-mode').innerText = S.mode === 'motor' ? 'Motor' : 'Generator';
+    $('hud-omega').innerText = Math.abs(S.omega).toFixed(2);
+    $('hud-emf').innerText = Math.abs(p.emf).toFixed(2);
+    $('hud-i').innerText = Math.abs(p.current).toFixed(2);
+    $('hud-status').innerText = S.running && !S.paused ? 'Running' : S.paused ? 'Paused' : 'Idle';
+
+    var fact;
+    if (S.mode === 'motor') {
+        fact = 'Motor: applied voltage V = ' + p.V_applied.toFixed(1) + ' V drives current ' + Math.abs(p.current).toFixed(2) + ' A. Torque accelerates armature. As ω increases, back-EMF builds, reducing current. Steady state: V = ε_b + I·R.';
+    } else {
+        fact = 'Generator: external rotation at ω = ' + Math.abs(S.omega).toFixed(2) + ' rad/s drives the coil through the ' + S.B + ' T field. Flux changes, inducing EMF = ' + Math.abs(p.emf).toFixed(3) + ' V.';
+    }
+    $('fact-box').innerText = fact;
+}
+
+// ============ QUIZ ============
+var QUIZ_EXPLAIN = {
+    q1:{correct:'B',why:'A motor takes <b>electrical energy</b> as input and produces <b>mechanical energy</b>.',tip:'Fans, drills, hard drives, EVs.'},
+    q2:{correct:'A',why:'A generator takes <b>mechanical energy</b> as input and produces <b>electrical energy</b>.',tip:'Power stations use generators driven by turbines.'},
+    q3:{correct:'B',why:'Lorentz force: F = B·I·L.',tip:'Fundamental force in motors.'},
+    q4:{correct:'A',why:'Torque: τ = N·B·I·A·sin(θ).',tip:'More N, B, I, A = more torque.'},
+    q5:{correct:'B',why:'As ω rises, back-EMF rises, opposing applied voltage. Current drops.',tip:'Motors draw less at high speed.'},
+    q6:{correct:'A',why:'At ω = 0, no back-EMF, current = V/R (maximum).',tip:'Motors trip breakers on startup.'},
+    q7:{correct:'B',why:'Peak EMF = N·B·A·ω.',tip:'Fundamental generator equation.'},
+    q8:{correct:'A',why:'Energy conservation: mechanical in = electrical out (minus losses).',tip:'P_m = τ·ω = P_e = ε·I.'},
+    q9:{correct:'B',why:'At θ = 0, flux is max but dΦ/dt = 0, so EMF = 0.',tip:'Flux and rate are 90° out of phase.'},
+    q10:{correct:'A',why:'Stalled motor: no back-EMF → current = V/R (maximum). Can burn out.',tip:'Called "locked rotor current".'}
+};
+
+function evaluateQuiz(){
+    var qs = document.querySelectorAll('.quiz-q');
+    var score = 0;
+    qs.forEach(function(q){
+        var name = q.dataset.q;
+        var correct = q.dataset.answer;
+        var chosen = q.querySelector('input[name="'+name+'"]:checked');
+        var expl = q.querySelector('.explanation');
+        var data = QUIZ_EXPLAIN[name];
+        expl.hidden = false;
+        expl.className = 'explanation';
+        if (chosen && chosen.value === correct) {
+            score++;
+            expl.classList.add('correct-box');
+            expl.innerHTML = '<strong>✓ Correct!</strong> ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:var(--mu);"><b>💡</b> ' + data.tip + '</div>';
+        } else {
+            expl.classList.add('wrong-box');
+            var cv = chosen ? chosen.value : '—';
+            expl.innerHTML = '<strong>✗ Answer: ' + correct + '</strong> You chose ' + cv + '. ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:var(--mu);"><b>💡</b> ' + data.tip + '</div>';
+        }
+    });
+    var pct = Math.round(score/qs.length*100);
+    beep(pct>=78?880:440,0.15,'sine',0.1);
+    var r = $('quiz-result');
+    r.style.display = 'block';
+    r.innerHTML = '<div style="font-size:1.4rem;color:var(--pr);">' + score + '/' + qs.length + ' · ' + pct + '%</div>';
+}
+function resetQuiz(){
+    document.querySelectorAll('.quiz-q').forEach(function(q){
+        q.querySelectorAll('input[type=radio]').forEach(function(r){ r.checked = false; });
+        var e = q.querySelector('.explanation');
+        e.hidden = true; e.innerHTML = ''; e.className = 'explanation';
+    });
+    $('quiz-result').style.display = 'none';
+}
+
+// ============ CHALLENGES ============
+function applyChallenge(id){
+    var note = $('challenge-note'), cres = $('challenge-result');
+    note.innerText = ''; cres.innerText = '';
+    if (id === 'motor') {
+        S.mode = 'motor'; $('mode').value = 'motor';
+        $('currentRow').style.display = 'block';
+        $('omegaRow').style.display = 'none';
+        S.I_applied = 2; $('current').value = 2; $('v-I').innerText = '2.0';
+        resetSim(); S.running = true;
+        note.innerText = 'Motor spins up from rest. Back-EMF builds, current drops.';
+        cres.innerText = 'Watch ω climb, back-EMF grow, current fall.';
+    } else if (id === 'gen') {
+        S.mode = 'generator'; $('mode').value = 'generator';
+        $('currentRow').style.display = 'none';
+        $('omegaRow').style.display = 'block';
+        S.omega_drive = 3; $('omega').value = 3; $('v-omega').innerText = '3.0';
+        resetSim(); S.running = true;
+        var peak = S.N * S.B * S.A * S.omega_drive;
+        note.innerText = 'Generator mode: spin the armature, get EMF.';
+        cres.innerText = 'Peak EMF = NBAω = ' + peak.toFixed(3) + ' V';
+    } else if (id === 'stronger') {
+        S.mode = 'motor'; $('mode').value = 'motor';
+        $('currentRow').style.display = 'block';
+        $('omegaRow').style.display = 'none';
+        S.B = 1.5; $('magB').value = 1.5; $('v-B').innerText = '1.50';
+        resetSim(); S.running = true;
+        note.innerText = 'Stronger B → 3× more torque → faster acceleration.';
+        cres.innerText = 'B = 1.5 T';
+    } else if (id === 'turns') {
+        S.mode = 'generator'; $('mode').value = 'generator';
+        $('currentRow').style.display = 'none';
+        $('omegaRow').style.display = 'block';
+        S.N = 100; $('turns').value = 100; $('v-N').innerText = '100';
+        S.omega_drive = 3; $('omega').value = 3; $('v-omega').innerText = '3.0';
+        resetSim(); S.running = true;
+        note.innerText = 'Double N → double peak EMF.';
+        cres.innerText = 'Peak EMF = ' + (S.N * S.B * S.A * S.omega_drive).toFixed(3) + ' V';
+    } else if (id === 'stall') {
+        S.mode = 'motor'; $('mode').value = 'motor';
+        $('currentRow').style.display = 'block';
+        $('omegaRow').style.display = 'none';
+        S.I_applied = 10; $('current').value = 10; $('v-I').innerText = '10.0';
+        resetSim();
+        S.omega = 0;
+        note.innerText = 'Stalled motor: no back-EMF → max current. Can burn out.';
+        cres.innerText = 'Stall current = V/R = ' + S.I_applied.toFixed(2) + ' A';
+    } else if (id === 'fastgen') {
+        S.mode = 'generator'; $('mode').value = 'generator';
+        $('currentRow').style.display = 'none';
+        $('omegaRow').style.display = 'block';
+        S.omega_drive = 10; $('omega').value = 10; $('v-omega').innerText = '10.0';
+        resetSim(); S.running = true;
+        note.innerText = 'Faster rotation → higher EMF.';
+        cres.innerText = 'Peak EMF at ω=10 = ' + (S.N * S.B * S.A * 10).toFixed(3) + ' V';
+    }
+    updateReadouts();
+}
+
+// ============ NOTEBOOK ============
+function recordMeasurement(){
+    var p = getState();
+    var line = new Date().toLocaleTimeString() + ' | ' + S.mode + ' | B=' + S.B + ' T | N=' + S.N + ' | A=' + S.A + ' | ω=' + Math.abs(S.omega).toFixed(3) + ' | EMF=' + Math.abs(p.emf).toFixed(4) + ' V | I=' + Math.abs(p.current).toFixed(4) + ' A | τ=' + Math.abs(p.torque).toFixed(4) + ' N·m';
+    S.records.push(line);
+    $('records').value = S.records.join('\n');
+    $('records').scrollTop = $('records').scrollHeight;
+}
+function downloadReport(){
+    var p = getState();
+    var text = 'MOTOR & GENERATOR LAB REPORT\nDate: ' + new Date().toLocaleString() + '\n\n' +
+        'Mode: ' + S.mode + '\n' +
+        'B = ' + S.B + ' T, N = ' + S.N + ', A = ' + S.A + ' m²\n' +
+        'R = ' + S.R + ' Ω, J = ' + S.J + ' kg·m²\n\n' +
+        'CURRENT STATE\n' +
+        'ω = ' + Math.abs(S.omega).toFixed(4) + ' rad/s\n' +
+        'ε = ' + Math.abs(p.emf).toFixed(4) + ' V\n' +
+        'I = ' + Math.abs(p.current).toFixed(4) + ' A\n' +
+        'τ = ' + Math.abs(p.torque).toFixed(4) + ' N·m\n' +
+        'P_mech = ' + p.mechanicalPower.toFixed(4) + ' W\n' +
+        'P_elec = ' + p.electricalPower.toFixed(4) + ' W\n' +
+        'Peak EMF = ' + p.peakEmf.toFixed(4) + ' V\n\n' +
+        'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+        'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+        'MEASUREMENTS\n' + S.records.join('\n') + '\n\n' +
+        'LIMITATIONS\nIdealized model. Educational use only.\n';
+    var blob = new Blob([text], {type:'text/plain'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'motor-generator-report.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+// ============ RESET ============
+function resetSim(){
+    S.time = 0;
+    S.omega = 0;
+    S.angle = START_ANGLE;
+    S.running = false;
+    S.paused = false;
+    $('btn-pause').textContent = '⏸ Pause';
+    $('btn-start').textContent = '▶ Start';
+    updateReadouts();
+}
+
+// ============ EVENTS ============
+$('mode').addEventListener('change', function(e){
+    S.mode = e.target.value;
+    $('currentRow').style.display = (S.mode === 'motor') ? 'block' : 'none';
+    $('omegaRow').style.display = (S.mode === 'generator') ? 'block' : 'none';
+    resetSim();
+});
+$('magB').addEventListener('input', function(e){ S.B = parseFloat(e.target.value); $('v-B').innerText = S.B.toFixed(2); });
+$('current').addEventListener('input', function(e){ S.I_applied = parseFloat(e.target.value); $('v-I').innerText = S.I_applied.toFixed(1); });
+$('omega').addEventListener('input', function(e){ S.omega_drive = parseFloat(e.target.value); $('v-omega').innerText = S.omega_drive.toFixed(1); });
+$('turns').addEventListener('input', function(e){ S.N = parseInt(e.target.value); $('v-N').innerText = S.N; });
+$('area').addEventListener('input', function(e){ S.A = parseFloat(e.target.value); $('v-A').innerText = S.A.toFixed(3); });
+$('resistance').addEventListener('input', function(e){ S.R = parseFloat(e.target.value); $('v-R').innerText = S.R; });
+$('inertia').addEventListener('input', function(e){ S.J = parseFloat(e.target.value); $('v-J').innerText = S.J.toFixed(3); });
+$('speed').addEventListener('input', function(e){ S.speed = parseFloat(e.target.value); $('v-speed').innerText = S.speed.toFixed(1); });
+
+$('btn-start').addEventListener('click', function(){
+    if (!S.running && !S.paused) {
+        S.time = 0;
+        S.angle = START_ANGLE;
+        if (S.mode === 'motor') S.omega = 0;
+        else S.omega = S.omega_drive;
+    }
+    S.running = true;
+    S.paused = false;
+    $('btn-start').textContent = '▶ Running';
+    $('btn-pause').textContent = '⏸ Pause';
+    beep(660, 0.15, 'sine', 0.08);
+});
+
+$('btn-pause').addEventListener('click', function(){
+    if (S.paused) {
+        S.paused = false;
+        S.running = true;
+        $('btn-pause').textContent = '⏸ Pause';
+        $('btn-start').textContent = '▶ Running';
+    } else if (S.running) {
+        S.paused = true;
+        S.running = false;
+        $('btn-pause').textContent = '▶ Resume';
+        $('btn-start').textContent = '▶ Start';
+    }
+});
+
+$('btn-reset').addEventListener('click', function(){ resetSim(); });
+$('btn-record').addEventListener('click', function(){ recordMeasurement(); beep(880, 0.08, 'sine', 0.06); });
+
+document.querySelectorAll('.tab-btn[data-tab]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+        document.querySelectorAll('.tab-btn[data-tab]').forEach(function(b){ b.classList.remove('active'); });
+        document.getElementById(btn.dataset.tab).classList.add('active');
+        btn.classList.add('active');
+    });
+});
+
+document.querySelectorAll('[data-challenge]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        applyChallenge(btn.dataset.challenge);
+        beep(660, 0.08, 'sine', 0.08);
+    });
+});
+
+$('btn-quiz-check').addEventListener('click', evaluateQuiz);
+$('btn-quiz-reset').addEventListener('click', resetQuiz);
+
+$('btn-clear-notes').addEventListener('click', function(){
+    if (!confirm('Clear notebook?')) return;
+    $('hypothesis').value = ''; $('conclusion').value = ''; $('records').value = '';
+    S.records = [];
+});
+$('btn-export').addEventListener('click', downloadReport);
+
+$('btn-sound').addEventListener('click', function(){
+    var on = $('btn-sound').classList.contains('playing');
+    if (on) {
+        stopHum();
+        $('btn-sound').classList.remove('playing');
+        $('btn-sound').textContent = '🔈 Enable sound';
+    } else {
+        startHum();
+        $('btn-sound').classList.add('playing');
+        $('btn-sound').textContent = '🔊 Sound ON';
+    }
+});
+
+// ============ SPLITTER ============
+(function(){
+    var sim = $('sim-area'), splitter = $('splitter');
+    if (!sim || !splitter) return;
+    var dragging = false, startY = 0, startH = 0;
+    var containerH = 0;
+
+    splitter.addEventListener('pointerdown', function(e){
+        e.preventDefault();
+        dragging = true;
+        startY = e.clientY;
+        startH = sim.getBoundingClientRect().height;
+        containerH = sim.parentElement.getBoundingClientRect().height;
+        try { splitter.setPointerCapture(e.pointerId); } catch(_){}
+        document.body.style.cursor = 'ns-resize';
+        document.body.style.userSelect = 'none';
+    });
+    window.addEventListener('pointermove', function(e){
+        if (!dragging) return;
+        var dy = e.clientY - startY;
+        var newH = startH + dy;
+        var minH = Math.max(140, containerH * 0.15);
+        var maxH = Math.min(window.innerHeight * 0.75, containerH * 0.75);
+        newH = Math.max(minH, Math.min(maxH, newH));
+        sim.style.flex = '0 0 ' + Math.round(newH) + 'px';
+        lastW = 0; lastH = 0;
+        resizeCanvas();
+    });
+    window.addEventListener('pointerup', function(e){
+        if (!dragging) return;
+        dragging = false;
+        try { splitter.releasePointerCapture(e.pointerId); } catch(_){}
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+    });
+    splitter.addEventListener('dblclick', function(){
+        sim.style.flex = '0 0 45%';
+        lastW = 0; lastH = 0;
+        resizeCanvas();
+    });
+})();
+
+// ============ ANIMATION LOOP ============
+var lastT = 0;
+function animate(now){
+    if (!lastT) lastT = now;
+    var dt = (now - lastT) / 1000;
+    if (dt > 0.1) dt = 0.016;
+    lastT = now;
+
+    if (S.running && !S.paused) {
+        var simDt = dt * S.speed;
+        S.time += simDt;
+
+        if (S.mode === 'motor') {
+            var p = getState();
+            var alpha = p.torque / S.J;
+            S.omega += alpha * simDt;
+            if (S.omega > 30) S.omega = 30;
+            S.angle += S.omega * simDt;
+        } else {
+            S.omega = S.omega_drive;
+            S.angle += S.omega * simDt;
+        }
+
+        if (S.angle > Math.PI * 4) S.angle -= Math.PI * 4;
+        if (S.angle < -Math.PI * 4) S.angle += Math.PI * 4;
+
+        updateHum();
+    }
+
+    drawScene();
+    updateReadouts();
+    requestAnimationFrame(animate);
+}
+
+window.addEventListener('resize', function(){
+    lastW = 0; lastH = 0;
+    resizeCanvas();
+});
+
+// ============ BOOT ============
+$('currentRow').style.display = 'block';
+$('omegaRow').style.display = 'none';
+resizeCanvas();
+S.angle = START_ANGLE;
+updateReadouts();
+requestAnimationFrame(animate);
+
+})();
+</script>
+</body>
+</html>

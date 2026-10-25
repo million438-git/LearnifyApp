@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -21,6 +22,7 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.File;
 import java.util.Locale;
@@ -34,11 +36,14 @@ public class SettingsActivity extends BaseActivity {
     
     private ImageView btnSaveSettings;
     private TextView tvReminderTime, tvLanguage, tvRegion, tvDateFormat, tvTheme, tvFontSize, tvCacheSize, tvAutoDownload;
+    private TextView tvSpeechRate;
     private MaterialSwitch switchSoundEffects, switchHapticFeedback, switchAnimations, switchReduceMotion, switchOfflineMode, switchCloudSync;
+    private MaterialSwitch switchInclusiveMode, switchTextToSpeech, switchHighContrast, switchAutoRead;
     
     private LinearLayout llAccountSettings, llPrivacySecurity, llNotificationPrefs;
     private LinearLayout llReminderTimeView, llLanguageView, llRegionView, llDateFormatView;
     private LinearLayout llThemeView, llFontSizeView, llClearCache, llAutoDownloadView;
+    private LinearLayout llSpeechRateView;
     private LinearLayout llLinkedAccounts, llShareProgress, llInviteFriends;
     private LinearLayout llTerms, llPrivacyPolicy, llRateUs, llDeleteAccount;
 
@@ -98,6 +103,7 @@ public class SettingsActivity extends BaseActivity {
         tvFontSize = findViewById(R.id.tvFontSize);
         tvCacheSize = findViewById(R.id.tvCacheSize);
         tvAutoDownload = findViewById(R.id.tvAutoDownload);
+        tvSpeechRate = findViewById(R.id.tvSpeechRate);
 
         switchSoundEffects = findViewById(R.id.switchSoundEffects);
         switchHapticFeedback = findViewById(R.id.switchHapticFeedback);
@@ -105,6 +111,11 @@ public class SettingsActivity extends BaseActivity {
         switchReduceMotion = findViewById(R.id.switchReduceMotion);
         switchOfflineMode = findViewById(R.id.switchOfflineMode);
         switchCloudSync = findViewById(R.id.switchCloudSync);
+
+        switchInclusiveMode = findViewById(R.id.switchInclusiveMode);
+        switchTextToSpeech = findViewById(R.id.switchTextToSpeech);
+        switchHighContrast = findViewById(R.id.switchHighContrast);
+        switchAutoRead = findViewById(R.id.switchAutoRead);
 
         llAccountSettings = findViewById(R.id.llAccountSettings);
         llPrivacySecurity = findViewById(R.id.llPrivacySecurity);
@@ -118,6 +129,7 @@ public class SettingsActivity extends BaseActivity {
         llFontSizeView = findViewById(R.id.llFontSize);
         llClearCache = findViewById(R.id.llClearCache);
         llAutoDownloadView = findViewById(R.id.llAutoDownload);
+        llSpeechRateView = findViewById(R.id.llSpeechRate);
         
         llLinkedAccounts = findViewById(R.id.llLinkedAccounts);
         llShareProgress = findViewById(R.id.llShareProgress);
@@ -137,13 +149,13 @@ public class SettingsActivity extends BaseActivity {
     private void loadSettingsToUI() {
         if (currentSettings == null) return;
 
-        if (tvReminderTime != null) tvReminderTime.setText("⏰ " + formatTo12Hour(currentSettings.getReminderTime()));
+        if (tvReminderTime != null) tvReminderTime.setText(formatTo12Hour(currentSettings.getReminderTime()));
         if (tvLanguage != null) tvLanguage.setText(getLanguageName(currentSettings.getLanguage()) + " ▼");
         if (tvRegion != null) tvRegion.setText(currentSettings.getRegion() + " ▼");
         if (tvDateFormat != null) tvDateFormat.setText(currentSettings.getDateFormat() + " ▼");
         if (tvTheme != null) tvTheme.setText(capitalize(currentSettings.getThemeMode()) + " ▼");
         if (tvFontSize != null) tvFontSize.setText(capitalize(currentSettings.getFontSize()) + " ▼");
-        if (tvAutoDownload != null) tvAutoDownload.setText("🔘 " + currentSettings.getAutoDownloadMedia());
+        if (tvAutoDownload != null) tvAutoDownload.setText(currentSettings.getAutoDownloadMedia());
 
         if (switchSoundEffects != null) switchSoundEffects.setChecked(currentSettings.isSoundEffects());
         if (switchHapticFeedback != null) switchHapticFeedback.setChecked(currentSettings.isHapticFeedback());
@@ -151,6 +163,19 @@ public class SettingsActivity extends BaseActivity {
         if (switchReduceMotion != null) switchReduceMotion.setChecked(currentSettings.isReduceMotion());
         if (switchOfflineMode != null) switchOfflineMode.setChecked(currentSettings.isOfflineMode());
         if (switchCloudSync != null) switchCloudSync.setChecked(currentSettings.isCloudSync());
+
+        if (switchInclusiveMode != null) switchInclusiveMode.setChecked(currentSettings.isInclusiveMode());
+        if (switchTextToSpeech != null) switchTextToSpeech.setChecked(currentSettings.isTextToSpeech());
+        if (switchHighContrast != null) switchHighContrast.setChecked(currentSettings.isHighContrastMode());
+        if (switchAutoRead != null) switchAutoRead.setChecked(currentSettings.isAutoReadContent());
+        if (tvSpeechRate != null) tvSpeechRate.setText(formatSpeechRate(currentSettings.getSpeechRate()) + " ▼");
+    }
+
+    private String formatSpeechRate(float rate) {
+        if (rate <= 0.8f) return "0.75x Slow";
+        if (rate <= 1.1f) return "1.0x Normal";
+        if (rate <= 1.35f) return "1.25x Fast";
+        return "1.5x Very Fast";
     }
 
     private String capitalize(String str) {
@@ -183,6 +208,7 @@ public class SettingsActivity extends BaseActivity {
         if (btnSaveSettings != null) btnSaveSettings.setOnClickListener(v -> {
             settingsService.saveSettings(currentSettings);
             NotificationHelper.scheduleStudyReminder(this, currentSettings.getReminderTime());
+            AccessibilityUtils.announceForAccessibility(v, "Settings saved successfully");
             Toast.makeText(this, "Settings saved successfully", Toast.LENGTH_SHORT).show();
         });
 
@@ -210,7 +236,7 @@ public class SettingsActivity extends BaseActivity {
             new android.app.TimePickerDialog(this, (view, hourOfDay, minuteOfHour) -> {
                 String selectedTime24 = String.format(Locale.US, "%02d:%02d", hourOfDay, minuteOfHour);
                 currentSettings.setReminderTime(selectedTime24);
-                tvReminderTime.setText("⏰ " + formatTo12Hour(selectedTime24));
+                tvReminderTime.setText(formatTo12Hour(selectedTime24));
                 settingsService.saveSettings(currentSettings);
                 NotificationHelper.scheduleStudyReminder(this, selectedTime24);
             }, hour, minute, false).show();
@@ -234,6 +260,8 @@ public class SettingsActivity extends BaseActivity {
         if (switchReduceMotion != null) switchReduceMotion.setOnCheckedChangeListener((v, isChecked) -> {
             currentSettings.setReduceMotion(isChecked);
             settingsService.saveSettings(currentSettings);
+            InclusiveModeManager.getInstance(this).setReducedMotionEnabled(isChecked);
+            AccessibilityUtils.announceForAccessibility(v, isChecked ? "Reduced motion enabled" : "Reduced motion disabled");
         });
         
         if (switchOfflineMode != null) switchOfflineMode.setOnCheckedChangeListener((v, isChecked) -> {
@@ -246,6 +274,47 @@ public class SettingsActivity extends BaseActivity {
             settingsService.saveSettings(currentSettings);
         });
 
+        // Inclusive Learning & Accessibility Listeners
+        if (switchInclusiveMode != null) {
+            switchInclusiveMode.setOnCheckedChangeListener((btn, isChecked) -> {
+                currentSettings.setInclusiveMode(isChecked);
+                InclusiveModeManager.getInstance(this).setInclusiveModeEnabled(isChecked);
+                settingsService.saveSettings(currentSettings);
+                AccessibilityUtils.announceForAccessibility(btn, isChecked ? "Inclusive Learning Mode enabled" : "Inclusive Learning Mode disabled");
+            });
+        }
+
+        if (switchTextToSpeech != null) {
+            switchTextToSpeech.setOnCheckedChangeListener((btn, isChecked) -> {
+                currentSettings.setTextToSpeech(isChecked);
+                InclusiveModeManager.getInstance(this).setTextToSpeechEnabled(isChecked);
+                settingsService.saveSettings(currentSettings);
+                AccessibilityUtils.announceForAccessibility(btn, isChecked ? "Read Content Aloud enabled" : "Read Content Aloud disabled");
+            });
+        }
+
+        if (llSpeechRateView != null) {
+            llSpeechRateView.setOnClickListener(v -> showSpeechRateDialog());
+        }
+
+        if (switchHighContrast != null) {
+            switchHighContrast.setOnCheckedChangeListener((btn, isChecked) -> {
+                currentSettings.setHighContrastMode(isChecked);
+                InclusiveModeManager.getInstance(this).setHighContrastEnabled(isChecked);
+                settingsService.saveSettings(currentSettings);
+                AccessibilityUtils.announceForAccessibility(btn, isChecked ? "High Contrast Display enabled" : "High Contrast Display disabled");
+            });
+        }
+
+        if (switchAutoRead != null) {
+            switchAutoRead.setOnCheckedChangeListener((btn, isChecked) -> {
+                currentSettings.setAutoReadContent(isChecked);
+                InclusiveModeManager.getInstance(this).setAutoReadContentEnabled(isChecked);
+                settingsService.saveSettings(currentSettings);
+                AccessibilityUtils.announceForAccessibility(btn, isChecked ? "Auto-Read Lessons enabled" : "Auto-Read Lessons disabled");
+            });
+        }
+
         if (llLanguageView != null) llLanguageView.setOnClickListener(v -> {
             String[] langs = {"English", "Amharic (አማርኛ)", "Oromo (Afaan Oromoo)", "Tigrinya (ትግርኛ)"};
             String[] codes = {"en", "am", "om", "ti"};
@@ -254,7 +323,6 @@ public class SettingsActivity extends BaseActivity {
                 tvLanguage.setText(langs[which] + " ▼");
                 settingsService.saveSettings(currentSettings);
                 
-                // Restart to apply language change
                 Intent intent = new Intent(this, WelcomeActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
@@ -274,14 +342,10 @@ public class SettingsActivity extends BaseActivity {
         if (llThemeView != null) llThemeView.setOnClickListener(v -> {
             String[] options = {"Light", "Dark", "System Default"};
             new MaterialAlertDialogBuilder(this).setTitle("Select Theme").setItems(options, (dialog, which) -> {
-                String choice = which == 0 ? "light" : (which == 1 ? "dark" : "system");
+                String choice = which == 0 ? ThemeManager.THEME_LIGHT : (which == 1 ? ThemeManager.THEME_DARK : ThemeManager.THEME_SYSTEM);
                 currentSettings.setThemeMode(choice);
-                tvTheme.setText(options[which] + " ▼");
-                settingsService.saveSettings(currentSettings);
-                
-                int mode = which == 0 ? AppCompatDelegate.MODE_NIGHT_NO : 
-                          (which == 1 ? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-                AppCompatDelegate.setDefaultNightMode(mode);
+                if (tvTheme != null) tvTheme.setText(options[which] + " ▼");
+                ThemeManager.setThemeMode(this, choice);
             }).show();
         });
         
@@ -291,6 +355,26 @@ public class SettingsActivity extends BaseActivity {
                 String choice = sizes[which].toLowerCase();
                 currentSettings.setFontSize(choice);
                 tvFontSize.setText(sizes[which] + " ▼");
+                boolean isLarge = "large".equals(choice) || "extra large".equals(choice);
+                InclusiveModeManager.getInstance(this).setLargeTextEnabled(isLarge);
+                settingsService.saveSettings(currentSettings);
+            }).show();
+        });
+
+        if (llDateFormatView != null) llDateFormatView.setOnClickListener(v -> {
+            String[] formats = {"MM/DD/YYYY", "DD/MM/YYYY", "YYYY-MM-DD"};
+            new MaterialAlertDialogBuilder(this).setTitle("Select Date Format").setItems(formats, (dialog, which) -> {
+                currentSettings.setDateFormat(formats[which]);
+                if (tvDateFormat != null) tvDateFormat.setText(formats[which] + " ▼");
+                settingsService.saveSettings(currentSettings);
+            }).show();
+        });
+
+        if (llAutoDownloadView != null) llAutoDownloadView.setOnClickListener(v -> {
+            String[] options = {"Wi-Fi only", "Wi-Fi and Cellular", "Never"};
+            new MaterialAlertDialogBuilder(this).setTitle("Auto-Download Media").setItems(options, (dialog, which) -> {
+                currentSettings.setAutoDownloadMedia(options[which]);
+                if (tvAutoDownload != null) tvAutoDownload.setText(options[which]);
                 settingsService.saveSettings(currentSettings);
             }).show();
         });
@@ -308,7 +392,10 @@ public class SettingsActivity extends BaseActivity {
                 .show();
         });
 
-        if (llLinkedAccounts != null) llLinkedAccounts.setOnClickListener(v -> Toast.makeText(this, "Opening Linked Accounts...", Toast.LENGTH_SHORT).show());
+        if (llLinkedAccounts != null) llLinkedAccounts.setOnClickListener(v -> {
+            Intent intent = new Intent(this, LinkedAccountsActivity.class);
+            startActivity(intent);
+        });
         if (llShareProgress != null) llShareProgress.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
@@ -316,23 +403,102 @@ public class SettingsActivity extends BaseActivity {
             startActivity(Intent.createChooser(intent, "Share via"));
         });
         if (llInviteFriends != null) llInviteFriends.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_TEXT, "Join me on Learnify and let's study together! Download now: https://learnify.com/download");
-            startActivity(Intent.createChooser(intent, "Invite via"));
+            Intent intent = new Intent(this, InviteFriendsActivity.class);
+            startActivity(intent);
         });
 
         if (llTerms != null) llTerms.setOnClickListener(v -> showModalWebView("Terms of Service", "https://learnify.com/terms"));
         if (llPrivacyPolicy != null) llPrivacyPolicy.setOnClickListener(v -> showModalWebView("Privacy Policy", "https://learnify.com/privacy"));
         if (llRateUs != null) llRateUs.setOnClickListener(v -> Toast.makeText(this, "Thank you for your rating!", Toast.LENGTH_SHORT).show());
         
-        if (llDeleteAccount != null) llDeleteAccount.setOnClickListener(v -> {
-             new MaterialAlertDialogBuilder(this)
-                 .setTitle("Delete Account")
-                 .setMessage("Warning: This action is permanent and cannot be undone. All your progress will be lost.")
-                 .setPositiveButton("Delete Permanently", (dialog, which) -> Toast.makeText(this, "Account deletion request submitted", Toast.LENGTH_LONG).show())
-                 .setNegativeButton("Keep My Account", null)
-                 .show();
+        if (llDeleteAccount != null) llDeleteAccount.setOnClickListener(v -> showDeleteAccountDialog());
+    }
+
+    private void showSpeechRateDialog() {
+        String[] options = {"0.75x (Slow)", "1.0x (Normal)", "1.25x (Fast)", "1.5x (Very Fast)"};
+        final float[] rates = {InclusiveModeManager.RATE_SLOW, InclusiveModeManager.RATE_NORMAL, InclusiveModeManager.RATE_FAST, InclusiveModeManager.RATE_VERY_FAST};
+        
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Speech Rate")
+                .setItems(options, (dialog, which) -> {
+                    float selectedRate = rates[which];
+                    currentSettings.setSpeechRate(selectedRate);
+                    InclusiveModeManager.getInstance(this).setSpeechRate(selectedRate);
+                    settingsService.saveSettings(currentSettings);
+                    if (tvSpeechRate != null) {
+                        tvSpeechRate.setText(formatSpeechRate(selectedRate) + " ▼");
+                    }
+                    AccessibilityUtils.announceForAccessibility(tvSpeechRate, "Speech rate set to " + options[which]);
+                })
+                .show();
+    }
+
+    private String getAuthenticatedUser() {
+        android.content.SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String user = session.getString("username", "");
+        if ((user == null || user.trim().isEmpty()) && securePrefs != null) {
+            user = securePrefs.getString("username", "");
+        }
+        return user != null ? user.trim() : "";
+    }
+
+    private void showDeleteAccountDialog() {
+        String username = getAuthenticatedUser();
+        if (username.isEmpty()) {
+            Toast.makeText(this, "Session invalid. Please log in again.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_delete_account, null);
+        TextInputEditText etPassword = view.findViewById(R.id.etDeletePassword);
+        TextInputEditText etConfirmPhrase = view.findViewById(R.id.etDeleteConfirmPhrase);
+
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+                .setTitle("Confirm Account Deletion")
+                .setView(view)
+                .setPositiveButton("Delete Permanently", null)
+                .setNegativeButton("Cancel", null)
+                .create();
+
+        dialog.show();
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String enteredPassword = etPassword != null && etPassword.getText() != null ? etPassword.getText().toString().trim() : "";
+            String enteredPhrase = etConfirmPhrase != null && etConfirmPhrase.getText() != null ? etConfirmPhrase.getText().toString().trim() : "";
+
+            if (enteredPassword.isEmpty()) {
+                if (etPassword != null) etPassword.setError("Password is required");
+                Toast.makeText(this, "Please enter your password", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (!"DELETE".equals(enteredPhrase)) {
+                if (etConfirmPhrase != null) etConfirmPhrase.setError("Type DELETE in all capital letters");
+                Toast.makeText(this, "Please type DELETE to confirm", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            boolean isPasswordCorrect = repository.verifyUserPassword(username, enteredPassword);
+            if (!isPasswordCorrect) {
+                if (etPassword != null) etPassword.setError("Incorrect password");
+                Toast.makeText(this, "Incorrect password. Cannot proceed.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            boolean deleted = repository.deleteUserAccount(username);
+            if (deleted) {
+                FirebaseSessionManager.signOut(this, FirebaseAuthSupport.getConfiguredAuth(this));
+
+                Toast.makeText(this, "Account and associated data deleted permanently.", Toast.LENGTH_LONG).show();
+                dialog.dismiss();
+
+                Intent intent = new Intent(this, WelcomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            } else {
+                Toast.makeText(this, "Account deletion failed. Please contact administrator.", Toast.LENGTH_LONG).show();
+            }
         });
     }
 

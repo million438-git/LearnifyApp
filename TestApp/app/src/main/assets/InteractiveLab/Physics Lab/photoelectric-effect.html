@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Physics: Photoelectric Effect Lab</title>
+<style>
+:root{--primary:#6366f1;--dark:#0f172a;--surface:#fff;--bg:#f1f5f9;--glass:rgba(255,255,255,0.92);}
+*{box-sizing:border-box;font-family:'Inter',system-ui,sans-serif;}
+html,body{height:100%;}
+body{margin:0;background:var(--bg);color:var(--dark);display:flex;flex-direction:column;overflow:hidden;}
+header{background:var(--dark);color:#fff;padding:10px;text-align:center;border-bottom:3px solid var(--primary);flex-shrink:0;}
+.lab-container{display:flex;flex:1;overflow:hidden;flex-direction:column;min-height:0;}
+#sim-area{flex:2 1 0;min-height:340px;position:relative;background:#05080f;border-bottom:2px solid #e2e8f0;overflow:hidden;}
+canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;}
+.splitter{height:10px;background:linear-gradient(90deg,rgba(0,0,0,.03),rgba(0,0,0,.06));cursor:ns-resize;flex-shrink:0;}
+.bottom-panel{flex:3 1 0;min-height:0;display:flex;flex-direction:row;background:var(--surface);overflow-y:auto;}
+.controls{flex:0 0 360px;padding:18px;border-right:1px solid #e2e8f0;min-width:300px;}
+.analysis{flex:1 1 720px;padding:18px;background:#fafafa;min-width:420px;}
+.card{background:#fff;border:1px solid #e2e8f0;padding:12px;border-radius:8px;margin-bottom:10px;}
+h4{margin:0 0 10px 0;font-size:.8rem;color:#64748b;text-transform:uppercase;}
+.input-row{margin-bottom:12px;}
+label{display:block;font-size:.8rem;font-weight:600;margin-bottom:4px;}
+input[type=range]{width:100%;accent-color:var(--primary);}
+select{width:100%;padding:6px;border-radius:6px;border:1px solid #cbd5e1;background:#fff;font-family:inherit;}
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+button{padding:10px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;transition:.2s;font-family:inherit;}
+.btn-fire{background:var(--primary);color:#fff;}.btn-fire:hover{background:#4f46e5;}
+.btn-reset{background:#64748b;color:#fff;}.btn-reset:hover{background:#475569;}
+.btn-play{background:linear-gradient(135deg,#10b981,#059669);color:#fff;}.btn-play:hover{background:linear-gradient(135deg,#059669,#047857);}
+.btn-sound{background:#10b981;color:#fff;}.btn-sound.playing{background:#ef4444;}
+.hud{position:absolute;top:10px;left:10px;background:var(--glass);padding:8px 10px;border-radius:8px;font-size:.75rem;border:1px solid #ddd;z-index:20;color:#0f172a;pointer-events:none;}
+.hud .metrics{line-height:1.7;}
+.hud span.val{color:#4f46e5;font-weight:700;font-variant-numeric:tabular-nums;}
+.vector-legend{position:absolute;bottom:10px;left:10px;font-size:.65rem;background:var(--glass);padding:5px 8px;border-radius:4px;color:#0f172a;pointer-events:none;}
+.vector-legend span{margin-right:8px;}
+.tab-btn{padding:8px 12px;border-radius:6px;background:#e2e8f0;color:var(--dark);font-weight:600;font-size:.8rem;border:none;cursor:pointer;}
+.tab-btn.active{background:var(--primary);color:#fff;}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+.readouts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;}
+.readout{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;}
+.readout span{font-size:.7rem;color:#64748b;display:block;}
+.readout strong{font-size:1rem;color:var(--dark);font-variant-numeric:tabular-nums;}
+.readout.hl strong{color:#4f46e5;}
+.readout.good strong{color:#10b981;}
+.readout.bad strong{color:#dc2626;}
+.quiz-q{padding:10px 0;border-bottom:1px solid #e2e8f0;}
+.quiz-q>strong{display:block;margin-bottom:8px;font-size:.9rem;}
+.quiz-q label{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;margin:3px 6px 3px 0;cursor:pointer;font-weight:500;}
+.quiz-q label:hover{background:#eef2ff;border-color:#6366f1;}
+.explanation{margin-top:8px;padding:10px;border-radius:6px;font-size:.82rem;line-height:1.55;background:#eef2ff;border-left:3px solid #6366f1;}
+.explanation.correct-box{background:#ecfdf5;border-left-color:#10b981;}
+.explanation.wrong-box{background:#fef2f2;border-left-color:#dc2626;}
+.quiz-section{font-size:.72rem;font-weight:700;text-transform:uppercase;color:#6366f1;margin:12px 0 6px 0;letter-spacing:.05em;}
+#quiz-result{margin-top:10px;padding:12px;border-radius:8px;background:#eef2ff;border:1px solid #c7d2fe;font-weight:700;text-align:center;}
+table.formulas{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:6px;}
+table.formulas th,table.formulas td{border:1px solid #e2e8f0;padding:6px 8px;text-align:left;}
+table.formulas th{background:#f1f5f9;font-weight:600;}
+.eq{font-family:'JetBrains Mono',monospace;background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:.82rem;}
+.note{font-size:.82rem;color:#475569;margin-top:8px;line-height:1.5;}
+.sound-hint{background:#fef3c7;border-left:3px solid #f59e0b;padding:8px;border-radius:6px;font-size:.82rem;margin-top:8px;}
+textarea{width:100%;padding:8px;border-radius:6px;border:1px solid #cbd5e1;font-family:inherit;font-size:.85rem;min-height:64px;resize:vertical;}
+@media(max-width:768px){.bottom-panel{flex-direction:column;}.controls{border-right:none;border-bottom:1px solid #eee;min-width:0;}.analysis{min-width:0;}.readouts{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header>
+<h2 style="margin:0;font-size:1.1rem;">⚛️ Photoelectric Effect Interactive Lab</h2>
+<small>Einstein's photoelectric equation · Threshold frequency · Stopping potential · Real metals</small>
+</header>
+
+<div class="lab-container">
+<div id="sim-area">
+<div class="hud">
+<b>LIVE STATE</b><br>
+<div class="metrics">
+Photon λ: <span class="val" id="hud-wl">400</span> nm<br>
+Photon E: <span class="val" id="hud-E">3.10</span> eV<br>
+Work function φ: <span class="val" id="hud-phi">2.28</span> eV<br>
+KE max: <span class="val" id="hud-ke">0.82</span> eV<br>
+Status: <span class="val" id="hud-status">Emitting</span>
+</div>
+</div>
+<div class="vector-legend">
+<span style="color:#fbbf24">● Photon</span>
+<span style="color:#a5f3fc">● Electron</span>
+<span style="color:#94a3b8">○ Metal cathode</span>
+</div>
+<canvas id="canvas"></canvas>
+</div>
+
+<div id="splitter" class="splitter"></div>
+
+<div class="bottom-panel">
+<div class="controls">
+<h4>🧪 Lab Settings</h4>
+
+<div class="input-row">
+<button class="btn-sound" id="btn-sound" style="width:100%;">🔈 Enable sound</button>
+<div class="sound-hint" id="sound-hint">Photon pings + electron clicks.</div>
+</div>
+
+<div class="input-row">
+<label>Light source</label>
+<select id="source">
+<option value="custom" selected>Custom wavelength</option>
+<option value="hydrogen">Hydrogen lamp (H-α 656nm etc.)</option>
+<option value="sodium">Sodium lamp (589nm)</option>
+<option value="mercury">Mercury lamp (254nm UV)</option>
+<option value="uv">UV lamp (300nm)</option>
+</select>
+</div>
+
+<div class="input-row">
+<label>Metal cathode</label>
+<select id="metal">
+<option value="cesium" selected>Cesium (φ = 2.14 eV)</option>
+<option value="potassium">Potassium (φ = 2.30 eV)</option>
+<option value="sodium">Sodium (φ = 2.28 eV)</option>
+<option value="calcium">Calcium (φ = 2.87 eV)</option>
+<option value="zinc">Zinc (φ = 4.33 eV)</option>
+<option value="copper">Copper (φ = 4.70 eV)</option>
+<option value="silver">Silver (φ = 4.73 eV)</option>
+<option value="platinum">Platinum (φ = 6.35 eV)</option>
+</select>
+</div>
+
+<div class="input-row">
+<label>Wavelength λ: <span id="v-wl">400</span> nm</label>
+<input type="range" id="wl" min="100" max="800" step="1" value="400">
+</div>
+
+<div class="input-row">
+<label>Light intensity: <span id="v-intensity">50</span>%</label>
+<input type="range" id="intensity" min="0" max="100" step="5" value="50">
+</div>
+
+<div class="input-row">
+<label>Anode voltage V: <span id="v-voltage">0</span> V</label>
+<input type="range" id="voltage" min="-20" max="20" step="0.5" value="0">
+</div>
+
+<div class="input-row">
+<label style="display:inline-flex;align-items:center;gap:6px;">
+<input type="checkbox" id="stopping-toggle"> Show stopping potential
+</label>
+</div>
+
+<div class="btn-grid">
+<button class="btn-play" id="btn-emit">▶ Emit light</button>
+<button class="btn-reset" id="btn-reset">↺ Reset</button>
+</div>
+</div>
+
+<div class="analysis">
+<h4>📊 Learn &amp; Practice</h4>
+
+<div class="readouts">
+<div class="readout hl"><span>Photon energy E = hc/λ</span><strong id="ro-E">3.10 eV</strong></div>
+<div class="readout"><span>Work function φ</span><strong id="ro-phi">2.14 eV</strong></div>
+<div class="readout hl good"><span>Max kinetic energy KE</span><strong id="ro-ke">0.96 eV</strong></div>
+<div class="readout"><span>Stopping potential V₀</span><strong id="ro-v0">0.96 V</strong></div>
+<div class="readout"><span>Threshold frequency f₀</span><strong id="ro-f0">5.17×10¹⁴ Hz</strong></div>
+<div class="readout"><span>Threshold wavelength λ₀</span><strong id="ro-l0">580 nm</strong></div>
+<div class="readout"><span>Photon frequency f</span><strong id="ro-f">7.49×10¹⁴ Hz</strong></div>
+<div class="readout"><span>Electron speed</span><strong id="ro-v">5.83×10⁵ m/s</strong></div>
+<div class="readout"><span>Applied voltage V</span><strong id="ro-V">0.0 V</strong></div>
+<div class="readout"><span>Current at anode</span><strong id="ro-I">0 (no emission)</strong></div>
+<div class="readout"><span>Status</span><strong id="ro-status">—</strong></div>
+<div class="readout"><span>Electrons/sec emitted</span><strong id="ro-rate">0</strong></div>
+</div>
+
+<div class="card">
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+<button class="tab-btn active" data-tab="formulas">Formulas</button>
+<button class="tab-btn" data-tab="quiz">Quiz</button>
+<button class="tab-btn" data-tab="challenges">Challenges</button>
+<button class="tab-btn" data-tab="notebook">Notebook</button>
+</div>
+
+<div id="formulas" class="tab-panel active">
+<h3 style="margin:6px 0 8px 0;">Einstein's Photoelectric Equations</h3>
+<ul style="font-size:.9rem;line-height:1.6;padding-left:1rem;margin:0;">
+<li><b>Photon energy:</b> E = hf = hc/λ</li>
+<li><b>Photoelectric equation:</b> KE_max = hf − φ</li>
+<li><b>Stopping potential:</b> eV₀ = KE_max = hf − φ</li>
+<li><b>Threshold frequency:</b> f₀ = φ/h</li>
+<li><b>Threshold wavelength:</b> λ₀ = hc/φ</li>
+<li><b>Photoelectric condition:</b> f > f₀ (or λ < λ₀) for emission</li>
+<li><b>Electron speed:</b> v = √(2·KE/m)</li>
+</ul>
+<p class="note"><b>💡 Key insight:</b> Increasing light <b>intensity</b> increases the <b>number</b> of electrons emitted (current), but NOT their max kinetic energy — that depends only on frequency. Increasing <b>frequency</b> increases KE_max. If f < f₀, no emission occurs regardless of intensity.</p>
+
+<table class="formulas" style="margin-top:12px;">
+<tr><th>Quantity</th><th>Formula</th><th>Value</th></tr>
+<tr><td>Planck constant</td><td><span class="eq">h</span></td><td>4.136×10⁻¹⁵ eV·s</td></tr>
+<tr><td>Speed of light</td><td><span class="eq">c</span></td><td>2.998×10⁸ m/s</td></tr>
+<tr><td>Electron mass</td><td><span class="eq">mₑ</span></td><td>9.109×10⁻³¹ kg</td></tr>
+<tr><td>hc (useful)</td><td><span class="eq">hc</span></td><td>1240 eV·nm</td></tr>
+</table>
+</div>
+
+<div id="quiz" class="tab-panel" style="max-height:600px;overflow:auto;">
+<h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+<div class="quiz-section">Basic — Photon Nature</div>
+<div class="quiz-q" data-q="q1" data-answer="B">
+<strong>1. Light behaves as ______ in the photoelectric effect:</strong>
+<label><input type="radio" name="q1" value="A"> A continuous wave</label>
+<label><input type="radio" name="q1" value="B"> A stream of discrete photons</label>
+<label><input type="radio" name="q1" value="C"> A magnetic field</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q2" data-answer="A">
+<strong>2. Photon energy is given by:</strong>
+<label><input type="radio" name="q2" value="A"> E = hf = hc/λ</label>
+<label><input type="radio" name="q2" value="B"> E = mc²</label>
+<label><input type="radio" name="q2" value="C"> E = ½mv²</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q3" data-answer="B">
+<strong>3. If light intensity doubles but frequency is unchanged:</strong>
+<label><input type="radio" name="q3" value="A"> Electron KE doubles</label>
+<label><input type="radio" name="q3" value="B"> Number of electrons doubles, KE same</label>
+<label><input type="radio" name="q3" value="C"> No change</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Intermediate — Threshold</div>
+<div class="quiz-q" data-q="q4" data-answer="B">
+<strong>4. The work function φ is:</strong>
+<label><input type="radio" name="q4" value="A"> The max KE of emitted electrons</label>
+<label><input type="radio" name="q4" value="B"> The minimum energy to remove an electron from the metal</label>
+<label><input type="radio" name="q4" value="C"> The photon wavelength</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q5" data-answer="A">
+<strong>5. If photon frequency is below the threshold frequency:</strong>
+<label><input type="radio" name="q5" value="A"> No electrons are emitted, no matter the intensity</label>
+<label><input type="radio" name="q5" value="B"> Electrons are emitted but with low KE</label>
+<label><input type="radio" name="q5" value="C"> Electrons are emitted at full speed</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q6" data-answer="A">
+<strong>6. The stopping potential V₀ is related to KE_max by:</strong>
+<label><input type="radio" name="q6" value="A"> eV₀ = KE_max</label>
+<label><input type="radio" name="q6" value="B"> V₀ = KE_max / c²</label>
+<label><input type="radio" name="q6" value="C"> V₀ = 2·KE_max</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Advanced — Deep Understanding</div>
+<div class="quiz-q" data-q="q7" data-answer="B">
+<strong>7. A metal with φ = 2.14 eV is illuminated by 400 nm light. E_photon = 3.10 eV. What is KE_max?</strong>
+<label><input type="radio" name="q7" value="A"> 5.24 eV</label>
+<label><input type="radio" name="q7" value="B"> 0.96 eV</label>
+<label><input type="radio" name="q7" value="C"> 0 eV</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q8" data-answer="B">
+<strong>8. If λ is decreased (higher f), the slope of the KE_max vs f graph:</strong>
+<label><input type="radio" name="q8" value="A"> Depends on intensity</label>
+<label><input type="radio" name="q8" value="B"> Is always Planck's constant h (universal)</label>
+<label><input type="radio" name="q8" value="C"> Changes per metal</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q9" data-answer="A">
+<strong>9. Why was the photoelectric effect crucial in the birth of quantum mechanics?</strong>
+<label><input type="radio" name="q9" value="A"> It proved light's energy is quantized (photons), contradicting classical wave theory</label>
+<label><input type="radio" name="q9" value="B"> It showed light is a wave</label>
+<label><input type="radio" name="q9" value="C"> It was the first example of fusion</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="btn-grid" style="margin-top:12px;">
+<button class="btn-fire" id="btn-quiz-check">Submit Quiz</button>
+<button class="btn-reset" id="btn-quiz-reset">Reset</button>
+</div>
+<div id="quiz-result" style="display:none;"></div>
+</div>
+
+<div id="challenges" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Challenges</h3>
+<div style="display:flex;flex-direction:column;gap:8px;font-size:.9rem;">
+<div><b>1. Below threshold</b><br><button class="btn-fire" data-challenge="below">Cesium + 650 nm — no emission</button></div>
+<div><b>2. Just above threshold</b><br><button class="btn-fire" data-challenge="just">Cesium + 580 nm — very slow electrons</button></div>
+<div><b>3. Strong emission</b><br><button class="btn-fire" data-challenge="strong">Cesium + 400 nm — clear emission</button></div>
+<div><b>4. High work function</b><br><button class="btn-fire" data-challenge="copper">Copper + 400 nm — need UV</button></div>
+<div><b>5. Stopping potential</b><br><button class="btn-fire" data-challenge="stopping">Cesium + 400 nm + stopping voltage</button></div>
+<div id="challenge-note" style="color:#0f172a;font-size:.85rem;"></div>
+<div id="challenge-result" style="color:#083344;font-weight:600;margin-top:6px;"></div>
+</div>
+</div>
+
+<div id="notebook" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Notebook</h3>
+<label>Hypothesis</label>
+<textarea id="hypothesis" placeholder="What do you expect?"></textarea>
+<label style="margin-top:10px;display:block;">Conclusion</label>
+<textarea id="conclusion" placeholder="What did you observe?"></textarea>
+<label style="margin-top:10px;display:block;">Measurements</label>
+<textarea id="records" readonly style="background:#f8fafc;font-family:monospace;font-size:.75rem;min-height:100px;"></textarea>
+<div class="btn-grid" style="margin-top:10px;">
+<button class="btn-fire" id="btn-record">📋 Record</button>
+<button class="btn-reset" id="btn-clear-notes">Clear</button>
+</div>
+<button class="btn-fire" style="margin-top:8px;width:100%;" id="btn-export">⬇ Report</button>
+</div>
+</div>
+
+<div class="card">
+<b>Real fact:</b> <span id="fact-box" style="font-size:.85rem;">—</span>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+"use strict";
+(function(){
+
+// ============ CONSTANTS ============
+var H_eV = 4.135667696e-15;   // Planck in eV·s
+var H_J = 6.62607015e-34;     // Planck in J·s
+var C = 299792458;             // m/s
+var E_CHARGE = 1.602176634e-19;
+var M_E = 9.1093837015e-31;   // kg
+var HC_eVnm = 1240.0;          // hc in eV·nm (accurate: 1239.841984)
+
+// ============ METALS (real work functions) ============
+var METALS = {
+    cesium:   { name:'Cesium',   phi:2.14, color:'#fbbf24', fact:'Cesium (φ=2.14 eV) is the most photosensitive metal — used in early phototubes. Threshold λ ≈ 580 nm (visible light).' },
+    potassium:{ name:'Potassium', phi:2.30, color:'#f59e0b', fact:'Potassium (φ=2.30 eV) was used in Hallwachs\' 1887 experiments. Threshold λ ≈ 540 nm (green light).' },
+    sodium:   { name:'Sodium',   phi:2.28, color:'#f97316', fact:'Sodium (φ=2.28 eV) works with visible light. Threshold λ ≈ 544 nm. Sodium street lamps can trigger it.' },
+    calcium:  { name:'Calcium',  phi:2.87, color:'#eab308', fact:'Calcium (φ=2.87 eV) needs blue/violet light — threshold λ ≈ 432 nm.' },
+    zinc:     { name:'Zinc',     phi:4.33, color:'#64748b', fact:'Zinc (φ=4.33 eV) needs UV light — threshold λ ≈ 286 nm. Hertz used zinc in his 1887 experiments.' },
+    copper:   { name:'Copper',   phi:4.70, color:'#b45309', fact:'Copper (φ=4.70 eV) — threshold λ ≈ 264 nm (UV). Requires short-wavelength UV to emit.' },
+    silver:   { name:'Silver',   phi:4.73, color:'#94a3b8', fact:'Silver (φ=4.73 eV) — threshold λ ≈ 262 nm. Silver\'s photosensitivity requires UV.' },
+    platinum: { name:'Platinum', phi:6.35, color:'#cbd5e1', fact:'Platinum (φ=6.35 eV) — the highest φ listed. Threshold λ ≈ 195 nm (deep UV). Used in UV detectors.' }
+};
+
+// ============ STATE ============
+var S = {
+    source: 'custom',
+    metal: 'cesium',
+    wavelength: 400,
+    intensity: 50,
+    voltage: 0,
+    showStopping: false,
+    running: true,
+    soundOn: false,
+    time: 0,
+    emitAccumulator: 0,
+    emittedCount: 0,
+    photons: [],
+    electrons: [],
+    debugCount: 0,
+    records: []
+};
+
+var $ = function(id){ return document.getElementById(id); };
+var canvas = $('canvas');
+var ctx = canvas.getContext('2d');
+var dpr = window.devicePixelRatio || 1;
+var view = { x:0, y:0, scale:1 };
+var lastW = 0, lastH = 0;
+
+// ============ CANVAS ============
+function resizeCanvas(){
+    var rect = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(rect.width));
+    var h = Math.max(1, Math.round(rect.height));
+    if (w === lastW && h === lastH) return;
+    lastW = w; lastH = h;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function cw(){ return canvas.width / dpr; }
+function ch(){ return canvas.height / dpr; }
+
+// ============ AUDIO ============
+var audioCtx = null;
+function initAudio(){
+    if (audioCtx) return;
+    try {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        audioCtx = new AC();
+    } catch(e){}
+}
+function beep(freq, dur, type, vol){
+    if (!audioCtx || !S.soundOn) return;
+    try {
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = type || 'sine';
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(vol || 0.06, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + dur);
+    } catch(e){}
+}
+function playPhotonPing(){
+    if (!audioCtx || !S.soundOn) return;
+    beep(700 + Math.random() * 200, 0.04, 'sine', 0.04);
+}
+function playElectronClick(){
+    if (!audioCtx || !S.soundOn) return;
+    beep(150 + Math.random() * 60, 0.05, 'triangle', 0.06);
+}
+function toggleSound(){
+    initAudio();
+    if (!audioCtx) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    S.soundOn = !S.soundOn;
+    if (S.soundOn) {
+        $('btn-sound').textContent = '🔊 Sound ON';
+        $('btn-sound').classList.add('playing');
+        beep(440, 0.1, 'sine', 0.1);
+    } else {
+        $('btn-sound').textContent = '🔈 Enable sound';
+        $('btn-sound').classList.remove('playing');
+    }
+}
+
+// ============ PHYSICS ============
+function getMetal(){ return METALS[S.metal]; }
+function photonEnergyEV(wl_nm){
+    return HC_eVnm / wl_nm;
+}
+function getKE_max(){
+    var E = photonEnergyEV(S.wavelength);
+    var phi = getMetal().phi;
+    return Math.max(0, E - phi);
+}
+function getStoppingPotential(){
+    return getKE_max();  // in volts
+}
+function getThresholdWavelength(){
+    return HC_eVnm / getMetal().phi;
+}
+function getThresholdFreq(){
+    return getMetal().phi / H_eV;
+}
+function getPhotonFreq(){
+    return C / (S.wavelength * 1e-9);
+}
+function getElectronSpeed(){
+    var ke = getKE_max() * E_CHARGE;  // J
+    if (ke <= 0) return 0;
+    return Math.sqrt(2 * ke / M_E);
+}
+function isEmitting(){
+    return getKE_max() > 0;
+}
+// Current: blocked if applied voltage stops electrons.
+// If V < -V_stopping, current is 0.
+// If V >= 0, current is proportional to intensity.
+// Between: partial current.
+function getCurrentFraction(){
+    if (!isEmitting()) return 0;
+    var v0 = getStoppingPotential();
+    if (S.voltage <= -v0) return 0;
+    if (S.voltage >= 0) return 1;
+    // Linear between -v0 and 0
+    return 1 - Math.abs(S.voltage) / v0;
+}
+
+// ============ COLOR ============
+function wlToRGB(wl){
+    var r=0,g=0,b=0;
+    if (wl>=380 && wl<440){r=-(wl-440)/60;b=1;}
+    else if (wl<490){g=(wl-440)/50;b=1;}
+    else if (wl<510){g=1;b=-(wl-510)/20;}
+    else if (wl<580){r=(wl-510)/70;g=1;}
+    else if (wl<645){r=1;g=-(wl-645)/65;}
+    else if (wl<=780){r=1;}
+    var f = 1;
+    if (wl>700) f = 0.3 + 0.7*(780-wl)/80;
+    if (wl<420) f = 0.3 + 0.7*(wl-380)/40;
+    var R=Math.round(r*f*255), G=Math.round(g*f*255), B=Math.round(b*f*255);
+    // UV (invisible) — show purple glow
+    if (wl < 380) { R=120; G=80; B=200; }
+    return 'rgb('+R+','+G+','+B+')';
+}
+
+// ============ DRAW ============
+function drawScene(){
+    resizeCanvas();
+    var w = cw(), h = ch();
+    if (w < 10 || h < 10) return;
+
+    // Background
+    var bg = ctx.createLinearGradient(0, 0, 0, h);
+    bg.addColorStop(0, '#0a1220');
+    bg.addColorStop(1, '#03060e');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.save();
+    ctx.translate(view.x, view.y);
+    ctx.scale(view.scale, view.scale);
+    var W = w/view.scale, H = h/view.scale;
+
+    // Layout: cathode (left) → vacuum gap → anode (right)
+    var cathodeX = W * 0.20;
+    var anodeX = W * 0.80;
+    var plateTop = H * 0.25;
+    var plateBottom = H * 0.75;
+    var plateH = plateBottom - plateTop;
+
+    // --- Cathode plate (metal target) ---
+    var mat = getMetal();
+    ctx.fillStyle = mat.color;
+    ctx.fillRect(cathodeX - 15, plateTop, 30, plateH);
+    ctx.strokeStyle = '#0f172a';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(cathodeX - 15, plateTop, 30, plateH);
+
+    // Cathode label
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = 'bold 11px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('CATHODE', cathodeX, plateTop - 15);
+    ctx.fillStyle = '#cbd5e1';
+    ctx.font = '11px Inter';
+    ctx.fillText(mat.name, cathodeX, plateTop - 30);
+    ctx.fillText('φ = ' + mat.phi.toFixed(2) + ' eV', cathodeX, plateBottom + 20);
+
+    // --- Anode plate ---
+    ctx.fillStyle = '#475569';
+    ctx.fillRect(anodeX - 15, plateTop, 30, plateH);
+    ctx.strokeStyle = '#0f172a';
+    ctx.strokeRect(anodeX - 15, plateTop, 30, plateH);
+
+    // Anode label
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = 'bold 11px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('ANODE', anodeX, plateTop - 15);
+    ctx.fillText('+' , anodeX, plateTop - 30);
+    ctx.fillText('V = ' + S.voltage.toFixed(1) + ' V', anodeX, plateBottom + 20);
+
+    // --- Light source (top-left) ---
+    var srcX = W * 0.05;
+    var srcY = H * 0.12;
+    // Lamp icon
+    ctx.fillStyle = isEmitting() ? '#fbbf24' : '#64748b';
+    ctx.beginPath();
+    ctx.arc(srcX, srcY, 20, 0, Math.PI * 2);
+    ctx.fill();
+    // Glow when emitting
+    if (isEmitting()) {
+        var glow = ctx.createRadialGradient(srcX, srcY, 0, srcX, srcY, 60);
+        glow.addColorStop(0, 'rgba(251,191,36,0.6)');
+        glow.addColorStop(1, 'rgba(251,191,36,0)');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(srcX, srcY, 60, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    ctx.fillStyle = '#0f172a';
+    ctx.font = 'bold 10px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('λ=' + S.wavelength + 'nm', srcX, srcY + 35);
+    ctx.fillText('E=' + photonEnergyEV(S.wavelength).toFixed(2) + 'eV', srcX, srcY + 50);
+
+    // --- Photons flying from source toward cathode ---
+    S.photons.forEach(function(p){
+        var color = wlToRGB(S.wavelength);
+        // Photon as glowing dot with trail
+        ctx.save();
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 12;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+        // Trail
+        ctx.strokeStyle = color;
+        ctx.globalAlpha = 0.5;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(p.x - p.vx * 0.03, p.y - p.vy * 0.03);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+        ctx.restore();
+    });
+
+    // --- Electrons flying from cathode toward anode ---
+    S.electrons.forEach(function(e){
+        // Electron as blue-cyan glowing dot
+        ctx.save();
+        ctx.shadowColor = '#a5f3fc';
+        ctx.shadowBlur = 12;
+        ctx.fillStyle = '#a5f3fc';
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, 5, 0, Math.PI * 2);
+        ctx.fill();
+        // Inner dark dot for visibility
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = '#0ea5e9';
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    });
+
+    // --- Emission burst effect ---
+    if (isEmitting() && S.running) {
+        // Pulsing glow on cathode
+        var pulse = 0.5 + 0.5 * Math.sin(S.time * 8);
+        ctx.fillStyle = 'rgba(165,243,252,' + (0.2 * pulse) + ')';
+        ctx.beginPath();
+        ctx.arc(cathodeX + 20, (plateTop + plateBottom) / 2, 30 + pulse * 10, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // --- Stopping potential readout bar ---
+    if (S.showStopping && isEmitting()) {
+        var v0 = getStoppingPotential();
+        ctx.fillStyle = 'rgba(0,0,0,0.6)';
+        ctx.fillRect(W * 0.30, H * 0.88, W * 0.40, 26);
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(W * 0.30, H * 0.88, W * 0.40, 26);
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = 'bold 12px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Stopping potential V₀ = ' + v0.toFixed(3) + ' V', W * 0.5, H * 0.88 + 17);
+    }
+
+    // --- Status badge ---
+    ctx.fillStyle = isEmitting() ? 'rgba(16,185,129,0.15)' : 'rgba(220,38,38,0.15)';
+    ctx.fillRect(W * 0.30, 20, W * 0.40, 36);
+    ctx.strokeStyle = isEmitting() ? '#10b981' : '#dc2626';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(W * 0.30, 20, W * 0.40, 36);
+    ctx.fillStyle = isEmitting() ? '#10b981' : '#dc2626';
+    ctx.font = 'bold 14px Inter';
+    ctx.textAlign = 'center';
+    var statusText = isEmitting() ? '⚡ PHOTOELECTRIC EMISSION ACTIVE' : '✗ NO EMISSION (below threshold)';
+    ctx.fillText(statusText, W * 0.5, 42);
+
+    ctx.restore();
+
+    // Caption
+    ctx.fillStyle = 'rgba(203,213,225,0.75)';
+    ctx.font = '11px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('Photon energy ' + photonEnergyEV(S.wavelength).toFixed(2) + ' eV vs. work function ' + mat.phi.toFixed(2) + ' eV → KE_max = ' + getKE_max().toFixed(2) + ' eV', w / 2, h - 8);
+
+    // Live pulse dot (proves animation)
+    var pulseR = 5 + 3 * Math.sin(S.time * 4);
+    ctx.fillStyle = 'rgba(16,185,129,0.9)';
+    ctx.beginPath();
+    ctx.arc(w - 25, 25, pulseR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#10b981';
+    ctx.font = 'bold 9px Inter';
+    ctx.textAlign = 'right';
+    ctx.fillText('LIVE', w - 38, 28);
+}
+
+// ============ PHOTON/ELECTRON SPAWNING ============
+function spawnPhoton(W, H){
+    var srcX = W * 0.05;
+    var srcY = H * 0.12;
+    var cathodeX = W * 0.20;
+    var plateTop = H * 0.25;
+    var plateBottom = H * 0.75;
+    // Aim at random point on cathode
+    var ty = plateTop + Math.random() * (plateBottom - plateTop);
+    var tx = cathodeX;
+    var dx = tx - srcX, dy = ty - srcY;
+    var len = Math.hypot(dx, dy);
+    S.photons.push({
+        x: srcX, y: srcY,
+        vx: dx / len * 600,
+        vy: dy / len * 600
+    });
+}
+
+function spawnElectron(W, H){
+    var cathodeX = W * 0.20;
+    var plateTop = H * 0.25;
+    var plateBottom = H * 0.75;
+    var anodeX = W * 0.80;
+    var y = plateTop + Math.random() * (plateBottom - plateTop);
+    var speed = 200 + Math.random() * 150;
+    S.electrons.push({
+        x: cathodeX + 20,
+        y: y,
+        vx: speed,
+        vy: (Math.random() - 0.5) * 30
+    });
+}
+
+// ============ UPDATE LOOP ============
+var lastT = 0;
+function animate(now){
+    if (!lastT) lastT = now;
+    var dt = (now - lastT) / 1000;
+    if (dt > 0.2 || dt < 0) dt = 0.016;
+    lastT = now;
+    S.time += dt;
+    S.debugCount++;
+
+    var w = cw(), h = ch();
+    var W = w / view.scale;
+    var H = h / view.scale;
+    var cathodeX = W * 0.20;
+    var anodeX = W * 0.80;
+
+    // Spawn photons at rate scaled by intensity
+    var intensityFactor = S.intensity / 100;
+    S.emitAccumulator += dt * intensityFactor * 15;  // spawn rate
+    while (S.emitAccumulator > 1 && S.photons.length < 40) {
+        spawnPhoton(W, H);
+        S.emitAccumulator -= 1;
+        if (Math.random() < 0.05) playPhotonPing(); // rate-limited sound
+    }
+
+    // Update photons
+    for (var i = S.photons.length - 1; i >= 0; i--) {
+        var p = S.photons[i];
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        // Reached cathode?
+        if (p.x >= cathodeX - 15) {
+            S.photons.splice(i, 1);
+            // Photon hits cathode — if E > φ, emit electron
+            if (isEmitting() && S.running) {
+                // Emit one electron per photon
+                var y = p.y;
+                var speed = 150 + 100 * (getKE_max() / 5); // faster for higher KE
+                // Voltage effect: if stopping voltage, slow down
+                var v0 = getStoppingPotential();
+                var appliedV = S.voltage;
+                // Net accelerating: anode voltage V accelerates electrons
+                // If applied V < -v0, electrons can't reach anode → no electron spawned? 
+                // Actually, electron IS emitted (from cathode) — but doesn't reach anode.
+                // For animation, we still spawn electron that travels partway and returns.
+                S.electrons.push({
+                    x: cathodeX + 20,
+                    y: y,
+                    vx: speed,
+                    vy: (Math.random() - 0.5) * 20,
+                    willReachAnode: (appliedV > -v0),
+                    slowing: (appliedV < 0)
+                });
+                S.emittedCount++;
+                if (Math.random() < 0.2) playElectronClick();
+            }
+        }
+    }
+
+    // Update electrons
+    for (var j = S.electrons.length - 1; j >= 0; j--) {
+        var e = S.electrons[j];
+        // Apply voltage effect
+        if (e.slowing) {
+            e.vx -= 300 * dt;  // decelerate
+            if (e.vx < 0) {
+                e.vx = 0;
+                // Turn back toward cathode
+                e.vx = -100;
+            }
+        }
+        e.x += e.vx * dt;
+        e.y += e.vy * dt;
+        // Exit stage
+        if (e.x > anodeX + 20 || e.x < cathodeX - 100) {
+            S.electrons.splice(j, 1);
+        }
+    }
+
+    drawScene();
+    updateReadouts();
+    requestAnimationFrame(animate);
+}
+
+// ============ READOUTS ============
+function updateReadouts(){
+    var mat = getMetal();
+    var E = photonEnergyEV(S.wavelength);
+    var ke = getKE_max();
+    var v0 = getStoppingPotential();
+    var f0 = getThresholdFreq();
+    var l0 = getThresholdWavelength();
+    var f = getPhotonFreq();
+    var v = getElectronSpeed();
+    var frac = getCurrentFraction();
+
+    $('ro-E').innerText = E.toFixed(3) + ' eV';
+    $('ro-phi').innerText = mat.phi.toFixed(2) + ' eV';
+    $('ro-ke').innerText = ke.toFixed(3) + ' eV';
+    $('ro-v0').innerText = v0.toFixed(3) + ' V';
+    $('ro-f0').innerText = f0.toExponential(3) + ' Hz';
+    $('ro-l0').innerText = l0.toFixed(0) + ' nm';
+    $('ro-f').innerText = f.toExponential(3) + ' Hz';
+    $('ro-v').innerText = v.toExponential(3) + ' m/s';
+    $('ro-V').innerText = S.voltage.toFixed(1) + ' V';
+    $('ro-I').innerText = frac > 0 ? (frac * 100).toFixed(0) + '% (relative)' : '0';
+    $('ro-rate').innerText = S.emittedCount + ' e⁻';
+
+    // Status
+    var status;
+    if (!isEmitting()) {
+        status = 'NO EMISSION';
+    } else if (frac === 0) {
+        status = 'EMISSION (blocked by V)';
+    } else if (frac < 1) {
+        status = 'PARTIAL (slowing)';
+    } else {
+        status = 'FULL EMISSION';
+    }
+    $('ro-status').innerText = status;
+
+    // Color readouts
+    var keEl = $('ro-ke').parentElement;
+    var statusEl = $('ro-status').parentElement;
+    if (ke > 0) {
+        keEl.className = 'readout good';
+        statusEl.className = 'readout good';
+    } else {
+        keEl.className = 'readout bad';
+        statusEl.className = 'readout bad';
+    }
+
+    $('hud-wl').innerText = S.wavelength;
+    $('hud-E').innerText = E.toFixed(2);
+    $('hud-phi').innerText = mat.phi.toFixed(2);
+    $('hud-ke').innerText = ke.toFixed(2);
+    $('hud-status').innerText = isEmitting() ? 'Emitting' : 'No emission';
+    $('hud-status').style.color = isEmitting() ? '#10b981' : '#dc2626';
+
+    $('fact-box').innerText = mat.fact;
+}
+
+// ============ QUIZ ============
+var QUIZ_EXPLAIN = {
+    q1:{correct:'B',why:'The photoelectric effect cannot be explained by classical wave theory. Einstein (1905) proposed that light is quantized into discrete packets — <b>photons</b> — each carrying energy E=hf. One photon interacts with one electron.',tip:'This was Einstein\'s great contribution — the paper that won him the 1921 Nobel Prize.'},
+    q2:{correct:'A',why:'Photon energy: <b>E = hf = hc/λ</b>. Higher frequency (shorter wavelength) means higher energy photons.',tip:'Useful shortcut: E(eV) = 1240 / λ(nm). A 400 nm photon has E ≈ 3.1 eV.'},
+    q3:{correct:'B',why:'Intensity = photons per second per unit area. More intensity = more photons = <b>more electrons</b>, but each photon has the same energy, so KE_max is unchanged.',tip:'This was the observation that broke classical wave theory — wave theory predicted KE would depend on intensity.'},
+    q4:{correct:'B',why:'The work function φ is the <b>minimum energy needed</b> to remove an electron from the metal surface. It is a property of the specific metal.',tip:'Cesium has small φ (2.14 eV) → emits with visible light. Platinum has large φ (6.35 eV) → needs deep UV.'},
+    q5:{correct:'A',why:'If hf < φ (below threshold frequency), a single photon does not have enough energy to free an electron. Adding more photons (higher intensity) does not help — each photon individually is still too weak.',tip:'This is why red light cannot eject electrons from zinc, no matter how bright.'},
+    q6:{correct:'A',why:'The stopping potential V₀ is the reverse voltage needed to stop even the fastest electrons: <b>eV₀ = KE_max</b>. So KE_max (in eV) = V₀ (in volts) numerically.',tip:'A KE_max of 0.96 eV means a stopping potential of 0.96 V.'},
+    q7:{correct:'B',why:'KE_max = E_photon − φ = 3.10 − 2.14 = <b>0.96 eV</b>.',tip:'Check: E = 1240/400 = 3.10 eV. ✓'},
+    q8:{correct:'B',why:'The slope of KE_max vs. frequency is <b>h</b> (Planck\'s constant) — the same for every metal. Only the y-intercept changes (−φ differs per metal). This is a universal test of quantum theory.',tip:'Millikan (1916) measured this slope and confirmed h — a landmark experiment.'},
+    q9:{correct:'A',why:'The photoelectric effect proved that light energy is <b>quantized</b>. Classical wave theory predicted no threshold and intensity-dependent KE — both wrong. Einstein\'s photon model explained everything and launched quantum mechanics.',tip:'Together with Compton scattering, it established the wave-particle duality of light.'}
+};
+function evaluateQuiz(){
+    var qs = document.querySelectorAll('.quiz-q');
+    var score = 0;
+    qs.forEach(function(q){
+        var name = q.dataset.q;
+        var correct = q.dataset.answer;
+        var chosen = q.querySelector('input[name="'+name+'"]:checked');
+        var expl = q.querySelector('.explanation');
+        var data = QUIZ_EXPLAIN[name];
+        expl.hidden = false;
+        expl.className = 'explanation';
+        if (chosen && chosen.value === correct) {
+            score++;
+            expl.classList.add('correct-box');
+            expl.innerHTML = '<strong>✓ Correct!</strong> ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:#475569;"><b>💡</b> ' + data.tip + '</div>';
+        } else {
+            expl.classList.add('wrong-box');
+            var cv = chosen ? chosen.value : '—';
+            expl.innerHTML = '<strong>✗ Answer: ' + correct + '</strong> You chose ' + cv + '. ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:#475569;"><b>💡</b> ' + data.tip + '</div>';
+        }
+    });
+    var pct = Math.round(score/qs.length*100);
+    beep(pct>=78?880:440,0.15,'sine',0.1);
+    var r = $('quiz-result');
+    r.style.display = 'block';
+    r.innerHTML = '<div style="font-size:1.4rem;color:#4338ca;">' + score + '/' + qs.length + ' · ' + pct + '%</div>';
+}
+function resetQuiz(){
+    document.querySelectorAll('.quiz-q').forEach(function(q){
+        q.querySelectorAll('input[type=radio]').forEach(function(r){ r.checked = false; });
+        var e = q.querySelector('.explanation');
+        e.hidden = true; e.innerHTML = ''; e.className = 'explanation';
+    });
+    $('quiz-result').style.display = 'none';
+}
+
+// ============ CHALLENGES ============
+function applyChallenge(id){
+    var note = $('challenge-note'), cres = $('challenge-result');
+    note.innerText = ''; cres.innerText = '';
+    if (id === 'below') {
+        S.metal = 'cesium'; $('metal').value = 'cesium';
+        S.source = 'custom'; $('source').value = 'custom';
+        S.wavelength = 650; $('wl').value = 650; $('v-wl').innerText = '650';
+        S.voltage = 0; $('voltage').value = 0; $('v-voltage').innerText = '0';
+        note.innerText = 'Cesium (φ=2.14 eV) with 650 nm red light. Photon E = 1.91 eV < φ. NO EMISSION.';
+        cres.innerText = 'E_photon = 1.91 eV < φ = 2.14 eV → no electrons. Try increasing intensity — still nothing!';
+    } else if (id === 'just') {
+        S.metal = 'cesium'; $('metal').value = 'cesium';
+        S.wavelength = 580; $('wl').value = 580; $('v-wl').innerText = '580';
+        note.innerText = 'Cesium at 580 nm — just above threshold (λ₀ ≈ 580 nm). Very slow electrons.';
+        cres.innerText = 'KE_max = 2.14 − 2.14 ≈ 0.01 eV · stopping potential ≈ 0.01 V';
+    } else if (id === 'strong') {
+        S.metal = 'cesium'; $('metal').value = 'cesium';
+        S.wavelength = 400; $('wl').value = 400; $('v-wl').innerText = '400';
+        note.innerText = 'Cesium with 400 nm violet light. Clear photoelectric emission.';
+        cres.innerText = 'E_photon = 3.10 eV · KE_max = 0.96 eV · V₀ = 0.96 V';
+    } else if (id === 'copper') {
+        S.metal = 'copper'; $('metal').value = 'copper';
+        S.wavelength = 400; $('wl').value = 400; $('v-wl').innerText = '400';
+        note.innerText = 'Copper (φ=4.70 eV) at 400 nm — photon E=3.10 eV < φ. No emission. Try 250 nm UV.';
+        cres.innerText = 'E_photon = 3.10 eV < φ = 4.70 eV → no emission. Need λ < 264 nm.';
+    } else if (id === 'stopping') {
+        S.metal = 'cesium'; $('metal').value = 'cesium';
+        S.wavelength = 400; $('wl').value = 400; $('v-wl').innerText = '400';
+        var v0 = getStoppingPotential();
+        S.voltage = -v0; $('voltage').value = -v0; $('v-voltage').innerText = (-v0).toFixed(2);
+        S.showStopping = true; $('stopping-toggle').checked = true;
+        note.innerText = 'Applied −V₀ = ' + (-v0).toFixed(2) + ' V exactly stops the fastest electrons. Current → 0.';
+        cres.innerText = 'Stopping potential V₀ = ' + v0.toFixed(3) + ' V';
+    }
+    updateReadouts();
+}
+
+// ============ NOTEBOOK ============
+function recordMeasurement(){
+    var mat = getMetal();
+    var line = new Date().toLocaleTimeString() + ' | ' + mat.name + ' (φ=' + mat.phi + 'eV) | λ=' + S.wavelength + 'nm | E=' + photonEnergyEV(S.wavelength).toFixed(3) + 'eV | KE_max=' + getKE_max().toFixed(3) + 'eV | V₀=' + getStoppingPotential().toFixed(3) + 'V | V_app=' + S.voltage + 'V';
+    S.records.push(line);
+    $('records').value = S.records.join('\n');
+    $('records').scrollTop = $('records').scrollHeight;
+}
+function downloadReport(){
+    var mat = getMetal();
+    var text = 'PHOTOELECTRIC EFFECT LAB REPORT\nDate: ' + new Date().toLocaleString() + '\n\n' +
+        'Metal: ' + mat.name + ' (φ = ' + mat.phi + ' eV)\n' +
+        'Wavelength: ' + S.wavelength + ' nm\n' +
+        'Photon energy: ' + photonEnergyEV(S.wavelength).toFixed(3) + ' eV\n' +
+        'KE_max: ' + getKE_max().toFixed(3) + ' eV\n' +
+        'Stopping potential: ' + getStoppingPotential().toFixed(3) + ' V\n' +
+        'Threshold λ: ' + getThresholdWavelength().toFixed(1) + ' nm\n' +
+        'Applied voltage: ' + S.voltage + ' V\n\n' +
+        'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+        'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+        'MEASUREMENTS\n' + $('records').value + '\n\n' +
+        'LIMITATIONS\nIdeal Einstein photoelectric model. Assumes monochromatic light, no energy loss inside metal, and ignores secondary emission. Real metals have contamination and spectral width effects. Educational use only.\n';
+    var blob = new Blob([text], {type:'text/plain'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'photoelectric-report.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+// ============ EVENTS ============
+$('btn-sound').addEventListener('click', toggleSound);
+$('source').addEventListener('change', function(e){
+    var val = e.target.value;
+    if (val === 'hydrogen') {
+        S.wavelength = 656; $('wl').value = 656; $('v-wl').innerText = '656';
+    } else if (val === 'sodium') {
+        S.wavelength = 589; $('wl').value = 589; $('v-wl').innerText = '589';
+    } else if (val === 'mercury') {
+        S.wavelength = 254; $('wl').value = 254; $('v-wl').innerText = '254';
+    } else if (val === 'uv') {
+        S.wavelength = 300; $('wl').value = 300; $('v-wl').innerText = '300';
+    }
+    S.source = val;
+    updateReadouts();
+});
+$('metal').addEventListener('change', function(e){ S.metal = e.target.value; updateReadouts(); });
+$('wl').addEventListener('input', function(e){
+    S.wavelength = parseFloat(e.target.value);
+    $('v-wl').innerText = S.wavelength;
+    S.source = 'custom'; $('source').value = 'custom';
+    updateReadouts();
+});
+$('intensity').addEventListener('input', function(e){
+    S.intensity = parseFloat(e.target.value);
+    $('v-intensity').innerText = S.intensity;
+});
+$('voltage').addEventListener('input', function(e){
+    S.voltage = parseFloat(e.target.value);
+    $('v-voltage').innerText = S.voltage.toFixed(1);
+    updateReadouts();
+});
+$('stopping-toggle').addEventListener('change', function(e){
+    S.showStopping = e.target.checked;
+});
+$('btn-emit').addEventListener('click', function(){
+    S.running = !S.running;
+    $('btn-emit').textContent = S.running ? '⏸ Stop light' : '▶ Emit light';
+});
+$('btn-reset').addEventListener('click', function(){
+    S.metal = 'cesium'; $('metal').value = 'cesium';
+    S.source = 'custom'; $('source').value = 'custom';
+    S.wavelength = 400; $('wl').value = 400; $('v-wl').innerText = '400';
+    S.intensity = 50; $('intensity').value = 50; $('v-intensity').innerText = '50';
+    S.voltage = 0; $('voltage').value = 0; $('v-voltage').innerText = '0';
+    S.showStopping = false; $('stopping-toggle').checked = false;
+    S.running = true; $('btn-emit').textContent = '▶ Emit light';
+    S.photons = []; S.electrons = []; S.emittedCount = 0;
+    updateReadouts();
+});
+
+document.querySelectorAll('.tab-btn[data-tab]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+        document.querySelectorAll('.tab-btn[data-tab]').forEach(function(b){ b.classList.remove('active'); });
+        document.getElementById(btn.dataset.tab).classList.add('active');
+        btn.classList.add('active');
+    });
+});
+document.querySelectorAll('[data-challenge]').forEach(function(btn){
+    btn.addEventListener('click', function(){ applyChallenge(btn.dataset.challenge); beep(660,0.08,'sine',0.08); });
+});
+$('btn-quiz-check').addEventListener('click', evaluateQuiz);
+$('btn-quiz-reset').addEventListener('click', resetQuiz);
+$('btn-record').addEventListener('click', recordMeasurement);
+$('btn-clear-notes').addEventListener('click', function(){
+    if (!confirm('Clear notebook?')) return;
+    $('hypothesis').value = ''; $('conclusion').value = ''; $('records').value = '';
+    S.records = [];
+});
+$('btn-export').addEventListener('click', downloadReport);
+
+// Zoom & pan
+var pointers = new Map(), pinch = null;
+function getPos(e){ var r = canvas.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
+canvas.addEventListener('wheel', function(e){
+    e.preventDefault();
+    var cx = e.offsetX, cy = e.offsetY;
+    var wx = (cx - view.x)/view.scale, wy = (cy - view.y)/view.scale;
+    var factor = Math.exp(-e.deltaY * 0.0015);
+    view.scale = Math.max(0.3, Math.min(5, view.scale * factor));
+    view.x = cx - wx * view.scale;
+    view.y = cy - wy * view.scale;
+}, {passive:false});
+canvas.addEventListener('pointerdown', function(e){
+    canvas.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, getPos(e));
+    if (pointers.size === 2) {
+        var pts = Array.from(pointers.values());
+        pinch = {dist: Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y), startScale: view.scale};
+    }
+});
+canvas.addEventListener('pointermove', function(e){
+    if (!pointers.has(e.pointerId)) return;
+    var prev = pointers.get(e.pointerId), pos = getPos(e);
+    pointers.set(e.pointerId, pos);
+    if (pointers.size === 1 && !pinch) {
+        view.x += pos.x - prev.x; view.y += pos.y - prev.y;
+    } else if (pointers.size === 2 && pinch) {
+        var pts = Array.from(pointers.values());
+        var d = Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
+        view.scale = Math.max(0.3, Math.min(5, pinch.startScale * d / pinch.dist));
+    }
+});
+canvas.addEventListener('pointerup', function(e){
+    pointers.delete(e.pointerId);
+    try { canvas.releasePointerCapture(e.pointerId); } catch(_){}
+    if (pointers.size < 2) pinch = null;
+});
+canvas.addEventListener('pointercancel', function(e){ pointers.delete(e.pointerId); pinch = null; });
+
+// Splitter
+(function(){
+    var sim = $('sim-area'), splitter = $('splitter');
+    var dragging = false, startY = 0, startH = 0;
+    splitter.addEventListener('pointerdown', function(e){
+        e.preventDefault(); dragging = true; startY = e.clientY;
+        startH = sim.getBoundingClientRect().height;
+        try { splitter.setPointerCapture(e.pointerId); } catch(_){}
+    });
+    window.addEventListener('pointermove', function(e){
+        if (!dragging) return;
+        var dy = e.clientY - startY;
+        var nh = Math.max(180, Math.min(window.innerHeight-240, Math.round(startH + dy)));
+        sim.style.flex = '0 0 ' + nh + 'px';
+    });
+    window.addEventListener('pointerup', function(e){
+        if (!dragging) return;
+        dragging = false;
+        try { splitter.releasePointerCapture(e.pointerId); } catch(_){}
+    });
+})();
+
+window.addEventListener('resize', function(){ lastW = 0; lastH = 0; });
+
+// ============ BOOT ============
+updateReadouts();
+requestAnimationFrame(animate);
+
+})();
+</script>
+</body>
+</html>

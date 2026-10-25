@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ideal Gas Law Laboratory</title>
+<style>
+:root{color-scheme:dark;--bg:#0a0f1f;--panel:#141b2e;--line:#26304a;--text:#e5e9f5;--muted:#93a0bd;--accent:#818cf8;--green:#34d399;--yellow:#fbbf24}
+*{box-sizing:border-box;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}body{margin:0;padding:16px;background:var(--bg);color:var(--text)}main{max-width:1000px;margin:auto}
+header{text-align:center;border-bottom:3px solid var(--accent);padding:8px 0 14px}h1{font-size:1.35rem;margin:0 0 5px}header p,.note{color:var(--muted);margin:4px 0}
+.grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(280px,1fr);gap:14px;margin-top:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+canvas{width:100%;height:300px;display:block;background:#05080f;border-radius:8px}.metric{margin-top:10px;background:#0d1425;border:1px solid var(--line);border-radius:8px;padding:12px}.metric span{color:var(--muted);display:block;font-size:.8rem}.metric strong{font-size:1.2rem;color:var(--yellow)}
+.control{margin:12px 0}.control label{display:flex;justify-content:space-between;gap:8px;font-size:.9rem;font-weight:600}input[type=range]{width:100%;accent-color:var(--accent);margin-top:8px}
+select{width:100%;padding:9px;border-radius:7px;background:#0d1425;color:var(--text);border:1px solid var(--line)}button{border:1px solid var(--line);border-radius:7px;padding:10px 14px;background:#202943;color:var(--text);font-weight:700;cursor:pointer}.primary{background:var(--accent);color:#101426;border-color:var(--accent)}.buttons{display:flex;gap:8px;margin-top:14px}
+.status{min-height:1.5em;color:var(--green)}.formula{line-height:1.65}.formula code{color:var(--yellow)}
+@media(max-width:700px){body{padding:10px}.grid{grid-template-columns:1fr}canvas{height:240px}}
+</style>
+</head>
+<body>
+<main>
+<header><h1>Ideal Gas Law Laboratory</h1><p>Change a state variable and calculate the fourth from the ideal-gas equation.</p></header>
+<div class="grid">
+<section class="card" aria-label="Gas particle model">
+<canvas id="gas" role="img" aria-label="Schematic moving gas particles in a fixed container"></canvas>
+<div class="metric" aria-live="polite"><span id="resultName">Calculated pressure</span><strong id="result">100.7 kPa</strong></div>
+<p class="note">Particle motion is illustrative; the calculation uses the ideal-gas model and SI units.</p>
+</section>
+<section class="card" aria-label="Gas law controls">
+<div class="control"><label for="solve">Calculate variable</label><select id="solve"><option value="p">Pressure</option><option value="v">Volume</option><option value="t">Temperature</option><option value="n">Amount of gas</option></select></div>
+<div class="control"><label for="pressure">Pressure P <output id="pressureLabel">100.7 kPa</output></label><input id="pressure" type="range" min="20" max="500" step="0.1" value="100.7" aria-label="Pressure in kilopascals"></div>
+<div class="control"><label for="volume">Volume V <output id="volumeLabel">24.6 L</output></label><input id="volume" type="range" min="1" max="30" step="0.1" value="24.6" aria-label="Volume in liters"></div>
+<div class="control"><label for="moles">Amount n <output id="molesLabel">1.00 mol</output></label><input id="moles" type="range" min="0.1" max="5" step="0.01" value="1" aria-label="Amount of gas in moles"></div>
+<div class="control"><label for="temperature">Temperature T <output id="temperatureLabel">298 K</output></label><input id="temperature" type="range" min="100" max="800" step="1" value="298" aria-label="Temperature in kelvin"></div>
+<div class="buttons"><button id="run" class="primary" type="button">Start particles</button><button id="reset" type="button">Reset</button></div>
+<p id="status" class="status" aria-live="polite">Ready. The selected variable is calculated from the other three.</p>
+<div class="formula"><strong>Ideal-gas equation</strong><br><code>PV = nRT</code><br>R = 8.314462618 J·mol⁻¹·K⁻¹. Inputs use kPa, L, mol, K; kPa·L equals joules, so the unit conversion is consistent. Assumes a dilute gas in equilibrium with negligible molecular volume and intermolecular forces.</div>
+</section>
+</div>
+</main>
+<script>
+(function(){
+  var c=document.getElementById('gas'),ctx=c.getContext('2d'),solve=document.getElementById('solve'),p=document.getElementById('pressure'),v=document.getElementById('volume'),n=document.getElementById('moles'),t=document.getElementById('temperature');
+  var R=8.314462618,running=false,raf=0,last=0,particles=[];
+  for(var i=0;i<24;i++)particles.push({x:Math.random(),y:Math.random(),vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4});
+  function calc(){
+    var P=+p.value,V=+v.value,N=+n.value,T=+t.value,key=solve.value,val=0,label='',unit='',valid=P>0&&V>0&&N>0&&T>0;
+    if(key==='p'){val=N*R*T/V;label='Calculated pressure';unit='kPa';}
+    if(key==='v'){val=N*R*T/P;label='Calculated volume';unit='L';}
+    if(key==='t'){val=P*V/(N*R);label='Calculated temperature';unit='K';}
+    if(key==='n'){val=P*V/(R*T);label='Calculated amount';unit='mol';}
+    valid=valid&&Number.isFinite(val)&&val>0;
+    document.getElementById('pressureLabel').textContent=P.toFixed(1)+' kPa';document.getElementById('volumeLabel').textContent=V.toFixed(1)+' L';document.getElementById('molesLabel').textContent=N.toFixed(2)+' mol';document.getElementById('temperatureLabel').textContent=T.toFixed(0)+' K';
+    document.getElementById('resultName').textContent=label;
+    document.getElementById('result').textContent=valid?(val.toFixed(key==='n'?3:2)+' '+unit):'Invalid state';
+    document.getElementById('status').textContent=valid?'Valid positive equilibrium state.':'All state variables must be positive and finite.';
+    document.getElementById('status').style.color=valid?'#34d399':'#f87171';draw();
+  }
+  function resize(){var d=Math.max(1,window.devicePixelRatio||1),r=c.getBoundingClientRect();c.width=Math.max(1,Math.round(r.width*d));c.height=Math.max(1,Math.round(r.height*d));ctx.setTransform(d,0,0,d,0,0);draw();}
+  function draw(){
+    var w=c.clientWidth,h=c.clientHeight;if(!w||!h)return;ctx.clearRect(0,0,w,h);ctx.fillStyle='#05080f';ctx.fillRect(0,0,w,h);
+    var x0=w*.13,y0=h*.18,bw=w*.74,bh=h*.64,T=+t.value;
+    ctx.strokeStyle='#818cf8';ctx.lineWidth=3;ctx.strokeRect(x0,y0,bw,bh);
+    ctx.fillStyle='#93a0bd';ctx.font='12px system-ui';ctx.fillText('FIXED VOLUME CONTAINER',x0,y0-8);ctx.fillText('T = '+T.toFixed(0)+' K',x0,y0+bh+20);
+    var speed=Math.sqrt(Math.max(.1,T)/298);
+    particles.forEach(function(q){if(running){q.x+=q.vx*speed*.025;q.y+=q.vy*speed*.025;if(q.x<.03||q.x>.97)q.vx*=-1;if(q.y<.05||q.y>.95)q.vy*=-1;q.x=Math.max(.03,Math.min(.97,q.x));q.y=Math.max(.05,Math.min(.95,q.y));}
+      var px=x0+q.x*bw,py=y0+q.y*bh;ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(px,py,4,0,Math.PI*2);ctx.fill();
+      if(running){ctx.strokeStyle='rgba(251,191,36,.4)';ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px-q.vx*speed*18,py-q.vy*speed*18);ctx.stroke();}
+    });
+  }
+  function tick(ts){if(!running)return;if(ts-last>30){draw();last=ts;}raf=requestAnimationFrame(tick);}
+  document.getElementById('run').addEventListener('click',function(){running=!running;this.textContent=running?'Pause particles':'Resume particles';document.getElementById('status').textContent=running?'Particle-motion model running.':'Particle model paused.';if(running)raf=requestAnimationFrame(tick);else cancelAnimationFrame(raf);});
+  document.getElementById('reset').addEventListener('click',function(){running=false;cancelAnimationFrame(raf);p.value='100.7';v.value='24.6';n.value='1';t.value='298';solve.value='p';document.getElementById('run').textContent='Start particles';particles.forEach(function(q){q.x=Math.random();q.y=Math.random();});calc();});
+  [solve,p,v,n,t].forEach(function(el){el.addEventListener('input',calc);el.addEventListener('change',calc);});window.addEventListener('resize',resize);resize();calc();
+})();
+</script>
+</body>
+</html>

@@ -1,304 +1,584 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/registerScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_register_gradient">
+    android:background="@color/learnify_void_navy"
+    android:fillViewport="true"
+    android:scrollbars="none"
+    tools:context=".RegisterActivity"
+    tools:theme="@style/Theme.TestApp">
 
-    <!-- Header with Back Button -->
-    <ImageView
-        android:id="@+id/btnBack"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="12dp"
-        android:src="@drawable/ic_back_white"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@android:color/white" />
-
-    <TextView
-        android:id="@+id/tvHeaderTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Create Account"
-        android:textColor="@android:color/white"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/btnBack"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/btnBack" />
-
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnBack">
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
+        <!-- Constrained container for optimal responsive layout -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxWidth="520dp"
             android:orientation="vertical"
-            android:padding="24dp"
-            android:gravity="center_horizontal">
+            android:paddingHorizontal="24dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="48dp">
 
-            <!-- Profile Image with Camera Overlay -->
-            <FrameLayout
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="32dp">
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/profileImage"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="2dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_user_person"
-                    app:shapeAppearanceOverlay="@style/CircleImageView"
-                    app:strokeColor="@android:color/white"
-                    app:strokeWidth="3dp" />
-
-                <ImageView
-                    android:id="@+id/btnCamera"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
-                    android:layout_gravity="bottom|end"
-                    android:layout_margin="4dp"
-                    android:src="@android:drawable/ic_menu_camera"
-                    android:background="@drawable/circle_bg"
-                    android:padding="8dp"
-                    android:elevation="4dp"/>
-            </FrameLayout>
-
-            <!-- Full Name -->
-            <EditText
-                android:id="@+id/regFullName"
+            <!-- ===================================================== -->
+            <!-- SECTION A: Header with Back Control & Brand Identity  -->
+            <!-- ===================================================== -->
+            <RelativeLayout
+                android:id="@+id/registerHeaderContainer"
                 android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:background="@drawable/bg_input_field_v2"
-                android:hint="Full Name"
-                android:textColorHint="#CCFFFFFF"
-                android:textColor="@android:color/white"
-                android:paddingHorizontal="16dp"
-                android:inputType="textPersonName"
-                android:layout_marginBottom="12dp"
-                android:textSize="15sp"
-                android:drawableStart="@drawable/ic_user_person"
-                android:drawablePadding="12dp"/>
+                android:layout_height="wrap_content">
 
-            <!-- Username with unique detection feedback -->
+                <!-- Back Navigation Button -->
+                <ImageView
+                    android:id="@+id/btnBack"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="Back"
+                    android:focusable="true"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_back_white" />
+
+                <!-- Centered Brand Identity -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:contentDescription="Learnify Logo"
+                        android:src="@drawable/ic_learnify_brand_logo" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-black"
+                            android:text="Learnify"
+                            android:textColor="@color/learnify_ice_white"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:letterSpacing="0.14"
+                            android:text="INTELLIGENCE MEETS CURIOSITY"
+                            android:textColor="@color/learnify_neon_cyan"
+                            android:textSize="8sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- ===================================================== -->
+            <!-- SECTION B: Hero Section                               -->
+            <!-- ===================================================== -->
+            <LinearLayout
+                android:id="@+id/registerHeroContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvRegisterTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-black"
+                    android:text="Start your journey."
+                    android:textColor="@color/learnify_ice_white"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:id="@+id/tvRegisterSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center"
+                    android:lineSpacingExtra="3dp"
+                    android:text="Create your student account to unlock intelligent science learning, interactive labs, and AI mentorship."
+                    android:textColor="@color/learnify_text_secondary"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <!-- ===================================================== -->
+            <!-- SECTION C: Profile Avatar Upload                      -->
+            <!-- ===================================================== -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginBottom="12dp">
+                android:layout_marginTop="20dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="116dp"
+                    android:layout_height="116dp">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/profileImage"
+                        android:layout_width="110dp"
+                        android:layout_height="110dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="Profile Photo"
+                        android:padding="2dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_user_person"
+                        app:shapeAppearanceOverlay="@style/CircleImageView"
+                        app:strokeColor="@color/learnify_neon_cyan"
+                        app:strokeWidth="2.5dp" />
+
+                    <ImageView
+                        android:id="@+id/btnCamera"
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
+                        android:layout_gravity="bottom|end"
+                        android:background="@drawable/bg_camera_badge"
+                        android:clickable="true"
+                        android:contentDescription="Upload Photo"
+                        android:elevation="6dp"
+                        android:focusable="true"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_camera_white" />
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Upload Student Avatar (Optional)"
+                    android:textColor="@color/learnify_text_muted"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <!-- ===================================================== -->
+            <!-- SECTION D: Registration Form Fields                   -->
+            <!-- ===================================================== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="vertical">
+
+                <!-- Full Name -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Full Name"
+                    android:textColor="@color/learnify_ice_white"
+                    android:textSize="13sp" />
+
+                <EditText
+                    android:id="@+id/regFullName"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_input_field_dark"
+                    android:drawableStart="@drawable/ic_user_person"
+                    android:drawablePadding="14dp"
+                    android:drawableTint="@color/learnify_text_secondary"
+                    android:fontFamily="sans-serif"
+                    android:hint="e.g. Abebe Bikila"
+                    android:inputType="textCapWords|textPersonName"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="@color/learnify_ice_white"
+                    android:textColorHint="@color/learnify_text_muted"
+                    android:textSize="14sp" />
+
+                <!-- Username -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Username"
+                    android:textColor="@color/learnify_ice_white"
+                    android:textSize="13sp" />
 
                 <EditText
                     android:id="@+id/regUsername"
                     android:layout_width="match_parent"
-                    android:layout_height="54dp"
-                    android:background="@drawable/bg_input_field_v2"
-                    android:hint="Username"
-                    android:textColorHint="#CCFFFFFF"
-                    android:textColor="@android:color/white"
-                    android:paddingHorizontal="16dp"
-                    android:inputType="text"
-                    android:textSize="15sp"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_input_field_dark"
                     android:drawableStart="@drawable/ic_user_person"
-                    android:drawablePadding="12dp"/>
+                    android:drawablePadding="14dp"
+                    android:drawableTint="@color/learnify_text_secondary"
+                    android:fontFamily="sans-serif"
+                    android:hint="Choose a unique username"
+                    android:inputType="text"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="@color/learnify_ice_white"
+                    android:textColorHint="@color/learnify_text_muted"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/tvUsernameFeedback"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="sans-serif-medium"
                     android:textSize="12sp"
                     android:visibility="gone"
-                    android:text="Checking username..."/>
-            </LinearLayout>
+                    tools:text="Identifier is available"
+                    tools:visibility="visible" />
 
-            <!-- Email -->
-            <EditText
-                android:id="@+id/regEmail"
-                android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:background="@drawable/bg_input_field_v2"
-                android:hint="Email Address"
-                android:textColorHint="#CCFFFFFF"
-                android:textColor="@android:color/white"
-                android:paddingHorizontal="16dp"
-                android:inputType="textEmailAddress"
-                android:layout_marginBottom="12dp"
-                android:textSize="15sp"
-                android:drawableStart="@drawable/ic_email_mail"
-                android:drawablePadding="12dp"/>
+                <!-- Email Address -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Email Address"
+                    android:textColor="@color/learnify_ice_white"
+                    android:textSize="13sp" />
 
-            <!-- Password -->
-            <EditText
-                android:id="@+id/regPassword"
-                android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:background="@drawable/bg_input_field_v2"
-                android:hint="Password"
-                android:textColorHint="#CCFFFFFF"
-                android:textColor="@android:color/white"
-                android:paddingHorizontal="16dp"
-                android:inputType="textPassword"
-                android:layout_marginBottom="12dp"
-                android:textSize="15sp"
-                android:drawableStart="@drawable/ic_lock"
-                android:drawablePadding="12dp"/>
-
-            <!-- Grade and Student ID Row -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:orientation="horizontal"
-                android:layout_marginBottom="12dp">
-
-                <!-- Grade Selection with dropdown arrow -->
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                    <AutoCompleteTextView
-                        android:id="@+id/regGrade"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/bg_input_field_v2"
-                        android:hint="Grade"
-                        android:textColorHint="#CCFFFFFF"
-                        android:textColor="@android:color/white"
-                        android:paddingHorizontal="16dp"
-                        android:paddingEnd="36dp"
-                        android:inputType="none"
-                        android:textSize="15sp"
-                        android:drawableStart="@drawable/ic_grade_cap"
-                        android:drawablePadding="12dp"/>
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="12dp"
-                        android:src="@drawable/ic_arrow_drop_down"
-                        app:tint="@android:color/white"
-                        android:contentDescription="dropdown" />
-                </RelativeLayout>
-
-                <View android:layout_width="12dp" android:layout_height="0dp"/>
-
-                <!-- Student ID -->
                 <EditText
-                    android:id="@+id/regStudentId"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_input_field_v2"
-                    android:hint="Student ID"
-                    android:textColorHint="#CCFFFFFF"
-                    android:textColor="@android:color/white"
+                    android:id="@+id/regEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_input_field_dark"
+                    android:drawableStart="@drawable/ic_email_mail"
+                    android:drawablePadding="14dp"
+                    android:drawableTint="@color/learnify_text_secondary"
+                    android:fontFamily="sans-serif"
+                    android:hint="student@school.edu"
+                    android:inputType="textEmailAddress"
                     android:paddingHorizontal="16dp"
-                    android:inputType="text"
-                    android:textSize="15sp"
-                    android:drawableStart="@drawable/ic_student_id"
-                    android:drawablePadding="12dp"/>
+                    android:textColor="@color/learnify_ice_white"
+                    android:textColorHint="@color/learnify_text_muted"
+                    android:textSize="14sp" />
+
+                <!-- Password with Toggle -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Password"
+                    android:textColor="@color/learnify_ice_white"
+                    android:textSize="13sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilRegPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:boxBackgroundMode="none"
+                    app:endIconMode="password_toggle"
+                    app:endIconTint="@color/learnify_neon_cyan"
+                    app:hintEnabled="false">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/regPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:background="@drawable/bg_input_field_dark"
+                        android:drawableStart="@drawable/ic_lock"
+                        android:drawablePadding="14dp"
+                        android:drawableTint="@color/learnify_text_secondary"
+                        android:fontFamily="sans-serif"
+                        android:hint="Create a strong password"
+                        android:inputType="textPassword"
+                        android:paddingHorizontal="16dp"
+                        android:textColor="@color/learnify_ice_white"
+                        android:textColorHint="@color/learnify_text_muted"
+                        android:textSize="14sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Grade Level & Student ID (2 Columns) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:baselineAligned="false"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <!-- Grade Level Column -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="Grade Level"
+                            android:textColor="@color/learnify_ice_white"
+                            android:textSize="13sp" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:layout_marginTop="8dp">
+
+                            <AutoCompleteTextView
+                                android:id="@+id/regGrade"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/bg_input_field_dark"
+                                android:clickable="true"
+                                android:cursorVisible="false"
+                                android:drawableStart="@drawable/ic_grade_cap"
+                                android:drawablePadding="10dp"
+                                android:drawableTint="@color/learnify_text_secondary"
+                                android:dropDownVerticalOffset="6dp"
+                                android:focusable="false"
+                                android:fontFamily="sans-serif"
+                                android:hint="Grade"
+                                android:inputType="none"
+                                android:paddingHorizontal="14dp"
+                                android:paddingEnd="36dp"
+                                android:popupBackground="@drawable/bg_dropdown_popup"
+                                android:textColor="@color/learnify_ice_white"
+                                android:textColorHint="@color/learnify_text_muted"
+                                android:textSize="14sp" />
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginEnd="10dp"
+                                android:contentDescription="dropdown"
+                                android:src="@drawable/ic_arrow_drop_down"
+                                app:tint="@color/learnify_neon_cyan" />
+                        </RelativeLayout>
+                    </LinearLayout>
+
+                    <!-- Student ID Column -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="Student ID"
+                            android:textColor="@color/learnify_ice_white"
+                            android:textSize="13sp" />
+
+                        <EditText
+                            android:id="@+id/regStudentId"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/bg_input_field_dark"
+                            android:drawableStart="@drawable/ic_student_id"
+                            android:drawablePadding="10dp"
+                            android:drawableTint="@color/learnify_text_secondary"
+                            android:fontFamily="sans-serif"
+                            android:hint="e.g. STU-1049"
+                            android:inputType="text"
+                            android:paddingHorizontal="14dp"
+                            android:textColor="@color/learnify_ice_white"
+                            android:textColorHint="@color/learnify_text_muted"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Phone Number Row with Country Code Dropdown -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Phone Number (Optional)"
+                    android:textColor="@color/learnify_ice_white"
+                    android:textSize="13sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_input_field_dark"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="4dp">
+
+                    <RelativeLayout
+                        android:layout_width="120dp"
+                        android:layout_height="match_parent">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/regCountryCode"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@android:color/transparent"
+                            android:clickable="true"
+                            android:cursorVisible="false"
+                            android:dropDownVerticalOffset="6dp"
+                            android:focusable="false"
+                            android:gravity="center_vertical"
+                            android:hint="+251"
+                            android:inputType="none"
+                            android:paddingHorizontal="12dp"
+                            android:paddingEnd="30dp"
+                            android:popupBackground="@drawable/bg_dropdown_popup"
+                            android:textColor="@color/learnify_ice_white"
+                            android:textColorHint="@color/learnify_text_secondary"
+                            android:textSize="13sp" />
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="6dp"
+                            android:contentDescription="dropdown"
+                            android:src="@drawable/ic_arrow_drop_down"
+                            app:tint="@color/learnify_neon_cyan" />
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="24dp"
+                        android:background="@color/learnify_border_blue" />
+
+                    <EditText
+                        android:id="@+id/regPhone"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@android:color/transparent"
+                        android:fontFamily="sans-serif"
+                        android:hint="912 345 678"
+                        android:inputType="phone"
+                        android:paddingHorizontal="14dp"
+                        android:textColor="@color/learnify_ice_white"
+                        android:textColorHint="@color/learnify_text_muted"
+                        android:textSize="14sp" />
+                </LinearLayout>
             </LinearLayout>
 
-            <!-- Phone Number Part with Country Code Dropdown -->
+            <!-- ===================================================== -->
+            <!-- SECTION E: Trust & Account Protection Banner          -->
+            <!-- ===================================================== -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:background="@drawable/bg_input_field_v2"
-                android:orientation="horizontal"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:background="@drawable/bg_security_banner"
                 android:gravity="center_vertical"
-                android:paddingHorizontal="4dp"
-                android:layout_marginBottom="24dp">
+                android:orientation="horizontal"
+                android:padding="14dp">
 
-                <RelativeLayout
-                    android:layout_width="120dp"
-                    android:layout_height="match_parent">
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:contentDescription="Security Shield"
+                    android:src="@drawable/ic_shield_security"
+                    app:tint="@color/learnify_science_mint" />
 
-                    <AutoCompleteTextView
-                        android:id="@+id/regCountryCode"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@android:color/transparent"
-                        android:hint="🇪🇹 +251"
-                        android:textColorHint="#CCFFFFFF"
-                        android:textColor="@android:color/white"
-                        android:paddingHorizontal="12dp"
-                        android:paddingEnd="32dp"
-                        android:inputType="none"
-                        android:textSize="14sp"
-                        android:gravity="center_vertical"/>
-
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="8dp"
-                        android:src="@drawable/ic_arrow_drop_down"
-                        app:tint="@android:color/white"
-                        android:contentDescription="dropdown" />
-                </RelativeLayout>
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="24dp"
-                    android:background="#4DFFFFFF" />
-
-                <EditText
-                    android:id="@+id/regPhone"
+                <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
                     android:layout_weight="1"
-                    android:background="@android:color/transparent"
-                    android:hint="•••• ••••••"
-                    android:textColorHint="#99FFFFFF"
-                    android:textColor="@android:color/white"
-                    android:inputType="phone"
-                    android:textSize="15sp"
-                    android:paddingHorizontal="12dp"/>
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-semibold"
+                        android:text="Your learning, protected."
+                        android:textColor="@color/learnify_ice_white"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="sans-serif"
+                        android:text="End-to-end credential verification &amp; encrypted student records."
+                        android:textColor="@color/learnify_text_secondary"
+                        android:textSize="11sp" />
+                </LinearLayout>
             </LinearLayout>
 
-            <!-- Create Account Button -->
+            <!-- ===================================================== -->
+            <!-- SECTION F: Create Account Primary CTA Button          -->
+            <!-- ===================================================== -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/registerButton"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:background="@drawable/bg_button_green"
-                app:backgroundTint="@null"
-                android:text="Create Account"
+                android:layout_height="56dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_btn_primary_cyan"
+                android:elevation="4dp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.08"
+                android:text="CREATE ACCOUNT"
                 android:textAllCaps="false"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/white"
-                app:cornerRadius="30dp"
-                android:elevation="6dp"/>
+                android:textColor="@color/learnify_void_navy"
+                android:textSize="15sp"
+                app:backgroundTint="@null"
+                app:cornerRadius="14dp" />
 
-            <!-- Already have an account? Sign In -->
+            <!-- ===================================================== -->
+            <!-- SECTION G: Login Redirect                             -->
+            <!-- ===================================================== -->
             <TextView
                 android:id="@+id/loginRedirect"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="sans-serif"
                 android:padding="8dp"
                 android:text="Already have an account? Sign In"
-                android:textColor="@android:color/white"
-                android:textSize="15sp" />
+                android:textColor="@color/learnify_ice_white"
+                android:textSize="14sp" />
+
+            <!-- ===================================================== -->
+            <!-- SECTION H: Branded Footer                             -->
+            <!-- ===================================================== -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="32dp"
+                android:fontFamily="sans-serif"
+                android:letterSpacing="0.04"
+                android:text="Learnify Academic Ecosystem • Grade 9–12"
+                android:textColor="@color/learnify_text_muted"
+                android:textSize="11sp" />
 
         </LinearLayout>
-    </ScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -20,7 +20,8 @@ import java.util.Locale;
 
 /**
  * ExamActivity - Professional examination and assessment engine.
- * Inherits from BaseActivity for Role-Based Access Control (RBAC).
+ * Inherits from BaseActivity for Role-Based Access Control (RBAC) and
+ * Learnify Inclusive Learning Mode support.
  */
 public class ExamActivity extends BaseActivity {
 
@@ -35,9 +36,17 @@ public class ExamActivity extends BaseActivity {
     private int currentIdx = 0;
     private int score = 0;
     private CountDownTimer examTimer;
-    private long timeLeftInMillis = 15 * 60 * 1000; 
+    private final long totalDurationMillis = 15 * 60 * 1000;
+    private long timeLeftInMillis = totalDurationMillis; 
+    private boolean isSubmitted = false;
     private String currentUsername;
     private String subjectName;
+
+    // Milestone tracking for accessible non-flooding timer alerts
+    private boolean announcedHalfTime = false;
+    private boolean announced5Min = false;
+    private boolean announced1Min = false;
+    private boolean announced30Sec = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +85,44 @@ public class ExamActivity extends BaseActivity {
         btnNext = findViewById(R.id.btnNext);
         btnPrev = findViewById(R.id.btnPrev);
         btnMark = findViewById(R.id.btnMark);
+
+        // Accessibility heading roles
+        if (tvQuestionNumber != null) {
+            AccessibilityUtils.setAsHeading(tvQuestionNumber, true);
+        }
+        TextView tvExamTitle = findViewById(R.id.tvExamTitleLarge);
+        if (tvExamTitle != null) {
+            AccessibilityUtils.setAsHeading(tvExamTitle, true);
+        }
+
+        // Option selection accessibility listener
+        if (rgOptions != null) {
+            rgOptions.setOnCheckedChangeListener((group, checkedId) -> {
+                if (checkedId == -1) return;
+                String optionLetter = "";
+                String rawText = "";
+                if (checkedId == R.id.rbA) {
+                    optionLetter = "A";
+                    rawText = rbA.getText().toString();
+                } else if (checkedId == R.id.rbB) {
+                    optionLetter = "B";
+                    rawText = rbB.getText().toString();
+                } else if (checkedId == R.id.rbC) {
+                    optionLetter = "C";
+                    rawText = rbC.getText().toString();
+                } else if (checkedId == R.id.rbD) {
+                    optionLetter = "D";
+                    rawText = rbD.getText().toString();
+                }
+                String spokenOption = AccessibilityUtils.cleanMathForSpeech(rawText);
+                String announcement = "Option " + optionLetter + " selected: " + spokenOption;
+                AccessibilityUtils.announceForAccessibility(group, announcement);
+                if (InclusiveModeManager.getInstance(this).isInclusiveModeEnabled() &&
+                        InclusiveModeManager.getInstance(this).isAutoReadEnabled()) {
+                    speakAnnouncement(announcement);
+                }
+            });
+        }
     }
 
     private void setupToolbar() {
@@ -85,7 +132,7 @@ public class ExamActivity extends BaseActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(subjectName + " Exam");
         }
-        toolbar.setNavigationOnClickListener(v -> finish());
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
     }
 
     private void loadMockQuestions() {
@@ -110,15 +157,30 @@ public class ExamActivity extends BaseActivity {
     }
 
     private void startTimer() {
+        if (examTimer != null) {
+            examTimer.cancel();
+        }
+        announcedHalfTime = false;
+        announced5Min = false;
+        announced1Min = false;
+        announced30Sec = false;
+
         examTimer = new CountDownTimer(timeLeftInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
+                if (isFinishing() || isDestroyed() || isSubmitted) {
+                    cancel();
+                    return;
+                }
                 timeLeftInMillis = millisUntilFinished;
                 updateTimerText();
             }
 
             @Override
             public void onFinish() {
+                if (isFinishing() || isDestroyed() || isSubmitted) {
+                    return;
+                }
                 autoSubmit();
             }
         }.start();
@@ -127,25 +189,77 @@ public class ExamActivity extends BaseActivity {
     private void updateTimerText() {
         int minutes = (int) (timeLeftInMillis / 1000) / 60;
         int seconds = (int) (timeLeftInMillis / 1000) % 60;
-        tvTimer.setText(String.format(Locale.getDefault(), "⏱ %02d:%02d", minutes, seconds));
+        tvTimer.setText(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds));
+        tvTimer.setContentDescription(String.format(Locale.getDefault(), "%d minutes and %d seconds remaining", minutes, seconds));
+        
         if (minutes < 1) tvTimer.setTextColor(Color.RED);
         else tvTimer.setTextColor(Color.parseColor("#4CAF50"));
+
+        long secondsRemaining = timeLeftInMillis / 1000;
+        if (!announcedHalfTime && timeLeftInMillis <= (totalDurationMillis / 2)) {
+            announcedHalfTime = true;
+            announceTimerMilestone("Half time remaining: " + minutes + " minutes.");
+        } else if (!announced5Min && secondsRemaining <= 300 && secondsRemaining > 290) {
+            announced5Min = true;
+            announceTimerMilestone("5 minutes remaining.");
+        } else if (!announced1Min && secondsRemaining <= 60 && secondsRemaining > 50) {
+            announced1Min = true;
+            announceTimerMilestone("Warning: 1 minute remaining.");
+        } else if (!announced30Sec && secondsRemaining <= 30 && secondsRemaining > 20) {
+            announced30Sec = true;
+            announceTimerMilestone("Warning: 30 seconds remaining.");
+        }
+    }
+
+    private void announceTimerMilestone(String message) {
+        if (tvTimer != null) {
+            AccessibilityUtils.announceAssertive(tvTimer, message);
+        }
+        if (InclusiveModeManager.getInstance(this).isInclusiveModeEnabled()) {
+            speakAnnouncement(message);
+        }
     }
 
     private void displayQuestion() {
         Question q = examQuestions.get(currentIdx);
-        tvQuestionNumber.setText("Question " + (currentIdx + 1) + "/" + examQuestions.size());
+        String qNumDisplay = "Question " + (currentIdx + 1) + "/" + examQuestions.size();
+        String qNumSpoken = "Question " + (currentIdx + 1) + " of " + examQuestions.size();
+        tvQuestionNumber.setText(qNumDisplay);
+        tvQuestionNumber.setContentDescription(qNumSpoken);
+
+        String spokenQuestion = AccessibilityUtils.cleanMathForSpeech(q.getQuestionText());
         tvQuestionText.setText(q.getQuestionText());
+        tvQuestionText.setContentDescription(spokenQuestion);
+
+        String cleanA = AccessibilityUtils.cleanMathForSpeech(q.getOptionA());
+        String cleanB = AccessibilityUtils.cleanMathForSpeech(q.getOptionB());
+        String cleanC = AccessibilityUtils.cleanMathForSpeech(q.getOptionC());
+        String cleanD = AccessibilityUtils.cleanMathForSpeech(q.getOptionD());
+
         rbA.setText(q.getOptionA());
+        rbA.setContentDescription("Option A: " + cleanA);
         rbB.setText(q.getOptionB());
+        rbB.setContentDescription("Option B: " + cleanB);
         rbC.setText(q.getOptionC());
+        rbC.setContentDescription("Option C: " + cleanC);
         rbD.setText(q.getOptionD());
+        rbD.setContentDescription("Option D: " + cleanD);
         
         rgOptions.clearCheck();
         cvExplanation.setVisibility(View.GONE);
 
         btnPrev.setEnabled(currentIdx > 0);
-        btnNext.setText(currentIdx == examQuestions.size() - 1 ? "FINISH" : "Next");
+        boolean isLast = currentIdx == examQuestions.size() - 1;
+        btnNext.setText(isLast ? "FINISH" : "Next");
+        btnNext.setContentDescription(isLast ? getString(R.string.acc_finish_exam) : getString(R.string.acc_next_question));
+
+        // Accessible announcement of the new question
+        String fullAnnouncement = qNumSpoken + ". " + spokenQuestion;
+        AccessibilityUtils.announceForAccessibility(tvQuestionText, fullAnnouncement);
+        if (InclusiveModeManager.getInstance(this).isInclusiveModeEnabled() &&
+                InclusiveModeManager.getInstance(this).isAutoReadEnabled()) {
+            speakAnnouncement(fullAnnouncement);
+        }
 
         btnNext.setOnClickListener(v -> {
             checkAnswer();
@@ -188,17 +302,73 @@ public class ExamActivity extends BaseActivity {
     }
 
     private void autoSubmit() {
-        if (examTimer != null) examTimer.cancel();
-        
-        int finalScorePercent = (int) (((float) score / examQuestions.size()) * 100);
+        if (isSubmitted || isFinishing() || isDestroyed()) {
+            return;
+        }
+        isSubmitted = true;
+
+        if (examTimer != null) {
+            examTimer.cancel();
+            examTimer = null;
+        }
+
+        int totalQuestions = examQuestions != null ? examQuestions.size() : 0;
+        if (totalQuestions == 0) {
+            finish();
+            return;
+        }
+
+        int finalScorePercent = (int) (((float) score / totalQuestions) * 100);
         String finalScoreStr = finalScorePercent + "%";
-        
-        repository.getLocalDb().saveExamResult(currentUsername, subjectName, finalScoreStr, examQuestions.size(), score);
+
+        try {
+            if (repository != null && repository.getLocalDb() != null) {
+                repository.getLocalDb().saveExamResult(currentUsername, subjectName, finalScoreStr, totalQuestions, score);
+            }
+        } catch (Exception e) {
+            android.util.Log.e("ExamActivity", "Failed to save exam result", e);
+        }
+
+        String submitAnnouncement = "Exam completed. Your score is " + finalScoreStr + ".";
+        AccessibilityUtils.announceAssertive(layoutExam != null ? layoutExam : layoutInfo, submitAnnouncement);
 
         Intent intent = new Intent(this, CertificateActivity.class);
         intent.putExtra("SUBJECT_NAME", subjectName);
         intent.putExtra("EXAM_SCORE", finalScoreStr);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (layoutExam != null && layoutExam.getVisibility() == View.VISIBLE && !isSubmitted) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Exit Exam?")
+                    .setMessage("Are you sure you want to leave? Your exam progress will not be saved.")
+                    .setPositiveButton("Exit", (dialog, which) -> {
+                        if (examTimer != null) {
+                            examTimer.cancel();
+                            examTimer = null;
+                        }
+                        finish();
+                    })
+                    .setNegativeButton("Continue Exam", null)
+                    .show();
+        } else {
+            if (examTimer != null) {
+                examTimer.cancel();
+                examTimer = null;
+            }
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (examTimer != null) {
+            examTimer.cancel();
+            examTimer = null;
+        }
     }
 }

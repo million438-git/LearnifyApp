@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Physics: Doppler Effect Lab</title>
+<style>
+:root{--primary:#6366f1;--dark:#0f172a;--surface:#fff;--bg:#f1f5f9;--glass:rgba(255,255,255,0.92);}
+*{box-sizing:border-box;font-family:'Inter',system-ui,sans-serif;}
+html,body{height:100%;}
+body{margin:0;background:var(--bg);color:var(--dark);display:flex;flex-direction:column;overflow:hidden;}
+header{background:var(--dark);color:#fff;padding:10px;text-align:center;border-bottom:3px solid var(--primary);flex-shrink:0;}
+.lab-container{display:flex;flex:1;overflow:hidden;flex-direction:column;min-height:0;}
+#sim-area{flex:2 1 0;min-height:340px;position:relative;background:#05080f;border-bottom:2px solid #e2e8f0;overflow:hidden;}
+canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;}
+.splitter{height:10px;background:linear-gradient(90deg,rgba(0,0,0,.03),rgba(0,0,0,.06));cursor:ns-resize;flex-shrink:0;}
+.bottom-panel{flex:3 1 0;min-height:0;display:flex;flex-direction:row;background:var(--surface);overflow-y:auto;}
+.controls{flex:0 0 360px;padding:18px;border-right:1px solid #e2e8f0;min-width:300px;}
+.analysis{flex:1 1 720px;padding:18px;background:#fafafa;min-width:420px;}
+.card{background:#fff;border:1px solid #e2e8f0;padding:12px;border-radius:8px;margin-bottom:10px;}
+h4{margin:0 0 10px 0;font-size:.8rem;color:#64748b;text-transform:uppercase;}
+.input-row{margin-bottom:12px;}
+label{display:block;font-size:.8rem;font-weight:600;margin-bottom:4px;}
+input[type=range]{width:100%;accent-color:var(--primary);}
+select{width:100%;padding:6px;border-radius:6px;border:1px solid #cbd5e1;background:#fff;font-family:inherit;}
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+button{padding:10px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;transition:.2s;font-family:inherit;}
+.btn-fire{background:var(--primary);color:#fff;}.btn-fire:hover{background:#4f46e5;}
+.btn-reset{background:#64748b;color:#fff;}.btn-reset:hover{background:#475569;}
+.btn-play{background:linear-gradient(135deg,#10b981,#059669);color:#fff;}.btn-play:hover{background:linear-gradient(135deg,#059669,#047857);}
+.btn-sound{background:#10b981;color:#fff;}.btn-sound.playing{background:#ef4444;}
+.hud{position:absolute;top:10px;left:10px;background:var(--glass);padding:8px 10px;border-radius:8px;font-size:.75rem;border:1px solid #ddd;z-index:20;color:#0f172a;pointer-events:none;}
+.hud .metrics{line-height:1.7;}
+.hud span.val{color:#4f46e5;font-weight:700;font-variant-numeric:tabular-nums;}
+.vector-legend{position:absolute;bottom:10px;left:10px;font-size:.65rem;background:var(--glass);padding:5px 8px;border-radius:4px;color:#0f172a;pointer-events:none;}
+.vector-legend span{margin-right:8px;}
+.tab-btn{padding:8px 12px;border-radius:6px;background:#e2e8f0;color:var(--dark);font-weight:600;font-size:.8rem;border:none;cursor:pointer;}
+.tab-btn.active{background:var(--primary);color:#fff;}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+.readouts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;}
+.readout{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;}
+.readout span{font-size:.7rem;color:#64748b;display:block;}
+.readout strong{font-size:1rem;color:var(--dark);font-variant-numeric:tabular-nums;}
+.readout.hl strong{color:#4f46e5;}
+.readout.good strong{color:#10b981;}
+.readout.warn strong{color:#f59e0b;}
+.quiz-q{padding:10px 0;border-bottom:1px solid #e2e8f0;}
+.quiz-q>strong{display:block;margin-bottom:8px;font-size:.9rem;}
+.quiz-q label{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;margin:3px 6px 3px 0;cursor:pointer;font-weight:500;}
+.quiz-q label:hover{background:#eef2ff;border-color:#6366f1;}
+.explanation{margin-top:8px;padding:10px;border-radius:6px;font-size:.82rem;line-height:1.55;background:#eef2ff;border-left:3px solid #6366f1;}
+.explanation.correct-box{background:#ecfdf5;border-left-color:#10b981;}
+.explanation.wrong-box{background:#fef2f2;border-left-color:#dc2626;}
+.quiz-section{font-size:.72rem;font-weight:700;text-transform:uppercase;color:#6366f1;margin:12px 0 6px 0;letter-spacing:.05em;}
+#quiz-result{margin-top:10px;padding:12px;border-radius:8px;background:#eef2ff;border:1px solid #c7d2fe;font-weight:700;text-align:center;}
+table.formulas{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:6px;}
+table.formulas th,table.formulas td{border:1px solid #e2e8f0;padding:6px 8px;text-align:left;}
+table.formulas th{background:#f1f5f9;font-weight:600;}
+.eq{font-family:'JetBrains Mono',monospace;background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:.82rem;}
+.note{font-size:.82rem;color:#475569;margin-top:8px;line-height:1.5;}
+.sound-hint{background:#fef3c7;border-left:3px solid #f59e0b;padding:8px;border-radius:6px;font-size:.82rem;margin-top:8px;}
+textarea{width:100%;padding:8px;border-radius:6px;border:1px solid #cbd5e1;font-family:inherit;font-size:.85rem;min-height:64px;resize:vertical;}
+@media(max-width:768px){.bottom-panel{flex-direction:column;}.controls{border-right:none;border-bottom:1px solid #eee;min-width:0;}.analysis{min-width:0;}.readouts{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header>
+<h2 style="margin:0;font-size:1.1rem;">🔊 Doppler Effect Interactive Lab</h2>
+<small>Moving source &amp; observer · Real pitch shift · Wavefront compression</small>
+</header>
+
+<div class="lab-container">
+<div id="sim-area">
+<div class="hud">
+<b>LIVE STATE</b><br>
+<div class="metrics">
+Source: <span class="val" id="hud-vs">0</span> m/s<br>
+Observer: <span class="val" id="hud-vo">0</span> m/s<br>
+Emitted f: <span class="val" id="hud-f">440</span> Hz<br>
+Observed f: <span class="val" id="hud-fobs">440</span> Hz<br>
+Shift: <span class="val" id="hud-shift">0</span>%
+</div>
+</div>
+<div class="vector-legend">
+<span style="color:#f43f5e">● Source</span>
+<span style="color:#10b981">● Observer</span>
+<span style="color:#6366f1">● Wavefronts</span>
+</div>
+<canvas id="canvas"></canvas>
+</div>
+
+<div id="splitter" class="splitter"></div>
+
+<div class="bottom-panel">
+<div class="controls">
+<h4>🧪 Lab Settings</h4>
+
+<div class="input-row">
+<button class="btn-sound" id="btn-sound" style="width:100%;">🔈 Enable sound</button>
+<div class="sound-hint" id="sound-hint">Real audio pitch shift as you drag the sliders.</div>
+</div>
+
+<div class="input-row">
+<button class="btn-play" id="btn-play" style="width:100%;">▶ Start animation</button>
+</div>
+
+<div class="input-row">
+<label>Medium</label>
+<select id="medium">
+<option value="air" selected>Air (343 m/s)</option>
+<option value="water">Water (1482 m/s)</option>
+<option value="steel">Steel (5960 m/s)</option>
+</select>
+</div>
+
+<div class="input-row">
+<label>Emitted frequency f₀: <span id="v-f">440</span> Hz</label>
+<input type="range" id="freq" min="100" max="1500" step="5" value="440">
+</div>
+
+<div class="input-row">
+<label>Source velocity v_s: <span id="v-vs">0</span> m/s</label>
+<input type="range" id="vs" min="-150" max="150" step="1" value="0">
+</div>
+
+<div class="input-row">
+<label>Observer velocity v_o: <span id="v-vo">0</span> m/s</label>
+<input type="range" id="vo" min="-150" max="150" step="1" value="0">
+</div>
+
+<div class="input-row">
+<label>Observer distance: <span id="v-dist">300</span> m</label>
+<input type="range" id="dist" min="100" max="500" step="10" value="300">
+</div>
+
+<div class="input-row">
+<label style="display:inline-flex;align-items:center;gap:6px;">
+<input type="checkbox" id="trail-toggle" checked> Show wavefronts
+</label>
+</div>
+
+<div class="btn-grid">
+<button class="btn-fire" id="btn-reset">↺ Reset</button>
+<button class="btn-fire" id="btn-observe">🎯 Snap observer</button>
+</div>
+</div>
+
+<div class="analysis">
+<h4>📊 Learn &amp; Practice</h4>
+
+<div class="readouts">
+<div class="readout hl"><span>Emitted freq. f₀</span><strong id="ro-f0">440 Hz</strong></div>
+<div class="readout hl good"><span>Observed freq. f'</span><strong id="ro-f">440 Hz</strong></div>
+<div class="readout"><span>Frequency shift Δf</span><strong id="ro-df">0 Hz</strong></div>
+<div class="readout"><span>Shift %</span><strong id="ro-pct">0%</strong></div>
+<div class="readout"><span>Speed of sound v</span><strong id="ro-v">343 m/s</strong></div>
+<div class="readout"><span>Source velocity v_s</span><strong id="ro-vs">0 m/s</strong></div>
+<div class="readout"><span>Observer velocity v_o</span><strong id="ro-vo">0 m/s</strong></div>
+<div class="readout"><span>Mach number (source)</span><strong id="ro-mach">0.00</strong></div>
+<div class="readout"><span>Observed wavelength λ'</span><strong id="ro-l">0.780 m</strong></div>
+<div class="readout"><span>Emitted wavelength λ₀</span><strong id="ro-l0">0.780 m</strong></div>
+<div class="readout"><span>Direction</span><strong id="ro-dir">At rest</strong></div>
+<div class="readout"><span>Musical interval</span><strong id="ro-int">—</strong></div>
+</div>
+
+<div class="card">
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+<button class="tab-btn active" data-tab="formulas">Formulas</button>
+<button class="tab-btn" data-tab="quiz">Quiz</button>
+<button class="tab-btn" data-tab="challenges">Challenges</button>
+<button class="tab-btn" data-tab="notebook">Notebook</button>
+</div>
+
+<div id="formulas" class="tab-panel active">
+<h3 style="margin:6px 0 8px 0;">Core Formulas — Doppler Effect</h3>
+<ul style="font-size:.9rem;line-height:1.6;padding-left:1rem;margin:0;">
+<li><b>General Doppler:</b> f' = f₀ · (v ± v_o) / (v ∓ v_s)</li>
+<li><b>Approaching source:</b> f' = f₀ · v / (v − v_s)  → pitch rises</li>
+<li><b>Receding source:</b> f' = f₀ · v / (v + v_s)  → pitch falls</li>
+<li><b>Approaching observer:</b> f' = f₀ · (v + v_o) / v  → pitch rises</li>
+<li><b>Receding observer:</b> f' = f₀ · (v − v_o) / v  → pitch falls</li>
+<li><b>Observed wavelength:</b> λ' = (v ± v_o) / f₀ (or use v/f')</li>
+<li><b>Mach number:</b> M = v_s / v  (M > 1 → supersonic)</li>
+</ul>
+<p class="note"><b>💡 Key insights:</b> The frequency change is NOT due to the source or observer "emitting differently" — the source always emits f₀. It's due to <b>relative motion</b> causing wavefronts to compress (approaching) or expand (receding). Approaching source → shorter wavelength → higher pitch. Receding source → longer wavelength → lower pitch. Both approaches give the same direction of shift. When v_s > v (Mach > 1), the source outruns its own sound — creating a <b>sonic boom</b> cone. The classic ambulance siren: pitch rises as it approaches, drops suddenly as it passes you.</p>
+
+<table class="formulas" style="margin-top:12px;">
+<tr><th>Quantity</th><th>Formula</th><th>Units</th></tr>
+<tr><td>General Doppler</td><td><span class="eq">f' = f₀ (v ± v_o)/(v ∓ v_s)</span></td><td>Hz</td></tr>
+<tr><td>Approaching (source)</td><td><span class="eq">f' = f₀ · v/(v − v_s)</span></td><td>Hz</td></tr>
+<tr><td>Receding (source)</td><td><span class="eq">f' = f₀ · v/(v + v_s)</span></td><td>Hz</td></tr>
+<tr><td>Observed λ</td><td><span class="eq">λ' = v/f'</span></td><td>m</td></tr>
+</table>
+</div>
+
+<div id="quiz" class="tab-panel" style="max-height:600px;overflow:auto;">
+<h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+<div class="quiz-section">Basic — Doppler Fundamentals</div>
+<div class="quiz-q" data-q="q1" data-answer="B">
+<strong>1. The Doppler effect is the change in:</strong>
+<label><input type="radio" name="q1" value="A"> Amplitude of a wave due to motion</label>
+<label><input type="radio" name="q1" value="B"> Observed frequency due to relative motion between source and observer</label>
+<label><input type="radio" name="q1" value="C"> Color of a light source</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q2" data-answer="A">
+<strong>2. When a source moves TOWARD an observer, the observed frequency:</strong>
+<label><input type="radio" name="q2" value="A"> Increases</label>
+<label><input type="radio" name="q2" value="B"> Decreases</label>
+<label><input type="radio" name="q2" value="C"> Stays the same</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q3" data-answer="B">
+<strong>3. When a source moves AWAY from an observer, the observed wavelength:</strong>
+<label><input type="radio" name="q3" value="A"> Shortens</label>
+<label><input type="radio" name="q3" value="B"> Lengthens</label>
+<label><input type="radio" name="q3" value="C"> Stays the same</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Intermediate — Formula Applications</div>
+<div class="quiz-q" data-q="q4" data-answer="B">
+<strong>4. The Doppler formula for an approaching source is:</strong>
+<label><input type="radio" name="q4" value="A"> f' = f₀(v − v_s)/v</label>
+<label><input type="radio" name="q4" value="B"> f' = f₀ · v/(v − v_s)</label>
+<label><input type="radio" name="q4" value="C"> f' = f₀ · v/(v + v_s)</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q5" data-answer="A">
+<strong>5. A source at 440 Hz moves toward you at 34.3 m/s (v=343 m/s). Observed frequency ≈ :</strong>
+<label><input type="radio" name="q5" value="A"> 489 Hz</label>
+<label><input type="radio" name="q5" value="B"> 396 Hz</label>
+<label><input type="radio" name="q5" value="C"> 440 Hz</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q6" data-answer="B">
+<strong>6. The ambulance siren effect is caused by:</strong>
+<label><input type="radio" name="q6" value="A"> Siren changing its own frequency</label>
+<label><input type="radio" name="q6" value="B"> Approaching vs receding motion changing the observed pitch</label>
+<label><input type="radio" name="q6" value="C"> Air pressure differences</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Advanced — Deep Understanding</div>
+<div class="quiz-q" data-q="q7" data-answer="B">
+<strong>7. When v_s > v (source faster than sound), the source produces:</strong>
+<label><input type="radio" name="q7" value="A"> A lower-pitched sound only</label>
+<label><input type="radio" name="q7" value="B"> A sonic boom (Mach cone of compressed wavefronts)</label>
+<label><input type="radio" name="q7" value="C"> Silence</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q8" data-answer="A">
+<strong>8. Redshift in astronomy (galaxies moving away) is:</strong>
+<label><input type="radio" name="q8" value="A"> The Doppler effect for light — receding source gives longer wavelength (redder)</label>
+<label><input type="radio" name="q8" value="B"> A property of old stars</label>
+<label><input type="radio" name="q8" value="C"> A gravitational effect only</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q9" data-answer="B">
+<strong>9. If both source and observer are moving (source approaching, observer receding), the observed frequency is:</strong>
+<label><input type="radio" name="q9" value="A"> Always higher than f₀</label>
+<label><input type="radio" name="q9" value="B"> Depends on combined effect — could be higher or lower</label>
+<label><input type="radio" name="q9" value="C"> Always equal to f₀</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-q" data-q="q10" data-answer="B">
+<strong>10. The Doppler effect occurs for:</strong>
+<label><input type="radio" name="q10" value="A"> Only sound waves</label>
+<label><input type="radio" name="q10" value="B"> All waves — sound, light, water, radar</label>
+<label><input type="radio" name="q10" value="C"> Only electromagnetic waves</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="btn-grid" style="margin-top:12px;">
+<button class="btn-fire" id="btn-quiz-check">Submit Quiz</button>
+<button class="btn-reset" id="btn-quiz-reset">Reset</button>
+</div>
+<div id="quiz-result" style="display:none;"></div>
+</div>
+
+<div id="challenges" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Challenges</h3>
+<div style="display:flex;flex-direction:column;gap:8px;font-size:.9rem;">
+<div><b>1. Ambulance approaching</b><br><button class="btn-fire" data-challenge="approach">Source moving toward you</button></div>
+<div><b>2. Ambulance receding</b><br><button class="btn-fire" data-challenge="recede">Source moving away</button></div>
+<div><b>3. You running toward siren</b><br><button class="btn-fire" data-challenge="youapproach">Observer moving toward source</button></div>
+<div><b>4. Both approaching</b><br><button class="btn-fire" data-challenge="both">Maximum frequency shift</button></div>
+<div><b>5. Mach 1.5</b><br><button class="btn-fire" data-challenge="mach">Supersonic — sonic boom</button></div>
+<div><b>6. Redshift</b><br><button class="btn-fire" data-challenge="redshift">Galaxy receding — light redshift</button></div>
+<div id="challenge-note" style="color:#0f172a;font-size:.85rem;"></div>
+<div id="challenge-result" style="color:#083344;font-weight:600;margin-top:6px;"></div>
+</div>
+</div>
+
+<div id="notebook" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Notebook</h3>
+<label>Hypothesis</label>
+<textarea id="hypothesis" placeholder="What do you expect?"></textarea>
+<label style="margin-top:10px;display:block;">Conclusion</label>
+<textarea id="conclusion" placeholder="What did you observe?"></textarea>
+<label style="margin-top:10px;display:block;">Measurements</label>
+<textarea id="records" readonly style="background:#f8fafc;font-family:monospace;font-size:.75rem;min-height:100px;"></textarea>
+<div class="btn-grid" style="margin-top:10px;">
+<button class="btn-fire" id="btn-record">📋 Record</button>
+<button class="btn-reset" id="btn-clear-notes">Clear</button>
+</div>
+<button class="btn-fire" style="margin-top:8px;width:100%;" id="btn-export">⬇ Report</button>
+</div>
+</div>
+
+<div class="card">
+<b>Real fact:</b> <span id="fact-box" style="font-size:.85rem;">—</span>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+"use strict";
+(function(){
+
+// ============ CONSTANTS ============
+var MEDIA = {
+    air:    { name: 'Air',    v: 343,  color:'#a5b4fc' },
+    water:  { name: 'Water',  v: 1482, color:'#3b82f6' },
+    steel:  { name: 'Steel',  v: 5960, color:'#475569' }
+};
+
+// ============ STATE ============
+var S = {
+    medium: 'air',
+    freq: 440,        // Hz emitted by source
+    vs: 0,            // source velocity (positive = toward observer, i.e., to the right)
+    vo: 0,            // observer velocity (positive = toward source, i.e., to the left)
+    dist: 300,        // initial distance between source and observer (m)
+    showTrail: true,
+    running: false,
+    soundOn: false,
+    time: 0,
+    // Source and observer positions (x coordinates in "world" meters)
+    // Observer at x=0, source at x = -dist (to the left)
+    sourceX: -300,    // meters from observer (source is to the left at rest)
+    observerX: 0,
+    // Wavefronts emitted (record with their emission position and time)
+    wavefronts: [],
+    emitAccumulator: 0,
+    debugCount: 0,
+    records: []
+};
+
+var $ = function(id){ return document.getElementById(id); };
+var canvas = $('canvas');
+var ctx = canvas.getContext('2d');
+var dpr = window.devicePixelRatio || 1;
+var view = { x:0, y:0, scale:1 };
+var lastW = 0, lastH = 0;
+
+// ============ CANVAS ============
+function resizeCanvas(){
+    var rect = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(rect.width));
+    var h = Math.max(1, Math.round(rect.height));
+    if (w === lastW && h === lastH) return;
+    lastW = w; lastH = h;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function cw(){ return canvas.width / dpr; }
+function ch(){ return canvas.height / dpr; }
+
+// ============ AUDIO ============
+var audioCtx = null;
+var osc = null, gain = null;
+function initAudio(){
+    if (audioCtx) return;
+    try {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) { $('sound-hint').textContent = '⚠ No Web Audio.'; return; }
+        audioCtx = new AC();
+    } catch(e){ $('sound-hint').textContent = '⚠ Audio init failed.'; }
+}
+function startTone(){
+    if (!audioCtx || !S.soundOn) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (osc) return;
+    try {
+        osc = audioCtx.createOscillator();
+        gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = getObservedFreq();
+        gain.gain.setValueAtTime(0, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + 0.2);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+    } catch(e){}
+}
+function stopTone(){
+    if (osc) {
+        try {
+            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.15);
+            osc.stop(audioCtx.currentTime + 0.2);
+        } catch(e){}
+        osc = null;
+        gain = null;
+    }
+}
+function updateToneFreq(){
+    if (!osc) return;
+    var f = getObservedFreq();
+    // Clamp to audible range
+    f = Math.max(20, Math.min(20000, f));
+    try {
+        osc.frequency.setTargetAtTime(f, audioCtx.currentTime, 0.05);
+    } catch(e){}
+}
+function beep(freq, dur, type, vol){
+    if (!audioCtx || !S.soundOn) return;
+    try {
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = type || 'sine';
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(vol || 0.08, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + dur);
+    } catch(e){}
+}
+function toggleSound(){
+    initAudio();
+    if (!audioCtx) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    S.soundOn = !S.soundOn;
+    if (S.soundOn) {
+        $('btn-sound').textContent = '🔊 Sound ON';
+        $('btn-sound').classList.add('playing');
+        $('sound-hint').textContent = 'Tone playing at observed frequency. Drag sliders to hear pitch shift.';
+        startTone();
+    } else {
+        stopTone();
+        $('btn-sound').textContent = '🔈 Enable sound';
+        $('btn-sound').classList.remove('playing');
+        $('sound-hint').textContent = 'Sound disabled.';
+    }
+}
+
+// ============ PHYSICS ============
+function getV(){ return MEDIA[S.medium].v; }
+
+// Compute observed frequency using general Doppler formula
+// Convention:
+//   v_s > 0 = source moving toward observer (to the right)
+//   v_s < 0 = source moving away from observer (to the left)
+//   v_o > 0 = observer moving toward source (to the left)
+//   v_o < 0 = observer moving away from source (to the right)
+function getObservedFreq(){
+    var v = getV();
+    var vs = S.vs;
+    var vo = S.vo;
+    // Approaching source: denom = v - vs (if vs > 0, approaching)
+    // Approaching observer: numerator = v + vo (if vo > 0, approaching)
+    var num = v + vo;
+    var den = v - vs;
+    if (den <= 0.01) den = 0.01;  // avoid division by zero for supersonic
+    return S.freq * num / den;
+}
+
+function getObservedWavelength(){
+    return getV() / getObservedFreq();
+}
+
+function getEmittedWavelength(){
+    return getV() / S.freq;
+}
+
+function getMach(){
+    return Math.abs(S.vs) / getV();
+}
+
+// Musical interval from frequency ratio
+function getMusicalInterval(ratio){
+    if (ratio < 1) ratio = 1 / ratio;
+    var semitones = Math.round(12 * Math.log2(ratio));
+    if (semitones === 0) return 'Unison';
+    if (semitones === 1) return 'Minor 2nd';
+    if (semitones === 2) return 'Major 2nd';
+    if (semitones === 3) return 'Minor 3rd';
+    if (semitones === 4) return 'Major 3rd';
+    if (semitones === 5) return 'Perfect 4th';
+    if (semitones === 6) return 'Tritone';
+    if (semitones === 7) return 'Perfect 5th';
+    if (semitones === 8) return 'Minor 6th';
+    if (semitones === 9) return 'Major 6th';
+    if (semitones === 10) return 'Minor 7th';
+    if (semitones === 11) return 'Major 7th';
+    if (semitones === 12) return 'Octave';
+    if (semitones > 12) return semitones + ' semitones up';
+    return Math.abs(semitones) + ' semitones down';
+}
+
+// ============ DRAW ============
+function drawScene(){
+    resizeCanvas();
+    var w = cw(), h = ch();
+    if (w < 10 || h < 10) return;
+
+    var bg = ctx.createLinearGradient(0, 0, 0, h);
+    bg.addColorStop(0, '#0a1220');
+    bg.addColorStop(1, '#03060e');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+
+    // Stars
+    var t = Date.now() * 0.001;
+    for (var i = 0; i < 40; i++) {
+        var sx = (i * 137 + 41) % w;
+        var sy = (i * 71 + 23) % (h * 0.4);
+        var tw = 0.4 + 0.6 * Math.abs(Math.sin(t * 1.5 + i));
+        ctx.fillStyle = 'rgba(255,255,255,' + tw + ')';
+        ctx.beginPath();
+        ctx.arc(sx, sy, 0.8, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    ctx.save();
+    ctx.translate(view.x, view.y);
+    ctx.scale(view.scale, view.scale);
+    var W = w / view.scale, H = h / view.scale;
+
+    // World scale: map "meters" to pixels
+    // Show a window of ~600 meters across the canvas
+    var windowMeters = 600;
+    var scale = W / windowMeters;
+    var centerX = W / 2;
+
+    // World coords: source at S.sourceX, observer at S.observerX
+    // Both are in meters, with observer at 0
+    // We map world x → canvas x: canvasX = centerX + (worldX - (S.observerX + S.sourceX)/2) * scale
+    var midWorld = (S.observerX + S.sourceX) / 2;
+    function toScreen(worldX){
+        return centerX + (worldX - midWorld) * scale;
+    }
+
+    var srcScreenX = toScreen(S.sourceX);
+    var obsScreenX = toScreen(S.observerX);
+
+    // Baseline (path)
+    var baseY = H * 0.65;
+    ctx.strokeStyle = 'rgba(148,163,184,0.3)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([6, 6]);
+    ctx.beginPath();
+    ctx.moveTo(0, baseY);
+    ctx.lineTo(W, baseY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw wavefronts (circles expanding from emission points)
+    // Only show those that haven't passed the observer
+    if (S.showTrail) {
+        var v = getV();
+        S.wavefronts.forEach(function(wf){
+            var age = S.time - wf.t;
+            var radius = v * age;  // in meters
+            if (radius < 0 || radius > 1000) return;
+            var screenX = toScreen(wf.x);
+            var screenR = radius * scale;
+            // Fade with age
+            var alpha = Math.max(0.15, 0.8 - age / 5);
+            // Color depends on side (approaching = red, receding = blue)
+            var isApproaching = (wf.x < S.observerX);
+            ctx.strokeStyle = isApproaching
+                ? 'rgba(244,63,94,' + alpha + ')'
+                : 'rgba(99,102,241,' + alpha + ')';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(screenX, baseY, screenR, Math.PI, 0);
+            ctx.stroke();
+        });
+    }
+
+    // Draw observer
+    ctx.fillStyle = '#10b981';
+    ctx.beginPath();
+    ctx.arc(obsScreenX, baseY, 14, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#065f46';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#0f172a';
+    ctx.font = 'bold 11px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('👂', obsScreenX, baseY + 4);
+
+    // Observer velocity arrow
+    if (S.vo !== 0) {
+        drawArrow(obsScreenX, baseY - 40, obsScreenX + (S.vo < 0 ? 40 : -40) * (S.vo < 0 ? 1 : 1) * -Math.sign(S.vo), baseY - 40, '#10b981');
+    }
+
+    // Label observer
+    ctx.fillStyle = '#cbd5e1';
+    ctx.font = 'bold 12px Inter';
+    ctx.fillText('Observer', obsScreenX, baseY + 40);
+    ctx.font = '10px Inter';
+    ctx.fillStyle = '#94a3b8';
+    ctx.fillText('v_o = ' + S.vo + ' m/s', obsScreenX, baseY + 55);
+
+    // Draw source
+    ctx.fillStyle = '#f43f5e';
+    ctx.beginPath();
+    ctx.arc(srcScreenX, baseY, 14, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#991b1b';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // Speaker icon inside
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.moveTo(srcScreenX - 4, baseY - 4);
+    ctx.lineTo(srcScreenX - 4, baseY + 4);
+    ctx.lineTo(srcScreenX, baseY + 4);
+    ctx.lineTo(srcScreenX + 5, baseY + 8);
+    ctx.lineTo(srcScreenX + 5, baseY - 8);
+    ctx.lineTo(srcScreenX, baseY - 4);
+    ctx.closePath();
+    ctx.fill();
+
+    // Source velocity arrow
+    if (S.vs !== 0) {
+        var dir = S.vs > 0 ? 1 : -1;
+        drawArrow(srcScreenX, baseY - 40, srcScreenX + dir * 40, baseY - 40, '#f43f5e');
+    }
+
+    // Label source
+    ctx.fillStyle = '#cbd5e1';
+    ctx.font = 'bold 12px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('Source', srcScreenX, baseY + 40);
+    ctx.font = '10px Inter';
+    ctx.fillStyle = '#94a3b8';
+    ctx.fillText('v_s = ' + S.vs + ' m/s', srcScreenX, baseY + 55);
+
+    // Distance indicator
+    ctx.strokeStyle = 'rgba(148,163,184,0.5)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(srcScreenX, baseY + 70);
+    ctx.lineTo(obsScreenX, baseY + 70);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '10px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('d = ' + Math.abs(S.observerX - S.sourceX).toFixed(0) + ' m', (srcScreenX + obsScreenX) / 2, baseY + 85);
+
+    // Frequency info box
+    var fObs = getObservedFreq();
+    var f0 = S.freq;
+    var ratio = fObs / f0;
+    var fPct = ((ratio - 1) * 100);
+
+    // Large frequency display
+    ctx.fillStyle = '#fbbf24';
+    ctx.font = 'bold 18px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('f₀ = ' + f0.toFixed(0) + ' Hz  →  f\' = ' + fObs.toFixed(1) + ' Hz', W / 2, 40);
+    ctx.font = '12px Inter';
+    ctx.fillStyle = fPct >= 0 ? '#10b981' : '#dc2626';
+    ctx.fillText((fPct >= 0 ? '↑ +' : '↓ ') + fPct.toFixed(2) + '% shift', W / 2, 60);
+
+    // Sonic boom indicator
+    if (getMach() > 1) {
+        ctx.fillStyle = 'rgba(220,38,38,0.9)';
+        ctx.fillRect(W/2 - 100, 75, 200, 28);
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 14px Inter';
+        ctx.fillText('⚡ SONIC BOOM (Mach ' + getMach().toFixed(2) + ')', W / 2, 93);
+    }
+
+    ctx.restore();
+
+    // Live pulse
+    var pulseR = 5 + 3 * Math.sin(S.time * 4);
+    ctx.fillStyle = S.running ? 'rgba(16,185,129,0.9)' : 'rgba(100,116,139,0.6)';
+    ctx.beginPath();
+    ctx.arc(w - 25, 25, pulseR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = S.running ? '#10b981' : '#64748b';
+    ctx.font = 'bold 9px Inter';
+    ctx.textAlign = 'right';
+    ctx.fillText(S.running ? 'RUNNING' : 'PAUSED', w - 38, 28);
+}
+
+function drawArrow(x1, y1, x2, y2, color){
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    var ang = Math.atan2(y2 - y1, x2 - x1);
+    var sz = 8;
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - sz * Math.cos(ang - 0.4), y2 - sz * Math.sin(ang - 0.4));
+    ctx.lineTo(x2 - sz * Math.cos(ang + 0.4), y2 - sz * Math.sin(ang + 0.4));
+    ctx.closePath();
+    ctx.fill();
+}
+
+// ============ READOUTS ============
+function updateReadouts(){
+    var v = getV();
+    var f0 = S.freq;
+    var fObs = getObservedFreq();
+    var df = fObs - f0;
+    var pct = (df / f0) * 100;
+    var lambda0 = getEmittedWavelength();
+    var lambdaObs = getObservedWavelength();
+    var mach = getMach();
+    var ratio = fObs / f0;
+    var interval = getMusicalInterval(ratio);
+
+    $('ro-f0').innerText = f0.toFixed(0) + ' Hz';
+    $('ro-f').innerText = fObs.toFixed(1) + ' Hz';
+    $('ro-df').innerText = (df >= 0 ? '+' : '') + df.toFixed(1) + ' Hz';
+    $('ro-pct').innerText = (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%';
+    $('ro-v').innerText = v + ' m/s';
+    $('ro-vs').innerText = S.vs + ' m/s';
+    $('ro-vo').innerText = S.vo + ' m/s';
+    $('ro-mach').innerText = mach.toFixed(3);
+    $('ro-l').innerText = lambdaObs.toFixed(3) + ' m';
+    $('ro-l0').innerText = lambda0.toFixed(3) + ' m';
+
+    var dir;
+    if (S.vs === 0 && S.vo === 0) dir = 'At rest';
+    else if ((S.vs > 0 && S.vo >= 0) || (S.vs >= 0 && S.vo > 0)) dir = 'Approaching';
+    else if (S.vs < 0 && S.vo <= 0) dir = 'Receding';
+    else dir = 'Mixed';
+    $('ro-dir').innerText = dir;
+    $('ro-int').innerText = interval;
+
+    $('hud-vs').innerText = S.vs;
+    $('hud-vo').innerText = S.vo;
+    $('hud-f').innerText = f0.toFixed(0);
+    $('hud-fobs').innerText = fObs.toFixed(1);
+    $('hud-shift').innerText = (pct >= 0 ? '+' : '') + pct.toFixed(1);
+
+    // Fact based on situation
+    var fact;
+    if (mach > 1) {
+        fact = '⚡ SUPERSONIC: The source outruns its own sound. The wavefronts form a cone behind the source — the Mach cone. Its boundary is where the sonic boom is heard.';
+    } else if (S.vs > 0) {
+        fact = 'Source approaching: wavefronts compress in front, so wavelength shortens and frequency rises. You hear a HIGHER pitch. This is the ambulance siren effect.';
+    } else if (S.vs < 0) {
+        fact = 'Source receding: wavefronts stretch out behind, so wavelength lengthens and frequency drops. You hear a LOWER pitch. This is how astronomers detect distant receding galaxies (redshift).';
+    } else if (S.vo > 0) {
+        fact = 'Observer approaching source: you encounter wavefronts more frequently, so the observed frequency rises. Same pitch shift as a moving source, but a different mechanism.';
+    } else if (S.vo < 0) {
+        fact = 'Observer receding from source: you encounter fewer wavefronts per second, so frequency drops. Slower/faster motion than the source case by the same formula.';
+    } else {
+        fact = 'No motion: the observed frequency equals the emitted frequency. Drag the source or observer velocity slider to see the Doppler effect in action.';
+    }
+    $('fact-box').innerText = fact;
+}
+
+// ============ QUIZ ============
+var QUIZ_EXPLAIN = {
+    q1:{correct:'B',why:'The Doppler effect is the change in <b>observed frequency</b> (or wavelength) due to <b>relative motion</b> between source and observer. The source emits the same frequency all along — the pitch shift is entirely due to how the wavefronts reach the observer.',tip:'Ambulance siren: pitch rises as it approaches, drops as it passes.'},
+    q2:{correct:'A',why:'Approaching source → wavefronts bunch up → observer receives more per second → higher frequency. Formula: f\' = f₀·v/(v − v_s).',tip:'Approaching source = higher pitch. Receding source = lower pitch.'},
+    q3:{correct:'B',why:'Receding source → wavefronts spread out behind → each wavefront arrives later → wavelength <b>lengthens</b>. Formula: λ\' = (v + v_s)/f₀.',tip:'Longer wavelength ↔ lower frequency ↔ lower pitch.'},
+    q4:{correct:'B',why:'Approaching source: <b>f\' = f₀ · v/(v − v_s)</b>. The denominator shrinks as v_s grows, so f\' increases.',tip:'Check: if v_s=0, f\'=f₀ ✓. If v_s → v, f\' → ∞ ✓.'},
+    q5:{correct:'A',why:'f\' = 440 × 343/(343−34.3) = 440 × 343/308.7 = 440 × 1.111 ≈ <b>489 Hz</b>.',tip:'A ~11% pitch increase — clearly audible.'},
+    q6:{correct:'B',why:'The siren emits a constant 1000-ish Hz. The <b>relative motion</b> causes the pitch shift: approaching → higher pitch, receding → lower pitch.',tip:'This is exactly why you hear that distinctive "waaaaaAAAaaa" as it passes.'},
+    q7:{correct:'B',why:'When v_s > v, the source outruns its own sound. It compresses wavefronts into a cone (the Mach cone). Crossing the cone boundary creates a <b>sonic boom</b>.',tip:'Concorde, fighter jets, and the Space Shuttle all generate sonic booms on approach.'},
+    q8:{correct:'A',why:'Redshift is the Doppler effect for light. A galaxy receding from us has a longer observed wavelength — toward the red end of the spectrum. The faster it recedes, the more redshift.',tip:'Hubble used redshift to discover the universe is expanding.'},
+    q9:{correct:'B',why:'If source approaches AND observer recedes, the two effects partially cancel. The combined frequency depends on which is stronger. Formula combines both: f\' = f₀·(v+v_o)/(v−v_s).',tip:'Same-direction motion → additive; opposite → subtractive.'},
+    q10:{correct:'B',why:'The Doppler effect applies to <b>all waves</b> — sound, light, water, radar, seismic waves. Any wave whose source or observer is moving relative to the medium.',tip:'Police radar uses it. Ultrasound uses it (blood flow). Astronomy uses it (galaxy velocities).'}
+};
+
+function evaluateQuiz(){
+    var qs = document.querySelectorAll('.quiz-q');
+    var score = 0;
+    qs.forEach(function(q){
+        var name = q.dataset.q;
+        var correct = q.dataset.answer;
+        var chosen = q.querySelector('input[name="'+name+'"]:checked');
+        var expl = q.querySelector('.explanation');
+        var data = QUIZ_EXPLAIN[name];
+        expl.hidden = false;
+        expl.className = 'explanation';
+        if (chosen && chosen.value === correct) {
+            score++;
+            expl.classList.add('correct-box');
+            expl.innerHTML = '<strong>✓ Correct!</strong> ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:#475569;"><b>💡</b> ' + data.tip + '</div>';
+        } else {
+            expl.classList.add('wrong-box');
+            var cv = chosen ? chosen.value : '—';
+            expl.innerHTML = '<strong>✗ Answer: ' + correct + '</strong> You chose ' + cv + '. ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:#475569;"><b>💡</b> ' + data.tip + '</div>';
+        }
+    });
+    var pct = Math.round(score/qs.length*100);
+    beep(pct>=78?880:440,0.15,'sine',0.1);
+    var r = $('quiz-result');
+    r.style.display = 'block';
+    r.innerHTML = '<div style="font-size:1.4rem;color:#4338ca;">' + score + '/' + qs.length + ' · ' + pct + '%</div>';
+}
+function resetQuiz(){
+    document.querySelectorAll('.quiz-q').forEach(function(q){
+        q.querySelectorAll('input[type=radio]').forEach(function(r){ r.checked = false; });
+        var e = q.querySelector('.explanation');
+        e.hidden = true; e.innerHTML = ''; e.className = 'explanation';
+    });
+    $('quiz-result').style.display = 'none';
+}
+
+// ============ CHALLENGES ============
+function applyChallenge(id){
+    var note = $('challenge-note'), cres = $('challenge-result');
+    note.innerText = ''; cres.innerText = '';
+    if (id === 'approach') {
+        S.medium = 'air'; $('medium').value = 'air';
+        S.freq = 440; $('freq').value = 440; $('v-f').innerText = '440';
+        S.vs = 50; $('vs').value = 50; $('v-vs').innerText = '50';
+        S.vo = 0; $('vo').value = 0; $('v-vo').innerText = '0';
+        note.innerText = 'Ambulance approaching at 50 m/s (180 km/h). Higher pitch.';
+        var fObs = getObservedFreq();
+        cres.innerText = 'f_obs = ' + fObs.toFixed(1) + ' Hz (was 440, now ' + ((fObs/440-1)*100).toFixed(1) + '% higher)';
+    } else if (id === 'recede') {
+        S.medium = 'air'; $('medium').value = 'air';
+        S.freq = 440; $('freq').value = 440; $('v-f').innerText = '440';
+        S.vs = -50; $('vs').value = -50; $('v-vs').innerText = '-50';
+        S.vo = 0; $('vo').value = 0; $('v-vo').innerText = '0';
+        note.innerText = 'Ambulance receding at 50 m/s — lower pitch.';
+        var fObs = getObservedFreq();
+        cres.innerText = 'f_obs = ' + fObs.toFixed(1) + ' Hz (' + ((fObs/440-1)*100).toFixed(1) + '% lower)';
+    } else if (id === 'youapproach') {
+        S.medium = 'air'; $('medium').value = 'air';
+        S.vs = 0; $('vs').value = 0; $('v-vs').innerText = '0';
+        S.vo = 50; $('vo').value = 50; $('v-vo').innerText = '50';
+        note.innerText = 'You running toward the siren at 50 m/s — pitch rises too.';
+        var fObs = getObservedFreq();
+        cres.innerText = 'f_obs = ' + fObs.toFixed(1) + ' Hz';
+    } else if (id === 'both') {
+        S.medium = 'air'; $('medium').value = 'air';
+        S.vs = 100; $('vs').value = 100; $('v-vs').innerText = '100';
+        S.vo = 100; $('vo').value = 100; $('v-vo').innerText = '100';
+        note.innerText = 'Both approaching at 100 m/s — maximum pitch shift!';
+        var fObs = getObservedFreq();
+        cres.innerText = 'f_obs = ' + fObs.toFixed(1) + ' Hz (' + ((fObs/440-1)*100).toFixed(1) + '% shift)';
+    } else if (id === 'mach') {
+        S.medium = 'air'; $('medium').value = 'air';
+        S.vs = Math.round(getV() * 1.5); $('vs').value = S.vs; $('v-vs').innerText = S.vs;
+        S.vo = 0; $('vo').value = 0; $('v-vo').innerText = '0';
+        note.innerText = 'Mach 1.5 — supersonic! Wavefronts form a cone (sonic boom).';
+        cres.innerText = 'Mach ' + getMach().toFixed(2) + ' · speed ' + S.vs + ' m/s';
+    } else if (id === 'redshift') {
+        S.medium = 'air'; $('medium').value = 'air';
+        S.freq = 500; $('freq').value = 500; $('v-f').innerText = '500';
+        S.vs = -100; $('vs').value = -100; $('v-vs').innerText = '-100';
+        note.innerText = 'Light from a receding galaxy: redshift. Same physics as sound.';
+        var fObs = getObservedFreq();
+        cres.innerText = 'Observed f = ' + fObs.toFixed(1) + ' Hz (Doppler-shifted down)';
+    }
+    updateReadouts();
+    updateToneFreq();
+}
+
+// ============ NOTEBOOK ============
+function recordMeasurement(){
+    var line = new Date().toLocaleTimeString() + ' | ' + MEDIA[S.medium].name + ' | f0=' + S.freq + 'Hz | v_s=' + S.vs + 'm/s | v_o=' + S.vo + 'm/s | f_obs=' + getObservedFreq().toFixed(2) + 'Hz | shift=' + (((getObservedFreq()/S.freq)-1)*100).toFixed(2) + '% | Mach=' + getMach().toFixed(3);
+    S.records.push(line);
+    $('records').value = S.records.join('\n');
+    $('records').scrollTop = $('records').scrollHeight;
+}
+function downloadReport(){
+    var fObs = getObservedFreq();
+    var text = 'DOPPLER EFFECT LAB REPORT\nDate: ' + new Date().toLocaleString() + '\n\n' +
+        'Medium: ' + MEDIA[S.medium].name + ' (v = ' + getV() + ' m/s)\n' +
+        'Emitted frequency f₀ = ' + S.freq + ' Hz\n' +
+        'Source velocity v_s = ' + S.vs + ' m/s\n' +
+        'Observer velocity v_o = ' + S.vo + ' m/s\n' +
+        'Mach number = ' + getMach().toFixed(3) + '\n\n' +
+        'RESULTS\n' +
+        'Observed frequency f\' = ' + fObs.toFixed(2) + ' Hz\n' +
+        'Frequency shift = ' + (fObs - S.freq).toFixed(2) + ' Hz (' + (((fObs/S.freq)-1)*100).toFixed(2) + '%)\n' +
+        'Emitted wavelength λ₀ = ' + getEmittedWavelength().toFixed(4) + ' m\n' +
+        'Observed wavelength λ\' = ' + getObservedWavelength().toFixed(4) + ' m\n' +
+        'Musical interval = ' + getMusicalInterval(fObs/S.freq) + '\n\n' +
+        'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+        'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+        'MEASUREMENTS\n' + $('records').value + '\n\n' +
+        'LIMITATIONS\nIdeal Doppler effect for a non-dispersive medium. Assumes source and observer move along the line connecting them (no transverse Doppler). For light, requires relativistic Doppler formula at v comparable to c. Educational use only.\n';
+    var blob = new Blob([text], {type:'text/plain'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'doppler-effect-report.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+// ============ ANIMATION LOOP ============
+var lastT = 0;
+function animate(now){
+    if (!lastT) lastT = now;
+    var dt = (now - lastT) / 1000;
+    if (dt > 0.2) dt = 0.016;
+    lastT = now;
+    S.time += dt;
+    S.debugCount++;
+
+    if (S.running) {
+        // Move source and observer
+        var v = getV();
+        // Source moves at S.vs m/s in +x direction (toward observer) when vs > 0
+        // But observer is at x=0, source starts at x=-dist
+        // So positive vs means source moves toward observer → sourceX increases
+        S.sourceX += S.vs * dt;
+        // Observer moves at S.vo m/s in -x direction (toward source) when vo > 0
+        // Observer moving toward source (left) means observerX decreases
+        S.observerX -= S.vo * dt;
+        // If source passes observer, wrap
+        if (S.sourceX > S.observerX + 100) {
+            // Source passed; reset for looping
+            S.sourceX = S.observerX - 300;
+        }
+        // If observer passes source (unlikely), reset
+        if (S.observerX < S.sourceX - 50) {
+            S.observerX = S.sourceX + 300;
+        }
+
+        // Emit wavefronts at rate f0
+        S.emitAccumulator += dt * S.freq;
+        while (S.emitAccumulator >= 1) {
+            S.emitAccumulator -= 1;
+            S.wavefronts.push({
+                x: S.sourceX,
+                t: S.time
+            });
+        }
+
+        // Remove old wavefronts (> 6 seconds old)
+        S.wavefronts = S.wavefronts.filter(function(wf){
+            return (S.time - wf.t) < 6;
+        });
+    }
+
+    drawScene();
+    updateReadouts();
+    // Update audio pitch continuously
+    if (osc) updateToneFreq();
+    requestAnimationFrame(animate);
+}
+
+// ============ EVENTS ============
+$('btn-sound').addEventListener('click', toggleSound);
+$('btn-play').addEventListener('click', function(){
+    S.running = !S.running;
+    $('btn-play').textContent = S.running ? '⏸ Pause' : '▶ Start animation';
+    if (S.running && S.soundOn && !osc) startTone();
+});
+$('medium').addEventListener('change', function(e){
+    S.medium = e.target.value;
+    updateReadouts();
+    updateToneFreq();
+});
+$('freq').addEventListener('input', function(e){
+    S.freq = parseFloat(e.target.value);
+    $('v-f').innerText = S.freq.toFixed(0);
+    updateReadouts();
+    updateToneFreq();
+});
+$('vs').addEventListener('input', function(e){
+    S.vs = parseFloat(e.target.value);
+    $('v-vs').innerText = S.vs;
+    updateReadouts();
+    updateToneFreq();
+});
+$('vo').addEventListener('input', function(e){
+    S.vo = parseFloat(e.target.value);
+    $('v-vo').innerText = S.vo;
+    updateReadouts();
+    updateToneFreq();
+});
+$('dist').addEventListener('input', function(e){
+    S.dist = parseFloat(e.target.value);
+    $('v-dist').innerText = S.dist;
+    // Reset positions
+    S.sourceX = S.observerX - S.dist;
+});
+$('trail-toggle').addEventListener('change', function(e){
+    S.showTrail = e.target.checked;
+});
+$('btn-reset').addEventListener('click', function(){
+    S.medium = 'air'; $('medium').value = 'air';
+    S.freq = 440; $('freq').value = 440; $('v-f').innerText = '440';
+    S.vs = 0; $('vs').value = 0; $('v-vs').innerText = '0';
+    S.vo = 0; $('vo').value = 0; $('v-vo').innerText = '0';
+    S.dist = 300; $('dist').value = 300; $('v-dist').innerText = '300';
+    S.sourceX = -300;
+    S.observerX = 0;
+    S.wavefronts = [];
+    S.running = false;
+    $('btn-play').textContent = '▶ Start animation';
+    updateReadouts();
+    updateToneFreq();
+});
+$('btn-observe').addEventListener('click', function(){
+    // Snap observer to a fixed distance from source for measurement
+    S.observerX = 0;
+    S.sourceX = -S.dist;
+    S.wavefronts = [];
+    updateReadouts();
+});
+
+document.querySelectorAll('.tab-btn[data-tab]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+        document.querySelectorAll('.tab-btn[data-tab]').forEach(function(b){ b.classList.remove('active'); });
+        document.getElementById(btn.dataset.tab).classList.add('active');
+        btn.classList.add('active');
+    });
+});
+document.querySelectorAll('[data-challenge]').forEach(function(btn){
+    btn.addEventListener('click', function(){ applyChallenge(btn.dataset.challenge); beep(660,0.08,'sine',0.08); });
+});
+$('btn-quiz-check').addEventListener('click', evaluateQuiz);
+$('btn-quiz-reset').addEventListener('click', resetQuiz);
+$('btn-record').addEventListener('click', recordMeasurement);
+$('btn-clear-notes').addEventListener('click', function(){
+    if (!confirm('Clear notebook?')) return;
+    $('hypothesis').value = ''; $('conclusion').value = ''; $('records').value = '';
+    S.records = [];
+});
+$('btn-export').addEventListener('click', downloadReport);
+
+// Zoom
+var pointers = new Map(), pinch = null;
+function getPos(e){ var r = canvas.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
+canvas.addEventListener('wheel', function(e){
+    e.preventDefault();
+    var cx = e.offsetX, cy = e.offsetY;
+    var wx = (cx - view.x)/view.scale, wy = (cy - view.y)/view.scale;
+    var factor = Math.exp(-e.deltaY * 0.0015);
+    view.scale = Math.max(0.3, Math.min(5, view.scale * factor));
+    view.x = cx - wx * view.scale;
+    view.y = cy - wy * view.scale;
+}, {passive:false});
+canvas.addEventListener('pointerdown', function(e){
+    canvas.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, getPos(e));
+    if (pointers.size === 2) {
+        var pts = Array.from(pointers.values());
+        pinch = {dist: Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y), startScale: view.scale};
+    }
+});
+canvas.addEventListener('pointermove', function(e){
+    if (!pointers.has(e.pointerId)) return;
+    var prev = pointers.get(e.pointerId), pos = getPos(e);
+    pointers.set(e.pointerId, pos);
+    if (pointers.size === 1 && !pinch) {
+        view.x += pos.x - prev.x; view.y += pos.y - prev.y;
+    } else if (pointers.size === 2 && pinch) {
+        var pts = Array.from(pointers.values());
+        var d = Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
+        view.scale = Math.max(0.3, Math.min(5, pinch.startScale * d / pinch.dist));
+    }
+});
+canvas.addEventListener('pointerup', function(e){
+    pointers.delete(e.pointerId);
+    try { canvas.releasePointerCapture(e.pointerId); } catch(_){}
+    if (pointers.size < 2) pinch = null;
+});
+canvas.addEventListener('pointercancel', function(e){ pointers.delete(e.pointerId); pinch = null; });
+
+// Splitter
+(function(){
+    var sim = $('sim-area'), splitter = $('splitter');
+    var dragging = false, startY = 0, startH = 0;
+    splitter.addEventListener('pointerdown', function(e){
+        e.preventDefault(); dragging = true; startY = e.clientY;
+        startH = sim.getBoundingClientRect().height;
+        try { splitter.setPointerCapture(e.pointerId); } catch(_){}
+    });
+    window.addEventListener('pointermove', function(e){
+        if (!dragging) return;
+        var dy = e.clientY - startY;
+        var nh = Math.max(180, Math.min(window.innerHeight-240, Math.round(startH + dy)));
+        sim.style.flex = '0 0 ' + nh + 'px';
+    });
+    window.addEventListener('pointerup', function(e){
+        if (!dragging) return;
+        dragging = false;
+        try { splitter.releasePointerCapture(e.pointerId); } catch(_){}
+    });
+})();
+
+window.addEventListener('resize', function(){ lastW = 0; lastH = 0; });
+
+// ============ BOOT ============
+S.sourceX = -S.dist;
+S.observerX = 0;
+updateReadouts();
+requestAnimationFrame(animate);
+
+})();
+</script>
+</body>
+</html>

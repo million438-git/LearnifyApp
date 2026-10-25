@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Physics: Snell's Law Refraction Lab</title>
+    <style>
+        :root {
+            --primary: #6366f1; --secondary: #f43f5e; --dark: #0f172a;
+            --surface: #ffffff; --bg: #f1f5f9; --glass: rgba(255,255,255,0.9);
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        html, body { height: 100%; }
+        body { margin: 0; background: var(--bg); color: var(--dark); display: flex; flex-direction: column; overflow: auto; -webkit-font-smoothing:antialiased; }
+
+        header { background: var(--dark); color: white; padding: 10px; text-align: center; border-bottom: 3px solid var(--primary); }
+        .lab-container { display: flex; flex: 1; overflow: auto; flex-direction: column; }
+
+        #sim-area { flex: 2 1 440px; position: relative; background: white; border-bottom: 2px solid #e2e8f0; overflow: auto; cursor: crosshair; min-height:340px; }
+        canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+        .splitter { height: 10px; background: linear-gradient(90deg, rgba(0,0,0,0.03), rgba(0,0,0,0.06)); cursor: ns-resize; display:block; }
+        .splitter:hover { background: linear-gradient(90deg, rgba(0,0,0,0.05), rgba(0,0,0,0.09)); }
+
+        .bottom-panel { flex: 3; display: flex; flex-direction: row; background: var(--surface); overflow-y: auto; }
+        .controls { flex: 0 0 360px; padding: 18px; border-right: 1px solid #e2e8f0; min-width: 300px; }
+        .analysis { flex: 1 1 720px; padding: 18px; background: #fafafa; min-width: 420px; }
+
+        .card { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        h4 { margin: 0 0 10px 0; font-size: 0.8rem; color: #64748b; text-transform: uppercase; }
+        .input-row { margin-bottom: 12px; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; }
+        input[type="range"] { width: 100%; accent-color: var(--primary); }
+        select, input[type="number"] { width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; font-family: inherit; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        button { padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit; }
+        .btn-fire { background: var(--primary); color: white; }
+        .btn-fire:hover { background: #4f46e5; }
+        .btn-reset { background: #64748b; color: white; }
+        .btn-reset:hover { background: #475569; }
+        .btn-sound { background: #10b981; color: white; }
+        .btn-sound:hover { background: #059669; }
+        .btn-sound.playing { background: #ef4444; }
+        .btn-sound.playing:hover { background: #dc2626; }
+
+        .hud { position: absolute; top: 10px; left: 10px; background: var(--glass); padding: 8px; border-radius: 8px; font-size: 0.75rem; border: 1px solid #ddd; z-index: 20; }
+        .hud * { pointer-events: auto; }
+        .hud .metrics { pointer-events: none; line-height: 1.7; }
+        .zoom-controls { display:flex; gap:6px; margin-top:6px; }
+        .zoom-controls button { padding:6px 8px; border-radius:6px; border:1px solid rgba(0,0,0,0.06); background:white; cursor:pointer; }
+        .vector-legend { position: absolute; bottom: 10px; left: 10px; font-size: 0.65rem; background: var(--glass); padding: 5px; border-radius: 4px; }
+
+        .tab-btn { padding: 8px 12px; border-radius: 6px; background: #e2e8f0; color: var(--dark); font-weight: 600; font-size: 0.8rem; }
+        .tab-btn:hover { background: #cbd5e1; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        .readouts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+        .readout { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; }
+        .readout span { font-size: 0.7rem; color: #64748b; display: block; }
+        .readout strong { font-size: 1rem; color: var(--dark); }
+
+        .quiz-q { padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+        .quiz-q:last-child { border-bottom: none; }
+        .quiz-q > strong { display: block; margin-bottom: 8px; font-size: 0.9rem; }
+        .quiz-q label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; margin: 3px 6px 3px 0; cursor: pointer; font-weight: 500; }
+        .quiz-q label:hover { background: #eef2ff; border-color: #6366f1; }
+        .explanation {
+            margin-top: 8px; padding: 10px 12px; border-radius: 6px; font-size: 0.82rem; line-height: 1.55;
+            background: #eef2ff; border-left: 3px solid #6366f1; color: #1e293b;
+        }
+        .explanation.correct-box { background: #ecfdf5; border-left-color: #10b981; }
+        .explanation.wrong-box { background: #fef2f2; border-left-color: #dc2626; }
+        .explanation strong { display: block; margin-bottom: 3px; }
+
+        .quiz-section { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6366f1; margin: 12px 0 6px 0; }
+        .quiz-section:first-child { margin-top: 0; }
+
+        #quiz-result { margin-top: 10px; padding: 12px; border-radius: 8px; background: #eef2ff; border: 1px solid #c7d2fe; font-weight: 700; text-align: center; }
+
+        table.formulas { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 6px; }
+        table.formulas th, table.formulas td { border: 1px solid #e2e8f0; padding: 6px 8px; text-align: left; }
+        table.formulas th { background: #f1f5f9; font-weight: 600; }
+        .eq { font-family: 'JetBrains Mono', ui-monospace, monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.82rem; }
+        .note { font-size: 0.82rem; color: #475569; margin-top: 8px; line-height: 1.5; }
+        .sound-hint { background: #fef3c7; border-left: 3px solid #f59e0b; padding: 8px 10px; border-radius: 6px; font-size: 0.82rem; margin-top: 8px; }
+
+        textarea { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 0.85rem; min-height: 64px; resize: vertical; }
+
+        @media (max-width: 768px) {
+            .bottom-panel { flex-direction: column; }
+            .controls { border-right: none; border-bottom: 1px solid #eee; min-width: 0; }
+            .analysis { min-width: 0; }
+            .readouts { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">🔦 Snell's Law — Refraction Interactive Lab</h2>
+    <small>Explore Light Refraction · Critical Angle · Total Internal Reflection · Real Materials</small>
+</header>
+
+<div class="lab-container">
+    <div id="sim-area">
+        <div class="hud">
+            <b>LIVE METRICS</b><br>
+            <div class="metrics">
+                θ₁ (incidence): <span id="hud-i">30.0</span>°<br>
+                θ₂ (refraction): <span id="hud-r">22.1</span>°<br>
+                n₁ → n₂: <span id="hud-n">1.00 → 1.50</span><br>
+                Critical angle: <span id="hud-crit">—</span>
+            </div>
+            <div style="margin-top:6px; font-size:0.75rem;">
+                <label style="display:inline-flex;align-items:center;gap:6px;"><input id="full-scroll-toggle" type="checkbox"> Enable Full Page Scrolling</label>
+            </div>
+        </div>
+        <div class="vector-legend">
+            <span style="color:#f43f5e">● Incident</span> | <span style="color:#6366f1">● Refracted</span> | <span style="color:#10b981">● Reflected</span>
+        </div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div id="splitter" class="splitter" title="Drag to resize simulation area"></div>
+
+    <div class="bottom-panel">
+        <div class="controls">
+            <h4>🧪 Lab Settings</h4>
+
+            <div class="input-row">
+                <button class="btn-sound" id="btn-sound" style="width:100%;">🔈 Enable sound effects</button>
+                <div class="sound-hint" id="sound-hint">Click to enable laser beep, glass tap, and feedback tones.</div>
+            </div>
+
+            <div class="input-row">
+                <label>Medium 1 (above surface)</label>
+                <select id="n1">
+                    <option value="1.000" selected>Air (n = 1.000)</option>
+                    <option value="1.0003">Vaccum/air (n ≈ 1.000)</option>
+                    <option value="1.33">Water (n = 1.33)</option>
+                    <option value="1.36">Ethanol (n = 1.36)</option>
+                    <option value="1.46">Fused quartz (n = 1.46)</option>
+                    <option value="1.52">Crown glass (n = 1.52)</option>
+                    <option value="1.65">Flint glass (n = 1.65)</option>
+                    <option value="2.42">Diamond (n = 2.42)</option>
+                </select>
+            </div>
+
+            <div class="input-row">
+                <label>Medium 2 (below surface)</label>
+                <select id="n2">
+                    <option value="1.000">Vaccum/air (n = 1.000)</option>
+                    <option value="1.33" selected>Water (n = 1.33)</option>
+                    <option value="1.36">Ethanol (n = 1.36)</option>
+                    <option value="1.46">Fused quartz (n = 1.46)</option>
+                    <option value="1.52">Crown glass (n = 1.52)</option>
+                    <option value="1.65">Flint glass (n = 1.65)</option>
+                    <option value="2.42">Diamond (n = 2.42)</option>
+                </select>
+            </div>
+
+            <div class="input-row">
+                <label>Angle of incidence θ₁: <span id="v-i">30</span>°</label>
+                <input type="range" id="angle" min="0" max="89" step="0.5" value="30">
+            </div>
+
+            <div class="input-row">
+                <label>Wavelength λ: <span id="v-wl">550</span> nm</label>
+                <input type="range" id="wl" min="400" max="700" step="10" value="550">
+            </div>
+
+            <div class="input-row">
+                <label style="display:inline-flex;align-items:center;gap:6px;">
+                    <input type="checkbox" id="reflect-toggle" checked> Show reflected ray
+                </label>
+            </div>
+
+            <div class="btn-grid">
+                <button class="btn-fire" id="btn-pulse">💡 Fire laser</button>
+                <button class="btn-reset" id="btn-reset">↺ Reset</button>
+            </div>
+        </div>
+
+        <div class="analysis">
+            <h4>📊 Learn &amp; Practice</h4>
+
+            <div class="readouts">
+                <div class="readout"><span>n₁</span><strong id="ro-n1">1.000</strong></div>
+                <div class="readout"><span>n₂</span><strong id="ro-n2">1.330</strong></div>
+                <div class="readout"><span>Angle of incidence θ₁</span><strong id="ro-i">30.0°</strong></div>
+                <div class="readout"><span>Angle of refraction θ₂</span><strong id="ro-r">22.1°</strong></div>
+                <div class="readout"><span>Critical angle θ_c</span><strong id="ro-crit">—</strong></div>
+                <div class="readout"><span>Speed in medium 1</span><strong id="ro-v1">3.00×10⁸ m/s</strong></div>
+                <div class="readout"><span>Speed in medium 2</span><strong id="ro-v2">2.26×10⁸ m/s</strong></div>
+                <div class="readout"><span>Status</span><strong id="ro-status">Refraction</strong></div>
+            </div>
+
+            <div class="card">
+                <div class="tabs" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                    <button class="tab-btn active" data-tab="formulas">Formulas</button>
+                    <button class="tab-btn" data-tab="quiz">Quiz</button>
+                    <button class="tab-btn" data-tab="challenges">Challenges</button>
+                    <button class="tab-btn" data-tab="notebook">Notebook</button>
+                </div>
+
+                <!-- FORMULAS -->
+                <div id="formulas" class="tab-panel active">
+                    <h3 style="margin:6px 0 8px 0;">Core Formulas — Refraction</h3>
+                    <ul style="font-size:0.9rem; line-height:1.6; padding-left:1rem; margin:0;">
+                        <li><b>Snell's Law:</b> n₁ · sin(θ₁) = n₂ · sin(θ₂)</li>
+                        <li><b>Refraction angle:</b> θ₂ = arcsin[(n₁/n₂) · sin θ₁]</li>
+                        <li><b>Refractive index:</b> n = c / v (c = speed of light in vacuum)</li>
+                        <li><b>Critical angle:</b> sin θ_c = n₂ / n₁ (when n₁ > n₂)</li>
+                        <li><b>Speed of light in medium:</b> v = c / n</li>
+                        <li><b>Wavelength in medium:</b> λ_n = λ_vacuum / n</li>
+                        <li><b>Total internal reflection:</b> θ₁ > θ_c → no transmitted ray</li>
+                    </ul>
+                    <p class="note"><b>💡 Quick tips:</b> Light bends toward the normal when entering a denser medium (higher n). Light bends away from the normal when entering a less dense medium. When going from a denser to a less-dense medium, above the critical angle the light reflects back entirely (total internal reflection) — this is how fiber optics work.</p>
+
+                    <table class="formulas" style="margin-top:12px;">
+                        <tr><th>Quantity</th><th>Formula</th><th>Units</th></tr>
+                        <tr><td>Snell's Law</td><td><span class="eq">n₁ sin θ₁ = n₂ sin θ₂</span></td><td>—</td></tr>
+                        <tr><td>Critical angle</td><td><span class="eq">θ_c = arcsin(n₂/n₁)</span></td><td>°</td></tr>
+                        <tr><td>Speed in medium</td><td><span class="eq">v = c / n</span></td><td>m/s</td></tr>
+                        <tr><td>Wavelength in medium</td><td><span class="eq">λ_n = λ₀ / n</span></td><td>nm</td></tr>
+                    </table>
+                </div>
+
+                <!-- QUIZ -->
+                <div id="quiz" class="tab-panel" style="max-height:600px; overflow:auto;">
+                    <h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+                    <div class="quiz-section">Basic — Refraction</div>
+
+                    <div class="quiz-q" data-q="q1" data-answer="B">
+                        <strong>1. When light passes from air into water, it:</strong>
+                        <label><input type="radio" name="q1" value="A"> Bends away from the normal</label>
+                        <label><input type="radio" name="q1" value="B"> Bends toward the normal</label>
+                        <label><input type="radio" name="q1" value="C"> Goes straight through</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q2" data-answer="B">
+                        <strong>2. Snell's Law is written as:</strong>
+                        <label><input type="radio" name="q2" value="A"> n₁ cos θ₁ = n₂ cos θ₂</label>
+                        <label><input type="radio" name="q2" value="B"> n₁ sin θ₁ = n₂ sin θ₂</label>
+                        <label><input type="radio" name="q2" value="C"> n₁ θ₁ = n₂ θ₂</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q3" data-answer="A">
+                        <strong>3. The refractive index n of a material equals:</strong>
+                        <label><input type="radio" name="q3" value="A"> c / v (vacuum speed / medium speed)</label>
+                        <label><input type="radio" name="q3" value="B"> v / c</label>
+                        <label><input type="radio" name="q3" value="C"> λ / f</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Intermediate — Critical Angle</div>
+
+                    <div class="quiz-q" data-q="q4" data-answer="B">
+                        <strong>4. Total internal reflection can happen when:</strong>
+                        <label><input type="radio" name="q4" value="A"> Going from lower n to higher n</label>
+                        <label><input type="radio" name="q4" value="B"> Going from higher n to lower n and θ > θ_c</label>
+                        <label><input type="radio" name="q4" value="C"> At any angle in any medium</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q5" data-answer="A">
+                        <strong>5. Light going from water (n=1.33) to air (n=1.00). The critical angle is about:</strong>
+                        <label><input type="radio" name="q5" value="A"> 48.8°</label>
+                        <label><input type="radio" name="q5" value="B"> 22.1°</label>
+                        <label><input type="radio" name="q5" value="C"> 90°</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q6" data-answer="A">
+                        <strong>6. Fiber optic cables work because:</strong>
+                        <label><input type="radio" name="q6" value="A"> Light is trapped by total internal reflection</label>
+                        <label><input type="radio" name="q6" value="B"> Light is absorbed and re-emitted</label>
+                        <label><input type="radio" name="q6" value="C"> Mirrors line the inside</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Advanced — Deep Understanding</div>
+
+                    <div class="quiz-q" data-q="q7" data-answer="B">
+                        <strong>7. Light at 30° enters water (n=1.33) from air (n=1.00). What is θ₂?</strong>
+                        <label><input type="radio" name="q7" value="A"> 30°</label>
+                        <label><input type="radio" name="q7" value="B"> 22.1°</label>
+                        <label><input type="radio" name="q7" value="C"> 40.2°</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q8" data-answer="B">
+                        <strong>8. When light enters a medium with higher n, its speed:</strong>
+                        <label><input type="radio" name="q8" value="A"> Increases</label>
+                        <label><input type="radio" name="q8" value="B"> Decreases</label>
+                        <label><input type="radio" name="q8" value="C"> Stays the same</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q9" data-answer="A">
+                        <strong>9. A diamond (n=2.42) sparkles because:</strong>
+                        <label><input type="radio" name="q9" value="A"> Its very small critical angle traps light in total internal reflection</label>
+                        <label><input type="radio" name="q9" value="B"> It reflects more light than glass</label>
+                        <label><input type="radio" name="q9" value="C"> It has a lower refractive index</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="btn-grid" style="margin-top:12px;">
+                        <button class="btn-fire" id="btn-quiz-check">Submit Quiz</button>
+                        <button class="btn-reset" id="btn-quiz-reset">Reset</button>
+                    </div>
+                    <div id="quiz-result" style="display:none;"></div>
+                </div>
+
+                <!-- CHALLENGES -->
+                <div id="challenges" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Interactive Challenges</h3>
+                    <div style="display:flex; flex-direction:column; gap:8px; font-size:0.9rem;">
+                        <div>
+                            <b>Challenge 1 — Air to Water</b><br>
+                            <button class="btn-fire" data-challenge="airwater">Set air → water at 30°</button>
+                        </div>
+                        <div>
+                            <b>Challenge 2 — Find Critical Angle</b><br>
+                            <button class="btn-fire" data-challenge="critical">Water → air at critical angle</button>
+                        </div>
+                        <div>
+                            <b>Challenge 3 — Total Internal Reflection</b><br>
+                            <button class="btn-fire" data-challenge="tir">Water → air at 60° (TIR!)</button>
+                        </div>
+                        <div>
+                            <b>Challenge 4 — Diamond Sparkle</b><br>
+                            <button class="btn-fire" data-challenge="diamond">Diamond → air at 30°</button>
+                        </div>
+                        <div>
+                            <b>Challenge 5 — No Bend</b><br>
+                            <button class="btn-fire" data-challenge="nobend">Same medium both sides</button>
+                        </div>
+                        <div id="challenge-note" style="color:#0f172a; font-size:0.85rem;"></div>
+                        <div id="challenge-result" style="color:#083344; font-weight:600; margin-top:6px;"></div>
+                    </div>
+                </div>
+
+                <!-- NOTEBOOK -->
+                <div id="notebook" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Experiment Notebook</h3>
+                    <label>Prediction / hypothesis</label>
+                    <textarea id="hypothesis" placeholder="What do you expect to happen, and why?"></textarea>
+                    <label style="margin-top:10px; display:block;">Conclusion / evidence</label>
+                    <textarea id="conclusion" placeholder="Explain what your observations show."></textarea>
+                    <label style="margin-top:10px; display:block;">Recorded measurements</label>
+                    <textarea id="records" readonly style="background:#f8fafc; font-family:monospace; font-size:0.75rem; min-height:100px;"></textarea>
+                    <div class="btn-grid" style="margin-top:10px;">
+                        <button class="btn-fire" id="btn-record">📋 Record</button>
+                        <button class="btn-reset" id="btn-clear-notes">Clear</button>
+                    </div>
+                    <button class="btn-fire" style="margin-top:8px; width:100%;" id="btn-export">⬇ Download Report</button>
+                </div>
+
+            </div>
+
+            <div class="card">
+                <b>Real-world fact:</b> <span id="fact-box" style="font-size:0.85rem;">—</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+"use strict";
+(function () {
+    // === Physical constants and materials ===
+    var C = 2.99792458e8; // speed of light (m/s)
+
+    // Real refractive indices at 589 nm (sodium D line)
+    var NAMES = {
+        '1.000':  'Air',
+        '1.0003': 'Air (precision)',
+        '1.33':   'Water',
+        '1.36':   'Ethanol',
+        '1.46':   'Fused quartz',
+        '1.52':   'Crown glass',
+        '1.65':   'Flint glass',
+        '2.42':   'Diamond'
+    };
+
+    // === State ===
+    var S = {
+        n1: 1.000,   // top medium
+        n2: 1.330,   // bottom medium
+        angle: 30,   // degrees, measured from normal
+        wl: 550,     // nm
+        showReflect: true,
+        laserPulse: 0, // animation counter for laser
+        soundOn: false,
+        records: []
+    };
+
+    var $ = function (id) { return document.getElementById(id); };
+
+    // === Canvas ===
+    var canvas = $('canvas');
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var view = { x: 0, y: 0, scale: 1 };
+
+    function resizeCanvas() {
+        var w = canvas.clientWidth, h = canvas.clientHeight;
+        canvas.width = Math.max(1, Math.round(w * dpr));
+        canvas.height = Math.max(1, Math.round(h * dpr));
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function cw() { return canvas.width / dpr; }
+    function ch() { return canvas.height / dpr; }
+
+    // === Web Audio API for sound effects ===
+    var audioCtx = null;
+
+    function initAudio() {
+        if (audioCtx) return;
+        try {
+            var AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) {
+                $('sound-hint').textContent = '⚠ Your browser does not support Web Audio API.';
+                return;
+            }
+            audioCtx = new AC();
+        } catch (err) {
+            $('sound-hint').textContent = '⚠ Audio failed to initialize.';
+        }
+    }
+
+    function playBeep(freq, duration, type) {
+        if (!audioCtx || !S.soundOn) return;
+        try {
+            var osc = audioCtx.createOscillator();
+            var gain = audioCtx.createGain();
+            osc.type = type || 'sine';
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        } catch (e) {}
+    }
+
+    function playLaserSound() {
+        if (!audioCtx || !S.soundOn) return;
+        try {
+            var osc = audioCtx.createOscillator();
+            var gain = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.15);
+        } catch (e) {}
+    }
+
+    function toggleSound() {
+        initAudio();
+        if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        S.soundOn = !S.soundOn;
+        if (S.soundOn) {
+            $('btn-sound').textContent = '🔊 Sound effects ON';
+            $('btn-sound').classList.add('playing');
+            $('sound-hint').textContent = 'Laser beeps, glass tap, and feedback tones are enabled.';
+            playBeep(660, 0.08, 'sine');
+        } else {
+            $('btn-sound').textContent = '🔈 Enable sound effects';
+            $('btn-sound').classList.remove('playing');
+            $('sound-hint').textContent = 'Sound effects disabled.';
+        }
+    }
+
+    // === Physics ===
+    function getTheta2() {
+        var sinTheta2 = (S.n1 / S.n2) * Math.sin(S.angle * Math.PI / 180);
+        if (Math.abs(sinTheta2) > 1) return null; // total internal reflection
+        return Math.asin(sinTheta2) * 180 / Math.PI;
+    }
+
+    function getCriticalAngle() {
+        if (S.n1 <= S.n2) return null; // no critical angle
+        return Math.asin(S.n2 / S.n1) * 180 / Math.PI;
+    }
+
+    function isTIR() {
+        var sinTheta2 = (S.n1 / S.n2) * Math.sin(S.angle * Math.PI / 180);
+        return Math.abs(sinTheta2) > 1;
+    }
+
+    function getV(n) { return C / n; }
+    function getWavelengthInMedium(n) { return S.wl / n; }
+
+    // === Drawing ===
+    function drawScene() {
+        var w = cw(), h = ch();
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.save();
+        ctx.translate(view.x, view.y);
+        ctx.scale(view.scale, view.scale);
+
+        var W = w / view.scale, H = h / view.scale;
+        var cx = W / 2;
+        var cy = H * 0.5; // interface
+
+        // === Backgrounds for two media ===
+        // Top medium (n1) — air (light blue)
+        var topAlpha = Math.min(0.25, (S.n1 - 1) * 0.3);
+        ctx.fillStyle = 'rgba(148, 197, 253, ' + (0.08 + topAlpha) + ')';
+        ctx.fillRect(0, 0, W, cy);
+
+        // Bottom medium (n2) — colored by refraction index
+        var n2Factor = Math.min(1, (S.n2 - 1) / 1.5);
+        ctx.fillStyle = 'rgba(96, 165, 250, ' + (0.15 + n2Factor * 0.35) + ')';
+        ctx.fillRect(0, cy, W, H - cy);
+
+        // Interface line
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, cy);
+        ctx.lineTo(W, cy);
+        ctx.stroke();
+
+        // Normal (dashed vertical line)
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([6, 6]);
+        ctx.beginPath();
+        ctx.moveTo(cx, 20);
+        ctx.lineTo(cx, H - 20);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Labels for media
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 14px Inter';
+        ctx.textAlign = 'left';
+        ctx.fillText('n₁ = ' + S.n1.toFixed(3) + ' (' + (NAMES[String(S.n1)] || 'medium') + ')', 20, 28);
+        ctx.fillText('n₂ = ' + S.n2.toFixed(3) + ' (' + (NAMES[String(S.n2)] || 'medium') + ')', 20, cy + 28);
+
+        // Angle arc
+        var radius = 80;
+        var theta1Rad = S.angle * Math.PI / 180;
+        var theta2Rad = getTheta2() !== null ? getTheta2() * Math.PI / 180 : 0;
+
+        // Incident ray (from top-left down to origin)
+        var rayLen = 260;
+        var incidentEndX = cx - Math.sin(theta1Rad) * rayLen;
+        var incidentEndY = cy - Math.cos(theta1Rad) * rayLen;
+        ctx.strokeStyle = '#f43f5e';
+        ctx.lineWidth = 3;
+        ctx.shadowColor = '#f43f5e';
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.moveTo(incidentEndX, incidentEndY);
+        ctx.lineTo(cx, cy);
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Arrow on incident ray
+        drawArrow(cx, cy, incidentEndX, incidentEndY, '#f43f5e');
+
+        // Reflected ray (optional, same angle on other side)
+        if (S.showReflect) {
+            var reflEndX = cx + Math.sin(theta1Rad) * rayLen;
+            var reflEndY = cy - Math.cos(theta1Rad) * rayLen;
+            ctx.strokeStyle = '#10b981';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 4]);
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(reflEndX, reflEndY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            drawArrow(reflEndX, reflEndY, cx, cy, '#10b981');
+        }
+
+        // Refracted ray or TIR
+        var tir = isTIR();
+        var theta2 = getTheta2();
+
+        if (tir) {
+            // TIR — show only reflection, brighter
+            ctx.strokeStyle = '#f43f5e';
+            ctx.lineWidth = 3;
+            var reflEndX2 = cx + Math.sin(theta1Rad) * rayLen;
+            var reflEndY2 = cy - Math.cos(theta1Rad) * rayLen;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(reflEndX2, reflEndY2);
+            ctx.stroke();
+            // TIR banner
+            ctx.fillStyle = '#fef2f2';
+            ctx.fillRect(cx + 100, cy + 20, 220, 36);
+            ctx.strokeStyle = '#dc2626';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(cx + 100, cy + 20, 220, 36);
+            ctx.fillStyle = '#dc2626';
+            ctx.font = 'bold 13px Inter';
+            ctx.textAlign = 'left';
+            ctx.fillText('⚠ TOTAL INTERNAL REFLECTION', cx + 108, cy + 42);
+        } else {
+            // Refracted ray down
+            var refrEndX = cx + Math.sin(theta2Rad) * rayLen;
+            var refrEndY = cy + Math.cos(theta2Rad) * rayLen;
+            ctx.strokeStyle = '#6366f1';
+            ctx.lineWidth = 3;
+            ctx.shadowColor = '#6366f1';
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(refrEndX, refrEndY);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            drawArrow(refrEndX, refrEndY, cx, cy, '#6366f1');
+
+            // θ₂ arc
+            ctx.strokeStyle = '#6366f1';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 60, Math.PI / 2 - theta2Rad, Math.PI / 2);
+            ctx.stroke();
+            // θ₂ label
+            var lblX = cx + Math.cos(Math.PI / 4 - theta2Rad / 2) * 80;
+            var lblY = cy + Math.sin(Math.PI / 4 - theta2Rad / 2) * 80;
+            ctx.fillStyle = '#6366f1';
+            ctx.font = 'bold 12px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText('θ₂ = ' + theta2.toFixed(1) + '°', lblX, lblY + 4);
+        }
+
+        // θ₁ arc
+        ctx.strokeStyle = '#f43f5e';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 60, Math.PI / 2 - theta1Rad, Math.PI / 2);
+        ctx.stroke();
+        // θ₁ label
+        var lblIX = cx - Math.cos(Math.PI / 4 - theta1Rad / 2) * 80;
+        var lblIY = cy - Math.sin(Math.PI / 4 - theta1Rad / 2) * 80;
+        ctx.fillStyle = '#f43f5e';
+        ctx.font = 'bold 12px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('θ₁ = ' + S.angle.toFixed(1) + '°', lblIX, lblIY + 4);
+
+        // Laser pulse animation
+        if (S.laserPulse > 0) {
+            var progress = 1 - S.laserPulse / 40;
+            var startX = incidentEndX;
+            var startY = incidentEndY;
+            var curX = startX + (cx - startX) * progress;
+            var curY = startY + (cy - startY) * progress;
+            ctx.fillStyle = 'rgba(244, 63, 94, 0.9)';
+            ctx.beginPath();
+            ctx.arc(curX, curY, 6, 0, Math.PI * 2);
+            ctx.fill();
+            S.laserPulse--;
+        }
+
+        // Medium labels
+        ctx.fillStyle = '#64748b';
+        ctx.font = '11px Inter';
+        ctx.textAlign = 'right';
+        ctx.fillText('Medium 1 (above)', W - 20, 28);
+        ctx.fillText('Medium 2 (below)', W - 20, cy + 28);
+
+        // Wavelength display
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#64748b';
+        ctx.fillText('λ_vac = ' + S.wl + ' nm', W - 20, H - 40);
+        ctx.fillText('λ₁ = ' + (S.wl / S.n1).toFixed(1) + ' nm', W - 20, H - 25);
+        ctx.fillText('λ₂ = ' + (S.wl / S.n2).toFixed(1) + ' nm', W - 20, H - 10);
+
+        ctx.restore();
+
+        // Caption
+        ctx.fillStyle = '#475569';
+        ctx.font = '11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Light ray bends according to n₁ sin θ₁ = n₂ sin θ₂ · angles measured from normal', w / 2, h - 8);
+    }
+
+    function drawArrow(fromX, fromY, toX, toY, color) {
+        var angle = Math.atan2(toY - fromY, toX - fromX);
+        var sz = 10;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - sz * Math.cos(angle - 0.4), toY - sz * Math.sin(angle - 0.4));
+        ctx.lineTo(toX - sz * Math.cos(angle + 0.4), toY - sz * Math.sin(angle + 0.4));
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    // === Readouts ===
+    function updateReadouts() {
+        var theta2 = getTheta2();
+        var crit = getCriticalAngle();
+        var tir = isTIR();
+        var v1 = getV(S.n1);
+        var v2 = getV(S.n2);
+        var status = tir ? 'Total internal reflection' : 'Refraction';
+
+        $('ro-n1').innerText = S.n1.toFixed(3);
+        $('ro-n2').innerText = S.n2.toFixed(3);
+        $('ro-i').innerText = S.angle.toFixed(1) + '°';
+        $('ro-r').innerText = theta2 !== null ? theta2.toFixed(2) + '°' : '— (TIR)';
+        $('ro-crit').innerText = crit !== null ? crit.toFixed(2) + '°' : 'N/A (n₁ ≤ n₂)';
+        $('ro-v1').innerText = v1.toExponential(3) + ' m/s';
+        $('ro-v2').innerText = v2.toExponential(3) + ' m/s';
+        $('ro-status').innerText = status;
+        $('ro-status').style.color = tir ? '#dc2626' : '#0f172a';
+
+        $('hud-i').innerText = S.angle.toFixed(1);
+        $('hud-r').innerText = theta2 !== null ? theta2.toFixed(1) : 'TIR';
+        $('hud-n').innerText = S.n1.toFixed(2) + ' → ' + S.n2.toFixed(2);
+        $('hud-crit').innerText = crit !== null ? crit.toFixed(1) + '°' : '—';
+
+        // Real fact
+        var fact;
+        if (tir) {
+            fact = 'Total internal reflection! The light cannot escape the denser medium at this angle — this is exactly how fiber optics transmit data over thousands of km without loss.';
+        } else if (S.n2 > S.n1) {
+            fact = 'Light entering a denser medium (higher n) bends toward the normal. Water (n=1.33) slows light to about 2.25×10⁸ m/s — 25% slower than vacuum.';
+        } else if (S.n2 < S.n1) {
+            fact = 'Light entering a less-dense medium bends away from the normal. At the critical angle (' + (crit !== null ? crit.toFixed(1) + '°' : '—') + '), the refracted ray grazes the surface.';
+        } else {
+            fact = 'Same refractive index on both sides — light passes straight through with no bending.';
+        }
+        $('fact-box').innerText = fact;
+    }
+
+    // === Quiz ===
+    var QUIZ_EXPLAIN = {
+        q1: { correct: 'B', why: 'Water has higher n (1.33) than air (1.00). By Snell\'s Law, light bends <b>toward the normal</b> when entering a denser medium.', tip: 'Mnemonic: "denser = slower = closer to normal".' },
+        q2: { correct: 'B', why: 'Snell\'s Law: <b>n₁ sin θ₁ = n₂ sin θ₂</b>. The sines (not the angles themselves) are proportional to the refractive indices.', tip: 'This is why doubling θ₁ does NOT double θ₂.' },
+        q3: { correct: 'A', why: 'Refractive index <b>n = c / v</b> — the ratio of the speed of light in vacuum to the speed in the medium. Air ≈ 1.000, water = 1.33, diamond = 2.42.', tip: 'n is always ≥ 1 because light never travels faster than c.' },
+        q4: { correct: 'B', why: 'Total internal reflection requires (1) light going from <b>higher n</b> to <b>lower n</b>, and (2) incident angle <b>greater than the critical angle</b>.', tip: 'From lower to higher n, light always refracts through — no TIR possible.' },
+        q5: { correct: 'A', why: 'θ_c = arcsin(n₂/n₁) = arcsin(1.00/1.33) = arcsin(0.7519) ≈ <b>48.8°</b>.', tip: 'At 48.8° the refracted ray skims the surface; above that, TIR.' },
+        q6: { correct: 'A', why: 'Fiber optic cables work by <b>total internal reflection</b> — light bounces along inside the glass core at angles above the critical angle, staying trapped over kilometers.', tip: 'The cladding has slightly lower n than the core, ensuring TIR.' },
+        q7: { correct: 'B', why: 'sin θ₂ = (n₁/n₂) sin θ₁ = (1.00/1.33)(sin 30°) = 0.7519 × 0.5 = 0.376 → θ₂ = arcsin(0.376) = <b>22.1°</b>.', tip: 'This matches the simulation default — try it in the lab!' },
+        q8: { correct: 'B', why: 'v = c/n. Higher n means slower light. In water (n=1.33), light travels at c/1.33 ≈ 2.25×10⁸ m/s — 25% slower than vacuum.', tip: 'In diamond (n=2.42), light crawls at only 1.24×10⁸ m/s.' },
+        q9: { correct: 'A', why: 'Diamond\'s very high n (2.42) gives a very small critical angle (~24.4°). Light entering a diamond gets trapped in total internal reflection, bouncing many times before exiting — creating the sparkle.', tip: 'Diamond cutters use precise angles to maximize this sparkle effect.' }
+    };
+
+    function evaluateQuiz() {
+        var qs = document.querySelectorAll('.quiz-q');
+        var score = 0, total = qs.length;
+
+        qs.forEach(function (q) {
+            var name = q.dataset.q;
+            var correct = q.dataset.answer;
+            var chosen = q.querySelector('input[name="' + name + '"]:checked');
+            var expl = q.querySelector('.explanation');
+            var data = QUIZ_EXPLAIN[name];
+
+            expl.hidden = false;
+            expl.className = 'explanation';
+
+            if (chosen && chosen.value === correct) {
+                score++;
+                expl.classList.add('correct-box');
+                expl.innerHTML = '<strong>✓ Correct!</strong>' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            } else {
+                expl.classList.add('wrong-box');
+                var chosenVal = chosen ? chosen.value : '—';
+                expl.innerHTML = '<strong>✗ Correct answer is ' + correct + '</strong>You chose ' + chosenVal + '. ' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            }
+        });
+
+        var pct = Math.round(score / total * 100);
+        var msg = '💪 Keep exploring!';
+        if (pct === 100) msg = '🌟 Perfect score!';
+        else if (pct >= 78) msg = '🎉 Excellent work!';
+        else if (pct >= 55) msg = '👍 Good effort! Review the explanations.';
+
+        if (S.soundOn) {
+            playBeep(pct >= 78 ? 880 : 440, 0.15, 'sine');
+            if (pct >= 78) setTimeout(function () { playBeep(1320, 0.2, 'sine'); }, 150);
+        }
+
+        var result = $('quiz-result');
+        result.style.display = 'block';
+        result.innerHTML = '<div style="font-size:1.4rem; color:#4338ca;">' + score + '/' + total + ' · ' + pct + '%</div><div style="font-size:0.85rem; color:#334155; margin-top:4px; font-weight:500;">' + msg + '</div>';
+    }
+
+    function resetQuiz() {
+        document.querySelectorAll('.quiz-q').forEach(function (q) {
+            q.querySelectorAll('input[type=radio]').forEach(function (r) { r.checked = false; });
+            var expl = q.querySelector('.explanation');
+            expl.hidden = true;
+            expl.innerHTML = '';
+            expl.className = 'explanation';
+        });
+        $('quiz-result').style.display = 'none';
+        $('quiz-result').innerHTML = '';
+    }
+
+    // === Challenges ===
+    function applyChallenge(id) {
+        var note = $('challenge-note');
+        var cres = $('challenge-result');
+        note.innerText = '';
+        cres.innerText = '';
+
+        if (id === 'airwater') {
+            S.n1 = 1.000; $('n1').value = '1.000';
+            S.n2 = 1.330; $('n2').value = '1.33';
+            S.angle = 30; $('angle').value = 30; $('v-i').innerText = '30';
+            var t2 = getTheta2();
+            note.innerText = 'Air (n=1.00) → Water (n=1.33) at 30°. Light bends toward the normal.';
+            cres.innerText = 'θ₂ = ' + t2.toFixed(2) + '° (was 30° in air — bends inward to 22.1° in water)';
+        } else if (id === 'critical') {
+            S.n1 = 1.330; $('n1').value = '1.33';
+            S.n2 = 1.000; $('n2').value = '1.000';
+            var crit = Math.asin(1 / 1.33) * 180 / Math.PI;
+            S.angle = Math.round(crit * 10) / 10;
+            $('angle').value = S.angle; $('v-i').innerText = S.angle.toFixed(1);
+            note.innerText = 'At critical angle ' + crit.toFixed(2) + '°, refracted ray grazes the surface (θ₂ = 90°).';
+            cres.innerText = 'θ_c = ' + crit.toFixed(2) + '° · refracted ray travels along interface';
+        } else if (id === 'tir') {
+            S.n1 = 1.330; $('n1').value = '1.33';
+            S.n2 = 1.000; $('n2').value = '1.000';
+            S.angle = 60; $('angle').value = 60; $('v-i').innerText = '60';
+            note.innerText = 'Water → Air at 60° — above critical angle. ALL light is totally reflected!';
+            cres.innerText = 'θ₁ = 60° > θ_c (48.8°) → total internal reflection, no refracted ray';
+        } else if (id === 'diamond') {
+            S.n1 = 2.420; $('n1').value = '2.42';
+            S.n2 = 1.000; $('n2').value = '1.000';
+            S.angle = 30; $('angle').value = 30; $('v-i').innerText = '30';
+            var critD = Math.asin(1 / 2.42) * 180 / Math.PI;
+            note.innerText = 'Diamond (n=2.42) → Air at 30°. Critical angle is only ' + critD.toFixed(1) + '° — light gets trapped and sparkles!';
+            cres.innerText = 'θ_c (diamond) = ' + critD.toFixed(2) + '° · 30° is well below critical → light exits but at large angle';
+        } else if (id === 'nobend') {
+            S.n1 = 1.330; $('n1').value = '1.33';
+            S.n2 = 1.330; $('n2').value = '1.33';
+            S.angle = 30; $('angle').value = 30; $('v-i').innerText = '30';
+            note.innerText = 'Same n on both sides → light passes straight through with no bending.';
+            cres.innerText = 'θ₁ = θ₂ = 30° (Snell\'s Law: n·sin 30° = n·sin θ₂ → θ₂ = 30°)';
+        }
+        updateReadouts();
+    }
+
+    // === Notebook ===
+    function recordMeasurement() {
+        var theta2 = getTheta2();
+        var line = new Date().toLocaleTimeString() + ' | n₁=' + S.n1.toFixed(3) + ' (' + (NAMES[String(S.n1)] || '?') + ') | n₂=' + S.n2.toFixed(3) + ' (' + (NAMES[String(S.n2)] || '?') + ') | θ₁=' + S.angle.toFixed(1) + '° | θ₂=' + (theta2 !== null ? theta2.toFixed(2) + '°' : 'TIR') + ' | λ=' + S.wl + ' nm | status=' + (isTIR() ? 'TIR' : 'refract');
+        S.records.push(line);
+        $('records').value = S.records.join('\n');
+        $('records').scrollTop = $('records').scrollHeight;
+    }
+
+    function downloadReport() {
+        var theta2 = getTheta2();
+        var crit = getCriticalAngle();
+        var text = 'LEARNIFY - SNELL\'S LAW REFRACTION - LAB REPORT\n' +
+            'Date: ' + new Date().toLocaleString() + '\n\n' +
+            'CURRENT STATE\n' +
+            'Medium 1: n = ' + S.n1.toFixed(4) + ' (' + (NAMES[String(S.n1)] || '?') + ')\n' +
+            'Medium 2: n = ' + S.n2.toFixed(4) + ' (' + (NAMES[String(S.n2)] || '?') + ')\n' +
+            'Angle of incidence θ₁ = ' + S.angle.toFixed(2) + '°\n' +
+            'Angle of refraction θ₂ = ' + (theta2 !== null ? theta2.toFixed(3) + '°' : 'no refraction (TIR)') + '\n' +
+            'Critical angle θ_c = ' + (crit !== null ? crit.toFixed(3) + '°' : 'N/A (n₁ ≤ n₂)') + '\n' +
+            'Status: ' + (isTIR() ? 'TOTAL INTERNAL REFLECTION' : 'Refraction') + '\n' +
+            'Wavelength (vacuum) = ' + S.wl + ' nm\n' +
+            'Wavelength in medium 1 = ' + (S.wl / S.n1).toFixed(1) + ' nm\n' +
+            'Wavelength in medium 2 = ' + (S.wl / S.n2).toFixed(1) + ' nm\n' +
+            'Speed in medium 1 = ' + getV(S.n1).toExponential(4) + ' m/s\n' +
+            'Speed in medium 2 = ' + getV(S.n2).toExponential(4) + ' m/s\n\n' +
+            'CALCULATION (Snell\'s Law)\n' +
+            'n₁ sin θ₁ = n₂ sin θ₂\n' +
+            S.n1.toFixed(3) + ' × sin(' + S.angle.toFixed(1) + '°) = ' + (S.n1 * Math.sin(S.angle * Math.PI / 180)).toFixed(4) + '\n' +
+            'sin θ₂ = ' + (S.n1 * Math.sin(S.angle * Math.PI / 180) / S.n2).toFixed(4) + '\n' +
+            'θ₂ = ' + (theta2 !== null ? theta2.toFixed(3) + '°' : 'undefined — angle exceeds 90°') + '\n\n' +
+            'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+            'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+            'MEASUREMENTS\n' + $('records').value + '\n\n' +
+            'LIMITATIONS\nIdeal ray optics. Assumes flat interface and monochromatic light. Does not include polarization effects, Fresnel reflection coefficients, or dispersion (n varies with wavelength). Real materials have wavelength-dependent n. Educational use only.\n';
+        var blob = new Blob([text], { type: 'text/plain' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'snells-law-report.txt';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    // === Animation ===
+    function animate() {
+        drawScene();
+        requestAnimationFrame(animate);
+    }
+
+    // === Event wiring ===
+    $('btn-sound').addEventListener('click', toggleSound);
+    $('n1').addEventListener('change', function (e) {
+        S.n1 = parseFloat(e.target.value);
+        updateReadouts();
+        if (S.soundOn) playBeep(440, 0.06, 'sine');
+    });
+    $('n2').addEventListener('change', function (e) {
+        S.n2 = parseFloat(e.target.value);
+        updateReadouts();
+        if (S.soundOn) playBeep(440, 0.06, 'sine');
+    });
+    $('angle').addEventListener('input', function (e) {
+        S.angle = parseFloat(e.target.value);
+        $('v-i').innerText = S.angle.toFixed(1);
+        updateReadouts();
+        if (S.soundOn && S.angle % 5 === 0) playBeep(300 + S.angle * 6, 0.03, 'sine');
+    });
+    $('wl').addEventListener('input', function (e) {
+        S.wl = parseFloat(e.target.value);
+        $('v-wl').innerText = S.wl;
+    });
+    $('reflect-toggle').addEventListener('change', function (e) {
+        S.showReflect = e.target.checked;
+    });
+    $('btn-pulse').addEventListener('click', function () {
+        S.laserPulse = 40;
+        playLaserSound();
+    });
+    $('btn-reset').addEventListener('click', function () {
+        S.n1 = 1.000;
+        S.n2 = 1.330;
+        S.angle = 30;
+        S.wl = 550;
+        S.showReflect = true;
+        S.laserPulse = 0;
+        $('n1').value = '1.000';
+        $('n2').value = '1.33';
+        $('angle').value = '30'; $('v-i').innerText = '30';
+        $('wl').value = '550'; $('v-wl').innerText = '550';
+        $('reflect-toggle').checked = true;
+        updateReadouts();
+    });
+
+    document.querySelectorAll('.tab-btn[data-tab]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+            document.querySelectorAll('.tab-btn[data-tab]').forEach(function (b) { b.classList.remove('active'); });
+            document.getElementById(btn.dataset.tab).classList.add('active');
+            btn.classList.add('active');
+        });
+    });
+
+    document.querySelectorAll('[data-challenge]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            applyChallenge(btn.dataset.challenge);
+            if (S.soundOn) playBeep(660, 0.08, 'sine');
+        });
+    });
+
+    $('btn-quiz-check').addEventListener('click', evaluateQuiz);
+    $('btn-quiz-reset').addEventListener('click', resetQuiz);
+
+    $('btn-record').addEventListener('click', recordMeasurement);
+    $('btn-clear-notes').addEventListener('click', function () {
+        if (!confirm('Clear all notebook fields?')) return;
+        $('hypothesis').value = '';
+        $('conclusion').value = '';
+        $('records').value = '';
+        S.records = [];
+    });
+    $('btn-export').addEventListener('click', downloadReport);
+
+    // Zoom & pan
+    var fullScroll = false;
+    var pointers = new Map();
+    var pinch = null;
+
+    $('full-scroll-toggle').addEventListener('change', function (e) {
+        fullScroll = e.target.checked;
+        canvas.style.touchAction = fullScroll ? 'auto' : 'none';
+        pointers.clear();
+        pinch = null;
+    });
+
+    function getPos(e) {
+        var r = canvas.getBoundingClientRect();
+        return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+
+    canvas.addEventListener('wheel', function (e) {
+        if (fullScroll) return;
+        e.preventDefault();
+        var cx = e.offsetX, cy = e.offsetY;
+        var wx = (cx - view.x) / view.scale;
+        var wy = (cy - view.y) / view.scale;
+        var factor = Math.exp(-e.deltaY * 0.0015);
+        view.scale = Math.max(0.3, Math.min(5, view.scale * factor));
+        view.x = cx - wx * view.scale;
+        view.y = cy - wy * view.scale;
+    }, { passive: false });
+
+    canvas.addEventListener('pointerdown', function (e) {
+        if (fullScroll) return;
+        canvas.setPointerCapture(e.pointerId);
+        pointers.set(e.pointerId, getPos(e));
+        if (pointers.size === 2) {
+            var pts = Array.from(pointers.values());
+            pinch = { dist: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y), startScale: view.scale };
+        }
+    });
+    canvas.addEventListener('pointermove', function (e) {
+        if (fullScroll || !pointers.has(e.pointerId)) return;
+        var prev = pointers.get(e.pointerId);
+        var pos = getPos(e);
+        pointers.set(e.pointerId, pos);
+        if (pointers.size === 1 && !pinch) {
+            view.x += pos.x - prev.x;
+            view.y += pos.y - prev.y;
+        } else if (pointers.size === 2 && pinch) {
+            var pts = Array.from(pointers.values());
+            var d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+            view.scale = Math.max(0.3, Math.min(5, pinch.startScale * d / pinch.dist));
+        }
+    });
+    canvas.addEventListener('pointerup', function (e) {
+        if (fullScroll) return;
+        pointers.delete(e.pointerId);
+        try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
+        if (pointers.size < 2) pinch = null;
+    });
+    canvas.addEventListener('pointercancel', function (e) {
+        pointers.delete(e.pointerId);
+        pinch = null;
+    });
+
+    (function () {
+        var hud = document.querySelector('.hud');
+        if (!hud) return;
+        var z = document.createElement('div');
+        z.className = 'zoom-controls';
+        z.innerHTML = '<button id="zoom-out">-</button><button id="zoom-reset">Reset</button><button id="zoom-in">+</button>';
+        hud.appendChild(z);
+        $('zoom-in').addEventListener('click', function () { view.scale = Math.min(5, view.scale * 1.25); });
+        $('zoom-out').addEventListener('click', function () { view.scale = Math.max(0.3, view.scale / 1.25); });
+        $('zoom-reset').addEventListener('click', function () { view.x = 0; view.y = 0; view.scale = 1; });
+    })();
+
+    (function () {
+        var sim = $('sim-area'), splitter = $('splitter');
+        if (!sim || !splitter) return;
+        var dragging = false, startY = 0, startH = 0;
+        var minH = 160, maxH = window.innerHeight - 220;
+
+        splitter.addEventListener('pointerdown', function (e) {
+            e.preventDefault();
+            dragging = true;
+            startY = e.clientY;
+            startH = sim.getBoundingClientRect().height;
+            try { splitter.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+        window.addEventListener('pointermove', function (e) {
+            if (!dragging) return;
+            var dy = e.clientY - startY;
+            var nh = Math.max(minH, Math.min(maxH, Math.round(startH + dy)));
+            sim.style.flex = '0 0 ' + nh + 'px';
+            resizeCanvas();
+        });
+        window.addEventListener('pointerup', function (e) {
+            if (!dragging) return;
+            dragging = false;
+            try { splitter.releasePointerCapture(e.pointerId); } catch (err) {}
+        });
+        splitter.addEventListener('dblclick', function () {
+            sim.style.flex = '';
+            resizeCanvas();
+        });
+    })();
+
+    window.addEventListener('resize', function () { resizeCanvas(); });
+
+    // === Boot ===
+    resizeCanvas();
+    updateReadouts();
+    animate();
+})();
+</script>
+</body>
+</html>

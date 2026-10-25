@@ -169,7 +169,7 @@ public class HelpSupportActivity extends BaseActivity {
             // Real-time Database Link: Admin will see this in Support Management
             boolean success = repository.getLocalDb().insertSupportTicket(currentUsername, title, cat, desc);
             if (success) {
-                Toast.makeText(this, "✅ Problem Reported! Admins are reviewing your ticket.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Problem Reported! Admins are reviewing your ticket.", Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(this, "Database Error. Please try again.", Toast.LENGTH_SHORT).show();
             }

@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f172a">
+<title>Bohr Model of Hydrogen — Interactive Physics Laboratory</title>
+<style>
+:root{
+  --primary:#6366f1; --secondary:#f43f5e; --dark:#0f172a;
+  --surface:#ffffff; --bg:#f1f5f9; --glass:rgba(255,255,255,0.92);
+  --accent:#10b981; --warn:#f59e0b; --violet:#8b5cf6;
+  --uv:#7c3aed; --vis:#10b981; --ir:#b45309;
+}
+*{box-sizing:border-box;font-family:'Inter',system-ui,sans-serif;}
+html,body{height:100%;}
+body{margin:0;background:var(--bg);color:var(--dark);display:flex;flex-direction:column;overflow:auto;-webkit-font-smoothing:antialiased;}
+header{background:var(--dark);color:#fff;padding:10px;text-align:center;border-bottom:3px solid var(--primary);}
+.lab-container{display:flex;flex:1;overflow:auto;flex-direction:column;}
+
+#sim-area{flex:2 1 480px;position:relative;background:#fff;border-bottom:2px solid #e2e8f0;overflow:auto;cursor:crosshair;min-height:340px;}
+canvas{width:100%;height:100%;display:block;touch-action:none;}
+.splitter{height:10px;background:linear-gradient(90deg,rgba(0,0,0,.03),rgba(0,0,0,.06));cursor:ns-resize;display:block;}
+.splitter:hover{background:linear-gradient(90deg,rgba(0,0,0,.05),rgba(0,0,0,.09));}
+
+.bottom-panel{flex:3;display:flex;flex-direction:row;background:var(--surface);overflow-y:auto;}
+.controls{flex:0 0 360px;padding:18px;border-right:1px solid #e2e8f0;min-width:300px;}
+.analysis{flex:1 1 720px;padding:18px;background:#fafafa;min-width:420px;}
+
+.card{background:#fff;border:1px solid #e2e8f0;padding:12px;border-radius:8px;margin-bottom:10px;}
+h4{margin:0 0 10px 0;font-size:.8rem;color:#64748b;text-transform:uppercase;}
+.input-row{margin-bottom:12px;}
+label{display:block;font-size:.8rem;font-weight:600;margin-bottom:4px;}
+input[type=range]{width:100%;accent-color:var(--primary);}
+input[type=number],select{width:100%;padding:6px;border-radius:6px;border:1px solid #cbd5e1;background:#fff;font-family:inherit;}
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+button{padding:10px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;transition:.2s;font-family:inherit;}
+.btn-fire{background:var(--primary);color:#fff;}
+.btn-fire:hover{background:#4f46e5;}
+.btn-reset{background:#64748b;color:#fff;}
+.btn-reset:hover{background:#475569;}
+.btn-ghost{background:#e2e8f0;color:var(--dark);}
+.btn-ghost:hover{background:#cbd5e1;}
+
+.hud{position:absolute;top:10px;left:10px;background:var(--glass);padding:8px 10px;border-radius:8px;font-size:.75rem;border:1px solid #ddd;z-index:20;backdrop-filter:blur(6px);max-width:260px;}
+.hud b{color:var(--dark);font-size:.7rem;letter-spacing:.4px;}
+.hud .metrics{line-height:1.7;}
+.hud span.val{color:var(--primary);font-weight:700;font-variant-numeric:tabular-nums;}
+.zoom-controls{display:flex;gap:6px;margin-top:6px;}
+.zoom-controls button{padding:6px 8px;border-radius:6px;border:1px solid rgba(0,0,0,.06);background:#fff;cursor:pointer;font-size:.75rem;}
+.legend-box{position:absolute;bottom:10px;left:10px;font-size:.7rem;background:var(--glass);padding:6px 8px;border-radius:6px;border:1px solid #eee;backdrop-filter:blur(6px);max-width:300px;line-height:1.7;}
+.legend-box span{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:middle;}
+
+.tab-btn{padding:8px 12px;border-radius:6px;background:#e2e8f0;color:var(--dark);font-size:.8rem;}
+.tab-btn:hover{background:#cbd5e1;}
+.tab-btn.active{background:var(--primary);color:#fff;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+.readouts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px;}
+.readout{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;}
+.readout span{font-size:.7rem;color:#64748b;display:block;}
+.readout strong{font-size:1.05rem;color:var(--dark);font-variant-numeric:tabular-nums;}
+
+.q-res{font-size:.75rem;font-weight:700;margin-left:6px;}
+.correct{color:#16a34a;}
+.wrong{color:#dc2626;}
+.eq{font-family:'JetBrains Mono',ui-monospace,monospace;background:#f1f5f9;padding:4px 8px;border-radius:4px;font-size:.85rem;display:inline-block;margin:2px 0;}
+.note{font-size:.85rem;color:#475569;margin-top:6px;}
+.warn{color:#b45309;font-weight:600;}
+.spectrum-strip{height:36px;border-radius:4px;margin:6px 0;position:relative;border:1px solid #cbd5e1;overflow:hidden;}
+.spectrum-strip .line{position:absolute;top:0;bottom:0;width:2px;transform:translateX(-1px);}
+table.formulas{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:6px;}
+table.formulas th,table.formulas td{border:1px solid #e2e8f0;padding:6px 8px;text-align:left;vertical-align:top;}
+table.formulas th{background:#f1f5f9;font-weight:600;}
+.series-chip{display:inline-block;padding:2px 8px;border-radius:99px;font-size:.7rem;font-weight:700;margin-left:6px;}
+.chip-lyman{background:#ede9fe;color:#6d28d9;}
+.chip-balmer{background:#d1fae5;color:#065f46;}
+.chip-paschen{background:#fef3c7;color:#92400e;}
+.chip-brackett{background:#fee2e2;color:#991b1b;}
+.chip-pfund{background:#e0e7ff;color:#3730a3;}
+textarea{width:100%;padding:8px;border-radius:6px;border:1px solid #cbd5e1;font-family:inherit;font-size:.85rem;min-height:64px;resize:vertical;}
+
+@media(max-width:768px){
+  .bottom-panel{flex-direction:column;}
+  .controls{border-right:none;border-bottom:1px solid #eee;min-width:0;}
+  .analysis{min-width:0;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h2 style="margin:0;font-size:1.1rem;">⚛️ Bohr Model of Hydrogen — Interactive Lab</h2>
+  <small>Quantized energy levels · Photon transitions · Spectral series</small>
+</header>
+
+<div class="lab-container">
+  <div id="sim-area">
+    <div class="hud">
+      <b>LIVE STATE</b><br>
+      <div class="metrics">
+        Level n: <span class="val" id="hud-n">1</span><br>
+        Energy: <span class="val" id="hud-e">−13.61</span> eV<br>
+        Radius: <span class="val" id="hud-r">0.053</span> nm<br>
+        Speed: <span class="val" id="hud-v">2.19×10⁶</span> m/s
+      </div>
+      <div style="margin-top:6px;font-size:.75rem;">
+        <label style="display:inline-flex;align-items:center;gap:6px;">
+          <input id="full-scroll-toggle" type="checkbox"> Full page scroll
+        </label>
+      </div>
+    </div>
+    <div class="legend-box">
+      <div><span style="background:var(--primary)"></span> Electron</div>
+      <div><span style="background:var(--secondary)"></span> Transition arrow</div>
+      <div><span style="background:#cbd5e1"></span> Orbit (illustrative radius)</div>
+    </div>
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <div id="splitter" class="splitter" title="Drag to resize"></div>
+
+  <div class="bottom-panel">
+    <div class="controls">
+      <h4>🔬 Lab Controls</h4>
+
+      <div class="input-row">
+        <label>Atom view</label>
+        <select id="atom-mode">
+          <option value="schematic" selected>Schematic orbit view</option>
+          <option value="energy" disabled>Energy diagram (see right)</option>
+        </select>
+      </div>
+
+      <div class="input-row">
+        <label>Electron energy level n</label>
+        <select id="n-select">
+          <option>1</option><option>2</option><option>3</option>
+          <option>4</option><option>5</option><option>6</option>
+        </select>
+      </div>
+
+      <div class="input-row">
+        <label>Max orbit shown</label>
+        <select id="n-max">
+          <option>3</option><option>4</option><option>5</option>
+          <option selected>6</option>
+        </select>
+      </div>
+
+      <div class="input-row">
+        <label>Animation speed: <span id="v-speed">1.0×</span></label>
+        <input type="range" id="speed" min="0.2" max="3" step="0.1" value="1">
+      </div>
+
+      <div class="input-row">
+        <label style="display:inline-flex;gap:6px;align-items:center;">
+          <input type="checkbox" id="labels-toggle" checked> Show orbit &amp; energy labels
+        </label>
+      </div>
+
+      <div class="btn-grid">
+        <button class="btn-fire" id="btn-pause">⏸ Pause</button>
+        <button class="btn-reset" id="btn-reset">↺ Reset</button>
+      </div>
+    </div>
+
+    <div class="analysis">
+      <h4>📊 Learn &amp; Practice</h4>
+
+      <div class="readouts">
+        <div class="readout"><span>Energy Eₙ</span><strong id="ro-e">−13.61 eV</strong></div>
+        <div class="readout"><span>Radius rₙ</span><strong id="ro-r">0.0529 nm</strong></div>
+        <div class="readout"><span>Speed vₙ</span><strong id="ro-v">2.19×10⁶ m/s</strong></div>
+        <div class="readout"><span>Angular momentum</span><strong id="ro-l">1.00 ħ</strong></div>
+        <div class="readout"><span>Ionization energy from n</span><strong id="ro-ion">13.61 eV</strong></div>
+        <div class="readout"><span>Orbit circumference</span><strong id="ro-circ">0.332 nm</strong></div>
+      </div>
+
+      <div class="card" style="margin-top:12px;">
+        <div class="tabs" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+          <button class="tab-btn active" data-tab="transitions">Transitions</button>
+          <button class="tab-btn" data-tab="spectrum">Spectrum</button>
+          <button class="tab-btn" data-tab="formulas">Formulas</button>
+          <button class="tab-btn" data-tab="quiz">Quiz</button>
+          <button class="tab-btn" data-tab="notebook">Notebook</button>
+        </div>
+
+        <!-- TRANSITIONS -->
+        <div id="transitions" class="tab-panel active">
+          <h3 style="margin:6px 0 8px 0;">Transition Laboratory</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div>
+              <label>Initial level nᵢ</label>
+              <select id="ni">
+                <option>1</option><option>2</option><option selected>3</option>
+                <option>4</option><option>5</option><option>6</option>
+              </select>
+            </div>
+            <div>
+              <label>Final level n_f</label>
+              <select id="nf">
+                <option selected>1</option><option>2</option>
+                <option>3</option><option>4</option><option>5</option><option>6</option>
+              </select>
+            </div>
+          </div>
+          <div class="btn-grid" style="margin-top:10px;">
+            <button class="btn-fire" id="btn-transition">▶ Run transition</button>
+            <button class="btn-ghost" id="btn-clear-t">Clear</button>
+          </div>
+
+          <div id="transition-result" style="margin-top:12px;"></div>
+        </div>
+
+        <!-- SPECTRUM -->
+        <div id="spectrum" class="tab-panel">
+          <h3 style="margin:6px 0 8px 0;">Hydrogen Spectrum Viewer</h3>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+            <button class="tab-btn" data-series="all">All</button>
+            <button class="tab-btn" data-series="lyman">Lyman (UV)</button>
+            <button class="tab-btn" data-series="balmer">Balmer (Visible)</button>
+            <button class="tab-btn" data-series="paschen">Paschen (IR)</button>
+            <button class="tab-btn" data-series="brackett">Brackett</button>
+            <button class="tab-btn" data-series="pfund">Pfund</button>
+          </div>
+          <div class="spectrum-strip" id="spectrum-strip"></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;">
+            <div>
+              <label>Min wavelength (nm)</label>
+              <input type="number" id="wl-min" value="80" min="1" step="1">
+            </div>
+            <div>
+              <label>Max wavelength (nm)</label>
+              <input type="number" id="wl-max" value="4000" min="1" step="1">
+            </div>
+            <div>
+              <label>Mode</label>
+              <select id="spectrum-mode">
+                <option value="emission" selected>Emission</option>
+                <option value="absorption">Absorption</option>
+              </select>
+            </div>
+          </div>
+          <div id="spectrum-list" style="margin-top:10px;font-size:.8rem;max-height:220px;overflow:auto;"></div>
+        </div>
+
+        <!-- FORMULAS -->
+        <div id="formulas" class="tab-panel">
+          <h3 style="margin:6px 0 8px 0;">Formula Explorer</h3>
+          <table class="formulas">
+            <tr><th>Quantity</th><th>Formula</th><th>Notes</th></tr>
+            <tr><td>Energy level</td><td><span class="eq">Eₙ = −13.605693 eV / n²</span></td><td>Idealized H model</td></tr>
+            <tr><td>Orbit radius</td><td><span class="eq">rₙ = a₀ · n²</span></td><td>a₀ ≈ 52.9177 pm</td></tr>
+            <tr><td>Angular momentum</td><td><span class="eq">Lₙ = n · ħ</span></td><td>Quantization postulate</td></tr>
+            <tr><td>Electron speed</td><td><span class="eq">vₙ ≈ αc / n</span></td><td>Non-relativistic Bohr</td></tr>
+            <tr><td>Photon energy</td><td><span class="eq">ΔE = |E_f − E_i|</span></td><td>Energy conservation</td></tr>
+            <tr><td>Photon frequency</td><td><span class="eq">ν = ΔE / h</span></td><td>Planck relation</td></tr>
+            <tr><td>Photon wavelength</td><td><span class="eq">λ = hc / ΔE</span></td><td>c = 2.998×10⁸ m/s</td></tr>
+            <tr><td>Rydberg form</td><td><span class="eq">1/λ = R_H (1/n_f² − 1/n_i²)</span></td><td>n_i > n_f (emission)</td></tr>
+            <tr><td>Hydrogen-like ions</td><td><span class="eq">Eₙ ∝ −Z²/n²; rₙ ∝ n²/Z</span></td><td>Single-electron only</td></tr>
+          </table>
+          <p class="note"><b>Scientific note:</b> The Bohr model is an idealized approximation that works well for hydrogen and hydrogen-like ions. It does not describe multi-electron atoms, fine structure, or line intensities. Modern quantum mechanics replaces circular orbits with probability distributions (orbitals).</p>
+
+          <h3 style="margin:14px 0 8px 0;">Quick Calculator</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div>
+              <label>Compute from</label>
+              <select id="calc-type">
+                <option value="E">Energy (eV) → λ, ν</option>
+                <option value="wl">Wavelength (nm) → E, ν</option>
+                <option value="nu">Frequency (THz) → E, λ</option>
+              </select>
+            </div>
+            <div>
+              <label>Value</label>
+              <input type="number" id="calc-val" value="1.89" step="0.0001">
+            </div>
+          </div>
+          <div class="btn-grid" style="margin-top:8px;">
+            <button class="btn-fire" id="btn-calc">Calculate</button>
+            <button class="btn-ghost" id="btn-clear-calc">Clear</button>
+          </div>
+          <div id="calc-result" style="margin-top:10px;font-size:.85rem;"></div>
+        </div>
+
+        <!-- QUIZ -->
+        <div id="quiz" class="tab-panel" style="max-height:440px;overflow:auto;">
+          <h3 style="margin:6px 0 8px 0;">Conceptual &amp; Numerical Quiz</h3>
+          <div style="font-size:.9rem;">
+
+            <b>Basic</b>
+            <ol>
+              <li>The Bohr model describes electrons in:
+                <label><input type="radio" name="q1" value="A"> Circular orbits</label>
+                <label><input type="radio" name="q1" value="B"> Random motion</label>
+                <label><input type="radio" name="q1" value="C"> 3D orbitals</label>
+                <span id="q1-res" class="q-res"></span>
+              </li>
+              <li>Ground-state energy of hydrogen is approximately:
+                <label><input type="radio" name="q2" value="A"> −3.40 eV</label>
+                <label><input type="radio" name="q2" value="B"> −13.6 eV</label>
+                <label><input type="radio" name="q2" value="C"> 0 eV</label>
+                <span id="q2-res" class="q-res"></span>
+              </li>
+              <li>As n increases, the energy Eₙ:
+                <label><input type="radio" name="q3" value="A"> Becomes more negative</label>
+                <label><input type="radio" name="q3" value="B"> Approaches zero</label>
+                <label><input type="radio" name="q3" value="C"> Stays constant</label>
+                <span id="q3-res" class="q-res"></span>
+              </li>
+            </ol>
+
+            <b>Intermediate</b>
+            <ol start="4">
+              <li>A photon is emitted when an electron:
+                <label><input type="radio" name="q4" value="A"> Moves to a higher level</label>
+                <label><input type="radio" name="q4" value="B"> Moves to a lower level</label>
+                <label><input type="radio" name="q4" value="C"> Stays in one level</label>
+                <span id="q4-res" class="q-res"></span>
+              </li>
+              <li>The orbit radius scales with n as:
+                <label><input type="radio" name="q5" value="A"> rₙ ∝ n</label>
+                <label><input type="radio" name="q5" value="B"> rₙ ∝ n²</label>
+                <label><input type="radio" name="q5" value="C"> rₙ ∝ 1/n</label>
+                <span id="q5-res" class="q-res"></span>
+              </li>
+              <li>The Lyman series ends at level:
+                <label><input type="radio" name="q6" value="A"> n_f = 1</label>
+                <label><input type="radio" name="q6" value="B"> n_f = 2</label>
+                <label><input type="radio" name="q6" value="C"> n_f = 3</label>
+                <span id="q6-res" class="q-res"></span>
+              </li>
+            </ol>
+
+            <b>Advanced</b>
+            <ol start="7">
+              <li>The n = 3 → 2 transition produces:
+                <label><input type="radio" name="q7" value="A"> Lyman UV line</label>
+                <label><input type="radio" name="q7" value="B"> Balmer Hα red line ≈ 656 nm</label>
+                <label><input type="radio" name="q7" value="C"> Paschen IR line</label>
+                <span id="q7-res" class="q-res"></span>
+              </li>
+              <li>Bohr model works best for:
+                <label><input type="radio" name="q8" value="A"> Multi-electron atoms</label>
+                <label><input type="radio" name="q8" value="B"> Hydrogen and hydrogen-like ions</label>
+                <label><input type="radio" name="q8" value="C"> Molecules</label>
+                <span id="q8-res" class="q-res"></span>
+              </li>
+              <li>As Z increases for hydrogen-like ions, orbit radius:
+                <label><input type="radio" name="q9" value="A"> Increases as Z²</label>
+                <label><input type="radio" name="q9" value="B"> Decreases as 1/Z</label>
+                <label><input type="radio" name="q9" value="C"> Stays same</label>
+                <span id="q9-res" class="q-res"></span>
+              </li>
+            </ol>
+
+            <button class="btn-fire" onclick="evaluateQuiz()" style="margin-top:8px;padding:8px 12px;">Submit Quiz</button>
+            <div id="quiz-result" style="margin-top:8px;font-weight:bold;"></div>
+          </div>
+        </div>
+
+        <!-- NOTEBOOK -->
+        <div id="notebook" class="tab-panel">
+          <h3 style="margin:6px 0 8px 0;">Experiment Notebook</h3>
+          <label>Prediction / hypothesis</label>
+          <textarea id="hypothesis" placeholder="What do you expect to happen, and why?"></textarea>
+          <label style="margin-top:10px;display:block;">Conclusion / evidence</label>
+          <textarea id="conclusion" placeholder="Explain what your observations show."></textarea>
+          <label style="margin-top:10px;display:block;">Recorded measurements</label>
+          <textarea id="records" readonly style="background:#f8fafc;font-family:'JetBrains Mono',monospace;font-size:.75rem;min-height:100px;"></textarea>
+          <div class="btn-grid" style="margin-top:10px;">
+            <button class="btn-fire" id="btn-record">📋 Record</button>
+            <button class="btn-reset" id="btn-clear-notes">Clear notes</button>
+          </div>
+          <button class="btn-fire" style="margin-top:8px;width:100%;" id="btn-export">⬇ Download Report</button>
+        </div>
+
+      </div>
+
+      <div class="card">
+        <b>Photon info:</b> <span id="photon-info" style="font-size:.85rem;">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+(() => {
+  // ============================================================
+  // 1. SCIENTIFIC CONSTANTS (SI, CODATA 2018)
+  // ============================================================
+  const CONST = {
+    h:    6.62607015e-34,    // Planck (J·s) exact
+    h_eV:4.135667696e-15,    // Planck in eV·s
+    c:    2.99792458e8,      // speed of light (m/s)
+    e:    1.602176634e-19,   // electron charge (C) exact
+    a0:   5.29177210903e-11, // Bohr radius (m)
+    Ry:   13.605693122994,   // Rydberg energy (eV) for H
+    RH:   1.09677583e7,      // Rydberg constant (1/m)
+    alpha:7.2973525693e-3,   // fine-structure constant
+    me:   9.1093837015e-31,  // electron mass (kg)
+    hbar: 1.054571817e-34    // reduced Planck (J·s)
+  };
+
+  // ============================================================
+  // 2. CORE PHYSICS ENGINE (single source of truth)
+  // ============================================================
+  const Physics = {
+    energyEV(n){
+      if (!Number.isFinite(n) || n < 1) return NaN;
+      return -CONST.Ry / (n*n);
+    },
+    radiusM(n){
+      if (!Number.isFinite(n) || n < 1) return NaN;
+      return CONST.a0 * n * n;
+    },
+    speedMS(n){
+      if (!Number.isFinite(n) || n < 1) return NaN;
+      return CONST.alpha * CONST.c / n;
+    },
+    angularMomentumHbar(n){
+      if (!Number.isFinite(n) || n < 1) return NaN;
+      return n;
+    },
+    circumferenceM(n){
+      const r = Physics.radiusM(n);
+      return 2 * Math.PI * r;
+    },
+    deltaE( ni, nf ){
+      return Math.abs( Physics.energyEV(ni) - Physics.energyEV(nf) );
+    },
+    frequencyHz(dE_eV){
+      // ν = ΔE / h (with h in eV·s → ν in Hz)
+      return dE_eV / CONST.h_eV;
+    },
+    wavelengthM(dE_eV){
+      if (!(dE_eV > 0)) return NaN;
+      return CONST.h * CONST.c / (dE_eV * CONST.e);
+    },
+    wavelengthNm(dE_eV){
+      return Physics.wavelengthM(dE_eV) * 1e9;
+    },
+    ionizationEV(n){
+      return Math.abs( Physics.energyEV(n) );
+    },
+    series(nf){
+      const map = {1:'Lyman',2:'Balmer',3:'Paschen',4:'Brackett',5:'Pfund'};
+      return map[nf] || null;
+    },
+    seriesRegion(nf){
+      if (nf === 1) return 'UV';
+      if (nf === 2) return 'Visible/UV edge';
+      return 'IR';
+    },
+    classifyWavelength(nm){
+      if (nm < 10) return 'X-ray / EUV';
+      if (nm < 380) return 'Ultraviolet';
+      if (nm < 750) return 'Visible';
+      if (nm < 1e6) return 'Infrared';
+      return 'Microwave / Radio';
+    },
+    colorFromWavelength(nm){
+      if (nm < 380 || nm > 750) return null;
+      if (nm < 450) return '#4b0082';
+      if (nm < 495) return '#0000ff';
+      if (nm < 570) return '#00c000';
+      if (nm < 590) return '#e0c000';
+      if (nm < 620) return '#ff8000';
+      return '#ff2020';
+    },
+    allLines(){
+      const out = [];
+      for (let ni = 2; ni <= 7; ni++) {
+        for (let nf = 1; nf < ni; nf++) {
+          if (ni - nf > 5) continue; // keep within Lyman..Pfund
+          const dE = Physics.deltaE(ni, nf);
+          const nm = Physics.wavelengthNm(dE);
+          out.push({ ni, nf, dE, nm, series: Physics.series(nf) || 'Other',
+                     region: Physics.classifyWavelength(nm) });
+        }
+      }
+      return out;
+    }
+  };
+
+  // ============================================================
+  // 3. STATE
+  // ============================================================
+  const state = {
+    n: 1,
+    maxN: 6,
+    speed: 1,
+    paused: false,
+    showLabels: true,
+    phase: 0,
+    transition: null, // {ni, nf, direction, dE, nm, freq}
+    photonFlight: null,
+    records: [],
+    spectrumSeries: 'all',
+    spectrumMode: 'emission'
+  };
+
+  const $ = id => document.getElementById(id);
+
+  // ============================================================
+  // 4. FORMATTERS
+  // ============================================================
+  function fmtE(eV){ return (eV >= 0 ? '+' : '') + eV.toFixed(3); }
+  function fmtR(m){
+    const nm = m * 1e9;
+    if (nm < 1) return (m * 1e12).toFixed(4) + ' pm';
+    if (nm < 1000) return nm.toFixed(4) + ' nm';
+    return (m * 1e6).toFixed(4) + ' µm';
+  }
+  function fmtV(v){
+    return v.toExponential(3).replace('e','×10^') + ' m/s';
+  }
+  function fmtNm(nm){
+    if (nm < 10) return nm.toFixed(2) + ' nm (EUV)';
+    if (nm < 1000) return nm.toFixed(2) + ' nm';
+    return (nm / 1000).toFixed(3) + ' µm';
+  }
+
+  // ============================================================
+  // 5. CANVAS SETUP
+  // ============================================================
+  const canvas = $('canvas');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const view = { x: 0, y: 0, scale: 1 };
+
+  function resizeCanvas(){
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    canvas.width = Math.max(1, Math.round(w * dpr));
+    canvas.height = Math.max(1, Math.round(h * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function cw(){ return canvas.width / dpr; }
+  function ch(){ return canvas.height / dpr; }
+
+  // ============================================================
+  // 6. DRAW ATOM
+  // ============================================================
+  function drawAtom(){
+    const w = cw(), h = ch();
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, w, h);
+
+    // subtle grid
+    ctx.strokeStyle = '#eef2f7';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < w; x += 40){ ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+    for (let y = 0; y < h; y += 40){ ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+
+    ctx.save();
+    ctx.translate(view.x, view.y);
+    ctx.scale(view.scale, view.scale);
+
+    const cx = w / view.scale / 2;
+    const cy = h / view.scale / 2;
+
+    // Nucleus
+    ctx.fillStyle = '#dc2626';
+    ctx.beginPath(); ctx.arc(cx, cy, 8, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 9px Inter'; ctx.textAlign = 'center';
+    ctx.fillText('p⁺', cx, cy + 3);
+
+    // Orbits
+    const maxR = Math.min(cx, cy) * 0.88;
+    const outerN = state.maxN;
+    // radius scale: use n² but compress for visual
+    const baseScale = maxR / (outerN * outerN);
+
+    for (let n = 1; n <= outerN; n++){
+      const r = baseScale * n * n;
+      const isCurrent = n === state.n;
+      ctx.strokeStyle = isCurrent ? '#6366f1' : '#cbd5e1';
+      ctx.lineWidth = isCurrent ? 2 : 1;
+      ctx.setLineDash(isCurrent ? [] : [4, 4]);
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+      ctx.setLineDash([]);
+
+      if (state.showLabels){
+        ctx.fillStyle = isCurrent ? '#4338ca' : '#64748b';
+        ctx.font = (isCurrent ? 'bold ' : '') + '10px Inter';
+        ctx.textAlign = 'left';
+        ctx.fillText(`n=${n}`, cx + r + 4, cy - 2);
+        if (isCurrent){
+          const E = Physics.energyEV(n);
+          ctx.fillText(`${E.toFixed(2)} eV`, cx + r + 4, cy + 10);
+        }
+      }
+    }
+
+    // Electron on current orbit
+    const rCur = baseScale * state.n * state.n;
+    const angle = state.phase;
+    const ex = cx + rCur * Math.cos(angle);
+    const ey = cy + rCur * Math.sin(angle);
+
+    ctx.shadowColor = '#6366f1'; ctx.shadowBlur = 12;
+    ctx.fillStyle = '#6366f1';
+    ctx.beginPath(); ctx.arc(ex, ey, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 8px Inter'; ctx.textAlign = 'center';
+    ctx.fillText('e⁻', ex, ey + 3);
+
+    // Transition arrow
+    if (state.transition && state.transition.showArrow){
+      const t = state.transition;
+      const rA = baseScale * t.ni * t.ni;
+      const rB = baseScale * t.nf * t.nf;
+      ctx.strokeStyle = '#f43f5e';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(cx + rA * Math.cos(1.2), cy + rA * Math.sin(1.2));
+      ctx.lineTo(cx + rB * Math.cos(1.2), cy + rB * Math.sin(1.2));
+      ctx.stroke();
+    }
+
+    // Photon flight (emitted photon trail)
+    if (state.photonFlight){
+      const p = state.photonFlight;
+      ctx.save();
+      ctx.strokeStyle = p.color || '#8b5cf6';
+      ctx.lineWidth = 3;
+      ctx.globalAlpha = Math.max(0.15, 1 - p.age / 1.6);
+      ctx.beginPath();
+      ctx.moveTo(p.x1, p.y1);
+      ctx.lineTo(p.x2, p.y2);
+      ctx.stroke();
+      ctx.restore();
+      p.age += 0.016;
+      if (p.age > 1.6) state.photonFlight = null;
+    }
+
+    ctx.restore();
+
+    // Caption
+    ctx.fillStyle = '#475569'; ctx.font = '11px Inter'; ctx.textAlign = 'center';
+    ctx.fillText('Schematic view — orbit radii and electron size are illustrative, not to scale', w / 2, h - 10);
+  }
+
+  // ============================================================
+  // 7. UPDATE READOUTS
+  // ============================================================
+  function updateReadouts(){
+    const n = state.n;
+    const E = Physics.energyEV(n);
+    const r = Physics.radiusM(n);
+    const v = Physics.speedMS(n);
+    const L = Physics.angularMomentumHbar(n);
+    const ion = Physics.ionizationEV(n);
+    const circ = Physics.circumferenceM(n);
+
+    $('ro-e').innerText = fmtE(E) + ' eV';
+    $('ro-r').innerText = fmtR(r);
+    $('ro-v').innerText = fmtV(v);
+    $('ro-l').innerText = L.toFixed(2) + ' ħ';
+    $('ro-ion').innerText = ion.toFixed(3) + ' eV';
+    $('ro-circ').innerText = fmtR(circ);
+
+    $('hud-n').innerText = n;
+    $('hud-e').innerText = fmtE(E);
+    $('hud-r').innerText = fmtR(r).replace(' nm','').replace(' pm','×10⁻³nm').replace(' µm','×10³nm');
+    $('hud-v').innerText = v.toExponential(2).replace('e+','×10^').replace('e','×10^');
+  }
+
+  // ============================================================
+  // 8. TRANSITION LOGIC
+  // ============================================================
+  function runTransition(){
+    const ni = parseInt($('ni').value, 10);
+    const nf = parseInt($('nf').value, 10);
+
+    if (!Number.isFinite(ni) || !Number.isFinite(nf) || ni < 1 || nf < 1){
+      $('transition-result').innerHTML = '<p class="warn">⚠ Invalid quantum numbers — n must be a positive integer.</p>';
+      return;
+    }
+    if (ni === nf){
+      $('transition-result').innerHTML = '<p class="warn">⚠ Initial and final levels are the same — no transition. Choose different levels.</p>';
+      return;
+    }
+
+    const direction = nf > ni ? 'absorption' : 'emission';
+    const dE = Physics.deltaE(ni, nf);
+    const freq = Physics.frequencyHz(dE);
+    const nm = Physics.wavelengthNm(dE);
+    const region = Physics.classifyWavelength(nm);
+    const series = direction === 'emission' ? Physics.series(nf) : null;
+
+    state.transition = { ni, nf, direction, dE, nm, freq, showArrow: true };
+
+    // Animate electron and photon
+    state.n = nf;
+    $('n-select').value = String(nf);
+    if (direction === 'emission'){
+      const w = cw(), h = ch();
+      state.photonFlight = {
+        x1: w * 0.5, y1: h * 0.5,
+        x2: w * 0.85, y2: h * 0.2,
+        age: 0,
+        color: Physics.colorFromWavelength(nm) || '#8b5cf6'
+      };
+    }
+
+    // Build result HTML
+    const rows = [
+      ['Direction', direction === 'absorption' ? '⬆ Absorption (electron gains energy)' : '⬇ Emission (photon released)'],
+      ['ΔE', dE.toFixed(4) + ' eV'],
+      ['Frequency ν', (freq / 1e12).toFixed(3) + ' THz'],
+      ['Wavelength λ', fmtNm(nm)],
+      ['EM region', region],
+    ];
+    if (series) rows.push(['Series', `<span class="series-chip chip-${series.toLowerCase()}">${series}</span> <span class="note">${Physics.seriesRegion(nf)}</span>`]);
+
+    let html = '<table class="formulas"><tr><th>Quantity</th><th>Value</th></tr>';
+    rows.forEach(([k,v]) => html += `<tr><td>${k}</td><td>${v}</td></tr>`);
+    html += '</table>';
+
+    html += `<div class="note" style="margin-top:10px;">
+      <b>Step-by-step:</b><br>
+      1. E<sub>${ni}</sub> = −13.606/${ni}² = ${Physics.energyEV(ni).toFixed(4)} eV<br>
+      2. E<sub>${nf}</sub> = −13.606/${nf}² = ${Physics.energyEV(nf).toFixed(4)} eV<br>
+      3. ΔE = |E<sub>${nf}</sub> − E<sub>${ni}</sub>| = ${dE.toFixed(4)} eV<br>
+      4. ν = ΔE / h = ${(freq / 1e12).toFixed(3)} THz<br>
+      5. λ = hc / ΔE = ${fmtNm(nm)}
+    </div>`;
+
+    $('transition-result').innerHTML = html;
+    $('photon-info').innerText = `${direction === 'emission' ? 'Emitted' : 'Absorbed'} photon: ${dE.toFixed(3)} eV, ${fmtNm(nm)}, ${region}${series ? ' · ' + series + ' series' : ''}`;
+
+    updateReadouts();
+    buildSpectrum();
+  }
+
+  // ============================================================
+  // 9. SPECTRUM VIEWER
+  // ============================================================
+  function wavelengthToColor(nm){
+    return Physics.colorFromWavelength(nm) || '#94a3b8';
+  }
+
+  function buildSpectrum(){
+    const strip = $('spectrum-strip');
+    strip.innerHTML = '';
+    const minNm = Math.max(1, Number($('wl-min').value) || 80);
+    const maxNm = Math.max(minNm + 1, Number($('wl-max').value) || 4000);
+
+    // background gradient
+    const stops = [];
+    for (let i = 0; i <= 20; i++){
+      const wl = minNm + (maxNm - minNm) * (i / 20);
+      stops.push(`${wavelengthToColor(wl)} ${(i / 20 * 100).toFixed(1)}%`);
+    }
+    strip.style.background = `linear-gradient(90deg, ${stops.join(',')})`;
+    strip.style.opacity = state.spectrumMode === 'absorption' ? '0.35' : '1';
+
+    const all = Physics.allLines();
+    let filtered = all.filter(l => l.nm >= minNm && l.nm <= maxNm);
+    if (state.spectrumSeries !== 'all'){
+      filtered = filtered.filter(l => (l.series || '').toLowerCase() === state.spectrumSeries);
+    }
+
+    // Draw lines
+    filtered.forEach(l => {
+      const pct = ((l.nm - minNm) / (maxNm - minNm)) * 100;
+      const line = document.createElement('div');
+      line.className = 'line';
+      line.style.left = pct + '%';
+      line.style.background = state.spectrumMode === 'emission' ? wavelengthToColor(l.nm) : '#fff';
+      line.style.boxShadow = state.spectrumMode === 'emission' ? `0 0 6px ${wavelengthToColor(l.nm)}` : '0 0 4px #fff';
+      strip.appendChild(line);
+    });
+
+    // List
+    const list = $('spectrum-list');
+    list.innerHTML = '';
+    if (!filtered.length){
+      list.innerHTML = '<p class="note">No lines in this range for the selected series.</p>';
+      return;
+    }
+    filtered.sort((a, b) => a.nm - b.nm);
+    const table = document.createElement('table');
+    table.className = 'formulas';
+    table.innerHTML = '<tr><th>Transition</th><th>Series</th><th>λ (nm)</th><th>ΔE (eV)</th><th>Region</th></tr>';
+    filtered.forEach(l => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${l.ni} → ${l.nf}</td>
+        <td>${l.series}</td>
+        <td>${l.nm.toFixed(2)}</td>
+        <td>${l.dE.toFixed(3)}</td>
+        <td>${l.region}</td>`;
+      table.appendChild(tr);
+    });
+    list.appendChild(table);
+  }
+
+  // ============================================================
+  // 10. QUICK CALCULATOR
+  // ============================================================
+  function runCalc(){
+    const type = $('calc-type').value;
+    const val = Number($('calc-val').value);
+    if (!Number.isFinite(val) || val <= 0){
+      $('calc-result').innerHTML = '<p class="warn">⚠ Enter a positive finite value.</p>';
+      return;
+    }
+
+    let dE, nu, nm, out = [];
+    if (type === 'E'){
+      dE = val;
+      nu = Physics.frequencyHz(dE);
+      nm = Physics.wavelengthNm(dE);
+      out.push(`<b>Input:</b> ΔE = ${dE.toFixed(4)} eV`);
+    } else if (type === 'wl'){
+      nm = val;
+      dE = CONST.h * CONST.c / (nm * 1e-9 * CONST.e);
+      nu = Physics.frequencyHz(dE);
+      out.push(`<b>Input:</b> λ = ${nm.toFixed(2)} nm`);
+    } else if (type === 'nu'){
+      nu = val * 1e12; // THz → Hz
+      dE = nu * CONST.h_eV;
+      nm = Physics.wavelengthNm(dE);
+      out.push(`<b>Input:</b> ν = ${val.toFixed(3)} THz`);
+    }
+
+    if (!Number.isFinite(dE) || dE <= 0){
+      $('calc-result').innerHTML = '<p class="warn">⚠ Could not compute — check your value.</p>';
+      return;
+    }
+
+    out.push(`ΔE = <b>${dE.toFixed(4)} eV</b> (${(dE * CONST.e).toExponential(3)} J)`);
+    out.push(`ν  = <b>${(nu / 1e12).toFixed(4)} THz</b> (${nu.toExponential(3)} Hz)`);
+    out.push(`λ  = <b>${fmtNm(nm)}</b>`);
+    out.push(`Region: <b>${Physics.classifyWavelength(nm)}</b>`);
+
+    $('calc-result').innerHTML = out.map(s => `<div>${s}</div>`).join('');
+  }
+
+  // ============================================================
+  // 11. QUIZ
+  // ============================================================
+  function evaluateQuiz(){
+    const key = { q1:'A', q2:'B', q3:'B', q4:'B', q5:'B', q6:'A', q7:'B', q8:'B', q9:'B' };
+    const explain = {
+      q1:'Bohr postulated electron motion in quantized circular orbits.',
+      q2:'E₁ = −13.6 eV for hydrogen in the ideal Bohr model.',
+      q3:'Higher n means energy approaches 0 from below (less negative).',
+      q4:'Emission occurs when an electron drops to a lower-energy level.',
+      q5:'Bohr radius scales as rₙ = a₀·n².',
+      q6:'The Lyman series is defined by transitions ending at n_f = 1.',
+      q7:'n=3 → 2 is the H-α line at ≈656 nm (Balmer visible series).',
+      q8:'Bohr model works well only for one-electron systems.',
+      q9:'For hydrogen-like ions, rₙ ∝ n²/Z — radius shrinks as Z grows.'
+    };
+    let score = 0;
+    for (let i = 1; i <= 9; i++){
+      const name = 'q' + i;
+      const chosen = document.querySelector(`input[name="${name}"]:checked`);
+      const resEl = document.getElementById(name + '-res');
+      if (chosen && chosen.value === key[name]){
+        score++;
+        resEl.textContent = '✓ Correct';
+        resEl.className = 'q-res correct';
+        resEl.title = explain[name];
+      } else {
+        resEl.textContent = `✗ Answer: ${key[name]}`;
+        resEl.className = 'q-res wrong';
+        resEl.title = explain[name];
+      }
+    }
+    $('quiz-result').innerText = `Score: ${score}/9 — ${Math.round(score/9*100)}%`;
+  }
+
+  // ============================================================
+  // 12. NOTEBOOK
+  // ============================================================
+  function recordMeasurement(){
+    const n = state.n;
+    const E = Physics.energyEV(n);
+    const r = Physics.radiusM(n);
+    const v = Physics.speedMS(n);
+    const line = `${new Date().toLocaleTimeString()} | n=${n} | E=${E.toFixed(4)} eV | r=${fmtR(r)} | v=${v.toExponential(3)} m/s`;
+    state.records.push(line);
+    $('records').value = state.records.join('\n');
+    $('records').scrollTop = $('records').scrollHeight;
+  }
+
+  function downloadReport(){
+    const n = state.n;
+    const E = Physics.energyEV(n);
+    const r = Physics.radiusM(n);
+    const v = Physics.speedMS(n);
+    const t = state.transition;
+    const text = `LEARNIFY — BOHR MODEL OF HYDROGEN · LAB REPORT
+Date: ${new Date().toLocaleString()}
+
+CURRENT STATE
+n = ${n}
+E = ${E.toFixed(4)} eV
+r = ${fmtR(r)}
+v = ${v.toExponential(3)} m/s
+
+LAST TRANSITION
+${t ? `${t.ni} → ${t.nf} (${t.direction}); ΔE = ${t.dE.toFixed(4)} eV; λ = ${t.nm.toFixed(2)} nm; ν = ${(t.freq/1e12).toFixed(3)} THz` : 'None recorded'}
+
+HYPOTHESIS
+${$('hypothesis').value}
+
+CONCLUSION
+${$('conclusion').value}
+
+MEASUREMENTS
+${$('records').value}
+
+LIMITATIONS
+Idealized non-relativistic Bohr model for hydrogen. Not valid for multi-electron atoms or fine structure. Educational use only.`;
+
+    const blob = new Blob([text], { type:'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'bohr-hydrogen-report.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  // ============================================================
+  // 13. ANIMATION LOOP
+  // ============================================================
+  let rafId = 0;
+  function animate(){
+    if (!state.paused){
+      state.phase += 0.02 * state.speed;
+    }
+    drawAtom();
+    rafId = requestAnimationFrame(animate);
+  }
+
+  // ============================================================
+  // 14. EVENT WIRING
+  // ============================================================
+  $('n-select').addEventListener('change', e => {
+    state.n = parseInt(e.target.value, 10);
+    state.transition = null;
+    updateReadouts();
+  });
+  $('n-max').addEventListener('change', e => {
+    state.maxN = parseInt(e.target.value, 10);
+    if (state.n > state.maxN){ state.n = state.maxN; $('n-select').value = state.maxN; }
+    updateReadouts();
+  });
+  $('speed').addEventListener('input', e => {
+    state.speed = parseFloat(e.target.value);
+    $('v-speed').innerText = state.speed.toFixed(1) + '×';
+  });
+  $('labels-toggle').addEventListener('change', e => {
+    state.showLabels = e.target.checked;
+  });
+  $('btn-pause').addEventListener('click', () => {
+    state.paused = !state.paused;
+    $('btn-pause').innerText = state.paused ? '▶ Resume' : '⏸ Pause';
+  });
+  $('btn-reset').addEventListener('click', () => {
+    state.n = 1; state.maxN = 6; state.speed = 1; state.paused = false;
+    state.transition = null; state.photonFlight = null; state.phase = 0;
+    $('n-select').value = '1';
+    $('n-max').value = '6';
+    $('speed').value = '1';
+    $('v-speed').innerText = '1.0×';
+    $('btn-pause').innerText = '⏸ Pause';
+    $('transition-result').innerHTML = '';
+    $('photon-info').innerText = '—';
+    updateReadouts();
+  });
+  $('btn-transition').addEventListener('click', runTransition);
+  $('btn-clear-t').addEventListener('click', () => {
+    state.transition = null;
+    $('transition-result').innerHTML = '';
+    $('photon-info').innerText = '—';
+  });
+
+  // tabs
+  document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn[data-tab]').forEach(b => b.classList.remove('active'));
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      btn.classList.add('active');
+    });
+  });
+
+  // spectrum series filter buttons
+  document.querySelectorAll('.tab-btn[data-series]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.spectrumSeries = btn.dataset.series;
+      buildSpectrum();
+    });
+  });
+  $('wl-min').addEventListener('input', buildSpectrum);
+  $('wl-max').addEventListener('input', buildSpectrum);
+  $('spectrum-mode').addEventListener('change', e => {
+    state.spectrumMode = e.target.value;
+    buildSpectrum();
+  });
+
+  // calculator
+  $('btn-calc').addEventListener('click', runCalc);
+  $('btn-clear-calc').addEventListener('click', () => {
+    $('calc-val').value = '1.89';
+    $('calc-result').innerHTML = '';
+  });
+
+  // notebook
+  $('btn-record').addEventListener('click', recordMeasurement);
+  $('btn-clear-notes').addEventListener('click', () => {
+    if (!confirm('Clear all notebook fields?')) return;
+    $('hypothesis').value = '';
+    $('conclusion').value = '';
+    $('records').value = '';
+    state.records = [];
+  });
+  $('btn-export').addEventListener('click', downloadReport);
+
+  // zoom & pan
+  let fullScroll = false;
+  $('full-scroll-toggle').addEventListener('change', e => {
+    fullScroll = e.target.checked;
+    canvas.style.touchAction = fullScroll ? 'auto' : 'none';
+    pointers.clear(); pinch = null;
+  });
+  const pointers = new Map();
+  let pinch = null;
+
+  function getPos(e){
+    const r = canvas.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+  canvas.addEventListener('wheel', e => {
+    if (fullScroll) return;
+    e.preventDefault();
+    const cx = e.offsetX, cy = e.offsetY;
+    const wx = (cx - view.x) / view.scale, wy = (cy - view.y) / view.scale;
+    const factor = Math.exp(-e.deltaY * 0.0015);
+    view.scale = Math.max(0.3, Math.min(5, view.scale * factor));
+    view.x = cx - wx * view.scale;
+    view.y = cy - wy * view.scale;
+  }, { passive: false });
+
+  canvas.addEventListener('pointerdown', e => {
+    if (fullScroll) return;
+    canvas.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, getPos(e));
+    if (pointers.size === 2){
+      const pts = Array.from(pointers.values());
+      pinch = { dist: Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y), startScale: view.scale };
+    }
+  });
+  canvas.addEventListener('pointermove', e => {
+    if (fullScroll) return;
+    if (!pointers.has(e.pointerId)) return;
+    const prev = pointers.get(e.pointerId);
+    const pos = getPos(e);
+    pointers.set(e.pointerId, pos);
+    if (pointers.size === 1 && !pinch){
+      view.x += pos.x - prev.x;
+      view.y += pos.y - prev.y;
+    } else if (pointers.size === 2 && pinch){
+      const pts = Array.from(pointers.values());
+      const d = Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
+      view.scale = Math.max(0.3, Math.min(5, pinch.startScale * d / pinch.dist));
+    }
+  });
+  canvas.addEventListener('pointerup', e => {
+    if (fullScroll) return;
+    pointers.delete(e.pointerId);
+    try { canvas.releasePointerCapture(e.pointerId); } catch(_) {}
+    if (pointers.size < 2) pinch = null;
+  });
+  canvas.addEventListener('pointercancel', e => { pointers.delete(e.pointerId); pinch = null; });
+
+  (function(){
+    const hud = document.querySelector('.hud');
+    if (!hud) return;
+    const z = document.createElement('div');
+    z.className = 'zoom-controls';
+    z.innerHTML = '<button id="zoom-out">−</button><button id="zoom-reset">Reset</button><button id="zoom-in">+</button>';
+    hud.appendChild(z);
+    $('zoom-in').addEventListener('click', () => { view.scale = Math.min(5, view.scale * 1.25); });
+    $('zoom-out').addEventListener('click', () => { view.scale = Math.max(0.3, view.scale / 1.25); });
+    $('zoom-reset').addEventListener('click', () => { view.x = 0; view.y = 0; view.scale = 1; });
+  })();
+
+  // splitter
+  (function(){
+    const sim = $('sim-area'), splitter = $('splitter');
+    if (!sim || !splitter) return;
+    let dragging = false, startY = 0, startH = 0;
+    const minH = 180, maxH = window.innerHeight - 240;
+    splitter.addEventListener('pointerdown', e => {
+      e.preventDefault(); dragging = true; startY = e.clientY;
+      startH = sim.getBoundingClientRect().height;
+      try { splitter.setPointerCapture(e.pointerId); } catch(_) {}
+    });
+    window.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      const dy = e.clientY - startY;
+      const nh = Math.max(minH, Math.min(maxH, Math.round(startH + dy)));
+      sim.style.flex = `0 0 ${nh}px`;
+      resizeCanvas();
+    });
+    window.addEventListener('pointerup', e => {
+      if (!dragging) return;
+      dragging = false;
+      try { splitter.releasePointerCapture(e.pointerId); } catch(_) {}
+    });
+    splitter.addEventListener('dblclick', () => {
+      sim.style.flex = ''; resizeCanvas();
+    });
+  })();
+
+  window.addEventListener('resize', () => { resizeCanvas(); buildSpectrum(); });
+
+  // ============================================================
+  // 15. BOOT
+  // ============================================================
+  resizeCanvas();
+  updateReadouts();
+  buildSpectrum();
+  animate();
+})();
+</script>
+</body>
+</html>

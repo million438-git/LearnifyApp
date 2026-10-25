@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Physics: Ohm's Law &amp; Kirchhoff's Laws Lab</title>
+<style>
+:root{--primary:#6366f1;--dark:#0f172a;--surface:#fff;--bg:#f1f5f9;--glass:rgba(255,255,255,0.92);}
+*{box-sizing:border-box;font-family:'Inter',system-ui,sans-serif;}
+html,body{height:100%;}
+body{margin:0;background:var(--bg);color:var(--dark);display:flex;flex-direction:column;overflow:hidden;}
+header{background:var(--dark);color:#fff;padding:10px;text-align:center;border-bottom:3px solid var(--primary);flex-shrink:0;}
+.lab-container{display:flex;flex:1;overflow:hidden;flex-direction:column;min-height:0;}
+#sim-area{flex:2 1 0;min-height:340px;position:relative;background:#fafafa;border-bottom:2px solid #e2e8f0;overflow:hidden;}
+canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;}
+.splitter{height:10px;background:linear-gradient(90deg,rgba(0,0,0,.03),rgba(0,0,0,.06));cursor:ns-resize;flex-shrink:0;}
+.bottom-panel{flex:3 1 0;min-height:0;display:flex;flex-direction:row;background:var(--surface);overflow-y:auto;}
+.controls{flex:0 0 360px;padding:18px;border-right:1px solid #e2e8f0;min-width:300px;}
+.analysis{flex:1 1 720px;padding:18px;background:#fafafa;min-width:420px;}
+.card{background:#fff;border:1px solid #e2e8f0;padding:12px;border-radius:8px;margin-bottom:10px;}
+h4{margin:0 0 10px 0;font-size:.8rem;color:#64748b;text-transform:uppercase;}
+.input-row{margin-bottom:12px;}
+label{display:block;font-size:.8rem;font-weight:600;margin-bottom:4px;}
+input[type=range]{width:100%;accent-color:var(--primary);}
+select{width:100%;padding:6px;border-radius:6px;border:1px solid #cbd5e1;background:#fff;font-family:inherit;}
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+button{padding:10px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;transition:.2s;font-family:inherit;}
+.btn-fire{background:var(--primary);color:#fff;}.btn-fire:hover{background:#4f46e5;}
+.btn-reset{background:#64748b;color:#fff;}.btn-reset:hover{background:#475569;}
+.btn-power{background:linear-gradient(135deg,#10b981,#059669);color:#fff;}.btn-power:hover{background:linear-gradient(135deg,#059669,#047857);}
+.btn-power.off{background:linear-gradient(135deg,#64748b,#475569);}
+.btn-sound{background:#10b981;color:#fff;}.btn-sound.playing{background:#ef4444;}
+.hud{position:absolute;top:10px;left:10px;background:var(--glass);padding:8px 10px;border-radius:8px;font-size:.75rem;border:1px solid #ddd;z-index:20;color:#0f172a;pointer-events:none;}
+.hud .metrics{line-height:1.7;}
+.hud span.val{color:#4f46e5;font-weight:700;font-variant-numeric:tabular-nums;}
+.vector-legend{position:absolute;bottom:10px;left:10px;font-size:.65rem;background:var(--glass);padding:5px 8px;border-radius:4px;color:#0f172a;pointer-events:none;}
+.vector-legend span{margin-right:8px;}
+.tab-btn{padding:8px 12px;border-radius:6px;background:#e2e8f0;color:var(--dark);font-weight:600;font-size:.8rem;border:none;cursor:pointer;}
+.tab-btn.active{background:var(--primary);color:#fff;}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+.readouts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;}
+.readout{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px;}
+.readout span{font-size:.7rem;color:#64748b;display:block;}
+.readout strong{font-size:1rem;color:var(--dark);font-variant-numeric:tabular-nums;}
+.readout.hl strong{color:#4f46e5;}
+.readout.good strong{color:#10b981;}
+.readout.warn strong{color:#dc2626;}
+.quiz-q{padding:10px 0;border-bottom:1px solid #e2e8f0;}
+.quiz-q>strong{display:block;margin-bottom:8px;font-size:.9rem;}
+.quiz-q label{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;margin:3px 6px 3px 0;cursor:pointer;font-weight:500;}
+.quiz-q label:hover{background:#eef2ff;border-color:#6366f1;}
+.explanation{margin-top:8px;padding:10px;border-radius:6px;font-size:.82rem;line-height:1.55;background:#eef2ff;border-left:3px solid #6366f1;}
+.explanation.correct-box{background:#ecfdf5;border-left-color:#10b981;}
+.explanation.wrong-box{background:#fef2f2;border-left-color:#dc2626;}
+.quiz-section{font-size:.72rem;font-weight:700;text-transform:uppercase;color:#6366f1;margin:12px 0 6px 0;letter-spacing:.05em;}
+#quiz-result{margin-top:10px;padding:12px;border-radius:8px;background:#eef2ff;border:1px solid #c7d2fe;font-weight:700;text-align:center;}
+table.formulas{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:6px;}
+table.formulas th,table.formulas td{border:1px solid #e2e8f0;padding:6px 8px;text-align:left;}
+table.formulas th{background:#f1f5f9;font-weight:600;}
+.eq{font-family:'JetBrains Mono',monospace;background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:.82rem;}
+.note{font-size:.82rem;color:#475569;margin-top:8px;line-height:1.5;}
+.sound-hint{background:#fef3c7;border-left:3px solid #f59e0b;padding:8px;border-radius:6px;font-size:.82rem;margin-top:8px;}
+textarea{width:100%;padding:8px;border-radius:6px;border:1px solid #cbd5e1;font-family:inherit;font-size:.85rem;min-height:64px;resize:vertical;}
+@media(max-width:768px){.bottom-panel{flex-direction:column;}.controls{border-right:none;border-bottom:1px solid #eee;min-width:0;}.analysis{min-width:0;}.readouts{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header>
+<h2 style="margin:0;font-size:1.1rem;">⚡ Ohm's Law &amp; Kirchhoff's Laws Lab</h2>
+<small>V = IR · Series · Parallel · Kirchhoff's voltage &amp; current laws</small>
+</header>
+
+<div class="lab-container">
+<div id="sim-area">
+<div class="hud">
+<b>LIVE CIRCUIT</b><br>
+<div class="metrics">
+Voltage V: <span class="val" id="hud-V">12.0</span> V<br>
+Total R: <span class="val" id="hud-R">100</span> Ω<br>
+Current I: <span class="val" id="hud-I">0.120</span> A<br>
+Power P: <span class="val" id="hud-P">1.44</span> W
+</div>
+</div>
+<div class="vector-legend">
+<span style="color:#dc2626">● Current flow</span>
+<span style="color:#fbbf24">● Battery</span>
+<span style="color:#6366f1">● Resistor</span>
+</div>
+<canvas id="canvas"></canvas>
+</div>
+
+<div id="splitter" class="splitter"></div>
+
+<div class="bottom-panel">
+<div class="controls">
+<h4>🧪 Circuit Controls</h4>
+
+<div class="input-row">
+<button class="btn-sound" id="btn-sound" style="width:100%;">🔈 Enable sound</button>
+<div class="sound-hint" id="sound-hint">Meter beeps + current hum.</div>
+</div>
+
+<div class="input-row">
+<label>Circuit type</label>
+<select id="circuit">
+<option value="single" selected>Single resistor (Ohm's law)</option>
+<option value="series">Series (2 resistors)</option>
+<option value="parallel">Parallel (2 resistors)</option>
+<option value="threeparallel">Three in parallel</option>
+<option value="combo">Series-parallel combo</option>
+<option value="kirchhoff">Kirchhoff — 2-loop circuit</option>
+</select>
+</div>
+
+<div class="input-row">
+<label>Source voltage V₁: <span id="v-V">12.0</span> V</label>
+<input type="range" id="V" min="0" max="24" step="0.5" value="12">
+</div>
+
+<div class="input-row" id="V2-row" style="display:none;">
+<label>Battery 2 voltage V₂: <span id="v-V2">6.0</span> V</label>
+<input type="range" id="V2" min="0" max="24" step="0.5" value="6">
+</div>
+
+<div class="input-row">
+<label>Resistor 1 R₁: <span id="v-R1">100</span> Ω</label>
+<input type="range" id="R1" min="10" max="1000" step="10" value="100">
+</div>
+
+<div class="input-row">
+<label>Resistor 2 R₂: <span id="v-R2">220</span> Ω</label>
+<input type="range" id="R2" min="10" max="1000" step="10" value="220">
+</div>
+
+<div class="input-row">
+<label>Resistor 3 R₃: <span id="v-R3">330</span> Ω</label>
+<input type="range" id="R3" min="10" max="1000" step="10" value="330">
+</div>
+
+<div class="input-row">
+<label style="display:inline-flex;align-items:center;gap:6px;">
+<input type="checkbox" id="labels-toggle" checked> Show voltage labels
+</label>
+</div>
+
+<div class="btn-grid">
+<button class="btn-power" id="btn-power">⚡ Power ON</button>
+<button class="btn-reset" id="btn-reset">↺ Reset</button>
+</div>
+</div>
+
+<div class="analysis">
+<h4>📊 Learn &amp; Practice</h4>
+
+<div class="readouts">
+<div class="readout hl"><span>Source voltage V</span><strong id="ro-V">12.0 V</strong></div>
+<div class="readout hl good"><span>Total resistance R</span><strong id="ro-R">100 Ω</strong></div>
+<div class="readout hl"><span>Total current I</span><strong id="ro-I">0.120 A</strong></div>
+<div class="readout"><span>Total power P</span><strong id="ro-P">1.44 W</strong></div>
+<div class="readout"><span>R₁ value</span><strong id="ro-R1">100 Ω</strong></div>
+<div class="readout"><span>V across R₁</span><strong id="ro-V1">12.0 V</strong></div>
+<div class="readout"><span>I through R₁</span><strong id="ro-I1">0.120 A</strong></div>
+<div class="readout"><span>P dissipated in R₁</span><strong id="ro-P1">1.44 W</strong></div>
+<div class="readout"><span>R₂ value</span><strong id="ro-R2">—</strong></div>
+<div class="readout"><span>V across R₂</span><strong id="ro-V2v">—</strong></div>
+<div class="readout"><span>I through R₂</span><strong id="ro-I2">—</strong></div>
+<div class="readout"><span>P dissipated in R₂</span><strong id="ro-P2">—</strong></div>
+</div>
+
+<div class="card" id="kirchhoff-panel" style="display:none; background:#fef2f2; border-color:#fca5a5;">
+<h4 style="color:#991b1b; margin-bottom:8px;">Kirchhoff's Laws — Live Verification</h4>
+<div style="font-size:.82rem; line-height:1.6; color:#7f1d1d;">
+<div style="margin-bottom:8px;"><b>KCL at node A:</b> <span id="kcl-text">I₁ + I₂ = I₃</span></div>
+<div style="margin-bottom:8px;"><b>KVL Loop 1 (left):</b> <span id="kvl1-text">V₁ − I₁R₁ − I₃R₃ = 0</span></div>
+<div style="margin-bottom:8px;"><b>KVL Loop 2 (right):</b> <span id="kvl2-text">V₂ − I₂R₂ − I₃R₃ = 0</span></div>
+<div style="padding:8px; background:#fff; border-radius:6px; font-family:monospace; font-size:.75rem;">
+<div>ΣI at node A = <span id="kcl-sum">0.000</span> A <span id="kcl-ok" style="color:#10b981; font-weight:bold;">✓ = 0</span></div>
+<div>ΣV around loop 1 = <span id="kvl1-sum">0.000</span> V <span id="kvl1-ok" style="color:#10b981; font-weight:bold;">✓ = 0</span></div>
+<div>ΣV around loop 2 = <span id="kvl2-sum">0.000</span> V <span id="kvl2-ok" style="color:#10b981; font-weight:bold;">✓ = 0</span></div>
+</div>
+</div>
+</div>
+
+<div class="card">
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+<button class="tab-btn active" data-tab="formulas">Formulas</button>
+<button class="tab-btn" data-tab="quiz">Quiz</button>
+<button class="tab-btn" data-tab="challenges">Challenges</button>
+<button class="tab-btn" data-tab="notebook">Notebook</button>
+</div>
+
+<div id="formulas" class="tab-panel active">
+<h3 style="margin:6px 0 8px 0;">Core Formulas — Ohm's Law &amp; Kirchhoff</h3>
+<ul style="font-size:.9rem;line-height:1.6;padding-left:1rem;margin:0;">
+<li><b>Ohm's law:</b> V = I·R</li>
+<li><b>Current:</b> I = V/R</li>
+<li><b>Resistance:</b> R = V/I</li>
+<li><b>Power (electrical):</b> P = V·I = I²·R = V²/R</li>
+<li><b>Series resistance:</b> R_total = R₁ + R₂ + R₃ + …</li>
+<li><b>Parallel resistance:</b> 1/R_total = 1/R₁ + 1/R₂ + 1/R₃ + …</li>
+<li><b>Kirchhoff's Current Law (KCL):</b> ΣI_in = ΣI_out at any node</li>
+<li><b>Kirchhoff's Voltage Law (KVL):</b> ΣV = 0 around any closed loop</li>
+</ul>
+<p class="note"><b>💡 Quick tips:</b> In a <b>series</b> circuit, current is the same through every component and voltage divides. In <b>parallel</b>, voltage is the same across every branch and current divides. <b>Kirchhoff's laws</b> are the two rules that let you solve <i>any</i> complex circuit — KCL enforces conservation of charge at each node, KVL enforces conservation of energy around each loop.</p>
+
+<table class="formulas" style="margin-top:12px;">
+<tr><th>Quantity</th><th>Formula</th><th>Units</th></tr>
+<tr><td>Ohm's law</td><td><span class="eq">V = I·R</span></td><td>V = A·Ω</td></tr>
+<tr><td>Power</td><td><span class="eq">P = V·I = I²R = V²/R</span></td><td>W</td></tr>
+<tr><td>Series R</td><td><span class="eq">R_s = R₁ + R₂ + …</span></td><td>Ω</td></tr>
+<tr><td>Parallel R</td><td><span class="eq">1/R_p = 1/R₁ + 1/R₂ + …</span></td><td>Ω</td></tr>
+<tr><td>KCL</td><td><span class="eq">ΣI_in = ΣI_out</span></td><td>A</td></tr>
+<tr><td>KVL</td><td><span class="eq">ΣV_loop = 0</span></td><td>V</td></tr>
+</table>
+</div>
+
+<div id="quiz" class="tab-panel" style="max-height:600px;overflow:auto;">
+<h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+<div class="quiz-section">Basic — Ohm's Law</div>
+<div class="quiz-q" data-q="q1" data-answer="B">
+<strong>1. Ohm's law is:</strong>
+<label><input type="radio" name="q1" value="A"> V = I/R</label>
+<label><input type="radio" name="q1" value="B"> V = I·R</label>
+<label><input type="radio" name="q1" value="C"> V = R/I</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q2" data-answer="A">
+<strong>2. A resistor has 12 V across it and 0.5 A through it. Its resistance is:</strong>
+<label><input type="radio" name="q2" value="A"> 24 Ω</label>
+<label><input type="radio" name="q2" value="B"> 6 Ω</label>
+<label><input type="radio" name="q2" value="C"> 0.5 Ω</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q3" data-answer="B">
+<strong>3. If you double the voltage across a fixed resistor, the current:</strong>
+<label><input type="radio" name="q3" value="A"> Halves</label>
+<label><input type="radio" name="q3" value="B"> Doubles</label>
+<label><input type="radio" name="q3" value="C"> Stays the same</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Intermediate — Series &amp; Parallel</div>
+<div class="quiz-q" data-q="q4" data-answer="A">
+<strong>4. Two resistors, 100 Ω and 200 Ω, are in series. Total R is:</strong>
+<label><input type="radio" name="q4" value="A"> 300 Ω</label>
+<label><input type="radio" name="q4" value="B"> 67 Ω</label>
+<label><input type="radio" name="q4" value="C"> 100 Ω</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q5" data-answer="B">
+<strong>5. Two resistors, 100 Ω and 200 Ω, are in parallel. Total R is:</strong>
+<label><input type="radio" name="q5" value="A"> 300 Ω</label>
+<label><input type="radio" name="q5" value="B"> 67 Ω</label>
+<label><input type="radio" name="q5" value="C"> 150 Ω</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q6" data-answer="A">
+<strong>6. In a series circuit, the current:</strong>
+<label><input type="radio" name="q6" value="A"> Is the same through all components</label>
+<label><input type="radio" name="q6" value="B"> Splits across components</label>
+<label><input type="radio" name="q6" value="C"> Decreases after each resistor</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="quiz-section">Advanced — Power &amp; Kirchhoff</div>
+<div class="quiz-q" data-q="q7" data-answer="B">
+<strong>7. Power in a 100 Ω resistor with 0.5 A through it is:</strong>
+<label><input type="radio" name="q7" value="A"> 50 W</label>
+<label><input type="radio" name="q7" value="B"> 25 W</label>
+<label><input type="radio" name="q7" value="C"> 100 W</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q8" data-answer="A">
+<strong>8. Kirchhoff's Current Law states that:</strong>
+<label><input type="radio" name="q8" value="A"> Total current entering a node equals total current leaving</label>
+<label><input type="radio" name="q8" value="B"> Voltage around a loop is zero</label>
+<label><input type="radio" name="q8" value="C"> Resistance is constant</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q9" data-answer="B">
+<strong>9. If you halve a resistor's resistance in a fixed-voltage circuit, current:</strong>
+<label><input type="radio" name="q9" value="A"> Halves</label>
+<label><input type="radio" name="q9" value="B"> Doubles</label>
+<label><input type="radio" name="q9" value="C"> Stays the same</label>
+<div class="explanation" hidden></div>
+</div>
+<div class="quiz-q" data-q="q10" data-answer="A">
+<strong>10. Kirchhoff's Voltage Law is a consequence of:</strong>
+<label><input type="radio" name="q10" value="A"> Conservation of energy</label>
+<label><input type="radio" name="q10" value="B"> Conservation of mass</label>
+<label><input type="radio" name="q10" value="C"> Ohm's law</label>
+<div class="explanation" hidden></div>
+</div>
+
+<div class="btn-grid" style="margin-top:12px;">
+<button class="btn-fire" id="btn-quiz-check">Submit Quiz</button>
+<button class="btn-reset" id="btn-quiz-reset">Reset</button>
+</div>
+<div id="quiz-result" style="display:none;"></div>
+</div>
+
+<div id="challenges" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Challenges</h3>
+<div style="display:flex;flex-direction:column;gap:8px;font-size:.9rem;">
+<div><b>1. Single resistor</b><br><button class="btn-fire" data-challenge="single">12V, 100Ω → I = 0.12 A</button></div>
+<div><b>2. Series divider</b><br><button class="btn-fire" data-challenge="series">Voltage divider (12V, 100+220)</button></div>
+<div><b>3. Parallel current split</b><br><button class="btn-fire" data-challenge="parallel">Equal voltage, split current</button></div>
+<div><b>4. Match a target current</b><br><button class="btn-fire" data-challenge="target">Set R for exactly 0.1 A at 12V</button></div>
+<div><b>5. Combo circuit</b><br><button class="btn-fire" data-challenge="combo">Series-parallel combination</button></div>
+<div><b>6. Kirchhoff's 2-loop</b><br><button class="btn-fire" data-challenge="kirchhoff">Verify KCL and KVL live</button></div>
+<div id="challenge-note" style="color:#0f172a;font-size:.85rem;"></div>
+<div id="challenge-result" style="color:#083344;font-weight:600;margin-top:6px;"></div>
+</div>
+</div>
+
+<div id="notebook" class="tab-panel">
+<h3 style="margin:6px 0 8px 0;">Notebook</h3>
+<label>Hypothesis</label>
+<textarea id="hypothesis" placeholder="What do you expect?"></textarea>
+<label style="margin-top:10px;display:block;">Conclusion</label>
+<textarea id="conclusion" placeholder="What did you observe?"></textarea>
+<label style="margin-top:10px;display:block;">Measurements</label>
+<textarea id="records" readonly style="background:#f8fafc;font-family:monospace;font-size:.75rem;min-height:100px;"></textarea>
+<div class="btn-grid" style="margin-top:10px;">
+<button class="btn-fire" id="btn-record">📋 Record</button>
+<button class="btn-reset" id="btn-clear-notes">Clear</button>
+</div>
+<button class="btn-fire" style="margin-top:8px;width:100%;" id="btn-export">⬇ Report</button>
+</div>
+</div>
+
+<div class="card">
+<b>Real fact:</b> <span id="fact-box" style="font-size:.85rem;">—</span>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+"use strict";
+(function(){
+
+// ============ STATE ============
+var S = {
+    circuit: 'single',
+    V: 12.0,
+    V2: 6.0,
+    R1: 100,
+    R2: 220,
+    R3: 330,
+    labels: true,
+    power: true,
+    soundOn: false,
+    time: 0,
+    currentPhase: 0,
+    debugCount: 0,
+    records: []
+};
+
+var $ = function(id){ return document.getElementById(id); };
+var canvas = $('canvas');
+var ctx = canvas.getContext('2d');
+var dpr = window.devicePixelRatio || 1;
+var view = { x:0, y:0, scale:1 };
+var lastW = 0, lastH = 0;
+
+// ============ CANVAS ============
+function resizeCanvas(){
+    var rect = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(rect.width));
+    var h = Math.max(1, Math.round(rect.height));
+    if (w === lastW && h === lastH) return;
+    lastW = w; lastH = h;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function cw(){ return canvas.width / dpr; }
+function ch(){ return canvas.height / dpr; }
+
+// ============ AUDIO ============
+var audioCtx = null;
+var currentHum = null, currentGain = null;
+function initAudio(){
+    if (audioCtx) return;
+    try {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return;
+        audioCtx = new AC();
+    } catch(e){}
+}
+function beep(freq, dur, type, vol){
+    if (!audioCtx || !S.soundOn) return;
+    try {
+        var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = type || 'sine';
+        o.frequency.value = freq;
+        g.gain.setValueAtTime(vol || 0.06, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(); o.stop(audioCtx.currentTime + dur);
+    } catch(e){}
+}
+function startHum(){
+    if (!audioCtx || !S.soundOn || !S.power) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (currentHum) return;
+    try {
+        currentHum = audioCtx.createOscillator();
+        currentGain = audioCtx.createGain();
+        currentHum.type = 'sine';
+        var I = getTotalCurrent();
+        currentHum.frequency.value = 100 + I * 40;
+        currentGain.gain.setValueAtTime(0, audioCtx.currentTime);
+        currentGain.gain.linearRampToValueAtTime(0.03 + Math.min(0.04, I * 0.1), audioCtx.currentTime + 0.3);
+        currentHum.connect(currentGain);
+        currentGain.connect(audioCtx.destination);
+        currentHum.start();
+    } catch(e){}
+}
+function stopHum(){
+    if (currentHum) {
+        try {
+            currentGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
+            currentHum.stop(audioCtx.currentTime + 0.25);
+        } catch(e){}
+        currentHum = null;
+        currentGain = null;
+    }
+}
+function toggleSound(){
+    initAudio();
+    if (!audioCtx) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    S.soundOn = !S.soundOn;
+    if (S.soundOn) {
+        $('btn-sound').textContent = '🔊 Sound ON';
+        $('btn-sound').classList.add('playing');
+        beep(440, 0.1, 'sine', 0.1);
+        if (S.power) startHum();
+    } else {
+        stopHum();
+        $('btn-sound').textContent = '🔈 Enable sound';
+        $('btn-sound').classList.remove('playing');
+    }
+}
+
+// ============ PHYSICS ============
+function computeCircuit(){
+    var result = {
+        Rtotal: 0, Itotal: 0,
+        R: [S.R1, S.R2, S.R3],
+        V: [0, 0, 0],
+        I: [0, 0, 0],
+        P: [0, 0, 0],
+        label: ''
+    };
+
+    if (S.circuit === 'single') {
+        result.Rtotal = S.R1;
+        result.Itotal = S.power ? S.V / S.R1 : 0;
+        result.V[0] = S.power ? S.V : 0;
+        result.I[0] = result.Itotal;
+        result.P[0] = result.V[0] * result.I[0];
+        result.label = 'Single resistor';
+    } else if (S.circuit === 'series') {
+        result.Rtotal = S.R1 + S.R2;
+        result.Itotal = S.power ? S.V / result.Rtotal : 0;
+        result.I[0] = result.Itotal;
+        result.I[1] = result.Itotal;
+        result.V[0] = result.I[0] * S.R1;
+        result.V[1] = result.I[1] * S.R2;
+        result.P[0] = result.V[0] * result.I[0];
+        result.P[1] = result.V[1] * result.I[1];
+        result.label = 'Series';
+    } else if (S.circuit === 'parallel') {
+        result.Rtotal = 1 / (1/S.R1 + 1/S.R2);
+        result.Itotal = S.power ? S.V / result.Rtotal : 0;
+        result.V[0] = S.power ? S.V : 0;
+        result.V[1] = S.power ? S.V : 0;
+        result.I[0] = result.V[0] / S.R1;
+        result.I[1] = result.V[1] / S.R2;
+        result.P[0] = result.V[0] * result.I[0];
+        result.P[1] = result.V[1] * result.I[1];
+        result.label = 'Parallel';
+    } else if (S.circuit === 'threeparallel') {
+        result.Rtotal = 1 / (1/S.R1 + 1/S.R2 + 1/S.R3);
+        result.Itotal = S.power ? S.V / result.Rtotal : 0;
+        result.V[0] = S.power ? S.V : 0;
+        result.V[1] = S.power ? S.V : 0;
+        result.V[2] = S.power ? S.V : 0;
+        result.I[0] = result.V[0] / S.R1;
+        result.I[1] = result.V[1] / S.R2;
+        result.I[2] = result.V[2] / S.R3;
+        result.P[0] = result.V[0] * result.I[0];
+        result.P[1] = result.V[1] * result.I[1];
+        result.P[2] = result.V[2] * result.I[2];
+        result.label = 'Three in parallel';
+    } else if (S.circuit === 'combo') {
+        var R23 = 1 / (1/S.R2 + 1/S.R3);
+        result.Rtotal = S.R1 + R23;
+        result.Itotal = S.power ? S.V / result.Rtotal : 0;
+        result.I[0] = result.Itotal;
+        result.V[0] = result.I[0] * S.R1;
+        result.V[1] = result.I[0] * R23;
+        result.V[2] = result.I[0] * R23;
+        result.I[1] = result.V[1] / S.R2;
+        result.I[2] = result.V[2] / S.R3;
+        result.P[0] = result.V[0] * result.I[0];
+        result.P[1] = result.V[1] * result.I[1];
+        result.P[2] = result.V[2] * result.I[2];
+        result.label = 'Combo (R1 + R2||R3)';
+    } else if (S.circuit === 'kirchhoff') {
+        // 2-loop circuit:
+        // Node A (top junction), Node B (bottom junction)
+        // Left branch: V1 - R1 (top), branch current I1 left-to-right at top
+        // Right branch: R2 (top) - V2, branch current I2 right-to-left at top (or from V2's perspective)
+        // Middle branch: R3, current I3 top-to-bottom
+        // KCL at node A: I1 + I2 = I3 (assuming I1 and I2 flow INTO node A from top-left and top-right)
+        // Actually simpler: define branch currents flowing DOWNWARD through R3 and CCW around each loop
+        // Left loop (CCW): starts at node B → up left wire → top-left → node A → down middle → R3 → node B
+        //   KVL: +V1 - I1*R1 - I3*R3 = 0
+        // Right loop (CW): node B → up middle → node A → top-right → right wire → down → V2 → node B
+        //   KVL: -V2 - I2*R2 + I3*R3 = 0  (signs depend on convention)
+        // Simpler and standard approach:
+        //   KCL at node A: I1 + I2 = I3 (I1 entering from left, I2 from right, I3 leaving downward)
+        //   KVL loop 1 (left, CW): V1 - I1*R1 - I3*R3 = 0
+        //   KVL loop 2 (right, CW): -V2 - I2*R2 - I3*R3 = 0  → wait sign of V2
+        // 
+        // Let's use standard:
+        //   Left loop CW: V1 - I1*R1 - I3*R3 = 0 → V1 = I1*R1 + I3*R3
+        //   Right loop CCW: V2 - I2*R2 - I3*R3 = 0 → V2 = I2*R2 + I3*R3
+        //   With KCL: I3 = I1 + I2
+        // Substituting I3:
+        //   V1 = I1*R1 + (I1+I2)*R3 = I1*(R1+R3) + I2*R3
+        //   V2 = I2*R2 + (I1+I2)*R3 = I1*R3 + I2*(R2+R3)
+        // Solve 2×2:
+        var R1 = S.R1, R2 = S.R2, R3 = S.R3;
+        var V1 = S.power ? S.V : 0;
+        var V2 = S.power ? S.V2 : 0;
+        var a11 = R1 + R3, a12 = R3;
+        var a21 = R3, a22 = R2 + R3;
+        var det = a11 * a22 - a12 * a21;
+        var I1, I2;
+        if (Math.abs(det) < 1e-9) {
+            I1 = 0; I2 = 0;
+        } else {
+            I1 = (V1 * a22 - a12 * V2) / det;
+            I2 = (a11 * V2 - V1 * a21) / det;
+        }
+        var I3 = I1 + I2;
+        result.kI1 = I1;
+        result.kI2 = I2;
+        result.kI3 = I3;
+        result.kV1 = V1;
+        result.kV2 = V2;
+        result.Rtotal = 1 / (1/R1 + 1/R2 + 1/R3);
+        result.Itotal = Math.abs(I1) + Math.abs(I2) + Math.abs(I3);
+        result.V[0] = Math.abs(I1) * R1;
+        result.V[1] = Math.abs(I2) * R2;
+        result.V[2] = Math.abs(I3) * R3;
+        result.I[0] = Math.abs(I1);
+        result.I[1] = Math.abs(I2);
+        result.I[2] = Math.abs(I3);
+        result.P[0] = I1 * I1 * R1;
+        result.P[1] = I2 * I2 * R2;
+        result.P[2] = I3 * I3 * R3;
+        result.label = 'Kirchhoff (2-loop)';
+    }
+
+    return result;
+}
+
+function getTotalCurrent(){
+    return computeCircuit().Itotal;
+}
+
+// ============ DRAW ============
+function drawScene(){
+    resizeCanvas();
+    var w = cw(), h = ch();
+    if (w < 10 || h < 10) return;
+
+    var bg = ctx.createLinearGradient(0, 0, 0, h);
+    bg.addColorStop(0, '#fafcff');
+    bg.addColorStop(1, '#eef2f7');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 1;
+    for (var gx = 0; gx < w; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke(); }
+    for (var gy = 0; gy < h; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke(); }
+
+    ctx.save();
+    ctx.translate(view.x, view.y);
+    ctx.scale(view.scale, view.scale);
+    var W = w / view.scale, H = h / view.scale;
+
+    var calc = computeCircuit();
+
+    if (S.circuit === 'single') drawSingleCircuit(W, H, calc);
+    else if (S.circuit === 'series') drawSeriesCircuit(W, H, calc);
+    else if (S.circuit === 'parallel') drawParallelCircuit(W, H, calc);
+    else if (S.circuit === 'threeparallel') drawThreeParallelCircuit(W, H, calc);
+    else if (S.circuit === 'combo') drawComboCircuit(W, H, calc);
+    else if (S.circuit === 'kirchhoff') drawKirchhoffCircuit(W, H, calc);
+
+    ctx.restore();
+
+    ctx.fillStyle = '#0f172a';
+    ctx.font = 'bold 13px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText(calc.label + ' circuit', w/2, 25);
+    ctx.font = '11px Inter';
+    ctx.fillStyle = '#64748b';
+    ctx.fillText('V = I·R  ·  P = V·I  ·  R_total = ' + calc.Rtotal.toFixed(1) + ' Ω', w/2, 43);
+
+    var pulseR = 5 + 3 * Math.sin(S.time * 4);
+    ctx.fillStyle = S.power ? 'rgba(16,185,129,0.9)' : 'rgba(100,116,139,0.6)';
+    ctx.beginPath();
+    ctx.arc(w - 25, 25, pulseR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = S.power ? '#10b981' : '#64748b';
+    ctx.font = 'bold 9px Inter';
+    ctx.textAlign = 'right';
+    ctx.fillText(S.power ? 'ON' : 'OFF', w - 38, 28);
+}
+
+// ---------- Circuit drawings ----------
+function drawSingleCircuit(W, H, calc){
+    var cx = W / 2, cy = H / 2;
+    var boxW = Math.min(W * 0.6, 500);
+    var boxH = Math.min(H * 0.5, 260);
+    var left = cx - boxW / 2, right = cx + boxW / 2;
+    var top = cy - boxH / 2, bottom = cy + boxH / 2;
+
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(left, top);
+    ctx.lineTo(right, top);
+    ctx.lineTo(right, bottom);
+    ctx.lineTo(left, bottom);
+    ctx.lineTo(left, top);
+    ctx.stroke();
+
+    drawBattery(left, cy, S.V, 'V');
+    drawResistor(right, cy, calc.R[0], 'R₁', calc.V[0], calc.I[0], calc.P[0]);
+
+    if (S.power && calc.Itotal > 0) {
+        animateCurrent([
+            { x1: left, y1: top, x2: right, y2: top },
+            { x1: right, y1: top, x2: right, y2: bottom },
+            { x1: right, y1: bottom, x2: left, y2: bottom },
+            { x1: left, y1: bottom, x2: left, y2: top }
+        ], calc.Itotal);
+    }
+}
+
+function drawSeriesCircuit(W, H, calc){
+    var cx = W / 2, cy = H / 2;
+    var boxW = Math.min(W * 0.65, 560);
+    var boxH = Math.min(H * 0.5, 260);
+    var left = cx - boxW / 2, right = cx + boxW / 2;
+    var top = cy - boxH / 2, bottom = cy + boxH / 2;
+
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(left, top);
+    ctx.lineTo(right, top);
+    ctx.lineTo(right, bottom);
+    ctx.lineTo(left, bottom);
+    ctx.lineTo(left, top);
+    ctx.stroke();
+
+    drawBattery(left, cy, S.V, 'V');
+    drawResistorHoriz(cx - 130, top, calc.R[0], 'R₁', calc.V[0], calc.I[0], calc.P[0]);
+    drawResistorHoriz(cx + 40, top, calc.R[1], 'R₂', calc.V[1], calc.I[1], calc.P[1]);
+
+    if (S.power && calc.Itotal > 0) {
+        animateCurrent([
+            { x1: left, y1: top, x2: right, y2: top },
+            { x1: right, y1: top, x2: right, y2: bottom },
+            { x1: right, y1: bottom, x2: left, y2: bottom },
+            { x1: left, y1: bottom, x2: left, y2: top }
+        ], calc.Itotal);
+    }
+}
+
+function drawParallelCircuit(W, H, calc){
+    var cx = W / 2, cy = H / 2;
+    var boxW = Math.min(W * 0.6, 500);
+    var boxH = Math.min(H * 0.6, 300);
+    var left = cx - boxW / 2, right = cx + boxW / 2;
+    var top = cy - boxH / 2, bottom = cy + boxH / 2;
+
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(left, top);
+    ctx.lineTo(right, top);
+    ctx.lineTo(right, bottom);
+    ctx.lineTo(left, bottom);
+    ctx.lineTo(left, top);
+    ctx.stroke();
+
+    var br1Y = cy - boxH * 0.25;
+    ctx.beginPath();
+    ctx.moveTo(cx - 80, top); ctx.lineTo(cx - 80, br1Y); ctx.lineTo(cx + 80, br1Y); ctx.lineTo(cx + 80, top);
+    ctx.stroke();
+
+    var br2Y = cy + boxH * 0.25;
+    ctx.beginPath();
+    ctx.moveTo(cx - 80, bottom); ctx.lineTo(cx - 80, br2Y); ctx.lineTo(cx + 80, br2Y); ctx.lineTo(cx + 80, bottom);
+    ctx.stroke();
+
+    drawBattery(left, cy, S.V, 'V');
+    drawResistorHoriz(cx - 30, br1Y, calc.R[0], 'R₁', calc.V[0], calc.I[0], calc.P[0]);
+    drawResistorHoriz(cx - 30, br2Y, calc.R[1], 'R₂', calc.V[1], calc.I[1], calc.P[1]);
+
+    if (S.power && calc.Itotal > 0) {
+        animateCurrent([
+            { x1: left, y1: top, x2: right, y2: top },
+            { x1: right, y1: top, x2: right, y2: bottom },
+            { x1: right, y1: bottom, x2: left, y2: bottom },
+            { x1: left, y1: bottom, x2: left, y2: top }
+        ], calc.Itotal);
+    }
+}
+
+function drawThreeParallelCircuit(W, H, calc){
+    var cx = W / 2, cy = H / 2;
+    var boxW = Math.min(W * 0.65, 560);
+    var boxH = Math.min(H * 0.7, 340);
+    var left = cx - boxW / 2, right = cx + boxW / 2;
+    var top = cy - boxH / 2, bottom = cy + boxH / 2;
+
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(left, top);
+    ctx.lineTo(right, top);
+    ctx.lineTo(right, bottom);
+    ctx.lineTo(left, bottom);
+    ctx.lineTo(left, top);
+    ctx.stroke();
+
+    var brY = [cy - boxH * 0.28, cy, cy + boxH * 0.28];
+    brY.forEach(function(y){
+        ctx.beginPath();
+        ctx.moveTo(cx - 100, top); ctx.lineTo(cx - 100, y); ctx.lineTo(cx + 100, y); ctx.lineTo(cx + 100, top);
+        ctx.stroke();
+    });
+
+    drawBattery(left, cy, S.V, 'V');
+    for (var i = 0; i < 3; i++) {
+        drawResistorHoriz(cx - 30, brY[i], calc.R[i], 'R' + (i+1), calc.V[i], calc.I[i], calc.P[i]);
+    }
+
+    if (S.power && calc.Itotal > 0) {
+        animateCurrent([
+            { x1: left, y1: top, x2: right, y2: top },
+            { x1: right, y1: top, x2: right, y2: bottom },
+            { x1: right, y1: bottom, x2: left, y2: bottom },
+            { x1: left, y1: bottom, x2: left, y2: top }
+        ], calc.Itotal);
+    }
+}
+
+function drawComboCircuit(W, H, calc){
+    var cx = W / 2, cy = H / 2;
+    var boxW = Math.min(W * 0.65, 560);
+    var boxH = Math.min(H * 0.55, 280);
+    var left = cx - boxW / 2, right = cx + boxW / 2;
+    var top = cy - boxH / 2, bottom = cy + boxH / 2;
+
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(left, top);
+    ctx.lineTo(right, top);
+    ctx.lineTo(right, bottom);
+    ctx.lineTo(left, bottom);
+    ctx.lineTo(left, top);
+    ctx.stroke();
+
+    var midY = cy;
+    ctx.beginPath();
+    ctx.moveTo(cx - 80, top); ctx.lineTo(cx - 80, midY - 20); ctx.lineTo(cx + 80, midY - 20); ctx.lineTo(cx + 80, top);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx - 80, bottom); ctx.lineTo(cx - 80, midY + 20); ctx.lineTo(cx + 80, midY + 20); ctx.lineTo(cx + 80, bottom);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx - 80, midY - 20); ctx.lineTo(cx - 80, midY + 20);
+    ctx.moveTo(cx + 80, midY - 20); ctx.lineTo(cx + 80, midY + 20);
+    ctx.stroke();
+
+    drawBattery(left, cy, S.V, 'V');
+    drawResistorHoriz(cx - 30, top, calc.R[0], 'R₁', calc.V[0], calc.I[0], calc.P[0]);
+    drawResistorHoriz(cx - 30, midY - 20, calc.R[1], 'R₂', calc.V[1], calc.I[1], calc.P[1]);
+    drawResistorHoriz(cx - 30, midY + 20, calc.R[2], 'R₃', calc.V[2], calc.I[2], calc.P[2]);
+
+    if (S.power && calc.Itotal > 0) {
+        animateCurrent([
+            { x1: left, y1: top, x2: right, y2: top },
+            { x1: right, y1: top, x2: right, y2: bottom },
+            { x1: right, y1: bottom, x2: left, y2: bottom },
+            { x1: left, y1: bottom, x2: left, y2: top }
+        ], calc.Itotal);
+    }
+}
+
+function drawKirchhoffCircuit(W, H, calc){
+    var cx = W / 2, cy = H / 2;
+    var boxW = Math.min(W * 0.72, 620);
+    var boxH = Math.min(H * 0.6, 320);
+    var left = cx - boxW / 2, right = cx + boxW / 2;
+    var top = cy - boxH / 2, bottom = cy + boxH / 2;
+    var midX = cx;
+
+    // Wires: outer rectangle + middle branch
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(left, top); ctx.lineTo(right, top);
+    ctx.lineTo(right, bottom);
+    ctx.lineTo(left, bottom);
+    ctx.lineTo(left, top);
+    ctx.moveTo(midX, top); ctx.lineTo(midX, bottom);
+    ctx.stroke();
+
+    // Battery V1 on left wire
+    drawBatteryVert(left, cy - 60, S.V, 'V₁');
+    // Battery V2 on right wire
+    drawBatteryVert(right, cy + 60, S.V2, 'V₂');
+
+    // R1 on top-left wire
+    drawResistorHoriz(left + (midX - left) / 2, top, calc.R[0], 'R₁', calc.V[0], calc.I[0], calc.P[0]);
+    // R2 on top-right wire
+    drawResistorHoriz((midX + right) / 2, top, calc.R[1], 'R₂', calc.V[1], calc.I[1], calc.P[1]);
+    // R3 on middle branch
+    drawResistorVert(midX, cy, calc.R[2], 'R₃', calc.V[2], calc.I[2], calc.P[2]);
+
+    // Nodes A (top) and B (bottom)
+    ctx.fillStyle = '#dc2626';
+    ctx.beginPath(); ctx.arc(midX, top, 7, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 10px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('A', midX, top + 3);
+
+    ctx.fillStyle = '#dc2626';
+    ctx.beginPath(); ctx.arc(midX, bottom, 7, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.fillText('B', midX, bottom + 3);
+
+    // Loop labels
+    ctx.fillStyle = '#dc2626';
+    ctx.font = 'bold 11px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('Loop 1', (left + midX) / 2, bottom - 10);
+    ctx.fillStyle = '#3b82f6';
+    ctx.fillText('Loop 2', (midX + right) / 2, bottom - 10);
+
+    // Current arrows
+    var I1 = calc.kI1 || 0;
+    var I2 = calc.kI2 || 0;
+    var I3 = calc.kI3 || 0;
+
+    drawCurrentArrow((left + midX) / 2, top - 32, I1 >= 0 ? 'right' : 'left', Math.abs(I1), 'I₁');
+    drawCurrentArrow((midX + right) / 2, top - 32, I2 >= 0 ? 'right' : 'left', Math.abs(I2), 'I₂');
+    drawCurrentArrowVert(midX + 30, cy, I3 >= 0 ? 'down' : 'up', Math.abs(I3), 'I₃');
+
+    // Current dots animation on both loops
+    if (S.power) {
+        // Left loop
+        animateCurrent([
+            { x1: left, y1: top, x2: midX, y2: top },
+            { x1: midX, y1: top, x2: midX, y2: bottom },
+            { x1: midX, y1: bottom, x2: left, y2: bottom },
+            { x1: left, y1: bottom, x2: left, y2: top }
+        ], Math.abs(I1) + Math.abs(I3));
+        // Right loop
+        animateCurrent([
+            { x1: midX, y1: top, x2: right, y2: top },
+            { x1: right, y1: top, x2: right, y2: bottom },
+            { x1: right, y1: bottom, x2: midX, y2: bottom },
+            { x1: midX, y1: bottom, x2: midX, y2: top }
+        ], Math.abs(I2) + Math.abs(I3));
+    }
+}
+
+// ---------- Component helpers ----------
+function drawBattery(x, y, V, label){
+    var size = 20;
+    ctx.fillStyle = '#fbbf24';
+    ctx.fillRect(x - 5, y - size, 8, size * 2);
+    ctx.strokeStyle = '#78350f';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x - 5, y - size, 8, size * 2);
+    ctx.fillStyle = '#94a3b8';
+    ctx.fillRect(x + 5, y - size * 0.5, 5, size);
+    ctx.strokeStyle = '#475569';
+    ctx.strokeRect(x + 5, y - size * 0.5, 5, size);
+
+    ctx.fillStyle = '#0f172a';
+    ctx.font = 'bold 14px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('+', x - 15, y - 15);
+    ctx.fillText('−', x + 20, y + 8);
+
+    ctx.fillStyle = '#fbbf24';
+    ctx.fillRect(x - 30, y - size - 30, 60, 20);
+    ctx.strokeStyle = '#78350f';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x - 30, y - size - 30, 60, 20);
+    ctx.fillStyle = '#0f172a';
+    ctx.font = 'bold 11px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText(V.toFixed(1) + ' V', x, y - size - 16);
+}
+
+function drawBatteryVert(x, y, V, label){
+    var size = 20;
+    ctx.fillStyle = '#fbbf24';
+    ctx.fillRect(x - size, y - 5, size * 2, 8);
+    ctx.strokeStyle = '#78350f';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x - size, y - 5, size * 2, 8);
+    ctx.fillStyle = '#94a3b8';
+    ctx.fillRect(x - size * 0.5, y + 5, size, 5);
+    ctx.strokeStyle = '#475569';
+    ctx.strokeRect(x - size * 0.5, y + 5, size, 5);
+
+    ctx.fillStyle = '#0f172a';
+    ctx.font = 'bold 12px Inter';
+    ctx.textAlign = 'left';
+    ctx.fillText('+', x + size + 4, y - 2);
+    ctx.fillText('−', x + size + 4, y + 15);
+
+    ctx.fillStyle = '#fbbf24';
+    ctx.fillRect(x + size + 16, y - 12, 55, 20);
+    ctx.strokeStyle = '#78350f';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x + size + 16, y - 12, 55, 20);
+    ctx.fillStyle = '#0f172a';
+    ctx.font = 'bold 11px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText(label + '=' + V.toFixed(1) + 'V', x + size + 44, y + 3);
+}
+
+function drawResistor(x, y, R, label, V, I, P){
+    var h = 60, w = 20;
+    var y1 = y - h/2, y2 = y + h/2;
+
+    ctx.strokeStyle = '#6366f1';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x, y1);
+    for (var i = 0; i < 5; i++) {
+        var segY = y1 + (i + 0.5) * h / 5;
+        var segX = x + (i % 2 === 0 ? w : -w);
+        ctx.lineTo(segX, segY);
+    }
+    ctx.lineTo(x, y2);
+    ctx.stroke();
+
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x, y1); ctx.lineTo(x, y1 - 20);
+    ctx.moveTo(x, y2); ctx.lineTo(x, y2 + 20);
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(199,210,254,0.4)';
+    ctx.strokeStyle = '#6366f1';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(x - 22, y - h/2, 44, h, 4);
+    ctx.fill();
+    ctx.stroke();
+
+    var bands = valueToBands(R);
+    for (var b = 0; b < bands.length; b++) {
+        ctx.fillStyle = bands[b];
+        ctx.fillRect(x - 22, y - h/2 + 6 + b * 8, 44, 5);
+    }
+
+    ctx.fillStyle = '#0f172a';
+    ctx.font = 'bold 12px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x, y - h/2 - 35);
+    ctx.fillText(R + ' Ω', x, y - h/2 - 20);
+
+    if (S.labels) {
+        ctx.fillStyle = '#6366f1';
+        ctx.font = '10px Inter';
+        ctx.fillText(V.toFixed(1) + ' V', x + 40, y - 5);
+        ctx.fillStyle = '#dc2626';
+        ctx.fillText(I.toFixed(3) + ' A', x + 40, y + 10);
+        ctx.fillStyle = '#f59e0b';
+        ctx.fillText(P.toFixed(2) + ' W', x + 40, y + 25);
+    }
+}
+
+function drawResistorHoriz(x, y, R, label, V, I, P){
+    var w = 60, h = 20;
+    var x1 = x - w/2, x2 = x + w/2;
+
+    ctx.strokeStyle = '#6366f1';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x1, y);
+    for (var i = 0; i < 5; i++) {
+        var segX = x1 + (i + 0.5) * w / 5;
+        var segY = y + (i % 2 === 0 ? h : -h);
+        ctx.lineTo(segX, segY);
+    }
+    ctx.lineTo(x2, y);
+    ctx.stroke();
+
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x1, y); ctx.lineTo(x1 - 20, y);
+    ctx.moveTo(x2, y); ctx.lineTo(x2 + 20, y);
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(199,210,254,0.4)';
+    ctx.strokeStyle = '#6366f1';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(x1, y - h/2, w, h, 4);
+    ctx.fill();
+    ctx.stroke();
+
+    var bands = valueToBands(R);
+    for (var b = 0; b < bands.length; b++) {
+        ctx.fillStyle = bands[b];
+        ctx.fillRect(x1 + 6 + b * 8, y - h/2, 5, h);
+    }
+
+    ctx.fillStyle = '#0f172a';
+    ctx.font = 'bold 11px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x, y - h/2 - 22);
+    ctx.fillText(R + ' Ω', x, y - h/2 - 9);
+
+    if (S.labels) {
+        ctx.fillStyle = '#6366f1';
+        ctx.font = '10px Inter';
+        ctx.fillText(V.toFixed(1) + ' V · ' + I.toFixed(3) + ' A', x, y + h/2 + 14);
+        ctx.fillStyle = '#f59e0b';
+        ctx.fillText(P.toFixed(2) + ' W', x, y + h/2 + 26);
+    }
+}
+
+function drawResistorVert(x, y, R, label, V, I, P){
+    var h = 60, w = 20;
+    var y1 = y - h/2, y2 = y + h/2;
+
+    ctx.strokeStyle = '#6366f1';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x, y1);
+    for (var i = 0; i < 5; i++) {
+        var segY = y1 + (i + 0.5) * h / 5;
+        var segX = x + (i % 2 === 0 ? w : -w);
+        ctx.lineTo(segX, segY);
+    }
+    ctx.lineTo(x, y2);
+    ctx.stroke();
+
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x, y1); ctx.lineTo(x, y1 - 15);
+    ctx.moveTo(x, y2); ctx.lineTo(x, y2 + 15);
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(199,210,254,0.4)';
+    ctx.strokeStyle = '#6366f1';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(x - 22, y - h/2, 44, h, 4);
+    ctx.fill();
+    ctx.stroke();
+
+    var bands = valueToBands(R);
+    for (var b = 0; b < bands.length; b++) {
+        ctx.fillStyle = bands[b];
+        ctx.fillRect(x - 22, y - h/2 + 6 + b * 8, 44, 5);
+    }
+
+    ctx.fillStyle = '#0f172a';
+    ctx.font = 'bold 11px Inter';
+    ctx.textAlign = 'right';
+    ctx.fillText(label, x - 35, y - 5);
+    ctx.fillText(R + 'Ω', x - 35, y + 10);
+    if (S.labels) {
+        ctx.fillStyle = '#6366f1';
+        ctx.font = '10px Inter';
+        ctx.fillText(V.toFixed(1) + ' V', x + 35, y - 5);
+        ctx.fillStyle = '#dc2626';
+        ctx.fillText(I.toFixed(3) + ' A', x + 35, y + 10);
+    }
+}
+
+function drawCurrentArrow(x, y, dir, magnitude, label){
+    ctx.fillStyle = '#dc2626';
+    ctx.beginPath();
+    var sz = 12;
+    if (dir === 'right') {
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + sz, y - sz/2);
+        ctx.lineTo(x + sz, y + sz/2);
+    } else {
+        ctx.moveTo(x, y);
+        ctx.lineTo(x - sz, y - sz/2);
+        ctx.lineTo(x - sz, y + sz/2);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#dc2626';
+    ctx.font = 'bold 10px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText(label + ' = ' + magnitude.toFixed(3) + ' A', x, y - 10);
+}
+
+function drawCurrentArrowVert(x, y, dir, magnitude, label){
+    ctx.fillStyle = '#dc2626';
+    ctx.beginPath();
+    var sz = 12;
+    if (dir === 'down') {
+        ctx.moveTo(x, y);
+        ctx.lineTo(x - sz/2, y + sz);
+        ctx.lineTo(x + sz/2, y + sz);
+    } else {
+        ctx.moveTo(x, y);
+        ctx.lineTo(x - sz/2, y - sz);
+        ctx.lineTo(x + sz/2, y - sz);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#dc2626';
+    ctx.font = 'bold 10px Inter';
+    ctx.textAlign = 'left';
+    ctx.fillText(label + ' = ' + magnitude.toFixed(3) + ' A', x + 8, y);
+}
+
+// Resistor color code
+function valueToBands(R){
+    var bands = [];
+    var colors = ['#000000','#78350f','#dc2626','#f59e0b','#fbbf24','#10b981','#3b82f6','#8b5cf6','#94a3b8','#e2e8f0'];
+    var R2 = Math.round(R);
+    if (R2 < 10) R2 = 10;
+    var digits = String(R2);
+    var d1 = parseInt(digits[0]);
+    var d2 = parseInt(digits[1] || '0');
+    var multiplier = digits.length - 2;
+    if (multiplier > 9) multiplier = 9;
+    bands.push(colors[d1] || '#000000');
+    bands.push(colors[d2] || '#000000');
+    bands.push(colors[multiplier] || '#000000');
+    bands.push('#fbbf24');
+    return bands;
+}
+
+// Current animation
+function animateCurrent(segments, I){
+    var speed = Math.min(3, 0.3 + I * 2);
+    var phase = (S.currentPhase * speed) % 1;
+    var totalLen = 0;
+    segments.forEach(function(s){ totalLen += Math.hypot(s.x2 - s.x1, s.y2 - s.y1); });
+    var numDots = Math.max(6, Math.floor(totalLen / 40));
+    for (var i = 0; i < numDots; i++) {
+        var pos = ((i / numDots) + phase) % 1;
+        var target = pos * totalLen;
+        var cumLen = 0;
+        for (var j = 0; j < segments.length; j++) {
+            var seg = segments[j];
+            var segLen = Math.hypot(seg.x2 - seg.x1, seg.y2 - seg.y1);
+            if (target <= cumLen + segLen) {
+                var t = (target - cumLen) / segLen;
+                var px = seg.x1 + (seg.x2 - seg.x1) * t;
+                var py = seg.y1 + (seg.y2 - seg.y1) * t;
+                ctx.fillStyle = '#dc2626';
+                ctx.shadowColor = '#dc2626';
+                ctx.shadowBlur = 8;
+                ctx.beginPath();
+                ctx.arc(px, py, 3.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                break;
+            }
+            cumLen += segLen;
+        }
+    }
+}
+
+// ============ READOUTS ============
+function updateReadouts(){
+    var calc = computeCircuit();
+    var I = calc.Itotal;
+    var Ptotal = S.power ? S.V * I : 0;
+    if (S.circuit === 'kirchhoff') Ptotal = calc.P[0] + calc.P[1] + calc.P[2];
+
+    $('ro-V').innerText = S.V.toFixed(1) + ' V';
+    $('ro-R').innerText = calc.Rtotal.toFixed(1) + ' Ω';
+    $('ro-I').innerText = I.toFixed(4) + ' A';
+    $('ro-P').innerText = Ptotal.toFixed(3) + ' W';
+    $('ro-R1').innerText = S.R1 + ' Ω';
+    $('ro-V1').innerText = calc.V[0].toFixed(2) + ' V';
+    $('ro-I1').innerText = calc.I[0].toFixed(4) + ' A';
+    $('ro-P1').innerText = calc.P[0].toFixed(3) + ' W';
+
+    if (S.circuit === 'single') {
+        $('ro-R2').innerText = '—';
+        $('ro-V2v').innerText = '—';
+        $('ro-I2').innerText = '—';
+        $('ro-P2').innerText = '—';
+    } else {
+        $('ro-R2').innerText = S.R2 + ' Ω';
+        $('ro-V2v').innerText = calc.V[1].toFixed(2) + ' V';
+        $('ro-I2').innerText = calc.I[1].toFixed(4) + ' A';
+        $('ro-P2').innerText = calc.P[1].toFixed(3) + ' W';
+    }
+
+    $('hud-V').innerText = S.V.toFixed(1);
+    $('hud-R').innerText = calc.Rtotal.toFixed(1);
+    $('hud-I').innerText = I.toFixed(3);
+    $('hud-P').innerText = Ptotal.toFixed(2);
+
+    // Kirchhoff panel toggle + live values
+    var kPanel = $('kirchhoff-panel');
+    var v2row = $('V2-row');
+    if (S.circuit === 'kirchhoff') {
+        kPanel.style.display = 'block';
+        v2row.style.display = 'block';
+        var I1 = calc.kI1 || 0;
+        var I2 = calc.kI2 || 0;
+        var I3 = calc.kI3 || 0;
+        var V1 = calc.kV1 || 0;
+        var V2 = calc.kV2 || 0;
+        var R1 = S.R1, R2 = S.R2, R3 = S.R3;
+        // KCL: I1 + I2 - I3 = 0
+        var kclSum = I1 + I2 - I3;
+        // KVL loop 1: V1 - I1*R1 - I3*R3 = 0
+        var kvl1 = V1 - I1 * R1 - I3 * R3;
+        // KVL loop 2: V2 - I2*R2 - I3*R3 = 0
+        var kvl2 = V2 - I2 * R2 - I3 * R3;
+        $('kcl-text').innerText = 'I₁ + I₂ = I₃  →  ' + I1.toFixed(3) + ' + ' + I2.toFixed(3) + ' = ' + I3.toFixed(3) + ' A';
+        $('kvl1-text').innerText = 'V₁ − I₁R₁ − I₃R₃ = 0  →  ' + V1.toFixed(2) + ' − ' + (I1*R1).toFixed(2) + ' − ' + (I3*R3).toFixed(2) + ' = 0';
+        $('kvl2-text').innerText = 'V₂ − I₂R₂ − I₃R₃ = 0  →  ' + V2.toFixed(2) + ' − ' + (I2*R2).toFixed(2) + ' − ' + (I3*R3).toFixed(2) + ' = 0';
+        $('kcl-sum').innerText = kclSum.toExponential(2);
+        $('kvl1-sum').innerText = kvl1.toExponential(2);
+        $('kvl2-sum').innerText = kvl2.toExponential(2);
+        $('kcl-ok').innerText = Math.abs(kclSum) < 1e-9 ? '✓ = 0' : '✗';
+        $('kvl1-ok').innerText = Math.abs(kvl1) < 1e-9 ? '✓ = 0' : '✗';
+        $('kvl2-ok').innerText = Math.abs(kvl2) < 1e-9 ? '✓ = 0' : '✗';
+    } else {
+        kPanel.style.display = 'none';
+        v2row.style.display = 'none';
+    }
+
+    var fact;
+    if (S.circuit === 'single') {
+        fact = 'Ohm\'s law: V = I·R. With V = ' + S.V.toFixed(1) + ' V and R = ' + S.R1 + ' Ω, the current is I = V/R = ' + I.toFixed(4) + ' A. The power dissipated as heat is P = VI = ' + Ptotal.toFixed(3) + ' W.';
+    } else if (S.circuit === 'series') {
+        fact = 'Series: same current through all, R_total = ' + calc.Rtotal.toFixed(1) + ' Ω, I = ' + I.toFixed(4) + ' A. Voltage divides: V₁ = ' + calc.V[0].toFixed(2) + ' V, V₂ = ' + calc.V[1].toFixed(2) + ' V.';
+    } else if (S.circuit === 'parallel') {
+        fact = 'Parallel: same voltage across all, R_total = ' + calc.Rtotal.toFixed(1) + ' Ω. Current splits: I₁ = ' + calc.I[0].toFixed(4) + ' A, I₂ = ' + calc.I[1].toFixed(4) + ' A.';
+    } else if (S.circuit === 'threeparallel') {
+        fact = 'Three in parallel: R_total = ' + calc.Rtotal.toFixed(2) + ' Ω. Each branch sees ' + S.V.toFixed(1) + ' V, but different current depending on R. Lower R branch carries more current.';
+    } else if (S.circuit === 'combo') {
+        fact = 'Combo: R₂ || R₃ = ' + (1/(1/S.R2 + 1/S.R3)).toFixed(1) + ' Ω, in series with R₁. Total R = ' + calc.Rtotal.toFixed(1) + ' Ω. I_total = ' + I.toFixed(4) + ' A.';
+    } else {
+        fact = 'Kirchhoff\'s laws verified live: KCL (ΣI at any node = 0) and KVL (ΣV around any loop = 0) always hold. Solve the 2-loop system to find I₁, I₂, I₃.';
+    }
+    $('fact-box').innerText = fact;
+}
+
+// ============ QUIZ ============
+var QUIZ_EXPLAIN = {
+    q1:{correct:'B',why:'Ohm\'s law: <b>V = I·R</b>. Voltage equals current times resistance.',tip:'Memory: "VIR" — Voltage, Current, Resistance.'},
+    q2:{correct:'A',why:'R = V/I = 12/0.5 = <b>24 Ω</b>.',tip:'Divide volts by amps to get ohms.'},
+    q3:{correct:'B',why:'I = V/R. If V doubles and R is fixed, I doubles. Ohm\'s law is linear.',tip:'This linearity defines an "ohmic" component.'},
+    q4:{correct:'A',why:'Series: R_total = R₁ + R₂ = 100 + 200 = <b>300 Ω</b>.',tip:'Just add them up for series.'},
+    q5:{correct:'B',why:'Parallel: 1/R_total = 1/100 + 1/200 = 3/200, so R_total = <b>200/3 ≈ 67 Ω</b>.',tip:'Parallel total is always less than the smallest resistor.'},
+    q6:{correct:'A',why:'In series, only one path, so the <b>same current</b> flows through every component.',tip:'Old Christmas lights in series all go dark when one bulb fails.'},
+    q7:{correct:'B',why:'P = I²R = 0.5² × 100 = 0.25 × 100 = <b>25 W</b>.',tip:'Alternatively: V = I·R = 50 V, P = VI = 25 W.'},
+    q8:{correct:'A',why:'KCL: current into a node = current out. Charge is conserved.',tip:'It\'s conservation of electric charge at a junction.'},
+    q9:{correct:'B',why:'I = V/R. Halving R doubles I (V fixed).',tip:'Lower resistance means more current for the same voltage.'},
+    q10:{correct:'A',why:'KVL is a statement of conservation of energy — going around any closed loop, you return to the same potential, so total voltage rise = total voltage drop.',tip:'KCL = charge conservation. KVL = energy conservation.'}
+};
+
+function evaluateQuiz(){
+    var qs = document.querySelectorAll('.quiz-q');
+    var score = 0;
+    qs.forEach(function(q){
+        var name = q.dataset.q;
+        var correct = q.dataset.answer;
+        var chosen = q.querySelector('input[name="'+name+'"]:checked');
+        var expl = q.querySelector('.explanation');
+        var data = QUIZ_EXPLAIN[name];
+        expl.hidden = false;
+        expl.className = 'explanation';
+        if (chosen && chosen.value === correct) {
+            score++;
+            expl.classList.add('correct-box');
+            expl.innerHTML = '<strong>✓ Correct!</strong> ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:#475569;"><b>💡</b> ' + data.tip + '</div>';
+        } else {
+            expl.classList.add('wrong-box');
+            var cv = chosen ? chosen.value : '—';
+            expl.innerHTML = '<strong>✗ Answer: ' + correct + '</strong> You chose ' + cv + '. ' + data.why + '<div style="margin-top:6px;font-size:.78rem;color:#475569;"><b>💡</b> ' + data.tip + '</div>';
+        }
+    });
+    var pct = Math.round(score/qs.length*100);
+    beep(pct>=78?880:440,0.15,'sine',0.1);
+    var r = $('quiz-result');
+    r.style.display = 'block';
+    r.innerHTML = '<div style="font-size:1.4rem;color:#4338ca;">' + score + '/' + qs.length + ' · ' + pct + '%</div>';
+}
+function resetQuiz(){
+    document.querySelectorAll('.quiz-q').forEach(function(q){
+        q.querySelectorAll('input[type=radio]').forEach(function(r){ r.checked = false; });
+        var e = q.querySelector('.explanation');
+        e.hidden = true; e.innerHTML = ''; e.className = 'explanation';
+    });
+    $('quiz-result').style.display = 'none';
+}
+
+// ============ CHALLENGES ============
+function applyChallenge(id){
+    var note = $('challenge-note'), cres = $('challenge-result');
+    note.innerText = ''; cres.innerText = '';
+    if (id === 'single') {
+        S.circuit = 'single'; $('circuit').value = 'single';
+        S.V = 12; $('V').value = 12; $('v-V').innerText = '12.0';
+        S.R1 = 100; $('R1').value = 100; $('v-R1').innerText = '100';
+        note.innerText = 'Single resistor: I = V/R = 12/100 = 0.12 A.';
+        cres.innerText = 'Current: 0.12 A · Power: 1.44 W';
+    } else if (id === 'series') {
+        S.circuit = 'series'; $('circuit').value = 'series';
+        S.V = 12; $('V').value = 12; $('v-V').innerText = '12.0';
+        S.R1 = 100; $('R1').value = 100; $('v-R1').innerText = '100';
+        S.R2 = 220; $('R2').value = 220; $('v-R2').innerText = '220';
+        note.innerText = 'Series: total R = 320 Ω, I = 0.0375 A. Voltage divides: V₁=3.75V, V₂=8.25V.';
+        cres.innerText = 'Voltage divider — V₁ + V₂ = 12 V';
+    } else if (id === 'parallel') {
+        S.circuit = 'parallel'; $('circuit').value = 'parallel';
+        S.V = 12; $('V').value = 12; $('v-V').innerText = '12.0';
+        S.R1 = 100; $('R1').value = 100; $('v-R1').innerText = '100';
+        S.R2 = 220; $('R2').value = 220; $('v-R2').innerText = '220';
+        note.innerText = 'Parallel: R_total = 68.75 Ω. Same 12V across both branches.';
+        cres.innerText = 'I₁ = 0.12 A, I₂ = 0.055 A';
+    } else if (id === 'target') {
+        S.circuit = 'single'; $('circuit').value = 'single';
+        S.V = 12; $('V').value = 12; $('v-V').innerText = '12.0';
+        S.R1 = 120; $('R1').value = 120; $('v-R1').innerText = '120';
+        note.innerText = 'For I = 0.1 A at 12 V, set R = 120 Ω.';
+        cres.innerText = 'R = V/I = 12/0.1 = 120 Ω';
+    } else if (id === 'combo') {
+        S.circuit = 'combo'; $('circuit').value = 'combo';
+        note.innerText = 'Combo: R1 in series with (R2 || R3).';
+        cres.innerText = 'R_parallel = 132 Ω. Total = 100 + 132 = 232 Ω';
+    } else if (id === 'kirchhoff') {
+        S.circuit = 'kirchhoff'; $('circuit').value = 'kirchhoff';
+        S.V = 12; $('V').value = 12; $('v-V').innerText = '12.0';
+        S.V2 = 6; $('V2').value = 6; $('v-V2').innerText = '6.0';
+        S.R1 = 100; $('R1').value = 100; $('v-R1').innerText = '100';
+        S.R2 = 220; $('R2').value = 220; $('v-R2').innerText = '220';
+        S.R3 = 330; $('R3').value = 330; $('v-R3').innerText = '330';
+        note.innerText = '2-loop circuit solved using Kirchhoff\'s laws. Watch KCL and KVL sums stay at exactly zero.';
+        cres.innerText = 'KCL: ΣI at node A = 0 · KVL: ΣV around each loop = 0';
+    }
+    updateReadouts();
+}
+
+// ============ NOTEBOOK ============
+function recordMeasurement(){
+    var calc = computeCircuit();
+    var line;
+    if (S.circuit === 'kirchhoff') {
+        line = new Date().toLocaleTimeString() + ' | Kirchhoff | V1=' + S.V + 'V | V2=' + S.V2 + 'V | R1=' + S.R1 + 'Ω R2=' + S.R2 + 'Ω R3=' + S.R3 + 'Ω | I1=' + (calc.kI1||0).toFixed(4) + 'A | I2=' + (calc.kI2||0).toFixed(4) + 'A | I3=' + (calc.kI3||0).toFixed(4) + 'A';
+    } else {
+        line = new Date().toLocaleTimeString() + ' | ' + calc.label + ' | V=' + S.V + 'V | R_total=' + calc.Rtotal.toFixed(1) + 'Ω | I=' + calc.Itotal.toFixed(4) + 'A | P=' + (S.V*calc.Itotal).toFixed(3) + 'W';
+    }
+    S.records.push(line);
+    $('records').value = S.records.join('\n');
+    $('records').scrollTop = $('records').scrollHeight;
+}
+function downloadReport(){
+    var calc = computeCircuit();
+    var text = 'OHM\'S LAW & KIRCHHOFF LAB REPORT\nDate: ' + new Date().toLocaleString() + '\n\n' +
+        'Circuit: ' + calc.label + '\n' +
+        'Source V₁ = ' + S.V + ' V';
+    if (S.circuit === 'kirchhoff') text += ' · V₂ = ' + S.V2 + ' V';
+    text += '\nR₁ = ' + S.R1 + ' Ω · R₂ = ' + S.R2 + ' Ω · R₃ = ' + S.R3 + ' Ω\n' +
+        'Total R = ' + calc.Rtotal.toFixed(2) + ' Ω\n';
+    if (S.circuit === 'kirchhoff') {
+        text += 'I₁ = ' + (calc.kI1||0).toFixed(4) + ' A\n' +
+            'I₂ = ' + (calc.kI2||0).toFixed(4) + ' A\n' +
+            'I₃ = ' + (calc.kI3||0).toFixed(4) + ' A\n' +
+            'KCL ΣI at node A = 0 (verified)\n' +
+            'KVL loop 1 ΣV = 0 (verified)\n' +
+            'KVL loop 2 ΣV = 0 (verified)\n';
+    } else {
+        text += 'Total I = ' + calc.Itotal.toFixed(4) + ' A\n' +
+            'Total P = ' + (S.V*calc.Itotal).toFixed(3) + ' W\n';
+    }
+    text += '\nHYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+        'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+        'MEASUREMENTS\n' + $('records').value + '\n\n' +
+        'LIMITATIONS\nIdeal resistors and ideal batteries. No internal resistance. Educational use only.\n';
+    var blob = new Blob([text], {type:'text/plain'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'ohms-kirchhoff-report.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+// ============ ANIMATION ============
+var lastT = 0;
+function animate(now){
+    if (!lastT) lastT = now;
+    var dt = (now - lastT) / 1000;
+    if (dt > 0.2) dt = 0.016;
+    lastT = now;
+    S.time += dt;
+    S.currentPhase += dt * 0.5;
+    S.debugCount++;
+    if (S.power && S.soundOn && !currentHum) startHum();
+    drawScene();
+    updateReadouts();
+    requestAnimationFrame(animate);
+}
+
+// ============ EVENTS ============
+$('btn-sound').addEventListener('click', toggleSound);
+$('circuit').addEventListener('change', function(e){ S.circuit = e.target.value; updateReadouts(); });
+$('V').addEventListener('input', function(e){
+    S.V = parseFloat(e.target.value);
+    $('v-V').innerText = S.V.toFixed(1);
+    updateReadouts();
+    if (currentHum && currentGain) {
+        var I = getTotalCurrent();
+        try { currentHum.frequency.setTargetAtTime(100 + I * 40, audioCtx.currentTime, 0.1); } catch(e){}
+    }
+});
+$('V2').addEventListener('input', function(e){
+    S.V2 = parseFloat(e.target.value);
+    $('v-V2').innerText = S.V2.toFixed(1);
+    updateReadouts();
+});
+$('R1').addEventListener('input', function(e){ S.R1 = parseFloat(e.target.value); $('v-R1').innerText = S.R1; updateReadouts(); });
+$('R2').addEventListener('input', function(e){ S.R2 = parseFloat(e.target.value); $('v-R2').innerText = S.R2; updateReadouts(); });
+$('R3').addEventListener('input', function(e){ S.R3 = parseFloat(e.target.value); $('v-R3').innerText = S.R3; updateReadouts(); });
+$('labels-toggle').addEventListener('change', function(e){ S.labels = e.target.checked; });
+$('btn-power').addEventListener('click', function(){
+    S.power = !S.power;
+    $('btn-power').textContent = S.power ? '⚡ Power ON' : '⚡ Power OFF';
+    $('btn-power').classList.toggle('off', !S.power);
+    if (S.power) {
+        beep(660, 0.15, 'sine', 0.1);
+        if (S.soundOn) startHum();
+    } else {
+        beep(220, 0.15, 'sine', 0.08);
+        stopHum();
+    }
+    updateReadouts();
+});
+$('btn-reset').addEventListener('click', function(){
+    S.circuit = 'single'; $('circuit').value = 'single';
+    S.V = 12; $('V').value = 12; $('v-V').innerText = '12.0';
+    S.V2 = 6; $('V2').value = 6; $('v-V2').innerText = '6.0';
+    S.R1 = 100; $('R1').value = 100; $('v-R1').innerText = '100';
+    S.R2 = 220; $('R2').value = 220; $('v-R2').innerText = '220';
+    S.R3 = 330; $('R3').value = 330; $('v-R3').innerText = '330';
+    S.power = true; $('btn-power').textContent = '⚡ Power ON'; $('btn-power').classList.remove('off');
+    updateReadouts();
+});
+
+document.querySelectorAll('.tab-btn[data-tab]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+        document.querySelectorAll('.tab-btn[data-tab]').forEach(function(b){ b.classList.remove('active'); });
+        document.getElementById(btn.dataset.tab).classList.add('active');
+        btn.classList.add('active');
+    });
+});
+document.querySelectorAll('[data-challenge]').forEach(function(btn){
+    btn.addEventListener('click', function(){ applyChallenge(btn.dataset.challenge); beep(660,0.08,'sine',0.08); });
+});
+$('btn-quiz-check').addEventListener('click', evaluateQuiz);
+$('btn-quiz-reset').addEventListener('click', resetQuiz);
+$('btn-record').addEventListener('click', recordMeasurement);
+$('btn-clear-notes').addEventListener('click', function(){
+    if (!confirm('Clear notebook?')) return;
+    $('hypothesis').value = ''; $('conclusion').value = ''; $('records').value = '';
+    S.records = [];
+});
+$('btn-export').addEventListener('click', downloadReport);
+
+var pointers = new Map(), pinch = null;
+function getPos(e){ var r = canvas.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
+canvas.addEventListener('wheel', function(e){
+    e.preventDefault();
+    var cx = e.offsetX, cy = e.offsetY;
+    var wx = (cx - view.x)/view.scale, wy = (cy - view.y)/view.scale;
+    var factor = Math.exp(-e.deltaY * 0.0015);
+    view.scale = Math.max(0.3, Math.min(5, view.scale * factor));
+    view.x = cx - wx * view.scale;
+    view.y = cy - wy * view.scale;
+}, {passive:false});
+canvas.addEventListener('pointerdown', function(e){
+    canvas.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, getPos(e));
+    if (pointers.size === 2) {
+        var pts = Array.from(pointers.values());
+        pinch = {dist: Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y), startScale: view.scale};
+    }
+});
+canvas.addEventListener('pointermove', function(e){
+    if (!pointers.has(e.pointerId)) return;
+    var prev = pointers.get(e.pointerId), pos = getPos(e);
+    pointers.set(e.pointerId, pos);
+    if (pointers.size === 1 && !pinch) {
+        view.x += pos.x - prev.x; view.y += pos.y - prev.y;
+    } else if (pointers.size === 2 && pinch) {
+        var pts = Array.from(pointers.values());
+        var d = Math.hypot(pts[0].x-pts[1].x, pts[0].y-pts[1].y);
+        view.scale = Math.max(0.3, Math.min(5, pinch.startScale * d / pinch.dist));
+    }
+});
+canvas.addEventListener('pointerup', function(e){
+    pointers.delete(e.pointerId);
+    try { canvas.releasePointerCapture(e.pointerId); } catch(_){}
+    if (pointers.size < 2) pinch = null;
+});
+canvas.addEventListener('pointercancel', function(e){ pointers.delete(e.pointerId); pinch = null; });
+
+(function(){
+    var sim = $('sim-area'), splitter = $('splitter');
+    var dragging = false, startY = 0, startH = 0;
+    splitter.addEventListener('pointerdown', function(e){
+        e.preventDefault(); dragging = true; startY = e.clientY;
+        startH = sim.getBoundingClientRect().height;
+        try { splitter.setPointerCapture(e.pointerId); } catch(_){}
+    });
+    window.addEventListener('pointermove', function(e){
+        if (!dragging) return;
+        var dy = e.clientY - startY;
+        var nh = Math.max(180, Math.min(window.innerHeight-240, Math.round(startH + dy)));
+        sim.style.flex = '0 0 ' + nh + 'px';
+    });
+    window.addEventListener('pointerup', function(e){
+        if (!dragging) return;
+        dragging = false;
+        try { splitter.releasePointerCapture(e.pointerId); } catch(_){}
+    });
+})();
+
+window.addEventListener('resize', function(){ lastW = 0; lastH = 0; });
+
+// ============ BOOT ============
+updateReadouts();
+requestAnimationFrame(animate);
+
+})();
+</script>
+</body>
+</html>

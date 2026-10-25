@@ -5,30 +5,32 @@
     android:id="@+id/adminDrawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0F172A"
+    android:background="@color/admin_bg"
     tools:context="com.million.learnify.AdminDashboardActivity">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- Executive App Bar -->
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#0F172A"
+            android:background="@color/admin_bg"
             app:elevation="0dp">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/adminToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                android:background="@color/admin_bg"
                 app:contentInsetStart="0dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <!-- Custom Back Arrow [ ← Dashboard ] -->
+                    <!-- Drawer Toggle / Brand Action [ Learnify Admin ] -->
                     <LinearLayout
                         android:id="@+id/llToolbarBack"
                         android:layout_width="wrap_content"
@@ -38,26 +40,39 @@
                         android:focusable="true"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingStart="12dp"
+                        android:paddingStart="16dp"
                         android:paddingEnd="16dp">
 
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:src="@drawable/ic_back_white"
-                            app:tint="#FFFFFF" />
+                            android:src="@drawable/ic_menu"
+                            app:tint="@color/admin_text_primary"
+                            android:contentDescription="Navigation Menu" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:text="Learnify Admin"
+                            android:textColor="@color/admin_text_primary"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:text="Dashboard"
-                            android:textColor="#FFFFFF"
-                            android:textSize="18sp"
+                            android:background="@drawable/bg_stat_chip_streak"
+                            android:paddingHorizontal="6dp"
+                            android:paddingVertical="2dp"
+                            android:text="EXEC"
+                            android:textColor="@color/sapphire_primary"
+                            android:textSize="9sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
-                    <!-- Right-aligned Elements [ 🔔  👤 ] -->
+                    <!-- Right-aligned Elements [ Notifications, Profile ] -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
@@ -68,28 +83,28 @@
 
                         <ImageView
                             android:id="@+id/ivAdminNotification"
-                            android:layout_width="28dp"
-                            android:layout_height="28dp"
-                            android:layout_marginEnd="16dp"
+                            android:layout_width="38dp"
+                            android:layout_height="38dp"
+                            android:layout_marginEnd="12dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:clickable="true"
                             android:focusable="true"
-                            android:padding="2dp"
-                            android:src="@android:drawable/ic_popup_reminder"
-                            app:tint="#FFFFFF"
+                            android:padding="8dp"
+                            android:src="@drawable/ic_bell"
+                            app:tint="@color/admin_text_primary"
                             android:contentDescription="Notifications" />
 
                         <com.google.android.material.imageview.ShapeableImageView
                             android:id="@+id/adminProfileImg"
                             android:layout_width="36dp"
                             android:layout_height="36dp"
-                            android:background="#1E293B"
+                            android:background="@color/admin_card_bg"
                             android:clickable="true"
                             android:focusable="true"
                             android:scaleType="centerCrop"
                             android:src="@drawable/ic_user_person"
                             app:shapeAppearanceOverlay="@style/CircleImageView"
-                            app:strokeColor="#3B82F6"
+                            app:strokeColor="@color/sapphire_primary_light"
                             app:strokeWidth="2dp"
                             android:contentDescription="Admin Profile" />
                     </LinearLayout>
@@ -101,7 +116,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingBottom="40dp"
+            android:paddingBottom="48dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
@@ -109,226 +124,1494 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- [ ☰ ] Small, left side under header -->
-                <ImageButton
-                    android:id="@+id/btnOpenDrawer"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="16dp"
-                    android:background="@drawable/bg_admin_menu_panel"
-                    android:src="@drawable/ic_menu"
-                    app:tint="#3B82F6"
-                    android:padding="8dp"
-                    android:scaleType="fitCenter"
-                    android:contentDescription="Open Sidebar" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingHorizontal="20dp"
-                    android:paddingBottom="20dp">
+                    android:paddingHorizontal="16dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="24dp">
 
+                    <!-- EXECUTIVE HERO HEADER BANNER -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="2dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#3B82F6"
+                        app:cardBackgroundColor="@android:color/transparent">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_admin_hero_banner"
+                            android:orientation="vertical"
+                            android:padding="20dp">
+
+                            <!-- Top row: Pill badge + Live Date -->
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical"
+                                    android:background="@drawable/bg_stat_chip_streak"
+                                    android:backgroundTint="#30FFFFFF"
+                                    android:paddingHorizontal="10dp"
+                                    android:paddingVertical="4dp">
+
+                                    <ImageView
+                                        android:layout_width="12dp"
+                                        android:layout_height="12dp"
+                                        android:src="@drawable/ic_verified_check"
+                                        app:tint="@android:color/white"
+                                        android:contentDescription="@null" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="6dp"
+                                        android:text="COMMAND CENTER"
+                                        android:textColor="@android:color/white"
+                                        android:textSize="10sp"
+                                        android:textStyle="bold"
+                                        android:letterSpacing="0.08" />
+                                </LinearLayout>
+
+                                <TextView
+                                    android:id="@+id/tvAdminDate"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_centerVertical="true"
+                                    android:text="Live Operations"
+                                    android:textColor="#BFDBFE"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+                            </RelativeLayout>
+
+                            <!-- Welcome Greeting with dynamic admin name -->
+                            <TextView
+                                android:id="@+id/tvAdminWelcome"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Welcome, Administrator"
+                                android:textSize="22sp"
+                                android:textStyle="bold"
+                                android:textColor="@android:color/white"
+                                android:layout_marginTop="14dp" />
+
+                            <TextView
+                                android:id="@+id/tvAdminSubGreeting"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Real-time institutional oversight and management"
+                                android:layout_marginTop="4dp"
+                                android:textColor="#BFDBFE"
+                                android:textSize="13sp" />
+
+                            <!-- Operational Status Pill -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:background="@drawable/bg_stat_chip_streak"
+                                android:backgroundTint="#064E3B"
+                                android:paddingHorizontal="12dp"
+                                android:paddingVertical="6dp"
+                                android:layout_marginTop="14dp">
+
+                                <View
+                                    android:layout_width="8dp"
+                                    android:layout_height="8dp"
+                                    android:background="@drawable/circle_bg"
+                                    android:backgroundTint="@color/admin_green" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="SYSTEM STATUS: OPERATIONAL &amp; SECURE"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/admin_green"
+                                    android:layout_marginStart="8dp" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- SECTION 1: REAL-TIME INSTITUTION METRICS -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/admin_command_center"
-                        android:textSize="26sp"
+                        android:text="INSTITUTION PERFORMANCE METRICS"
+                        android:textSize="12sp"
                         android:textStyle="bold"
-                        android:textColor="#FFFFFF" />
+                        android:textColor="@color/admin_text_secondary"
+                        android:letterSpacing="0.08"
+                        android:layout_marginTop="24dp"
+                        android:layout_marginBottom="12dp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/admin_system_overview"
-                        android:layout_marginTop="4dp"
-                        android:textColor="#94A3B8"
-                        android:letterSpacing="0.02"/>
-
-                    <!-- 1. TOTAL STUDENTS -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardTotalStudents"
+                    <!-- ROW 1: Total Students + Active Students -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="28dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="0dp"
-                        app:strokeWidth="1dp"
-                        app:strokeColor="#334155"
-                        app:cardBackgroundColor="#1E293B">
-                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                            <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_student_badge" app:tint="#3B82F6" />
-                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_total_students" android:textSize="16sp" android:textStyle="bold" android:textColor="#FFFFFF" />
-                                <TextView android:id="@+id/tvTotalStudents" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0 Active Records" android:textSize="12sp" android:textColor="#94A3B8" />
-                            </LinearLayout>
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
+                        android:orientation="horizontal"
+                        android:baselineAligned="false">
 
-                    <!-- 2. ISSUE CERTIFICATE -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardIssueCert"
+                        <!-- 1. Total Students -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardTotalStudents"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="1dp"
+                            app:strokeColor="@color/admin_card_stroke"
+                            app:cardBackgroundColor="@color/admin_card_bg"
+                            app:rippleColor="@color/sapphire_subtle"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?attr/selectableItemBackground">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <LinearLayout
+                                        android:layout_width="42dp"
+                                        android:layout_height="42dp"
+                                        android:gravity="center"
+                                        android:background="@drawable/bg_icon_container_sapphire">
+
+                                        <ImageView
+                                            android:layout_width="22dp"
+                                            android:layout_height="22dp"
+                                            android:src="@drawable/ic_student_badge"
+                                            app:tint="@color/sapphire_primary"
+                                            android:contentDescription="@null" />
+                                    </LinearLayout>
+
+                                    <ImageView
+                                        android:layout_width="16dp"
+                                        android:layout_height="16dp"
+                                        android:layout_alignParentEnd="true"
+                                        android:layout_centerVertical="true"
+                                        android:src="@drawable/ic_chevron_right"
+                                        app:tint="@color/admin_text_secondary"
+                                        android:alpha="0.5"
+                                        android:contentDescription="@null" />
+                                </RelativeLayout>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/admin_total_students"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.04"
+                                    android:textColor="@color/admin_text_secondary"
+                                    android:layout_marginTop="12dp" />
+
+                                <TextView
+                                    android:id="@+id/tvTotalStudents"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textSize="24sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/admin_text_primary"
+                                    android:includeFontPadding="false"
+                                    android:layout_marginTop="2dp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Active Records"
+                                    android:textSize="11sp"
+                                    android:textColor="@color/admin_text_secondary"
+                                    android:layout_marginTop="2dp" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <View
+                            android:layout_width="12dp"
+                            android:layout_height="0dp" />
+
+                        <!-- 2. Active Students -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardActiveStudents"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="1dp"
+                            app:strokeColor="@color/admin_card_stroke"
+                            app:cardBackgroundColor="@color/admin_card_bg"
+                            app:rippleColor="@color/emerald_subtle"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?attr/selectableItemBackground">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <LinearLayout
+                                        android:layout_width="42dp"
+                                        android:layout_height="42dp"
+                                        android:gravity="center"
+                                        android:background="@drawable/bg_icon_container_emerald">
+
+                                        <ImageView
+                                            android:layout_width="22dp"
+                                            android:layout_height="22dp"
+                                            android:src="@drawable/ic_user_person"
+                                            app:tint="@color/emerald_primary"
+                                            android:contentDescription="@null" />
+                                    </LinearLayout>
+
+                                    <ImageView
+                                        android:layout_width="16dp"
+                                        android:layout_height="16dp"
+                                        android:layout_alignParentEnd="true"
+                                        android:layout_centerVertical="true"
+                                        android:src="@drawable/ic_chevron_right"
+                                        app:tint="@color/admin_text_secondary"
+                                        android:alpha="0.5"
+                                        android:contentDescription="@null" />
+                                </RelativeLayout>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/admin_active_students"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.04"
+                                    android:textColor="@color/admin_text_secondary"
+                                    android:layout_marginTop="12dp" />
+
+                                <TextView
+                                    android:id="@+id/tvActiveStudents"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textSize="24sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/admin_text_primary"
+                                    android:includeFontPadding="false"
+                                    android:layout_marginTop="2dp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Online Now"
+                                    android:textSize="11sp"
+                                    android:textColor="@color/admin_text_secondary"
+                                    android:layout_marginTop="2dp" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
+
+                    <!-- ROW 2: Faculty & Staff + Virtual Labs -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="0dp"
-                        app:strokeWidth="1dp"
-                        app:strokeColor="#334155"
-                        app:cardBackgroundColor="#1E293B">
-                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                            <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_certificate" app:tint="#10B981" />
-                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ISSUE CERTIFICATES" android:textSize="16sp" android:textStyle="bold" android:textColor="#FFFFFF" />
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Generate student credentials" android:textSize="12sp" android:textColor="#94A3B8" />
-                            </LinearLayout>
-                            <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@android:drawable/ic_menu_send" app:tint="#10B981" />
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
+                        android:orientation="horizontal"
+                        android:baselineAligned="false"
+                        android:layout_marginTop="12dp">
 
-                    <!-- 3. ACTIVE STUDENTS -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardActiveStudents"
+                        <!-- 3. Faculty / Teachers -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardTeachers"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="1dp"
+                            app:strokeColor="@color/admin_card_stroke"
+                            app:cardBackgroundColor="@color/admin_card_bg"
+                            app:rippleColor="@color/amber_subtle"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?attr/selectableItemBackground">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <LinearLayout
+                                        android:layout_width="42dp"
+                                        android:layout_height="42dp"
+                                        android:gravity="center"
+                                        android:background="@drawable/bg_icon_container_amber">
+
+                                        <ImageView
+                                            android:layout_width="22dp"
+                                            android:layout_height="22dp"
+                                            android:src="@drawable/ic_user_plus"
+                                            app:tint="@color/amber_accent"
+                                            android:contentDescription="@null" />
+                                    </LinearLayout>
+
+                                    <ImageView
+                                        android:layout_width="16dp"
+                                        android:layout_height="16dp"
+                                        android:layout_alignParentEnd="true"
+                                        android:layout_centerVertical="true"
+                                        android:src="@drawable/ic_chevron_right"
+                                        app:tint="@color/admin_text_secondary"
+                                        android:alpha="0.5"
+                                        android:contentDescription="@null" />
+                                </RelativeLayout>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/admin_teachers_staff"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.04"
+                                    android:textColor="@color/admin_text_secondary"
+                                    android:layout_marginTop="12dp" />
+
+                                <TextView
+                                    android:id="@+id/tvTotalTeachers"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textSize="24sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/admin_text_primary"
+                                    android:includeFontPadding="false"
+                                    android:layout_marginTop="2dp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Staff Members"
+                                    android:textSize="11sp"
+                                    android:textColor="@color/admin_text_secondary"
+                                    android:layout_marginTop="2dp" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <View
+                            android:layout_width="12dp"
+                            android:layout_height="0dp" />
+
+                        <!-- 4. Virtual Labs -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardTotalLabs"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="1dp"
+                            app:strokeColor="@color/admin_card_stroke"
+                            app:cardBackgroundColor="@color/admin_card_bg"
+                            app:rippleColor="@color/purple_subtle"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?attr/selectableItemBackground">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <LinearLayout
+                                        android:layout_width="42dp"
+                                        android:layout_height="42dp"
+                                        android:gravity="center"
+                                        android:background="@drawable/bg_icon_container_purple">
+
+                                        <ImageView
+                                            android:layout_width="22dp"
+                                            android:layout_height="22dp"
+                                            android:src="@drawable/ic_lab"
+                                            app:tint="@color/purple_accent"
+                                            android:contentDescription="@null" />
+                                    </LinearLayout>
+
+                                    <ImageView
+                                        android:layout_width="16dp"
+                                        android:layout_height="16dp"
+                                        android:layout_alignParentEnd="true"
+                                        android:layout_centerVertical="true"
+                                        android:src="@drawable/ic_chevron_right"
+                                        app:tint="@color/admin_text_secondary"
+                                        android:alpha="0.5"
+                                        android:contentDescription="@null" />
+                                </RelativeLayout>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/admin_total_labs"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.04"
+                                    android:textColor="@color/admin_text_secondary"
+                                    android:layout_marginTop="12dp" />
+
+                                <TextView
+                                    android:id="@+id/tvTotalLabs"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textSize="24sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/admin_text_primary"
+                                    android:includeFontPadding="false"
+                                    android:layout_marginTop="2dp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Virtual Labs"
+                                    android:textSize="11sp"
+                                    android:textColor="@color/admin_text_secondary"
+                                    android:layout_marginTop="2dp" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
+
+                    <!-- ROW 3: Completed Labs + Pending Labs -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="0dp"
-                        app:strokeWidth="1dp"
-                        app:strokeColor="#334155"
-                        app:cardBackgroundColor="#1E293B">
-                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                            <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_user_person" app:tint="#3B82F6" />
-                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_active_students" android:textSize="16sp" android:textStyle="bold" android:textColor="#FFFFFF" />
-                                <TextView android:id="@+id/tvActiveStudents" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0 Online Now" android:textSize="12sp" android:textColor="#94A3B8" />
-                            </LinearLayout>
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
+                        android:orientation="horizontal"
+                        android:baselineAligned="false"
+                        android:layout_marginTop="12dp">
 
-                    <!-- 4. TEACHERS / STAFF -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardTeachers"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="0dp"
-                        app:strokeWidth="1dp"
-                        app:strokeColor="#334155"
-                        app:cardBackgroundColor="#1E293B">
-                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                            <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_user_person" app:tint="#F59E0B" />
-                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_teachers_staff" android:textSize="16sp" android:textStyle="bold" android:textColor="#FFFFFF" />
-                                <TextView android:id="@+id/tvTotalTeachers" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0 Staff Members" android:textSize="12sp" android:textColor="#94A3B8" />
-                            </LinearLayout>
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
+                        <!-- 5. Completed Labs -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardCompletedLabs"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="1dp"
+                            app:strokeColor="@color/admin_card_stroke"
+                            app:cardBackgroundColor="@color/admin_card_bg"
+                            app:rippleColor="@color/teal_subtle"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?attr/selectableItemBackground">
 
-                    <!-- 5. TOTAL LABS -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardTotalLabs"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="0dp"
-                        app:strokeWidth="1dp"
-                        app:strokeColor="#334155"
-                        app:cardBackgroundColor="#1E293B">
-                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                            <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_lab" app:tint="#8B5CF6" />
-                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_total_labs" android:textSize="16sp" android:textStyle="bold" android:textColor="#FFFFFF" />
-                                <TextView android:id="@+id/tvTotalLabs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0 Virtual Labs" android:textSize="12sp" android:textColor="#94A3B8" />
-                            </LinearLayout>
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="16dp">
 
-                    <!-- 6. COMPLETED LABS -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardCompletedLabs"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="0dp"
-                        app:strokeWidth="1dp"
-                        app:strokeColor="#334155"
-                        app:cardBackgroundColor="#1E293B">
-                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                            <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@android:drawable/checkbox_on_background" app:tint="#10B981" />
-                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_completed_labs" android:textSize="16sp" android:textStyle="bold" android:textColor="#FFFFFF" />
-                                <TextView android:id="@+id/tvCompletedLabs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0 Submissions" android:textSize="12sp" android:textColor="#94A3B8" />
-                            </LinearLayout>
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
 
-                    <!-- 7. PENDING LABS -->
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/cardPendingLabs"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="0dp"
-                        app:strokeWidth="1dp"
-                        app:strokeColor="#334155"
-                        app:cardBackgroundColor="#1E293B">
-                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                            <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@android:drawable/ic_menu_recent_history" app:tint="#F59E0B" />
-                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_pending_tasks" android:textSize="16sp" android:textStyle="bold" android:textColor="#FFFFFF" />
-                                <TextView android:id="@+id/tvPendingLabs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0 Action Required" android:textSize="12sp" android:textColor="#94A3B8" />
-                            </LinearLayout>
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
+                                    <LinearLayout
+                                        android:layout_width="42dp"
+                                        android:layout_height="42dp"
+                                        android:gravity="center"
+                                        android:background="@drawable/bg_icon_container_teal">
 
-                    <!-- 8. SYSTEM HEALTH -->
+                                        <ImageView
+                                            android:layout_width="22dp"
+                                            android:layout_height="22dp"
+                                            android:src="@drawable/ic_verified_check"
+                                            app:tint="@color/teal_accent"
+                                            android:contentDescription="@null" />
+                                    </LinearLayout>
+
+                                    <ImageView
+                                        android:layout_width="16dp"
+                                        android:layout_height="16dp"
+                                        android:layout_alignParentEnd="true"
+                                        android:layout_centerVertical="true"
+                                        android:src="@drawable/ic_chevron_right"
+                                        app:tint="@color/admin_text_secondary"
+                                        android:alpha="0.5"
+                                        android:contentDescription="@null" />
+                                </RelativeLayout>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/admin_completed_labs"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.04"
+                                    android:textColor="@color/admin_text_secondary"
+                                    android:layout_marginTop="12dp" />
+
+                                <TextView
+                                    android:id="@+id/tvCompletedLabs"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textSize="24sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/admin_text_primary"
+                                    android:includeFontPadding="false"
+                                    android:layout_marginTop="2dp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Submissions"
+                                    android:textSize="11sp"
+                                    android:textColor="@color/admin_text_secondary"
+                                    android:layout_marginTop="2dp" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <View
+                            android:layout_width="12dp"
+                            android:layout_height="0dp" />
+
+                        <!-- 6. Pending Labs -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardPendingLabs"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="1dp"
+                            app:strokeColor="@color/admin_card_stroke"
+                            app:cardBackgroundColor="@color/admin_card_bg"
+                            app:rippleColor="@color/rose_subtle"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?attr/selectableItemBackground">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <LinearLayout
+                                        android:layout_width="42dp"
+                                        android:layout_height="42dp"
+                                        android:gravity="center"
+                                        android:background="@drawable/bg_icon_container_rose">
+
+                                        <ImageView
+                                            android:layout_width="22dp"
+                                            android:layout_height="22dp"
+                                            android:src="@drawable/ic_history"
+                                            app:tint="@color/rose_accent"
+                                            android:contentDescription="@null" />
+                                    </LinearLayout>
+
+                                    <ImageView
+                                        android:layout_width="16dp"
+                                        android:layout_height="16dp"
+                                        android:layout_alignParentEnd="true"
+                                        android:layout_centerVertical="true"
+                                        android:src="@drawable/ic_chevron_right"
+                                        app:tint="@color/admin_text_secondary"
+                                        android:alpha="0.5"
+                                        android:contentDescription="@null" />
+                                </RelativeLayout>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/admin_pending_tasks"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.04"
+                                    android:textColor="@color/admin_text_secondary"
+                                    android:layout_marginTop="12dp" />
+
+                                <TextView
+                                    android:id="@+id/tvPendingLabs"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textSize="24sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/admin_text_primary"
+                                    android:includeFontPadding="false"
+                                    android:layout_marginTop="2dp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Action Required"
+                                    android:textSize="11sp"
+                                    android:textColor="@color/admin_text_secondary"
+                                    android:layout_marginTop="2dp" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
+
+                    <!-- 7. SYSTEM HEALTH (Full width status card) -->
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cardSystemHealth"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="14dp"
                         app:cardCornerRadius="16dp"
-                        app:cardElevation="0dp"
+                        app:cardElevation="2dp"
                         app:strokeWidth="1dp"
-                        app:strokeColor="#334155"
-                        app:cardBackgroundColor="#1E293B">
-                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="20dp" android:gravity="center_vertical">
-                            <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_settings" app:tint="#3B82F6" />
-                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp">
-                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/admin_system_status" android:textSize="16sp" android:textStyle="bold" android:textColor="#FFFFFF" />
-                                <TextView android:id="@+id/tvSystemHealth" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="System Initializing..." android:textSize="12sp" android:textColor="#10B981" />
+                        app:strokeColor="@color/admin_card_stroke"
+                        app:cardBackgroundColor="@color/admin_card_bg"
+                        app:rippleColor="@color/sapphire_subtle"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="16dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
+                                android:gravity="center"
+                                android:background="@drawable/bg_icon_container_sapphire">
+
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/ic_settings"
+                                    app:tint="@color/sapphire_primary"
+                                    android:contentDescription="@null" />
                             </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:layout_marginStart="14dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="SYSTEM HEALTH &amp; SECURITY"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.06"
+                                    android:textColor="@color/admin_text_secondary" />
+
+                                <TextView
+                                    android:id="@+id/tvSystemHealth"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="All Systems Operational"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/admin_green"
+                                    android:layout_marginTop="2dp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Local SQLite, security rules and services active"
+                                    android:textSize="11sp"
+                                    android:textColor="@color/admin_text_secondary"
+                                    android:layout_marginTop="1dp" />
+                            </LinearLayout>
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_chevron_right"
+                                app:tint="@color/admin_text_secondary"
+                                android:contentDescription="@null" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
-                    <!-- QUICK ACTIONS -->
+                    <!-- 8. ISSUE CERTIFICATES (Primary Action Banner) -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardIssueCert"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#065F46"
+                        app:cardBackgroundColor="#064E3B"
+                        app:rippleColor="@color/emerald_subtle"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="16dp"
+                            android:gravity="center_vertical">
+
+                            <ImageView
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:src="@drawable/ic_certificate"
+                                app:tint="@color/admin_green" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:layout_marginStart="14dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="CREDENTIAL ISSUANCE"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@android:color/white" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Generate verified student certificates"
+                                    android:textSize="12sp"
+                                    android:textColor="#A7F3D0"
+                                    android:layout_marginTop="2dp" />
+                            </LinearLayout>
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_chevron_right"
+                                app:tint="@color/admin_green" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- SECTION 2: MANAGEMENT & GOVERNANCE ACTIONS -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/admin_quick_actions"
-                        android:textSize="20sp"
+                        android:text="MANAGEMENT &amp; GOVERNANCE ACTIONS"
+                        android:textSize="12sp"
                         android:textStyle="bold"
-                        android:textColor="#FFFFFF"
-                        android:layout_marginTop="36dp"
-                        android:layout_marginBottom="20dp" />
+                        android:textColor="@color/admin_text_secondary"
+                        android:letterSpacing="0.08"
+                        android:layout_marginTop="24dp"
+                        android:layout_marginBottom="12dp" />
 
+                    <!-- Quick Action Buttons Grid (Executive 2-Column Standard) -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
-                        <Button android:id="@+id/btnIssueCertificate" style="@style/AdminCyberButton.ActionCyan" android:text="Issue Certificate" app:icon="@drawable/ic_certificate" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="12dp" app:iconGravity="textStart" app:iconPadding="16dp" android:backgroundTint="#1E293B" android:textColor="#FFFFFF" app:strokeColor="#334155"/>
-                        <Button android:id="@+id/btnCreateLab" style="@style/AdminCyberButton.ActionCyan" android:text="@string/admin_btn_create_lab" app:icon="@drawable/ic_lab" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="12dp" app:iconGravity="textStart" app:iconPadding="16dp" android:backgroundTint="#1E293B" android:textColor="#FFFFFF" app:strokeColor="#334155"/>
-                        <Button android:id="@+id/btnAddUser" style="@style/AdminCyberButton.ActionCyan" android:text="@string/admin_btn_add_user" app:icon="@drawable/ic_user_person" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="12dp" app:iconGravity="textStart" app:iconPadding="16dp" android:backgroundTint="#1E293B" android:textColor="#FFFFFF" app:strokeColor="#334155"/>
-                        <Button android:id="@+id/btnUpload" style="@style/AdminCyberButton.ActionCyan" android:text="@string/admin_btn_upload" app:icon="@android:drawable/ic_menu_upload" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="12dp" app:iconGravity="textStart" app:iconPadding="16dp" android:backgroundTint="#1E293B" android:textColor="#FFFFFF" app:strokeColor="#334155"/>
-                        <Button android:id="@+id/btnSimulate" style="@style/AdminCyberButton.ActionCyan" android:text="@string/admin_btn_simulate" app:icon="@drawable/ic_lab" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="12dp" app:iconGravity="textStart" app:iconPadding="16dp" android:backgroundTint="#1E293B" android:textColor="#FFFFFF" app:strokeColor="#334155"/>
-                        <Button android:id="@+id/btnReports" style="@style/AdminCyberButton.ActionCyan" android:text="@string/admin_btn_reports" app:icon="@android:drawable/ic_menu_sort_by_size" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="12dp" app:iconGravity="textStart" app:iconPadding="16dp" android:backgroundTint="#1E293B" android:textColor="#FFFFFF" app:strokeColor="#334155"/>
-                        <Button android:id="@+id/btnSettings" style="@style/AdminCyberButton.ActionAmber" android:text="@string/admin_btn_settings" app:icon="@drawable/ic_settings" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="12dp" app:iconGravity="textStart" app:iconPadding="16dp" android:backgroundTint="#1E293B" android:textColor="#FFFFFF" app:strokeColor="#334155"/>
+
+                        <!-- Row 1: Issue Certificate & Create Lab -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="12dp">
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/btnIssueCertificate"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                app:cardCornerRadius="16dp"
+                                app:cardElevation="2dp"
+                                app:strokeWidth="1dp"
+                                app:strokeColor="@color/admin_card_stroke"
+                                app:cardBackgroundColor="@color/admin_card_bg"
+                                app:rippleColor="@color/emerald_subtle"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:foreground="?attr/selectableItemBackground">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:padding="16dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+                                        <LinearLayout
+                                            android:layout_width="42dp"
+                                            android:layout_height="42dp"
+                                            android:gravity="center"
+                                            android:background="@drawable/bg_icon_container_emerald">
+
+                                            <ImageView
+                                                android:layout_width="22dp"
+                                                android:layout_height="22dp"
+                                                android:src="@drawable/ic_certificate"
+                                                app:tint="@color/emerald_primary"
+                                                android:contentDescription="@null" />
+                                        </LinearLayout>
+
+                                        <ImageView
+                                            android:layout_width="16dp"
+                                            android:layout_height="16dp"
+                                            android:layout_alignParentEnd="true"
+                                            android:layout_centerVertical="true"
+                                            android:src="@drawable/ic_chevron_right"
+                                            app:tint="@color/admin_text_secondary"
+                                            android:alpha="0.4"
+                                            android:contentDescription="@null" />
+                                    </RelativeLayout>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Issue Cert"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/admin_text_primary"
+                                        android:layout_marginTop="12dp" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Student credentials"
+                                        android:textSize="11sp"
+                                        android:textColor="@color/admin_text_secondary"
+                                        android:layout_marginTop="2dp" />
+                                </LinearLayout>
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <View
+                                android:layout_width="12dp"
+                                android:layout_height="0dp" />
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/btnCreateLab"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                app:cardCornerRadius="16dp"
+                                app:cardElevation="2dp"
+                                app:strokeWidth="1dp"
+                                app:strokeColor="@color/admin_card_stroke"
+                                app:cardBackgroundColor="@color/admin_card_bg"
+                                app:rippleColor="@color/sapphire_subtle"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:foreground="?attr/selectableItemBackground">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:padding="16dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+                                        <LinearLayout
+                                            android:layout_width="42dp"
+                                            android:layout_height="42dp"
+                                            android:gravity="center"
+                                            android:background="@drawable/bg_icon_container_sapphire">
+
+                                            <ImageView
+                                                android:layout_width="22dp"
+                                                android:layout_height="22dp"
+                                                android:src="@drawable/ic_lab"
+                                                app:tint="@color/sapphire_primary"
+                                                android:contentDescription="@null" />
+                                        </LinearLayout>
+
+                                        <ImageView
+                                            android:layout_width="16dp"
+                                            android:layout_height="16dp"
+                                            android:layout_alignParentEnd="true"
+                                            android:layout_centerVertical="true"
+                                            android:src="@drawable/ic_chevron_right"
+                                            app:tint="@color/admin_text_secondary"
+                                            android:alpha="0.4"
+                                            android:contentDescription="@null" />
+                                    </RelativeLayout>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Create Lab"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/admin_text_primary"
+                                        android:layout_marginTop="12dp" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Author assessments"
+                                        android:textSize="11sp"
+                                        android:textColor="@color/admin_text_secondary"
+                                        android:layout_marginTop="2dp" />
+                                </LinearLayout>
+                            </com.google.android.material.card.MaterialCardView>
+                        </LinearLayout>
+
+                        <!-- Row 2: Add User & Upload Content -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="12dp">
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/btnAddUser"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                app:cardCornerRadius="16dp"
+                                app:cardElevation="2dp"
+                                app:strokeWidth="1dp"
+                                app:strokeColor="@color/admin_card_stroke"
+                                app:cardBackgroundColor="@color/admin_card_bg"
+                                app:rippleColor="@color/amber_subtle"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:foreground="?attr/selectableItemBackground">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:padding="16dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+                                        <LinearLayout
+                                            android:layout_width="42dp"
+                                            android:layout_height="42dp"
+                                            android:gravity="center"
+                                            android:background="@drawable/bg_icon_container_amber">
+
+                                            <ImageView
+                                                android:layout_width="22dp"
+                                                android:layout_height="22dp"
+                                                android:src="@drawable/ic_user_plus"
+                                                app:tint="@color/amber_accent"
+                                                android:contentDescription="@null" />
+                                        </LinearLayout>
+
+                                        <ImageView
+                                            android:layout_width="16dp"
+                                            android:layout_height="16dp"
+                                            android:layout_alignParentEnd="true"
+                                            android:layout_centerVertical="true"
+                                            android:src="@drawable/ic_chevron_right"
+                                            app:tint="@color/admin_text_secondary"
+                                            android:alpha="0.4"
+                                            android:contentDescription="@null" />
+                                    </RelativeLayout>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Enroll User"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/admin_text_primary"
+                                        android:layout_marginTop="12dp" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Register accounts"
+                                        android:textSize="11sp"
+                                        android:textColor="@color/admin_text_secondary"
+                                        android:layout_marginTop="2dp" />
+                                </LinearLayout>
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <View
+                                android:layout_width="12dp"
+                                android:layout_height="0dp" />
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/btnUpload"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                app:cardCornerRadius="16dp"
+                                app:cardElevation="2dp"
+                                app:strokeWidth="1dp"
+                                app:strokeColor="@color/admin_card_stroke"
+                                app:cardBackgroundColor="@color/admin_card_bg"
+                                app:rippleColor="@color/teal_subtle"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:foreground="?attr/selectableItemBackground">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:padding="16dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+                                        <LinearLayout
+                                            android:layout_width="42dp"
+                                            android:layout_height="42dp"
+                                            android:gravity="center"
+                                            android:background="@drawable/bg_icon_container_teal">
+
+                                            <ImageView
+                                                android:layout_width="22dp"
+                                                android:layout_height="22dp"
+                                                android:src="@drawable/ic_database"
+                                                app:tint="@color/teal_accent"
+                                                android:contentDescription="@null" />
+                                        </LinearLayout>
+
+                                        <ImageView
+                                            android:layout_width="16dp"
+                                            android:layout_height="16dp"
+                                            android:layout_alignParentEnd="true"
+                                            android:layout_centerVertical="true"
+                                            android:src="@drawable/ic_chevron_right"
+                                            app:tint="@color/admin_text_secondary"
+                                            android:alpha="0.4"
+                                            android:contentDescription="@null" />
+                                    </RelativeLayout>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Upload Content"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/admin_text_primary"
+                                        android:layout_marginTop="12dp" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Syllabus &amp; media"
+                                        android:textSize="11sp"
+                                        android:textColor="@color/admin_text_secondary"
+                                        android:layout_marginTop="2dp" />
+                                </LinearLayout>
+                            </com.google.android.material.card.MaterialCardView>
+                        </LinearLayout>
+
+                        <!-- Row 3: Simulation Lab & Reports -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="12dp">
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/btnSimulate"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                app:cardCornerRadius="16dp"
+                                app:cardElevation="2dp"
+                                app:strokeWidth="1dp"
+                                app:strokeColor="@color/admin_card_stroke"
+                                app:cardBackgroundColor="@color/admin_card_bg"
+                                app:rippleColor="@color/purple_subtle"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:foreground="?attr/selectableItemBackground">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:padding="16dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+                                        <LinearLayout
+                                            android:layout_width="42dp"
+                                            android:layout_height="42dp"
+                                            android:gravity="center"
+                                            android:background="@drawable/bg_icon_container_purple">
+
+                                            <ImageView
+                                                android:layout_width="22dp"
+                                                android:layout_height="22dp"
+                                                android:src="@drawable/ic_bolt"
+                                                app:tint="@color/purple_accent"
+                                                android:contentDescription="@null" />
+                                        </LinearLayout>
+
+                                        <ImageView
+                                            android:layout_width="16dp"
+                                            android:layout_height="16dp"
+                                            android:layout_alignParentEnd="true"
+                                            android:layout_centerVertical="true"
+                                            android:src="@drawable/ic_chevron_right"
+                                            app:tint="@color/admin_text_secondary"
+                                            android:alpha="0.4"
+                                            android:contentDescription="@null" />
+                                    </RelativeLayout>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Simulation"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/admin_text_primary"
+                                        android:layout_marginTop="12dp" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Physics engine"
+                                        android:textSize="11sp"
+                                        android:textColor="@color/admin_text_secondary"
+                                        android:layout_marginTop="2dp" />
+                                </LinearLayout>
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <View
+                                android:layout_width="12dp"
+                                android:layout_height="0dp" />
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/btnReports"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                app:cardCornerRadius="16dp"
+                                app:cardElevation="2dp"
+                                app:strokeWidth="1dp"
+                                app:strokeColor="@color/admin_card_stroke"
+                                app:cardBackgroundColor="@color/admin_card_bg"
+                                app:rippleColor="@color/rose_subtle"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:foreground="?attr/selectableItemBackground">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:padding="16dp">
+
+                                    <RelativeLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content">
+
+                                        <LinearLayout
+                                            android:layout_width="42dp"
+                                            android:layout_height="42dp"
+                                            android:gravity="center"
+                                            android:background="@drawable/bg_icon_container_rose">
+
+                                            <ImageView
+                                                android:layout_width="22dp"
+                                                android:layout_height="22dp"
+                                                android:src="@drawable/ic_history"
+                                                app:tint="@color/rose_accent"
+                                                android:contentDescription="@null" />
+                                        </LinearLayout>
+
+                                        <ImageView
+                                            android:layout_width="16dp"
+                                            android:layout_height="16dp"
+                                            android:layout_alignParentEnd="true"
+                                            android:layout_centerVertical="true"
+                                            android:src="@drawable/ic_chevron_right"
+                                            app:tint="@color/admin_text_secondary"
+                                            android:alpha="0.4"
+                                            android:contentDescription="@null" />
+                                    </RelativeLayout>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="System Audit"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/admin_text_primary"
+                                        android:layout_marginTop="12dp" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Reports &amp; analytics"
+                                        android:textSize="11sp"
+                                        android:textColor="@color/admin_text_secondary"
+                                        android:layout_marginTop="2dp" />
+                                </LinearLayout>
+                            </com.google.android.material.card.MaterialCardView>
+                        </LinearLayout>
+
+                        <!-- Row 4: System Settings (Full Width Executive Card) -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/btnSettings"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="1dp"
+                            app:strokeColor="@color/admin_card_stroke"
+                            app:cardBackgroundColor="@color/admin_card_bg"
+                            app:rippleColor="@color/amber_subtle"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?attr/selectableItemBackground">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:padding="16dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <LinearLayout
+                                    android:layout_width="44dp"
+                                    android:layout_height="44dp"
+                                    android:gravity="center"
+                                    android:background="@drawable/bg_icon_container_amber">
+
+                                    <ImageView
+                                        android:layout_width="24dp"
+                                        android:layout_height="24dp"
+                                        android:src="@drawable/ic_settings"
+                                        app:tint="@color/amber_accent"
+                                        android:contentDescription="@null" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical"
+                                    android:layout_marginStart="14dp">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="System Settings"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/admin_text_primary" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Security policies, backups &amp; configurations"
+                                        android:textSize="12sp"
+                                        android:textColor="@color/admin_text_secondary"
+                                        android:layout_marginTop="2dp" />
+                                </LinearLayout>
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/ic_chevron_right"
+                                    app:tint="@color/admin_text_secondary"
+                                    android:contentDescription="@null" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
+
+                    <!-- SECTION 3: COMPLIANCE & SUPPORT -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="COMPLIANCE &amp; SUPPORT"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/admin_text_secondary"
+                        android:letterSpacing="0.08"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="12dp" />
+
+                    <!-- Payment Verification Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardPaymentVerification"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="@color/admin_card_stroke"
+                        app:cardBackgroundColor="@color/admin_card_bg"
+                        app:rippleColor="@color/emerald_subtle"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="16dp"
+                            android:gravity="center_vertical">
+
+                            <LinearLayout
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
+                                android:gravity="center"
+                                android:background="@drawable/bg_icon_container_emerald">
+
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/ic_verified_check"
+                                    app:tint="@color/emerald_primary" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:layout_marginStart="14dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Payment Verification"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/admin_text_primary" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Review &amp; approve student bank transfers"
+                                    android:textSize="12sp"
+                                    android:textColor="@color/admin_text_secondary"
+                                    android:layout_marginTop="2dp" />
+                            </LinearLayout>
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_chevron_right"
+                                app:tint="@color/admin_text_secondary" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Support Center Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardSupportCenter"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="24dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="@color/admin_card_stroke"
+                        app:cardBackgroundColor="@color/admin_card_bg"
+                        app:rippleColor="@color/sapphire_subtle"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="16dp"
+                            android:gravity="center_vertical">
+
+                            <LinearLayout
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
+                                android:gravity="center"
+                                android:background="@drawable/bg_icon_container_sapphire">
+
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/ic_support_headset"
+                                    app:tint="@color/sapphire_primary" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:layout_marginStart="14dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Support Center Management"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/admin_text_primary" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Handle student inquiries and support tickets"
+                                    android:textSize="12sp"
+                                    android:textColor="@color/admin_text_secondary"
+                                    android:layout_marginTop="2dp" />
+                            </LinearLayout>
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_chevron_right"
+                                app:tint="@color/admin_text_secondary" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
                 </LinearLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
@@ -343,10 +1626,10 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header_admin"
         app:menu="@menu/admin_drawer_menu"
-        android:background="#0F172A"
-        app:itemIconTint="#94A3B8"
-        app:itemTextColor="#FFFFFF"
-        app:itemShapeFillColor="#1E293B"
+        android:background="@color/admin_bg"
+        app:itemIconTint="@color/admin_text_secondary"
+        app:itemTextColor="@color/admin_text_primary"
+        app:itemShapeFillColor="@color/admin_card_bg"
         app:itemShapeAppearanceOverlay="@style/RoundedImageView" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

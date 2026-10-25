@@ -45,6 +45,11 @@ public class StudentSettings {
     // Privacy & Security
     private boolean twoFactorEnabled;
 
+    // Inclusive Learning Mode (Accessibility)
+    private boolean inclusiveMode;
+    private float speechRate;
+    private boolean autoReadContent;
+
     public StudentSettings(String themeMode, boolean notificationsEnabled) {
         this(themeMode, notificationsEnabled, true);
     }
@@ -90,6 +95,10 @@ public class StudentSettings {
         this.pushEnabled = true;
 
         this.twoFactorEnabled = false;
+
+        this.inclusiveMode = false;
+        this.speechRate = 1.0f;
+        this.autoReadContent = false;
     }
 
     // Getters and Setters
@@ -166,4 +175,11 @@ public class StudentSettings {
     public void setPushEnabled(boolean pushEnabled) { this.pushEnabled = pushEnabled; }
     public boolean isTwoFactorEnabled() { return twoFactorEnabled; }
     public void setTwoFactorEnabled(boolean twoFactorEnabled) { this.twoFactorEnabled = twoFactorEnabled; }
+
+    public boolean isInclusiveMode() { return inclusiveMode; }
+    public void setInclusiveMode(boolean inclusiveMode) { this.inclusiveMode = inclusiveMode; }
+    public float getSpeechRate() { return speechRate; }
+    public void setSpeechRate(float speechRate) { this.speechRate = speechRate; }
+    public boolean isAutoReadContent() { return autoReadContent; }
+    public void setAutoReadContent(boolean autoReadContent) { this.autoReadContent = autoReadContent; }
 }

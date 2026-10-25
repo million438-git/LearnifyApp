@@ -1,23 +1,29 @@
 package com.million.learnify;
 
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.widget.EditText;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
-import com.google.android.material.card.MaterialCardView;
+import androidx.core.content.ContextCompat;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 /**
  * AdminSupportManagementActivity - Student support and ticket resolution center.
+ * Redesigned with Learnify Executive Academic Sapphire design system.
  * Inherits from BaseActivity for Role-Based Access Control (RBAC).
  */
 public class AdminSupportManagementActivity extends BaseActivity {
 
     private LinearLayout ticketListContainer;
+    private LinearLayout emptyTicketState;
+    private TextView tvTicketCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,24 +34,24 @@ public class AdminSupportManagementActivity extends BaseActivity {
         
         setContentView(R.layout.activity_admin_support_management);
 
-        setupToolbar();
-        ticketListContainer = findViewById(R.id.ticketListContainer);
-        loadTickets();
-    }
-
-    private void setupToolbar() {
         Toolbar toolbar = findViewById(R.id.supportMgmtToolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(v -> finish());
+        setupPortalToolbar(toolbar, "Support Management");
+
+        ticketListContainer = findViewById(R.id.ticketListContainer);
+        emptyTicketState = findViewById(R.id.emptyTicketState);
+        tvTicketCount = findViewById(R.id.tvTicketCount);
+
+        loadTickets();
     }
 
     private void loadTickets() {
         ticketListContainer.removeAllViews();
         Cursor cursor = repository.getLocalDb().getAllSupportTickets();
 
-        if (cursor.moveToFirst()) {
+        int count = 0;
+        if (cursor != null && cursor.moveToFirst()) {
             do {
+                count++;
                 int id = cursor.getInt(0);
                 String user = cursor.getString(1);
                 String title = cursor.getString(2);
@@ -56,79 +62,114 @@ public class AdminSupportManagementActivity extends BaseActivity {
 
                 addTicketCard(id, user, title, category, desc, status, reply);
             } while (cursor.moveToNext());
+            cursor.close();
         }
-        cursor.close();
+
+        if (count > 0) {
+            emptyTicketState.setVisibility(View.GONE);
+            ticketListContainer.setVisibility(View.VISIBLE);
+            tvTicketCount.setText(count + (count == 1 ? " Ticket" : " Tickets"));
+        } else {
+            emptyTicketState.setVisibility(View.VISIBLE);
+            ticketListContainer.setVisibility(View.GONE);
+            tvTicketCount.setText("0 Tickets");
+        }
     }
 
     private void addTicketCard(int id, String user, String title, String category, String desc, String status, String reply) {
-        MaterialCardView card = new MaterialCardView(this);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, 0, 0, 24);
-        card.setLayoutParams(params);
-        card.setCardBackgroundColor(Color.WHITE);
-        card.setRadius(24f);
-        card.setStrokeWidth(2);
-        card.setStrokeColor(Color.parseColor("#E2E8F0"));
+        View card = LayoutInflater.from(this).inflate(R.layout.item_admin_support_ticket, ticketListContainer, false);
 
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(32, 32, 32, 32);
+        TextView tvUser = card.findViewById(R.id.tvTicketUser);
+        TextView tvCategory = card.findViewById(R.id.tvTicketCategory);
+        TextView tvTitle = card.findViewById(R.id.tvTicketTitle);
+        TextView tvDesc = card.findViewById(R.id.tvTicketDesc);
+        TextView tvStatus = card.findViewById(R.id.tvTicketStatus);
+        View layoutReply = card.findViewById(R.id.layoutAdminReply);
+        TextView tvReply = card.findViewById(R.id.tvAdminReply);
+        MaterialButton btnReply = card.findViewById(R.id.btnReplyTicket);
 
-        TextView tvUser = new TextView(this);
-        tvUser.setText("From: " + user);
-        tvUser.setTextColor(Color.parseColor("#64748B"));
-        tvUser.setTextSize(12);
+        tvUser.setText("From: " + (user != null ? user : "Student"));
+        tvCategory.setText("Category: " + (category != null && !category.isEmpty() ? category : "General"));
+        tvTitle.setText(title != null ? title : "Support Ticket");
+        tvDesc.setText(desc != null ? desc : "No additional details provided.");
 
-        TextView tvTitle = new TextView(this);
-        tvTitle.setText(title + " [" + category + "]");
-        tvTitle.setTextColor(Color.parseColor("#1E293B"));
-        tvTitle.setTextSize(16);
-        tvTitle.setPadding(0, 8, 0, 8);
-        tvTitle.setTypeface(null, android.graphics.Typeface.BOLD);
+        String normStatus = status != null ? status.trim() : "Open";
+        tvStatus.setText(normStatus.toUpperCase());
 
-        TextView tvDesc = new TextView(this);
-        tvDesc.setText(desc);
-        tvDesc.setTextColor(Color.parseColor("#475569"));
-
-        TextView tvStatus = new TextView(this);
-        tvStatus.setText("Status: " + status);
-        tvStatus.setTextColor(status.equals("Open") ? Color.RED : Color.parseColor("#059669"));
-        tvStatus.setPadding(0, 16, 0, 0);
-        tvStatus.setTypeface(null, android.graphics.Typeface.BOLD);
-
-        layout.addView(tvUser);
-        layout.addView(tvTitle);
-        layout.addView(tvDesc);
-        if (reply != null && !reply.isEmpty()) {
-            TextView tvReply = new TextView(this);
-            tvReply.setText("Admin Reply: " + reply);
-            tvReply.setTextColor(Color.BLUE);
-            tvReply.setPadding(0, 8, 0, 0);
-            layout.addView(tvReply);
+        if ("Resolved".equalsIgnoreCase(normStatus) || "Closed".equalsIgnoreCase(normStatus)) {
+            tvStatus.setBackgroundResource(R.drawable.bg_badge_active);
+            tvStatus.setTextColor(ContextCompat.getColor(this, R.color.emerald_accent));
+        } else {
+            tvStatus.setBackgroundResource(R.drawable.bg_badge_pending);
+            tvStatus.setTextColor(ContextCompat.getColor(this, R.color.amber_accent));
         }
-        layout.addView(tvStatus);
 
-        card.addView(layout);
-        card.setOnClickListener(v -> showReplyDialog(id, title, user));
+        if (reply != null && !reply.trim().isEmpty()) {
+            layoutReply.setVisibility(View.VISIBLE);
+            tvReply.setText(reply.trim());
+            btnReply.setText("Update Reply");
+        } else {
+            layoutReply.setVisibility(View.GONE);
+            btnReply.setText("Reply / Resolve");
+        }
+
+        View.OnClickListener clickListener = v -> showReplyDialog(id, title, user, reply);
+        card.setOnClickListener(clickListener);
+        btnReply.setOnClickListener(clickListener);
+
         ticketListContainer.addView(card);
     }
 
-    private void showReplyDialog(int id, String title, String user) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Reply to: " + user);
-        final EditText input = new EditText(this);
-        input.setHint("Type your response here...");
-        builder.setView(input);
+    private void showReplyDialog(int id, String title, String user, String existingReply) {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+        builder.setTitle("Resolve Ticket: " + (user != null ? user : "Student"));
 
-        builder.setPositiveButton("SEND REPLY", (dialog, which) -> {
-            String replyText = input.getText().toString();
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        int pad = (int) (20 * getResources().getDisplayMetrics().density);
+        layout.setPadding(pad, pad / 2, pad, pad / 2);
+
+        TextView tvSubject = new TextView(this);
+        tvSubject.setText("Issue: " + (title != null ? title : "Inquiry"));
+        tvSubject.setTextSize(13);
+        tvSubject.setTextColor(ContextCompat.getColor(this, R.color.admin_text_secondary));
+        tvSubject.setPadding(0, 0, 0, pad / 2);
+        layout.addView(tvSubject);
+
+        TextInputLayout til = new TextInputLayout(this, null, com.google.android.material.R.attr.textInputOutlinedStyle);
+        til.setHint("Official Admin Response");
+        til.setBoxCornerRadii(
+                12 * getResources().getDisplayMetrics().density,
+                12 * getResources().getDisplayMetrics().density,
+                12 * getResources().getDisplayMetrics().density,
+                12 * getResources().getDisplayMetrics().density
+        );
+
+        TextInputEditText input = new TextInputEditText(til.getContext());
+        input.setLines(4);
+        input.setGravity(android.view.Gravity.TOP);
+        input.setTextColor(ContextCompat.getColor(this, R.color.admin_text_primary));
+        if (existingReply != null && !existingReply.isEmpty()) {
+            input.setText(existingReply);
+            input.setSelection(existingReply.length());
+        }
+        til.addView(input);
+        layout.addView(til);
+
+        builder.setView(layout);
+
+        builder.setPositiveButton("SEND RESPONSE", (dialog, which) -> {
+            String replyText = input.getText() != null ? input.getText().toString().trim() : "";
             if (!replyText.isEmpty()) {
                 repository.getLocalDb().updateTicketReply(id, replyText);
-                Toast.makeText(this, "Reply sent to " + user, Toast.LENGTH_SHORT).show();
+                repository.logSystemAction("Admin", "SUPPORT_REPLY", "Resolved ticket #" + id + " for student: " + user);
+                Toast.makeText(this, "Reply dispatched to " + user, Toast.LENGTH_SHORT).show();
                 loadTickets();
+            } else {
+                Toast.makeText(this, "Response cannot be empty", Toast.LENGTH_SHORT).show();
             }
         });
+
         builder.setNegativeButton("CANCEL", null);
         builder.show();
     }

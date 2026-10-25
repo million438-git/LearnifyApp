@@ -2,11 +2,11 @@ package com.million.learnify;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 public class PhysicsSimulationActivity extends AppCompatActivity {
 
@@ -20,6 +20,18 @@ public class PhysicsSimulationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_physics_simulation);
 
         experimentId = getIntent().getIntExtra("experiment_id", 1);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            String experimentName = getIntent().getStringExtra("experiment_name");
+            getSupportActionBar().setTitle(
+                    experimentName == null || experimentName.trim().isEmpty()
+                            ? "Physics Simulation"
+                            : experimentName);
+        }
+        toolbar.setNavigationOnClickListener(v -> finish());
 
         webViewSim = findViewById(R.id.webViewSim);
         setupWebView();
@@ -37,7 +49,6 @@ public class PhysicsSimulationActivity extends AppCompatActivity {
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setSupportZoom(true);
-        
         webViewSim.setWebViewClient(new WebViewClient());
         webViewSim.setBackgroundColor(0x00000000);
     }
@@ -88,5 +99,32 @@ public class PhysicsSimulationActivity extends AppCompatActivity {
             default: fileName = "projectile_motion.html"; break;
         }
         webViewSim.loadUrl("file:///android_asset/InteractiveLab/Physics Lab/" + fileName);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (webViewSim != null) {
+            webViewSim.onResume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        if (webViewSim != null) {
+            webViewSim.onPause();
+        }
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (webViewSim != null) {
+            webViewSim.stopLoading();
+            webViewSim.removeAllViews();
+            webViewSim.destroy();
+            webViewSim = null;
+        }
+        super.onDestroy();
     }
 }

@@ -81,11 +81,11 @@ public class SubjectActivity extends BaseActivity {
 
         String displayName = subjectName.substring(0, 1).toUpperCase() + subjectName.substring(1);
         nameText.setText(displayName);
-        emojiText.setText(getEmojiForSubject(subjectName));
+        emojiText.setText(getSubjectBadge(subjectName));
 
         boolean isDownloaded = downloadPrefs.getBoolean(subjectName, false);
         if (isDownloaded) {
-            statusText.setText("✅ Knowledge Pack Active (Offline)");
+            statusText.setText("Knowledge Pack Active (Offline)");
             if (btnDownload != null) { btnDownload.setText("Synced"); btnDownload.setEnabled(false); }
         } else {
             statusText.setText("Master " + displayName + " lessons offline");
@@ -95,12 +95,16 @@ public class SubjectActivity extends BaseActivity {
         }
 
         card.setOnClickListener(v -> {
-            if (repository.getLocalDb().hasPremiumAccess(currentUsername, userGrade)) {
+            if (repository.getLocalDb().hasPremiumAccess(currentUsername, userGrade, subjectName)) {
                 Intent intent = new Intent(SubjectActivity.this, ChapterListActivity.class);
                 intent.putExtra("SUBJECT_NAME", subjectName);
                 startActivity(intent);
             } else {
-                Toast.makeText(this, "🔐 Access Restricted. Requires Premium or Admin Enrollment.", Toast.LENGTH_LONG).show();
+                if (repository.getLocalDb().hasPremiumAccess(currentUsername, userGrade, null)) {
+                    Toast.makeText(this, "Plan A covers Math & English. Upgrade to Plan B for " + displayName + "!", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(this, "Access Restricted. Requires Premium or Admin Enrollment.", Toast.LENGTH_LONG).show();
+                }
                 startActivity(new Intent(this, PaymentActivity.class));
             }
         });
@@ -119,18 +123,18 @@ public class SubjectActivity extends BaseActivity {
             progress.dismiss();
             downloadPrefs.edit().putBoolean(id, true).apply();
             if (btn != null) { btn.setText("Synced"); btn.setEnabled(false); }
-            status.setText("✅ Knowledge Pack Active (Offline)");
-            Toast.makeText(this, name + " is now full-functional offline!", Toast.LENGTH_LONG).show();
+            status.setText("Knowledge Pack Active (Offline)");
+            Toast.makeText(this, name + " is ready for offline study.", Toast.LENGTH_LONG).show();
         }, 1500);
     }
 
-    private String getEmojiForSubject(String name) {
-        String lowerName = name.toLowerCase();
-        if (lowerName.contains("biology")) return "🧬";
-        if (lowerName.contains("physics")) return "⚛️";
-        if (lowerName.contains("chemistry")) return "🧪";
-        if (lowerName.contains("math")) return "📐";
-        if (lowerName.contains("english")) return "📚";
-        return "📖";
+    private String getSubjectBadge(String name) {
+        String lowerName = name.toLowerCase(java.util.Locale.US);
+        if (lowerName.contains("biology")) return "BIO";
+        if (lowerName.contains("physics")) return "PHY";
+        if (lowerName.contains("chemistry")) return "CHM";
+        if (lowerName.contains("math")) return "MTH";
+        if (lowerName.contains("english")) return "ENG";
+        return "GEN";
     }
 }

@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Physics: Prism Dispersion Lab</title>
+    <style>
+        :root {
+            --primary: #6366f1; --secondary: #f43f5e; --dark: #0f172a;
+            --surface: #ffffff; --bg: #f1f5f9; --glass: rgba(255,255,255,0.9);
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        html, body { height: 100%; }
+        body { margin: 0; background: var(--bg); color: var(--dark); display: flex; flex-direction: column; overflow: auto; -webkit-font-smoothing:antialiased; }
+
+        header { background: var(--dark); color: white; padding: 10px; text-align: center; border-bottom: 3px solid var(--primary); }
+        .lab-container { display: flex; flex: 1; overflow: auto; flex-direction: column; }
+
+        #sim-area { flex: 2 1 460px; position: relative; background: #05080f; border-bottom: 2px solid #e2e8f0; overflow: auto; cursor: crosshair; min-height:360px; }
+        canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+        .splitter { height: 10px; background: linear-gradient(90deg, rgba(0,0,0,0.03), rgba(0,0,0,0.06)); cursor: ns-resize; display:block; }
+        .splitter:hover { background: linear-gradient(90deg, rgba(0,0,0,0.05), rgba(0,0,0,0.09)); }
+
+        .bottom-panel { flex: 3; display: flex; flex-direction: row; background: var(--surface); overflow-y: auto; }
+        .controls { flex: 0 0 360px; padding: 18px; border-right: 1px solid #e2e8f0; min-width: 300px; }
+        .analysis { flex: 1 1 720px; padding: 18px; background: #fafafa; min-width: 420px; }
+
+        .card { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        h4 { margin: 0 0 10px 0; font-size: 0.8rem; color: #64748b; text-transform: uppercase; }
+        .input-row { margin-bottom: 12px; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; }
+        input[type="range"] { width: 100%; accent-color: var(--primary); }
+        select, input[type="number"] { width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; font-family: inherit; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        button { padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit; }
+        .btn-fire { background: var(--primary); color: white; }
+        .btn-fire:hover { background: #4f46e5; }
+        .btn-reset { background: #64748b; color: white; }
+        .btn-reset:hover { background: #475569; }
+        .btn-sound { background: #10b981; color: white; }
+        .btn-sound:hover { background: #059669; }
+        .btn-sound.playing { background: #ef4444; }
+        .btn-sound.playing:hover { background: #dc2626; }
+
+        .hud { position: absolute; top: 10px; left: 10px; background: var(--glass); padding: 8px; border-radius: 8px; font-size: 0.75rem; border: 1px solid #ddd; z-index: 20; color: #0f172a; }
+        .hud * { pointer-events: auto; }
+        .hud .metrics { pointer-events: none; line-height: 1.7; }
+        .zoom-controls { display:flex; gap:6px; margin-top:6px; }
+        .zoom-controls button { padding:6px 8px; border-radius:6px; border:1px solid rgba(0,0,0,0.06); background:white; cursor:pointer; }
+        .vector-legend { position: absolute; bottom: 10px; left: 10px; font-size: 0.65rem; background: var(--glass); padding: 5px; border-radius: 4px; color: #0f172a; }
+
+        .tab-btn { padding: 8px 12px; border-radius: 6px; background: #e2e8f0; color: var(--dark); font-weight: 600; font-size: 0.8rem; }
+        .tab-btn:hover { background: #cbd5e1; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        .readouts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+        .readout { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; }
+        .readout span { font-size: 0.7rem; color: #64748b; display: block; }
+        .readout strong { font-size: 1rem; color: var(--dark); }
+        .readout.big strong { font-size: 1.1rem; color: #4f46e5; }
+
+        .quiz-q { padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+        .quiz-q:last-child { border-bottom: none; }
+        .quiz-q > strong { display: block; margin-bottom: 8px; font-size: 0.9rem; }
+        .quiz-q label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; margin: 3px 6px 3px 0; cursor: pointer; font-weight: 500; }
+        .quiz-q label:hover { background: #eef2ff; border-color: #6366f1; }
+        .explanation {
+            margin-top: 8px; padding: 10px 12px; border-radius: 6px; font-size: 0.82rem; line-height: 1.55;
+            background: #eef2ff; border-left: 3px solid #6366f1; color: #1e293b;
+        }
+        .explanation.correct-box { background: #ecfdf5; border-left-color: #10b981; }
+        .explanation.wrong-box { background: #fef2f2; border-left-color: #dc2626; }
+        .explanation strong { display: block; margin-bottom: 3px; }
+
+        .quiz-section { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6366f1; margin: 12px 0 6px 0; }
+        .quiz-section:first-child { margin-top: 0; }
+
+        #quiz-result { margin-top: 10px; padding: 12px; border-radius: 8px; background: #eef2ff; border: 1px solid #c7d2fe; font-weight: 700; text-align: center; }
+
+        table.formulas { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 6px; }
+        table.formulas th, table.formulas td { border: 1px solid #e2e8f0; padding: 6px 8px; text-align: left; }
+        table.formulas th { background: #f1f5f9; font-weight: 600; }
+        .eq { font-family: 'JetBrains Mono', ui-monospace, monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.82rem; }
+        .note { font-size: 0.82rem; color: #475569; margin-top: 8px; line-height: 1.5; }
+        .sound-hint { background: #fef3c7; border-left: 3px solid #f59e0b; padding: 8px 10px; border-radius: 6px; font-size: 0.82rem; margin-top: 8px; }
+
+        textarea { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 0.85rem; min-height: 64px; resize: vertical; }
+
+        @media (max-width: 768px) {
+            .bottom-panel { flex-direction: column; }
+            .controls { border-right: none; border-bottom: 1px solid #eee; min-width: 0; }
+            .analysis { min-width: 0; }
+            .readouts { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">🌈 Prism Dispersion Interactive Lab</h2>
+    <small>Refraction · Snell's Law · Refractive Index · Rainbow Spectrum · Cauchy Dispersion</small>
+</header>
+
+<div class="lab-container">
+    <div id="sim-area">
+        <div class="hud">
+            <b>LIVE STATE</b><br>
+            <div class="metrics">
+                Wavelength: <span id="hud-wl">550</span> nm<br>
+                n(λ): <span id="hud-n">1.517</span><br>
+                θ₁: <span id="hud-i">45.0</span>°<br>
+                Dispersion: <span id="hud-disp">5.0</span>°
+            </div>
+            <div style="margin-top:6px; font-size:0.75rem;">
+                <label style="display:inline-flex;align-items:center;gap:6px;"><input id="full-scroll-toggle" type="checkbox"> Enable Full Page Scrolling</label>
+            </div>
+        </div>
+        <div class="vector-legend">
+            <span style="color:#fff">○ Prism</span> | <span style="color:#f43f5e">● Incident</span> | <span style="color:#a5f3fc">● Refracted</span>
+        </div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div id="splitter" class="splitter" title="Drag to resize simulation area"></div>
+
+    <div class="bottom-panel">
+        <div class="controls">
+            <h4>🧪 Lab Settings</h4>
+
+            <div class="input-row">
+                <button class="btn-sound" id="btn-sound" style="width:100%;">🔈 Enable sound</button>
+                <div class="sound-hint" id="sound-hint">Light ray "whoosh" + wavelength tone.</div>
+            </div>
+
+            <div class="input-row">
+                <label>Prism material</label>
+                <select id="material">
+                    <option value="crown" selected>Crown glass (n_D = 1.517)</option>
+                    <option value="flint">Flint glass (n_D = 1.620)</option>
+                    <option value="water">Water (n_D = 1.333)</option>
+                    <option value="diamond">Diamond (n_D = 2.417)</option>
+                    <option value="quartz">Fused quartz (n_D = 1.458)</option>
+                    <option value="acrylic">Acrylic (n_D = 1.491)</option>
+                </select>
+            </div>
+
+            <div class="input-row">
+                <label>Light source</label>
+                <select id="source">
+                    <option value="white" selected>White light (full spectrum)</option>
+                    <option value="laser">Single wavelength laser</option>
+                    <option value="hydrogen">Hydrogen emission (discrete lines)</option>
+                </select>
+            </div>
+
+            <div class="input-row">
+                <label>Angle of incidence θ₁: <span id="v-i">45</span>°</label>
+                <input type="range" id="angle" min="10" max="80" step="0.5" value="45">
+            </div>
+
+            <div class="input-row">
+                <label>Apex angle A: <span id="v-A">60</span>°</label>
+                <input type="range" id="apex" min="20" max="90" step="1" value="60">
+            </div>
+
+            <div class="input-row">
+                <label>Laser wavelength: <span id="v-wl">550</span> nm</label>
+                <input type="range" id="wl" min="380" max="700" step="5" value="550">
+            </div>
+
+            <div class="input-row">
+                <label style="display:inline-flex;align-items:center;gap:6px;">
+                    <input type="checkbox" id="show-normals" checked> Show normals
+                </label>
+            </div>
+
+            <div class="btn-grid">
+                <button class="btn-fire" id="btn-fire">💡 Fire light</button>
+                <button class="btn-reset" id="btn-reset">↺ Reset</button>
+            </div>
+        </div>
+
+        <div class="analysis">
+            <h4>📊 Learn &amp; Practice</h4>
+
+            <div class="readouts">
+                <div class="readout big"><span>Material</span><strong id="ro-mat">Crown glass</strong></div>
+                <div class="readout big"><span>Dispersion angle Δ</span><strong id="ro-disp">5.0°</strong></div>
+                <div class="readout"><span>n(red) — 700 nm</span><strong id="ro-nr">1.514</strong></div>
+                <div class="readout"><span>n(green) — 550 nm</span><strong id="ro-ng">1.517</strong></div>
+                <div class="readout"><span>n(violet) — 400 nm</span><strong id="ro-nv">1.527</strong></div>
+                <div class="readout"><span>θ₁ (incidence)</span><strong id="ro-i">45.0°</strong></div>
+                <div class="readout"><span>θ₂ (first refraction)</span><strong id="ro-r1">27.3°</strong></div>
+                <div class="readout"><span>θ₃ (inside prism)</span><strong id="ro-r2">32.7°</strong></div>
+                <div class="readout"><span>θ₄ (emergence)</span><strong id="ro-r4">72.4°</strong></div>
+                <div class="readout"><span>Deviation (green)</span><strong id="ro-dev">42.4°</strong></div>
+                <div class="readout"><span>Min deviation</span><strong id="ro-min">37.2°</strong></div>
+                <div class="readout"><span>Critical angle</span><strong id="ro-crit">41.2°</strong></div>
+            </div>
+
+            <div class="card">
+                <div class="tabs" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                    <button class="tab-btn active" data-tab="formulas">Formulas</button>
+                    <button class="tab-btn" data-tab="quiz">Quiz</button>
+                    <button class="tab-btn" data-tab="challenges">Challenges</button>
+                    <button class="tab-btn" data-tab="notebook">Notebook</button>
+                </div>
+
+                <!-- FORMULAS -->
+                <div id="formulas" class="tab-panel active">
+                    <h3 style="margin:6px 0 8px 0;">Core Formulas — Prism Dispersion</h3>
+                    <ul style="font-size:0.9rem; line-height:1.6; padding-left:1rem; margin:0;">
+                        <li><b>Snell's Law (first face):</b> n₁ sin θ₁ = n₂ sin θ₂</li>
+                        <li><b>Snell's Law (second face):</b> n sin θ₃ = 1 · sin θ₄</li>
+                        <li><b>Inside angle:</b> θ₃ = A − θ₂ (where A is the apex angle)</li>
+                        <li><b>Total deviation:</b> δ = θ₁ + θ₄ − A</li>
+                        <li><b>Minimum deviation:</b> n = sin[(A + δ_min)/2] / sin(A/2)</li>
+                        <li><b>Dispersion:</b> Δδ = δ_violet − δ_red</li>
+                        <li><b>Cauchy's equation:</b> n(λ) = A + B/λ² (empirical)</li>
+                        <li><b>Critical angle:</b> sin θ_c = 1/n (internal → air)</li>
+                    </ul>
+                    <p class="note"><b>💡 Quick tips:</b> A prism spreads white light into a rainbow because n depends on wavelength — blue bends more than red. Violet light has a higher n (~1.52) than red (~1.51) in glass, so violet deviates more. Minimum deviation occurs when θ₁ = θ₄ (symmetric path). The apex angle A together with the deviation δ determines n via the prism formula. Diamonds sparkle because their very high n (2.42) gives a small critical angle (~24°), trapping light in total internal reflection.</p>
+
+                    <table class="formulas" style="margin-top:12px;">
+                        <tr><th>Quantity</th><th>Formula</th><th>Units</th></tr>
+                        <tr><td>Snell</td><td><span class="eq">n₁ sin θ₁ = n₂ sin θ₂</span></td><td>—</td></tr>
+                        <tr><td>Deviation</td><td><span class="eq">δ = θ₁ + θ₄ − A</span></td><td>°</td></tr>
+                        <tr><td>Prism formula</td><td><span class="eq">n = sin((A+δ)/2)/sin(A/2)</span></td><td>—</td></tr>
+                        <tr><td>Cauchy</td><td><span class="eq">n(λ) = A + B/λ²</span></td><td>—</td></tr>
+                    </table>
+                </div>
+
+                <!-- QUIZ -->
+                <div id="quiz" class="tab-panel" style="max-height:600px; overflow:auto;">
+                    <h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+                    <div class="quiz-section">Basic — Refraction</div>
+
+                    <div class="quiz-q" data-q="q1" data-answer="B">
+                        <strong>1. White light passing through a prism spreads into colors because:</strong>
+                        <label><input type="radio" name="q1" value="A"> The prism adds color</label>
+                        <label><input type="radio" name="q1" value="B"> Different wavelengths refract by different amounts</label>
+                        <label><input type="radio" name="q1" value="C"> The prism is painted</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q2" data-answer="A">
+                        <strong>2. In a glass prism, which color deviates the most?</strong>
+                        <label><input type="radio" name="q2" value="A"> Violet (short wavelength)</label>
+                        <label><input type="radio" name="q2" value="B"> Red (long wavelength)</label>
+                        <label><input type="radio" name="q2" value="C"> All colors deviate equally</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q3" data-answer="B">
+                        <strong>3. Snell's law is written as:</strong>
+                        <label><input type="radio" name="q3" value="A"> n₁ cos θ₁ = n₂ cos θ₂</label>
+                        <label><input type="radio" name="q3" value="B"> n₁ sin θ₁ = n₂ sin θ₂</label>
+                        <label><input type="radio" name="q3" value="C"> n₁ θ₁ = n₂ θ₂</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Intermediate — Prism Geometry</div>
+
+                    <div class="quiz-q" data-q="q4" data-answer="A">
+                        <strong>4. The total deviation δ produced by a prism equals:</strong>
+                        <label><input type="radio" name="q4" value="A"> δ = θ₁ + θ₄ − A</label>
+                        <label><input type="radio" name="q4" value="B"> δ = θ₁ + θ₄ + A</label>
+                        <label><input type="radio" name="q4" value="C"> δ = A / 2</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q5" data-answer="B">
+                        <strong>5. In glass, the refractive index for violet light is:</strong>
+                        <label><input type="radio" name="q5" value="A"> Less than for red light</label>
+                        <label><input type="radio" name="q5" value="B"> Greater than for red light</label>
+                        <label><input type="radio" name="q5" value="C"> Equal to for red light</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q6" data-answer="A">
+                        <strong>6. Minimum deviation through a prism occurs when:</strong>
+                        <label><input type="radio" name="q6" value="A"> θ₁ = θ₄ (symmetric path)</label>
+                        <label><input type="radio" name="q6" value="B"> θ₁ = 0</label>
+                        <label><input type="radio" name="q6" value="C"> θ₁ = 90°</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Advanced — Deep Understanding</div>
+
+                    <div class="quiz-q" data-q="q7" data-answer="B">
+                        <strong>7. The prism formula at minimum deviation is:</strong>
+                        <label><input type="radio" name="q7" value="A"> n = sin(A)/sin(δ)</label>
+                        <label><input type="radio" name="q7" value="B"> n = sin((A+δ)/2) / sin(A/2)</label>
+                        <label><input type="radio" name="q7" value="C"> n = (A+δ)/A</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q8" data-answer="A">
+                        <strong>8. Cauchy's empirical formula n(λ) = A + B/λ² predicts that:</strong>
+                        <label><input type="radio" name="q8" value="A"> n is larger for shorter wavelengths</label>
+                        <label><input type="radio" name="q8" value="B"> n is larger for longer wavelengths</label>
+                        <label><input type="radio" name="q8" value="C"> n is independent of λ</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q9" data-answer="B">
+                        <strong>9. Diamond (n = 2.42) sparkles more than glass (n = 1.52) because:</strong>
+                        <label><input type="radio" name="q9" value="A"> It is harder</label>
+                        <label><input type="radio" name="q9" value="B"> Its higher n gives a smaller critical angle, trapping light in total internal reflection</label>
+                        <label><input type="radio" name="q9" value="C"> It is transparent</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="btn-grid" style="margin-top:12px;">
+                        <button class="btn-fire" id="btn-quiz-check">Submit Quiz</button>
+                        <button class="btn-reset" id="btn-quiz-reset">Reset</button>
+                    </div>
+                    <div id="quiz-result" style="display:none;"></div>
+                </div>
+
+                <!-- CHALLENGES -->
+                <div id="challenges" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Interactive Challenges</h3>
+                    <div style="display:flex; flex-direction:column; gap:8px; font-size:0.9rem;">
+                        <div>
+                            <b>Challenge 1 — Newton's prism</b><br>
+                            <button class="btn-fire" data-challenge="newton">White light through crown glass at 45°</button>
+                        </div>
+                        <div>
+                            <b>Challenge 2 — Rainbow ordering</b><br>
+                            <button class="btn-fire" data-challenge="rainbow">Show which color deviates most</button>
+                        </div>
+                        <div>
+                            <b>Challenge 3 — Diamond prism</b><br>
+                            <button class="btn-fire" data-challenge="diamond">Diamond (n = 2.42) — huge dispersion</button>
+                        </div>
+                        <div>
+                            <b>Challenge 4 — Red laser</b><br>
+                            <button class="btn-fire" data-challenge="redlaser">Red laser at 650 nm only</button>
+                        </div>
+                        <div>
+                            <b>Challenge 5 — Minimum deviation</b><br>
+                            <button class="btn-fire" data-challenge="minimum">Snap to minimum-deviation angle</button>
+                        </div>
+                        <div id="challenge-note" style="color:#0f172a; font-size:0.85rem;"></div>
+                        <div id="challenge-result" style="color:#083344; font-weight:600; margin-top:6px;"></div>
+                    </div>
+                </div>
+
+                <!-- NOTEBOOK -->
+                <div id="notebook" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Experiment Notebook</h3>
+                    <label>Prediction / hypothesis</label>
+                    <textarea id="hypothesis" placeholder="What do you expect to happen, and why?"></textarea>
+                    <label style="margin-top:10px; display:block;">Conclusion / evidence</label>
+                    <textarea id="conclusion" placeholder="Explain what your observations show."></textarea>
+                    <label style="margin-top:10px; display:block;">Recorded measurements</label>
+                    <textarea id="records" readonly style="background:#f8fafc; font-family:monospace; font-size:0.75rem; min-height:100px;"></textarea>
+                    <div class="btn-grid" style="margin-top:10px;">
+                        <button class="btn-fire" id="btn-record">📋 Record</button>
+                        <button class="btn-reset" id="btn-clear-notes">Clear</button>
+                    </div>
+                    <button class="btn-fire" style="margin-top:8px; width:100%;" id="btn-export">⬇ Download Report</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <b>Real-world fact:</b> <span id="fact-box" style="font-size:0.85rem;">—</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+"use strict";
+(function () {
+    // === Real material Cauchy coefficients (A + B/λ²·10⁻¹⁴ where λ in nm) ===
+    // These give accurate n values across the visible spectrum
+    var MATERIALS = {
+        crown: {
+            name: 'Crown glass',
+            nD: 1.517,
+            A: 1.5046, B: 4.20,  // A + B/λ² (λ in µm)
+            color: '#a5b4fc',
+            fact: 'Crown glass (n_D = 1.517) disperses moderately. Newton used a crown glass prism in 1666 to demonstrate that white light is a mixture of colors.'
+        },
+        flint: {
+            name: 'Flint glass',
+            nD: 1.620,
+            A: 1.6030, B: 5.30,
+            color: '#c7d2fe',
+            fact: 'Flint glass (n_D = 1.62) has higher dispersion than crown glass. Used in camera lenses paired with crown glass to correct chromatic aberration.'
+        },
+        water: {
+            name: 'Water',
+            nD: 1.333,
+            A: 1.3240, B: 3.20,
+            color: '#7dd3fc',
+            fact: 'Water (n_D = 1.333) creates natural rainbows when sunlight refracts through raindrops. The rainbow is always at ~42° from the anti-solar point.'
+        },
+        diamond: {
+            name: 'Diamond',
+            nD: 2.417,
+            A: 2.3800, B: 4.80,
+            color: '#cffafe',
+            fact: 'Diamond (n_D = 2.42) has the highest dispersion of common gems. Its critical angle is only 24.4° — most light entering gets trapped inside and bounces multiple times before exiting.'
+        },
+        quartz: {
+            name: 'Fused quartz',
+            nD: 1.458,
+            A: 1.4460, B: 3.50,
+            color: '#e0f2fe',
+            fact: 'Fused quartz (n_D = 1.458) transmits UV and has low dispersion — that is why it is used in UV-transparent optics and astronomical telescopes.'
+        },
+        acrylic: {
+            name: 'Acrylic',
+            nD: 1.491,
+            A: 1.4780, B: 4.00,
+            color: '#dbeafe',
+            fact: 'Acrylic/PMMA (n_D = 1.491) is cheap and clear — used in light guides and educational prisms. Its dispersion is close to crown glass.'
+        }
+    };
+
+    // === Wavelength → RGB (accurate visible spectrum approximation) ===
+    function wavelengthToRGB(wl) {
+        var r = 0, g = 0, b = 0;
+        if (wl >= 380 && wl < 440) { r = -(wl - 440) / 60; b = 1; }
+        else if (wl < 490) { g = (wl - 440) / 50; b = 1; }
+        else if (wl < 510) { g = 1; b = -(wl - 510) / 20; }
+        else if (wl < 580) { r = (wl - 510) / 70; g = 1; }
+        else if (wl < 645) { r = 1; g = -(wl - 645) / 65; }
+        else if (wl <= 780) { r = 1; }
+        var factor = 1;
+        if (wl > 700) factor = 0.3 + 0.7 * (780 - wl) / 80;
+        if (wl < 420) factor = 0.3 + 0.7 * (wl - 380) / 40;
+        return [Math.round(r * factor * 255), Math.round(g * factor * 255), Math.round(b * factor * 255)];
+    }
+    function rgbStr(rgb) {
+        return 'rgb(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ')';
+    }
+
+    // === State ===
+    var S = {
+        material: 'crown',
+        source: 'white',
+        theta1: 45,
+        apexA: 60,
+        wl: 550,
+        showNormals: true,
+        soundOn: false,
+        laserPulse: 0,
+        records: []
+    };
+
+    var $ = function (id) { return document.getElementById(id); };
+
+    // === Canvas ===
+    var canvas = $('canvas');
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var view = { x: 0, y: 0, scale: 1 };
+
+    function resizeCanvas() {
+        var w = canvas.clientWidth, h = canvas.clientHeight;
+        canvas.width = Math.max(1, Math.round(w * dpr));
+        canvas.height = Math.max(1, Math.round(h * dpr));
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function cw() { return canvas.width / dpr; }
+    function ch() { return canvas.height / dpr; }
+
+    // === Web Audio ===
+    var audioCtx = null;
+    function initAudio() {
+        if (audioCtx) return;
+        try {
+            var AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) { $('sound-hint').textContent = '⚠ No Web Audio.'; return; }
+            audioCtx = new AC();
+        } catch (e) { $('sound-hint').textContent = '⚠ Audio init failed.'; }
+    }
+    function beep(freq, dur, type, vol) {
+        if (!audioCtx || !S.soundOn) return;
+        try {
+            var o = audioCtx.createOscillator();
+            var g = audioCtx.createGain();
+            o.type = type || 'sine';
+            o.frequency.value = freq;
+            g.gain.setValueAtTime(vol || 0.08, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+            o.connect(g);
+            g.connect(audioCtx.destination);
+            o.start();
+            o.stop(audioCtx.currentTime + dur);
+        } catch (e) {}
+    }
+    function playLightSound() {
+        if (!audioCtx || !S.soundOn) return;
+        try {
+            var o = audioCtx.createOscillator();
+            var g = audioCtx.createGain();
+            o.type = 'sine';
+            // Pitch maps wavelength: violet (400) high pitch, red (700) low pitch
+            var freq = 200 + (700 - S.wl) * 1.5;  // ~200-650 Hz range
+            o.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            o.frequency.linearRampToValueAtTime(freq * 1.1, audioCtx.currentTime + 0.15);
+            g.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+            o.connect(g);
+            g.connect(audioCtx.destination);
+            o.start();
+            o.stop(audioCtx.currentTime + 0.2);
+        } catch (e) {}
+    }
+    function toggleSound() {
+        initAudio();
+        if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        S.soundOn = !S.soundOn;
+        if (S.soundOn) {
+            $('btn-sound').textContent = '🔊 Sound ON';
+            $('btn-sound').classList.add('playing');
+            $('sound-hint').textContent = 'Light whoosh + wavelength-mapped tone.';
+            beep(440, 0.1, 'sine', 0.1);
+        } else {
+            $('btn-sound').textContent = '🔈 Enable sound';
+            $('btn-sound').classList.remove('playing');
+            $('sound-hint').textContent = 'Sound disabled.';
+        }
+    }
+
+    // === Physics ===
+    function getMaterial() { return MATERIALS[S.material]; }
+
+    // Cauchy: n(λ) = A + B/λ² where λ is in micrometers
+    function getN(wl_nm) {
+        var mat = getMaterial();
+        var lambda_um = wl_nm / 1000;
+        return mat.A + mat.B / (lambda_um * lambda_um);
+    }
+
+    // Trace a ray through the prism for a given wavelength
+    // Returns {theta2, theta3, theta4, delta, path: [...]} or null if TIR
+    function traceRay(wl_nm, theta1_deg) {
+        var mat = getMaterial();
+        var n = getN(wl_nm);
+        var A_rad = S.apexA * Math.PI / 180;
+        var theta1_rad = theta1_deg * Math.PI / 180;
+
+        // First refraction: air → glass
+        var sinTheta2 = Math.sin(theta1_rad) / n;
+        if (Math.abs(sinTheta2) > 1) return null; // shouldn't happen for air→glass
+        var theta2_rad = Math.asin(sinTheta2);
+
+        // Inside prism: theta3 = A - theta2
+        var theta3_rad = A_rad - theta2_rad;
+        if (theta3_rad < 0) return null;
+
+        // Second refraction: glass → air (may TIR)
+        var sinTheta4 = n * Math.sin(theta3_rad);
+        if (Math.abs(sinTheta4) > 1) {
+            // Total internal reflection
+            return { tir: true, n: n, theta2: theta2_rad, theta3: theta3_rad };
+        }
+        var theta4_rad = Math.asin(sinTheta4);
+
+        // Total deviation
+        var delta_rad = theta1_rad + theta4_rad - A_rad;
+
+        return {
+            tir: false,
+            n: n,
+            theta2: theta2_rad * 180 / Math.PI,
+            theta3: theta3_rad * 180 / Math.PI,
+            theta4: theta4_rad * 180 / Math.PI,
+            delta: delta_rad * 180 / Math.PI
+        };
+    }
+
+    // === Drawing ===
+    function drawScene() {
+        var w = cw(), h = ch();
+        // Dark background (like a real optics lab)
+        var grad = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.max(w, h) / 1.5);
+        grad.addColorStop(0, '#0a1220');
+        grad.addColorStop(1, '#050810');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.save();
+        ctx.translate(view.x, view.y);
+        ctx.scale(view.scale, view.scale);
+        var W = w / view.scale, H = h / view.scale;
+
+        // Center of prism
+        var cx = W / 2;
+        var cy = H / 2;
+        var size = Math.min(W, H) * 0.28;
+
+        // Prism triangle vertices
+        var A_rad = S.apexA * Math.PI / 180;
+        // Equilateral-ish triangle: apex at top, base at bottom
+        // Apex angle A at top vertex
+        var halfBase = Math.tan(A_rad / 2) * size;
+        var vApex = { x: cx, y: cy - size * 0.7 };
+        var vLeft = { x: cx - halfBase, y: cy + size * 0.7 };
+        var vRight = { x: cx + halfBase, y: cy + size * 0.7 };
+
+        // Draw prism body
+        ctx.beginPath();
+        ctx.moveTo(vApex.x, vApex.y);
+        ctx.lineTo(vLeft.x, vLeft.y);
+        ctx.lineTo(vRight.x, vRight.y);
+        ctx.closePath();
+        // Fill with glass-like gradient
+        var prismGrad = ctx.createLinearGradient(vLeft.x, vApex.y, vRight.x, vLeft.y);
+        prismGrad.addColorStop(0, 'rgba(165, 180, 252, 0.18)');
+        prismGrad.addColorStop(0.5, 'rgba(199, 210, 254, 0.12)');
+        prismGrad.addColorStop(1, 'rgba(165, 180, 252, 0.18)');
+        ctx.fillStyle = prismGrad;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(199, 210, 254, 0.8)';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+        // Inner glow
+        ctx.strokeStyle = 'rgba(165, 180, 252, 0.3)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Determine which edge the light enters and exits
+        // Light comes from upper-left, enters left face, exits right face
+        // This is the classic Newton prism arrangement
+
+        // Compute entry and exit points on the prism
+        // Left face: from vApex to vLeft
+        // Right face: from vApex to vRight
+        // Base: from vLeft to vRight
+
+        // Incident light direction: coming from upper-left toward prism center
+        var theta1_rad = S.theta1 * Math.PI / 180;
+
+        // Entry point on left face — we aim at a fixed point on the left face
+        var entryParam = 0.45; // 0 = apex, 1 = left base corner
+        var entryX = vApex.x + (vLeft.x - vApex.x) * entryParam;
+        var entryY = vApex.y + (vLeft.y - vApex.y) * entryParam;
+
+        // Left face outward normal points up-left (perpendicular to face, pointing out)
+        // Face direction (from apex to left corner): vLeft - vApex
+        var faceDirX = vLeft.x - vApex.x;
+        var faceDirY = vLeft.y - vApex.y;
+        var faceLen = Math.hypot(faceDirX, faceDirY);
+        faceDirX /= faceLen; faceDirY /= faceLen;
+        // Normal is perpendicular: (-faceDirY, faceDirX) or (faceDirY, -faceDirX)
+        // We want the OUTWARD normal (pointing away from prism interior)
+        // Interior is to the right of the left face — so outward normal has negative x
+        var normX = -faceDirY;
+        var normY = faceDirX;
+        // Check direction: interior center is at (cx, cy), if dot is negative we have outward
+        var testDot = (cx - entryX) * normX + (cy - entryY) * normY;
+        if (testDot > 0) { normX = -normX; normY = -normY; }
+
+        // Incident ray direction: angle theta1_rad from the normal, rotating clockwise (coming from above-left)
+        // Incident direction (toward entry point): make angle theta1 with the inward normal
+        var inwardNormX = -normX, inwardNormY = -normY;
+        // Rotate inward normal by theta1 (choose orientation so ray comes from upper-left)
+        var cosA = Math.cos(theta1_rad), sinA = Math.sin(theta1_rad);
+        var incDirX = inwardNormX * cosA - inwardNormY * sinA;
+        var incDirY = inwardNormX * sinA + inwardNormY * cosA;
+
+        // Incident ray start point (upstream from entry)
+        var incLen = Math.min(W, H) * 0.3;
+        var incStartX = entryX - incDirX * incLen;
+        var incStartY = entryY - incDirY * incLen;
+
+        // Draw incident ray
+        if (S.source === 'white') {
+            // White light — draw as thick white beam
+            drawGlowLine(incStartX, incStartY, entryX, entryY, '#ffffff', 3);
+        } else if (S.source === 'laser') {
+            var rgb = wavelengthToRGB(S.wl);
+            drawGlowLine(incStartX, incStartY, entryX, entryY, rgbStr(rgb), 3);
+        } else {
+            // Hydrogen: multiple discrete wavelengths
+            drawGlowLine(incStartX, incStartY, entryX, entryY, '#ff6699', 2.5);
+        }
+
+        // Draw entry marker
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(entryX, entryY, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Now propagate through the prism
+        // Right face: from vApex to vRight
+        // We need to find where the refracted ray exits the right face
+        // For simplicity, compute exit by tracing the refracted ray direction and finding intersection with right face
+
+        // Wavelengths to display
+        var wavelengths = [];
+        if (S.source === 'white') {
+            // Sample wavelengths across the visible spectrum
+            for (var wl = 400; wl <= 700; wl += 25) wavelengths.push(wl);
+        } else if (S.source === 'laser') {
+            wavelengths.push(S.wl);
+        } else {
+            // Hydrogen emission lines (real values in nm)
+            wavelengths = [410.2, 434.0, 486.1, 656.3]; // violet, blue-violet, blue-green, red
+        }
+
+        // Sort by wavelength for consistent rendering
+        wavelengths.sort(function (a, b) { return a - b; });
+
+        // Draw each ray through the prism
+        wavelengths.forEach(function (wl) {
+            var result = traceRay(wl, S.theta1);
+            if (!result || result.tir) return;
+
+            var rgb = wavelengthToRGB(wl);
+            var colorStr = rgbStr(rgb);
+
+            // First refraction direction (inside prism)
+            // We need to bend the ray by theta1 - theta2 relative to the incident direction
+            var dev1_rad = theta1_rad - result.theta2 * Math.PI / 180;
+            // Rotate inward normal by theta2 (refracted angle)
+            var ref1X = inwardNormX * Math.cos(result.theta2 * Math.PI / 180) - inwardNormY * Math.sin(result.theta2 * Math.PI / 180);
+            var ref1Y = inwardNormX * Math.sin(result.theta2 * Math.PI / 180) + inwardNormY * Math.cos(result.theta2 * Math.PI / 180);
+
+            // Find intersection of refracted ray with right face (from apex to right base)
+            // Right face parameter: P(t) = vApex + t * (vRight - vApex), t in [0,1]
+            var rayP = { x: entryX, y: entryY };
+            var rayD = { x: ref1X, y: ref1Y };
+            var faceP = { x: vApex.x, y: vApex.y };
+            var faceD = { x: vRight.x - vApex.x, y: vRight.y - vApex.y };
+
+            // Solve rayP + t*rayD = faceP + s*faceD
+            var det = rayD.x * (-faceD.y) - rayD.y * (-faceD.x);
+            var exitX, exitY, tExit;
+            if (Math.abs(det) < 1e-9) {
+                // Parallel — use midpoint as fallback
+                exitX = cx + halfBase * 0.5; exitY = cy;
+                tExit = 0.5;
+            } else {
+                var dx = faceP.x - rayP.x, dy = faceP.y - rayP.y;
+                tExit = (dx * (-faceD.y) - dy * (-faceD.x)) / det;
+                exitX = rayP.x + rayD.x * tExit;
+                exitY = rayP.y + rayD.y * tExit;
+            }
+
+            // Draw internal ray from entry to exit
+            drawGlowLine(entryX, entryY, exitX, exitY, colorStr, 2);
+
+            // At exit — second refraction
+            // Compute outward normal on right face
+            var rfaceDirX = vRight.x - vApex.x;
+            var rfaceDirY = vRight.y - vApex.y;
+            var rfaceLen = Math.hypot(rfaceDirX, rfaceDirY);
+            rfaceDirX /= rfaceLen; rfaceDirY /= rfaceLen;
+            // Outward normal points right and up
+            var rNormX = rfaceDirY, rNormY = -rfaceDirX;
+            var rTest = (cx - exitX) * rNormX + (cy - exitY) * rNormY;
+            if (rTest > 0) { rNormX = -rNormX; rNormY = -rNormY; }
+            var rInwardNormX = -rNormX, rInwardNormY = -rNormY;
+
+            // Refracted direction on exit
+            var theta4_rad = result.theta4 * Math.PI / 180;
+            var ref2X = rInwardNormX * Math.cos(theta4_rad) - rInwardNormY * Math.sin(theta4_rad);
+            var ref2Y = rInwardNormX * Math.sin(theta4_rad) + rInwardNormY * Math.cos(theta4_rad);
+
+            // Draw exiting ray
+            var exitLen = Math.min(W, H) * 0.4;
+            var exitEndX = exitX + ref2X * exitLen;
+            var exitEndY = exitY + ref2Y * exitLen;
+            drawGlowLine(exitX, exitY, exitEndX, exitEndY, colorStr, 2.5);
+
+            // Exit marker
+            ctx.fillStyle = colorStr;
+            ctx.beginPath();
+            ctx.arc(exitX, exitY, 3, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        // Draw normals at entry and exit
+        if (S.showNormals) {
+            ctx.strokeStyle = 'rgba(148, 163, 184, 0.4)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 4]);
+            // Entry normal
+            ctx.beginPath();
+            ctx.moveTo(entryX - normX * 80, entryY - normY * 80);
+            ctx.lineTo(entryX + normX * 80, entryY + normY * 80);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        ctx.restore();
+
+        // Caption
+        ctx.fillStyle = 'rgba(203, 213, 225, 0.7)';
+        ctx.font = '11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText(getMaterial().name + ' prism · apex A = ' + S.apexA + '° · θ₁ = ' + S.theta1.toFixed(1) + '° · ' + (S.source === 'white' ? 'white light dispersed' : S.source === 'laser' ? S.wl + ' nm laser' : 'hydrogen spectrum'), w / 2, h - 8);
+    }
+
+    function drawGlowLine(x1, y1, x2, y2, color, width) {
+        // Outer glow
+        ctx.save();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width + 4;
+        ctx.globalAlpha = 0.3;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+        // Middle glow
+        ctx.globalAlpha = 0.6;
+        ctx.lineWidth = width + 1.5;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+        // Core
+        ctx.globalAlpha = 1;
+        ctx.lineWidth = width;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    // === Readouts ===
+    function updateReadouts() {
+        var mat = getMaterial();
+        var n_red = getN(700);
+        var n_green = getN(550);
+        var n_violet = getN(400);
+        var trace_green = traceRay(550, S.theta1);
+        var trace_red = traceRay(700, S.theta1);
+        var trace_violet = traceRay(400, S.theta1);
+        var disp = (trace_violet && trace_red && !trace_violet.tir && !trace_red.tir)
+            ? Math.abs(trace_violet.delta - trace_red.delta) : 0;
+        var dev = trace_green && !trace_green.tir ? trace_green.delta : NaN;
+        var critAngle = Math.asin(1 / n_green) * 180 / Math.PI;
+
+        // Minimum deviation: use prism formula to solve
+        // At minimum, theta1 = theta4, so n = sin((A + delta_min)/2)/sin(A/2)
+        // → delta_min = 2 * asin(n * sin(A/2)) - A
+        var A_rad = S.apexA * Math.PI / 180;
+        var sinHalf = n_green * Math.sin(A_rad / 2);
+        var deltaMin = sinHalf <= 1 ? (2 * Math.asin(sinHalf) * 180 / Math.PI - S.apexA) : NaN;
+
+        $('ro-mat').innerText = mat.name;
+        $('ro-disp').innerText = disp.toFixed(2) + '°';
+        $('ro-nr').innerText = n_red.toFixed(4);
+        $('ro-ng').innerText = n_green.toFixed(4);
+        $('ro-nv').innerText = n_violet.toFixed(4);
+        $('ro-i').innerText = S.theta1.toFixed(1) + '°';
+        $('ro-r1').innerText = trace_green && !trace_green.tir ? trace_green.theta2.toFixed(1) + '°' : '—';
+        $('ro-r2').innerText = trace_green && !trace_green.tir ? trace_green.theta3.toFixed(1) + '°' : '—';
+        $('ro-r4').innerText = trace_green && !trace_green.tir ? trace_green.theta4.toFixed(1) + '°' : 'TIR';
+        $('ro-dev').innerText = isFinite(dev) ? dev.toFixed(1) + '°' : 'TIR';
+        $('ro-min').innerText = isFinite(deltaMin) ? deltaMin.toFixed(1) + '°' : 'N/A';
+        $('ro-crit').innerText = critAngle.toFixed(1) + '°';
+
+        $('hud-wl').innerText = S.wl;
+        $('hud-n').innerText = getN(S.wl).toFixed(3);
+        $('hud-i').innerText = S.theta1.toFixed(1);
+        $('hud-disp').innerText = disp.toFixed(1);
+
+        // Fact based on material
+        var fact = mat.fact;
+        $('fact-box').innerText = fact;
+    }
+
+    // === Quiz ===
+    var QUIZ_EXPLAIN = {
+        q1: { correct: 'B', why: 'White light contains all visible wavelengths. When it enters glass, different wavelengths have slightly different refractive indices (n depends on λ — that is dispersion). Violet bends more than red, spreading the light into a rainbow.', tip: 'This is called <b>dispersion</b>, and it is why prisms make rainbows.' },
+        q2: { correct: 'A', why: 'Violet has a shorter wavelength, and n is higher for shorter wavelengths (Cauchy: n = A + B/λ²). Higher n means more bending. So violet deviates more than red in glass.', tip: 'This is why the rainbow is always ordered: red on the outside, violet on the inside.' },
+        q3: { correct: 'B', why: 'Snell\'s Law: n₁ sin θ₁ = n₂ sin θ₂. It relates the angles of incidence and refraction to the refractive indices of the two media.', tip: 'Angles are always measured from the normal (perpendicular to the surface).' },
+        q4: { correct: 'A', why: 'Total deviation δ = θ₁ + θ₄ − A. It is the angle between the original incident direction and the final emergent direction.', tip: 'Derived by considering the two refractions and the prism geometry.' },
+        q5: { correct: 'B', why: 'In glass, n_violet ≈ 1.52 > n_red ≈ 1.51. Shorter wavelengths have higher n. This is why violet bends more and appears on the inner edge of the rainbow.', tip: 'Cauchy equation: n(λ) = A + B/λ² — smaller λ → larger n.' },
+        q6: { correct: 'A', why: 'At minimum deviation, the ray passes symmetrically through the prism — θ₁ = θ₄ and θ₂ = θ₃. The prism formula n = sin((A+δ)/2)/sin(A/2) applies exactly at this point.', tip: 'This is how prism refractometers measure n experimentally.' },
+        q7: { correct: 'B', why: 'The prism formula at minimum deviation: <b>n = sin((A+δ_min)/2) / sin(A/2)</b>. It relates the apex angle A, minimum deviation δ_min, and refractive index n.', tip: 'Measured by rotating the prism to find the angle where deviation is minimum.' },
+        q8: { correct: 'A', why: 'Cauchy formula n = A + B/λ². Since λ² is in the denominator, smaller λ (shorter wavelength, higher frequency) gives larger B/λ² → larger n. So shorter wavelengths have higher n.', tip: 'This is why blue light bends more than red light in a prism.' },
+        q9: { correct: 'B', why: 'Critical angle sin θ_c = 1/n. For diamond n = 2.42 → θ_c ≈ 24.4°. For glass n = 1.52 → θ_c ≈ 41.1°. A smaller critical angle means light entering diamond is more likely to undergo total internal reflection, bouncing many times before exiting.', tip: 'This, plus diamond\'s dispersion, is why diamonds sparkle so much.' }
+    };
+
+    function evaluateQuiz() {
+        var qs = document.querySelectorAll('.quiz-q');
+        var score = 0, total = qs.length;
+        qs.forEach(function (q) {
+            var name = q.dataset.q;
+            var correct = q.dataset.answer;
+            var chosen = q.querySelector('input[name="' + name + '"]:checked');
+            var expl = q.querySelector('.explanation');
+            var data = QUIZ_EXPLAIN[name];
+            expl.hidden = false;
+            expl.className = 'explanation';
+            if (chosen && chosen.value === correct) {
+                score++;
+                expl.classList.add('correct-box');
+                expl.innerHTML = '<strong>✓ Correct!</strong>' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            } else {
+                expl.classList.add('wrong-box');
+                var cv = chosen ? chosen.value : '—';
+                expl.innerHTML = '<strong>✗ Correct answer is ' + correct + '</strong>You chose ' + cv + '. ' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            }
+        });
+        var pct = Math.round(score / total * 100);
+        var msg = '💪 Keep exploring!';
+        if (pct === 100) msg = '🌟 Perfect score!';
+        else if (pct >= 78) msg = '🎉 Excellent work!';
+        else if (pct >= 55) msg = '👍 Good effort! Review the explanations.';
+        beep(pct >= 78 ? 880 : 440, 0.15, 'sine', 0.1);
+        var result = $('quiz-result');
+        result.style.display = 'block';
+        result.innerHTML = '<div style="font-size:1.4rem; color:#4338ca;">' + score + '/' + total + ' · ' + pct + '%</div><div style="font-size:0.85rem; color:#334155; margin-top:4px; font-weight:500;">' + msg + '</div>';
+    }
+    function resetQuiz() {
+        document.querySelectorAll('.quiz-q').forEach(function (q) {
+            q.querySelectorAll('input[type=radio]').forEach(function (r) { r.checked = false; });
+            var expl = q.querySelector('.explanation');
+            expl.hidden = true;
+            expl.innerHTML = '';
+            expl.className = 'explanation';
+        });
+        $('quiz-result').style.display = 'none';
+        $('quiz-result').innerHTML = '';
+    }
+
+    // === Challenges ===
+    function applyChallenge(id) {
+        var note = $('challenge-note');
+        var cres = $('challenge-result');
+        note.innerText = '';
+        cres.innerText = '';
+
+        if (id === 'newton') {
+            S.material = 'crown'; $('material').value = 'crown';
+            S.source = 'white'; $('source').value = 'white';
+            S.theta1 = 45; $('angle').value = 45; $('v-i').innerText = '45';
+            S.apexA = 60; $('apex').value = 60; $('v-A').innerText = '60';
+            var t1 = traceRay(400, 45);
+            var t2 = traceRay(700, 45);
+            var disp = (t1 && t2 && !t1.tir && !t2.tir) ? Math.abs(t1.delta - t2.delta) : 0;
+            note.innerText = 'Newton\'s famous prism experiment: white light through a glass prism, showing the visible spectrum.';
+            cres.innerText = 'Dispersion = ' + disp.toFixed(2) + '° · ' + (t1 && t2 ? 'violet deviates ' + (t1.delta - t2.delta).toFixed(1) + '° more than red' : '');
+        } else if (id === 'rainbow') {
+            S.source = 'white'; $('source').value = 'white';
+            S.material = 'flint'; $('material').value = 'flint';
+            var tv = traceRay(400, S.theta1);
+            var tr = traceRay(700, S.theta1);
+            if (tv && tr && !tv.tir && !tr.tir) {
+                note.innerText = 'Deviation comparison at ' + S.theta1.toFixed(0) + '° incidence:';
+                cres.innerText = 'Violet (400nm): δ = ' + tv.delta.toFixed(2) + '° · Red (700nm): δ = ' + tr.delta.toFixed(2) + '° → violet bends ' + (tv.delta - tr.delta).toFixed(2) + '° more';
+            }
+        } else if (id === 'diamond') {
+            S.material = 'diamond'; $('material').value = 'diamond';
+            S.source = 'white'; $('source').value = 'white';
+            S.theta1 = 40; $('angle').value = 40; $('v-i').innerText = '40';
+            S.apexA = 60; $('apex').value = 60; $('v-A').innerText = '60';
+            note.innerText = 'Diamond has n = 2.42 — very high dispersion, but also a small critical angle (~24°) which traps light inside.';
+            cres.innerText = 'n(red) = ' + getN(700).toFixed(3) + ' · n(violet) = ' + getN(400).toFixed(3) + ' · critical angle ≈ ' + (Math.asin(1 / getN(550)) * 180 / Math.PI).toFixed(1) + '°';
+        } else if (id === 'redlaser') {
+            S.source = 'laser'; $('source').value = 'laser';
+            S.wl = 650; $('wl').value = 650; $('v-wl').innerText = '650';
+            S.material = 'crown'; $('material').value = 'crown';
+            note.innerText = 'Red laser (650 nm) — no visible dispersion because it is a single wavelength.';
+            cres.innerText = 'n(650 nm) = ' + getN(650).toFixed(4) + ' · single ray, no rainbow';
+        } else if (id === 'minimum') {
+            S.material = 'crown'; $('material').value = 'crown';
+            var n_g = getN(550);
+            var A_rad = S.apexA * Math.PI / 180;
+            var sinHalf = n_g * Math.sin(A_rad / 2);
+            var deltaMin = 2 * Math.asin(sinHalf) * 180 / Math.PI - S.apexA;
+            var theta1_min = (Math.asin(n_g * Math.sin(A_rad / 2)) * 180 / Math.PI);
+            // Actually at minimum deviation, theta1 = theta4, and (A + delta)/2 = theta1
+            theta1_min = (S.apexA + deltaMin) / 2;
+            S.theta1 = theta1_min;
+            $('angle').value = theta1_min; $('v-i').innerText = theta1_min.toFixed(1);
+            note.innerText = 'Minimum deviation: θ₁ = θ₄ = ' + theta1_min.toFixed(2) + '°. At this angle the ray passes symmetrically through the prism.';
+            cres.innerText = 'δ_min = ' + deltaMin.toFixed(2) + '° · θ₁ = θ₄ = ' + theta1_min.toFixed(2) + '°';
+        }
+        updateReadouts();
+    }
+
+    // === Notebook ===
+    function recordMeasurement() {
+        var mat = getMaterial();
+        var trace = traceRay(550, S.theta1);
+        var line = new Date().toLocaleTimeString() + ' | ' + mat.name + ' | source=' + S.source + ' | θ₁=' + S.theta1.toFixed(1) + '° | A=' + S.apexA + '° | λ=' + S.wl + 'nm | n(λ)=' + getN(S.wl).toFixed(4) + ' | ' + (trace && !trace.tir ? 'θ₂=' + trace.theta2.toFixed(2) + '° | θ₄=' + trace.theta4.toFixed(2) + '° | δ=' + trace.delta.toFixed(2) + '°' : 'TIR');
+        S.records.push(line);
+        $('records').value = S.records.join('\n');
+        $('records').scrollTop = $('records').scrollHeight;
+    }
+    function downloadReport() {
+        var mat = getMaterial();
+        var trace = traceRay(550, S.theta1);
+        var text = 'LEARNIFY - PRISM DISPERSION - LAB REPORT\n' +
+            'Date: ' + new Date().toLocaleString() + '\n\n' +
+            'PRISM\n' +
+            'Material: ' + mat.name + ' (n_D = ' + mat.nD + ')\n' +
+            'Apex angle A = ' + S.apexA + '°\n' +
+            'Angle of incidence θ₁ = ' + S.theta1.toFixed(2) + '°\n\n' +
+            'INCIDENT LIGHT\n' +
+            'Source: ' + S.source + '\n' +
+            (S.source === 'laser' ? 'Wavelength = ' + S.wl + ' nm\n' : '') + '\n' +
+            'REFRACTIVE INDICES (Cauchy: n = A + B/λ²)\n' +
+            'n(400 nm) = ' + getN(400).toFixed(5) + '\n' +
+            'n(550 nm) = ' + getN(550).toFixed(5) + '\n' +
+            'n(700 nm) = ' + getN(700).toFixed(5) + '\n\n' +
+            'TRACE (at 550 nm)\n' +
+            (trace && !trace.tir
+                ? 'θ₂ (first refraction) = ' + trace.theta2.toFixed(3) + '°\n' +
+                  'θ₃ (inside prism) = ' + trace.theta3.toFixed(3) + '°\n' +
+                  'θ₄ (emergence) = ' + trace.theta4.toFixed(3) + '°\n' +
+                  'Total deviation δ = ' + trace.delta.toFixed(3) + '°\n'
+                : 'TOTAL INTERNAL REFLECTION — no emergent ray\n') + '\n' +
+            'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+            'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+            'MEASUREMENTS\n' + $('records').value + '\n\n' +
+            'LIMITATIONS\nIdeal ray optics approximation. Cauchy formula is a two-term approximation valid for normal dispersion in the visible range. Does not include absorption, birefringence, or anomalous dispersion. Educational use only.\n';
+        var blob = new Blob([text], { type: 'text/plain' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'prism-dispersion-report.txt';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    // === Animation ===
+    function animate() {
+        if (S.laserPulse > 0) S.laserPulse--;
+        drawScene();
+        requestAnimationFrame(animate);
+    }
+
+    // === Event wiring ===
+    $('btn-sound').addEventListener('click', toggleSound);
+    $('material').addEventListener('change', function (e) {
+        S.material = e.target.value;
+        updateReadouts();
+        playLightSound();
+    });
+    $('source').addEventListener('change', function (e) {
+        S.source = e.target.value;
+        updateReadouts();
+        playLightSound();
+    });
+    $('angle').addEventListener('input', function (e) {
+        S.theta1 = parseFloat(e.target.value);
+        $('v-i').innerText = S.theta1.toFixed(1);
+        updateReadouts();
+    });
+    $('apex').addEventListener('input', function (e) {
+        S.apexA = parseFloat(e.target.value);
+        $('v-A').innerText = S.apexA;
+        updateReadouts();
+    });
+    $('wl').addEventListener('input', function (e) {
+        S.wl = parseFloat(e.target.value);
+        $('v-wl').innerText = S.wl;
+        updateReadouts();
+    });
+    $('show-normals').addEventListener('change', function (e) {
+        S.showNormals = e.target.checked;
+    });
+    $('btn-fire').addEventListener('click', function () {
+        S.laserPulse = 40;
+        playLightSound();
+    });
+    $('btn-reset').addEventListener('click', function () {
+        S.material = 'crown'; $('material').value = 'crown';
+        S.source = 'white'; $('source').value = 'white';
+        S.theta1 = 45; $('angle').value = 45; $('v-i').innerText = '45';
+        S.apexA = 60; $('apex').value = 60; $('v-A').innerText = '60';
+        S.wl = 550; $('wl').value = 550; $('v-wl').innerText = '550';
+        S.showNormals = true; $('show-normals').checked = true;
+        updateReadouts();
+    });
+
+    document.querySelectorAll('.tab-btn[data-tab]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+            document.querySelectorAll('.tab-btn[data-tab]').forEach(function (b) { b.classList.remove('active'); });
+            document.getElementById(btn.dataset.tab).classList.add('active');
+            btn.classList.add('active');
+        });
+    });
+
+    document.querySelectorAll('[data-challenge]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            applyChallenge(btn.dataset.challenge);
+            beep(660, 0.08, 'sine', 0.08);
+        });
+    });
+
+    $('btn-quiz-check').addEventListener('click', evaluateQuiz);
+    $('btn-quiz-reset').addEventListener('click', resetQuiz);
+
+    $('btn-record').addEventListener('click', recordMeasurement);
+    $('btn-clear-notes').addEventListener('click', function () {
+        if (!confirm('Clear all notebook fields?')) return;
+        $('hypothesis').value = '';
+        $('conclusion').value = '';
+        $('records').value = '';
+        S.records = [];
+    });
+    $('btn-export').addEventListener('click', downloadReport);
+
+    // Zoom & pan
+    var fullScroll = false;
+    var pointers = new Map();
+    var pinch = null;
+
+    $('full-scroll-toggle').addEventListener('change', function (e) {
+        fullScroll = e.target.checked;
+        canvas.style.touchAction = fullScroll ? 'auto' : 'none';
+        pointers.clear();
+        pinch = null;
+    });
+
+    function getPos(e) {
+        var r = canvas.getBoundingClientRect();
+        return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+    canvas.addEventListener('wheel', function (e) {
+        if (fullScroll) return;
+        e.preventDefault();
+        var cx = e.offsetX, cy = e.offsetY;
+        var wx = (cx - view.x) / view.scale;
+        var wy = (cy - view.y) / view.scale;
+        var factor = Math.exp(-e.deltaY * 0.0015);
+        view.scale = Math.max(0.3, Math.min(5, view.scale * factor));
+        view.x = cx - wx * view.scale;
+        view.y = cy - wy * view.scale;
+    }, { passive: false });
+    canvas.addEventListener('pointerdown', function (e) {
+        if (fullScroll) return;
+        canvas.setPointerCapture(e.pointerId);
+        pointers.set(e.pointerId, getPos(e));
+        if (pointers.size === 2) {
+            var pts = Array.from(pointers.values());
+            pinch = { dist: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y), startScale: view.scale };
+        }
+    });
+    canvas.addEventListener('pointermove', function (e) {
+        if (fullScroll || !pointers.has(e.pointerId)) return;
+        var prev = pointers.get(e.pointerId);
+        var pos = getPos(e);
+        pointers.set(e.pointerId, pos);
+        if (pointers.size === 1 && !pinch) {
+            view.x += pos.x - prev.x;
+            view.y += pos.y - prev.y;
+        } else if (pointers.size === 2 && pinch) {
+            var pts = Array.from(pointers.values());
+            var d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+            view.scale = Math.max(0.3, Math.min(5, pinch.startScale * d / pinch.dist));
+        }
+    });
+    canvas.addEventListener('pointerup', function (e) {
+        if (fullScroll) return;
+        pointers.delete(e.pointerId);
+        try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
+        if (pointers.size < 2) pinch = null;
+    });
+    canvas.addEventListener('pointercancel', function (e) {
+        pointers.delete(e.pointerId);
+        pinch = null;
+    });
+
+    (function () {
+        var hud = document.querySelector('.hud');
+        if (!hud) return;
+        var z = document.createElement('div');
+        z.className = 'zoom-controls';
+        z.innerHTML = '<button id="zoom-out">-</button><button id="zoom-reset">Reset</button><button id="zoom-in">+</button>';
+        hud.appendChild(z);
+        $('zoom-in').addEventListener('click', function () { view.scale = Math.min(5, view.scale * 1.25); });
+        $('zoom-out').addEventListener('click', function () { view.scale = Math.max(0.3, view.scale / 1.25); });
+        $('zoom-reset').addEventListener('click', function () { view.x = 0; view.y = 0; view.scale = 1; });
+    })();
+
+    (function () {
+        var sim = $('sim-area'), splitter = $('splitter');
+        if (!sim || !splitter) return;
+        var dragging = false, startY = 0, startH = 0;
+        var minH = 180, maxH = window.innerHeight - 240;
+        splitter.addEventListener('pointerdown', function (e) {
+            e.preventDefault();
+            dragging = true;
+            startY = e.clientY;
+            startH = sim.getBoundingClientRect().height;
+            try { splitter.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+        window.addEventListener('pointermove', function (e) {
+            if (!dragging) return;
+            var dy = e.clientY - startY;
+            var nh = Math.max(minH, Math.min(maxH, Math.round(startH + dy)));
+            sim.style.flex = '0 0 ' + nh + 'px';
+            resizeCanvas();
+        });
+        window.addEventListener('pointerup', function (e) {
+            if (!dragging) return;
+            dragging = false;
+            try { splitter.releasePointerCapture(e.pointerId); } catch (err) {}
+        });
+        splitter.addEventListener('dblclick', function () {
+            sim.style.flex = '';
+            resizeCanvas();
+        });
+    })();
+
+    window.addEventListener('resize', function () { resizeCanvas(); });
+
+    // === Boot ===
+    resizeCanvas();
+    updateReadouts();
+    animate();
+})();
+</script>
+</body>
+</html>

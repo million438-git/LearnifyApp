@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Physics: Sound Waves Lab</title>
+    <style>
+        :root {
+            --primary: #6366f1; --secondary: #f43f5e; --dark: #0f172a;
+            --surface: #ffffff; --bg: #f1f5f9; --glass: rgba(255,255,255,0.9);
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        html, body { height: 100%; }
+        body { margin: 0; background: var(--bg); color: var(--dark); display: flex; flex-direction: column; overflow: auto; -webkit-font-smoothing:antialiased; }
+
+        header { background: var(--dark); color: white; padding: 10px; text-align: center; border-bottom: 3px solid var(--primary); }
+        .lab-container { display: flex; flex: 1; overflow: auto; flex-direction: column; }
+
+        #sim-area { flex: 2 1 440px; position: relative; background: white; border-bottom: 2px solid #e2e8f0; overflow: auto; cursor: crosshair; min-height:340px; }
+        canvas { width: 100%; height: 100%; display: block; touch-action: none; }
+        .splitter { height: 10px; background: linear-gradient(90deg, rgba(0,0,0,0.03), rgba(0,0,0,0.06)); cursor: ns-resize; display:block; }
+        .splitter:hover { background: linear-gradient(90deg, rgba(0,0,0,0.05), rgba(0,0,0,0.09)); }
+
+        .bottom-panel { flex: 3; display: flex; flex-direction: row; background: var(--surface); overflow-y: auto; }
+        .controls { flex: 0 0 360px; padding: 18px; border-right: 1px solid #e2e8f0; min-width: 300px; }
+        .analysis { flex: 1 1 720px; padding: 18px; background: #fafafa; min-width: 420px; }
+
+        .card { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; margin-bottom: 10px; }
+        h4 { margin: 0 0 10px 0; font-size: 0.8rem; color: #64748b; text-transform: uppercase; }
+        .input-row { margin-bottom: 12px; }
+        label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; }
+        input[type="range"] { width: 100%; accent-color: var(--primary); }
+        select, input[type="number"] { width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; font-family: inherit; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        button { padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit; }
+        .btn-fire { background: var(--primary); color: white; }
+        .btn-fire:hover { background: #4f46e5; }
+        .btn-reset { background: #64748b; color: white; }
+        .btn-reset:hover { background: #475569; }
+        .btn-sound { background: #10b981; color: white; }
+        .btn-sound:hover { background: #059669; }
+        .btn-sound.playing { background: #ef4444; }
+        .btn-sound.playing:hover { background: #dc2626; }
+
+        .hud { position: absolute; top: 10px; left: 10px; background: var(--glass); padding: 8px; border-radius: 8px; font-size: 0.75rem; border: 1px solid #ddd; z-index: 20; }
+        .hud * { pointer-events: auto; }
+        .hud .metrics { pointer-events: none; line-height: 1.7; }
+        .zoom-controls { display:flex; gap:6px; margin-top:6px; }
+        .zoom-controls button { padding:6px 8px; border-radius:6px; border:1px solid rgba(0,0,0,0.06); background:white; cursor:pointer; }
+        .vector-legend { position: absolute; bottom: 10px; left: 10px; font-size: 0.65rem; background: var(--glass); padding: 5px; border-radius: 4px; }
+
+        .tab-btn { padding: 8px 12px; border-radius: 6px; background: #e2e8f0; color: var(--dark); font-weight: 600; font-size: 0.8rem; }
+        .tab-btn:hover { background: #cbd5e1; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        .readouts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+        .readout { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; }
+        .readout span { font-size: 0.7rem; color: #64748b; display: block; }
+        .readout strong { font-size: 1rem; color: var(--dark); }
+
+        .quiz-q { padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+        .quiz-q:last-child { border-bottom: none; }
+        .quiz-q > strong { display: block; margin-bottom: 8px; font-size: 0.9rem; }
+        .quiz-q label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; margin: 3px 6px 3px 0; cursor: pointer; font-weight: 500; }
+        .quiz-q label:hover { background: #eef2ff; border-color: #6366f1; }
+        .explanation {
+            margin-top: 8px; padding: 10px 12px; border-radius: 6px; font-size: 0.82rem; line-height: 1.55;
+            background: #eef2ff; border-left: 3px solid #6366f1; color: #1e293b;
+        }
+        .explanation.correct-box { background: #ecfdf5; border-left-color: #10b981; }
+        .explanation.wrong-box { background: #fef2f2; border-left-color: #dc2626; }
+        .explanation strong { display: block; margin-bottom: 3px; }
+
+        .quiz-section { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #6366f1; margin: 12px 0 6px 0; }
+        .quiz-section:first-child { margin-top: 0; }
+
+        #quiz-result { margin-top: 10px; padding: 12px; border-radius: 8px; background: #eef2ff; border: 1px solid #c7d2fe; font-weight: 700; text-align: center; }
+
+        table.formulas { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 6px; }
+        table.formulas th, table.formulas td { border: 1px solid #e2e8f0; padding: 6px 8px; text-align: left; }
+        table.formulas th { background: #f1f5f9; font-weight: 600; }
+        .eq { font-family: 'JetBrains Mono', ui-monospace, monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.82rem; }
+        .note { font-size: 0.82rem; color: #475569; margin-top: 8px; line-height: 1.5; }
+        .sound-hint { background: #fef3c7; border-left: 3px solid #f59e0b; padding: 8px 10px; border-radius: 6px; font-size: 0.82rem; margin-top: 8px; }
+
+        textarea { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 0.85rem; min-height: 64px; resize: vertical; }
+
+        @media (max-width: 768px) {
+            .bottom-panel { flex-direction: column; }
+            .controls { border-right: none; border-bottom: 1px solid #eee; min-width: 0; }
+            .analysis { min-width: 0; }
+            .readouts { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 style="margin:0; font-size: 1.1rem;">🔊 Sound Waves Interactive Lab</h2>
+    <small>Explore Frequency · Wavelength · Speed · Pitch · Doppler Effect · Real Audio</small>
+</header>
+
+<div class="lab-container">
+    <div id="sim-area">
+        <div class="hud">
+            <b>LIVE METRICS</b><br>
+            <div class="metrics">
+                Frequency f: <span id="hud-f">440</span> Hz<br>
+                Wavelength λ: <span id="hud-l">0.773</span> m<br>
+                Speed v: <span id="hud-v">343</span> m/s<br>
+                Medium: <span id="hud-med">Air (20°C)</span><br>
+                Audio: <span id="hud-audio">OFF</span>
+            </div>
+            <div style="margin-top:6px; font-size:0.75rem;">
+                <label style="display:inline-flex;align-items:center;gap:6px;"><input id="full-scroll-toggle" type="checkbox"> Enable Full Page Scrolling</label>
+            </div>
+        </div>
+        <div class="vector-legend">
+            <span style="color:#6366f1">● Compression</span> | <span style="color:#94a3b8">○ Rarefaction</span> | <span style="color:#f43f5e">● Speaker</span>
+        </div>
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div id="splitter" class="splitter" title="Drag to resize simulation area"></div>
+
+    <div class="bottom-panel">
+        <div class="controls">
+            <h4>🧪 Lab Settings</h4>
+
+            <div class="input-row">
+                <button class="btn-sound" id="btn-sound" style="width:100%;">🔈 Start Sound</button>
+                <div class="sound-hint" id="sound-hint">Click "Start Sound" to hear the tone. Uses your device's Web Audio.</div>
+            </div>
+
+            <div class="input-row">
+                <label>Volume: <span id="v-vol">50</span>%</label>
+                <input type="range" id="vol" min="0" max="100" step="1" value="50">
+            </div>
+
+            <div class="input-row">
+                <label>Waveform</label>
+                <select id="waveform">
+                    <option value="sine" selected>Sine (pure tone)</option>
+                    <option value="triangle">Triangle (mellow)</option>
+                    <option value="square">Square (buzzy)</option>
+                    <option value="sawtooth">Sawtooth (bright)</option>
+                </select>
+            </div>
+
+            <div class="input-row">
+                <label>Medium</label>
+                <select id="medium">
+                    <option value="air0">Air (0 °C) — v = 331 m/s</option>
+                    <option value="air20" selected>Air (20 °C) — v = 343 m/s</option>
+                    <option value="air100">Air (100 °C) — v = 386 m/s</option>
+                    <option value="helium">Helium — v = 972 m/s</option>
+                    <option value="water">Water — v = 1482 m/s</option>
+                    <option value="seawater">Seawater — v = 1522 m/s</option>
+                    <option value="steel">Steel — v = 5960 m/s</option>
+                    <option value="glass">Glass — v = 5640 m/s</option>
+                </select>
+            </div>
+
+            <div class="input-row">
+                <label>Frequency f: <span id="v-f">440</span> Hz</label>
+                <input type="range" id="f" min="20" max="2000" step="1" value="440">
+            </div>
+
+            <div class="input-row">
+                <label>Amplitude A (visual): <span id="v-a">1.00</span></label>
+                <input type="range" id="amp" min="0.1" max="2" step="0.05" value="1">
+            </div>
+
+            <div class="input-row">
+                <label style="display:inline-flex;align-items:center;gap:6px;">
+                    <input type="checkbox" id="doppler-toggle"> Enable Doppler (moving source)
+                </label>
+            </div>
+
+            <div class="input-row">
+                <label>Source velocity v_s: <span id="v-vs">0</span> m/s</label>
+                <input type="range" id="vs" min="-100" max="100" step="5" value="0">
+            </div>
+
+            <div class="btn-grid">
+                <button class="btn-fire" id="btn-play">⏸ Pause</button>
+                <button class="btn-reset" id="btn-reset">↺ Reset</button>
+            </div>
+        </div>
+
+        <div class="analysis">
+            <h4>📊 Learn &amp; Practice</h4>
+
+            <div class="readouts">
+                <div class="readout"><span>Frequency f</span><strong id="ro-f">440 Hz</strong></div>
+                <div class="readout"><span>Period T</span><strong id="ro-t">2.27 ms</strong></div>
+                <div class="readout"><span>Wavelength λ</span><strong id="ro-l">0.78 m</strong></div>
+                <div class="readout"><span>Wave speed v</span><strong id="ro-v">343 m/s</strong></div>
+                <div class="readout"><span>Angular freq. ω</span><strong id="ro-w">2765 rad/s</strong></div>
+                <div class="readout"><span>Wave number k</span><strong id="ro-k">8.13 rad/m</strong></div>
+                <div class="readout"><span>Observed frequency</span><strong id="ro-fobs">440 Hz</strong></div>
+                <div class="readout"><span>Musical note</span><strong id="ro-note">A4</strong></div>
+            </div>
+
+            <div class="card">
+                <div class="tabs" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                    <button class="tab-btn active" data-tab="formulas">Formulas</button>
+                    <button class="tab-btn" data-tab="quiz">Quiz</button>
+                    <button class="tab-btn" data-tab="challenges">Challenges</button>
+                    <button class="tab-btn" data-tab="notebook">Notebook</button>
+                </div>
+
+                <div id="formulas" class="tab-panel active">
+                    <h3 style="margin:6px 0 8px 0;">Core Formulas — Sound Waves</h3>
+                    <ul style="font-size:0.9rem; line-height:1.6; padding-left:1rem; margin:0;">
+                        <li><b>Wave speed:</b> v = f · λ</li>
+                        <li><b>Period:</b> T = 1/f</li>
+                        <li><b>Angular frequency:</b> ω = 2πf</li>
+                        <li><b>Wave number:</b> k = 2π/λ</li>
+                        <li><b>Wave equation:</b> y(x,t) = A·sin(kx − ωt)</li>
+                        <li><b>Doppler (moving source):</b> f_obs = f · v / (v ∓ v_s)</li>
+                        <li><b>Beat frequency:</b> f_beat = |f₁ − f₂|</li>
+                        <li><b>Air speed vs temperature:</b> v ≈ 331 + 0.6·T(°C) m/s</li>
+                    </ul>
+                    <p class="note"><b>💡 Quick tips:</b> Sound travels ~343 m/s in room-temperature air, 4× faster in water, 17× faster in steel. Frequency is set by the source and does not change when sound enters a new medium — but wavelength and speed change (λ = v/f). Pitch = frequency, loudness ∝ log(intensity).</p>
+
+                    <table class="formulas" style="margin-top:12px;">
+                        <tr><th>Quantity</th><th>Formula</th><th>Units</th></tr>
+                        <tr><td>Wave speed</td><td><span class="eq">v = f·λ</span></td><td>m/s</td></tr>
+                        <tr><td>Period</td><td><span class="eq">T = 1/f</span></td><td>s</td></tr>
+                        <tr><td>Wavelength</td><td><span class="eq">λ = v/f</span></td><td>m</td></tr>
+                        <tr><td>Doppler (source)</td><td><span class="eq">f_obs = f·v/(v ± v_s)</span></td><td>Hz</td></tr>
+                    </table>
+                </div>
+
+                <div id="quiz" class="tab-panel" style="max-height:600px; overflow:auto;">
+                    <h3 style="margin:6px 0 8px 0;">Conceptual Quiz</h3>
+
+                    <div class="quiz-section">Basic — Sound Waves</div>
+
+                    <div class="quiz-q" data-q="q1" data-answer="B">
+                        <strong>1. Sound is a:</strong>
+                        <label><input type="radio" name="q1" value="A"> Electromagnetic wave</label>
+                        <label><input type="radio" name="q1" value="B"> Longitudinal mechanical wave</label>
+                        <label><input type="radio" name="q1" value="C"> Transverse wave</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q2" data-answer="B">
+                        <strong>2. If frequency doubles while sound speed stays constant, wavelength:</strong>
+                        <label><input type="radio" name="q2" value="A"> Doubles</label>
+                        <label><input type="radio" name="q2" value="B"> Halves</label>
+                        <label><input type="radio" name="q2" value="C"> Stays the same</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q3" data-answer="A">
+                        <strong>3. Sound travels fastest in:</strong>
+                        <label><input type="radio" name="q3" value="A"> Steel</label>
+                        <label><input type="radio" name="q3" value="B"> Air</label>
+                        <label><input type="radio" name="q3" value="C"> Vacuum</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Intermediate — Pitch &amp; Doppler</div>
+
+                    <div class="quiz-q" data-q="q4" data-answer="A">
+                        <strong>4. When a source moves toward you, the pitch you hear:</strong>
+                        <label><input type="radio" name="q4" value="A"> Increases (higher frequency)</label>
+                        <label><input type="radio" name="q4" value="B"> Decreases</label>
+                        <label><input type="radio" name="q4" value="C"> Stays the same</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q5" data-answer="B">
+                        <strong>5. The Doppler effect for sound occurs because:</strong>
+                        <label><input type="radio" name="q5" value="A"> The source's frequency changes</label>
+                        <label><input type="radio" name="q5" value="B"> Wavefronts bunch up in front of the moving source</label>
+                        <label><input type="radio" name="q5" value="C"> Sound speeds up when moving</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q6" data-answer="A">
+                        <strong>6. Pitch is related to ______, loudness is related to ______:</strong>
+                        <label><input type="radio" name="q6" value="A"> Frequency; amplitude</label>
+                        <label><input type="radio" name="q6" value="B"> Amplitude; frequency</label>
+                        <label><input type="radio" name="q6" value="C"> Wavelength; speed</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-section">Advanced — Deep Understanding</div>
+
+                    <div class="quiz-q" data-q="q7" data-answer="B">
+                        <strong>7. A 440 Hz tone travels in air at 343 m/s. Its wavelength is:</strong>
+                        <label><input type="radio" name="q7" value="A"> 0.386 m</label>
+                        <label><input type="radio" name="q7" value="B"> 0.780 m</label>
+                        <label><input type="radio" name="q7" value="C"> 1.29 m</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q8" data-answer="A">
+                        <strong>8. Sound cannot travel through:</strong>
+                        <label><input type="radio" name="q8" value="A"> A vacuum</label>
+                        <label><input type="radio" name="q8" value="B"> Water</label>
+                        <label><input type="radio" name="q8" value="C"> Steel</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="quiz-q" data-q="q9" data-answer="B">
+                        <strong>9. A source moves at 50 m/s toward a stationary listener (v=343 m/s). Observed frequency vs emitted frequency:</strong>
+                        <label><input type="radio" name="q9" value="A"> Stay the same</label>
+                        <label><input type="radio" name="q9" value="B"> Increase to f·343/(343−50) ≈ 1.17·f</label>
+                        <label><input type="radio" name="q9" value="C"> Decrease to f·343/(343+50)</label>
+                        <div class="explanation" hidden></div>
+                    </div>
+
+                    <div class="btn-grid" style="margin-top:12px;">
+                        <button class="btn-fire" id="btn-quiz-check">Submit Quiz</button>
+                        <button class="btn-reset" id="btn-quiz-reset">Reset</button>
+                    </div>
+                    <div id="quiz-result" style="display:none;"></div>
+                </div>
+
+                <div id="challenges" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Interactive Challenges</h3>
+                    <div style="display:flex; flex-direction:column; gap:8px; font-size:0.9rem;">
+                        <div>
+                            <b>Challenge 1 — Concert Pitch A</b><br>
+                            <button class="btn-fire" data-challenge="a440">Set 440 Hz (A4)</button>
+                        </div>
+                        <div>
+                            <b>Challenge 2 — Audible Range</b><br>
+                            <button class="btn-fire" data-challenge="audible">Set 20 Hz (lower limit)</button>
+                        </div>
+                        <div>
+                            <b>Challenge 3 — High Pitch</b><br>
+                            <button class="btn-fire" data-challenge="ultrasound">Set 2000 Hz (slider max)</button>
+                        </div>
+                        <div>
+                            <b>Challenge 4 — Underwater</b><br>
+                            <button class="btn-fire" data-challenge="underwater">Switch to water (v = 1482 m/s)</button>
+                        </div>
+                        <div>
+                            <b>Challenge 5 — Doppler Effect</b><br>
+                            <button class="btn-fire" data-challenge="doppler">Moving source approaching at 50 m/s</button>
+                        </div>
+                        <div id="challenge-note" style="color:#0f172a; font-size:0.85rem;"></div>
+                        <div id="challenge-result" style="color:#083344; font-weight:600; margin-top:6px;"></div>
+                    </div>
+                </div>
+
+                <div id="notebook" class="tab-panel">
+                    <h3 style="margin:6px 0 8px 0;">Experiment Notebook</h3>
+                    <label>Prediction / hypothesis</label>
+                    <textarea id="hypothesis" placeholder="What do you expect to happen, and why?"></textarea>
+                    <label style="margin-top:10px; display:block;">Conclusion / evidence</label>
+                    <textarea id="conclusion" placeholder="Explain what your observations show."></textarea>
+                    <label style="margin-top:10px; display:block;">Recorded measurements</label>
+                    <textarea id="records" readonly style="background:#f8fafc; font-family:monospace; font-size:0.75rem; min-height:100px;"></textarea>
+                    <div class="btn-grid" style="margin-top:10px;">
+                        <button class="btn-fire" id="btn-record">📋 Record</button>
+                        <button class="btn-reset" id="btn-clear-notes">Clear</button>
+                    </div>
+                    <button class="btn-fire" style="margin-top:8px; width:100%;" id="btn-export">⬇ Download Report</button>
+                </div>
+
+            </div>
+
+            <div class="card">
+                <b>Real-world fact:</b> <span id="fact-box" style="font-size:0.85rem;">—</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+"use strict";
+(function () {
+    // === Real speed of sound (m/s) ===
+    var MEDIUMS = {
+        air0:     { name: 'Air (0 °C)',   v: 331,  fact: 'At 0 °C sound travels at 331 m/s in air. The rule of thumb is v ≈ 331 + 0.6·T (°C).' },
+        air20:    { name: 'Air (20 °C)',  v: 343,  fact: 'Room temperature (~20 °C) air transmits sound at 343 m/s. This is the reference used in acoustics.' },
+        air100:   { name: 'Air (100 °C)', v: 386,  fact: 'At 100 °C the air is hotter, sound speeds up to 386 m/s — 13 percent faster than at 20 °C.' },
+        helium:   { name: 'Helium',       v: 972,  fact: 'Helium atoms are very light, so sound travels ~3× faster than air (972 m/s). This is why voices sound like chipmunks when you breathe helium.' },
+        water:    { name: 'Water',        v: 1482, fact: 'Sound travels 4× faster in water (1482 m/s). Whale song can travel hundreds of km in the ocean.' },
+        seawater: { name: 'Seawater',     v: 1522, fact: 'Salt water (1522 m/s) transmits sound slightly faster than fresh water — important for sonar.' },
+        steel:    { name: 'Steel',        v: 5960, fact: 'In steel, sound travels at ~5960 m/s — 17× faster than air. Railroads used this to detect cracks.' },
+        glass:    { name: 'Glass',        v: 5640, fact: 'Glass transmits sound at ~5640 m/s. You can hear a whisper through a glass window from far away.' }
+    };
+
+    // === State ===
+    var S = {
+        medium: 'air20',
+        f: 440,
+        A: 1.0,
+        dopplerOn: false,
+        vs: 0,
+        paused: false,
+        time: 0,
+        volume: 0.5,
+        waveform: 'sine',
+        records: []
+    };
+
+    var $ = function (id) { return document.getElementById(id); };
+
+    // === Canvas ===
+    var canvas = $('canvas');
+    var ctx = canvas.getContext('2d');
+    var dpr = window.devicePixelRatio || 1;
+    var view = { x: 0, y: 0, scale: 1 };
+
+    function resizeCanvas() {
+        var w = canvas.clientWidth, h = canvas.clientHeight;
+        canvas.width = Math.max(1, Math.round(w * dpr));
+        canvas.height = Math.max(1, Math.round(h * dpr));
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function cw() { return canvas.width / dpr; }
+    function ch() { return canvas.height / dpr; }
+
+    // === Web Audio API ===
+    var audioCtx = null;
+    var oscillator = null;
+    var gainNode = null;
+    var audioPlaying = false;
+
+    function initAudio() {
+        if (audioCtx) return;
+        try {
+            var AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) {
+                $('sound-hint').textContent = '⚠ Your browser does not support Web Audio API.';
+                return;
+            }
+            audioCtx = new AC();
+        } catch (err) {
+            $('sound-hint').textContent = '⚠ Audio failed to initialize: ' + err.message;
+            return;
+        }
+    }
+
+    function startSound() {
+        initAudio();
+        if (!audioCtx) return;
+
+        // Resume if suspended (autoplay policy)
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+
+        if (audioPlaying) {
+            // Stop
+            stopSound();
+            return;
+        }
+
+        try {
+            oscillator = audioCtx.createOscillator();
+            gainNode = audioCtx.createGain();
+
+            oscillator.type = S.waveform;
+            oscillator.frequency.setValueAtTime(S.f, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(S.volume * 0.3, audioCtx.currentTime);  // 0.3 = safe max
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator.start();
+
+            audioPlaying = true;
+            $('btn-sound').textContent = '🔊 Stop Sound';
+            $('btn-sound').classList.add('playing');
+            $('hud-audio').textContent = 'ON (' + S.f + ' Hz)';
+            $('hud-audio').style.color = '#10b981';
+            $('sound-hint').textContent = 'Playing ' + S.f + ' Hz ' + S.waveform + ' wave at ' + Math.round(S.volume * 100) + '% volume.';
+        } catch (err) {
+            $('sound-hint').textContent = '⚠ Audio error: ' + err.message;
+        }
+    }
+
+    function stopSound() {
+        if (oscillator) {
+            try { oscillator.stop(); } catch (e) {}
+            try { oscillator.disconnect(); } catch (e) {}
+            oscillator = null;
+        }
+        if (gainNode) {
+            try { gainNode.disconnect(); } catch (e) {}
+            gainNode = null;
+        }
+        audioPlaying = false;
+        $('btn-sound').textContent = '🔈 Start Sound';
+        $('btn-sound').classList.remove('playing');
+        $('hud-audio').textContent = 'OFF';
+        $('hud-audio').style.color = '#64748b';
+        $('sound-hint').textContent = 'Sound stopped. Click "Start Sound" to hear the tone again.';
+    }
+
+    function updateAudioFrequency() {
+        if (!audioPlaying || !oscillator) return;
+        var freq = getObservedFreq();
+        // Clamp to audible range for safety
+        var clamped = Math.max(20, Math.min(20000, freq));
+        oscillator.frequency.setTargetAtTime(clamped, audioCtx.currentTime, 0.02);
+        $('hud-audio').textContent = 'ON (' + clamped.toFixed(0) + ' Hz)';
+    }
+
+    function updateAudioVolume() {
+        if (!audioPlaying || !gainNode) return;
+        gainNode.gain.setTargetAtTime(S.volume * 0.3, audioCtx.currentTime, 0.02);
+    }
+
+    function updateAudioWaveform() {
+        if (!audioPlaying || !oscillator) return;
+        oscillator.type = S.waveform;
+    }
+
+    // === Physics ===
+    function getV() { return MEDIUMS[S.medium].v; }
+    function getWavelength() { return getV() / S.f; }
+    function getPeriod() { return 1 / S.f; }
+    function getOmega() { return 2 * Math.PI * S.f; }
+    function getK() { return 2 * Math.PI / getWavelength(); }
+
+    function getObservedFreq() {
+        var v = getV();
+        if (!S.dopplerOn || S.vs === 0) return S.f;
+        // moving source: f_obs = f * v / (v - v_s) when approaching (positive vs)
+        // clamp denominator to avoid divide-by-zero / negative
+        var denom = v - S.vs;
+        if (denom <= 0) denom = 0.01;
+        return S.f * v / denom;
+    }
+
+    function getNote(freq) {
+        if (freq < 16) return 'infrasonic';
+        if (freq < 20) return 'below hearing';
+        if (freq < 20000) {
+            var n = Math.round(12 * Math.log2(freq / 440));
+            var notes = ['A','A#','B','C','C#','D','D#','E','F','F#','G','G#'];
+            var octave = 4 + Math.floor((n + 9) / 12);
+            return notes[((n + 9) % 12 + 12) % 12] + octave;
+        }
+        return 'ultrasonic';
+    }
+
+    // === Drawing ===
+    function drawScene() {
+        var w = cw(), h = ch();
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.save();
+        ctx.translate(view.x, view.y);
+        ctx.scale(view.scale, view.scale);
+
+        var W = w / view.scale, H = h / view.scale;
+
+        ctx.strokeStyle = '#f1f5f9';
+        ctx.lineWidth = 1;
+        for (var gx = 0; gx < W; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
+        for (var gy = 0; gy < H; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+
+        var med = MEDIUMS[S.medium];
+        var v = getV();
+        var lambda = getWavelength();
+        var k = getK();
+        var omega = getOmega();
+
+        var pxPerM = W / (4 * lambda);
+        var speakerX = W * 0.15;
+        var y = H * 0.45;
+
+        // Longitudinal wave — particles with density variation
+        var numParticles = 60;
+        var spacing = (W - speakerX - 40) / numParticles;
+        for (var i = 0; i < numParticles; i++) {
+            var px = speakerX + 40 + i * spacing;
+            var xReal = (px - speakerX) / pxPerM;
+            var density = 1 + Math.min(0.9, Math.max(0, S.A * 0.6)) * Math.sin(k * xReal - omega * S.time);
+            var r = 3 * Math.max(0.1, density);
+            var alpha = Math.max(0.2, Math.min(1, density * 0.5));
+            ctx.fillStyle = 'rgba(99, 102, 241, ' + alpha + ')';
+            ctx.beginPath();
+            ctx.arc(px, y, r, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Transverse waveform
+        var waveY = H * 0.72;
+        var ampPx = Math.min(H * 0.14, S.A * 50);
+        ctx.strokeStyle = '#6366f1';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for (var px2 = speakerX + 40; px2 <= W - 20; px2 += 2) {
+            var xReal2 = (px2 - speakerX) / pxPerM;
+            var yWave = waveY - ampPx * Math.sin(k * xReal2 - omega * S.time);
+            if (px2 === speakerX + 40) ctx.moveTo(px2, yWave);
+            else ctx.lineTo(px2, yWave);
+        }
+        ctx.stroke();
+
+        // Speaker
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(speakerX - 20, y - 30, 40, 60);
+        ctx.fillStyle = '#f43f5e';
+        ctx.beginPath();
+        ctx.arc(speakerX, y, 18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Sound rings (animated) — pulsing if audio is playing
+        var ringSpeed = audioPlaying ? 1.5 : 0.5;
+        for (var ring = 0; ring < 3; ring++) {
+            var phase = (S.time * ringSpeed + ring * 0.33) % 1;
+            ctx.strokeStyle = 'rgba(244, 63, 94, ' + (1 - phase) + ')';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(speakerX + 25, y, 20 + phase * 80, -0.6, 0.6);
+            ctx.stroke();
+        }
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Source', speakerX, y + 50);
+        ctx.font = '10px Inter';
+        ctx.fillText(S.f + ' Hz', speakerX, y + 63);
+
+        // Speaker icon showing audio state
+        if (audioPlaying) {
+            ctx.fillStyle = '#10b981';
+            ctx.font = 'bold 20px Inter';
+            ctx.fillText('🔊', speakerX, y - 50);
+        }
+
+        // Observer
+        var obsX = W * 0.82;
+        ctx.fillStyle = '#10b981';
+        ctx.beginPath();
+        ctx.arc(obsX, y, 14, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Observer', obsX, y + 38);
+        var obsF = getObservedFreq();
+        ctx.font = '10px Inter';
+        ctx.fillStyle = '#10b981';
+        ctx.fillText(obsF.toFixed(0) + ' Hz', obsX, y + 52);
+
+        // Wavelength label
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        var lx1 = obsX - 60;
+        var lx2 = lx1 - lambda * pxPerM;
+        var ly = H * 0.95;
+        ctx.beginPath();
+        ctx.moveTo(lx1, ly); ctx.lineTo(lx2, ly);
+        ctx.moveTo(lx1, ly - 5); ctx.lineTo(lx1, ly + 5);
+        ctx.moveTo(lx2, ly - 5); ctx.lineTo(lx2, ly + 5);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#475569';
+        ctx.font = 'bold 11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('λ = ' + lambda.toFixed(3) + ' m', (lx1 + lx2) / 2, ly - 8);
+
+        // Medium info
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 14px Inter';
+        ctx.textAlign = 'left';
+        ctx.fillText(med.name, 20, 30);
+        ctx.font = '11px Inter';
+        ctx.fillStyle = '#64748b';
+        ctx.fillText('v = ' + v + ' m/s', 20, 48);
+        ctx.fillText('f = ' + S.f + ' Hz', 20, 64);
+
+        if (S.dopplerOn && S.vs !== 0) {
+            ctx.fillStyle = S.vs > 0 ? '#dc2626' : '#2563eb';
+            ctx.font = 'bold 12px Inter';
+            ctx.textAlign = 'right';
+            ctx.fillText(S.vs > 0 ? '→ Source moving toward observer' : '← Source moving away', W - 20, 30);
+            ctx.strokeStyle = S.vs > 0 ? '#dc2626' : '#2563eb';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(speakerX + 30, y - 50);
+            ctx.lineTo(speakerX + 30 + Math.abs(S.vs) * 0.8, y - 50);
+            ctx.stroke();
+        }
+
+        ctx.restore();
+
+        ctx.fillStyle = '#475569';
+        ctx.font = '11px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText('Density variation of particles (longitudinal) + transverse waveform below', w / 2, h - 8);
+    }
+
+    // === Readouts ===
+    function updateReadouts() {
+        var v = getV();
+        var lambda = getWavelength();
+        var T = getPeriod();
+        var omega = getOmega();
+        var k = getK();
+        var obsF = getObservedFreq();
+        var note = getNote(S.f);
+
+        $('ro-f').innerText = S.f + ' Hz';
+        $('ro-t').innerText = (T * 1000).toFixed(2) + ' ms';
+        $('ro-l').innerText = lambda.toFixed(3) + ' m';
+        $('ro-v').innerText = v + ' m/s';
+        $('ro-w').innerText = omega.toFixed(0) + ' rad/s';
+        $('ro-k').innerText = k.toFixed(2) + ' rad/m';
+        $('ro-fobs').innerText = obsF.toFixed(1) + ' Hz';
+        $('ro-note').innerText = note;
+
+        $('hud-f').innerText = S.f;
+        $('hud-l').innerText = lambda.toFixed(3);
+        $('hud-v').innerText = v;
+        $('hud-med').innerText = MEDIUMS[S.medium].name;
+
+        $('fact-box').innerText = MEDIUMS[S.medium].fact;
+    }
+
+    // === Quiz ===
+    var QUIZ_EXPLAIN = {
+        q1: { correct: 'B', why: 'Sound is a longitudinal mechanical wave — particles vibrate parallel to the direction of travel. Sound needs a medium.', tip: 'EM waves (light) are transverse; sound is longitudinal.' },
+        q2: { correct: 'B', why: 'λ = v/f. Same v, doubled f → halved λ.', tip: 'High pitch = short wavelength in the same medium.' },
+        q3: { correct: 'A', why: 'Sound travels fastest in steel (~5960 m/s) — strong interatomic bonds transmit pressure fast. Air ~343, vacuum: nothing.', tip: 'Order (slow→fast): air < water < steel.' },
+        q4: { correct: 'A', why: 'Approaching source → wavefronts bunch up → observer receives more waves per second → higher frequency/pitch.', tip: 'Classic ambulance siren effect.' },
+        q5: { correct: 'B', why: 'The source emits the same frequency. Motion compresses wavefronts in front (higher f_obs) and stretches them behind (lower f_obs). Speed of sound unchanged.', tip: 'f_obs = f · v/(v − v_s) for approaching source.' },
+        q6: { correct: 'A', why: 'Pitch = perceived frequency. Loudness = perceived amplitude/intensity. Independent.', tip: 'Same pitch, different loudness: same frequency, different amplitude.' },
+        q7: { correct: 'B', why: 'λ = v/f = 343/440 = 0.780 m.', tip: 'Check: 343/440 ≈ 0.7795 m ≈ 78 cm.' },
+        q8: { correct: 'A', why: 'Sound needs particles. A vacuum has none.', tip: 'Space is silent — no medium.' },
+        q9: { correct: 'B', why: 'f_obs = f·v/(v − v_s) = f·343/(343−50) = f·343/293 ≈ 1.17·f. Frequency rises 17%.', tip: 'Moving away: v/(v + v_s) → lower frequency.' }
+    };
+
+    function evaluateQuiz() {
+        var qs = document.querySelectorAll('.quiz-q');
+        var score = 0, total = qs.length;
+
+        qs.forEach(function (q) {
+            var name = q.dataset.q;
+            var correct = q.dataset.answer;
+            var chosen = q.querySelector('input[name="' + name + '"]:checked');
+            var expl = q.querySelector('.explanation');
+            var data = QUIZ_EXPLAIN[name];
+
+            expl.hidden = false;
+            expl.className = 'explanation';
+
+            if (chosen && chosen.value === correct) {
+                score++;
+                expl.classList.add('correct-box');
+                expl.innerHTML = '<strong>✓ Correct!</strong>' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            } else {
+                expl.classList.add('wrong-box');
+                var chosenVal = chosen ? chosen.value : '—';
+                expl.innerHTML = '<strong>✗ Correct answer is ' + correct + '</strong>You chose ' + chosenVal + '. ' + data.why + '<div style="margin-top:6px; font-size:0.78rem; color:#475569;"><b>💡 Tip:</b> ' + data.tip + '</div>';
+            }
+        });
+
+        var pct = Math.round(score / total * 100);
+        var msg = '💪 Keep exploring!';
+        if (pct === 100) msg = '🌟 Perfect score!';
+        else if (pct >= 78) msg = '🎉 Excellent work!';
+        else if (pct >= 55) msg = '👍 Good effort! Review the explanations.';
+
+        var result = $('quiz-result');
+        result.style.display = 'block';
+        result.innerHTML = '<div style="font-size:1.4rem; color:#4338ca;">' + score + '/' + total + ' · ' + pct + '%</div><div style="font-size:0.85rem; color:#334155; margin-top:4px; font-weight:500;">' + msg + '</div>';
+    }
+
+    function resetQuiz() {
+        document.querySelectorAll('.quiz-q').forEach(function (q) {
+            q.querySelectorAll('input[type=radio]').forEach(function (r) { r.checked = false; });
+            var expl = q.querySelector('.explanation');
+            expl.hidden = true;
+            expl.innerHTML = '';
+            expl.className = 'explanation';
+        });
+        $('quiz-result').style.display = 'none';
+        $('quiz-result').innerHTML = '';
+    }
+
+    // === Challenges ===
+    function applyChallenge(id) {
+        var note = $('challenge-note');
+        var cres = $('challenge-result');
+        note.innerText = '';
+        cres.innerText = '';
+
+        if (id === 'a440') {
+            S.medium = 'air20';
+            $('medium').value = 'air20';
+            S.f = 440;
+            $('f').value = 440;
+            $('v-f').innerText = '440';
+            note.innerText = 'A4 concert pitch = 440 Hz. Standard reference for musicians.';
+            cres.innerText = 'f = 440 Hz · λ = ' + getWavelength().toFixed(3) + ' m in air at 20 °C · note = ' + getNote(440);
+        } else if (id === 'audible') {
+            S.f = 20;
+            $('f').value = 20;
+            $('v-f').innerText = '20';
+            note.innerText = 'At 20 Hz we are at the lower edge of human hearing (20 Hz – 20 kHz).';
+            cres.innerText = 'f = 20 Hz · λ = ' + getWavelength().toFixed(2) + ' m — a very long wavelength!';
+        } else if (id === 'ultrasound') {
+            S.f = 2000;
+            $('f').value = 2000;
+            $('v-f').innerText = '2000';
+            note.innerText = '2000 Hz (slider max) — real ultrasound starts at 20 kHz.';
+            cres.innerText = 'f = 2000 Hz · λ = ' + getWavelength().toFixed(4) + ' m';
+        } else if (id === 'underwater') {
+            S.medium = 'water';
+            $('medium').value = 'water';
+            note.innerText = 'In water, sound travels 4× faster than in air. Same frequency → wavelength is 4× longer.';
+            cres.innerText = 'v = 1482 m/s · λ = ' + (1482 / S.f).toFixed(3) + ' m vs ' + (343 / S.f).toFixed(3) + ' m in air';
+        } else if (id === 'doppler') {
+            S.medium = 'air20';
+            $('medium').value = 'air20';
+            S.dopplerOn = true;
+            $('doppler-toggle').checked = true;
+            S.vs = 50;
+            $('vs').value = 50;
+            $('v-vs').innerText = '50';
+            note.innerText = 'Source moving 50 m/s toward observer — pitch rises ~17 percent. Listen for the shift if sound is playing!';
+            cres.innerText = 'f = ' + S.f + ' Hz → f_obs = ' + getObservedFreq().toFixed(1) + ' Hz';
+        }
+        updateReadouts();
+        updateAudioFrequency();
+    }
+
+    // === Notebook ===
+    function recordMeasurement() {
+        var med = MEDIUMS[S.medium];
+        var line = new Date().toLocaleTimeString() + ' | ' + med.name + ' | v=' + med.v + ' m/s | f=' + S.f + ' Hz | λ=' + getWavelength().toFixed(4) + ' m | T=' + (getPeriod() * 1000).toFixed(3) + ' ms | f_obs=' + getObservedFreq().toFixed(2) + ' Hz | audio=' + (audioPlaying ? 'ON' : 'OFF');
+        S.records.push(line);
+        $('records').value = S.records.join('\n');
+        $('records').scrollTop = $('records').scrollHeight;
+    }
+
+    function downloadReport() {
+        var med = MEDIUMS[S.medium];
+        var text = 'LEARNIFY - SOUND WAVES - LAB REPORT\n' +
+            'Date: ' + new Date().toLocaleString() + '\n\n' +
+            'CURRENT STATE\n' +
+            'Medium: ' + med.name + '\n' +
+            'Speed of sound v = ' + med.v + ' m/s\n' +
+            'Frequency f = ' + S.f + ' Hz\n' +
+            'Wavelength λ = ' + getWavelength().toFixed(4) + ' m\n' +
+            'Period T = ' + (getPeriod() * 1000).toFixed(4) + ' ms\n' +
+            'Angular frequency ω = ' + getOmega().toFixed(2) + ' rad/s\n' +
+            'Wave number k = ' + getK().toFixed(3) + ' rad/m\n' +
+            'Observed frequency = ' + getObservedFreq().toFixed(2) + ' Hz\n' +
+            'Musical note ≈ ' + getNote(S.f) + '\n' +
+            'Doppler: ' + (S.dopplerOn ? 'ON at v_s = ' + S.vs + ' m/s' : 'OFF') + '\n' +
+            'Audio waveform: ' + S.waveform + '\n\n' +
+            'HYPOTHESIS\n' + $('hypothesis').value + '\n\n' +
+            'CONCLUSION\n' + $('conclusion').value + '\n\n' +
+            'MEASUREMENTS\n' + $('records').value + '\n\n' +
+            'LIMITATIONS\nIdeal plane-wave model. Real sound in a room includes reflections and absorption. Doppler assumes source moving along line of sight. Audio is a synthesized sine/triangle/square/sawtooth wave at the computed frequency. Educational use only.\n';
+        var blob = new Blob([text], { type: 'text/plain' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'sound-waves-report.txt';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    // === Animation ===
+    function animate() {
+        if (!S.paused) S.time += 0.02;
+        drawScene();
+        updateReadouts();
+        requestAnimationFrame(animate);
+    }
+
+    // === Event wiring ===
+    $('btn-sound').addEventListener('click', startSound);
+    $('vol').addEventListener('input', function (e) {
+        S.volume = parseFloat(e.target.value) / 100;
+        $('v-vol').innerText = e.target.value;
+        updateAudioVolume();
+    });
+    $('waveform').addEventListener('change', function (e) {
+        S.waveform = e.target.value;
+        updateAudioWaveform();
+        if (audioPlaying) {
+            $('sound-hint').textContent = 'Playing ' + S.f + ' Hz ' + S.waveform + ' wave at ' + Math.round(S.volume * 100) + '% volume.';
+        }
+    });
+    $('medium').addEventListener('change', function (e) {
+        S.medium = e.target.value;
+        updateAudioFrequency();
+    });
+    $('f').addEventListener('input', function (e) {
+        S.f = parseFloat(e.target.value);
+        $('v-f').innerText = S.f;
+        updateAudioFrequency();
+    });
+    $('amp').addEventListener('input', function (e) {
+        S.A = parseFloat(e.target.value);
+        $('v-a').innerText = S.A.toFixed(2);
+    });
+    $('doppler-toggle').addEventListener('change', function (e) {
+        S.dopplerOn = e.target.checked;
+        updateAudioFrequency();
+    });
+    $('vs').addEventListener('input', function (e) {
+        S.vs = parseFloat(e.target.value);
+        $('v-vs').innerText = S.vs;
+        updateAudioFrequency();
+    });
+    $('btn-play').addEventListener('click', function () {
+        S.paused = !S.paused;
+        $('btn-play').innerText = S.paused ? '▶ Play' : '⏸ Pause';
+    });
+    $('btn-reset').addEventListener('click', function () {
+        S.medium = 'air20';
+        S.f = 440;
+        S.A = 1.0;
+        S.dopplerOn = false;
+        S.vs = 0;
+        S.paused = false;
+        S.time = 0;
+        S.volume = 0.5;
+        S.waveform = 'sine';
+        $('medium').value = 'air20';
+        $('f').value = '440'; $('v-f').innerText = '440';
+        $('amp').value = '1'; $('v-a').innerText = '1.00';
+        $('vol').value = '50'; $('v-vol').innerText = '50';
+        $('waveform').value = 'sine';
+        $('doppler-toggle').checked = false;
+        $('vs').value = '0'; $('v-vs').innerText = '0';
+        $('btn-play').innerText = '⏸ Pause';
+        updateAudioFrequency();
+        updateAudioVolume();
+        updateReadouts();
+    });
+
+    document.querySelectorAll('.tab-btn[data-tab]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+            document.querySelectorAll('.tab-btn[data-tab]').forEach(function (b) { b.classList.remove('active'); });
+            document.getElementById(btn.dataset.tab).classList.add('active');
+            btn.classList.add('active');
+        });
+    });
+
+    document.querySelectorAll('[data-challenge]').forEach(function (btn) {
+        btn.addEventListener('click', function () { applyChallenge(btn.dataset.challenge); });
+    });
+
+    $('btn-quiz-check').addEventListener('click', evaluateQuiz);
+    $('btn-quiz-reset').addEventListener('click', resetQuiz);
+
+    $('btn-record').addEventListener('click', recordMeasurement);
+    $('btn-clear-notes').addEventListener('click', function () {
+        if (!confirm('Clear all notebook fields?')) return;
+        $('hypothesis').value = '';
+        $('conclusion').value = '';
+        $('records').value = '';
+        S.records = [];
+    });
+    $('btn-export').addEventListener('click', downloadReport);
+
+    // Zoom & pan
+    var fullScroll = false;
+    var pointers = new Map();
+    var pinch = null;
+
+    $('full-scroll-toggle').addEventListener('change', function (e) {
+        fullScroll = e.target.checked;
+        canvas.style.touchAction = fullScroll ? 'auto' : 'none';
+        pointers.clear();
+        pinch = null;
+    });
+
+    function getPos(e) {
+        var r = canvas.getBoundingClientRect();
+        return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+
+    canvas.addEventListener('wheel', function (e) {
+        if (fullScroll) return;
+        e.preventDefault();
+        var cx = e.offsetX, cy = e.offsetY;
+        var wx = (cx - view.x) / view.scale;
+        var wy = (cy - view.y) / view.scale;
+        var factor = Math.exp(-e.deltaY * 0.0015);
+        view.scale = Math.max(0.3, Math.min(5, view.scale * factor));
+        view.x = cx - wx * view.scale;
+        view.y = cy - wy * view.scale;
+    }, { passive: false });
+
+    canvas.addEventListener('pointerdown', function (e) {
+        if (fullScroll) return;
+        canvas.setPointerCapture(e.pointerId);
+        pointers.set(e.pointerId, getPos(e));
+        if (pointers.size === 2) {
+            var pts = Array.from(pointers.values());
+            pinch = { dist: Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y), startScale: view.scale };
+        }
+    });
+    canvas.addEventListener('pointermove', function (e) {
+        if (fullScroll || !pointers.has(e.pointerId)) return;
+        var prev = pointers.get(e.pointerId);
+        var pos = getPos(e);
+        pointers.set(e.pointerId, pos);
+        if (pointers.size === 1 && !pinch) {
+            view.x += pos.x - prev.x;
+            view.y += pos.y - prev.y;
+        } else if (pointers.size === 2 && pinch) {
+            var pts = Array.from(pointers.values());
+            var d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+            view.scale = Math.max(0.3, Math.min(5, pinch.startScale * d / pinch.dist));
+        }
+    });
+    canvas.addEventListener('pointerup', function (e) {
+        if (fullScroll) return;
+        pointers.delete(e.pointerId);
+        try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
+        if (pointers.size < 2) pinch = null;
+    });
+    canvas.addEventListener('pointercancel', function (e) {
+        pointers.delete(e.pointerId);
+        pinch = null;
+    });
+
+    (function () {
+        var hud = document.querySelector('.hud');
+        if (!hud) return;
+        var z = document.createElement('div');
+        z.className = 'zoom-controls';
+        z.innerHTML = '<button id="zoom-out">-</button><button id="zoom-reset">Reset</button><button id="zoom-in">+</button>';
+        hud.appendChild(z);
+        $('zoom-in').addEventListener('click', function () { view.scale = Math.min(5, view.scale * 1.25); });
+        $('zoom-out').addEventListener('click', function () { view.scale = Math.max(0.3, view.scale / 1.25); });
+        $('zoom-reset').addEventListener('click', function () { view.x = 0; view.y = 0; view.scale = 1; });
+    })();
+
+    (function () {
+        var sim = $('sim-area'), splitter = $('splitter');
+        if (!sim || !splitter) return;
+        var dragging = false, startY = 0, startH = 0;
+        var minH = 160, maxH = window.innerHeight - 220;
+
+        splitter.addEventListener('pointerdown', function (e) {
+            e.preventDefault();
+            dragging = true;
+            startY = e.clientY;
+            startH = sim.getBoundingClientRect().height;
+            try { splitter.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+        window.addEventListener('pointermove', function (e) {
+            if (!dragging) return;
+            var dy = e.clientY - startY;
+            var nh = Math.max(minH, Math.min(maxH, Math.round(startH + dy)));
+            sim.style.flex = '0 0 ' + nh + 'px';
+            resizeCanvas();
+        });
+        window.addEventListener('pointerup', function (e) {
+            if (!dragging) return;
+            dragging = false;
+            try { splitter.releasePointerCapture(e.pointerId); } catch (err) {}
+        });
+        splitter.addEventListener('dblclick', function () {
+            sim.style.flex = '';
+            resizeCanvas();
+        });
+    })();
+
+    window.addEventListener('resize', function () { resizeCanvas(); });
+
+    // === Boot ===
+    resizeCanvas();
+    updateReadouts();
+    animate();
+})();
+</script>
+</body>
+</html>

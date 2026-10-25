@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.View;
@@ -25,7 +26,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import java.util.Random;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 /**
  * RegisterActivity - Professional student onboarding with active email validation.
@@ -40,15 +42,15 @@ public class RegisterActivity extends BaseActivity {
     private AutoCompleteTextView gradeDropdown, countryCodeDropdown;
     private TextView tvUsernameFeedback;
     private ImageView profileImage;
-    private MailService mailService;
     private boolean isUsernameAvailable = false;
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        mailService = new MailService(this);
+        firebaseAuth = FirebaseAuthSupport.getConfiguredAuth(this);
 
         initViews();
         setupDropdowns();
@@ -81,21 +83,25 @@ public class RegisterActivity extends BaseActivity {
         Button registerButton = findViewById(R.id.registerButton);
         registerButton.setOnClickListener(v -> handleRegistration());
 
-        findViewById(R.id.loginRedirect).setOnClickListener(v -> finish());
+        TextView loginRedirect = findViewById(R.id.loginRedirect);
+        if (loginRedirect != null) {
+            loginRedirect.setText(Html.fromHtml("Already have an account? <font color='#00D8FF'><b>Sign In</b></font>", Html.FROM_HTML_MODE_LEGACY));
+            loginRedirect.setOnClickListener(v -> finish());
+        }
     }
 
     private void setupDropdowns() {
         String[] grades = {"9", "10", "11", "12"};
         ArrayAdapter<String> gradeAdapter = new ArrayAdapter<>(this, 
-                android.R.layout.simple_dropdown_item_1line, grades);
+                R.layout.item_dropdown_luxury, grades);
         gradeDropdown.setAdapter(gradeAdapter);
         gradeDropdown.setOnClickListener(v -> gradeDropdown.showDropDown());
 
         String[] countries = {
-            "🇪🇹 +251 (Ethiopia)", "🇺🇸 +1 (USA)", "🇬🇧 +44 (UK)", "🇰🇪 +254 (Kenya)"
+            "+251 (Ethiopia)", "+1 (USA)", "+44 (UK)", "+254 (Kenya)"
         };
         ArrayAdapter<String> countryAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_dropdown_item_1line, countries);
+                R.layout.item_dropdown_luxury, countries);
         countryCodeDropdown.setAdapter(countryAdapter);
         countryCodeDropdown.setOnClickListener(v -> countryCodeDropdown.showDropDown());
     }
@@ -121,11 +127,11 @@ public class RegisterActivity extends BaseActivity {
         // Security Check through Repository
         if (repository.isUsernameTaken(username)) {
             tvUsernameFeedback.setText("Username or Email already in use");
-            tvUsernameFeedback.setTextColor(Color.RED);
+            tvUsernameFeedback.setTextColor(Color.parseColor("#FF5252"));
             isUsernameAvailable = false;
         } else {
             tvUsernameFeedback.setText("Identifier is available");
-            tvUsernameFeedback.setTextColor(Color.parseColor("#4CAF50"));
+            tvUsernameFeedback.setTextColor(ContextCompat.getColor(this, R.color.learnify_science_mint));
             isUsernameAvailable = true;
         }
     }
@@ -168,26 +174,49 @@ public class RegisterActivity extends BaseActivity {
             return;
         }
 
-        // Centralized Registration through Repository
-        boolean registered = repository.register(name, studentId, grade, user, email, pass, img, "STUDENT");
-
-        if (registered) {
-            // First send the verification email simulation
-            mailService.sendVerificationEmail(email, user);
-            
-            // Trigger first-time welcome notification
-            NotificationHelper.showInstantNotification(this, "welcome", "Welcome to Learnify", "Glad to have you! Please verify your email to start.");
-            
-            Toast.makeText(this, "Success! Please check your notifications for the verification code.", Toast.LENGTH_LONG).show();
-            
-            Intent intent = new Intent(this, EmailVerificationActivity.class);
-            intent.putExtra("EMAIL", email);
-            intent.putExtra("USERNAME", user);
-            startActivity(intent);
-            finish();
-        } else {
-            Toast.makeText(this, "Critical: Data persistence failed.", Toast.LENGTH_SHORT).show();
+        firebaseAuth = FirebaseAuthSupport.getConfiguredAuth(this);
+        if (firebaseAuth == null) {
+            Toast.makeText(this, "Firebase is not configured for this app. Contact Learnify support.", Toast.LENGTH_LONG).show();
+            return;
         }
+
+        Button registerButton = findViewById(R.id.registerButton);
+        registerButton.setEnabled(false);
+        firebaseAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(this, task -> {
+            if (!task.isSuccessful() || task.getResult() == null) {
+                registerButton.setEnabled(true);
+                Toast.makeText(this, FirebaseAuthSupport.messageFor(task.getException()), Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            FirebaseUser firebaseUser = task.getResult().getUser();
+            try {
+                FirebaseSessionManager.ensureStudentProfile(
+                        this, firebaseUser, name, user, studentId, grade, img);
+            } catch (IllegalStateException e) {
+                registerButton.setEnabled(true);
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            firebaseUser.sendEmailVerification().addOnCompleteListener(this, verificationTask -> {
+                registerButton.setEnabled(true);
+                if (!verificationTask.isSuccessful()) {
+                    Toast.makeText(this, FirebaseAuthSupport.messageFor(verificationTask.getException()), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                NotificationHelper.showInstantNotification(
+                        this, "welcome", "Welcome to Learnify", "Verify your email to activate your account.");
+                Toast.makeText(this, "Check your email for a Firebase verification link.", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(this, EmailVerificationActivity.class);
+                intent.putExtra("EMAIL", email);
+                intent.putExtra("USERNAME", user);
+                intent.putExtra("PROVIDER", "Password");
+                startActivity(intent);
+                finish();
+            });
+        });
     }
 
     private String getText(EditText et) {

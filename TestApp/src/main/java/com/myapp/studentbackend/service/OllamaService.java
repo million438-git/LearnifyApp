@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 
 @Service
 public class OllamaService {
@@ -14,8 +14,10 @@ public class OllamaService {
 
     public String askOllama(String question) {
         try {
-            URL url = new URL("http://localhost:11434/api/generate");
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            HttpURLConnection conn = (HttpURLConnection) URI
+                    .create("http://localhost:11434/api/generate")
+                    .toURL()
+                    .openConnection();
 
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");

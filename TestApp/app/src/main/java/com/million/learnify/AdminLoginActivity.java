@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.browser.customtabs.CustomTabsIntent;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -21,11 +18,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
-
-import java.util.UUID;
 
 /**
  * AdminLoginActivity - Professional Portal with Secure Persistence.
@@ -43,6 +43,7 @@ public class AdminLoginActivity extends BaseActivity {
 
     private static final int RC_GOOGLE_SIGN_IN = 9001;
     private GoogleSignInClient mGoogleSignInClient;
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +51,9 @@ public class AdminLoginActivity extends BaseActivity {
         
         try {
             setContentView(R.layout.activity_admin_login);
+            firebaseAuth = FirebaseAuthSupport.getConfiguredAuth(this);
             configureGoogleAuth();
             initViews();
-            handleSocialCallback(getIntent());
             loadAdminProfileImage();
         } catch (Exception e) {
             Log.e(TAG, "Error in onCreate", e);
@@ -62,9 +63,18 @@ public class AdminLoginActivity extends BaseActivity {
     }
 
     private void configureGoogleAuth() {
+        int clientIdResource = getResources().getIdentifier(
+                "default_web_client_id",
+                "string",
+                getPackageName());
+        if (clientIdResource == 0) {
+            mGoogleSignInClient = null;
+            return;
+        }
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .requestProfile()
+                .requestIdToken(getString(clientIdResource))
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
@@ -84,7 +94,7 @@ public class AdminLoginActivity extends BaseActivity {
         }
 
         if (tvAdminRegisterLink != null) {
-            tvAdminRegisterLink.setOnClickListener(v -> startActivity(new Intent(this, AdminRegisterActivity.class)));
+            tvAdminRegisterLink.setVisibility(View.GONE);
         }
 
         if (btnAdminGoogleLogin != null) {
@@ -97,68 +107,40 @@ public class AdminLoginActivity extends BaseActivity {
     }
 
     private void startGoogleAuth() {
+        if (mGoogleSignInClient == null || firebaseAuth == null) {
+            Toast.makeText(this, "Firebase Google sign-in is not configured for this build.", Toast.LENGTH_LONG).show();
+            return;
+        }
         setLoading(true);
         startActivityForResult(mGoogleSignInClient.getSignInIntent(), RC_GOOGLE_SIGN_IN);
     }
 
     private void startLinkedInAuth() {
-        setLoading(true);
-        String authUrl = "https://www.linkedin.com/oauth/v2/authorization" +
-                "?response_type=code&client_id=86isxh7vxy8xxx&redirect_uri=learnify://admin-linkedin-callback&state=SECURE_" + UUID.randomUUID().toString() + "&scope=r_liteprofile%20r_emailaddress";
-        try {
-            new CustomTabsIntent.Builder().build().launchUrl(this, Uri.parse(authUrl));
-        } catch (Exception e) {
-            setLoading(false);
-            Toast.makeText(this, "Could not launch LinkedIn login", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void handleSocialCallback(Intent intent) {
-        Uri uri = intent.getData();
-        if (uri != null && uri.toString().contains("admin-linkedin-callback")) {
-            verifyAndLoginSocialAdmin("LinkedIn", "admin_social@learnify.edu", "LinkedIn Admin");
-        }
+        setLoading(false);
+        Toast.makeText(this, "LinkedIn administrator sign-in is unavailable because secure backend verification is not configured.", Toast.LENGTH_LONG).show();
     }
 
     private void handleGoogleResult(Task<GoogleSignInAccount> task) {
         try {
             GoogleSignInAccount account = task.getResult(ApiException.class);
-            if (account != null && account.getEmail() != null) {
-                verifyAndLoginSocialAdmin("Google", account.getEmail(), account.getDisplayName());
+            if (account != null && account.getIdToken() != null && firebaseAuth != null) {
+                AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+                firebaseAuth.signInWithCredential(credential).addOnCompleteListener(this, authTask -> {
+                    if (authTask.isSuccessful() && authTask.getResult() != null) {
+                        verifyAdminClaim(authTask.getResult().getUser(), "Google");
+                    } else {
+                        setLoading(false);
+                        Toast.makeText(this, FirebaseAuthSupport.messageFor(authTask.getException()), Toast.LENGTH_LONG).show();
+                    }
+                });
+            } else {
+                setLoading(false);
+                Toast.makeText(this, "Google sign-in did not return a Firebase credential.", Toast.LENGTH_SHORT).show();
             }
         } catch (ApiException e) {
             setLoading(false);
-            // Fallback for developer/demo testing
-            if (e.getStatusCode() == 10 || e.getStatusCode() == 7) { 
-                verifyAndLoginSocialAdmin("Google", "demo_admin@learnify.edu", "Verified Demo Admin");
-            } else {
-                Toast.makeText(this, "Google Sign-In Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(this, "Google sign-in was cancelled or could not be completed.", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void verifyAndLoginSocialAdmin(String provider, String email, String name) {
-        Cursor c = repository.getUserDetails(email);
-        boolean exists = false;
-        if (c != null && c.moveToFirst()) {
-            exists = true;
-            String type = c.getString(c.getColumnIndexOrThrow("user_type"));
-            if (!"ADMIN".equals(type)) {
-                setLoading(false);
-                Toast.makeText(this, "This account is not registered as an Admin.", Toast.LENGTH_LONG).show();
-                c.close();
-                return;
-            }
-            c.close();
-        }
-
-        if (!exists) {
-            // For demo/simplified flow, auto-register as admin if using social
-            // In a real app, you might want to restrict this or check against a whitelist
-            repository.register(name, "ADM-" + UUID.randomUUID().toString().substring(0,8), "Administrator", email, email, "social_verified", "", "ADMIN");
-        }
-
-        onLoginSuccess(email);
     }
 
     private void loadAdminProfileImage() {
@@ -184,17 +166,95 @@ public class AdminLoginActivity extends BaseActivity {
             return;
         }
 
-        setLoading(true);
+        firebaseAuth = FirebaseAuthSupport.getConfiguredAuth(this);
+        if (firebaseAuth == null) {
+            Toast.makeText(this, "Firebase is not configured for this app. Contact Learnify support.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        String email = findAdminEmail(user);
+        if (email == null && user.contains("@")) {
+            email = user;
+        }
+        if (email == null) {
+            Toast.makeText(this, "Use the email address provisioned for your administrator account.", Toast.LENGTH_LONG).show();
+            return;
+        }
 
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            if (repository.login(user, pass, "ADMIN")) {
-                onLoginSuccess(user);
+        setLoading(true);
+        firebaseAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(this, task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                verifyAdminClaim(task.getResult().getUser(), "Password");
             } else {
                 setLoading(false);
-                Toast.makeText(this, "Unauthorized access attempt blocked.", Toast.LENGTH_SHORT).show();
-                repository.logSystemAction(user, "FAILED_LOGIN_ADMIN", "Failed login attempt from: " + user);
+                Toast.makeText(this, FirebaseAuthSupport.messageFor(task.getException()), Toast.LENGTH_LONG).show();
             }
-        }, 800);
+        });
+    }
+
+    private String findAdminEmail(String identifier) {
+        try (Cursor cursor = repository.getUserDetails(identifier)) {
+            if (cursor != null && cursor.moveToFirst()
+                    && "ADMIN".equalsIgnoreCase(cursor.getString(cursor.getColumnIndexOrThrow("user_type")))) {
+                return cursor.getString(cursor.getColumnIndexOrThrow("email"));
+            }
+        }
+        return null;
+    }
+
+    private void verifyAdminClaim(FirebaseUser user, String provider) {
+        if (user == null || !FirebaseAuthPolicy.hasVerifiedEmail(user.isEmailVerified())) {
+            FirebaseSessionManager.signOut(this, firebaseAuth);
+            setLoading(false);
+            Toast.makeText(this, "A verified Firebase email is required for administrator access.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        user.getIdToken(true).addOnCompleteListener(this, task -> {
+            GetTokenResult tokenResult = task.isSuccessful() ? task.getResult() : null;
+            boolean isProvisionedAdmin = tokenResult != null
+                    && FirebaseAuthPolicy.hasAdminAuthorization(
+                            user.isEmailVerified(),
+                            tokenResult.getClaims().get("admin"));
+            if (!isProvisionedAdmin) {
+                FirebaseSessionManager.signOut(this, firebaseAuth);
+                setLoading(false);
+                Toast.makeText(this, "Access denied. Administrator access must be provisioned by Learnify security staff.", Toast.LENGTH_LONG).show();
+                return;
+            }
+            if (!ensureLocalAdminProfile(user)) {
+                FirebaseSessionManager.signOut(this, firebaseAuth);
+                setLoading(false);
+                Toast.makeText(this, "Unable to prepare the local administrator profile. Contact support.", Toast.LENGTH_LONG).show();
+                return;
+            }
+            onLoginSuccess(user, provider);
+        });
+    }
+
+    private boolean ensureLocalAdminProfile(FirebaseUser user) {
+        String email = user.getEmail();
+        if (email == null) return false;
+        try (Cursor cursor = repository.getUserDetails(email)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                if (!"ADMIN".equalsIgnoreCase(cursor.getString(cursor.getColumnIndexOrThrow("user_type")))
+                        || "Blocked".equalsIgnoreCase(cursor.getString(cursor.getColumnIndexOrThrow("status")))) {
+                    return false;
+                }
+                repository.setVerified(email, true);
+                return true;
+            }
+        }
+        String name = user.getDisplayName() != null ? user.getDisplayName() : "Administrator";
+        boolean registered = repository.register(
+                name,
+                user.getUid(),
+                "Administrator",
+                email,
+                email,
+                PasswordUtils.generateRandomPlaceholder(),
+                "",
+                "ADMIN");
+        if (registered) repository.setVerified(email, true);
+        return registered;
     }
 
     private void setLoading(boolean loading) {
@@ -207,23 +267,29 @@ public class AdminLoginActivity extends BaseActivity {
         }
     }
 
-    private void onLoginSuccess(String user) {
+    private void onLoginSuccess(FirebaseUser firebaseUser, String provider) {
+        String user = firebaseUser.getEmail();
         securePrefs.saveString("username", user);
         securePrefs.saveString("full_name", "Administrator");
         securePrefs.saveString("user_type", "ADMIN");
+        securePrefs.saveString("firebase_uid", firebaseUser.getUid());
+        securePrefs.saveString("login_provider", provider);
         securePrefs.saveBoolean("isLoggedIn", true);
 
         getSharedPreferences("UserSession", MODE_PRIVATE).edit()
             .putString("username", user)
             .putString("full_name", "Administrator")
             .putString("user_type", "ADMIN")
+            .putString("firebase_uid", firebaseUser.getUid())
+            .putString("login_provider", provider)
             .putBoolean("isLoggedIn", true)
             .apply();
 
         repository.logSystemAction(user, "LOGIN_SUCCESS_ADMIN", "Admin logged in successfully");
 
-        setLoading(false);
         Toast.makeText(this, "Admin access granted.", Toast.LENGTH_SHORT).show();
+
+        setLoading(false);
         startActivity(new Intent(this, AdminDashboardActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
         finish();
     }

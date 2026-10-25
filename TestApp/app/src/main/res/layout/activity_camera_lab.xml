@@ -11,6 +11,66 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!-- Rule of Thirds Grid Overlay (Controlled by CameraSettings) -->
+    <FrameLayout
+        android:id="@+id/viewFinderGrid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#4DFFFFFF" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#4DFFFFFF" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#4DFFFFFF" />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#4DFFFFFF" />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+        </LinearLayout>
+    </FrameLayout>
+
     <!-- AR Simulated Layer (Section 10.3) -->
     <FrameLayout
         android:id="@+id/arOverlayContainer"
@@ -36,7 +96,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="Camera AI Lab 📸"
+            app:title="Camera AI Lab"
             app:titleTextColor="@android:color/white"
             app:navigationIconTint="@android:color/white">
             <LinearLayout
@@ -263,7 +323,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="16dp"
                 android:padding="8dp"
-                android:src="@android:drawable/ic_menu_mylocation"
+                android:src="@drawable/ic_bolt"
                 app:tint="@android:color/white" />
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btnCapture"
@@ -315,7 +375,7 @@
                     android:id="@+id/tvResultHeader"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="📸 Analysis Result"
+                    android:text="Analysis Result"
                     android:textColor="#0F172A"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -339,7 +399,7 @@
 
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_height="180dp"
                 android:layout_marginTop="12dp">
                 <TextView
                     android:id="@+id/tvResultBody"
@@ -407,6 +467,39 @@
                     android:textSize="10sp"
                     app:strokeColor="#10B981"
                     android:textColor="#10B981" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCreateFlashcard"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="CREATE FLASHCARD"
+                    android:textSize="10sp"
+                    app:icon="@drawable/ic_flashcard"
+                    app:iconSize="14dp"
+                    app:iconPadding="4dp"
+                    app:iconGravity="textStart"
+                    app:strokeColor="#8B5CF6"
+                    android:textColor="#8B5CF6"
+                    app:iconTint="#8B5CF6" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnOpenVisualizer"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:text="OPEN 3D LAB"
+                    android:textSize="10sp"
+                    app:strokeColor="#F59E0B"
+                    android:textColor="#F59E0B" />
             </LinearLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

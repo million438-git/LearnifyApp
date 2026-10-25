@@ -13,6 +13,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * AdminDashboardActivity - Professional Command Center.
@@ -24,8 +28,9 @@ public class AdminDashboardActivity extends BaseActivity {
     private String currentUsername;
     private ImageView adminProfileImg, ivAdminNotification;
     
-    // Stats TextViews
+    // Stats & Hero TextViews
     private TextView tvTotalStudents, tvActiveStudents, tvTotalTeachers, tvTotalLabs, tvCompletedLabs, tvPendingLabs, tvSystemHealth;
+    private TextView tvAdminWelcome, tvAdminDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +45,21 @@ public class AdminDashboardActivity extends BaseActivity {
         currentUsername = pref.getString("username", "admin");
 
         initViews();
-        setupPortalToolbar(findViewById(R.id.adminToolbar), "Admin Dashboard");
+        Toolbar adminToolbar = findViewById(R.id.adminToolbar);
+        if (adminToolbar != null) {
+            setSupportActionBar(adminToolbar);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayShowTitleEnabled(false);
+            }
+        }
+        View llToolbarBack = findViewById(R.id.llToolbarBack);
+        if (llToolbarBack != null) {
+            llToolbarBack.setOnClickListener(v -> {
+                if (drawerLayout != null) {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                }
+            });
+        }
         setupDrawerButton(drawerLayout);
         
         setupNavigation();
@@ -61,14 +80,16 @@ public class AdminDashboardActivity extends BaseActivity {
         tvCompletedLabs = findViewById(R.id.tvCompletedLabs);
         tvPendingLabs = findViewById(R.id.tvPendingLabs);
         tvSystemHealth = findViewById(R.id.tvSystemHealth);
+        tvAdminWelcome = findViewById(R.id.tvAdminWelcome);
+        tvAdminDate = findViewById(R.id.tvAdminDate);
 
         adminProfileImg.setOnClickListener(v -> {
-            startActivity(new Intent(AdminDashboardActivity.this, AdminProfileActivity.class));
+            safeStartActivity(new Intent(AdminDashboardActivity.this, AdminProfileActivity.class));
         });
 
         if (ivAdminNotification != null) {
             ivAdminNotification.setOnClickListener(v -> {
-                startActivity(new Intent(AdminDashboardActivity.this, NotificationListActivity.class));
+                safeStartActivity(new Intent(AdminDashboardActivity.this, NotificationListActivity.class));
             });
         }
     }
@@ -82,17 +103,19 @@ public class AdminDashboardActivity extends BaseActivity {
         int completedLabs = repository.getLocalDb().getTableCount("lab_results", null, null);
         int pendingTasks = repository.getLocalDb().getTableCount("tasks", "status=?", new String[]{"Pending"});
 
+        NumberFormat nf = NumberFormat.getIntegerInstance();
+
         // Updating UI with Live Counts
-        if (tvTotalStudents != null) tvTotalStudents.setText(totalStudents + " Active Records");
-        if (tvActiveStudents != null) tvActiveStudents.setText(activeStudents + " Online Now");
-        if (tvTotalTeachers != null) tvTotalTeachers.setText(totalTeachers + " Staff Members");
-        if (tvTotalLabs != null) tvTotalLabs.setText(totalLabs + " Virtual Labs");
-        if (tvCompletedLabs != null) tvCompletedLabs.setText(completedLabs + " Submissions");
-        if (tvPendingLabs != null) tvPendingLabs.setText(pendingTasks + " Action Required");
+        if (tvTotalStudents != null) tvTotalStudents.setText(nf.format(totalStudents));
+        if (tvActiveStudents != null) tvActiveStudents.setText(nf.format(activeStudents));
+        if (tvTotalTeachers != null) tvTotalTeachers.setText(nf.format(totalTeachers));
+        if (tvTotalLabs != null) tvTotalLabs.setText(nf.format(totalLabs));
+        if (tvCompletedLabs != null) tvCompletedLabs.setText(nf.format(completedLabs));
+        if (tvPendingLabs != null) tvPendingLabs.setText(nf.format(pendingTasks));
         
         if (tvSystemHealth != null) {
             tvSystemHealth.setText("All Systems Operational");
-            tvSystemHealth.setTextColor(getResources().getColor(android.R.color.holo_green_light));
+            tvSystemHealth.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.admin_green));
         }
     }
 
@@ -107,48 +130,112 @@ public class AdminDashboardActivity extends BaseActivity {
             }
         }
 
+        String displayName = null;
+
         NavigationView navigationView = findViewById(R.id.adminNavView);
-        View headerView = navigationView.getHeaderView(0);
-        if (headerView != null) {
-            ImageView ivUserHeader = headerView.findViewById(R.id.ivUserHeader);
-            TextView tvUserNameHeader = headerView.findViewById(R.id.tvUserNameHeader);
-            TextView tvUserEmailHeader = headerView.findViewById(R.id.tvUserEmailHeader);
+        View headerView = (navigationView != null) ? navigationView.getHeaderView(0) : null;
 
-            Cursor cursor = repository.getUserDetails(currentUsername);
-            if (cursor != null && cursor.moveToFirst()) {
-                String fullName = cursor.getString(cursor.getColumnIndexOrThrow("full_name"));
-                String email = cursor.getString(cursor.getColumnIndexOrThrow("email"));
-                String headerImgUriStr = cursor.getString(cursor.getColumnIndexOrThrow("profile_image"));
+        Cursor cursor = repository.getUserDetails(currentUsername);
+        if (cursor != null && cursor.moveToFirst()) {
+            String fullName = cursor.getString(cursor.getColumnIndexOrThrow("full_name"));
+            String email = cursor.getString(cursor.getColumnIndexOrThrow("email"));
+            String headerImgUriStr = cursor.getString(cursor.getColumnIndexOrThrow("profile_image"));
 
-                tvUserNameHeader.setText(fullName);
-                tvUserEmailHeader.setText(email);
+            if (fullName != null && !fullName.trim().isEmpty()) {
+                displayName = fullName.trim();
+            }
 
-                if (headerImgUriStr != null && !headerImgUriStr.isEmpty()) {
+            if (headerView != null) {
+                TextView tvUserNameHeader = headerView.findViewById(R.id.tvUserNameHeader);
+                TextView tvUserEmailHeader = headerView.findViewById(R.id.tvUserEmailHeader);
+                ImageView ivUserHeader = headerView.findViewById(R.id.ivUserHeader);
+
+                if (tvUserNameHeader != null) tvUserNameHeader.setText(fullName != null ? fullName : currentUsername);
+                if (tvUserEmailHeader != null) tvUserEmailHeader.setText(email);
+
+                if (headerImgUriStr != null && !headerImgUriStr.isEmpty() && ivUserHeader != null) {
                     try {
                         ivUserHeader.setImageURI(Uri.parse(headerImgUriStr));
                         ivUserHeader.setPadding(0, 0, 0, 0);
                     } catch (Exception e) {
-                        ivUserHeader.setImageResource(android.R.drawable.ic_menu_myplaces);
+                        ivUserHeader.setImageResource(R.drawable.ic_user_person);
                     }
                 }
-                cursor.close();
             }
+            cursor.close();
+        }
 
+        if (headerView != null) {
             headerView.setOnClickListener(v -> {
-                startActivity(new Intent(AdminDashboardActivity.this, AdminProfileActivity.class));
-                drawerLayout.closeDrawer(GravityCompat.START);
+                safeStartActivity(new Intent(AdminDashboardActivity.this, AdminProfileActivity.class));
+                if (drawerLayout != null) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                }
             });
+        }
+
+        // Set dynamic welcome text without raw placeholders
+        if (displayName == null || displayName.trim().isEmpty()) {
+            if (currentUsername != null && !currentUsername.trim().isEmpty() && !currentUsername.equalsIgnoreCase("admin")) {
+                displayName = currentUsername.trim();
+            } else {
+                displayName = "Administrator";
+            }
+        }
+
+        if (tvAdminWelcome != null) {
+            tvAdminWelcome.setText("Welcome back, " + displayName);
+        }
+
+        if (tvAdminDate != null) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.getDefault());
+                tvAdminDate.setText(sdf.format(new Date()));
+            } catch (Exception ignored) {}
         }
     }
 
     private void setupNavigation() {
         NavigationView navigationView = findViewById(R.id.adminNavView);
         if (navigationView != null) {
+            navigationView.setCheckedItem(R.id.admin_nav_dashboard);
             navigationView.setNavigationItemSelectedListener(item -> {
                 handleNavigation(item.getItemId());
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             });
+        }
+    }
+
+    private long lastActionClickTime = 0;
+    public static final long DEBOUNCE_INTERVAL_MS = 600;
+
+    public static boolean checkCanPerformAction(long currentTime, long lastActionTime) {
+        return (currentTime - lastActionTime) >= DEBOUNCE_INTERVAL_MS;
+    }
+
+    boolean canPerformAction() {
+        return canPerformAction(System.currentTimeMillis());
+    }
+
+    boolean canPerformAction(long currentTime) {
+        if (!checkCanPerformAction(currentTime, lastActionClickTime)) {
+            return false;
+        }
+        lastActionClickTime = currentTime;
+        return true;
+    }
+
+    private void safeStartActivity(Intent intent) {
+        if (canPerformAction()) {
+            startActivity(intent);
+        }
+    }
+
+    private void setSafeClickListener(int viewId, Class<?> targetClass) {
+        View view = findViewById(viewId);
+        if (view != null) {
+            view.setOnClickListener(v -> safeStartActivity(new Intent(this, targetClass)));
         }
     }
 
@@ -158,54 +245,63 @@ public class AdminDashboardActivity extends BaseActivity {
             updateDashboardStats();
             loadProfileData();
         } else if (id == R.id.admin_nav_users) {
-            startActivity(new Intent(this, AdminUserManagementActivity.class));
+            safeStartActivity(new Intent(this, AdminUserManagementActivity.class));
         } else if (id == R.id.admin_nav_issue_cert) {
-            startActivity(new Intent(this, AdminIssueCertificateActivity.class));
+            safeStartActivity(new Intent(this, AdminIssueCertificateActivity.class));
         } else if (id == R.id.admin_nav_content) {
-            startActivity(new Intent(this, AdminContentManagementActivity.class));
+            safeStartActivity(new Intent(this, AdminContentManagementActivity.class));
         } else if (id == R.id.admin_nav_camera_lab) {
-            startActivity(new Intent(this, AdminCameraLabActivity.class));
+            safeStartActivity(new Intent(this, AdminCameraLabActivity.class));
         } else if (id == R.id.admin_nav_reports) {
-            startActivity(new Intent(this, AdminReportsActivity.class));
+            safeStartActivity(new Intent(this, AdminReportsActivity.class));
         } else if (id == R.id.admin_nav_settings) {
-            startActivity(new Intent(this, AdminSystemSettingsActivity.class));
+            safeStartActivity(new Intent(this, AdminSystemSettingsActivity.class));
         } else if (id == R.id.admin_nav_add_question) {
-            startActivity(new Intent(this, AdminQuestionActivity.class));
+            safeStartActivity(new Intent(this, AdminQuestionActivity.class));
+        } else if (id == R.id.admin_nav_payment_verification) {
+            safeStartActivity(new Intent(this, AdminPaymentVerificationActivity.class));
+        } else if (id == R.id.admin_nav_support_management) {
+            safeStartActivity(new Intent(this, AdminSupportManagementActivity.class));
         } else if (id == R.id.admin_nav_logout) {
             onLogoutClick(null);
         }
     }
 
     private void setupDashboardActions() {
-        findViewById(R.id.cardTotalStudents).setOnClickListener(v -> startActivity(new Intent(this, AdminUserManagementActivity.class)));
-        findViewById(R.id.cardActiveStudents).setOnClickListener(v -> startActivity(new Intent(this, AdminUserManagementActivity.class)));
-        findViewById(R.id.cardTeachers).setOnClickListener(v -> {
-            Intent intent = new Intent(this, AdminUserManagementActivity.class);
-            intent.putExtra("FILTER_ROLE", "TEACHER");
-            startActivity(intent);
-        });
-        findViewById(R.id.cardTotalLabs).setOnClickListener(v -> startActivity(new Intent(this, AdminContentManagementActivity.class)));
-        findViewById(R.id.cardCompletedLabs).setOnClickListener(v -> startActivity(new Intent(this, AdminReportsActivity.class)));
-        findViewById(R.id.cardPendingLabs).setOnClickListener(v -> startActivity(new Intent(this, AdminContentManagementActivity.class)));
-        findViewById(R.id.cardSystemHealth).setOnClickListener(v -> startActivity(new Intent(this, AdminSystemSettingsActivity.class)));
-
-        View cardIssueCert = findViewById(R.id.cardIssueCert);
-        if (cardIssueCert != null) {
-            cardIssueCert.setOnClickListener(v -> startActivity(new Intent(this, AdminIssueCertificateActivity.class)));
+        setSafeClickListener(R.id.cardTotalStudents, AdminUserManagementActivity.class);
+        setSafeClickListener(R.id.cardActiveStudents, AdminUserManagementActivity.class);
+        
+        View cardTeachers = findViewById(R.id.cardTeachers);
+        if (cardTeachers != null) {
+            cardTeachers.setOnClickListener(v -> {
+                Intent intent = new Intent(this, AdminUserManagementActivity.class);
+                intent.putExtra("FILTER_ROLE", "TEACHER");
+                safeStartActivity(intent);
+            });
         }
+        
+        setSafeClickListener(R.id.cardTotalLabs, AdminContentManagementActivity.class);
+        setSafeClickListener(R.id.cardCompletedLabs, AdminReportsActivity.class);
+        setSafeClickListener(R.id.cardPendingLabs, AdminContentManagementActivity.class);
+        setSafeClickListener(R.id.cardSystemHealth, AdminSystemSettingsActivity.class);
 
-        findViewById(R.id.btnIssueCertificate).setOnClickListener(v -> startActivity(new Intent(this, AdminIssueCertificateActivity.class)));
-        findViewById(R.id.btnCreateLab).setOnClickListener(v -> startActivity(new Intent(this, AdminQuestionActivity.class)));
-        findViewById(R.id.btnAddUser).setOnClickListener(v -> startActivity(new Intent(this, AdminRegisterActivity.class)));
-        findViewById(R.id.btnUpload).setOnClickListener(v -> startActivity(new Intent(this, AdminContentManagementActivity.class)));
-        findViewById(R.id.btnSimulate).setOnClickListener(v -> startActivity(new Intent(this, PhysicsSimulationActivity.class)));
-        findViewById(R.id.btnReports).setOnClickListener(v -> startActivity(new Intent(this, AdminReportsActivity.class)));
-        findViewById(R.id.btnSettings).setOnClickListener(v -> startActivity(new Intent(this, AdminSystemSettingsActivity.class)));
+        // Governance & Compliance Cards
+        setSafeClickListener(R.id.cardIssueCert, AdminIssueCertificateActivity.class);
+        setSafeClickListener(R.id.cardPaymentVerification, AdminPaymentVerificationActivity.class);
+        setSafeClickListener(R.id.cardSupportCenter, AdminSupportManagementActivity.class);
+
+        // Quick Action Grid
+        setSafeClickListener(R.id.btnIssueCertificate, AdminIssueCertificateActivity.class);
+        setSafeClickListener(R.id.btnCreateLab, AdminQuestionActivity.class);
+        setSafeClickListener(R.id.btnAddUser, AdminRegisterActivity.class);
+        setSafeClickListener(R.id.btnUpload, AdminContentManagementActivity.class);
+        setSafeClickListener(R.id.btnSimulate, PhysicsSimulationActivity.class);
+        setSafeClickListener(R.id.btnReports, AdminReportsActivity.class);
+        setSafeClickListener(R.id.btnSettings, AdminSystemSettingsActivity.class);
     }
 
     public void onLogoutClick(View v) {
-        getSharedPreferences("UserSession", MODE_PRIVATE).edit().clear().apply();
-        securePrefs.clearSession();
+        FirebaseSessionManager.signOut(this, FirebaseAuthSupport.getConfiguredAuth(this));
         repository.logSystemAction(currentUsername, "LOGOUT_ADMIN", "Admin logged out");
 
         Intent intent = new Intent(this, MainActivity.class);
@@ -217,6 +313,11 @@ public class AdminDashboardActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        lastActionClickTime = 0;
+        NavigationView navigationView = findViewById(R.id.adminNavView);
+        if (navigationView != null) {
+            navigationView.setCheckedItem(R.id.admin_nav_dashboard);
+        }
         loadProfileData();
         updateDashboardStats();
     }

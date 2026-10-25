@@ -107,7 +107,11 @@ public class EditProfileActivity extends AppCompatActivity {
             
             String imgUriStr = cursor.getString(cursor.getColumnIndexOrThrow("profile_image"));
             if (imgUriStr != null && !imgUriStr.isEmpty()) {
-                ivEditProfilePic.setImageURI(Uri.parse(imgUriStr));
+                try {
+                    ivEditProfilePic.setImageURI(Uri.parse(imgUriStr));
+                } catch (Exception e) {
+                    ivEditProfilePic.setImageResource(R.drawable.ic_user_person);
+                }
             }
 
             // Load new fields
@@ -133,13 +137,13 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private String getLanguageName(String code) {
         switch (code) {
-            case "am": return "አማርኛ 🇪🇹";
-            case "om": return "Afaan Oromoo 🇪🇹";
-            case "ti": return "ትግርኛ 🇪🇹";
-            case "es": return "Español 🇪🇸";
-            case "fr": return "Français 🇫🇷";
-            case "ar": return "العربية 🇸🇦";
-            default: return "English 🇬🇧";
+            case "am": return "Amharic (አማርኛ)";
+            case "om": return "Afaan Oromoo";
+            case "ti": return "Tigrinya (ትግርኛ)";
+            case "es": return "Spanish (Español)";
+            case "fr": return "French (Français)";
+            case "ar": return "Arabic (العربية)";
+            default: return "English";
         }
     }
 
@@ -167,7 +171,7 @@ public class EditProfileActivity extends AppCompatActivity {
         findViewById(R.id.btnLanguageTop).setOnClickListener(v -> showLanguagePicker());
         
         findViewById(R.id.llChangePassword).setOnClickListener(v -> {
-            startActivity(new Intent(this, ForgotPasswordActivity.class));
+            startActivity(new Intent(this, PrivacySecurityActivity.class));
         });
 
         tvVisibility.setOnClickListener(v -> showOptionPicker("Profile Visibility", new String[]{"Public", "Private", "Friends Only"}, tvVisibility));
@@ -220,11 +224,11 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private void showDeactivationWarning() {
         new AlertDialog.Builder(this)
-                .setTitle("⚠️ Danger Zone")
+                .setTitle("Danger Zone")
                 .setMessage("Are you sure you want to deactivate your account? This action can be reversed by logging in again within 30 days.")
                 .setPositiveButton("Deactivate", (d, w) -> {
                     Toast.makeText(this, "Account deactivated. Logging out...", Toast.LENGTH_LONG).show();
-                    getSharedPreferences("UserSession", MODE_PRIVATE).edit().clear().apply();
+                    FirebaseSessionManager.signOut(this, FirebaseAuthSupport.getConfiguredAuth(this));
                     Intent intent = new Intent(this, MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
@@ -276,7 +280,7 @@ public class EditProfileActivity extends AppCompatActivity {
         boolean success = dbHelper.updateUserProfileFull(currentUsername, name, email, phone, university, year, major, xpGoal, "Math,Physics", visibility, showLeaderboard, emailNotifications, imageUriStr);
         
         if (success) {
-            Toast.makeText(this, "Profile updated successfully! ✨", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Profile updated successfully.", Toast.LENGTH_SHORT).show();
             finish();
         } else {
             Toast.makeText(this, "Update failed", Toast.LENGTH_SHORT).show();
