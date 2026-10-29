@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 10 Physics · Unit 4: Static and Current Electricity</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#f4f6fb;--surface:#ffffff;--surface2:#eef2f9;--fg:#111827;--muted:#5b6472;
+    --line:#dbe2ef;--accent:#3b5bdb;--accent2:#7048e8;--accent-soft:#e8edff;
+    --correct:#0b7a5e;--correct-bg:#dcfce7;--wrong:#b91c1c;--wrong-bg:#fee2e2;
+    --gold:#f59f00;--gold-soft:#fff4d6;
+    --radius:16px;--shadow:0 6px 20px rgba(17,24,39,.07);
+    --font:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+    --am:'Noto Sans Ethiopic','Abyssinica SIL',system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{--bg:#0b1220;--surface:#131c2e;--surface2:#1b2740;--fg:#e6edf7;--muted:#9aa8bf;
+      --line:#27344f;--accent:#7c9cff;--accent2:#b197fc;--accent-soft:#1e2a4a;
+      --correct:#34d399;--correct-bg:#0c3a2e;--wrong:#f87171;--wrong-bg:#3f1414;
+      --gold:#fbbf24;--gold-soft:#3a2e0a;--shadow:0 6px 20px rgba(0,0,0,.4)}
+  }
+  body{font-family:var(--font);background:var(--bg);color:var(--fg);line-height:1.8;padding:14px;max-width:1000px;margin:0 auto}
+  h1{font-size:1.55rem;margin-bottom:4px;letter-spacing:-.02em}
+  h2{font-size:1.25rem;margin:1.2em 0 .5em;padding-bottom:8px;border-bottom:2px solid var(--line);color:var(--accent)}
+  h3{font-size:1.05rem;margin:1em 0 .4em;color:var(--accent2);font-weight:700}
+  p{margin-bottom:.8em}
+  ul,ol{padding-left:1.4em;margin-bottom:.8em}
+  li{margin-bottom:.35em}
+  .am{font-family:var(--am);color:var(--muted);font-size:.9rem;display:block;margin-top:3px;border-left:3px solid var(--accent-soft);padding-left:10px;font-style:normal}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-bottom:22px;box-shadow:var(--shadow)}
+  .card-accent{border-left:6px solid var(--accent)}
+  .badge{display:inline-block;background:var(--accent-soft);color:var(--accent);font-weight:800;font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:20px;margin-right:5px}
+  .badge-easy{background:#d3f9d8;color:#2b8a3e}
+  .badge-medium{background:#fff3bf;color:#e67700}
+  .badge-challenging{background:#ffe3e3;color:#c92a2a}
+  @media (prefers-color-scheme: dark){
+    .badge-easy{background:#0c3a2e;color:#6ee7b7}
+    .badge-medium{background:#3a2e0a;color:#fcd34d}
+    .badge-challenging{background:#3f1414;color:#fca5a5}
+  }
+  .unit-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px;background:var(--surface);padding:8px;border-radius:var(--radius);position:sticky;top:6px;z-index:20;border:1px solid var(--line);box-shadow:var(--shadow)}
+  .unit-nav button{flex:1 1 auto;padding:10px 12px;border:1px solid transparent;border-radius:12px;background:transparent;color:var(--muted);font-weight:700;font-size:.8rem;cursor:pointer;font-family:var(--font);white-space:nowrap;transition:.2s}
+  .unit-nav button:hover{background:var(--surface2);color:var(--fg)}
+  .unit-nav button.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 14px rgba(59,91,219,.35)}
+  .section-panel{display:none}
+  .section-panel.active{display:block}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9rem;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  th,td{border:1px solid var(--line);padding:9px 12px;text-align:left}
+  th{background:var(--surface2);font-weight:800;color:var(--accent)}
+  td{background:var(--surface)}
+  .formula{background:linear-gradient(135deg,var(--accent-soft),var(--surface2));border-left:5px solid var(--accent);padding:12px 16px;margin:12px 0;border-radius:0 12px 12px 0;font-family:'Courier New',monospace;font-size:1rem;overflow-x:auto;font-weight:600}
+  .diagram-box{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin:16px 0}
+  .diagram-box figure{flex:0 1 230px;text-align:center;background:var(--surface);padding:12px;border-radius:12px;border:1px solid var(--line);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+  .diagram-box svg{width:100%;height:auto;max-height:180px;display:block}
+  .diagram-box figcaption{font-size:.78rem;color:var(--muted);margin-top:7px;line-height:1.5}
+  .question-block{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.04);transition:.2s}
+  .question-block.correct-highlight{border-color:var(--correct);border-left:5px solid var(--correct)}
+  .question-block.wrong-highlight{border-color:var(--wrong);border-left:5px solid var(--wrong)}
+  .question-text{font-weight:700;margin-bottom:10px;font-size:.96rem;line-height:1.65}
+  .q-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:9px;font-size:.74rem;color:var(--muted)}
+  .option-list{display:flex;flex-direction:column;gap:7px;margin:8px 0}
+  .option-btn{text-align:left;padding:11px 14px;border:2px solid var(--line);border-radius:11px;background:var(--surface);color:var(--fg);font-size:.91rem;cursor:pointer;font-family:var(--font);line-height:1.5;transition:.15s;font-weight:500}
+  .option-btn:hover{border-color:var(--accent);background:var(--accent-soft);transform:translateX(2px)}
+  .option-btn.correct{border-color:var(--correct);background:var(--correct-bg);font-weight:700}
+  .option-btn.wrong{border-color:var(--wrong);background:var(--wrong-bg);font-weight:700}
+  .option-btn:disabled{cursor:default;opacity:.95;transform:none}
+  .feedback{margin-top:12px;padding:14px 16px;border-radius:12px;font-size:.9rem;line-height:1.75;display:none}
+  .feedback.show{display:block}
+  .feedback.correct-fb{background:var(--correct-bg);border-left:5px solid var(--correct)}
+  .feedback.wrong-fb{background:var(--wrong-bg);border-left:5px solid var(--wrong)}
+  .numeric-answer-area{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}
+  .numeric-answer-area input{padding:11px 14px;border:2px solid var(--line);border-radius:11px;font-size:.96rem;width:140px;background:var(--surface);color:var(--fg);font-family:var(--font);font-weight:600}
+  .numeric-answer-area input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+  .unit-label{font-weight:800;color:var(--accent);font-size:.95rem}
+  .btn{padding:10px 18px;border-radius:11px;border:none;font-weight:700;font-size:.9rem;cursor:pointer;font-family:var(--font);transition:.15s}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 3px 10px rgba(59,91,219,.3)}
+  .btn-primary:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .btn-secondary{background:var(--surface2);color:var(--fg);border:1px solid var(--line)}
+  .btn-secondary:hover{background:var(--line)}
+  .solution-details{margin-top:12px;padding:16px 18px;background:var(--surface2);border-radius:12px;font-size:.89rem;line-height:1.8;display:none;border-left:4px solid var(--gold)}
+  .solution-details.show{display:block}
+  .solution-details .step{display:block;margin-bottom:8px;padding:10px 14px;border-left:3px solid var(--accent);background:var(--surface);border-radius:0 8px 8px 0;line-height:1.7}
+  .solution-details .step:last-child{margin-bottom:0}
+  .solution-details strong{color:var(--accent)}
+  .solution-title{font-weight:800;color:var(--gold);font-size:.95rem;margin-bottom:8px;display:block}
+  .progress-bar-container{background:var(--line);border-radius:12px;height:14px;overflow:hidden;margin:8px 0}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--correct));width:0;transition:width .4s;border-radius:12px}
+  .filter-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;align-items:center}
+  .filter-bar select{padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font-family:var(--font);font-size:.86rem;font-weight:600}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .worked-example{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0;font-size:.91rem;border-left:4px solid var(--accent2)}
+  .worked-example h4{margin-top:0;color:var(--accent2);font-size:.95rem;margin-bottom:10px}
+  .worked-example ol li{margin-bottom:.5em;line-height:1.75}
+  .tag-conceptual{background:#dbeafe;color:#1e40af}
+  .tag-numerical{background:#fce7f3;color:#9d174d}
+  @media (prefers-color-scheme: dark){
+    .tag-conceptual{background:#1e3a5f;color:#93c5fd}
+    .tag-numerical{background:#5f1e3a;color:#f9a8d4}
+  }
+  .highlight-box{background:linear-gradient(135deg,var(--gold-soft),var(--accent-soft));border-radius:12px;padding:14px 18px;margin:14px 0;font-size:.91rem;border-left:4px solid var(--gold);line-height:1.75}
+  .verify-box{background:var(--correct-bg);border-radius:10px;padding:10px 14px;margin-top:8px;font-size:.86rem;border-left:3px solid var(--correct);line-height:1.65}
+  .textbook-exercise{background:linear-gradient(135deg,#fff8e1,#fef3c7);border:1px solid #fbbf24;border-radius:12px;padding:16px 18px;margin:14px 0;font-size:.9rem}
+  .textbook-exercise h4{margin-top:0;color:#92400e;font-size:.95rem;margin-bottom:10px}
+  .textbook-exercise .sol{background:var(--surface);border-radius:8px;padding:10px 14px;margin-top:8px;border-left:3px solid var(--correct);line-height:1.7}
+  @media (prefers-color-scheme: dark){
+    .textbook-exercise{background:linear-gradient(135deg,#3a2e0a,#422006);border-color:#fbbf24}
+    .textbook-exercise h4{color:#fcd34d}
+  }
+  @media (max-width:600px){
+    body{padding:8px}
+    .card{padding:14px 16px}
+    h1{font-size:1.2rem}
+    h2{font-size:1.05rem}
+    .unit-nav button{font-size:.68rem;padding:7px 9px}
+    .diagram-box figure{flex:1 1 145px}
+    .option-btn{font-size:.86rem;padding:10px 12px}
+  }
+</style>
+</head>
+<body>
+
+<header style="margin-bottom:18px">
+  <h1>📘 Grade 10 Physics · Unit 4: Static and Current Electricity</h1>
+  <p style="color:var(--muted);font-size:.9rem">Matric &amp; entrance-exam ready · 100 advanced questions with full step-by-step bilingual solutions</p>
+</header>
+
+<nav class="unit-nav" role="tablist" aria-label="Unit sections">
+  <button role="tab" class="active" data-section="4.1" aria-selected="true">4.1 Charges in Nature</button>
+  <button role="tab" data-section="4.2" aria-selected="false">4.2 Methods of Charging</button>
+  <button role="tab" data-section="4.3" aria-selected="false">4.3 Electroscope</button>
+  <button role="tab" data-section="4.5" aria-selected="false">4.5 Coulomb's Law</button>
+  <button role="tab" data-section="4.6" aria-selected="false">4.6 Electric Field</button>
+  <button role="tab" data-section="4.8" aria-selected="false">4.8 Current &amp; Ohm's Law</button>
+  <button role="tab" data-section="4.9" aria-selected="false">4.9 Resistors</button>
+  <button role="tab" data-section="4.11" aria-selected="false">4.11 Safety &amp; Meters</button>
+  <button role="tab" data-section="assessment" aria-selected="false">📝 100 Qs Assessment</button>
+</nav>
+
+<!-- ==================== SECTION 4.1 ==================== -->
+<section id="section-4.1" class="section-panel active" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 4.1</span>
+  <h2>Charges in Nature</h2>
+
+  <p><strong>There are two types of electric charge:</strong> positive and negative. Protons carry positive charge; electrons carry negative charge. When equal amounts of positive and negative charge are present in a body, the body is <strong>neutral</strong>. If there is an imbalance (extra electrons or a deficit), the body is <strong>charged</strong>.</p>
+  <p class="am">ሁለት ዓይነት የኤሌክትሪክ ቻርጅ አሉ፦ አዎንታዊና አሉታዊ። ፕሮቶን አዎንታዊ ቻርጅ አለው፤ ኤሌክትሮን ደግሞ አሉታዊ። ሁለቱ በእኩል መጠን ሲገኙ አካሉ ገለልተኛ (neutral) ይሆናል። አንደኛው ከሌላው ቢበዛ አካሉ ተሞልቷል (charged) ይባላል።</p>
+
+  <div class="highlight-box">
+    <strong>Key facts:</strong><br>
+    • Gain electrons → negatively charged. Lose electrons → positively charged.<br>
+    • SI unit of charge: <strong>Coulomb (C)</strong>. 1 C = 6.25 × 10¹⁸ electrons.<br>
+    • Charge of one electron: <strong>e = 1.6 × 10⁻¹⁹ C</strong>.<br>
+    • 1 µC = 10⁻⁶ C; 1 nC = 10⁻⁹ C.<br>
+    • <strong>Conservation of charge:</strong> total charge in an isolated system never changes.<br>
+    • <strong>Quantization of charge:</strong> q = ne, where n is an integer (positive or negative).
+    <span class="am"><strong>ቁልፍ እውነታዎች፦</strong> ኤሌክትሮን ማግኘት → አሉታዊ። ማጣት → አዎንታዊ። የ SI አሃድ ኩሎምብ (C)። e = 1.6×10⁻¹⁹ C። የቻርጅ ጥበቃ ህግ። ቻርጅ በ e ብዜት ብቻ ይመጣል (q = ne)።</span>
+  </div>
+
+  <h3>Formulas</h3>
+  <div class="formula">Charge quantization: q = n · e &nbsp; (n = integer)</div>
+  <div class="formula">e = 1.6 × 10⁻¹⁹ C (elementary charge)</div>
+  <div class="formula">1 C = 6.25 × 10¹⁸ electrons</div>
+
+  <h3>Diagram: Two Types of Charge</h3>
+  <div class="diagram-box">
+    <figure>
+      <svg viewBox="0 0 240 130" role="img" aria-label="Positive and negative charges">
+        <circle cx="70" cy="60" r="24" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+        <text x="70" y="70" fill="#b91c1c" font-size="28" text-anchor="middle" font-weight="bold">+</text>
+        <text x="70" y="115" fill="#5b6472" font-size="11" text-anchor="middle">Positive</text>
+        <circle cx="170" cy="60" r="24" fill="#dbeafe" stroke="#1e40af" stroke-width="2"/>
+        <text x="170" y="70" fill="#1e40af" font-size="28" text-anchor="middle" font-weight="bold">−</text>
+        <text x="170" y="115" fill="#5b6472" font-size="11" text-anchor="middle">Negative</text>
+      </svg>
+      <figcaption>Two types: positive (protons) and negative (electrons).</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 240 130" role="img" aria-label="Like charges repel, unlike attract">
+        <circle cx="60" cy="60" r="18" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+        <text x="60" y="67" fill="#b91c1c" font-size="20" text-anchor="middle" font-weight="bold">+</text>
+        <circle cx="140" cy="60" r="18" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+        <text x="140" y="67" fill="#b91c1c" font-size="20" text-anchor="middle" font-weight="bold">+</text>
+        <text x="100" y="105" fill="#5b6472" font-size="11" text-anchor="middle">Repel</text>
+      </svg>
+      <figcaption>Like charges repel.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 4.1.1 — Number of electrons in a given charge</h4>
+    <p>A body has a charge of −3.2 × 10⁻¹⁹ C. How many excess electrons does it carry?</p>
+    <p class="am">አንድ አካል −3.2×10⁻¹⁹ C ቻርጅ አለው። ስንት ተጨማሪ ኤሌክትሮኖች አሉት?</p>
+    <ol>
+      <li><strong>Given:</strong> q = −3.2 × 10⁻¹⁹ C; e = −1.6 × 10⁻¹⁹ C per electron.</li>
+      <li><strong>Formula:</strong> q = ne → n = q/e.</li>
+      <li><strong>Compute:</strong> n = (−3.2×10⁻¹⁹) / (−1.6×10⁻¹⁹) = 2.</li>
+      <li><strong>Answer:</strong> 2 excess electrons (negative charge = excess electrons).</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> 2 excess electrons. · <span class="am" style="display:inline">መልስ፦ 2 ተጨማሪ ኤሌክትሮኖች።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 4.1.2 — Charge from a known number of electrons</h4>
+    <p>How much negative charge is carried by 5 × 10¹⁰ electrons?</p>
+    <p class="am">5×10¹⁰ ኤሌክትሮኖች ስንት አሉታዊ ቻርጅ ይይዛሉ?</p>
+    <ol>
+      <li><strong>Given:</strong> n = 5 × 10¹⁰; e = 1.6 × 10⁻¹⁹ C.</li>
+      <li><strong>Formula:</strong> q = ne.</li>
+      <li><strong>Compute:</strong> q = (5×10¹⁰)(1.6×10⁻¹⁹) = 8 × 10⁻⁹ C.</li>
+      <li><strong>Answer:</strong> −8 × 10⁻⁹ C = −8 nC.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> q = −8 × 10⁻⁹ C = −8 nC. · <span class="am" style="display:inline">መልስ፦ −8 nC።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Exercise 4.1 — When do you say a body is charged positively?</h4>
+    <p>A body is positively charged when it has lost electrons (or gained protons), so the number of protons exceeds the number of electrons.</p>
+    <p class="am">አንድ አካል ኤሌክትሮን ሲያጣ (ወይም ፕሮቶን ሲያገኝ) አዎንታዊ ቻርጅ ይይዛል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Exercise 4.2 — Conductor with charge +3.2 × 10⁻¹⁹ C. Excess/deficit electrons?</h4>
+    <p><strong>Solution:</strong> Charge is positive → deficit of electrons. n = q/e = 3.2×10⁻¹⁹ / 1.6×10⁻¹⁹ = <strong>2 electrons deficit</strong>.</p>
+    <p class="am">መልስ፦ 2 ኤሌክትሮኖች ጎድለዋል (deficit)።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 4.1.1 — Types of charges in nature?</h4>
+    <p>Two types: <strong>positive</strong> (protons) and <strong>negative</strong> (electrons).</p>
+    <p class="am">መልስ፦ ሁለት ዓይነት — አዎንታዊና አሉታዊ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 4.1.2 — When is a body negatively charged?</h4>
+    <p>When it has gained electrons — the number of electrons exceeds the number of protons.</p>
+    <p class="am">መልስ፦ ኤሌክትሮን ሲያገኝ — የኤሌክትሮኖች ቁጥር ከፕሮቶኖች ሲበዛ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 4.1.3 — What does the law of conservation of charge say?</h4>
+    <p>The total electric charge in an isolated system is constant — charge is neither created nor destroyed, only transferred.</p>
+    <p class="am">መልስ፦ በተናጠል ስርዓት ውስጥ አጠቃላይ ቻርጅ ቋሚ ነው — አይፈጠርም፣ አይጠፋም፤ ይተላለፍ ብቻ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 4.1.4 — What is quantization of charge?</h4>
+    <p>Charge exists only in integral multiples of the elementary charge e: q = ne, where n is an integer.</p>
+    <p class="am">መልስ፦ ቻርጅ በ e ብዜት ብቻ ይመጣል — q = ne።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 4.1.5 — Properties of electric charges</h4>
+    <p>1) Two types (positive, negative). 2) Like charges repel; unlike attract. 3) Quantized (q = ne). 4) Conserved (in isolated systems). 5) Charge resides on the surface of conductors. 6) Charges reside on conductors and are mobile.</p>
+    <p class="am">1) ሁለት ዓይነት 2) ተመሳሳይ ይጣላሉ፣ ተቃራኒ ይሳባሉ 3) በ e ብዜት 4) ይጠበቃል 5) በኮንዳክተር ላይ ብቻ 6) በኮንዳክተር ላይ ይንቀሳቀሳሉ።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-4.1"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 4.2 ==================== -->
+<section id="section-4.2" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 4.2</span>
+  <h2>Methods of Charging a Body</h2>
+
+  <p><strong>Charging</strong> is the process of adding or removing electric charge from a body. There are <strong>three methods</strong>:</p>
+  <p class="am">ቻርጅ ማድረግ ማለት ቻርጅ መጨመር ወይም መቀነስ ነው። ሦስት ዘዴዎች አሉ፦</p>
+
+  <div class="highlight-box">
+    <strong>Three methods:</strong><br>
+    <strong>1. Rubbing (friction):</strong> Two different neutral materials are rubbed together. Electrons transfer from one to the other, giving opposite charges.<br>
+    <strong>2. Conduction (contact):</strong> A charged object touches a neutral object. They end up with the <em>same</em> sign of charge, but weaker.<br>
+    <strong>3. Induction:</strong> A charged object is brought near (but does not touch) a neutral conductor that is temporarily grounded. They end up with <em>opposite</em> signs.
+    <span class="am"><strong>ሦስት ዘዴዎች፦</strong> 1) በመፋታት፦ ሁለት ገለልተኛ ነገሮች ሲፋቱ — ተቃራኒ ቻርጆች። 2) በመንካት (conduction)፦ የተሞላ ነገር ገለልተኛ ነገርን ሲነካ — ተመሳሳይ ቻርጅ ግን ደካማ። 3) በመግቢያ (induction)፦ የተሞላ ነገር ሳይነካ ሲቃረብ — ተቃራኒ ቻርጅ።</span>
+  </div>
+
+  <h3>Diagram: Three Methods of Charging</h3>
+  <div class="diagram-box">
+    <figure>
+      <svg viewBox="0 0 240 110" role="img" aria-label="Charging by friction">
+        <rect x="30" y="40" width="70" height="30" fill="#fff4d6" stroke="#f59f00" stroke-width="2" rx="4"/>
+        <text x="65" y="60" fill="#5b6472" font-size="10" text-anchor="middle">Comb</text>
+        <rect x="140" y="40" width="70" height="30" fill="#e8edff" stroke="#3b5bdb" stroke-width="2" rx="4"/>
+        <text x="175" y="60" fill="#5b6472" font-size="10" text-anchor="middle">Hair</text>
+        <text x="65" y="90" fill="#b91c1c" font-size="10" text-anchor="middle">− after rubbing</text>
+        <text x="175" y="90" fill="#b91c1c" font-size="10" text-anchor="middle">+ after rubbing</text>
+      </svg>
+      <figcaption>Rubbing: opposite charges.</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 240 110" role="img" aria-label="Charging by conduction">
+        <circle cx="70" cy="55" r="22" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+        <text x="70" y="62" fill="#b91c1c" font-size="18" text-anchor="middle" font-weight="bold">+</text>
+        <text x="70" y="95" fill="#5b6472" font-size="10" text-anchor="middle">Charged</text>
+        <circle cx="170" cy="55" r="22" fill="#dbeafe" stroke="#1e40af" stroke-width="2"/>
+        <text x="170" y="62" fill="#1e40af" font-size="18" text-anchor="middle" font-weight="bold">N</text>
+        <text x="170" y="95" fill="#5b6472" font-size="10" text-anchor="middle">Neutral</text>
+        <path d="M 95 55 L 145 55" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowP)"/>
+        <defs><marker id="arrowP" markerWidth="8" markerHeight="5" refX="8" refY="2.5" orient="auto"><polygon points="0 0, 8 2.5, 0 5" fill="#7048e8"/></marker></defs>
+      </svg>
+      <figcaption>Conduction: contact → same sign (weaker).</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 240 110" role="img" aria-label="Charging by induction">
+        <circle cx="70" cy="55" r="22" fill="#dbeafe" stroke="#1e40af" stroke-width="2"/>
+        <text x="70" y="62" fill="#1e40af" font-size="18" text-anchor="middle" font-weight="bold">−</text>
+        <text x="70" y="95" fill="#5b6472" font-size="10" text-anchor="middle">Rod (near)</text>
+        <circle cx="170" cy="55" r="22" fill="#fff4d6" stroke="#f59f00" stroke-width="2"/>
+        <text x="165" y="48" fill="#b91c1c" font-size="14" text-anchor="middle">+</text>
+        <text x="178" y="65" fill="#1e40af" font-size="14" text-anchor="middle">−</text>
+        <text x="170" y="95" fill="#5b6472" font-size="10" text-anchor="middle">Sphere (no touch)</text>
+      </svg>
+      <figcaption>Induction: no contact → opposite sign.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 4.2.1 — Charging by rubbing (comb and hair)</h4>
+    <p>A neutral comb is rubbed with neutral hair. After rubbing, the comb attracts small paper pieces. Explain.</p>
+    <p class="am">ገለልተኛ ማበጠሪያ (comb) በጸጉር ተፋትቶ ትንንሽ ወረቀቶችን ይስባል። ለምን?</p>
+    <ol>
+      <li><strong>Before rubbing:</strong> Both comb and hair are neutral (equal protons and electrons).</li>
+      <li><strong>Rubbing:</strong> Electrons transfer from hair atoms to comb atoms (some materials hold electrons more tightly).</li>
+      <li><strong>After rubbing:</strong> Comb has extra electrons → negatively charged. Hair has lost electrons → positively charged.</li>
+      <li><strong>Effect:</strong> The charged comb attracts neutral paper pieces by induction (polarizing them).</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Comb −ve, hair +ve. · <span class="am" style="display:inline">መልስ፦ ማበጠሪያው −፣ ጸጉሩ +።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 4.2.2 — Charging by conduction (contact)</h4>
+    <p>A +5 µC charged metal sphere touches a neutral metal sphere, then is separated. What happens?</p>
+    <p class="am">+5 µC የተሞላ የብረት ኳስ ገለልተኛ ኳስን ተነክቶ ሲለያይ ምን ይሆናል?</p>
+    <ol>
+      <li><strong>Contact:</strong> Electrons flow from the neutral sphere to the positively charged sphere.</li>
+      <li><strong>Result:</strong> The excess positive charge is shared between both spheres.</li>
+      <li><strong>After separation:</strong> Each sphere has +2.5 µC (assuming identical spheres).</li>
+      <li><strong>Both are positive</strong> — same sign, weaker than original.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Both spheres +2.5 µC. · <span class="am" style="display:inline">መልስ፦ ሁለቱም +2.5 µC።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 4.2.3 — Charging by induction</h4>
+    <p>A negatively charged ebonite rod is brought near a neutral metal sphere (no contact). Describe the sphere's charges.</p>
+    <p class="am">አሉታዊ የተሞላ የኢቦናይት ዘንግ ሳይነካ ወደ ገለልተኛ የብረት ኳስ ሲቀርብ ምን ይሆናል?</p>
+    <ol>
+      <li><strong>Bring rod near:</strong> Free electrons in the metal sphere are repelled to the far side.</li>
+      <li><strong>Near side:</strong> Becomes positive (electron-deficient). <strong>Far side:</strong> Becomes negative (excess electrons).</li>
+      <li><strong>Ground the far side:</strong> Electrons flow to Earth.</li>
+      <li><strong>Remove ground, remove rod:</strong> Sphere is left with net positive charge.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Sphere net +ve (opposite to rod). · <span class="am" style="display:inline">መልስ፦ ኳሱ +፣ ከዘንጉ ተቃራኒ።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 4.2.1 — State the three methods of charging a body</h4>
+    <p>1) Charging by rubbing (friction). 2) Charging by conduction (contact). 3) Charging by induction.</p>
+    <p class="am">መልስ፦ 1) በመፋታት 2) በመንካት 3) በመግቢያ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 4.2.2 — Describe charging by contact and rubbing</h4>
+    <p><strong>By contact:</strong> A charged object touches a neutral one; electrons flow to equalize potential; both end up with the same sign of charge (weaker than the original).</p>
+    <p><strong>By rubbing:</strong> Two different neutral materials are rubbed; electrons transfer from the material with weaker electron hold to the stronger one; the two objects end up with opposite charges.</p>
+    <p class="am">በመንካት፦ የተሞላ አካል ገለልተኛ አካልን ይነካል — ሁለቱም ተመሳሳይ ቻርጅ ያገኛሉ (ደካማ)። በመፋታት፦ ሁለት ገለልተኛ ነገሮች ይፋታሉ — ተቃራኒ ቻርጆች ያገኛሉ።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-4.2"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 4.3 ==================== -->
+<section id="section-4.3" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 4.3</span>
+  <h2>The Electroscope</h2>
+
+  <p><strong>An electroscope</strong> is a sensitive instrument used to <strong>detect</strong> the presence of electric charge, identify its type, compare magnitudes, and determine if a material is a conductor or insulator.</p>
+  <p class="am"><strong>ኤሌክትሮስኮፕ</strong> ቻርጅ መኖሩን፣ ዓይነቱንና መጠኑን ለመለየት የሚያገለግል መሳሪያ ነው።</p>
+
+  <div class="highlight-box">
+    <strong>Structure:</strong> Glass jar + metal rod + metal plate (top) + two thin gold leaves (bottom).<br>
+    <strong>How it works:</strong> When a charged object is brought near the metal plate, charges are redistributed. The gold leaves repel each other (like charges) and diverge. More charge → more divergence.
+    <span class="am"><strong>አወቃቀር፦</strong> የመስታወት ማሰሮ + የብረት ዘንግ + የብረት ሰሌዳ + ሁለት ቀጭን የወርቅ ቅጠሎች። ቻርጅ ሲቃረብ ቅጠሎቹ ይለያያሉ።</span>
+  </div>
+
+  <h3>Diagram: Electroscope</h3>
+  <div class="diagram-box">
+    <figure>
+      <svg viewBox="0 0 220 180" role="img" aria-label="Electroscope">
+        <rect x="60" y="20" width="100" height="140" fill="#f4f6fb" stroke="#5b6472" stroke-width="2" rx="6"/>
+        <line x1="110" y1="20" x2="110" y2="80" stroke="#3b5bdb" stroke-width="3"/>
+        <ellipse cx="110" cy="20" rx="30" ry="6" fill="#dbeafe" stroke="#3b5bdb" stroke-width="2"/>
+        <text x="110" y="15" fill="#5b6472" font-size="9" text-anchor="middle">metal plate</text>
+        <text x="110" y="60" fill="#5b6472" font-size="9" text-anchor="middle">metal rod</text>
+        <line x1="110" y1="80" x2="95" y2="135" stroke="#f59f00" stroke-width="2"/>
+        <line x1="110" y1="80" x2="125" y2="135" stroke="#f59f00" stroke-width="2"/>
+        <text x="110" y="160" fill="#5b6472" font-size="9" text-anchor="middle">gold leaves</text>
+        <text x="170" y="90" fill="#f59f00" font-size="9" text-anchor="middle">diverge</text>
+      </svg>
+      <figcaption>Electroscope: charged leaves diverge.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 4.3.1 — Detecting charge with an electroscope</h4>
+    <p>A positively charged rod is brought near (not touching) the neutral electroscope's plate. Describe what happens.</p>
+    <p class="am">አዎንታዊ የተሞላ ዘንግ ሳይነካ ወደ ገለልተኛ ኤሌክትሮስኮፕ ሲቀርብ ምን ይሆናል?</p>
+    <ol>
+      <li><strong>Neutral electroscope:</strong> Leaves hang down (closed).</li>
+      <li><strong>Bring +ve rod near:</strong> Electrons attracted from leaves &amp; rod up to the plate.</li>
+      <li><strong>Leaves become +ve</strong> (electron-deficient). Plate becomes −ve (excess electrons).</li>
+      <li><strong>Like charges repel:</strong> The two +ve leaves repel each other → they <strong>diverge</strong>.</li>
+      <li><strong>Remove rod:</strong> Charges return to even distribution; leaves fall back together.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Leaves diverge while rod is near; collapse when removed. · <span class="am" style="display:inline">መልስ፦ ዘንጉ ሲቃረብ ቅጠሎቹ ይለያያሉ፤ ሲወገድ ይመለሳሉ።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 4.3.2 — Identifying the charge sign</h4>
+    <p>A negatively charged rod is brought near an electroscope that is already positively charged. Describe what happens.</p>
+    <p class="am">አሉታዊ የተሞላ ዘንግ አስቀድሞ አዎንታዊ ወደ ሆነ ኤሌክትሮስኮፕ ሲቀርብ ምን ይሆናል?</p>
+    <ol>
+      <li><strong>Electroscope is +ve:</strong> Leaves are diverged (both +ve).</li>
+      <li><strong>Bring −ve rod near:</strong> Electrons attracted to plate; more +ve charge pushed to leaves.</li>
+      <li><strong>Result:</strong> Leaves diverge <em>more</em> (more +ve charges on them).</li>
+      <li><strong>If rod were +ve instead:</strong> Leaves would collapse slightly (positive charge pulled up to plate).</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> More divergence → rod is −ve (opposite to electroscope). · <span class="am" style="display:inline">መልስ፦ ቅጠሎቹ በበለጠ ሲለያዩ ዘንጉ − ነው።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 4.3.1 — Function of an electroscope</h4>
+    <p>To detect the presence of electric charge, identify its sign (positive or negative), compare magnitudes, and test whether a material is a conductor or insulator.</p>
+    <p class="am">መልስ፦ ቻርጅ መኖሩን፣ ዓይነቱንና መጠኑን ለመለየት፤ እንዲሁም ኮንዳክተር/ኢንሱሌተር መሆኑን ለመፈተሽ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 4.3.2 — How do you know if an electroscope is charged?</h4>
+    <p>If the leaves are <strong>diverged</strong> (spread apart), the electroscope carries net charge. If leaves hang together (collapsed), it is neutral.</p>
+    <p class="am">መልስ፦ ቅጠሎቹ ከተለያዩ ቻርጅ አለው፤ ካልተለያዩ ገለልተኛ ነው።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-4.3"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 4.5 ==================== -->
+<section id="section-4.5" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 4.5</span>
+  <h2>Coulomb's Law of Electrostatics</h2>
+
+  <p><strong>Coulomb's law</strong> gives the magnitude of the electrostatic force between two point charges. The force is <strong>directly proportional</strong> to the product of the charges and <strong>inversely proportional</strong> to the square of the distance between them.</p>
+  <p class="am"><strong>የኩሎምብ ህግ</strong> በሁለት ነጥብ ቻርጆች መካከል ያለውን የኤሌክትሮስታቲክ ኃይል ይሰጣል። ኃይሉ ከቻርጆቹ ብዜት ጋር ቀጥተኛ፣ ከርቀታቸው ካሬ ጋር ተቃራኒ ነው።</p>
+
+  <h3>Formulas</h3>
+  <div class="formula">F = k · |q₁ · q₂| / r²</div>
+  <div class="formula">k = 1/(4πε₀) ≈ 9 × 10⁹ N·m²/C²</div>
+  <div class="formula">ε₀ = 8.85 × 10⁻¹² C²/(N·m²) (permittivity of free space)</div>
+  <div class="formula">Direction: like charges repel; unlike attract (along the line joining them)</div>
+
+  <h3>Diagram: Coulomb Forces</h3>
+  <div class="diagram-box">
+    <figure>
+      <svg viewBox="0 0 260 100" role="img" aria-label="Attractive force">
+        <circle cx="60" cy="50" r="18" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+        <text x="60" y="57" fill="#b91c1c" font-size="18" text-anchor="middle" font-weight="bold">+</text>
+        <circle cx="200" cy="50" r="18" fill="#dbeafe" stroke="#1e40af" stroke-width="2"/>
+        <text x="200" y="57" fill="#1e40af" font-size="18" text-anchor="middle" font-weight="bold">−</text>
+        <path d="M 80 45 L 180 45" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowL)"/>
+        <path d="M 180 55 L 80 55" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowR)"/>
+        <defs>
+          <marker id="arrowL" markerWidth="8" markerHeight="5" refX="8" refY="2.5" orient="auto"><polygon points="0 0, 8 2.5, 0 5" fill="#7048e8"/></marker>
+          <marker id="arrowR" markerWidth="8" markerHeight="5" refX="8" refY="2.5" orient="auto"><polygon points="8 0, 0 2.5, 8 5" fill="#7048e8"/></marker>
+        </defs>
+        <text x="130" y="90" fill="#5b6472" font-size="10" text-anchor="middle">Attractive (unlike)</text>
+      </svg>
+      <figcaption>Unlike charges attract.</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 260 100" role="img" aria-label="Repulsive force">
+        <circle cx="60" cy="50" r="18" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+        <text x="60" y="57" fill="#b91c1c" font-size="18" text-anchor="middle" font-weight="bold">+</text>
+        <circle cx="200" cy="50" r="18" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+        <text x="200" y="57" fill="#b91c1c" font-size="18" text-anchor="middle" font-weight="bold">+</text>
+        <path d="M 60 45 L 30 45" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowL)"/>
+        <path d="M 200 45 L 230 45" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowL)"/>
+        <text x="130" y="90" fill="#5b6472" font-size="10" text-anchor="middle">Repulsive (like)</text>
+      </svg>
+      <figcaption>Like charges repel.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 4.5.1 — Force between two charges (matric exam)</h4>
+    <p>q₁ = 5.0 µC and q₂ = −12.0 µC, separated by 30 cm. Find the magnitude of the force.</p>
+    <p class="am">q₁ = 5.0 µC እና q₂ = −12.0 µC በ30 ሴ.ሜ ርቀት። የኃይሉን መጠን ፈልግ።</p>
+    <ol>
+      <li><strong>Convert:</strong> q₁ = 5 × 10⁻⁶ C; q₂ = −12 × 10⁻⁶ C; r = 0.30 m.</li>
+      <li><strong>Formula:</strong> F = k |q₁ q₂| / r².</li>
+      <li><strong>Substitute:</strong> F = (9×10⁹)(5×10⁻⁶)(12×10⁻⁶) / (0.30)².</li>
+      <li><strong>Compute numerator:</strong> 9 × 5 × 12 × 10⁻³ = 540 × 10⁻³ = 0.54.</li>
+      <li><strong>Divide:</strong> 0.54 / 0.09 = <strong>6.0 N</strong>.</li>
+      <li><strong>Direction:</strong> Opposite signs → attractive force.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> F = 6.0 N (attractive). · <span class="am" style="display:inline">መልስ፦ 6.0 N፣ የመሳሳብ ኃይል።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 4.5.2 — Force with microcoulomb charges</h4>
+    <p>q₁ = 2 µC and q₂ = −4 µC, 20 cm apart. Find magnitude and direction of the force.</p>
+    <p class="am">q₁ = 2 µC፣ q₂ = −4 µC፣ 20 ሴ.ሜ ርቀት። መጠንና አቅጣጫ ፈልግ።</p>
+    <ol>
+      <li><strong>Convert:</strong> q₁ = 2×10⁻⁶ C; q₂ = −4×10⁻⁶ C; r = 0.20 m.</li>
+      <li><strong>Formula:</strong> F = k |q₁ q₂| / r².</li>
+      <li><strong>Substitute:</strong> F = (9×10⁹)(2×10⁻⁶)(4×10⁻⁶) / (0.04).</li>
+      <li><strong>Numerator:</strong> 72 × 10⁻³ = 0.072.</li>
+      <li><strong>Divide:</strong> 0.072 / 0.04 = <strong>1.8 N</strong>.</li>
+      <li><strong>Direction:</strong> Opposite signs → attractive.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> F = 1.8 N attractive. · <span class="am" style="display:inline">መልስ፦ 1.8 N፣ የመሳሳብ።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 4.5.3 — Finding distance for a given force</h4>
+    <p>Two equal charges of 1.1 × 10⁻⁷ C experience a force of 4.2 × 10⁴ N. How far apart are they?</p>
+    <p class="am">ሁለት እኩል 1.1×10⁻⁷ C ቻርጆች 4.2×10⁴ N ኃይል ይሰማቸዋል። ርቀታቸው ስንት ነው?</p>
+    <ol>
+      <li><strong>Given:</strong> q₁ = q₂ = 1.1×10⁻⁷ C; F = 4.2×10⁴ N.</li>
+      <li><strong>Rearrange:</strong> r = √(k |q₁ q₂| / F).</li>
+      <li><strong>Numerator:</strong> (9×10⁹)(1.1×10⁻⁷)² = 9×10⁹ × 1.21×10⁻¹⁴ = 1.089×10⁻⁴.</li>
+      <li><strong>Divide:</strong> 1.089×10⁻⁴ / 4.2×10⁴ = 2.59×10⁻⁹.</li>
+      <li><strong>Square root:</strong> r ≈ 5.09×10⁻⁵ m = 0.051 mm.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> r ≈ 5.1 × 10⁻⁵ m. · <span class="am" style="display:inline">መልስ፦ 5.1×10⁻⁵ ሜትር።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 4.5.1 — Two charges 1 C and −4 C. Direction of force?</h4>
+    <p>Opposite signs → <strong>attractive force</strong> (toward each other along the joining line).</p>
+    <p class="am">መልስ፦ የመሳሳብ (attractive)።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 4.5.2 — q₁ = 2×10⁻⁶ C and q₂ = −4×10⁻³ C, 30 cm apart. Force?</h4>
+    <p><strong>Step 1:</strong> r = 0.30 m. <strong>Step 2:</strong> F = (9×10⁹)(2×10⁻⁶)(4×10⁻³) / (0.30)².</p>
+    <p><strong>Step 3:</strong> Numerator = 9×2×4×10⁰ = 72. Denominator = 0.09.</p>
+    <p><strong>Step 4:</strong> F = 72 / 0.09 = <strong>800 N</strong> attractive.</p>
+    <p class="am">መልስ፦ 800 N፣ የመሳሳብ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q8 — q₁=2µC, q₂=−4µC, 20 cm apart. Force?</h4>
+    <p><strong>Solution:</strong> F = (9×10⁹)(2×10⁻⁶)(4×10⁻⁶) / (0.20)² = 0.072/0.04 = <strong>1.8 N attractive</strong>.</p>
+    <p class="am">መልስ፦ 1.8 N፣ የመሳሳብ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q9 — Two spheres 4.0 cm apart, F = 1.2×10⁹ N, one has twice the charge (opposite sign). Find charges.</h4>
+    <p><strong>Step 1:</strong> Let charges be q and −2q. |q₁q₂| = 2q².</p>
+    <p><strong>Step 2:</strong> F = k(2q²)/r² → 1.2×10⁹ = (9×10⁹)(2q²)/(0.04)².</p>
+    <p><strong>Step 3:</strong> 1.2×10⁹ × 0.0016 = 18×10⁹ q² → 1.92×10⁶ = 18×10⁹ q².</p>
+    <p><strong>Step 4:</strong> q² = 1.067×10⁻⁴ → q ≈ 1.03×10⁻² C. So charges are ±1.03×10⁻² C and ∓2.06×10⁻² C.</p>
+    <p class="am">መልስ፦ ±1.03×10⁻² C እና ∓2.06×10⁻² C።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q10 — Two equal charges 1.1×10⁻⁷ C, F = 4.2×10⁴ N. Distance?</h4>
+    <p><strong>Solution:</strong> r = √(kq²/F) = √[(9×10⁹)(1.1×10⁻⁷)²/(4.2×10⁴)] = √(1.089×10⁻⁴/4.2×10⁴) = √(2.59×10⁻⁹) ≈ <strong>5.09×10⁻⁵ m</strong>.</p>
+    <p class="am">መልስ፦ 5.09×10⁻⁵ ሜትር።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-4.5"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 4.6 ==================== -->
+<section id="section-4.6" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 4.6</span>
+  <h2>The Electric Field</h2>
+
+  <p><strong>An electric field</strong> is a region around a charge where another charge would experience a force. The field strength <strong>E</strong> is defined as force per unit charge on a positive test charge.</p>
+  <p class="am"><strong>የኤሌክትሪክ መስክ</strong> በቻርጅ ዙሪያ ያለ አካባቢ ሲሆን ሌላ ቻርጅ ኃይል የሚሰማበት ነው። ጥንካሬው E በአንድ አሃድ ቻርጅ ላይ የሚሠራ ኃይል ነው።</p>
+
+  <h3>Formulas</h3>
+  <div class="formula">Electric field: E = F / q &nbsp; [N/C]</div>
+  <div class="formula">Force from field: F = qE</div>
+  <div class="formula">Field of a point charge: E = kq / r²</div>
+  <div class="formula">Direction: radially outward from +ve charge; radially inward toward −ve charge</div>
+
+  <h3>Diagram: Electric Field Lines</h3>
+  <div class="diagram-box">
+    <figure>
+      <svg viewBox="0 0 240 140" role="img" aria-label="Field lines of positive charge">
+        <circle cx="120" cy="70" r="20" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+        <text x="120" y="78" fill="#b91c1c" font-size="20" text-anchor="middle" font-weight="bold">+</text>
+        <line x1="140" y1="70" x2="200" y2="70" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowF)"/>
+        <line x1="100" y1="70" x2="40" y2="70" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowF)"/>
+        <line x1="120" y1="50" x2="120" y2="10" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowF)"/>
+        <line x1="120" y1="90" x2="120" y2="130" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowF)"/>
+        <line x1="134" y1="56" x2="170" y2="20" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowF)"/>
+        <line x1="106" y1="56" x2="70" y2="20" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowF)"/>
+        <line x1="134" y1="84" x2="170" y2="120" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowF)"/>
+        <line x1="106" y1="84" x2="70" y2="120" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowF)"/>
+        <defs><marker id="arrowF" markerWidth="8" markerHeight="5" refX="8" refY="2.5" orient="auto"><polygon points="0 0, 8 2.5, 0 5" fill="#7048e8"/></marker></defs>
+      </svg>
+      <figcaption>Field lines point away from +ve charge.</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 240 140" role="img" aria-label="Field lines of negative charge">
+        <circle cx="120" cy="70" r="20" fill="#dbeafe" stroke="#1e40af" stroke-width="2"/>
+        <text x="120" y="78" fill="#1e40af" font-size="20" text-anchor="middle" font-weight="bold">−</text>
+        <line x1="200" y1="70" x2="140" y2="70" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowF2)"/>
+        <line x1="40" y1="70" x2="100" y2="70" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowF2)"/>
+        <line x1="120" y1="10" x2="120" y2="50" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowF2)"/>
+        <line x1="120" y1="130" x2="120" y2="90" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowF2)"/>
+        <defs><marker id="arrowF2" markerWidth="8" markerHeight="5" refX="8" refY="2.5" orient="auto"><polygon points="0 0, 8 2.5, 0 5" fill="#7048e8"/></marker></defs>
+      </svg>
+      <figcaption>Field lines point toward −ve charge.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Properties of field lines</h3>
+  <ul>
+    <li>Never cross each other.</li>
+    <li>Perpendicular to the surface of a conductor.</li>
+    <li>Originate at +ve charges; terminate at −ve charges.</li>
+    <li>Number of lines ∝ magnitude of charge.</li>
+    <li>Close together where field is strong; far apart where weak.</li>
+  </ul>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 4.6.1 — Electric field of a point charge (matric exam)</h4>
+    <p>Calculate the field due to a 2.0 nC point charge at 5.0 mm away.</p>
+    <p class="am">2.0 nC ቻርጅ በ5.0 ሚሜ ርቀት ላይ የሚፈጥረውን መስክ አስላ።</p>
+    <ol>
+      <li><strong>Given:</strong> q = 2.0×10⁻⁹ C; r = 5.0×10⁻³ m.</li>
+      <li><strong>Formula:</strong> E = kq/r².</li>
+      <li><strong>Substitute:</strong> E = (9×10⁹)(2×10⁻⁹) / (5×10⁻³)².</li>
+      <li><strong>Numerator:</strong> 18. <strong>Denominator:</strong> 25×10⁻⁶.</li>
+      <li><strong>Compute:</strong> 18 / (25×10⁻⁶) = 7.2 × 10⁵ N/C.</li>
+      <li><strong>Direction:</strong> Away from the +ve charge.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> E = 7.2 × 10⁵ N/C, away from charge. · <span class="am" style="display:inline">መልስ፦ 7.2×10⁵ N/C፣ ከቻርጁ ወደ ውጭ።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 4.6.2 — Force on a charge in a field</h4>
+    <p>A 3.50 µC charge is placed in a 250 N/C field pointing east. Find magnitude and direction of the force.</p>
+    <p class="am">3.50 µC ቻርጅ ወደ ምስራቅ 250 N/C መስክ ውስጥ ሲቀመጥ ኃይሉን ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> q = 3.50×10⁻⁶ C; E = 250 N/C, east.</li>
+      <li><strong>Formula:</strong> F = qE.</li>
+      <li><strong>Compute:</strong> F = (3.50×10⁻⁶)(250) = 8.75×10⁻⁴ N.</li>
+      <li><strong>Direction:</strong> Positive charge → force in same direction as E → <strong>east</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> F = 8.75 × 10⁻⁴ N east. · <span class="am" style="display:inline">መልስ፦ 8.75×10⁻⁴ N ወደ ምስራቅ።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 4.6.3 — Field at a distance</h4>
+    <p>Find the field at 2.00 m from a 5.00 mC point charge.</p>
+    <p class="am">ከ5.00 mC ቻርጅ 2.00 ሜትር ርቀት ላይ ያለውን መስክ ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> q = 5.00×10⁻³ C; r = 2.00 m.</li>
+      <li><strong>Formula:</strong> E = kq/r².</li>
+      <li><strong>Substitute:</strong> E = (9×10⁹)(5×10⁻³) / 4.</li>
+      <li><strong>Compute:</strong> E = 45×10⁶ / 4 = <strong>1.125×10⁷ N/C</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> E ≈ 1.13 × 10⁷ N/C outward. · <span class="am" style="display:inline">መልስ፦ 1.13×10⁷ N/C፣ ወደ ውጭ።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 4.6.1 — What is an electric field line?</h4>
+    <p>A field line is an imaginary line drawn so that its tangent at any point gives the direction of the electric field at that point. It shows the path a positive test charge would follow.</p>
+    <p class="am">መልስ፦ የመስኩን አቅጣጫ የሚያሳይ ምናባዊ መስመር።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 4.6.2 — Force on 3.50 µC in 250 N/C field (east)</h4>
+    <p><strong>Solution:</strong> F = qE = (3.50×10⁻⁶)(250) = <strong>8.75×10⁻⁴ N east</strong> (positive charge → same direction as field).</p>
+    <p class="am">መልስ፦ 8.75×10⁻⁴ N ወደ ምስራቅ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 4.6.3 — Field 2.00 m from 5.00 mC charge</h4>
+    <p><strong>Solution:</strong> E = kq/r² = (9×10⁹)(5×10⁻³)/4 = <strong>1.125×10⁷ N/C outward</strong>.</p>
+    <p class="am">መልስ፦ 1.125×10⁷ N/C፣ ወደ ውጭ።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-4.6"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 4.8 ==================== -->
+<section id="section-4.8" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 4.8</span>
+  <h2>Current, Voltage, and Ohm's Law</h2>
+
+  <p><strong>Current (I)</strong> = rate of flow of charge. <strong>Voltage (V)</strong> = work per unit charge (potential difference). <strong>Resistance (R)</strong> = opposition to current flow. Ohm's law links them: V = IR.</p>
+  <p class="am"><strong>አሁንታ (I)</strong> = የቻርጅ ፍሰት መጠን። <strong>ቮልቴጅ (V)</strong> = በአንድ አሃድ ቻርጅ የሚሠራ ሥራ። <strong>መቋቋሚያ (R)</strong> = የቻርጅ ፍሰትን የመቃወም ባህሪ። የኦህም ህግ፦ V = IR።</p>
+
+  <h3>Formulas</h3>
+  <div class="formula">Current: I = Q / t &nbsp; [A = C/s]</div>
+  <div class="formula">Voltage: V = W / Q &nbsp; [V = J/C]</div>
+  <div class="formula">Ohm's Law: V = I R &nbsp; [Ω = V/A]</div>
+  <div class="formula">Resistance from material: R = ρ L / A &nbsp; [Ω]</div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 4.8.1 — Charge from current and time</h4>
+    <p>A current of 0.5 A flows for 10 minutes. Find the total charge.</p>
+    <p class="am">0.5 A ለ10 ደቂቃ ሲፈስ ጠቅላላ ቻርጁን ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> I = 0.5 A; t = 10 min = 600 s.</li>
+      <li><strong>Formula:</strong> Q = I·t.</li>
+      <li><strong>Compute:</strong> Q = 0.5 × 600 = <strong>300 C</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Q = 300 C. · <span class="am" style="display:inline">መልስ፦ 300 C።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 4.8.2 — Work to move a charge across a voltage</h4>
+    <p>How much work moves 2 C across a 12 V potential difference?</p>
+    <p class="am">2 C በ12 V ልዩነት ለማንቀሳቀስ ስንት ሥራ ያስፈልጋል?</p>
+    <ol>
+      <li><strong>Given:</strong> Q = 2 C; V = 12 V.</li>
+      <li><strong>Formula:</strong> W = V·Q.</li>
+      <li><strong>Compute:</strong> W = 12 × 2 = <strong>24 J</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> W = 24 J. · <span class="am" style="display:inline">መልስ፦ 24 J።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 4.8.3 — Ohm's law (bulb example)</h4>
+    <p>A bulb with resistance 1200 Ω is connected to a 220 V source. Find the current.</p>
+    <p class="am">1200 Ω ቡልብ ከ220 V ምንጭ ጋር ሲገናኝ አሁንታውን ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> V = 220 V; R = 1200 Ω.</li>
+      <li><strong>Formula:</strong> I = V/R.</li>
+      <li><strong>Compute:</strong> I = 220/1200 = <strong>0.183 A</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> I ≈ 0.18 A. · <span class="am" style="display:inline">መልስ፦ 0.18 A።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 4.8.4 — Heater at increased voltage (matric exam)</h4>
+    <p>A heater draws 4 A at 60 V. What current does it draw at 120 V?</p>
+    <p class="am">ማሞቂያ በ60 V 4 A ይስባል። በ120 V ስንት A ይስባል?</p>
+    <ol>
+      <li><strong>Step 1 (find R):</strong> R = V/I = 60/4 = 15 Ω.</li>
+      <li><strong>Step 2 (new current):</strong> I = 120/15 = <strong>8 A</strong>.</li>
+      <li><strong>Conclusion:</strong> Doubling voltage doubles current (for constant R).</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> I = 8 A at 120 V. · <span class="am" style="display:inline">መልስ፦ 8 A።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 4.8.5 — Resistivity calculation (matric exam)</h4>
+    <p>A wire 1 m long, 0.3 mm diameter, has resistance 26 Ω at 20 °C. Find resistivity.</p>
+    <p class="am">1 ሜ ርዝመት፣ 0.3 ሚሜ ዲያሜትር፣ 26 Ω መቋቋሚያ ያለው ሽቦ ጥግግት ፈልግ።</p>
+    <ol>
+      <li><strong>Radius:</strong> r = 0.15 mm = 1.5×10⁻⁴ m.</li>
+      <li><strong>Area:</strong> A = πr² = 3.14 × 2.25×10⁻⁸ = 7.07×10⁻⁸ m².</li>
+      <li><strong>Formula:</strong> ρ = R·A/L.</li>
+      <li><strong>Compute:</strong> ρ = (26)(7.07×10⁻⁸) / 1 = 1.84×10⁻⁶ Ω·m.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> ρ ≈ 1.84 × 10⁻⁶ Ω·m (manganese). · <span class="am" style="display:inline">መልስ፦ 1.84×10⁻⁶ Ω·m።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 4.8.1 — Term for flow of charge per unit time?</h4>
+    <p><strong>Electric current</strong> (measured in amperes, A).</p>
+    <p class="am">መልስ፦ የኤሌክትሪክ አሁንታ (A)።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 4.8.2 — Relationship among V, I, R?</h4>
+    <p>Ohm's law: V = IR (current proportional to voltage when R is constant).</p>
+    <p class="am">መልስ፦ V = IR።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 4.8.3 — Potential difference of 1 V — meaning?</h4>
+    <p>1 V means 1 joule of work is done to move 1 coulomb of charge between the two points.</p>
+    <p class="am">መልስ፦ 1 C ለማንቀሳቀስ 1 J ሥራ ያስፈልጋል ማለት ነው።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 4.8.4 — Factors that determine resistance of a conductor?</h4>
+    <p>Length L (directly proportional), cross-sectional area A (inversely proportional), material (resistivity ρ), and temperature.</p>
+    <p class="am">መልስ፦ ርዝመት L፣ መስቀለኛ መስፋፋት A፣ ቁስ (ρ)፣ ሙቀት።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 4.8.5 — Thick vs thin wire — which allows more current?</h4>
+    <p><strong>Thick wire</strong> — larger cross-sectional area → lower resistance → more current for the same voltage.</p>
+    <p class="am">መልስ፦ ወፍራም ሽቦ — የበለጠ አሁንታ ያስተላልፋል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 4.8.6 — Voltage halved, R constant. Current change?</h4>
+    <p>Current is also halved (I = V/R — direct proportion).</p>
+    <p class="am">መልስ፦ አሁንታውም ግማሽ ይሆናል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q15 — Voltage doubled, R unchanged. Current?</h4>
+    <p>Current doubles (I = V/R).</p>
+    <p class="am">መልስ፦ አሁንታው ይጨምራል (በእጥፍ)።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q16 — Copper wire diameter 0.5 mm, ρ = 1.6×10⁻⁸ Ω·m, R = 10 Ω. Length? Diameter doubled — R changes?</h4>
+    <p><strong>Step 1:</strong> A = π(0.25×10⁻³)² = 1.96×10⁻⁷ m².</p>
+    <p><strong>Step 2:</strong> L = R·A/ρ = (10)(1.96×10⁻⁷)/(1.6×10⁻⁸) = <strong>122.7 m</strong>.</p>
+    <p><strong>Step 3:</strong> If diameter doubled → A quadruples → R becomes 1/4 → <strong>2.5 Ω</strong>.</p>
+    <p class="am">መልስ፦ 122.7 ሜትር፤ ዲያሜትር ከተጨመረ R ወደ 2.5 Ω ይቀንሳል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q17 — Aluminum vs copper, same L and R — which has larger diameter?</h4>
+    <p>ρ_Al > ρ_Cu (aluminum is more resistive). For same R and L: A = ρL/R — larger ρ needs larger A. So <strong>aluminum</strong> has the larger diameter.</p>
+    <p class="am">መልስ፦ አሉሚኒየም (የበለጠ ρ) ስላለው ዲያሜትሩ ሰፊ ይሆናል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q18 — V-I values: I = 0.1, 0.2, 0.3, 0.4, 0.5 A; V = 1.5, 3.0, 4.5, 6.0, 7.5 V. R?</h4>
+    <p><strong>Solution:</strong> R = V/I = 1.5/0.1 = 15 Ω (same for all pairs) → <strong>R = 15 Ω</strong>.</p>
+    <p class="am">መልስ፦ 15 Ω።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q19 — 12 V battery, current 2.5 mA. R?</h4>
+    <p><strong>Solution:</strong> I = 2.5×10⁻³ A. R = V/I = 12 / 2.5×10⁻³ = <strong>4800 Ω</strong>.</p>
+    <p class="am">መልስ፦ 4800 Ω።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-4.8"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 4.9 ==================== -->
+<section id="section-4.9" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 4.9</span>
+  <h2>Combination of Resistors</h2>
+
+  <p><strong>Series:</strong> One path — same current through all. <strong>Parallel:</strong> Multiple paths — same voltage across all.</p>
+  <p class="am"><strong>ተከታታይ (Series)፦</strong> አንድ መንገድ — ተመሳሳይ አሁንታ። <strong>ትይዩ (Parallel)፦</strong> በርካታ መንገዶች — ተመሳሳይ ቮልቴጅ።</p>
+
+  <h3>Formulas</h3>
+  <div class="formula">Series: R_eq = R₁ + R₂ + R₃ + … ; I same; V = V₁ + V₂ + …</div>
+  <div class="formula">Parallel: 1/R_eq = 1/R₁ + 1/R₂ + 1/R₃ + … ; V same; I = I₁ + I₂ + …</div>
+
+  <h3>Diagram: Series vs Parallel</h3>
+  <div class="diagram-box">
+    <figure>
+      <svg viewBox="0 0 260 100" role="img" aria-label="Series circuit">
+        <rect x="20" y="40" width="220" height="20" fill="none" stroke="#3b5bdb" stroke-width="2"/>
+        <rect x="60" y="35" width="30" height="30" fill="#dbeafe" stroke="#3b5bdb" stroke-width="2"/>
+        <text x="75" y="55" fill="#1e40af" font-size="11" text-anchor="middle">R1</text>
+        <rect x="115" y="35" width="30" height="30" fill="#dbeafe" stroke="#3b5bdb" stroke-width="2"/>
+        <text x="130" y="55" fill="#1e40af" font-size="11" text-anchor="middle">R2</text>
+        <rect x="170" y="35" width="30" height="30" fill="#dbeafe" stroke="#3b5bdb" stroke-width="2"/>
+        <text x="185" y="55" fill="#1e40af" font-size="11" text-anchor="middle">R3</text>
+        <text x="130" y="85" fill="#5b6472" font-size="10" text-anchor="middle">Series — one path</text>
+      </svg>
+      <figcaption>Series: same current, sum resistance.</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 260 120" role="img" aria-label="Parallel circuit">
+        <rect x="20" y="30" width="220" height="60" fill="none" stroke="#3b5bdb" stroke-width="2"/>
+        <rect x="60" y="25" width="15" height="20" fill="#dbeafe" stroke="#3b5bdb" stroke-width="2"/>
+        <text x="67" y="20" fill="#1e40af" font-size="11" text-anchor="middle">R1</text>
+        <rect x="115" y="25" width="15" height="20" fill="#dbeafe" stroke="#3b5bdb" stroke-width="2"/>
+        <text x="122" y="20" fill="#1e40af" font-size="11" text-anchor="middle">R2</text>
+        <rect x="170" y="25" width="15" height="20" fill="#dbeafe" stroke="#3b5bdb" stroke-width="2"/>
+        <text x="177" y="20" fill="#1e40af" font-size="11" text-anchor="middle">R3</text>
+        <text x="130" y="110" fill="#5b6472" font-size="10" text-anchor="middle">Parallel — multiple paths</text>
+      </svg>
+      <figcaption>Parallel: same voltage, reciprocal sum.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 4.9.1 — Series resistors (matric exam)</h4>
+    <p>R₁=12 Ω, R₂=3 Ω, R₃=4 Ω, R₄=5 Ω in series with 12 V battery. Find R_eq and current.</p>
+    <p class="am">R₁=12 Ω፣ R₂=3 Ω፣ R₃=4 Ω፣ R₄=5 Ω ተከታታይ በ12 V ባትሪ። R_eq እና አሁንታ ፈልግ።</p>
+    <ol>
+      <li><strong>R_eq:</strong> 12 + 3 + 4 + 5 = <strong>24 Ω</strong>.</li>
+      <li><strong>Current:</strong> I = V/R_eq = 12/24 = <strong>0.50 A</strong>.</li>
+      <li><strong>Same current in all resistors:</strong> 0.50 A each.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> R_eq = 24 Ω; I = 0.50 A. · <span class="am" style="display:inline">መልስ፦ R_eq = 24 Ω፤ I = 0.50 A።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 4.9.2 — Parallel resistors (matric exam)</h4>
+    <p>R₁=12 Ω, R₂=12 Ω, R₃=6 Ω in parallel with 12 V source. Find R_eq and each branch current.</p>
+    <p class="am">R₁=12 Ω፣ R₂=12 Ω፣ R₃=6 Ω ትይዩ በ12 V። R_eq እና የእያንዳንዱን አሁንታ ፈልግ።</p>
+    <ol>
+      <li><strong>R_eq:</strong> 1/R_eq = 1/12 + 1/12 + 1/6 = 1/12 + 1/12 + 2/12 = 4/12.</li>
+      <li><strong>R_eq = 3 Ω</strong>.</li>
+      <li><strong>Total current:</strong> I = 12/3 = 4 A.</li>
+      <li><strong>Branch currents:</strong> I₁ = 12/12 = 1 A; I₂ = 1 A; I₃ = 12/6 = 2 A.</li>
+      <li><strong>Check:</strong> 1+1+2 = 4 A ✓</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> R_eq = 3 Ω; I = 4 A; branches 1A, 1A, 2A. · <span class="am" style="display:inline">መልስ፦ R_eq = 3 Ω፤ I = 4 A።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 4.9.3 — Series-parallel combination (matric exam)</h4>
+    <p>R₁=4 Ω in series with a parallel combination of R₂=5 Ω and R₃=9 Ω. Voltage = 6 V. Find R_eq and current through R₁.</p>
+    <p class="am">R₁=4 Ω ከ R₂=5 Ω እና R₃=9 Ω ትይዩ ጋር ተከታታይ። 6 V። R_eq እና አሁንታ ፈልግ።</p>
+    <ol>
+      <li><strong>Parallel part:</strong> 1/R_p = 1/5 + 1/9 = 9/45 + 5/45 = 14/45.</li>
+      <li><strong>R_p</strong> = 45/14 ≈ 3.21 Ω.</li>
+      <li><strong>Total:</strong> R_eq = 4 + 3.21 = <strong>7.21 Ω</strong>.</li>
+      <li><strong>Current:</strong> I = 6/7.21 = <strong>0.83 A</strong>.</li>
+      <li><strong>Current through R₁ = total current</strong> (it's in series) = 0.83 A.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> R_eq = 7.21 Ω; I = 0.83 A. · <span class="am" style="display:inline">መልስ፦ R_eq = 7.21 Ω፤ I = 0.83 A።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 4.9.1 — Which circuit has more than one path?</h4>
+    <p><strong>Parallel</strong> circuit.</p>
+    <p class="am">መልስ፦ ትይዩ (Parallel)።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 4.9.2 — 4 Ω, 8 Ω, 12 Ω in series with 24 V battery</h4>
+    <p><strong>(a) R_eq:</strong> 4 + 8 + 12 = <strong>24 Ω</strong>.</p>
+    <p><strong>(b) Current:</strong> I = 24/24 = <strong>1 A</strong>.</p>
+    <p><strong>(c) Current in each resistor:</strong> same = <strong>1 A</strong> (series).</p>
+    <p class="am">መልስ፦ R_eq = 24 Ω፤ I = 1 A፤ በሁሉም ተመሳሳይ 1 A።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 4.9.3 — Wire cut into 5 pieces, parallel, R_eq = 2 Ω. Original R?</h4>
+    <p><strong>Step 1:</strong> Each piece has resistance R/5.</p>
+    <p><strong>Step 2:</strong> Five in parallel: 1/R_eq = 5/(R/5) = 25/R.</p>
+    <p><strong>Step 3:</strong> 1/2 = 25/R → R = <strong>50 Ω</strong>.</p>
+    <p class="am">መልስ፦ 50 Ω።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 4.9.4 — Car headlights parallel vs series</h4>
+    <p><strong>Parallel (actual):</strong> Each headlight receives 12 V fully — if one fails, the other still works. <strong>Series:</strong> Each would receive only 6 V — dimmer; if one fails, both go out.</p>
+    <p class="am">መልስ፦ በትይዩ እያንዳንዱ 12 V ያገኛል፤ በተከታታይ ግን ግማሽ ብቻ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q20 — 9 V battery in series with 0.2, 0.3, 0.4, 0.5, 12 Ω. Current?</h4>
+    <p><strong>Solution:</strong> R_eq = 0.2 + 0.3 + 0.4 + 0.5 + 12 = 13.4 Ω. I = 9/13.4 = <strong>0.672 A</strong>.</p>
+    <p class="am">መልስ፦ 0.672 A።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q21 — How many 176 Ω resistors in parallel to carry 5 A at 220 V?</h4>
+    <p><strong>Step 1:</strong> Required R_eq = V/I = 220/5 = 44 Ω.</p>
+    <p><strong>Step 2:</strong> For n resistors in parallel: R_eq = R/n → 44 = 176/n → n = 4.</p>
+    <p><strong>Answer:</strong> <strong>4 resistors</strong>.</p>
+    <p class="am">መልስ፦ 4 ሬዚስተሮች።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q22 — Three 6 Ω resistors to get (i) 9 Ω, (ii) 4 Ω</h4>
+    <p><strong>(i) 9 Ω:</strong> Two in parallel (6∥6 = 3 Ω) + one in series (3 + 6 = 9 Ω).</p>
+    <p><strong>(ii) 4 Ω:</strong> Two in series (12 Ω) parallel with one (6 Ω): 1/R = 1/12 + 1/6 = 3/12 → R = 4 Ω.</p>
+    <p class="am">መልስ፦ (i) ሁለቱ ትይዩ (3 Ω) + አንድ ተከታታይ = 9 Ω። (ii) ሁለቱ ተከታታይ (12 Ω) + አንድ ትይዩ = 4 Ω።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q23 — Why is series arrangement not used for domestic circuits?</h4>
+    <p>1) If one appliance fails, all go out. 2) All appliances share the voltage — no independent control. 3) You cannot switch appliances on/off separately. 4) High total resistance reduces current.</p>
+    <p class="am">መልስ፦ አንድ ሲበላሽ ሁሉም ይጠፋል፤ ራሱን የቻለ ቁጥጥር አይቻልም።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q24 — How does resistance vary with area?</h4>
+    <p>R is <strong>inversely proportional</strong> to A: R = ρL/A. Larger area → smaller resistance.</p>
+    <p class="am">መልስ፦ ከ A ጋር ተቃራኒ — ሰፊ ስፋት = አነስተኛ R።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-4.9"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 4.11 ==================== -->
+<section id="section-4.11" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 4.11</span>
+  <h2>Electrical Safety, Voltmeter &amp; Ammeter</h2>
+
+  <p><strong>Voltmeter:</strong> measures voltage, connected in <em>parallel</em> with the component, high resistance. <strong>Ammeter:</strong> measures current, connected in <em>series</em>, low resistance.</p>
+  <p class="am"><strong>ቮልትሜትር፦</strong> ቮልቴጅ ይለካል፤ በትይዩ (parallel) ይገናኛል። <strong>አሚትር፦</strong> አሁንታ ይለካል፤ በተከታታይ (series) ይገናኛል።</p>
+
+  <h3>Diagram: Meter Connections</h3>
+  <div class="diagram-box">
+    <figure>
+      <svg viewBox="0 0 260 100" role="img" aria-label="Ammeter in series">
+        <rect x="20" y="40" width="220" height="20" fill="none" stroke="#3b5bdb" stroke-width="2"/>
+        <rect x="60" y="35" width="30" height="30" fill="#dbeafe" stroke="#3b5bdb" stroke-width="2"/>
+        <text x="75" y="55" fill="#1e40af" font-size="10" text-anchor="middle">R</text>
+        <circle cx="150" cy="50" r="18" fill="#fff4d6" stroke="#f59f00" stroke-width="2"/>
+        <text x="150" y="55" fill="#92400e" font-size="10" text-anchor="middle" font-weight="bold">A</text>
+        <text x="130" y="90" fill="#5b6472" font-size="10" text-anchor="middle">Ammeter in SERIES</text>
+      </svg>
+      <figcaption>Ammeter: series connection.</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 260 100" role="img" aria-label="Voltmeter in parallel">
+        <rect x="20" y="40" width="220" height="20" fill="none" stroke="#3b5bdb" stroke-width="2"/>
+        <rect x="100" y="35" width="30" height="30" fill="#dbeafe" stroke="#3b5bdb" stroke-width="2"/>
+        <text x="115" y="55" fill="#1e40af" font-size="10" text-anchor="middle">R</text>
+        <circle cx="115" cy="90" r="14" fill="#fff4d6" stroke="#f59f00" stroke-width="2"/>
+        <text x="115" y="94" fill="#92400e" font-size="10" text-anchor="middle" font-weight="bold">V</text>
+        <line x1="100" y1="40" x2="105" y2="76" stroke="#f59f00" stroke-width="1.5"/>
+        <line x1="130" y1="40" x2="125" y2="76" stroke="#f59f00" stroke-width="1.5"/>
+        <text x="130" y="112" fill="#5b6472" font-size="10" text-anchor="middle">Voltmeter in PARALLEL</text>
+      </svg>
+      <figcaption>Voltmeter: parallel connection.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 4.11.1 — Fuse and safety (matric exam)</h4>
+    <p>Why is a fuse used in a circuit?</p>
+    <p class="am">ለምን ፊውዝ (fuse) በወረዳ ውስጥ ያገለግላል?</p>
+    <ol>
+      <li><strong>Fuse</strong> = thin metal wire with low melting point, inserted in series.</li>
+      <li><strong>Normal current:</strong> Fuse stays intact — no damage.</li>
+      <li><strong>Fault (short circuit):</strong> Current surges, fuse wire heats up and melts.</li>
+      <li><strong>Circuit breaks</strong> — protects appliances from damage.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Fuse = sacrificial element that breaks the circuit at excessive current. · <span class="am" style="display:inline">መልስ፦ ፊውዝ ከመጠን በላይ አሁንታ ሲፈስ ይቀልጦ ወረዳውን ያቋርጣል።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 4.11.2 — Grounding safety</h4>
+    <p>How does a three-prong plug protect the user?</p>
+    <p class="am">ሶስት እግር (three-prong) መሰኪያ ተጠቃሚውን እንዴት ይጠብቃል?</p>
+    <ol>
+      <li><strong>Two wires:</strong> Live (220 V) + neutral (0 V) — power the device.</li>
+      <li><strong>Third wire:</strong> Case ground — connected to the metal case and to Earth.</li>
+      <li><strong>Fault scenario:</strong> If live touches case, current flows through ground wire (low resistance), not user.</li>
+      <li><strong>Result:</strong> Fuse/breaker trips; user safe.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Third wire → safest path for fault current. · <span class="am" style="display:inline">መልስ፦ ሶስተኛው ሽቦ ለተጠቃሚው ደህንነት አስተማማኝ መንገድ ይሰጣል።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 4.11.1 — Factors determining damage from electric shock</h4>
+    <p>1) Magnitude of current. 2) Path through the body (e.g., hand-to-hand crosses the heart). 3) Duration of exposure. 4) Frequency of the current. 5) Wet vs dry skin.</p>
+    <p class="am">መልስ፦ የአሁንታ መጠን፣ በሰውነት ውስጥ የሚያልፈው መንገድ፣ የቆይታ ጊዜ፣ ድግግሞሽ፣ እርጥብ/ደረቅ ቆዳ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 4.11.2 — Why dry hands before touching switches?</h4>
+    <p>Water (especially with dissolved ions) is a good conductor. Wet skin has much lower resistance → dangerous current can flow through the body. Dry skin provides insulation.</p>
+    <p class="am">መልስ፦ ውሃ አምጪ ነው፤ እርጥብ ቆዳ መቋቋሚያው ዝቅተኛ ስለሆነ አደገኛ አሁንታ ያስፈልጋል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q26 — Don't flick switches with wet hands; don't throw water on electric fire</h4>
+    <p>Same reason: water conducts electricity. Wet hands lower body resistance → shock. Water on electric fire conducts current back to you → shock. Use sand or CO₂ extinguisher instead.</p>
+    <p class="am">መልስ፦ ውሃ ኤሌክትሪክ ያስተላልፋል፤ አደጋ ያስከትላል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q27 — Why is wet skin's resistance smaller?</h4>
+    <p>Water + salts (from sweat) provide mobile ions, turning the skin from a dry insulator into a wet conductor. Lower resistance → more current for the same voltage → more danger.</p>
+    <p class="am">መልስ፦ ጨውና ውሃ አዮኖችን ስለሚያመጡ ቆዳው ኮንዳክተር ይሆናል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q28 — What determines severity of a shock?</h4>
+    <p>Current magnitude (most critical), duration, path through body, and skin resistance. Voltage alone is not enough — 100 V through dry skin may be safe, 30 V through wet skin can be lethal.</p>
+    <p class="am">መልስ፦ በዋናነት የአሁንታው መጠን፣ የቆይታ ጊዜ፣ የመንገድ አቅጣጫ፣ የቆዳ መቋቋሚያ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q29 — Fuses prevent shock hazards?</h4>
+    <p>Fuses interrupt when current exceeds a set threshold (e.g., 15 A). They protect wiring from overheating and prevent fire. They do NOT directly prevent small currents (5-100 mA) that cause shock — for that, GFCIs are needed.</p>
+    <p class="am">መልስ፦ ፊውዞች ከመጠን በላይ አሁንታን ይገድባሉ፤ ግን ትንሽ ሾክ አያግዱም — ለዚያ GFCI ያስፈልጋል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q30 — Heater plugged in, lights go out</h4>
+    <p>The heater draws a large current that exceeds the circuit's rated capacity → the fuse blows or circuit breaker trips. This is overloading protection. Fix: use lower-power devices or rewire with higher capacity.</p>
+    <p class="am">መልስ፦ ማሞቂያው ከመጠን በላይ አሁንታ ስለሚስብ ፊውዙ ተቀልጦ ወይም ብሬከሩ ተጠልፎ መብራቶቹ ጠፉ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q31 — Why is 30 A fuse dangerous in a 15 A circuit?</h4>
+    <p>The 15 A circuit's wiring is rated for only 15 A. A 30 A fuse will allow 30 A to flow before melting → wires overheat and can start a fire BEFORE the fuse protects. Always match fuse rating to circuit rating.</p>
+    <p class="am">መልስ፦ የ15 A ወረዳ 30 A ፊውዝ ካለው ሽቦው ከመጠን በላይ ሞቆ እሳት ሊያስነሳ ይችላል።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-4.11"></div>
+</div>
+</section>
+
+<!-- ==================== ASSESSMENT ==================== -->
+<section id="section-assessment" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Assessment</span>
+  <h2>100 Advanced Questions · 50 Conceptual + 50 Numerical</h2>
+  <p style="color:var(--muted);font-size:.88rem">Matric &amp; entrance-exam level. Every question shows full step-by-step solutions after you answer.</p>
+
+  <div class="progress-bar-container" aria-label="Progress">
+    <div class="progress-bar-fill" id="overall-progress-fill"></div>
+  </div>
+  <p id="progress-text" style="font-size:.85rem;color:var(--muted)">0 of 100 answered</p>
+
+  <div class="filter-bar">
+    <label for="filter-type" class="sr-only">Filter by type</label>
+    <select id="filter-type">
+      <option value="all">All types</option>
+      <option value="conceptual">Conceptual only</option>
+      <option value="numerical">Numerical only</option>
+    </select>
+    <label for="filter-topic" class="sr-only">Filter by topic</label>
+    <select id="filter-topic">
+      <option value="all">All topics</option>
+      <option value="4.1">4.1 Charges</option>
+      <option value="4.2">4.2 Charging</option>
+      <option value="4.3">4.3 Electroscope</option>
+      <option value="4.5">4.5 Coulomb's Law</option>
+      <option value="4.6">4.6 Electric Field</option>
+      <option value="4.8">4.8 Ohm's Law</option>
+      <option value="4.9">4.9 Resistor Combinations</option>
+      <option value="4.11">4.11 Safety &amp; Meters</option>
+    </select>
+    <button class="btn btn-secondary" id="reset-progress-btn" style="margin-left:auto">Reset progress</button>
+  </div>
+
+  <div id="assessment-questions-container"></div>
+</div>
+</section>
+
+<script>
+(function(){
+'use strict';
+
+// ============ LESSON QUIZZES ============
+const lessonQuizzes = {
+  '4.1': [
+    { q:'An object gains electrons. Its charge becomes:',
+      options:['Positive','Negative','Neutral','Zero'], correct:1,
+      explanation:'Step 1: Electrons carry negative charge. Step 2: Adding electrons to a neutral body gives it net negative charge. Step 3: Losing electrons makes it positive. Step 4: Answer: negative. · ደረጃ 1፦ ኤሌክትሮን አሉታዊ ነው። ደረጃ 2፦ መጨመር አሉታዊ ያደርገዋል። ደረጃ 3፦ ማጣት አዎንታዊ ያደርገዋል። መልስ፦ አሉታዊ።' },
+    { q:'The SI unit of electric charge is:',
+      options:['Ampere','Coulomb','Volt','Ohm'], correct:1,
+      explanation:'Step 1: Ampere is current (C/s). Volt is potential difference (J/C). Ohm is resistance (V/A). Step 2: The SI unit of charge itself is the Coulomb (C). Step 3: 1 C = 6.25 × 10¹⁸ electrons. Step 4: Answer: Coulomb. · ደረጃ 1፦ አሚትር አሁንታ፣ ቮልት ቮልቴጅ፣ ኦህም መቋቋሚያ። ደረጃ 2፦ የቻርጅ አሃድ ኩሎምብ (C)። መልስ፦ ኩሎምብ።' },
+    { q:'A body has charge +3.2×10⁻¹⁹ C. How many electrons is it deficient (missing)?',
+      options:['1','2','3','5'], correct:1,
+      explanation:'Step 1: Positive charge means electrons were lost. Step 2: n = q/e = 3.2×10⁻¹⁹ / 1.6×10⁻¹⁹. Step 3: = 2. Step 4: Answer: 2 electrons missing. · ደረጃ 1፦ አዎንታዊ ቻርጅ ኤሌክትሮን መጥፋት ማለት ነው። ደረጃ 2፦ n = 3.2×10⁻¹⁹ / 1.6×10⁻¹⁹ = 2። መልስ፦ 2 ኤሌክትሮኖች ጎድለዋል።' },
+    { q:'The law of conservation of charge states:',
+      options:['Charge can be created by rubbing','Total charge in an isolated system remains constant','Charge can be destroyed','Only positive charges are conserved'], correct:1,
+      explanation:'Step 1: Charge is neither created nor destroyed — it only transfers. Step 2: In an isolated system (no charge in/out), the total charge is constant. Step 3: Rubbing transfers charge between objects but total is conserved. Step 4: Answer: total charge in an isolated system remains constant. · ደረጃ 1፦ ቻርጅ አይፈጠርም፣ አይጠፋም። ደረጃ 2፦ በተናጠል ስርዓት ውስጥ አጠቃላይ ቻርጅ ቋሚ ነው። መልስ፦ አጠቃላይ ቻርጅ ቋሚ ነው።' }
+  ],
+  '4.2': [
+    { q:'Charging by rubbing typically leaves the two bodies with:',
+      options:['Same charge','Opposite charges','Both neutral','Both positive'], correct:1,
+      explanation:'Step 1: Electrons transfer from one material to another during rubbing. Step 2: One gains electrons (−ve), one loses electrons (+ve). Step 3: The two end up with opposite signs. Step 4: Answer: opposite charges. · ደረጃ 1፦ ኤሌክትሮኖች ከአንድ ወደ ሌላ ይተላለፋሉ። ደረጃ 2፦ አንዱ −፣ ሌላው + ይሆናል። መልስ፦ ተቃራኒ ቻርጆች።' },
+    { q:'Charging by conduction leaves both bodies with:',
+      options:['Same sign of charge','Opposite signs','No charge','Both neutral'], correct:0,
+      explanation:'Step 1: In conduction (contact), electrons flow to equalize. Step 2: Charge is shared; if one was +ve and the other neutral, both become +ve (weaker). Step 3: Same sign, weaker magnitude. Step 4: Answer: same sign. · ደረጃ 1፦ በመንካት ኤሌክትሮኖች ይፈሳሉ። ደረጃ 2፦ ቻርጁ ይጋራል። መልስ፦ ተመሳሳይ ምልክት።' },
+    { q:'Charging by induction leaves the charged and uncharged bodies with:',
+      options:['Same sign','Opposite signs','Both neutral','Both positive'], correct:1,
+      explanation:'Step 1: A charged rod is brought near (not touching) a neutral sphere. Step 2: Charges redistribute; grounding drains one type. Step 3: Final charge on sphere is opposite to the rod. Step 4: Answer: opposite signs. · ደረጃ 1፦ ዘንጉ ሳይነካ ይቀርባል። ደረጃ 2፦ ቻርጆች ይከፋፈላሉ። መልስ፦ ተቃራኒ ምልክት።' },
+    { q:'A neutral comb is rubbed with neutral hair. After rubbing:',
+      options:['Both neutral','Both positive','Comb −ve, hair +ve (or vice versa)','Comb +ve, hair −ve only'], correct:2,
+      explanation:'Step 1: Before: both neutral. Step 2: Rubbing transfers electrons from hair to comb (or vice versa depending on materials). Step 3: Opposite signs — comb attracts paper. Step 4: Answer: opposite signs. · ደረጃ 1፦ መጀመሪያ ሁለቱም ገለልተኛ ናቸው። ደረጃ 2፦ በመፋታት ኤሌክትሮኖች ይተላለፋሉ። ደረጃ 3፦ ተቃራኒ ቻርጆች ይሆናሉ። መልስ፦ ተቃራኒ።' }
+  ],
+  '4.3': [
+    { q:'The main purpose of an electroscope is to:',
+      options:['Measure voltage','Detect the presence of electric charge','Store charge','Measure resistance'], correct:1,
+      explanation:'Step 1: Electroscope has thin gold leaves that diverge when charged. Step 2: Its main use is detecting charge presence and sign. Step 3: It does not measure precise voltage or store charge. Step 4: Answer: detect electric charge. · ደረጃ 1፦ ቅጠሎቹ በቻርጅ ሲለያዩ ያሳያሉ። ደረጃ 2፦ ዋና ሥራው ቻርጅ መኖሩን ማወቅ ነው። መልስ፦ ቻርጅ ማወቅ።' },
+    { q:'When a positively charged rod is brought near (not touching) a neutral electroscope, the leaves:',
+      options:['Remain closed','Diverge','Melt','Sparks fly'], correct:1,
+      explanation:'Step 1: +ve rod attracts electrons up to plate. Step 2: Leaves lose electrons → become +ve. Step 3: Two +ve leaves repel → diverge. Step 4: Answer: diverge. · ደረጃ 1፦ ዘንጉ ኤሌክትሮኖችን ወደ ሰሌዳ ይስባል። ደረጃ 2፦ ቅጠሎቹ + ይሆናሉ። ደረጃ 3፦ ተመሳሳይ ስለሆኑ ይጣላሉ። መልስ፦ ይለያያሉ።' },
+    { q:'If the leaves of an electroscope are already diverged and you bring a rod of the SAME sign close, the leaves will:',
+      options:['Diverge more','Collapse slightly','Stay exactly the same','Melt'], correct:0,
+      explanation:'Step 1: Leaves are +ve (assuming +ve electroscope). Step 2: Bring +ve rod near — it repels +ve charges down to the leaves. Step 3: Leaves get even more +ve → repel more → diverge more. Step 4: Answer: diverge more. · ደረጃ 1፦ ቅጠሎቹ + ናቸው። ደረጃ 2፦ ተመሳሳይ ዘንግ + ተጨማሪ ይጣላሉ። መልስ፦ በበለጠ ይለያያሉ።' },
+    { q:'If you bring the OPPOSITE sign near a charged electroscope, the leaves will:',
+      options:['Diverge more','Collapse slightly (move closer together)','Melt','Stay the same'], correct:1,
+      explanation:'Step 1: Positive electroscope, bring −ve rod near. Step 2: −ve rod attracts the +ve charges to the plate. Step 3: Leaves lose +ve charge → repel less → collapse. Step 4: Answer: collapse slightly. · ደረጃ 1፦ ኤሌክትሮስኮፑ +፣ ዘንጉ −። ደረጃ 2፦ ዘንጉ + ቻርጆችን ይስባል። ደረጃ 3፦ ቅጠሎቹ ቻርጅ ያጣሉ → ይመለሳሉ። መልስ፦ ይመለሳሉ።' }
+  ],
+  '4.5': [
+    { q:'Coulomb\'s law states force between two charges is proportional to:',
+      options:['q₁ × q₂ / r','q₁ × q₂ / r²','q₁ + q₂ / r²','q₁ − q₂ / r²'], correct:1,
+      explanation:'Step 1: F ∝ q₁q₂ (product of charges). Step 2: F ∝ 1/r² (inverse square of distance). Step 3: Combine: F = k q₁q₂ / r². Step 4: Answer: q₁q₂/r². · ደረጃ 1፦ F ∝ q₁q₂። ደረጃ 2፦ F ∝ 1/r²። ደረጃ 3፦ F = kq₁q₂/r²። መልስ፦ q₁q₂/r²።' },
+    { q:'Two charges of +2 µC and +3 µC are 6 cm apart. The force is:',
+      options:['Attractive','Repulsive','Zero','Not defined'], correct:1,
+      explanation:'Step 1: Both charges are positive (+2 µC, +3 µC). Step 2: Like charges repel. Step 3: The force is repulsive. Step 4: Answer: repulsive. · ደረጃ 1፦ ሁለቱም + ናቸው። ደረጃ 2፦ ተመሳሳይ ይጣላሉ። መልስ፦ ይጣላሉ።' },
+    { q:'If the distance between two charges is doubled, the force becomes:',
+      options:['Double','Half','One quarter','Four times'], correct:2,
+      explanation:'Step 1: F ∝ 1/r². Step 2: If r → 2r, then F → F/(2²) = F/4. Step 3: Force becomes one quarter. Step 4: Answer: one quarter. · ደረጃ 1፦ F ∝ 1/r²። ደረጃ 2፦ r ቢጨምር F ይቀንሳል (÷4)። መልስ፦ ሩብ።' },
+    { q:'The value of Coulomb\'s constant k is approximately:',
+      options:['9 × 10⁹ N·m²/C²','1.6 × 10⁻¹⁹ N·m²/C²','8.85 × 10⁻¹² N·m²/C²','6.25 × 10¹⁸ N·m²/C²'], correct:0,
+      explanation:'Step 1: k = 1/(4πε₀) = 9 × 10⁹ N·m²/C². Step 2: Option B is the elementary charge e. Step 3: Option C is ε₀ (permittivity). Step 4: Answer: 9 × 10⁹ N·m²/C². · ደረጃ 1፦ k = 9×10⁹ N·m²/C²። ደረጃ 2፦ B = e, C = ε₀። መልስ፦ 9×10⁹።' }
+  ],
+  '4.6': [
+    { q:'The SI unit of electric field strength is:',
+      options:['N/C','C/N','N·m/C','C·m/N'], correct:0,
+      explanation:'Step 1: E = F/q → N/C (or V/m). Step 2: N/C is the standard unit. Step 3: C/N is the reciprocal. Step 4: Answer: N/C. · ደረጃ 1፦ E = F/q → N/C። መልስ፦ N/C።' },
+    { q:'Electric field lines originate at ______ and terminate at ______:',
+      options:['Negative charges, positive charges','Positive charges, negative charges','Neutral charges, positive charges','Positive charges, neutral charges'], correct:1,
+      explanation:'Step 1: By convention, field lines follow the direction a positive test charge would move. Step 2: Positive test charge is repelled by +ve charge → lines point away from +ve. Step 3: Attracted toward −ve → lines point toward −ve. Step 4: Answer: from +ve, to −ve. · ደረጃ 1፦ መስመሮች የ + ቻርጅ አቅጣጫ ይከተላሉ። መልስ፦ ከ+ ወደ −።' },
+    { q:'Two field lines never cross because:',
+      options:['There are no field lines','At a crossing point, there would be two directions for the field — impossible','They are too thin','Physics forbids it without reason'], correct:1,
+      explanation:'Step 1: Each point in space has only one field direction. Step 2: If two lines crossed, that point would have two field directions — contradictory. Step 3: So field lines never cross. Step 4: Answer: it would imply two field directions at one point. · ደረጃ 1፦ እያንዳንዱ ነጥብ አንድ አቅጣጫ ብቻ አለው። መልስ፦ ሁለት አቅጣጫ ስለማይቻል አይገናኙም።' },
+    { q:'Electric field strength at distance r from a point charge q is:',
+      options:['kq/r','kq/r²','kq²/r²','kq/r³'], correct:1,
+      explanation:'Step 1: E = F/q_test = (k q q_test / r²) / q_test. Step 2: = kq/r². Step 3: Inverse square dependence on r. Step 4: Answer: kq/r². · ደረጃ 1፦ E = F/q_test። ደረጃ 2፦ = kq/r²። መልስ፦ kq/r²።' }
+  ],
+  '4.8': [
+    { q:'The relationship V = IR is called:',
+      options:['Coulomb\'s law','Ohm\'s law','Faraday\'s law','Kirchhoff\'s law'], correct:1,
+      explanation:'Step 1: V = IR connects voltage, current, resistance. Step 2: Discovered by Georg Simon Ohm. Step 3: Valid for ohmic materials at constant temperature. Step 4: Answer: Ohm\'s law. · ደረጃ 1፦ V = IR ቮልቴጅ፣ አሁንታ፣ መቋቋሚያ ያገናኛል። ደረጃ 2፦ በኦህም የተገኘ። መልስ፦ የኦህም ህግ።' },
+    { q:'If current through a conductor is 0.5 A for 4 seconds, the charge is:',
+      options:['0.5 C','2 C','4 C','8 C'], correct:1,
+      explanation:'Step 1: Q = I × t. Step 2: = 0.5 × 4. Step 3: = 2 C. Step 4: Answer: 2 C. · ደረጃ 1፦ Q = I×t። ደረጃ 2፦ = 0.5×4 = 2 C። መልስ፦ 2 C።' },
+    { q:'If voltage is halved and resistance is unchanged, current becomes:',
+      options:['Double','Half','Same','Four times'], correct:1,
+      explanation:'Step 1: I = V/R. Step 2: If V → V/2 and R unchanged, I → I/2. Step 3: Current halves. Step 4: Answer: half. · ደረጃ 1፦ I = V/R። ደረጃ 2፦ V ግማሽ ሲሆን I ግማሽ። መልስ፦ ግማሽ።' },
+    { q:'Resistance of a conductor depends on:',
+      options:['Only length','Only area','Length, area, material, temperature','Only material'], correct:2,
+      explanation:'Step 1: R = ρL/A. Step 2: ρ depends on material and temperature. Step 3: Length L (direct) and area A (inverse) also matter. Step 4: Answer: all four factors. · ደረጃ 1፦ R = ρL/A። ደረጃ 2፦ ρ፣ L፣ A፣ ሙቀት ሁሉም ይጎዳሉ። መልስ፦ አራቱም።' }
+  ],
+  '4.9': [
+    { q:'In a series circuit, the current:',
+      options:['Splits at junctions','Is the same everywhere','Is zero','Doubles at each resistor'], correct:1,
+      explanation:'Step 1: Series = one path for charge. Step 2: Charge entering any point equals charge leaving. Step 3: So current is the same throughout. Step 4: Answer: same everywhere. · ደረጃ 1፦ ተከታታይ = አንድ መንገድ። ደረጃ 2፦ አሁንታ ተመሳሳይ ነው። መልስ፦ ተመሳሳይ።' },
+    { q:'In a parallel circuit, the voltage across each branch:',
+      options:['Adds up','Is the same','Halves','Doubles'], correct:1,
+      explanation:'Step 1: All branches connect across the same two points. Step 2: Potential difference is between those same two points. Step 3: So V is the same across each branch. Step 4: Answer: same for all branches. · ደረጃ 1፦ ቅርንጫፎቹ በተመሳሳይ ሁለት ነጥቦች ተገናኝተዋል። ደረጃ 2፦ ቮልቴጁ ተመሳሳይ ነው። መልስ፦ ተመሳሳይ።' },
+    { q:'Equivalent resistance of 3 Ω and 6 Ω in parallel:',
+      options:['9 Ω','2 Ω','4.5 Ω','1 Ω'], correct:1,
+      explanation:'Step 1: 1/R_eq = 1/3 + 1/6 = 2/6 + 1/6 = 3/6. Step 2: 1/R_eq = 1/2 → R_eq = 2 Ω. Step 3: Less than the smallest ✓ Step 4: Answer: 2 Ω. · ደረጃ 1፦ 1/R = 1/3+1/6 = 1/2። ደረጃ 2፦ R = 2 Ω። መልስ፦ 2 Ω።' },
+    { q:'Equivalent resistance of 3 Ω and 6 Ω in series:',
+      options:['9 Ω','2 Ω','4.5 Ω','18 Ω'], correct:0,
+      explanation:'Step 1: R_eq = R₁ + R₂ (series). Step 2: = 3 + 6 = 9 Ω. Step 3: Greater than either ✓ Step 4: Answer: 9 Ω. · ደረጃ 1፦ R = 3+6። ደረጃ 2፦ = 9 Ω። መልስ፦ 9 Ω።' }
+  ],
+  '4.11': [
+    { q:'A voltmeter is connected:',
+      options:['In series with the component','In parallel with the component','In place of the component','Behind the battery'], correct:1,
+      explanation:'Step 1: Voltmeter measures voltage (potential difference) across a component. Step 2: Only a parallel connection has the same voltage as the component. Step 3: High resistance of voltmeter → draws little current. Step 4: Answer: parallel. · ደረጃ 1፦ ቮልትሜትር ቮልቴጅ ይለካል። ደረጃ 2፦ በትይዩ ይገናኛል። መልስ፦ በትይዩ።' },
+    { q:'An ammeter is connected:',
+      options:['In parallel','In series with the component','Behind the battery','Across the source'], correct:1,
+      explanation:'Step 1: Ammeter measures current. Step 2: Only series connection has the same current as the component. Step 3: Low resistance of ammeter → doesn\'t affect current. Step 4: Answer: series. · ደረጃ 1፦ አሚትር አሁንታ ይለካል። ደረጃ 2፦ በተከታታይ ይገናኛል። መልስ፦ በተከታታይ።' },
+    { q:'The purpose of a fuse in a circuit is to:',
+      options:['Increase current','Reduce voltage','Break the circuit if current is too high','Store charge'], correct:2,
+      explanation:'Step 1: Fuse is a thin wire with a low melting point. Step 2: Excessive current heats it → melts → circuit breaks. Step 3: Protects against short-circuit and overload. Step 4: Answer: break the circuit at excessive current. · ደረጃ 1፦ ፊውዝ ቀጭን ሽቦ ነው። ደረጃ 2፦ ከመጠን በላይ አሁንታ ሲፈስ ይቀልጣል። መልስ፦ ወረዳውን ያቋርጣል።' },
+    { q:'Why is water dangerous when using electrical devices?',
+      options:['Water is an insulator','Water conducts electricity well and lowers skin resistance','Water creates voltage','Water melts wires'], correct:1,
+      explanation:'Step 1: Pure water is a poor conductor, but tap/body water contains ions. Step 2: Ions make water conductive. Step 3: Wet skin has much lower resistance → more current passes through body → shock risk. Step 4: Answer: water conducts electricity and lowers skin resistance. · ደረጃ 1፦ ውሃ አዮኖች አሉት። ደረጃ 2፦ ኮንዳክተር ይሆናል። ደረጃ 3፦ የቆዳ መቋቋሚያ ይቀንሳል። መልስ፦ ውሃ ኤሌክትሪክ ያስተላልፋል።' }
+  ]
+};
+
+function renderLessonQuiz(lessonId){
+  const c = document.getElementById('lesson-quiz-'+lessonId);
+  if(!c) return;
+  const items = lessonQuizzes[lessonId];
+  let h = '';
+  items.forEach(function(item, idx){
+    const qid = 'L-'+lessonId+'-'+idx;
+    h += '<div class="question-block" data-qid="'+qid+'">';
+    h += '<div class="question-text">Q'+(idx+1)+'. '+item.q+'</div>';
+    h += '<div class="option-list">';
+    item.options.forEach(function(opt, oi){
+      h += '<button class="option-btn" data-correct="'+(oi===item.correct)+'" data-index="'+oi+'">'+opt+'</button>';
+    });
+    h += '</div>';
+    h += '<div class="feedback" id="fb-'+qid+'"></div>';
+    h += '<div class="solution-details" id="sol-'+qid+'"></div>';
+    h += '</div>';
+  });
+  c.innerHTML = h;
+}
+['4.1','4.2','4.3','4.5','4.6','4.8','4.9','4.11'].forEach(renderLessonQuiz);
+
+// ============ 100 ASSESSMENT QUESTIONS ============
+const conceptualData = [
+  {t:'4.1',d:'challenging',q:'An object gains electrons. Its charge becomes:',o:['Positive','Negative','Neutral','Zero'],c:1,
+   e:'Step 1: Electrons are negatively charged. Step 2: Adding electrons to a neutral body → net negative charge. Step 3: Losing electrons → net positive. Step 4: Answer: negative. · ደረጃ 1፦ ኤሌክትሮን አሉታዊ ነው። ደረጃ 2፦ መጨመር አሉታዊ ያደርጋል። ደረጃ 3፦ ማጣት አዎንታዊ ያደርጋል። መልስ፦ አሉታዊ።'},
+  {t:'4.1',d:'challenging',q:'A neutral body has:',o:['Only positive charges','Only negative charges','Equal numbers of positive and negative charges','Zero protons'],c:2,
+   e:'Step 1: Neutral means net zero charge. Step 2: Protons (+) equal electrons (−) in number. Step 3: They cancel. Step 4: Answer: equal numbers. · ደረጃ 1፦ ገለልተኛ = ዜሮ ቻርጅ። ደረጃ 2፦ ፕሮቶንና ኤሌክትሮን እኩል ቁጥር። መልስ፦ እኩል ቁጥር።'},
+  {t:'4.1',d:'challenging',q:'Charge is quantized means:',o:['It can only be + or −','It comes in multiples of e = 1.6×10⁻¹⁹ C','It is always zero','It is continuous'],c:1,
+   e:'Step 1: "Quantized" means discrete, not continuous. Step 2: Charge exists as q = ne where n is an integer. Step 3: The elementary quantum is e. Step 4: Answer: multiples of e. · ደረጃ 1፦ ብዜት ማለት የተለያዩ ክፍሎች ማለት ነው። ደረጃ 2፦ q = ne። መልስ፦ የ e ብዜት።'},
+  {t:'4.1',d:'challenging',q:'Total charge in an isolated system:',o:['Increases with time','Decreases with time','Remains constant','Oscillates'],c:2,
+   e:'Step 1: Law of conservation of charge. Step 2: Isolated = no charge leaves or enters. Step 3: Total charge is constant. Step 4: Answer: remains constant. · ደረጃ 1፦ የቻርጅ ጥበቃ ህግ። ደረጃ 2፦ ምንም አይገባም አይወጣም። መልስ፦ ቋሚ ነው።'},
+  {t:'4.1',d:'challenging',q:'A body has 4 excess electrons. Its charge is:',o:['+6.4×10⁻¹⁹ C','−6.4×10⁻¹⁹ C','+1.6×10⁻¹⁹ C','−1.6×10⁻¹⁹ C'],c:1,
+   e:'Step 1: Excess electrons → negative charge. Step 2: q = 4 × (−1.6×10⁻¹⁹). Step 3: = −6.4×10⁻¹⁹ C. Step 4: Answer: −6.4×10⁻¹⁹ C. · ደረጃ 1፦ ትርፍ ኤሌክትሮን → አሉታዊ። ደረጃ 2፦ q = 4×(−1.6×10⁻¹⁹)። መልስ፦ −6.4×10⁻¹⁹ C።'},
+  {t:'4.1',d:'challenging',q:'Like charges ______, unlike charges ______.',o:['Attract, repel','Repel, attract','Neutralize, attract','Attract, neutralize'],c:1,
+   e:'Step 1: Two +ve or two −ve → repel. Step 2: One +ve, one −ve → attract. Step 3: Fundamental rule. Step 4: Answer: repel, attract. · ደረጃ 1፦ ተመሳሳይ → ይጣላሉ። ደረጃ 2፦ ተቃራኒ → ይሳባሉ። መልስ፦ ይጣላሉ፣ ይሳባሉ።'},
+  {t:'4.1',d:'challenging',q:'1 Coulomb of charge equals how many electrons?',o:['1.6 × 10⁻¹⁹','6.25 × 10¹⁸','9 × 10⁹','8.85 × 10⁻¹²'],c:1,
+   e:'Step 1: n = Q/e = 1 C / 1.6×10⁻¹⁹ C/electron. Step 2: = 6.25 × 10¹⁸ electrons. Step 3: This is a standard result. Step 4: Answer: 6.25 × 10¹⁸. · ደረጃ 1፦ n = 1/(1.6×10⁻¹⁹)። ደረጃ 2፦ = 6.25×10¹⁸። መልስ፦ 6.25×10¹⁸።'},
+  {t:'4.1',d:'challenging',q:'If a body has deficit of 5 electrons, its charge is:',o:['−8×10⁻¹⁹ C','+8×10⁻¹⁹ C','−5×10⁻¹⁹ C','+5×10⁻¹⁹ C'],c:1,
+   e:'Step 1: Deficit of electrons → positive charge. Step 2: q = 5 × 1.6×10⁻¹⁹. Step 3: = 8×10⁻¹⁹ C. Step 4: Answer: +8×10⁻¹⁹ C. · ደረጃ 1፦ ጉድለት → +። ደረጃ 2፦ q = 5×1.6×10⁻¹⁹። መልስ፦ +8×10⁻¹⁹ C።'},
+
+  {t:'4.2',d:'challenging',q:'Charging by friction leaves two bodies with:',o:['Same charge','Opposite charges','Both neutral','Both positive'],c:1,
+   e:'Step 1: Rubbing transfers electrons from one to another. Step 2: One gains (−ve), one loses (+ve). Step 3: Opposite charges result. Step 4: Answer: opposite charges. · ደረጃ 1፦ በመፋታት ኤሌክትሮኖች ይተላለፋሉ። ደረጃ 2፦ አንዱ −፣ ሌላው +። መልስ፦ ተቃራኒ።'},
+  {t:'4.2',d:'challenging',q:'Charging by conduction involves:',o:['Bringing charges near without contact','Direct contact between charged and neutral','Rubbing two bodies','Grounding'],c:1,
+   e:'Step 1: "Conduction" literally means "by contact". Step 2: Charge flows through the contact point. Step 3: Both end up with same sign, weaker. Step 4: Answer: direct contact. · ደረጃ 1፦ "Conduction" ማለት መንካት ነው። መልስ፦ ቀጥተኛ መንካት።'},
+  {t:'4.2',d:'challenging',q:'In charging by induction, the final charge on the sphere is:',o:['Same as the inducing rod','Opposite to the inducing rod','Neutral','Undefined'],c:1,
+   e:'Step 1: Rod near sphere causes charge redistribution. Step 2: Grounding removes one type. Step 3: Remaining charge is opposite to the rod. Step 4: Answer: opposite sign. · ደረጃ 1፦ ዘንጉ ሳይነካ ሲቀርብ ቻርጆች ይከፋፈላሉ። ደረጃ 2፦ መሬት አንዱን ያስወግዳል። መልስ፦ ተቃራኒ ምልክት።'},
+  {t:'4.2',d:'challenging',q:'Which method does NOT require contact?',o:['Friction','Conduction','Induction','None of the above'],c:2,
+   e:'Step 1: Friction requires rubbing (contact). Step 2: Conduction requires touching. Step 3: Induction works with the charged object NEAR but NOT touching. Step 4: Answer: induction. · ደረጃ 1፦ Friction መንካት ይፈልጋል። ደረጃ 2፦ Conduction መንካት ይፈልጋል። ደረጃ 3፦ Induction መንካት አይፈልግም። መልስ፦ induction።'},
+  {t:'4.2',d:'challenging',q:'When a charged rod touches a neutral metal sphere (with grounding), the sphere ends up:',o:['Same charge as rod','Opposite charge','Neutral','Depends on grounding'],c:1,
+   e:'Step 1: This describes induction with grounding. Step 2: Electrons either flow to ground or from ground. Step 3: Result: sphere is opposite to rod. Step 4: Answer: opposite. · ደረጃ 1፦ ይህ induction ነው። ደረጃ 2፦ ውጤቱ ከዘንጉ ተቃራኒ ነው። መልስ፦ ተቃራኒ።'},
+  {t:'4.2',d:'challenging',q:'A plastic comb rubbed on hair attracts small paper pieces because:',o:['Comb is magnetic','Charged comb polarizes neutral paper','Paper is charged','Both are neutral'],c:1,
+   e:'Step 1: Comb becomes charged by friction. Step 2: Neutral paper is polarized by the charged comb. Step 3: Polarized paper is attracted. Step 4: Answer: comb polarizes paper. · ደረጃ 1፦ Comb በመፋታት ይሞላል። ደረጃ 2፦ ወረቀቱ ይስባል። መልስ፦ Comb ወረቀቱን polarize ያደርጋል።'},
+
+  {t:'4.3',d:'challenging',q:'The diverging of gold leaves in an electroscope indicates:',o:['No charge','Presence of charge','Too much current','High voltage'],c:1,
+   e:'Step 1: Leaves get same-sign charges from induction. Step 2: Same signs repel. Step 3: Divergence indicates charge presence. Step 4: Answer: presence of charge. · ደረጃ 1፦ ቅጠሎቹ ተመሳሳይ ቻርጅ ያገኛሉ። ደረጃ 2፦ ይጣላሉ። መልስ፦ ቻርጅ መኖር።'},
+  {t:'4.3',d:'challenging',q:'An electroscope with diverged leaves is brought near a positive rod. Leaves diverge MORE. The electroscope was:',o:['Positive','Negative','Neutral','Impossible to tell'],c:0,
+   e:'Step 1: Positive rod repels positive charges down to the leaves. Step 2: Leaves gain +ve charge → repel more. Step 3: So the electroscope must already be +ve. Step 4: Answer: positive. · ደረጃ 1፦ + ዘንግ + ቻርጅ ወደ ቅጠሎች ይገፋል። ደረጃ 2፦ ይበልጥ ይለያያሉ። መልስ፦ ኤሌክትሮስኮፑ + ነበር።'},
+  {t:'4.3',d:'challenging',q:'After the charged rod is removed from near an electroscope, the leaves:',o:['Stay diverged','Collapse (come back together)','Fly off','Melt'],c:1,
+   e:'Step 1: With rod near, charges are separated → divergence. Step 2: Remove rod → charges redistribute uniformly. Step 3: No more net charge on leaves → collapse. Step 4: Answer: collapse. · ደረጃ 1፦ ዘንጉ ሲወገድ ቻርጆች ይመለሳሉ። ደረጃ 2፦ ቅጠሎቹ ይዘጋሉ። መልስ፦ ይመለሳሉ።'},
+  {t:'4.3',d:'challenging',q:'An electroscope can be used to test whether a material is a conductor or insulator:',o:['By observing if it can charge the electroscope','By measuring temperature','By weighing','By colour change'],c:0,
+   e:'Step 1: If a material can conduct charge to the electroscope, the leaves diverge. Step 2: If not, they don\'t. Step 3: So it tests conductivity. Step 4: Answer: by observing if it transfers charge. · ደረጃ 1፦ ቻርጅ ማስተላለፍ ይችል እንደሆነ በመመልከት። መልስ፦ ቻርጅ ማስተላለፍ መቻሉን።'},
+  {t:'4.3',d:'challenging',q:'If a negative rod is brought near a neutral electroscope, the leaves become:',o:['Negative','Positive','Neutral','Zero'],c:0,
+   e:'Step 1: −ve rod repels electrons downward. Step 2: Electrons accumulate in the leaves. Step 3: Leaves become −ve. Step 4: Answer: negative. · ደረጃ 1፦ − ዘንግ ኤሌክትሮኖችን ወደ ታች ይገፋል። ደረጃ 2፦ ቅጠሎቹ − ይሆናሉ። መልስ፦ አሉታዊ።'},
+  {t:'4.3',d:'challenging',q:'When a charged electroscope\'s leaves are diverged and you touch the plate with your finger:',o:['Leaves diverge more','Leaves collapse (discharge via your body to ground)','Nothing happens','Electroscope explodes'],c:1,
+   e:'Step 1: Touch = contact with your body → ground path. Step 2: Charge flows to ground through you. Step 3: Electroscope neutralizes → leaves collapse. Step 4: Answer: collapse. · ደረጃ 1፦ መንካት = ወደ መሬት መንገድ። ደረጃ 2፦ ቻርጅ ወደ መሬት ይፈሳል። መልስ፦ ይመለሳሉ።'},
+
+  {t:'4.5',d:'challenging',q:'Coulomb\'s force between two charges is:',o:['Directly proportional to distance','Inversely proportional to distance','Inversely proportional to distance squared','Independent of distance'],c:2,
+   e:'Step 1: F = k q₁q₂ / r². Step 2: F ∝ 1/r². Step 3: Inverse square law. Step 4: Answer: inversely proportional to r². · ደረጃ 1፦ F = kq₁q₂/r²። ደረጃ 2፦ F ∝ 1/r²። መልስ፦ ተቃራኒ ከ r²።'},
+  {t:'4.5',d:'challenging',q:'If both charges are doubled, the force:',o:['Stays same','Doubles','Quadruples','Halves'],c:2,
+   e:'Step 1: F = k q₁q₂/r². Step 2: New F = k(2q₁)(2q₂)/r² = 4 × old F. Step 3: Quadruples. Step 4: Answer: quadruples. · ደረጃ 1፦ ሁለቱም ቢጨመሩ F×4። መልስ፦ አራት እጥፍ።'},
+  {t:'4.5',d:'challenging',q:'If distance is tripled, the force becomes:',o:['1/3','1/6','1/9','1/27'],c:2,
+   e:'Step 1: F ∝ 1/r². Step 2: New F = old F × (1/3)² = old F / 9. Step 3: Answer: 1/9. · ደረጃ 1፦ F ∝ 1/r²። ደረጃ 2፦ r→3r → F÷9። መልስ፦ 1/9።'},
+  {t:'4.5',d:'challenging',q:'Two identical charges of 1 µC each are 10 cm apart. The force is:',o:['Attractive, 0.9 N','Repulsive, 0.9 N','Repulsive, 9 N','Attractive, 90 N'],c:1,
+   e:'Step 1: Both +ve → repulsive. Step 2: F = (9×10⁹)(1×10⁻⁶)²/(0.1)². Step 3: = 9×10⁻³/0.01 = 0.9 N. Step 4: Answer: repulsive, 0.9 N. · ደረጃ 1፦ ሁለቱም + ናቸው → ይጣላሉ። ደረጃ 2፦ F = 0.9 N። መልስ፦ ይጣላሉ፣ 0.9 N።'},
+  {t:'4.5',d:'challenging',q:'The constant k = 1/(4πε₀) has value:',o:['9 × 10⁹ N·m²/C²','1.6 × 10⁻¹⁹ C','8.85 × 10⁻¹² C²/(N·m²)','6.25 × 10¹⁸ C'],c:0,
+   e:'Step 1: k = Coulomb\'s constant. Step 2: = 9×10⁹ N·m²/C². Step 3: ε₀ = 8.85×10⁻¹². Step 4: Answer: 9×10⁹. · ደረጃ 1፦ k = 9×10⁹። መልስ፦ 9×10⁹።'},
+  {t:'4.5',d:'challenging',q:'Electrostatic force between two charges is directed:',o:['Perpendicular to line joining them','Along line joining them','In a circle','Randomly'],c:1,
+   e:'Step 1: Coulomb\'s force is a central force. Step 2: It acts along the line connecting the two charges. Step 3: Attractive if opposite, repulsive if same. Step 4: Answer: along the joining line. · ደረጃ 1፦ ኃይሉ በሁለቱን ቻርጆች በሚያገናኘው መስመር ላይ ነው። መልስ፦ በተገናኘው መስመር።'},
+  {t:'4.5',d:'challenging',q:'Two charges +2 µC and −2 µC are 30 cm apart. The force is:',o:['Repulsive 0.4 N','Attractive 0.4 N','Attractive 4 N','Repulsive 4 N'],c:1,
+   e:'Step 1: Opposite signs → attractive. Step 2: F = (9×10⁹)(2×10⁻⁶)(2×10⁻⁶)/(0.3)² = 0.036/0.09 = 0.4 N. Step 4: Answer: attractive 0.4 N. · ደረጃ 1፦ ተቃራኒ ስለሆኑ ይሳባሉ። ደረጃ 2፦ F = 0.4 N። መልስ፦ 0.4 N፣ ትስብ።'},
+  {t:'4.5',d:'challenging',q:'If the force between two charges is F, and the distance is halved (charges same), the new force is:',o:['F/2','F','2F','4F'],c:3,
+   e:'Step 1: F ∝ 1/r². Step 2: r → r/2 → F → F × 4. Step 3: Answer: 4F. · ደረጃ 1፦ F ∝ 1/r²። ደረጃ 2፦ r→r/2 → F×4። መልስ፦ 4F።'},
+
+  {t:'4.6',d:'challenging',q:'The electric field is defined as:',o:['Force × charge','Force per unit charge','Charge per force','Force per unit area'],c:1,
+   e:'Step 1: E = F/q. Step 2: It measures force on a test charge per unit charge. Step 3: Unit: N/C. Step 4: Answer: force per unit charge. · ደረጃ 1፦ E = F/q። መልስ፦ በአንድ አሃድ ቻርጅ የሚሠራ ኃይል።'},
+  {t:'4.6',d:'challenging',q:'Electric field lines point:',o:['From −ve to +ve charges','From +ve to −ve charges','Randomly','Only outward'],c:1,
+   e:'Step 1: By convention, field lines show direction of force on a positive test charge. Step 2: Positive test charge repelled by +ve → away. Step 3: Attracted to −ve → toward. Step 4: Answer: from +ve to −ve. · ደረጃ 1፦ የመስመሮች አቅጣጫ የ + ቻርጅ ኃይል አቅጣጫ ነው። መልስ፦ ከ+ ወደ −።'},
+  {t:'4.6',d:'challenging',q:'Two field lines from different charges:',o:['Can cross','Never cross','Merge into one','Go backwards'],c:1,
+   e:'Step 1: If they crossed, that point would have two field directions. Step 2: A field has only one direction at each point. Step 3: So they never cross. Step 4: Answer: never cross. · ደረጃ 1፦ ቢገናኙ ሁለት አቅጣጫ ይኖራል። ደረጃ 2፦ ይህ አይቻልም። መልስ፦ አይገናኙም።'},
+  {t:'4.6',d:'challenging',q:'Field strength at distance r from point charge q is:',o:['kq/r','kq/r²','kq²/r²','k²q/r²'],c:1,
+   e:'Step 1: E = F/q_test. Step 2: F = kqq_test/r². Step 3: Divide by q_test: E = kq/r². Step 4: Answer: kq/r². · ደረጃ 1፦ E = F/q_test = kq/r²። መልስ፦ kq/r²።'},
+  {t:'4.6',d:'challenging',q:'The unit of electric field strength is:',o:['N/C','C/N','N·m/C','V·C'],c:0,
+   e:'Step 1: E = F/q → N/C. Step 2: Equivalently V/m. Step 3: Both are valid; N/C is most common. Step 4: Answer: N/C. · ደረጃ 1፦ E = F/q → N/C። መልስ፦ N/C።'},
+  {t:'4.6',d:'challenging',q:'A negative charge placed in an E field pointing right will feel a force:',o:['To the right','To the left','Upward','Zero'],c:1,
+   e:'Step 1: F = qE. Step 2: q is negative → force is opposite to E. Step 3: E points right → force on −ve charge points left. Step 4: Answer: left. · ደረጃ 1፦ F = qE። ደረጃ 2፦ q − ስለሆነ ኃይሉ ተቃራኒ ነው። መልስ፦ ወደ ግራ።'},
+
+  {t:'4.8',d:'challenging',q:'Electric current is defined as:',o:['Total charge in a circuit','Rate of flow of charge','Voltage per charge','Resistance per length'],c:1,
+   e:'Step 1: I = Q/t. Step 2: Rate at which charge flows past a point. Step 3: Unit: C/s = A. Step 4: Answer: rate of flow of charge. · ደረጃ 1፦ I = Q/t። መልስ፦ የቻርጅ ፍሰት መጠን።'},
+  {t:'4.8',d:'challenging',q:'Ohm\'s law states:',o:['V = I/R','V = IR','I = VR','R = VI'],c:1,
+   e:'Step 1: Ohm\'s law: V = IR. Step 2: Voltage directly proportional to current when R is constant. Step 3: Valid for ohmic materials. Step 4: Answer: V = IR. · ደረጃ 1፦ V = IR። መልስ፦ V = IR።'},
+  {t:'4.8',d:'challenging',q:'A 12 V battery drives 3 A through a resistor. R?',o:['36 Ω','4 Ω','0.25 Ω','15 Ω'],c:1,
+   e:'Step 1: R = V/I. Step 2: = 12/3. Step 3: = 4 Ω. Step 4: Answer: 4 Ω. · ደረጃ 1፦ R = 12/3። መልስ፦ 4 Ω።'},
+  {t:'4.8',d:'challenging',q:'If 6 C flows in 2 s, the current is:',o:['12 A','3 A','0.33 A','8 A'],c:1,
+   e:'Step 1: I = Q/t. Step 2: = 6/2. Step 3: = 3 A. Step 4: Answer: 3 A. · ደረጃ 1፦ I = 6/2 = 3 A። መልስ፦ 3 A።'},
+  {t:'4.8',d:'challenging',q:'If R doubles and V is unchanged, current:',o:['Doubles','Halves','Same','Quadruples'],c:1,
+   e:'Step 1: I = V/R. Step 2: R → 2R → I → I/2. Step 3: Answer: halves. · ደረጃ 1፦ I = V/R። ደረጃ 2፦ R 2R → I ግማሽ። መልስ፦ ግማሽ።'},
+  {t:'4.8',d:'challenging',q:'Resistance of a wire depends on:',o:['Only voltage','Only current','Length, area, material, temperature','Only temperature'],c:2,
+   e:'Step 1: R = ρL/A. Step 2: ρ depends on material and temperature. Step 3: L and A also matter. Step 4: Answer: all four. · ደረጃ 1፦ R = ρL/A። መልስ፦ ሁሉም አራት።'},
+  {t:'4.8',d:'challenging',q:'The unit of resistivity is:',o:['Ω','Ω/m','Ω·m','Ω/m²'],c:2,
+   e:'Step 1: R = ρL/A. Step 2: ρ = RA/L. Step 3: Units: Ω × m² / m = Ω·m. Step 4: Answer: Ω·m. · ደረጃ 1፦ ρ = RA/L። ደረጃ 2፦ አሃድ Ω·m። መልስ፦ Ω·m።'},
+  {t:'4.8',d:'challenging',q:'A thick wire has ______ resistance than a thin wire of the same length and material.',o:['Higher','Lower','Same','Zero'],c:1,
+   e:'Step 1: R ∝ 1/A. Step 2: Thick wire has larger A. Step 3: Larger A → smaller R. Step 4: Answer: lower. · ደረጃ 1፦ R ∝ 1/A። ደረጃ 2፦ ሰፊ A → ትንሽ R። መልስ፦ ያነሰ።'},
+
+  {t:'4.9',d:'challenging',q:'In a series circuit, the current:',o:['Splits','Is the same everywhere','Increases','Decreases'],c:1,
+   e:'Step 1: One path for charge. Step 2: Charge entering = charge leaving. Step 3: Current is same throughout. Step 4: Answer: same everywhere. · ደረጃ 1፦ አንድ መንገድ። መልስ፦ ተመሳሳይ።'},
+  {t:'4.9',d:'challenging',q:'In a parallel circuit, the voltage:',o:['Adds up','Is the same across each branch','Halves','Doubles'],c:1,
+   e:'Step 1: All branches connect to the same two terminals. Step 2: Potential difference is the same. Step 3: Voltage across each branch = battery voltage. Step 4: Answer: same across each branch. · ደረጃ 1፦ ሁሉም ቅርንጫፎች በተመሳሳይ ተርሚናሎች ናቸው። መልስ፦ ተመሳሳይ።'},
+  {t:'4.9',d:'challenging',q:'Equivalent resistance of 2 Ω and 2 Ω in parallel:',o:['4 Ω','2 Ω','1 Ω','0.5 Ω'],c:2,
+   e:'Step 1: 1/R_eq = 1/2 + 1/2 = 1. Step 2: R_eq = 1 Ω. Step 3: Half of each. Step 4: Answer: 1 Ω. · ደረጃ 1፦ 1/R = 1/2+1/2 = 1። መልስ፦ 1 Ω።'},
+  {t:'4.9',d:'challenging',q:'Equivalent resistance of 2 Ω and 2 Ω in series:',o:['4 Ω','2 Ω','1 Ω','0.5 Ω'],c:0,
+   e:'Step 1: R_eq = R₁ + R₂. Step 2: = 2 + 2 = 4 Ω. Step 3: Sum of both. Step 4: Answer: 4 Ω. · ደረጃ 1፦ R = 2+2 = 4 Ω። መልስ፦ 4 Ω።'},
+  {t:'4.9',d:'challenging',q:'Adding resistors in series (keeping R fixed) causes equivalent resistance to:',o:['Increase','Decrease','Stay same','Halve'],c:0,
+   e:'Step 1: R_eq = R₁ + R₂ + ... Step 2: Adding more terms → larger. Step 3: Equivalent resistance increases. Step 4: Answer: increases. · ደረጃ 1፦ R_eq = R₁+R₂+...። መልስ፦ ይጨምራል።'},
+  {t:'4.9',d:'challenging',q:'Adding more branches in parallel:',o:['Increases R_eq','Decreases R_eq','Same R_eq','Doubles R_eq'],c:1,
+   e:'Step 1: 1/R_eq = Σ(1/R_i). Step 2: More terms → larger sum → smaller R_eq. Step 3: Equivalent resistance decreases. Step 4: Answer: decreases. · ደረጃ 1፦ 1/R_eq = Σ(1/R_i)። ደረጃ 2፦ ብዙ ቅርንጫፎች → R_eq ትንሽ። መልስ፦ ይቀንሳል።'},
+  {t:'4.9',d:'challenging',q:'In a parallel circuit, the branch with the smallest resistance carries:',o:['Least current','Most current','Same current as others','Zero current'],c:1,
+   e:'Step 1: V is same across all branches. Step 2: I = V/R. Step 3: Smaller R → larger I. Step 4: Answer: most current. · ደረጃ 1፦ V ተመሳሳይ ነው። ደረጃ 2፦ I = V/R። መልስ፦ ትልቁን አሁንታ።'},
+  {t:'4.9',d:'challenging',q:'Three resistors in series: which quantity is the same for all?',o:['Voltage','Current','Power','Charge flow rate'],c:1,
+   e:'Step 1: Voltage differs. Step 2: Current same (single path). Step 3: Power differs. Step 4: Answer: current. · ደረጃ 1፦ ቮልቴጅ ይለያያል። ደረጃ 2፦ አሁንታ ተመሳሳይ። መልስ፦ አሁንታ።'},
+
+  {t:'4.11',d:'challenging',q:'A voltmeter is always connected:',o:['In series','In parallel','Behind the battery','Across the switch'],c:1,
+   e:'Step 1: Voltmeter measures voltage across a component. Step 2: Only parallel connection has the same voltage. Step 3: High resistance → draws little current. Step 4: Answer: parallel. · ደረጃ 1፦ ቮልትሜትር ቮልቴጅ ይለካል። መልስ፦ በትይዩ።'},
+  {t:'4.11',d:'challenging',q:'An ammeter is always connected:',o:['In series','In parallel','Behind the battery','Across the source'],c:0,
+   e:'Step 1: Ammeter measures current through a component. Step 2: Only series has the same current. Step 3: Low resistance → doesn\'t change current. Step 4: Answer: series. · ደረጃ 1፦ አሚትር አሁንታ ይለካል። መልስ፦ በተከታታይ።'},
+  {t:'4.11',d:'challenging',q:'A fuse works by:',o:['Adding resistance','Melting at excessive current','Storing charge','Increasing voltage'],c:1,
+   e:'Step 1: Fuse wire has low melting point. Step 2: Normal current → intact. Step 3: Excess current → melts → circuit breaks. Step 4: Answer: melting at excessive current. · ደረጃ 1፦ ፊውዝ በቀላሉ ይቀልጣል። መልስ፦ ከመጠን በላይ አሁንታ ሲፈስ ይቀልጣል።'},
+  {t:'4.11',d:'challenging',q:'Grounding a device protects the user by:',o:['Increasing voltage','Providing a safe path for fault current','Storing charge','Blocking current'],c:1,
+   e:'Step 1: Third prong connects metal case to Earth. Step 2: If fault, current flows through ground wire not user. Step 3: Fuse may blow. Step 4: Answer: provides safe path for fault current. · ደረጃ 1፦ ሦስተኛው ሽቦ ጉዳዩን ከመሬት ጋር ያገናኛል። መልስ፦ አስተማማኝ መንገድ ይሰጣል።'},
+  {t:'4.11',d:'challenging',q:'Why is wet skin more dangerous than dry skin?',o:['Wet skin is warmer','Wet skin has lower resistance → more current','Wet skin is thicker','Wet skin stores charge'],c:1,
+   e:'Step 1: Dry skin: high resistance (insulator). Step 2: Wet skin: water + ions → lower resistance. Step 3: Lower R → more current through body → shock risk. Step 4: Answer: lower resistance. · ደረጃ 1፦ ደረቅ ቆዳ ከፍተኛ R። ደረጃ 2፦ እርጥብ ቆዳ ዝቅተኛ R። መልስ፦ ዝቅተኛ R።'},
+  {t:'4.11',d:'challenging',q:'A GFCI (Ground Fault Circuit Interrupter) protects by:',o:['Limiting voltage','Detecting current leaking to ground and shutting off','Increasing resistance','Blocking DC'],c:1,
+   e:'Step 1: GFCI monitors current in live vs neutral wires. Step 2: If they differ by ~5 mA (leak to ground), it trips. Step 3: Shuts off in <1 ms. Step 4: Answer: detects ground-fault current. · ደረጃ 1፦ GFCI የሚፈሰውን ወደ መሬት የሚወጣ አሁንታ ይከታተላል። መልስ፦ ያገኘው ከሆነ ያቋርጣል።'}
+];
+
+// 50 numerical
+const numericalData = [
+  {t:'4.1',d:'challenging',q:'Number of excess electrons if charge is −8×10⁻¹⁹ C?',
+   a:5,u:'',tol:0.05,
+   steps:['q = ne → n = q/e.','= 8×10⁻¹⁹ / 1.6×10⁻¹⁹.','= 5 electrons.','ኤሌክትሮኖች = 5።']},
+  {t:'4.1',d:'challenging',q:'Charge of 4 missing electrons (deficit)?',
+   a:6.4e-19,u:'C',tol:6.4e-21,
+   steps:['Deficit → positive charge.','q = 4 × 1.6×10⁻¹⁹.','= 6.4×10⁻¹⁹ C.','መልስ፦ 6.4×10⁻¹⁹ C።']},
+  {t:'4.1',d:'challenging',q:'Charge on 3.125×10¹⁹ electrons?',
+   a:-5,u:'C',tol:0.05,
+   steps:['q = ne = (3.125×10¹⁹)(−1.6×10⁻¹⁹).','= −5 C.','Negative since electrons.','መልስ፦ −5 C።']},
+  {t:'4.1',d:'challenging',q:'Number of electrons in 2 C of charge?',
+   a:1.25e19,u:'',tol:1.25e17,
+   steps:['n = Q/e = 2 / 1.6×10⁻¹⁹.','= 1.25×10¹⁹ electrons.','መልስ፦ 1.25×10¹⁹።']},
+
+  {t:'4.5',d:'challenging',q:'Two 2 µC charges 10 cm apart. Force?',
+   a:3.6,u:'N',tol:0.036,
+   steps:['F = kq²/r² = (9×10⁹)(2×10⁻⁶)²/(0.1)².','= 9×10⁹ × 4×10⁻¹² / 0.01.','= 3.6 N.','መልስ፦ 3.6 N።']},
+  {t:'4.5',d:'challenging',q:'q₁=5µC, q₂=−12µC, 30 cm apart. Force?',
+   a:6,u:'N',tol:0.06,
+   steps:['F = (9×10⁹)(5×10⁻⁶)(12×10⁻⁶)/(0.3)².','= (9×5×12×10⁻³)/0.09.','= 6 N (attractive).','መልስ፦ 6 N።']},
+  {t:'4.5',d:'challenging',q:'q₁=2µC, q₂=−4µC, 20 cm apart. Force?',
+   a:1.8,u:'N',tol:0.018,
+   steps:['F = (9×10⁹)(2×10⁻⁶)(4×10⁻⁶)/(0.2)².','= 72×10⁻³/0.04.','= 1.8 N (attractive).','መልስ፦ 1.8 N።']},
+  {t:'4.5',d:'challenging',q:'Force between 1 C and 1 C, 1 m apart?',
+   a:9e9,u:'N',tol:9e7,
+   steps:['F = (9×10⁹)(1)(1)/(1)².','= 9×10⁹ N.','Enormous — why we don\'t see this in practice.','መልስ፦ 9×10⁹ N።']},
+  {t:'4.5',d:'challenging',q:'Two 1µC charges 30 cm apart. Force?',
+   a:0.1,u:'N',tol:0.001,
+   steps:['F = (9×10⁹)(1×10⁻⁶)²/(0.3)².','= 9×10⁻³/0.09.','= 0.1 N.','መልስ፦ 0.1 N።']},
+  {t:'4.5',d:'challenging',q:'Force between +3µC and −2µC at 0.5 m?',
+   a:0.216,u:'N',tol:0.002,
+   steps:['F = (9×10⁹)(3×10⁻⁶)(2×10⁻⁶)/(0.5)².','= 54×10⁻³/0.25.','= 0.216 N (attractive).','መልስ፦ 0.216 N።']},
+
+  {t:'4.6',d:'challenging',q:'E due to 2 nC at 5 mm?',
+   a:7.2e5,u:'N/C',tol:7.2e3,
+   steps:['E = kq/r² = (9×10⁹)(2×10⁻⁹)/(5×10⁻³)².','= 18/(25×10⁻⁶).','= 7.2×10⁵ N/C.','መልስ፦ 7.2×10⁵ N/C።']},
+  {t:'4.6',d:'challenging',q:'Force on 3.5 µC in 250 N/C field?',
+   a:8.75e-4,u:'N',tol:8.75e-6,
+   steps:['F = qE = (3.5×10⁻⁶)(250).','= 8.75×10⁻⁴ N.','መልስ፦ 8.75×10⁻⁴ N።']},
+  {t:'4.6',d:'challenging',q:'E at 2 m from 5 mC charge?',
+   a:1.125e7,u:'N/C',tol:1.125e5,
+   steps:['E = (9×10⁹)(5×10⁻³)/(2)².','= 45×10⁶/4.','= 1.125×10⁷ N/C.','መልስ፦ 1.125×10⁷ N/C።']},
+  {t:'4.6',d:'challenging',q:'Force on 2 C in 100 N/C field?',
+   a:200,u:'N',tol:2,
+   steps:['F = qE = 2 × 100.','= 200 N.','መልስ፦ 200 N።']},
+  {t:'4.6',d:'challenging',q:'E at 0.1 m from 1 µC charge?',
+   a:9e5,u:'N/C',tol:9e3,
+   steps:['E = (9×10⁹)(1×10⁻⁶)/(0.1)².','= 9×10³/0.01.','= 9×10⁵ N/C.','መልስ፦ 9×10⁵ N/C።']},
+
+  {t:'4.8',d:'challenging',q:'Charge from 0.5 A over 600 s?',
+   a:300,u:'C',tol:3,
+   steps:['Q = It = 0.5 × 600.','= 300 C.','መልስ፦ 300 C።']},
+  {t:'4.8',d:'challenging',q:'Work to move 2 C across 12 V?',
+   a:24,u:'J',tol:0.24,
+   steps:['W = VQ = 12 × 2.','= 24 J.','መልስ፦ 24 J።']},
+  {t:'4.8',d:'challenging',q:'Current through 1200 Ω at 220 V?',
+   a:0.183,u:'A',tol:0.002,
+   steps:['I = V/R = 220/1200.','= 0.183 A.','መልስ፦ 0.183 A።']},
+  {t:'4.8',d:'challenging',q:'R if 60 V drives 4 A?',
+   a:15,u:'Ω',tol:0.15,
+   steps:['R = V/I = 60/4.','= 15 Ω.','መልስ፦ 15 Ω።']},
+  {t:'4.8',d:'challenging',q:'Current at 120 V through 15 Ω?',
+   a:8,u:'A',tol:0.08,
+   steps:['I = 120/15.','= 8 A.','መልስ፦ 8 A።']},
+  {t:'4.8',d:'challenging',q:'Resistivity of wire: R=26Ω, L=1m, diameter=0.3mm?',
+   a:1.84e-6,u:'Ω·m',tol:1.84e-8,
+   steps:['r = 1.5×10⁻⁴ m.','A = πr² = 7.07×10⁻⁸ m².','ρ = RA/L = 26×7.07×10⁻⁸.','= 1.84×10⁻⁶ Ω·m.','መልስ፦ 1.84×10⁻⁶ Ω·m።']},
+  {t:'4.8',d:'challenging',q:'Charge from 2 A for 5 min?',
+   a:600,u:'C',tol:6,
+   steps:['t = 5 min = 300 s.','Q = 2 × 300.','= 600 C.','መልስ፦ 600 C።']},
+  {t:'4.8',d:'challenging',q:'Voltage if 3 A flows through 8 Ω?',
+   a:24,u:'V',tol:0.24,
+   steps:['V = IR = 3 × 8.','= 24 V.','መልስ፦ 24 V።']},
+  {t:'4.8',d:'challenging',q:'Resistance of copper wire: L=2 m, A=1×10⁻⁶ m², ρ=1.7×10⁻⁸ Ω·m?',
+   a:0.034,u:'Ω',tol:0.0005,
+   steps:['R = ρL/A = (1.7×10⁻⁸)(2)/(1×10⁻⁶).','= 3.4×10⁻⁸/1×10⁻⁶.','= 0.034 Ω.','መልስ፦ 0.034 Ω።']},
+
+  {t:'4.9',d:'challenging',q:'R_eq of 2Ω, 3Ω in series?',
+   a:5,u:'Ω',tol:0.05,
+   steps:['R_eq = 2 + 3.','= 5 Ω.','መልስ፦ 5 Ω።']},
+  {t:'4.9',d:'challenging',q:'R_eq of 4Ω, 4Ω in parallel?',
+   a:2,u:'Ω',tol:0.02,
+   steps:['1/R_eq = 1/4 + 1/4 = 2/4 = 1/2.','R_eq = 2 Ω.','መልስ፦ 2 Ω።']},
+  {t:'4.9',d:'challenging',q:'R_eq of 6Ω, 3Ω in parallel?',
+   a:2,u:'Ω',tol:0.02,
+   steps:['1/R_eq = 1/6 + 1/3 = 3/6 = 1/2.','R_eq = 2 Ω.','መልስ፦ 2 Ω።']},
+  {t:'4.9',d:'challenging',q:'Current in 12V series with 2+4 Ω?',
+   a:2,u:'A',tol:0.02,
+   steps:['R_eq = 2+4 = 6 Ω.','I = 12/6 = 2 A.','መልስ፦ 2 A።']},
+  {t:'4.9',d:'challenging',q:'Current in branch if 12V across 6Ω (parallel)?',
+   a:2,u:'A',tol:0.02,
+   steps:['Each branch has V = 12 V.','I = 12/6 = 2 A.','መልስ፦ 2 A።']},
+  {t:'4.9',d:'challenging',q:'R_eq of 3Ω, 6Ω, 9Ω in series?',
+   a:18,u:'Ω',tol:0.18,
+   steps:['R_eq = 3 + 6 + 9.','= 18 Ω.','መልስ፦ 18 Ω።']},
+  {t:'4.9',d:'challenging',q:'Total current 12V with 3Ω, 6Ω parallel?',
+   a:6,u:'A',tol:0.06,
+   steps:['R_eq = 1/(1/3+1/6) = 1/(3/6) = 2 Ω.','I_total = 12/2 = 6 A.','መልስ፦ 6 A።']},
+  {t:'4.9',d:'challenging',q:'Number of 176Ω in parallel to give 44Ω?',
+   a:4,u:'',tol:0.05,
+   steps:['R_eq = R/n → 44 = 176/n.','n = 4.','መልስ፦ 4።']},
+  {t:'4.9',d:'challenging',q:'Current from 9V with 4.5Ω?',
+   a:2,u:'A',tol:0.02,
+   steps:['I = V/R = 9/4.5.','= 2 A.','መልስ፦ 2 A።']},
+  {t:'4.9',d:'challenging',q:'Original R of wire cut into 5 pieces, parallel 2Ω?',
+   a:50,u:'Ω',tol:0.5,
+   steps:['Each piece = R/5.','1/R_eq = 5/(R/5) = 25/R.','1/2 = 25/R → R = 50 Ω.','መልስ፦ 50 Ω።']},
+  {t:'4.9',d:'challenging',q:'R_eq of 4Ω (series) + [5Ω ∥ 9Ω]?',
+   a:7.21,u:'Ω',tol:0.07,
+   steps:['1/R_p = 1/5 + 1/9 = 14/45.','R_p = 45/14 ≈ 3.21.','R_eq = 4 + 3.21 = 7.21 Ω.','መልስ፦ 7.21 Ω።']},
+  {t:'4.9',d:'challenging',q:'Total current in previous circuit at 6V?',
+   a:0.83,u:'A',tol:0.008,
+   steps:['I = 6/7.21.','≈ 0.83 A.','መልስ፦ 0.83 A።']},
+  {t:'4.9',d:'challenging',q:'R_eq of 2Ω (series) + [2Ω ∥ 2Ω]?',
+   a:3,u:'Ω',tol:0.03,
+   steps:['2∥2 = 1 Ω.','R_eq = 2 + 1 = 3 Ω.','መልስ፦ 3 Ω።']},
+  {t:'4.9',d:'challenging',q:'Total current in above at 6V?',
+   a:2,u:'A',tol:0.02,
+   steps:['I = 6/3.','= 2 A.','መልስ፦ 2 A።']},
+
+  {t:'4.11',d:'challenging',q:'Fuse rating for 240V, 1200W appliance?',
+   a:5,u:'A',tol:0.05,
+   steps:['P = VI → I = P/V = 1200/240.','= 5 A.','Fuse ≥ 5 A.','መልስ፦ 5 A።']},
+  {t:'4.11',d:'challenging',q:'Power of 220V, 5A device?',
+   a:1100,u:'W',tol:11,
+   steps:['P = VI = 220 × 5.','= 1100 W.','መልስ፦ 1100 W።']},
+  {t:'4.11',d:'challenging',q:'Voltage from 100J moving 5C?',
+   a:20,u:'V',tol:0.2,
+   steps:['V = W/Q = 100/5.','= 20 V.','መልስ፦ 20 V።']},
+  {t:'4.11',d:'challenging',q:'Resistance if 12V drives 2.5mA?',
+   a:4800,u:'Ω',tol:48,
+   steps:['R = V/I = 12/2.5×10⁻³.','= 4800 Ω.','መልስ፦ 4800 Ω።']},
+  {t:'4.11',d:'challenging',q:'Current if 24V across 8Ω?',
+   a:3,u:'A',tol:0.03,
+   steps:['I = 24/8.','= 3 A.','መልስ፦ 3 A።']},
+  {t:'4.11',d:'challenging',q:'Power of heater at 220V, 1200Ω resistance?',
+   a:40.3,u:'W',tol:0.4,
+   steps:['I = 220/1200 ≈ 0.183 A.','P = VI = 220 × 0.183.','≈ 40.3 W.','መልስ፦ 40.3 W።']}
+];
+
+// Build questions
+const questions = [];
+conceptualData.forEach(function(item, i){
+  questions.push({id:'C'+String(i+1).padStart(3,'0'),type:'conceptual',topic:item.t,difficulty:item.d,question:item.q,options:item.o,correctIndex:item.c,explanation:item.e,answered:false});
+});
+numericalData.forEach(function(item, i){
+  questions.push({id:'N'+String(i+1).padStart(3,'0'),type:'numerical',topic:item.t,difficulty:item.d,question:item.q,answer:item.a,unit:item.u,tolerance:item.tol,direction:item.dir||'',steps:item.steps,answered:false,userAnswer:null});
+});
+
+// ============ RENDER ============
+const container = document.getElementById('assessment-questions-container');
+const progressFill = document.getElementById('overall-progress-fill');
+const progressText = document.getElementById('progress-text');
+
+function renderQuestions(filterType, filterTopic){
+  let html = '';
+  const filtered = questions.filter(function(q){
+    return (filterType==='all'||q.type===filterType) && (filterTopic==='all'||q.topic===filterTopic);
+  });
+  filtered.forEach(function(q){
+    const typeLabel = q.type === 'conceptual' ? 'Conceptual' : 'Numerical';
+    const typeClass = q.type === 'conceptual' ? 'tag-conceptual' : 'tag-numerical';
+    html += '<div class="question-block" id="q-'+q.id+'" data-qid="'+q.id+'">';
+    html += '<div class="q-meta">';
+    html += '<span class="badge">'+q.topic+'</span>';
+    html += '<span class="badge badge-'+q.difficulty+'">'+q.difficulty+'</span>';
+    html += '<span class="badge '+typeClass+'">'+typeLabel+'</span>';
+    html += '<span style="margin-left:auto;font-weight:600">#'+q.id+'</span>';
+    html += '</div>';
+    html += '<div class="question-text">'+q.question+'</div>';
+
+    if(q.type === 'conceptual'){
+      html += '<div class="option-list" role="group">';
+      q.options.forEach(function(opt, oi){
+        html += '<button class="option-btn" data-qid="'+q.id+'" data-index="'+oi+'" data-correct="'+(oi===q.correctIndex)+'">'+opt+'</button>';
+      });
+      html += '</div>';
+    } else {
+      html += '<div class="numeric-answer-area">';
+      html += '<label class="sr-only" for="input-'+q.id+'">Answer</label>';
+      html += '<input type="number" step="any" id="input-'+q.id+'" placeholder="Enter value">';
+      html += '<span class="unit-label">'+q.unit+'</span>';
+      html += '<button class="btn btn-primary" id="check-'+q.id+'" data-qid="'+q.id+'">Check</button>';
+      html += '</div>';
+    }
+    html += '<div class="feedback" id="fb-'+q.id+'"></div>';
+    html += '<div class="solution-details" id="sol-'+q.id+'"></div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+  updateProgress();
+}
+
+// Conceptual click
+container.addEventListener('click', function(e){
+  const btn = e.target.closest('.option-btn');
+  if(!btn || !btn.dataset.qid) return;
+  const qid = btn.dataset.qid;
+  const parent = document.getElementById('q-'+qid);
+  if(!parent || parent.dataset.answered === 'true') return;
+  const q = questions.find(function(x){ return x.id === qid; });
+  if(!q) return;
+  const sel = parseInt(btn.dataset.index, 10);
+  const ok = sel === q.correctIndex;
+  parent.dataset.answered = 'true';
+  q.answered = true;
+
+  parent.querySelectorAll('.option-btn').forEach(function(b){
+    b.disabled = true;
+    if(parseInt(b.dataset.index,10) === q.correctIndex) b.classList.add('correct');
+    else if(b === btn) b.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('fb-'+qid);
+  fb.classList.add('show', ok ? 'correct-fb' : 'wrong-fb');
+  fb.innerHTML = (ok ? '✅ <strong>Correct!</strong>' : '❌ <strong>Incorrect.</strong>') + ' Read the full solution below.';
+
+  const sol = document.getElementById('sol-'+qid);
+  sol.classList.add('show');
+  const parts = q.explanation.split(/(?=Step \d+:)/);
+  let solHtml = '<span class="solution-title">Full step-by-step solution · ሙሉ ደረጃ በደረጃ መፍትሔ</span>';
+  parts.forEach(function(p){
+    if(p.trim()) solHtml += '<span class="step">'+p.trim()+'</span>';
+  });
+  sol.innerHTML = solHtml;
+
+  parent.classList.add(ok ? 'correct-highlight' : 'wrong-highlight');
+  updateProgress();
+});
+
+// Numerical check
+container.addEventListener('click', function(e){
+  const btn = e.target.closest('.btn-primary');
+  if(!btn || !btn.id.startsWith('check-')) return;
+  const qid = btn.dataset.qid;
+  const parent = document.getElementById('q-'+qid);
+  if(!parent || parent.dataset.answered === 'true') return;
+  const q = questions.find(function(x){ return x.id === qid; });
+  if(!q) return;
+  const inp = document.getElementById('input-'+qid);
+  const val = parseFloat(inp.value);
+  if(isNaN(val)){ inp.focus(); inp.style.borderColor = 'var(--wrong)'; return; }
+  inp.style.borderColor = '';
+
+  const ok = Math.abs(val - q.answer) <= q.tolerance;
+  parent.dataset.answered = 'true';
+  q.answered = true;
+
+  const fb = document.getElementById('fb-'+qid);
+  fb.classList.add('show', ok ? 'correct-fb' : 'wrong-fb');
+  const dirNote = q.direction ? ' ('+q.direction+')' : '';
+  if(ok){
+    fb.innerHTML = '✅ <strong>Correct!</strong> Answer = '+q.answer+' '+q.unit+dirNote;
+  } else {
+    fb.innerHTML = '❌ <strong>Incorrect.</strong> Your answer: '+val+' '+q.unit+'. Correct: <strong>'+q.answer+' '+q.unit+'</strong>'+dirNote;
+  }
+
+  const sol = document.getElementById('sol-'+qid);
+  sol.classList.add('show');
+  let solHtml = '<span class="solution-title">Full step-by-step solution · ሙሉ ደረጃ በደረጃ መፍትሔ</span>';
+  q.steps.forEach(function(s, i){
+    solHtml += '<span class="step"><strong>Step '+(i+1)+':</strong> '+s+'</span>';
+  });
+  solHtml += '<span class="step"><strong>Final answer · የመጨረሻ መልስ:</strong> '+q.answer+' '+q.unit+dirNote+'</span>';
+  sol.innerHTML = solHtml;
+
+  parent.classList.add(ok ? 'correct-highlight' : 'wrong-highlight');
+  updateProgress();
+});
+
+function updateProgress(){
+  const n = questions.filter(function(q){ return q.answered; }).length;
+  progressFill.style.width = (n/questions.length*100)+'%';
+  progressText.textContent = n+' of '+questions.length+' answered · ከ'+questions.length+' ውስጥ '+n+' ተመልሷል';
+}
+
+document.getElementById('filter-type').addEventListener('change', function(){
+  renderQuestions(this.value, document.getElementById('filter-topic').value);
+});
+document.getElementById('filter-topic').addEventListener('change', function(){
+  renderQuestions(document.getElementById('filter-type').value, this.value);
+});
+document.getElementById('reset-progress-btn').addEventListener('click', function(){
+  if(!confirm('Reset all answers?')) return;
+  questions.forEach(function(q){ q.answered = false; q.userAnswer = null; });
+  renderQuestions(document.getElementById('filter-type').value, document.getElementById('filter-topic').value);
+});
+
+// Tab nav
+const navBtns = document.querySelectorAll('.unit-nav button');
+const panels = document.querySelectorAll('.section-panel');
+navBtns.forEach(function(btn){
+  btn.addEventListener('click', function(){
+    navBtns.forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+    panels.forEach(function(p){ p.classList.remove('active'); });
+    this.classList.add('active'); this.setAttribute('aria-selected','true');
+    const sec = this.dataset.section;
+    const target = document.getElementById('section-'+sec);
+    if(target) target.classList.add('active');
+    if(sec === 'assessment'){
+      renderQuestions(document.getElementById('filter-type').value, document.getElementById('filter-topic').value);
+    }
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+// Lesson quiz click
+document.addEventListener('click', function(e){
+  const btn = e.target.closest('.option-btn');
+  if(!btn || !btn.dataset.correct || !btn.closest('[id^="lesson-quiz-"]')) return;
+  const parent = btn.closest('.question-block');
+  if(!parent || parent.dataset.answered === 'true') return;
+  parent.dataset.answered = 'true';
+  const ok = btn.dataset.correct === 'true';
+  parent.querySelectorAll('.option-btn').forEach(function(b){
+    b.disabled = true;
+    if(b.dataset.correct === 'true') b.classList.add('correct');
+    else if(b === btn) b.classList.add('wrong');
+  });
+
+  const qid = parent.dataset.qid;
+  const parts = qid.split('-');
+  const lessonId = parts[1];
+  const idx = parseInt(parts[2], 10);
+  const item = lessonQuizzes[lessonId][idx];
+
+  const fb = parent.querySelector('.feedback');
+  if(fb){
+    fb.classList.add('show', ok ? 'correct-fb' : 'wrong-fb');
+    fb.innerHTML = (ok ? '✅ <strong>Correct!</strong>' : '❌ <strong>Incorrect.</strong>') + ' Full reasoning below.';
+  }
+
+  const sol = parent.querySelector('.solution-details');
+  if(sol && item && item.explanation){
+    sol.classList.add('show');
+    const expParts = item.explanation.split(/(?=Step \d+:)/);
+    let solHtml = '<span class="solution-title">Full step-by-step solution · ሙሉ ደረጃ በደረጃ መፍትሔ</span>';
+    expParts.forEach(function(p){
+      if(p.trim()) solHtml += '<span class="step">'+p.trim()+'</span>';
+    });
+    sol.innerHTML = solHtml;
+  }
+
+  parent.classList.add(ok ? 'correct-highlight' : 'wrong-highlight');
+});
+
+renderQuestions('all','all');
+updateProgress();
+})();
+</script>
+</body>
+</html>

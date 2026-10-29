@@ -23,6 +23,18 @@ final class FirebaseSessionManager {
             String studentId,
             String grade,
             String profileImage) {
+        return ensureStudentProfile(context, user, preferredName, preferredUsername, studentId, grade, profileImage, null);
+    }
+
+    static StudentProfile ensureStudentProfile(
+            Context context,
+            FirebaseUser user,
+            String preferredName,
+            String preferredUsername,
+            String studentId,
+            String grade,
+            String profileImage,
+            String phone) {
         if (user == null || TextUtils.isEmpty(user.getEmail())) {
             throw new IllegalStateException("The authenticated account has no email address.");
         }
@@ -64,7 +76,8 @@ final class FirebaseSessionManager {
                     email,
                     PasswordUtils.generateRandomPlaceholder(),
                     savedImage,
-                    "STUDENT")) {
+                    "STUDENT",
+                    phone)) {
                 throw new IllegalStateException("Learnify could not save the local student profile.");
             }
             type = "STUDENT";

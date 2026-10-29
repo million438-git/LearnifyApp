@@ -228,7 +228,7 @@ public class AdminProfileActivity extends BaseActivity {
             AuthCredential credential = EmailAuthProvider.getCredential(user.getEmail(), currentPass);
             user.reauthenticate(credential).addOnCompleteListener(this, reauthTask -> {
                 if (!reauthTask.isSuccessful()) {
-                    Toast.makeText(this, "Could not verify your Firebase password. Use Forgot Password if this account uses Google sign-in.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Could not verify your current Firebase password. Please try again or use Forgot Password.", Toast.LENGTH_LONG).show();
                     return;
                 }
                 user.updatePassword(newPass).addOnCompleteListener(this, updateTask -> {

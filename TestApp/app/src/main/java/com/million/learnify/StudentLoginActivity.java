@@ -14,24 +14,16 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 /**
  * StudentLoginActivity
  *
- * Handles student authentication through Firebase, Google Sign-In,
+ * Handles student authentication through Firebase,
  * legacy local-account migration, email verification, and session management.
  *
  * Existing Learnify authentication flows are preserved.
@@ -39,19 +31,16 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 public class StudentLoginActivity extends BaseActivity {
 
     private static final String TAG = "StudentLogin";
-    private static final int RC_GOOGLE_SIGN_IN = 9001;
 
     private EditText etStudentUser;
     private EditText etStudentPassword;
     private MaterialButton btnStudentLogin;
     private CircularProgressIndicator loginProgress;
     private TextView tvRegisterRedirect;
-    private View btnGoogleLogin;
     private View btnLinkedinLogin;
     private CheckBox cbRememberMe;
 
     private SharedPreferences loginPrefs;
-    private GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth firebaseAuth;
 
     @Override
@@ -88,7 +77,6 @@ public class StudentLoginActivity extends BaseActivity {
 
             loginPrefs = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
 
-            configureGoogleAuth();
             initViews();
             loadRememberedData();
 
@@ -102,53 +90,6 @@ public class StudentLoginActivity extends BaseActivity {
         }
     }
 
-    /**
-     * Configure Google Sign-In using the generated Firebase web client ID.
-     */
-    private void configureGoogleAuth() {
-        int clientIdResource = getResources().getIdentifier(
-                "default_web_client_id",
-                "string",
-                getPackageName()
-        );
-
-        Log.d(TAG, "Google web client resource found: "
-                + (clientIdResource != 0));
-
-        if (clientIdResource == 0) {
-            mGoogleSignInClient = null;
-            Log.e(TAG,
-                    "Google Sign-In unavailable: default_web_client_id resource is missing.");
-            return;
-        }
-
-        try {
-            String webClientId = getString(clientIdResource);
-
-            if (webClientId.trim().isEmpty()) {
-                mGoogleSignInClient = null;
-                Log.e(TAG, "Google Sign-In unavailable: web client ID is empty.");
-                return;
-            }
-
-            GoogleSignInOptions options =
-                    new GoogleSignInOptions.Builder(
-                            GoogleSignInOptions.DEFAULT_SIGN_IN
-                    )
-                            .requestEmail()
-                            .requestProfile()
-                            .requestIdToken(webClientId)
-                            .build();
-
-            mGoogleSignInClient = GoogleSignIn.getClient(this, options);
-
-            Log.d(TAG, "Google Sign-In client configured.");
-
-        } catch (Exception e) {
-            mGoogleSignInClient = null;
-            Log.e(TAG, "Failed to configure Google Sign-In.", e);
-        }
-    }
 
     private void initViews() {
         etStudentUser = findViewById(R.id.etStudentUser);
@@ -156,7 +97,6 @@ public class StudentLoginActivity extends BaseActivity {
         btnStudentLogin = findViewById(R.id.btnStudentLogin);
         loginProgress = findViewById(R.id.loginProgress);
         tvRegisterRedirect = findViewById(R.id.tvRegisterRedirect);
-        btnGoogleLogin = findViewById(R.id.btnGoogleLogin);
         btnLinkedinLogin = findViewById(R.id.btnLinkedinLogin);
         cbRememberMe = findViewById(R.id.cbRememberMe);
 
@@ -165,7 +105,6 @@ public class StudentLoginActivity extends BaseActivity {
                 || btnStudentLogin == null
                 || loginProgress == null
                 || tvRegisterRedirect == null
-                || btnGoogleLogin == null
                 || cbRememberMe == null) {
             throw new IllegalStateException(
                     "A required student login view is missing from the layout."
@@ -174,10 +113,6 @@ public class StudentLoginActivity extends BaseActivity {
 
         btnStudentLogin.setOnClickListener(
                 v -> handleTraditionalLogin()
-        );
-
-        btnGoogleLogin.setOnClickListener(
-                v -> startGoogleAuth()
         );
 
         if (btnLinkedinLogin != null) {
@@ -216,183 +151,6 @@ public class StudentLoginActivity extends BaseActivity {
         }
     }
 
-    /**
-     * Start Google authentication and log which prerequisite is missing.
-     */
-    private void startGoogleAuth() {
-        Log.d(TAG,
-                "Google client available: " + (mGoogleSignInClient != null)
-                        + "; Firebase Auth available: " + (firebaseAuth != null));
-
-        if (mGoogleSignInClient == null) {
-            Toast.makeText(
-                    this,
-                    "Google Sign-In is unavailable. Check the app configuration.",
-                    Toast.LENGTH_LONG
-            ).show();
-            Log.e(TAG, "Google Sign-In client is null.");
-            return;
-        }
-
-        if (firebaseAuth == null) {
-            // Retry obtaining Firebase Auth in case it was not available earlier.
-            firebaseAuth = FirebaseAuthSupport.getConfiguredAuth(this);
-        }
-
-        if (firebaseAuth == null) {
-            Toast.makeText(
-                    this,
-                    "Firebase authentication is unavailable. Please try again later.",
-                    Toast.LENGTH_LONG
-            ).show();
-            Log.e(TAG, "FirebaseAuth is null when Google Sign-In starts.");
-            return;
-        }
-
-        setLoading(true);
-
-        try {
-            startActivityForResult(
-                    mGoogleSignInClient.getSignInIntent(),
-                    RC_GOOGLE_SIGN_IN
-            );
-        } catch (Exception e) {
-            setLoading(false);
-            Log.e(TAG, "Could not launch the Google Sign-In screen.", e);
-
-            Toast.makeText(
-                    this,
-                    "Could not open Google Sign-In. Please try again.",
-                    Toast.LENGTH_LONG
-            ).show();
-        }
-    }
-
-    /**
-     * Exchange the Google ID token for a Firebase credential.
-     */
-    private void handleGoogleResult(Task<GoogleSignInAccount> task) {
-        try {
-            GoogleSignInAccount account =
-                    task.getResult(ApiException.class);
-
-            if (account == null) {
-                setLoading(false);
-                Log.e(TAG, "Google Sign-In returned no account.");
-
-                Toast.makeText(
-                        this,
-                        "Google Sign-In did not return an account.",
-                        Toast.LENGTH_LONG
-                ).show();
-                return;
-            }
-
-            if (account.getIdToken() == null
-                    || account.getIdToken().trim().isEmpty()) {
-                setLoading(false);
-                Log.e(TAG,
-                        "Google account returned no ID token. Check OAuth client configuration.");
-
-                Toast.makeText(
-                        this,
-                        "Google did not provide an authentication token. Check the Firebase OAuth configuration.",
-                        Toast.LENGTH_LONG
-                ).show();
-                return;
-            }
-
-            if (firebaseAuth == null) {
-                firebaseAuth = FirebaseAuthSupport.getConfiguredAuth(this);
-            }
-
-            if (firebaseAuth == null) {
-                setLoading(false);
-                Log.e(TAG, "FirebaseAuth unavailable after Google Sign-In.");
-
-                Toast.makeText(
-                        this,
-                        "Firebase authentication is unavailable. Please try again later.",
-                        Toast.LENGTH_LONG
-                ).show();
-                return;
-            }
-
-            AuthCredential credential = GoogleAuthProvider.getCredential(
-                    account.getIdToken(),
-                    null
-            );
-
-            firebaseAuth.signInWithCredential(credential)
-                    .addOnCompleteListener(this, authTask -> {
-                        if (authTask.isSuccessful()
-                                && authTask.getResult() != null
-                                && authTask.getResult().getUser() != null) {
-
-                            finishFirebaseStudentSignIn(
-                                    authTask.getResult().getUser(),
-                                    "Google",
-                                    account.getDisplayName(),
-                                    null,
-                                    null,
-                                    null,
-                                    ""
-                            );
-
-                        } else {
-                            setLoading(false);
-
-                            Exception exception = authTask.getException();
-                            Log.e(TAG,
-                                    "Firebase Google credential sign-in failed.",
-                                    exception);
-
-                            Toast.makeText(
-                                    this,
-                                    FirebaseAuthSupport.messageFor(exception),
-                                    Toast.LENGTH_LONG
-                            ).show();
-                        }
-                    });
-
-        } catch (ApiException e) {
-            setLoading(false);
-
-            int statusCode = e.getStatusCode();
-
-            Log.e(TAG,
-                    "Google Sign-In failed. Status code: " + statusCode
-                            + "; status: "
-                            + CommonStatusCodes.getStatusCodeString(statusCode),
-                    e);
-
-            if (statusCode == 12501) {
-                Toast.makeText(
-                        this,
-                        "Google Sign-In was cancelled.",
-                        Toast.LENGTH_SHORT
-                ).show();
-            } else {
-                Toast.makeText(
-                        this,
-                        "Google Sign-In failed (code "
-                                + statusCode
-                                + "). Check the diagnostic log.",
-                        Toast.LENGTH_LONG
-                ).show();
-            }
-
-        } catch (Exception e) {
-            setLoading(false);
-            Log.e(TAG, "Unexpected Google Sign-In result error.", e);
-
-            Toast.makeText(
-                    this,
-                    "An unexpected sign-in error occurred. Please try again.",
-                    Toast.LENGTH_LONG
-            ).show();
-        }
-    }
 
     private void startLinkedInAuth() {
         setLoading(false);
@@ -721,9 +479,6 @@ public class StudentLoginActivity extends BaseActivity {
             );
         }
 
-        if (btnGoogleLogin != null) {
-            btnGoogleLogin.setEnabled(!loading);
-        }
     }
 
     @Override
@@ -733,12 +488,6 @@ public class StudentLoginActivity extends BaseActivity {
             @Nullable Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == RC_GOOGLE_SIGN_IN) {
-            handleGoogleResult(
-                    GoogleSignIn.getSignedInAccountFromIntent(data)
-            );
-        }
     }
 
     private void loadRememberedData() {
