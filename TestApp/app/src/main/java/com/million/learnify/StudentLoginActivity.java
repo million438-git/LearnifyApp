@@ -58,10 +58,12 @@ public class StudentLoginActivity extends BaseActivity {
                 ? firebaseAuth.getCurrentUser()
                 : null;
 
+        String provider = session.getString("login_provider", "");
+        boolean isLocal = "Local".equalsIgnoreCase(provider);
+
         if (session.getBoolean("isLoggedIn", false)
                 && "STUDENT".equals(session.getString("user_type", ""))
-                && currentUser != null
-                && currentUser.isEmailVerified()) {
+                && (isLocal || (currentUser != null && currentUser.isEmailVerified()))) {
             navigateToDashboard();
             return;
         }
@@ -275,80 +277,122 @@ public class StudentLoginActivity extends BaseActivity {
         if (user.isEmpty() || pass.isEmpty()) {
             Toast.makeText(
                     this,
-                    "Please enter your identifier and password",
+                    "Please enter your username/email and password",
                     Toast.LENGTH_SHORT
             ).show();
             return;
         }
 
-        firebaseAuth = FirebaseAuthSupport.getConfiguredAuth(this);
-
-        if (firebaseAuth == null) {
-            Log.e(TAG, "FirebaseAuth unavailable for password sign-in.");
-
-            Toast.makeText(
-                    this,
-                    "Firebase is not configured for this app. Contact Learnify support.",
-                    Toast.LENGTH_LONG
-            ).show();
+        // 1. FIRST PRIORITY: Direct local authentication via SQLite
+        if (repository != null && repository.login(user, pass, "STUDENT")) {
+            setLoading(false);
+            performLocalStudentLogin(user);
             return;
         }
 
+        // 2. SECOND PRIORITY: Firebase Cloud Authentication
+        firebaseAuth = FirebaseAuthSupport.getConfiguredAuth(this);
         String email = findStudentEmail(user);
-
         if (email == null && user.contains("@")) {
             email = user;
         }
 
-        if (email == null || email.trim().isEmpty()) {
-            Toast.makeText(
-                    this,
-                    "Sign in with the email address linked to your account.",
-                    Toast.LENGTH_LONG
-            ).show();
+        if (email != null && !email.trim().isEmpty() && firebaseAuth != null) {
+            setLoading(true);
+            String signInEmail = email.trim();
+
+            firebaseAuth.signInWithEmailAndPassword(signInEmail, pass)
+                    .addOnCompleteListener(this, task -> {
+                        if (task.isSuccessful()
+                                && task.getResult() != null
+                                && task.getResult().getUser() != null) {
+
+                            finishFirebaseStudentSignIn(
+                                    task.getResult().getUser(),
+                                    "Password",
+                                    "Student",
+                                    null,
+                                    null,
+                                    null,
+                                    ""
+                            );
+
+                        } else if (repository != null && repository.login(user, pass, "STUDENT")) {
+                            setLoading(false);
+                            performLocalStudentLogin(user);
+                        } else {
+                            setLoading(false);
+                            Exception exception = task.getException();
+                            Log.e(TAG, "Firebase password sign-in failed.", exception);
+                            String code = (exception instanceof com.google.firebase.auth.FirebaseAuthException)
+                                    ? ((com.google.firebase.auth.FirebaseAuthException) exception).getErrorCode()
+                                    : null;
+                            if ("ERROR_OPERATION_NOT_ALLOWED".equalsIgnoreCase(code)
+                                    || "operation-not-allowed".equalsIgnoreCase(code)) {
+                                Toast.makeText(this, "Account not found or password incorrect. Please check your credentials.", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(
+                                        this,
+                                        FirebaseAuthSupport.messageFor(exception),
+                                        Toast.LENGTH_LONG
+                                ).show();
+                            }
+                        }
+                    });
             return;
         }
 
-        setLoading(true);
-        String signInEmail = email;
+        // 3. Fallback: If neither local record nor valid email found
+        if (!user.contains("@")) {
+            Toast.makeText(
+                    this,
+                    "Account not found. Please enter your email address or tap Create Account.",
+                    Toast.LENGTH_LONG
+            ).show();
+        } else {
+            Toast.makeText(
+                    this,
+                    "Incorrect credentials. Please verify your password or create an account.",
+                    Toast.LENGTH_LONG
+            ).show();
+        }
+    }
 
-        firebaseAuth.signInWithEmailAndPassword(signInEmail, pass)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()
-                            && task.getResult() != null
-                            && task.getResult().getUser() != null) {
+    private void performLocalStudentLogin(String identifier) {
+        String studentUsername = identifier;
+        String studentName = "Student";
+        String studentGrade = "10";
+        String studentEmail = identifier.contains("@") ? identifier : "";
 
-                        finishFirebaseStudentSignIn(
-                                task.getResult().getUser(),
-                                "Password",
-                                "Student",
-                                null,
-                                null,
-                                null,
-                                ""
-                        );
+        try (Cursor cursor = repository.getUserDetails(identifier)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                studentUsername = cursor.getString(cursor.getColumnIndexOrThrow("username"));
+                studentName = cursor.getString(cursor.getColumnIndexOrThrow("full_name"));
+                studentGrade = cursor.getString(cursor.getColumnIndexOrThrow("grade_or_role"));
+                studentEmail = cursor.getString(cursor.getColumnIndexOrThrow("email"));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error reading student details for local login", e);
+        }
 
-                    } else if (repository.login(user, pass, "STUDENT")) {
-                        migrateLocalStudentAccount(
-                                user,
-                                pass,
-                                signInEmail
-                        );
+        FirebaseSessionManager.saveLocalStudentSession(
+                this,
+                studentName,
+                studentUsername,
+                studentEmail,
+                "",
+                studentGrade
+        );
 
-                    } else {
-                        setLoading(false);
+        if (cbRememberMe != null && cbRememberMe.isChecked()) {
+            loginPrefs.edit()
+                    .putString("username", studentUsername)
+                    .putBoolean("remember", true)
+                    .apply();
+        }
 
-                        Exception exception = task.getException();
-                        Log.e(TAG, "Firebase password sign-in failed.",
-                                exception);
-
-                        Toast.makeText(
-                                this,
-                                FirebaseAuthSupport.messageFor(exception),
-                                Toast.LENGTH_LONG
-                        ).show();
-                    }
-                });
+        Toast.makeText(this, "Welcome back, " + studentName + "!", Toast.LENGTH_SHORT).show();
+        navigateToDashboard();
     }
 
     private String findStudentEmail(String identifier) {

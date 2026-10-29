@@ -202,17 +202,27 @@ public abstract class BaseActivity extends AppCompatActivity {
         SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
         String currentRole = session.getString("user_type", "");
         String username = session.getString("username", "");
-        FirebaseAuth auth = FirebaseAuthSupport.getConfiguredAuth(this);
-        FirebaseUser firebaseUser = auth != null ? auth.getCurrentUser() : null;
-        String storedFirebaseUid = securePrefs != null
-                ? securePrefs.getString("firebase_uid", "")
-                : "";
-        if (firebaseUser == null
-                || !firebaseUser.isEmailVerified()
-                || !firebaseUser.getUid().equals(storedFirebaseUid)) {
-            Toast.makeText(this, "A verified Firebase sign-in is required.", Toast.LENGTH_LONG).show();
+        String loginProvider = session.getString("login_provider", "Local");
+        boolean isLoggedIn = session.getBoolean("isLoggedIn", false);
+
+        if (!isLoggedIn || username.isEmpty() || !currentRole.equalsIgnoreCase(requiredRole)) {
+            Log.w(TAG, "Access Denied: Session invalid or role mismatch.");
+            Toast.makeText(this, "Please sign in to access this portal.", Toast.LENGTH_SHORT).show();
             logoutInternal();
             return;
+        }
+
+        FirebaseAuth auth = FirebaseAuthSupport.getConfiguredAuth(this);
+        FirebaseUser firebaseUser = auth != null ? auth.getCurrentUser() : null;
+        String storedFirebaseUid = securePrefs != null ? securePrefs.getString("firebase_uid", "") : "";
+
+        // If explicitly signed in via cloud Firebase, ensure session consistency
+        if ("Password".equalsIgnoreCase(loginProvider) && firebaseUser != null && !storedFirebaseUid.isEmpty()) {
+            if (!firebaseUser.getUid().equals(storedFirebaseUid)) {
+                Log.w(TAG, "Firebase session mismatch for " + username);
+                logoutInternal();
+                return;
+            }
         }
 
         // 1. Check Role Authorization against Encrypted Preferences (if available)

@@ -137,6 +137,42 @@ final class FirebaseSessionManager {
         }
     }
 
+    static void saveLocalStudentSession(
+            Context context,
+            String name,
+            String username,
+            String email,
+            String studentId,
+            String grade) {
+
+        SecurePreferencesHelper securePreferences = new SecurePreferencesHelper(context);
+        securePreferences.saveString("username", username);
+        securePreferences.saveString("full_name", name);
+        securePreferences.saveString("user_type", "STUDENT");
+        securePreferences.saveString("grade", grade != null ? grade : "10");
+        securePreferences.saveString("firebase_uid", "local_" + username);
+        securePreferences.saveString("login_provider", "Local");
+        securePreferences.saveBoolean("isLoggedIn", true);
+
+        SharedPreferences session = context.getSharedPreferences("UserSession", Context.MODE_PRIVATE);
+        session.edit()
+                .putString("username", username)
+                .putString("full_name", name)
+                .putString("user_type", "STUDENT")
+                .putString("grade", grade != null ? grade : "10")
+                .putString("firebase_uid", "local_" + username)
+                .putString("login_provider", "Local")
+                .putBoolean("isLoggedIn", true)
+                .apply();
+
+        NotificationHelper.scheduleDailyMotivation(context);
+        NotificationHelper.scheduleLoginReminder(context);
+        StudentSettings settings = new SettingsService(context).loadSettings();
+        if (settings != null && settings.getReminderTime() != null) {
+            NotificationHelper.scheduleStudyReminder(context, settings.getReminderTime());
+        }
+    }
+
     static void signOut(Context context, FirebaseAuth auth) {
         if (auth != null) {
             auth.signOut();

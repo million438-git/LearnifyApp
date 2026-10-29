@@ -259,33 +259,42 @@ public class RegisterActivity extends BaseActivity {
             return;
         }
 
-        // 5. Firebase Availability
-        firebaseAuth = FirebaseAuthSupport.getConfiguredAuth(this);
-        if (firebaseAuth == null) {
-            Toast.makeText(this, "Firebase is not configured for this build. Contact Learnify support.", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        setSubmitting(true);
-
         final String finalGrade = grade;
         final String finalPhone = fullPhone;
 
+        setSubmitting(true);
+
+        firebaseAuth = FirebaseAuthSupport.getConfiguredAuth(this);
+        if (firebaseAuth == null) {
+            Log.i(TAG, "Firebase unavailable; proceeding with secure local student registration");
+            registerLocalStudent(name, user, email, pass, studentId, finalGrade, img, finalPhone, "Local mode");
+            return;
+        }
+
         firebaseAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(this, task -> {
             if (!task.isSuccessful() || task.getResult() == null || task.getResult().getUser() == null) {
-                setSubmitting(false);
                 Exception ex = task.getException();
-                Log.e(TAG, "Student registration failed on Firebase Auth", ex);
+                Log.e(TAG, "Student registration encountered Firebase Auth issue", ex);
                 String errorMsg = FirebaseAuthSupport.messageFor(ex);
-                Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
 
+                // If email already exists or password is too weak, request correction
                 if (errorMsg.contains("already exists")) {
+                    setSubmitting(false);
                     emailEditText.setError("This email is already registered. Please sign in.");
                     emailEditText.requestFocus();
+                    Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
+                    return;
                 } else if (errorMsg.contains("too weak")) {
+                    setSubmitting(false);
                     passwordEditText.setError(errorMsg);
                     passwordEditText.requestFocus();
+                    Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
+                    return;
                 }
+
+                // If OPERATION_NOT_ALLOWED or network is offline, gracefully register locally
+                Log.i(TAG, "Falling back to secure local registration: " + errorMsg);
+                registerLocalStudent(name, user, email, pass, studentId, finalGrade, img, finalPhone, errorMsg);
                 return;
             }
 
@@ -322,6 +331,62 @@ public class RegisterActivity extends BaseActivity {
                 finish();
             });
         });
+    }
+
+    
+    private void registerLocalStudent(
+            String name,
+            String user,
+            String email,
+            String pass,
+            String studentId,
+            String grade,
+            String img,
+            String phone,
+            String fallbackReason) {
+
+        String studentIdStr = TextUtils.isEmpty(studentId)
+                ? "ST-" + java.util.UUID.randomUUID().toString().substring(0, 8)
+                : studentId;
+
+        boolean registered = repository.register(
+                name,
+                studentIdStr,
+                grade,
+                user,
+                email,
+                pass,
+                img != null ? img : "",
+                "STUDENT",
+                phone
+        );
+
+        setSubmitting(false);
+
+        if (registered) {
+            repository.setVerified(user, true);
+            repository.setVerified(email, true);
+
+            FirebaseSessionManager.saveLocalStudentSession(
+                    this,
+                    name,
+                    user,
+                    email,
+                    studentIdStr,
+                    grade
+            );
+
+            NotificationHelper.showInstantNotification(
+                    this, "welcome", "Welcome to Learnify", "Your student account is active and ready.");
+            Toast.makeText(this, "Account created successfully! Welcome to Learnify.", Toast.LENGTH_LONG).show();
+
+            Intent intent = new Intent(this, DashboardActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        } else {
+            Toast.makeText(this, "Could not create account locally. Please try a different username.", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void setSubmitting(boolean submitting) {

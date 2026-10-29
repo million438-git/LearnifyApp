@@ -32,6 +32,10 @@ public class DataRepository {
 
     // --- 1. USER AUTH & PROFILE (Common) ---
 
+    public void ensureAdminAccount() {
+        dbHelper.ensureAdminAccount();
+    }
+
     public boolean login(String user, String pass, String type) {
         return dbHelper.checkUser(user, pass, type);
     }

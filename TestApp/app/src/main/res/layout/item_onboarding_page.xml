@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <!-- Top Guideline: Positioned safely below the status bar and header bar -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTopHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="96dp" />
+
+    <!-- Guideline dividing top gradient hero (~56%) and bottom white sheet (~44%) -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineHeroSheet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.56" />
+
+    <!-- Top Hero Area: Floating Responsive Illustration Container (Between Header and White Sheet) -->
+    <FrameLayout
+        android:id="@+id/flIllustrationContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toTopOf="@id/guidelineHeroSheet"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guidelineTopHeader">
+
+        <ImageView
+            android:id="@+id/ivIllustration"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:contentDescription="Slide Illustration"
+            android:scaleType="fitCenter"
+            tools:src="@drawable/ic_onb_learn" />
+    </FrameLayout>
+
+    <!-- Bottom Area: Title and Description over White Sheet -->
+    <LinearLayout
+        android:id="@+id/llTextContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="28dp"
+        android:paddingTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guidelineHeroSheet">
+
+        <!-- Slide Title: 28sp, sans-serif-black, dark ink #0F172A -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-black"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:maxLines="2"
+            android:textColor="@color/onb_text_title"
+            android:textSize="28sp"
+            tools:text="Learn anything, your way" />
+
+        <!-- Slide Description: 15sp, slate #64748B, max 3 lines -->
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:maxLines="3"
+            android:textColor="@color/onb_text_description"
+            android:textSize="15sp"
+            tools:text="All your subjects, notes, lessons and exams together in one simple place." />
+    </LinearLayout>
+
+    <!-- Bottom Spacer to ensure text never overlaps fixed controls -->
+    <View
+        android:id="@+id/vPageSpacerBottom"
+        android:layout_width="match_parent"
+        android:layout_height="148dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
