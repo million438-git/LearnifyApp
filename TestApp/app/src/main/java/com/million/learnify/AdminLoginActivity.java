@@ -12,17 +12,10 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
@@ -39,10 +32,7 @@ public class AdminLoginActivity extends BaseActivity {
     private CircularProgressIndicator adminLoginProgress;
     private TextView tvAdminRegisterLink;
     private ImageView ivAdminLoginProfile;
-    private ImageView btnAdminGoogleLogin, btnAdminLinkedinLogin;
-
-    private static final int RC_GOOGLE_SIGN_IN = 9001;
-    private GoogleSignInClient mGoogleSignInClient;
+    private ImageView btnAdminLinkedinLogin;
     private FirebaseAuth firebaseAuth;
 
     @Override
@@ -52,7 +42,6 @@ public class AdminLoginActivity extends BaseActivity {
         try {
             setContentView(R.layout.activity_admin_login);
             firebaseAuth = FirebaseAuthSupport.getConfiguredAuth(this);
-            configureGoogleAuth();
             initViews();
             loadAdminProfileImage();
         } catch (Exception e) {
@@ -62,22 +51,6 @@ public class AdminLoginActivity extends BaseActivity {
         }
     }
 
-    private void configureGoogleAuth() {
-        int clientIdResource = getResources().getIdentifier(
-                "default_web_client_id",
-                "string",
-                getPackageName());
-        if (clientIdResource == 0) {
-            mGoogleSignInClient = null;
-            return;
-        }
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .requestProfile()
-                .requestIdToken(getString(clientIdResource))
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-    }
 
     private void initViews() {
         etAdminUser = findViewById(R.id.etAdminUser);
@@ -86,7 +59,6 @@ public class AdminLoginActivity extends BaseActivity {
         adminLoginProgress = findViewById(R.id.adminLoginProgress);
         tvAdminRegisterLink = findViewById(R.id.tvAdminRegisterLink);
         ivAdminLoginProfile = findViewById(R.id.ivAdminLoginProfile);
-        btnAdminGoogleLogin = findViewById(R.id.btnAdminGoogleLogin);
         btnAdminLinkedinLogin = findViewById(R.id.btnAdminLinkedinLogin);
 
         if (btnAdminLogin != null) {
@@ -97,22 +69,9 @@ public class AdminLoginActivity extends BaseActivity {
             tvAdminRegisterLink.setVisibility(View.GONE);
         }
 
-        if (btnAdminGoogleLogin != null) {
-            btnAdminGoogleLogin.setOnClickListener(v -> startGoogleAuth());
-        }
-
         if (btnAdminLinkedinLogin != null) {
             btnAdminLinkedinLogin.setOnClickListener(v -> startLinkedInAuth());
         }
-    }
-
-    private void startGoogleAuth() {
-        if (mGoogleSignInClient == null || firebaseAuth == null) {
-            Toast.makeText(this, "Firebase Google sign-in is not configured for this build.", Toast.LENGTH_LONG).show();
-            return;
-        }
-        setLoading(true);
-        startActivityForResult(mGoogleSignInClient.getSignInIntent(), RC_GOOGLE_SIGN_IN);
     }
 
     private void startLinkedInAuth() {
@@ -120,28 +79,6 @@ public class AdminLoginActivity extends BaseActivity {
         Toast.makeText(this, "LinkedIn administrator sign-in is unavailable because secure backend verification is not configured.", Toast.LENGTH_LONG).show();
     }
 
-    private void handleGoogleResult(Task<GoogleSignInAccount> task) {
-        try {
-            GoogleSignInAccount account = task.getResult(ApiException.class);
-            if (account != null && account.getIdToken() != null && firebaseAuth != null) {
-                AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-                firebaseAuth.signInWithCredential(credential).addOnCompleteListener(this, authTask -> {
-                    if (authTask.isSuccessful() && authTask.getResult() != null) {
-                        verifyAdminClaim(authTask.getResult().getUser(), "Google");
-                    } else {
-                        setLoading(false);
-                        Toast.makeText(this, FirebaseAuthSupport.messageFor(authTask.getException()), Toast.LENGTH_LONG).show();
-                    }
-                });
-            } else {
-                setLoading(false);
-                Toast.makeText(this, "Google sign-in did not return a Firebase credential.", Toast.LENGTH_SHORT).show();
-            }
-        } catch (ApiException e) {
-            setLoading(false);
-            Toast.makeText(this, "Google sign-in was cancelled or could not be completed.", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     private void loadAdminProfileImage() {
         if (ivAdminLoginProfile != null) {
@@ -297,8 +234,5 @@ public class AdminLoginActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RC_GOOGLE_SIGN_IN) {
-            handleGoogleResult(GoogleSignIn.getSignedInAccountFromIntent(data));
-        }
     }
 }

@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 10 Physics · Unit 5: Magnetism</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#f4f6fb;--surface:#ffffff;--surface2:#eef2f9;--fg:#111827;--muted:#5b6472;
+    --line:#dbe2ef;--accent:#3b5bdb;--accent2:#7048e8;--accent-soft:#e8edff;
+    --correct:#0b7a5e;--correct-bg:#dcfce7;--wrong:#b91c1c;--wrong-bg:#fee2e2;
+    --gold:#f59f00;--gold-soft:#fff4d6;
+    --radius:16px;--shadow:0 6px 20px rgba(17,24,39,.07);
+    --font:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+    --am:'Noto Sans Ethiopic','Abyssinica SIL',system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{--bg:#0b1220;--surface:#131c2e;--surface2:#1b2740;--fg:#e6edf7;--muted:#9aa8bf;
+      --line:#27344f;--accent:#7c9cff;--accent2:#b197fc;--accent-soft:#1e2a4a;
+      --correct:#34d399;--correct-bg:#0c3a2e;--wrong:#f87171;--wrong-bg:#3f1414;
+      --gold:#fbbf24;--gold-soft:#3a2e0a;--shadow:0 6px 20px rgba(0,0,0,.4)}
+  }
+  body{font-family:var(--font);background:var(--bg);color:var(--fg);line-height:1.8;padding:14px;max-width:1000px;margin:0 auto}
+  h1{font-size:1.55rem;margin-bottom:4px;letter-spacing:-.02em}
+  h2{font-size:1.25rem;margin:1.2em 0 .5em;padding-bottom:8px;border-bottom:2px solid var(--line);color:var(--accent)}
+  h3{font-size:1.05rem;margin:1em 0 .4em;color:var(--accent2);font-weight:700}
+  p{margin-bottom:.8em}
+  ul,ol{padding-left:1.4em;margin-bottom:.8em}
+  li{margin-bottom:.35em}
+  .am{font-family:var(--am);color:var(--muted);font-size:.9rem;display:block;margin-top:3px;border-left:3px solid var(--accent-soft);padding-left:10px;font-style:normal}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-bottom:22px;box-shadow:var(--shadow)}
+  .card-accent{border-left:6px solid var(--accent)}
+  .badge{display:inline-block;background:var(--accent-soft);color:var(--accent);font-weight:800;font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:20px;margin-right:5px}
+  .badge-easy{background:#d3f9d8;color:#2b8a3e}
+  .badge-medium{background:#fff3bf;color:#e67700}
+  .badge-challenging{background:#ffe3e3;color:#c92a2a}
+  @media (prefers-color-scheme: dark){
+    .badge-easy{background:#0c3a2e;color:#6ee7b7}
+    .badge-medium{background:#3a2e0a;color:#fcd34d}
+    .badge-challenging{background:#3f1414;color:#fca5a5}
+  }
+  .unit-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px;background:var(--surface);padding:8px;border-radius:var(--radius);position:sticky;top:6px;z-index:20;border:1px solid var(--line);box-shadow:var(--shadow)}
+  .unit-nav button{flex:1 1 auto;padding:10px 12px;border:1px solid transparent;border-radius:12px;background:transparent;color:var(--muted);font-weight:700;font-size:.8rem;cursor:pointer;font-family:var(--font);white-space:nowrap;transition:.2s}
+  .unit-nav button:hover{background:var(--surface2);color:var(--fg)}
+  .unit-nav button.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 14px rgba(59,91,219,.35)}
+  .section-panel{display:none}
+  .section-panel.active{display:block}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9rem;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  th,td{border:1px solid var(--line);padding:9px 12px;text-align:left}
+  th{background:var(--surface2);font-weight:800;color:var(--accent)}
+  td{background:var(--surface)}
+  .formula{background:linear-gradient(135deg,var(--accent-soft),var(--surface2));border-left:5px solid var(--accent);padding:12px 16px;margin:12px 0;border-radius:0 12px 12px 0;font-family:'Courier New',monospace;font-size:1rem;overflow-x:auto;font-weight:600}
+  .diagram-box{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin:16px 0}
+  .diagram-box figure{flex:0 1 230px;text-align:center;background:var(--surface);padding:12px;border-radius:12px;border:1px solid var(--line);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+  .diagram-box svg{width:100%;height:auto;max-height:180px;display:block}
+  .diagram-box figcaption{font-size:.78rem;color:var(--muted);margin-top:7px;line-height:1.5}
+  .question-block{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.04);transition:.2s}
+  .question-block.correct-highlight{border-color:var(--correct);border-left:5px solid var(--correct)}
+  .question-block.wrong-highlight{border-color:var(--wrong);border-left:5px solid var(--wrong)}
+  .question-text{font-weight:700;margin-bottom:10px;font-size:.96rem;line-height:1.65}
+  .q-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:9px;font-size:.74rem;color:var(--muted)}
+  .option-list{display:flex;flex-direction:column;gap:7px;margin:8px 0}
+  .option-btn{text-align:left;padding:11px 14px;border:2px solid var(--line);border-radius:11px;background:var(--surface);color:var(--fg);font-size:.91rem;cursor:pointer;font-family:var(--font);line-height:1.5;transition:.15s;font-weight:500}
+  .option-btn:hover{border-color:var(--accent);background:var(--accent-soft);transform:translateX(2px)}
+  .option-btn.correct{border-color:var(--correct);background:var(--correct-bg);font-weight:700}
+  .option-btn.wrong{border-color:var(--wrong);background:var(--wrong-bg);font-weight:700}
+  .option-btn:disabled{cursor:default;opacity:.95;transform:none}
+  .feedback{margin-top:12px;padding:14px 16px;border-radius:12px;font-size:.9rem;line-height:1.75;display:none}
+  .feedback.show{display:block}
+  .feedback.correct-fb{background:var(--correct-bg);border-left:5px solid var(--correct)}
+  .feedback.wrong-fb{background:var(--wrong-bg);border-left:5px solid var(--wrong)}
+  .numeric-answer-area{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}
+  .numeric-answer-area input{padding:11px 14px;border:2px solid var(--line);border-radius:11px;font-size:.96rem;width:140px;background:var(--surface);color:var(--fg);font-family:var(--font);font-weight:600}
+  .numeric-answer-area input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+  .unit-label{font-weight:800;color:var(--accent);font-size:.95rem}
+  .btn{padding:10px 18px;border-radius:11px;border:none;font-weight:700;font-size:.9rem;cursor:pointer;font-family:var(--font);transition:.15s}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 3px 10px rgba(59,91,219,.3)}
+  .btn-primary:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .btn-secondary{background:var(--surface2);color:var(--fg);border:1px solid var(--line)}
+  .btn-secondary:hover{background:var(--line)}
+  .solution-details{margin-top:12px;padding:16px 18px;background:var(--surface2);border-radius:12px;font-size:.89rem;line-height:1.8;display:none;border-left:4px solid var(--gold)}
+  .solution-details.show{display:block}
+  .solution-details .step{display:block;margin-bottom:8px;padding:10px 14px;border-left:3px solid var(--accent);background:var(--surface);border-radius:0 8px 8px 0;line-height:1.7}
+  .solution-details .step:last-child{margin-bottom:0}
+  .solution-details strong{color:var(--accent)}
+  .solution-title{font-weight:800;color:var(--gold);font-size:.95rem;margin-bottom:8px;display:block}
+  .progress-bar-container{background:var(--line);border-radius:12px;height:14px;overflow:hidden;margin:8px 0}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--correct));width:0;transition:width .4s;border-radius:12px}
+  .filter-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;align-items:center}
+  .filter-bar select{padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font-family:var(--font);font-size:.86rem;font-weight:600}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .worked-example{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0;font-size:.91rem;border-left:4px solid var(--accent2)}
+  .worked-example h4{margin-top:0;color:var(--accent2);font-size:.95rem;margin-bottom:10px}
+  .worked-example ol li{margin-bottom:.5em;line-height:1.75}
+  .tag-conceptual{background:#dbeafe;color:#1e40af}
+  .tag-numerical{background:#fce7f3;color:#9d174d}
+  @media (prefers-color-scheme: dark){
+    .tag-conceptual{background:#1e3a5f;color:#93c5fd}
+    .tag-numerical{background:#5f1e3a;color:#f9a8d4}
+  }
+  .highlight-box{background:linear-gradient(135deg,var(--gold-soft),var(--accent-soft));border-radius:12px;padding:14px 18px;margin:14px 0;font-size:.91rem;border-left:4px solid var(--gold);line-height:1.75}
+  .verify-box{background:var(--correct-bg);border-radius:10px;padding:10px 14px;margin-top:8px;font-size:.86rem;border-left:3px solid var(--correct);line-height:1.65}
+  .textbook-exercise{background:linear-gradient(135deg,#fff8e1,#fef3c7);border:1px solid #fbbf24;border-radius:12px;padding:16px 18px;margin:14px 0;font-size:.9rem}
+  .textbook-exercise h4{margin-top:0;color:#92400e;font-size:.95rem;margin-bottom:10px}
+  .textbook-exercise .sol{background:var(--surface);border-radius:8px;padding:10px 14px;margin-top:8px;border-left:3px solid var(--correct);line-height:1.7}
+  @media (prefers-color-scheme: dark){
+    .textbook-exercise{background:linear-gradient(135deg,#3a2e0a,#422006);border-color:#fbbf24}
+    .textbook-exercise h4{color:#fcd34d}
+  }
+  @media (max-width:600px){
+    body{padding:8px}
+    .card{padding:14px 16px}
+    h1{font-size:1.2rem}
+    h2{font-size:1.05rem}
+    .unit-nav button{font-size:.68rem;padding:7px 9px}
+    .diagram-box figure{flex:1 1 145px}
+    .option-btn{font-size:.86rem;padding:10px 12px}
+  }
+</style>
+</head>
+<body>
+
+<header style="margin-bottom:18px">
+  <h1>📘 Grade 10 Physics · Unit 5: Magnetism</h1>
+  <p style="color:var(--muted);font-size:.9rem">Matric &amp; entrance-exam ready · 100 advanced questions with full step-by-step bilingual solutions</p>
+</header>
+
+<nav class="unit-nav" role="tablist" aria-label="Unit sections">
+  <button role="tab" class="active" data-section="5.1" aria-selected="true">5.1 Magnets</button>
+  <button role="tab" data-section="5.2" aria-selected="false">5.2 Magnetic Field</button>
+  <button role="tab" data-section="5.3" aria-selected="false">5.3 Earth's Field &amp; Compass</button>
+  <button role="tab" data-section="5.4" aria-selected="false">5.4 Current → Field</button>
+  <button role="tab" data-section="5.5" aria-selected="false">5.5 Force on Moving Charge</button>
+  <button role="tab" data-section="5.6" aria-selected="false">5.6 Force on Current Wire</button>
+  <button role="tab" data-section="5.7" aria-selected="false">5.7 Parallel Wires</button>
+  <button role="tab" data-section="5.8" aria-selected="false">5.8 Applications</button>
+  <button role="tab" data-section="assessment" aria-selected="false">📝 100 Qs Assessment</button>
+</nav>
+
+<!-- ==================== SECTION 5.1 ==================== -->
+<section id="section-5.1" class="section-panel active" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 5.1</span>
+  <h2>Magnets</h2>
+
+  <p><strong>A magnet</strong> is a material that produces a magnetic field and can attract or repel other magnetic materials. The earliest magnets were natural stones called <strong>lodestones</strong> (magnetized magnetite, Fe₃O₄) discovered by the ancient Greeks. Today, magnets come in many shapes and are used in countless devices.</p>
+  <p class="am">ማግኔት የራሱን መግነጢሳዊ መስክ የሚፈጥር እና ሌሎች መግነጢሳዊ ቁሶችን የሚስብ ወይም የሚጠላ ቁስ ነው። የመጀመሪያዎቹ ማግኔቶች ሎድስቶን (lodestone) ይባሉ ነበር — የተመግነጠዘ የብረት ኦክሳይድ ዓለት።</p>
+
+  <h3>Types of Magnets</h3>
+  <p><strong>1. Permanent magnets</strong> — made of magnetized steel, retain their magnetism permanently. Used in speakers, phones, cars, generators, TVs, sensors.</p>
+  <p><strong>2. Temporary magnets</strong> — become magnetized in the presence of a magnetic field; lose magnetism when the field is removed. Examples: iron nails, paper clips.</p>
+  <p><strong>3. Electromagnets</strong> — a coil of wire wrapped around an iron core; only magnetic when current flows. Strength controlled by current. Used in generators, motors, transformers, MRI machines.</p>
+  <p class="am"><strong>ሶስት ዓይነት ማግኔቶች፦</strong> 1) ቋሚ (permanent) — ለዘላለም መግነጢሳዊነቱን ይይዛል። 2) ጊዜያዊ (temporary) — በመግነጢሳዊ መስክ ውስጥ ብቻ ይሠራል። 3) ኤሌክትሮማግኔት — በኤሌክትሪክ አሁንታ ብቻ ይሠራል።</p>
+
+  <h3>Properties of Magnets</h3>
+  <ul>
+    <li><strong>Two poles:</strong> Every magnet has a North pole and a South pole. Poles are the regions of greatest magnetic attraction.</li>
+    <li><strong>Poles come in pairs:</strong> Cutting a magnet in half produces two smaller magnets, each with its own N and S pole. You cannot isolate a single pole (no magnetic monopoles).</li>
+    <li><strong>Free-hanging magnet:</strong> Suspended freely, a magnet aligns with the Earth's N-S direction. The end pointing north is the North pole.</li>
+    <li><strong>Like poles repel; unlike poles attract.</strong></li>
+    <li><strong>Distance matters:</strong> Force between two magnets is stronger when they are closer together.</li>
+  </ul>
+  <p class="am"><strong>የማግኔት ባህሪያት፦</strong> ሁለት ዋልታዎች (ሰሜን፣ ደቡብ)፤ ዋልታዎች ሁልጊዜ ጥንድ ሆነው ይገኛሉ (ማግኔትን ቢቀራፈፉም ሁለቱም ዋልታዎች ይኖራሉ)፤ ተመሳሳይ ዋልታዎች ይጣላሉ፣ ተቃራኒ ዋልታዎች ይሳባሉ፤ በነፃ ሲሰቀል ወደ ሰሜን-ደቡብ ይመራል።</p>
+
+  <div class="highlight-box">
+    <strong>Demagnetization — losing magnetism:</strong><br>
+    • Exposing to extreme temperatures (heat).<br>
+    • Hammering or dropping (breaks atomic alignment).<br>
+    • Striking one magnet against another inappropriately.<br>
+    • Applying a strong alternating field.
+    <span class="am"><strong>ማግኔትነትን ማጣት፦</strong> ሙቀት መጋለጥ፣ መምታት/መውደቅ፣ በሌላ ማግኔት ላይ መምታት።</span>
+  </div>
+
+  <h3>Diagram: Bar Magnet and Poles</h3>
+  <div class="diagram-box">
+    <figure>
+      <svg viewBox="0 0 260 100" role="img" aria-label="Bar magnet with N and S poles">
+        <rect x="30" y="35" width="200" height="30" fill="#f4f6fb" stroke="#5b6472" stroke-width="2" rx="4"/>
+        <rect x="30" y="35" width="100" height="30" fill="#ffe3e3" stroke="#c92a2a" stroke-width="2" rx="4"/>
+        <text x="80" y="58" fill="#c92a2a" font-size="18" text-anchor="middle" font-weight="bold">N</text>
+        <text x="180" y="58" fill="#1e40af" font-size="18" text-anchor="middle" font-weight="bold">S</text>
+        <text x="130" y="85" fill="#5b6472" font-size="11" text-anchor="middle">Bar magnet — N and S poles</text>
+      </svg>
+      <figcaption>Every magnet has a North and a South pole.</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 260 100" role="img" aria-label="Poles cannot be separated">
+        <rect x="20" y="35" width="100" height="30" fill="#ffe3e3" stroke="#c92a2a" stroke-width="2" rx="4"/>
+        <text x="45" y="58" fill="#c92a2a" font-size="14" font-weight="bold">N</text>
+        <text x="100" y="58" fill="#1e40af" font-size="14" font-weight="bold">S</text>
+        <rect x="140" y="35" width="100" height="30" fill="#ffe3e3" stroke="#c92a2a" stroke-width="2" rx="4"/>
+        <text x="165" y="58" fill="#c92a2a" font-size="14" font-weight="bold">N</text>
+        <text x="220" y="58" fill="#1e40af" font-size="14" font-weight="bold">S</text>
+        <text x="130" y="85" fill="#5b6472" font-size="11" text-anchor="middle">Cut a magnet → two magnets, each with N and S</text>
+      </svg>
+      <figcaption>Poles cannot be separated — always N and S together.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 5.1.1 — Distinguish the three types</h4>
+    <p>Classify: a bar magnet, an iron nail that has been near a magnet, a coil of wire with current flowing through it.</p>
+    <p class="am">ሶስቱን ዓይነት ለይ፦ ባር ማግኔት፣ በማግኔት አጠገብ የኖረ ብረት ምስማር፣ አሁንታ ያለው ጠመጠም (coil)።</p>
+    <ol>
+      <li><strong>Bar magnet</strong> → <strong>Permanent magnet.</strong> It retains magnetism permanently, independent of surroundings.</li>
+      <li><strong>Iron nail near magnet</strong> → <strong>Temporary magnet.</strong> Magnetized only while near the magnet; loses magnetism when separated.</li>
+      <li><strong>Coil with current</strong> → <strong>Electromagnet.</strong> Magnetic only when current flows; strength depends on current.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Permanent / Temporary / Electromagnet. · <span class="am" style="display:inline">መልስ፦ ቋሚ / ጊዜያዊ / ኤሌክትሮማግኔት።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 5.1.2 — Breaking a magnet</h4>
+    <p>A bar magnet is broken into three pieces. What poles does each piece have?</p>
+    <p class="am">ባር ማግኔት ወደ ሶስት ተቀርፎ ቢከፋፈል እያንዳንዱ ቁራጭ ስንት ዋልታዎች ይኖሩታል?</p>
+    <ol>
+      <li>Magnetic poles cannot be isolated — they always come in pairs.</li>
+      <li>When you cut a magnet, the atoms at the cut reorganize so each piece becomes a complete magnet.</li>
+      <li>Therefore, <strong>each of the three pieces has its own North pole and South pole</strong>.</li>
+      <li>This continues down to atomic level — no matter how finely you cut, you get pairs.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Each piece has N and S poles. · <span class="am" style="display:inline">መልስ፦ እያንዳንዱ ቁራጭ N እና S አለው።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 5.1.1 — What is a magnet? List its properties.</h4>
+    <p><strong>Definition:</strong> A magnet is a material that produces a magnetic field and attracts/repels magnetic materials.</p>
+    <p><strong>Properties:</strong> 1) Two poles (N and S). 2) Poles always in pairs. 3) Like poles repel, unlike attract. 4) Free magnet aligns N-S. 5) Attraction strongest at poles. 6) Force decreases with distance.</p>
+    <p class="am"><strong>ትርጓሜ፦</strong> ማግኔት መግነጢሳዊ መስክ የሚፈጥርና ብረቶችን የሚስብ ቁስ ነው። <strong>ባህሪያት፦</strong> ሁለት ዋልታዎች፣ ጥንድ ሆነው ይገኛሉ፣ ተመሳሳይ ይጣላሉ ተቃራኒ ይሳባሉ፣ በነፃ ሲሰቀል ወደ N-S ይመራል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 5.1.2 — How can a magnet lose its magnetic properties?</h4>
+    <p>By: 1) heating to extreme temperatures, 2) hammering/dropping, 3) striking against another magnet, 4) strong alternating current.</p>
+    <p class="am">ማግኔትነቱን ያጣል፦ በሙቀት፣ በመምታት፣ በሌላ ማግኔት ላይ በመምታት።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 5.1.3 — Rule for magnetic attraction and repulsion</h4>
+    <p><strong>Like poles (N-N, S-S) repel. Unlike poles (N-S) attract.</strong></p>
+    <p class="am">ተመሳሳይ ዋልታዎች ይጣላሉ፣ ተቃራኒ ዋልታዎች ይሳባሉ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 5.1.4 — Temporary vs permanent magnet</h4>
+    <p><strong>Permanent:</strong> retains magnetism permanently (e.g., steel magnet).</p>
+    <p><strong>Temporary:</strong> magnetic only while near a magnetic field (e.g., iron nail near a magnet).</p>
+    <p class="am">ቋሚ፦ ሁልጊዜ መግነጢሳዊ ነው። ጊዜያዊ፦ በመግነጢሳዊ መስክ ውስጥ ብቻ ነው።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 5.1.5 — What are magnetic poles? Does a magnetic mono-pole exist?</h4>
+    <p><strong>Magnetic poles</strong> are the two ends of a magnet where the magnetic force is strongest (N and S). <strong>No magnetic mono-pole has ever been observed</strong> — poles always come in pairs.</p>
+    <p class="am">ዋልታዎች የማግኔቱ ሁለት ጫፎች ናቸው። አንድ ብቻ ዋልታ (monopole) የለም — ሁልጊዜ ጥንድ ናቸው።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 5.1.6 — If you break a magnet into two, do you get isolated N and S poles?</h4>
+    <p><strong>No.</strong> Each broken piece becomes a complete magnet with its own N and S pole. Poles cannot be separated.</p>
+    <p class="am">አይደለም። እያንዳንዱ ቁራጭ የራሱ N እና S ይኖረዋል።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-5.1"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 5.2 ==================== -->
+<section id="section-5.2" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 5.2</span>
+  <h2>Magnetic Field</h2>
+
+  <p><strong>A magnetic field</strong> is the region around a magnet (or moving charge) where a magnetic force acts on other magnetic materials or moving charges. It is visualized using <strong>magnetic field lines</strong>.</p>
+  <p class="am">መግነጢሳዊ መስክ በማግኔት (ወይም በሚንቀሳቀስ ቻርጅ) ዙሪያ ያለ እና ሌሎች መግነጢሳዊ ቁሶች ወይም ቻርጆች ላይ ኃይል የሚሠራበት አካባቢ ነው።</p>
+
+  <h3>Properties of Magnetic Field Lines</h3>
+  <ul>
+    <li><strong>Never intersect.</strong> (If they did, there would be two field directions at one point.)</li>
+    <li><strong>Form closed loops.</strong> Outside a magnet, N → S. Inside, S → N.</li>
+    <li><strong>Origin at N, terminate at S</strong> (outside the magnet).</li>
+    <li><strong>Density ∝ field strength.</strong> Closer lines = stronger field.</li>
+    <li><strong>Strongest at the poles</strong> (lines are densest there).</li>
+    <li><strong>Unlike poles:</strong> lines converge (come together). <strong>Like poles:</strong> lines diverge (bend apart).</li>
+  </ul>
+  <p class="am"><strong>የመስክ መስመሮች ባህሪያት፦</strong> አይገናኙም፤ የተዘጉ ዑደቶች ናቸው፤ ከሰሜን ወደ ደቡብ ይሄዳሉ (ከማግኔቱ ውጭ)፤ ጥግግታቸው ከመስኩ ጥንካሬ ጋር ተመጣጣኝ ነው፤ በዋልታዎች ላይ ጥንካሬው ይበልጣል።</p>
+
+  <h3>Diagram: Field Lines</h3>
+  <div class="diagram-box">
+    <figure>
+      <svg viewBox="0 0 240 140" role="img" aria-label="Field lines of a bar magnet">
+        <rect x="40" y="55" width="160" height="30" fill="#ffe3e3" stroke="#c92a2a" stroke-width="2"/>
+        <text x="70" y="75" fill="#c92a2a" font-size="16" font-weight="bold">N</text>
+        <text x="175" y="75" fill="#1e40af" font-size="16" font-weight="bold">S</text>
+        <path d="M 60,55 Q 60,20 120,20 Q 180,20 180,55" fill="none" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowM)"/>
+        <path d="M 60,85 Q 60,120 120,120 Q 180,120 180,85" fill="none" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowM)"/>
+        <path d="M 40,70 Q 20,70 30,55" fill="none" stroke="#7048e8" stroke-width="2"/>
+        <path d="M 200,70 Q 220,70 210,55" fill="none" stroke="#7048e8" stroke-width="2"/>
+        <defs><marker id="arrowM" markerWidth="8" markerHeight="5" refX="8" refY="2.5" orient="auto"><polygon points="0 0, 8 2.5, 0 5" fill="#7048e8"/></marker></defs>
+        <text x="120" y="135" fill="#5b6472" font-size="10" text-anchor="middle">Field lines N → S outside</text>
+      </svg>
+      <figcaption>Bar magnet: lines from N to S outside.</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 240 140" role="img" aria-label="Like poles repel">
+        <rect x="20" y="55" width="80" height="30" fill="#ffe3e3" stroke="#c92a2a" stroke-width="2"/>
+        <text x="60" y="75" fill="#c92a2a" font-size="16" font-weight="bold">N</text>
+        <rect x="140" y="55" width="80" height="30" fill="#ffe3e3" stroke="#c92a2a" stroke-width="2"/>
+        <text x="180" y="75" fill="#c92a2a" font-size="16" font-weight="bold">N</text>
+        <path d="M 100,60 Q 120,40 140,60" fill="none" stroke="#7048e8" stroke-width="2"/>
+        <path d="M 100,80 Q 120,100 140,80" fill="none" stroke="#7048e8" stroke-width="2"/>
+        <text x="120" y="130" fill="#5b6472" font-size="10" text-anchor="middle">Like poles: lines diverge</text>
+      </svg>
+      <figcaption>Like poles: field lines bend apart.</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 240 140" role="img" aria-label="Unlike poles attract">
+        <rect x="20" y="55" width="80" height="30" fill="#ffe3e3" stroke="#c92a2a" stroke-width="2"/>
+        <text x="60" y="75" fill="#c92a2a" font-size="16" font-weight="bold">N</text>
+        <rect x="140" y="55" width="80" height="30" fill="#dbeafe" stroke="#1e40af" stroke-width="2"/>
+        <text x="180" y="75" fill="#1e40af" font-size="16" font-weight="bold">S</text>
+        <path d="M 100,60 Q 120,55 140,60" fill="none" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowM)"/>
+        <path d="M 100,80 Q 120,85 140,80" fill="none" stroke="#7048e8" stroke-width="2" marker-end="url(#arrowM)"/>
+        <text x="120" y="130" fill="#5b6472" font-size="10" text-anchor="middle">Unlike poles: lines converge</text>
+      </svg>
+      <figcaption>Unlike poles: lines join together.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Similarities and Differences: Electric vs Magnetic Fields</h3>
+  <table>
+    <thead><tr><th>Feature</th><th>Electric field</th><th>Magnetic field</th></tr></thead>
+    <tbody>
+      <tr><td>Produced by</td><td>Electric charges</td><td>Moving charges or magnets</td></tr>
+      <tr><td>Poles/charges</td><td>+ and − (can separate)</td><td>N and S (never separate)</td></tr>
+      <tr><td>Force rule</td><td>Like charges repel, unlike attract</td><td>Like poles repel, unlike attract</td></tr>
+      <tr><td>Field lines</td><td>Start at + and end at −</td><td>Closed loops</td></tr>
+      <tr><td>Direction</td><td>Direction of force on + charge</td><td>Direction of force on N pole</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 5.2.1 — Where is the field strongest?</h4>
+    <p>A bar magnet is placed on a table with iron filings scattered around it. Where do the filings clump most densely?</p>
+    <p class="am">ባር ማግኔት በጠረጴዛ ላይ ተቀምጦ የብረት ቅንጣቶች ተበትነውበታል። ቅንጣቶቹ የሚሰበሰቡት የት ነው?</p>
+    <ol>
+      <li>Iron filings align with the magnetic field lines.</li>
+      <li>Where field lines are dense → strong field → more filings clump.</li>
+      <li>Field lines are densest at the poles (N and S ends).</li>
+      <li>So the filings clump most at the two poles.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Densest at the poles. · <span class="am" style="display:inline">መልስ፦ በዋልታዎቹ ላይ።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 5.2.2 — Do field lines cross?</h4>
+    <p>Two magnetic field lines appear to be heading toward the same point. What must happen?</p>
+    <p class="am">ሁለት የመስክ መስመሮች ወደ አንድ ነጥብ ይመሩ እንደሆነ ምን ይሆናል?</p>
+    <ol>
+      <li>If they crossed, that point would have two field directions.</li>
+      <li>By definition, a field has exactly ONE direction at each point.</li>
+      <li>Therefore, they must bend away from each other — field lines NEVER cross.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> They never cross. · <span class="am" style="display:inline">መልስ፦ አይገናኙም።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 5.2.1 — Draw a bar magnet and its field lines</h4>
+    <p>Field lines emerge from the N pole, curve through space, and enter the S pole. Inside the magnet, they continue S → N forming closed loops. Density is highest near the poles.</p>
+    <p class="am">መስመሮቹ ከ N ወጥተው ወደ S ይገባሉ (ከማግኔቱ ውጭ)፤ በውስጥ ከ S ወደ N ይሄዳሉ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 5.2.2 — Draw field between two like poles and two unlike poles</h4>
+    <p><strong>Like poles (N-N or S-S):</strong> Field lines bend away from each other — they diverge in the middle.</p>
+    <p><strong>Unlike poles (N-S):</strong> Field lines flow from N to S — they converge/connect in the middle.</p>
+    <p class="am">ተመሳሳይ ዋልታዎች፦ መስመሮቹ ይለያያሉ። ተቃራኒ ዋልታዎች፦ መስመሮቹ ይገናኛሉ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 5.2.3 — Where is field strongest / weakest?</h4>
+    <p><strong>Strongest:</strong> at the poles (lines dense). <strong>Weakest:</strong> far from the magnet (lines spread out).</p>
+    <p class="am">በዋልታዎች ላይ ጠንካራ፤ ከማግኔቱ ርቆ ደካማ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 5.2.4 — Explain magnetic field using field lines</h4>
+    <p>A magnetic field is a region where a magnetic force acts, visualized by field lines whose direction shows the field direction and whose density shows the field's strength.</p>
+    <p class="am">መስክ ማለት ኃይል የሚሠራበት አካባቢ ነው፤ መስመሮቹ አቅጣጫውንና ጥንካሬውን ያሳያሉ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 5.2.5 — Properties of magnetic field lines</h4>
+    <p>1) Never intersect. 2) Closed loops. 3) Outside: N → S; inside: S → N. 4) Density ∝ field strength. 5) Strongest at poles. 6) Lines from unlike poles converge, from like poles diverge.</p>
+    <p class="am">1) አይገናኙም 2) የተዘጉ ናቸው 3) ከ N ወደ S 4) ጥግግታ = ጥንካሬ 5) በዋልታዎች ጠንካራ 6) ተቃራኒ ይሳባሉ ተመሳሳይ ይጣላሉ።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-5.2"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 5.3 ==================== -->
+<section id="section-5.3" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 5.3</span>
+  <h2>Earth's Magnetic Field and the Compass</h2>
+
+  <p><strong>Earth has its own magnetic field</strong> (the geomagnetic field), extending from deep inside the Earth's outer core out into space. It is generated by the motion of molten iron in the outer core. The field is like that of a giant bar magnet tilted ~11° from the geographic axis.</p>
+  <p class="am">ምድር የራሱ መግነጢሳዊ መስክ አላት። ይህ የሚፈጠረው በውጫዊው ኮር (outer core) ውስጥ በሚንቀሳቀሰው ብረት ነው። የምድር መስክ ከጂዮግራፊያዊው ዘንግ በ~11° ያዘነበለ ግዙፍ ባር ማግኔት ይመስላል።</p>
+
+  <div class="highlight-box">
+    <strong>Crucial consequence:</strong> The magnetic pole near Earth's <em>geographic</em> North is actually a <strong>magnetic SOUTH pole</strong>. That is why the North pole of a compass needle (which is a magnetic North pole) is attracted to it.<br>
+    <strong>Therefore:</strong> Compass needle's N pole points toward Earth's geographic North — but that location is the Earth's magnetic S pole.
+    <span class="am"><strong>ወሳኝ ጉዳይ፦</strong> የምድር ጂዮግራፊያዊ ሰሜን አጠገብ ያለው መግነጢሳዊ ዋልታ በእውነቱ መግነጢሳዊ <strong>ደቡብ</strong> ዋልታ ነው! የኮምፓስ ሰሜን ዋልታ ወደዚያ ይሳባል።</span>
+  </div>
+
+  <h3>Diagram: Earth's Magnetic Field</h3>
+  <div class="diagram-box">
+    <figure>
+      <svg viewBox="0 0 260 180" role="img" aria-label="Earth's magnetic field">
+        <ellipse cx="130" cy="90" rx="90" ry="60" fill="#dbeafe" stroke="#1e40af" stroke-width="2"/>
+        <line x1="130" y1="10" x2="130" y2="170" stroke="#5b6472" stroke-width="1.5" stroke-dasharray="4,2"/>
+        <text x="130" y="8" fill="#c92a2a" font-size="11" text-anchor="middle" font-weight="bold">Geographic N</text>
+        <text x="130" y="178" fill="#1e40af" font-size="11" text-anchor="middle" font-weight="bold">Geographic S</text>
+        <line x1="110" y1="40" x2="150" y2="140" stroke="#c92a2a" stroke-width="3"/>
+        <text x="80" y="50" fill="#c92a2a" font-size="11">Magnetic S (near N)</text>
+        <text x="160" y="140" fill="#1e40af" font-size="11">Magnetic N (near S)</text>
+        <path d="M 40,90 Q 130,10 220,90" fill="none" stroke="#7048e8" stroke-width="1.5"/>
+        <path d="M 40,90 Q 130,170 220,90" fill="none" stroke="#7048e8" stroke-width="1.5"/>
+        <text x="130" y="100" fill="#5b6472" font-size="10" text-anchor="middle">Earth</text>
+      </svg>
+      <figcaption>Earth's field ~ bar magnet tilted ~11°.</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 200 160" role="img" aria-label="Compass">
+        <circle cx="100" cy="80" r="60" fill="#f4f6fb" stroke="#5b6472" stroke-width="3"/>
+        <circle cx="100" cy="80" r="55" fill="none" stroke="#dbe2ef" stroke-width="1"/>
+        <text x="100" y="30" fill="#c92a2a" font-size="12" text-anchor="middle" font-weight="bold">N</text>
+        <text x="100" y="140" fill="#1e40af" font-size="12" text-anchor="middle" font-weight="bold">S</text>
+        <text x="35" y="85" fill="#5b6472" font-size="11" text-anchor="middle">W</text>
+        <text x="165" y="85" fill="#5b6472" font-size="11" text-anchor="middle">E</text>
+        <polygon points="100,35 95,80 105,80" fill="#c92a2a"/>
+        <polygon points="100,125 95,80 105,80" fill="#1e40af"/>
+        <text x="100" y="90" fill="#5b6472" font-size="9" text-anchor="middle">compass needle</text>
+      </svg>
+      <figcaption>Compass needle aligns with local field.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 5.3.1 — Compass direction reasoning</h4>
+    <p>A compass is placed on a table. Why does its needle point toward geographic North?</p>
+    <p class="am">ኮምፓስ በጠረጴዛ ላይ ተቀምጦ ለምን ወደ ጂዮግራፊያዊ ሰሜን ይመራል?</p>
+    <ol>
+      <li>The compass needle is itself a small magnet with an N pole and an S pole.</li>
+      <li>Earth's magnetic field is like a giant bar magnet with its <em>south</em> magnetic pole near the geographic North.</li>
+      <li>Like a magnetic compass, the needle's N pole is attracted to that magnetic S pole — which is under geographic North.</li>
+      <li>Therefore, the needle's N pole points toward geographic North.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> N pole of needle → Earth's magnetic S pole (which is near geographic North). · <span class="am" style="display:inline">መልስ፦ የኮምፓሱ N ዋልታ ወደ ምድር መግነጢሳዊ S ዋልታ (በጂዮግራፊያዊ ሰሜን አጠገብ) ይሳባል።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 5.3.2 — Why Earth's field matters</h4>
+    <p>What would happen to Earth's compasses if the outer core stopped moving?</p>
+    <p class="am">የውጫዊው ኮር መንቀሳቀስ ቢያቆም ኮምፓሶች ምን ይሆናሉ?</p>
+    <ol>
+      <li>Earth's magnetic field is generated by the motion of molten iron in the outer core.</li>
+      <li>If that motion stopped, the field would collapse.</li>
+      <li>Compasses would no longer align with a planetary field — they would point in random directions.</li>
+      <li>Navigation would lose this natural reference.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Earth's field would collapse; compasses would fail. · <span class="am" style="display:inline">መልስ፦ መስኩ ይጠፋል፤ ኮምፓሶች አይሠሩም።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 5.3.1 — What is the evidence for the existence of Earth's magnetic field?</h4>
+    <p>A free compass needle always aligns N-S. Migratory animals (pigeons, sea turtles) navigate by sensing the field. Auroras are caused by charged particles from the Sun spiraling along field lines toward the poles.</p>
+    <p class="am">ነፃ የሆነ የኮምፓስ መርፌ ሁልጊዜ ወደ N-S ይመራል፤ እንስሳት ለመንገድ ፍለጋ ይጠቀሙበታል፤ አውሮራስ በመስኩ ምክንያት ይከሰታል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 5.3.2 — Why does a compass show magnetic North?</h4>
+    <p>The compass needle is a tiny magnet. It aligns with the Earth's magnetic field. The needle's N pole is attracted toward Earth's magnetic S pole, which is located near the geographic North Pole. Thus, the N end of the needle points north.</p>
+    <p class="am">የኮምፓስ መርፌ ትንሽ ማግኔት ነው፤ ከምድር መስክ ጋር ይስማማል። የ N ዋልታው ወደ ምድር መግነጢሳዊ S ዋልታ ይሳባል — ይህም በጂዮግራፊያዊ ሰሜን አጠገብ ነው።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-5.3"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 5.4 ==================== -->
+<section id="section-5.4" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 5.4</span>
+  <h2>Magnetic Field of a Current-Carrying Conductor</h2>
+
+  <p><strong>A current-carrying wire produces a magnetic field</strong> around it. The field lines form closed concentric circles perpendicular to the wire.</p>
+  <p class="am">አሁንታ የሚሸከም ሽቦ በዙሪያው መግነጢሳዊ መስክ ይፈጥራል። የመስክ መስመሮቹ ከሽቦው ጋር ቀጥተኛ የሆኑ የተዘጉ ክብ ቅርጽ ያላቸው ናቸው።</p>
+
+  <h3>Formulas</h3>
+  <div class="formula">B = μ₀ I / (2π d)</div>
+  <div class="formula">μ₀ = 4π × 10⁻⁷ T·m/A (permeability of free space)</div>
+  <div class="formula">1 G = 10⁻⁴ T (gauss)</div>
+  <div class="formula">Earth's field at surface ≈ 5 × 10⁻⁵ T = 0.5 G</div>
+
+  <div class="highlight-box">
+    <strong>Right-hand grip rule:</strong> Point your right thumb in the direction of the current. Your curled fingers show the direction of the magnetic field lines (which form concentric circles around the wire).
+    <span class="am"><strong>የቀኝ እጅ ደንብ፦</strong> በቀኝ አውራ ጣትህ የአሁንታውን አቅጣጫ አሳይ። የታጠፉት ጣቶች የመስኩን አቅጣጫ ያሳያሉ።</span>
+  </div>
+
+  <h3>Diagram: Field Around a Wire</h3>
+  <div class="diagram-box">
+    <figure>
+      <svg viewBox="0 0 240 160" role="img" aria-label="Magnetic field around a wire">
+        <circle cx="120" cy="80" r="6" fill="#c92a2a"/>
+        <text x="120" y="68" fill="#c92a2a" font-size="10" text-anchor="middle" font-weight="bold">I (out)</text>
+        <ellipse cx="120" cy="80" rx="30" ry="14" fill="none" stroke="#7048e8" stroke-width="2"/>
+        <ellipse cx="120" cy="80" rx="55" ry="26" fill="none" stroke="#7048e8" stroke-width="2"/>
+        <ellipse cx="120" cy="80" rx="80" ry="38" fill="none" stroke="#7048e8" stroke-width="2"/>
+        <path d="M 90,80 L 84,74 M 150,80 L 156,74 M 120,66 L 126,62 M 120,94 L 114,98" stroke="#7048e8" stroke-width="1.5" marker-end="url(#arrowW)"/>
+        <defs><marker id="arrowW" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto"><polygon points="0 0, 6 2, 0 4" fill="#7048e8"/></marker></defs>
+        <text x="120" y="140" fill="#5b6472" font-size="10" text-anchor="middle">Field circles are counter-clockwise</text>
+      </svg>
+      <figcaption>Field lines form concentric circles.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 5.4.1 — Field of a long straight wire (matric exam)</h4>
+    <p>A long straight wire carries a 3 A current. Find B at 2 cm from the wire (μ₀ = 4π×10⁻⁷ T·m/A).</p>
+    <p class="am">ረዥም ቀጥተኛ ሽቦ 3 A አሁንታ ይሸከማል። ከሽቦው 2 ሴ.ሜ ርቀት ላይ B ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> I = 3 A; d = 2 cm = 0.02 m; μ₀ = 4π × 10⁻⁷ T·m/A.</li>
+      <li><strong>Formula:</strong> B = μ₀ I / (2π d).</li>
+      <li><strong>Substitute:</strong> B = (4π×10⁻⁷)(3) / (2π × 0.02).</li>
+      <li><strong>Simplify π:</strong> = (4×3×10⁻⁷) / (2×0.02) = (12×10⁻⁷) / 0.04 = 300 × 10⁻⁷.</li>
+      <li><strong>Compute:</strong> B = <strong>3.0 × 10⁻⁵ T</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> B = 3.0 × 10⁻⁵ T. · <span class="am" style="display:inline">መልስ፦ 3.0×10⁻⁵ T።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 5.4.2 — Distance for a given B</h4>
+    <p>What distance from a 10 A wire gives B = 1 × 10⁻⁵ T?</p>
+    <p class="am">ከ10 A ሽቦ B = 1×10⁻⁵ T ለማግኘት ምን ያህል ርቀት ያስፈልጋል?</p>
+    <ol>
+      <li><strong>Given:</strong> I = 10 A; B = 1×10⁻⁵ T; μ₀ = 4π × 10⁻⁷.</li>
+      <li><strong>Rearrange:</strong> d = μ₀ I / (2π B).</li>
+      <li><strong>Substitute:</strong> d = (4π×10⁻⁷)(10) / (2π × 1×10⁻⁵).</li>
+      <li><strong>Simplify:</strong> = (4×10⁻⁶) / (2×10⁻⁵) = 0.2 m.</li>
+      <li><strong>Answer:</strong> d = <strong>0.20 m = 20 cm</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> d = 0.20 m. · <span class="am" style="display:inline">መልስ፦ 0.20 ሜትር።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 5.4.3 — Direction using right-hand rule</h4>
+    <p>A wire carries current straight toward you (out of the page). Which way do the field lines wrap?</p>
+    <p class="am">ሽቦ ወደ አንተ አቅጣጫ (ከገጹ ወደ ውጭ) አሁንታ ይሸከማል። የመስክ መስመሮች ወዴት ይታጠፋሉ?</p>
+    <ol>
+      <li>Right-hand rule: thumb points toward you (out of page).</li>
+      <li>Fingers curl counter-clockwise (when viewed from your side).</li>
+      <li>So field lines form counter-clockwise circles when looking along the current direction.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Counter-clockwise circles. · <span class="am" style="display:inline">መልስ፦ በተቃራኒ ሰዓት አቅጣጫ ክብ።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 5.4.1 — Strength of B if distance is very large</h4>
+    <p>From B = μ₀I/(2πd), as d → ∞, B → 0. Field becomes negligible far from the wire.</p>
+    <p class="am">d ሲጨምር B ይቀንሳል — ወደ ዜሮ ይጠጋል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 5.4.2 — Factors affecting B</h4>
+    <p><strong>B depends on:</strong> 1) current I (B ∝ I), 2) distance d (B ∝ 1/d), 3) permeability of medium (μ₀).</p>
+    <p class="am">B ይወሰናል፦ በ I (ቀጥተኛ)፣ በ d (ተቃራኒ)፣ በ μ₀።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-5.4"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 5.5 ==================== -->
+<section id="section-5.5" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 5.5</span>
+  <h2>Magnetic Force on a Moving Charge</h2>
+
+  <p><strong>A moving charge in a magnetic field experiences a magnetic force</strong> perpendicular to both its velocity and the field.</p>
+  <p class="am">በመግነጢሳዊ መስክ ውስጥ የሚንቀሳቀስ ቻርጅ በሁለቱም ፍጥነቱና መስኩ ላይ ቀጥተኛ የሆነ መግነጢሳዊ ኃይል ይሰማዋል።</p>
+
+  <h3>Formulas</h3>
+  <div class="formula">F = q v B sin θ</div>
+  <div class="formula">θ = angle between v and B</div>
+  <div class="formula">F = 0 if θ = 0° or 180° (v ∥ B)</div>
+  <div class="formula">F is maximum if θ = 90° (v ⊥ B): F = q v B</div>
+
+  <div class="highlight-box">
+    <strong>Right-hand rule for F on a positive charge:</strong><br>
+    1) Point right thumb in the direction of velocity v.<br>
+    2) Point fingers in the direction of field B.<br>
+    3) The palm pushes in the direction of the force F.<br>
+    <strong>For a negative charge</strong> (electron), the force is in the <em>opposite</em> direction.
+    <span class="am"><strong>የቀኝ እጅ ደንብ (አዎንታዊ ቻርጅ)፦</strong> አውራ ጣት ወደ v፣ ጣቶች ወደ B፣ መዳፍ ወደ F። <strong>አሉታዊ ቻርጅ</strong> — ኃይሉ ተቃራኒ አቅጣጫ ነው።</span>
+  </div>
+
+  <h3>Diagram: Force on a Moving Charge</h3>
+  <div class="diagram-box">
+    <figure>
+      <svg viewBox="0 0 220 150" role="img" aria-label="Force on moving charge">
+        <text x="30" y="20" fill="#5b6472" font-size="10">B (into page)</text>
+        <line x1="20" y1="30" x2="20" y2="40" stroke="#5b6472" stroke-width="1"/>
+        <line x1="60" y1="30" x2="60" y2="40" stroke="#5b6472" stroke-width="1"/>
+        <line x1="100" y1="30" x2="100" y2="40" stroke="#5b6472" stroke-width="1"/>
+        <line x1="140" y1="30" x2="140" y2="40" stroke="#5b6472" stroke-width="1"/>
+        <line x1="180" y1="30" x2="180" y2="40" stroke="#5b6472" stroke-width="1"/>
+        <line x1="60" y1="75" x2="140" y2="75" stroke="#c92a2a" stroke-width="3" marker-end="url(#arrowV)"/>
+        <text x="100" y="68" fill="#c92a2a" font-size="10" text-anchor="middle">v</text>
+        <line x1="100" y1="75" x2="100" y2="30" stroke="#7048e8" stroke-width="3" marker-end="url(#arrowF)"/>
+        <text x="110" y="50" fill="#7048e8" font-size="10">F</text>
+        <defs>
+          <marker id="arrowV" markerWidth="8" markerHeight="5" refX="8" refY="2.5" orient="auto"><polygon points="0 0, 8 2.5, 0 5" fill="#c92a2a"/></marker>
+          <marker id="arrowF" markerWidth="8" markerHeight="5" refX="8" refY="2.5" orient="auto"><polygon points="0 0, 8 2.5, 0 5" fill="#7048e8"/></marker>
+        </defs>
+        <text x="110" y="125" fill="#5b6472" font-size="10" text-anchor="middle">F ⊥ v ⊥ B</text>
+      </svg>
+      <figcaption>Force perpendicular to v and B.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 5.5.1 — Force when v ∥ B</h4>
+    <p>A 50 C charged particle moves at 3 m/s parallel to a 1 T magnetic field. Find the force.</p>
+    <p class="am">50 C ቻርጅ በ3 m/s ፍጥነት ከ1 T መስክ ጋር ትይዩ ሲንቀሳቀስ ኃይሉን ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> q = 50 C; v = 3 m/s; B = 1 T; θ = 0° (parallel).</li>
+      <li><strong>Formula:</strong> F = q v B sin θ.</li>
+      <li><strong>Compute:</strong> F = 50 × 3 × 1 × sin 0° = 50 × 3 × 1 × 0 = <strong>0 N</strong>.</li>
+      <li><strong>Interpretation:</strong> When velocity is parallel to the field, no magnetic force acts.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> F = 0 N. · <span class="am" style="display:inline">መልስ፦ 0 N።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 5.5.2 — Force on an electron (matric exam)</h4>
+    <p>An electron moves at 7.5 × 10⁶ m/s perpendicular to Earth's field of 1.0 × 10⁻⁵ T. Find the force. (e = 1.6×10⁻¹⁹ C.)</p>
+    <p class="am">ኤሌክትሮን 7.5×10⁶ m/s በቀጥታ ወደ ምድር መስክ (1.0×10⁻⁵ T) ሲንቀሳቀስ ኃይሉን ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> q = 1.6 × 10⁻¹⁹ C; v = 7.5 × 10⁶ m/s; B = 1.0 × 10⁻⁵ T; θ = 90° (perpendicular).</li>
+      <li><strong>Formula:</strong> F = q v B sin 90° = q v B (since sin 90° = 1).</li>
+      <li><strong>Compute:</strong> F = (1.6×10⁻¹⁹)(7.5×10⁶)(1.0×10⁻⁵).</li>
+      <li><strong>Numerator:</strong> 1.6 × 7.5 × 1.0 = 12; exponents: −19 + 6 + (−5) = −18.</li>
+      <li><strong>Answer:</strong> F = <strong>1.2 × 10⁻¹⁸ N</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> F = 1.2 × 10⁻¹⁸ N. · <span class="am" style="display:inline">መልስ፦ 1.2×10⁻¹⁸ N።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 5.5.3 — Particle perpendicular to field</h4>
+    <p>A proton (q = 1.6×10⁻¹⁹ C) moves at 2 × 10⁶ m/s perpendicular to a 0.5 T field. Find the force.</p>
+    <p class="am">ፕሮቶን (1.6×10⁻¹⁹ C) በ2×10⁶ m/s ወደ 0.5 T መስክ ቀጥታ ሲንቀሳቀስ ኃይሉን ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> q = 1.6×10⁻¹⁹ C; v = 2×10⁶ m/s; B = 0.5 T; θ = 90°.</li>
+      <li><strong>Formula:</strong> F = q v B.</li>
+      <li><strong>Compute:</strong> F = (1.6×10⁻¹⁹)(2×10⁶)(0.5) = (1.6×2×0.5)×10⁻¹³.</li>
+      <li><strong>Answer:</strong> F = <strong>1.6 × 10⁻¹³ N</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> F = 1.6 × 10⁻¹³ N. · <span class="am" style="display:inline">መልስ፦ 1.6×10⁻¹³ N።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 5.5.1 — Can the magnetic force on a moving charge be zero?</h4>
+    <p><strong>Yes.</strong> If v is parallel or anti-parallel to B (θ = 0° or 180°), sin θ = 0 → F = 0. Also zero if v = 0 (charge at rest).</p>
+    <p class="am">አዎ። v ከ B ጋር ትይዩ ከሆነ F = 0።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 5.5.2 — Electron in Earth's field (7.5×10⁶ m/s perpendicular to 1.0×10⁻⁵ T)</h4>
+    <p><strong>Solution:</strong> F = q v B = (1.6×10⁻¹⁹)(7.5×10⁶)(1.0×10⁻⁵) = <strong>1.2 × 10⁻¹⁸ N</strong>.</p>
+    <p class="am">መልስ፦ 1.2×10⁻¹⁸ N።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-5.5"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 5.6 ==================== -->
+<section id="section-5.6" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 5.6</span>
+  <h2>Magnetic Force on a Current-Carrying Wire</h2>
+
+  <p><strong>A current-carrying wire in a magnetic field experiences a force</strong> proportional to the current, the field strength, the length of the wire, and sin θ (angle between current and field).</p>
+  <p class="am">በመግነጢሳዊ መስክ ውስጥ ያለ አሁንታ የሚሸከም ሽቦ ኃይል ይሰማዋል።</p>
+
+  <h3>Formulas</h3>
+  <div class="formula">F = I L B sin θ</div>
+  <div class="formula">I = current, L = length, B = magnetic field, θ = angle between wire and field</div>
+  <div class="formula">F is maximum when θ = 90° (wire ⊥ field): F = I L B</div>
+
+  <div class="highlight-box">
+    <strong>Right-hand rule for wire:</strong> Point right fingers in the direction of B. Point right thumb in the direction of current I. The palm pushes in the direction of the force F.
+    <span class="am"><strong>የቀኝ እጅ ደንብ (ሽቦ)፦</strong> ጣቶች ወደ B፣ አውራ ጣት ወደ I፣ መዳፍ ወደ F።</span>
+  </div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 5.6.1 — Wire perpendicular to field (matric exam)</h4>
+    <p>A 25 cm wire carries 6 A at right angles to a 0.30 T magnetic field. Find the force.</p>
+    <p class="am">25 ሴ.ሜ ሽቦ 6 A በ0.30 T መስክ ላይ ቀጥታ ሲያልፍ ኃይሉን ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> L = 0.25 m; I = 6 A; B = 0.30 T; θ = 90°.</li>
+      <li><strong>Formula:</strong> F = I L B sin θ = I L B (since sin 90° = 1).</li>
+      <li><strong>Compute:</strong> F = 6 × 0.25 × 0.30.</li>
+      <li><strong>Answer:</strong> F = <strong>0.45 N</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> F = 0.45 N. · <span class="am" style="display:inline">መልስ፦ 0.45 N።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 5.6.2 — Find B from force (matric exam)</h4>
+    <p>A 0.50 m wire carrying 8.0 A experiences a force of 0.40 N when perpendicular to a uniform magnetic field. Find B.</p>
+    <p class="am">0.50 ሜ ሽቦ 8.0 A አሁንታ ያለው፤ 0.40 N ኃይል ሲሰማው B ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> L = 0.50 m; I = 8.0 A; F = 0.40 N; θ = 90°.</li>
+      <li><strong>Rearrange:</strong> B = F / (I L).</li>
+      <li><strong>Compute:</strong> B = 0.40 / (8.0 × 0.50) = 0.40 / 4.0.</li>
+      <li><strong>Answer:</strong> B = <strong>0.10 T</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> B = 0.10 T. · <span class="am" style="display:inline">መልስ፦ 0.10 T።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 5.6.3 — Wire at angle θ</h4>
+    <p>A 0.20 m wire carrying 5 A makes a 30° angle with a 0.40 T field. Find the force.</p>
+    <p class="am">0.20 ሜ ሽቦ 5 A በ30° አንግል ከ0.40 T መስክ ጋር ሲያልፍ ኃይሉን ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> L = 0.20 m; I = 5 A; B = 0.40 T; θ = 30°.</li>
+      <li><strong>Formula:</strong> F = I L B sin 30°.</li>
+      <li><strong>Compute:</strong> F = 5 × 0.20 × 0.40 × 0.5.</li>
+      <li><strong>Answer:</strong> F = <strong>0.20 N</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> F = 0.20 N. · <span class="am" style="display:inline">መልስ፦ 0.20 N።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 5.6.1 — Explain force on a current-carrying wire</h4>
+    <p>When a wire carries current in a magnetic field, the moving charges in the wire experience the Lorentz force q v × B. These forces transfer to the wire material, producing a net force on the wire (F = ILB sin θ).</p>
+    <p class="am">አሁንታው በሽቦው ውስጥ ያሉ ቻርጆች በመንቀሳቀስ መግነጢሳዊ ኃይል ይሰማቸዋል። ይህም ወደ ሽቦው ይተላለፋል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 5.6.2 — Factors affecting the force</h4>
+    <p>1) Current I, 2) field strength B, 3) length L of wire in field, 4) angle θ between I and B.</p>
+    <p class="am">በI፣ በB፣ በL፣ በθ ይወሰናል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 5.6.3 — Right-hand rule for wire</h4>
+    <p>Fingers → B; thumb → current I; palm → force F.</p>
+    <p class="am">ጣቶች → B፣ አውራ ጣት → I፣ መዳፍ → F።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 5.6.4 — Wire 400 m, B = 0.20 T, F = 2.5 N. Current?</h4>
+    <p><strong>Solution:</strong> I = F / (L B) = 2.5 / (400 × 0.20) = 2.5 / 80 = <strong>0.031 A = 31 mA</strong>.</p>
+    <p class="am">መልስ፦ 0.031 A።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-5.6"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 5.7 ==================== -->
+<section id="section-5.7" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 5.7</span>
+  <h2>Magnetic Force Between Two Parallel Wires</h2>
+
+  <p><strong>Parallel wires carrying currents exert magnetic forces on each other</strong> because each wire produces a field that acts on the other's moving charges.</p>
+  <p class="am">ትይዩ ሽቦዎች አሁንታ ሲያስተላልፉ እያንዳንዱ የሚፈጥረው መስክ በሌላው ላይ ኃይል ያሳድራል።</p>
+
+  <div class="highlight-box">
+    <strong>The rule:</strong><br>
+    • Currents in the <em>same</em> direction → wires <strong>attract</strong>.<br>
+    • Currents in <em>opposite</em> directions → wires <strong>repel</strong>.<br>
+    • Magnitudes of force are equal and opposite (Newton's third law), even if currents differ.
+    <span class="am"><strong>ደንቡ፦</strong> ተመሳሳይ አቅጣጫ → ይሳባሉ። ተቃራኒ አቅጣጫ → ይጣላሉ። መጠኖቹ እኩል ናቸው።</span>
+  </div>
+
+  <h3>Diagram: Parallel Wires</h3>
+  <div class="diagram-box">
+    <figure>
+      <svg viewBox="0 0 240 100" role="img" aria-label="Parallel currents same direction attract">
+        <line x1="80" y1="20" x2="80" y2="80" stroke="#c92a2a" stroke-width="3"/>
+        <line x1="160" y1="20" x2="160" y2="80" stroke="#c92a2a" stroke-width="3"/>
+        <circle cx="80" cy="20" r="3" fill="#c92a2a"/>
+        <circle cx="160" cy="20" r="3" fill="#c92a2a"/>
+        <text x="80" y="15" fill="#c92a2a" font-size="10" text-anchor="middle">I₁</text>
+        <text x="160" y="15" fill="#c92a2a" font-size="10" text-anchor="middle">I₂</text>
+        <path d="M 90,50 L 140,50" stroke="#0b7a5e" stroke-width="2" marker-end="url(#attr)"/>
+        <path d="M 150,50 L 100,50" stroke="#0b7a5e" stroke-width="2" marker-end="url(#attr)"/>
+        <defs><marker id="attr" markerWidth="8" markerHeight="5" refX="8" refY="2.5" orient="auto"><polygon points="0 0, 8 2.5, 0 5" fill="#0b7a5e"/></marker></defs>
+        <text x="120" y="95" fill="#5b6472" font-size="10" text-anchor="middle">Same direction → ATTRACT</text>
+      </svg>
+      <figcaption>Same direction → attractive force.</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 240 100" role="img" aria-label="Parallel currents opposite repel">
+        <line x1="80" y1="20" x2="80" y2="80" stroke="#c92a2a" stroke-width="3"/>
+        <line x1="160" y1="20" x2="160" y2="80" stroke="#1e40af" stroke-width="3"/>
+        <circle cx="80" cy="20" r="3" fill="#c92a2a"/>
+        <circle cx="160" cy="80" r="3" fill="#1e40af"/>
+        <text x="80" y="15" fill="#c92a2a" font-size="10" text-anchor="middle">I₁↑</text>
+        <text x="160" y="95" fill="#1e40af" font-size="10" text-anchor="middle">I₂↓</text>
+        <path d="M 70,50 L 30,50" stroke="#b91c1c" stroke-width="2" marker-end="url(#rep)"/>
+        <path d="M 170,50 L 210,50" stroke="#b91c1c" stroke-width="2" marker-end="url(#rep)"/>
+        <defs><marker id="rep" markerWidth="8" markerHeight="5" refX="8" refY="2.5" orient="auto"><polygon points="0 0, 8 2.5, 0 5" fill="#b91c1c"/></marker></defs>
+        <text x="120" y="95" fill="#5b6472" font-size="10" text-anchor="middle">Opposite → REPEL</text>
+      </svg>
+      <figcaption>Opposite directions → repulsive force.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 5.7.1 — Same direction reasoning</h4>
+    <p>Wire A carries current upward; wire B (to the right) also carries current upward. Do they attract or repel?</p>
+    <p class="am">ሽቦ A ወደ ላይ አሁንታ፣ ሽቦ B በቀኝ በኩል ወደ ላይ አሁንታ። ይሳባሉ ወይስ ይጣላሉ?</p>
+    <ol>
+      <li>Wire A produces field at B's location. Using right-hand rule: thumb up (A), fingers curl counter-clockwise viewed from above → at B's location (to the right of A), field points OUT of the page.</li>
+      <li>Wire B carries current upward. Force on B: F = I L × B. Using right-hand rule: I up, B out → F toward A (left).</li>
+      <li>So wire B is pushed toward A → <strong>attraction</strong>.</li>
+      <li>Conclusion: same direction → attract.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Attract. · <span class="am" style="display:inline">መልስ፦ ይሳባሉ።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 5.7.2 — Opposite direction reasoning</h4>
+    <p>Wire A carries current upward; wire B (to the right) carries current downward. Do they attract or repel?</p>
+    <p class="am">ሽቦ A ወደ ላይ፣ ሽቦ B (በቀኝ) ወደ ታች። ይሳባሉ ወይስ ይጣላሉ?</p>
+    <ol>
+      <li>Wire A's field at B's location points out of page (same as before).</li>
+      <li>Wire B current is now downward. Force on B: I down, B out → F points right (away from A).</li>
+      <li>So B is pushed away from A → <strong>repulsion</strong>.</li>
+      <li>Conclusion: opposite directions → repel.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Repel. · <span class="am" style="display:inline">መልስ፦ ይጣላሉ።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 5.7.1 — Two parallel wires with currents in same direction attract. Why?</h4>
+    <p>Each wire produces a field at the other's location. Applying the right-hand rule twice (once for each wire's field on the other) shows that the force on each wire points toward the other. The magnitudes are equal by Newton's third law.</p>
+    <p class="am">እያንዳንዱ ሽቦ የሚፈጥረው መስክ በሌላው ላይ ኃይል ያሳድራል። የቀኝ እጅ ደንብ ሲተገበር ኃይሉ ወደ ሌላው ይመራል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 5.7.2 — Phase and neutral lines from power poles — attract or repel?</h4>
+    <p>Phase and neutral carry AC current. In a single-phase AC system, phase and neutral carry currents in <em>opposite</em> directions at every instant (current flows out on phase, returns on neutral). So the wires <strong>repel</strong> each other. However, in practice they are often bundled together to minimize this effect.</p>
+    <p class="am">Phase እና neutral በተቃራኒ አቅጣጫ አሁንታ ስለሚያስተላልፉ <strong>ይጣላሉ</strong>።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-5.7"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 5.8 ==================== -->
+<section id="section-5.8" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 5.8</span>
+  <h2>Applications of Magnetism</h2>
+
+  <p><strong>Magnetism is used everywhere:</strong> in medicine, homes, electronics, industry, and navigation. Understanding the concepts from earlier sections lets us appreciate how these technologies work.</p>
+  <p class="am">ማግኔትነት በሕክምና፣ በቤት ውስጥ፣ በኤሌክትሮኒክስ፣ በኢንዱስትሪና በአሰሳ ሁሉም ቦታ ያገለግላል።</p>
+
+  <h3>Key Applications</h3>
+  <table>
+    <thead><tr><th>Area</th><th>Application</th><th>Principle</th></tr></thead>
+    <tbody>
+      <tr><td>Medicine</td><td>MRI scanners</td><td>Strong magnetic fields align nuclei; RF pulses generate images</td></tr>
+      <tr><td>Medicine</td><td>Cancer treatment</td><td>Magnetic fluid + heating</td></tr>
+      <tr><td>Home</td><td>Fridge magnets, doorbells, speakers</td><td>Permanent magnets + electromagnets</td></tr>
+      <tr><td>Electronics</td><td>Hard drives, credit cards</td><td>Magnetic storage — magnetization direction = 0 or 1</td></tr>
+      <tr><td>Power</td><td>Motors, generators</td><td>Force on current in magnetic field</td></tr>
+      <tr><td>Industry</td><td>Crane magnets, sorting machines</td><td>Electromagnets for lifting/separating</td></tr>
+      <tr><td>Agriculture</td><td>Cow magnets</td><td>Swallowed by cows to trap metal bits</td></tr>
+      <tr><td>Navigation</td><td>Compasses</td><td>Earth's magnetic field alignment</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 5.8.1 — Why an MRI magnet is very strong</h4>
+    <p>An MRI uses a field of 3 T. How does this compare to Earth's field?</p>
+    <p class="am">MRI 3 T መስክ ይጠቀማል። ከምድር መስክ ጋር ማወዳደር?</p>
+    <ol>
+      <li>Earth's surface field ≈ 5 × 10⁻⁵ T = 0.00005 T.</li>
+      <li>MRI field = 3 T.</li>
+      <li>Ratio = 3 / (5×10⁻⁵) = 6 × 10⁴ = 60,000 times stronger.</li>
+      <li>This strong field is needed to make hydrogen nuclei (protons) in the body align.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> About 60,000 × Earth's field. · <span class="am" style="display:inline">መልስ፦ ~60,000 እጥፍ ጠንካራ።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 5.8.2 — Magnetic data storage</h4>
+    <p>How does a hard disk drive use magnetism to store data?</p>
+    <p class="am">ሃርድ ዲስክ ዳታ ለማከማቸት ማግኔትነትን እንዴት ይጠቀማል?</p>
+    <ol>
+      <li>The disk surface is coated with a magnetic material.</li>
+      <li>A tiny write head magnetizes each region of the surface in one of two directions (N → left or N → right).</li>
+      <li>These two directions represent binary 0 and 1.</li>
+      <li>A read head later detects the field direction → recovers the data.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Two magnetization directions = bits 0 and 1. · <span class="am" style="display:inline">መልስ፦ ሁለት አቅጣጫዎች = 0 እና 1።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 5.8 — List other applications not discussed</h4>
+    <p>Additional applications: loudspeakers (voice coil in magnet field), electric motors (in fans, blenders, drills), maglev trains, magnetic latches on cabinets, credit card stripes, ATMs, security scanners, magnetic clamps, loudspeakers, microphones, headphones, tape recorders, transformers, magnetrons in microwave ovens.</p>
+    <p class="am">ተጨማሪ ትግበራዎች፦ ድምጽ ማጉያዎች፣ ኤሌክትሪክ ሞተሮች፣ ማግሌቭ ባቡሮች፣ ክሬዲት ካርዶች፣ ማይክሮፎኖች፣ ማግኔትሮኖች።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-5.8"></div>
+</div>
+</section>
+
+<!-- ==================== ASSESSMENT ==================== -->
+<section id="section-assessment" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Assessment</span>
+  <h2>100 Advanced Questions · 50 Conceptual + 50 Numerical</h2>
+  <p style="color:var(--muted);font-size:.88rem">Matric &amp; entrance-exam level. Every question shows full step-by-step bilingual solutions.</p>
+
+  <div class="progress-bar-container" aria-label="Progress">
+    <div class="progress-bar-fill" id="overall-progress-fill"></div>
+  </div>
+  <p id="progress-text" style="font-size:.85rem;color:var(--muted)">0 of 100 answered</p>
+
+  <div class="filter-bar">
+    <label for="filter-type" class="sr-only">Filter by type</label>
+    <select id="filter-type">
+      <option value="all">All types</option>
+      <option value="conceptual">Conceptual only</option>
+      <option value="numerical">Numerical only</option>
+    </select>
+    <label for="filter-topic" class="sr-only">Filter by topic</label>
+    <select id="filter-topic">
+      <option value="all">All topics</option>
+      <option value="5.1">5.1 Magnets</option>
+      <option value="5.2">5.2 Magnetic Field</option>
+      <option value="5.3">5.3 Earth &amp; Compass</option>
+      <option value="5.4">5.4 Current → Field</option>
+      <option value="5.5">5.5 Force on Charge</option>
+      <option value="5.6">5.6 Force on Wire</option>
+      <option value="5.7">5.7 Parallel Wires</option>
+      <option value="5.8">5.8 Applications</option>
+    </select>
+    <button class="btn btn-secondary" id="reset-progress-btn" style="margin-left:auto">Reset progress</button>
+  </div>
+
+  <div id="assessment-questions-container"></div>
+</div>
+</section>
+
+<script>
+(function(){
+'use strict';
+
+// ============ LESSON QUIZZES ============
+const lessonQuizzes = {
+  '5.1': [
+    { q:'A permanent magnet differs from a temporary magnet because:',
+      options:['It only works when current flows','It retains magnetism permanently','It has no poles','It must be heated to work'], correct:1,
+      explanation:'Step 1: "Permanent" means the magnetism persists without any external influence. Step 2: Made from magnetized steel. Step 3: Temporary magnets only work near a field. Step 4: Answer: retains magnetism permanently. · ደረጃ 1፦ ቋሚ = ሁልጊዜ መግነጢሳዊ። ደረጃ 2፦ ከተመግነጠዘ ብረት የተሰራ። ደረጃ 3፦ ጊዜያዊ በመስክ ውስጥ ብቻ ነው። መልስ፦ ቋሚ ነው።' },
+    { q:'If a bar magnet is broken into 3 pieces, each piece has:',
+      options:['Only a North pole','Only a South pole','Both a North and a South pole','No poles'], correct:2,
+      explanation:'Step 1: Magnetic poles always come in pairs. Step 2: Cutting a magnet creates new N and S poles at each cut. Step 3: Each piece is a complete magnet. Step 4: Answer: both poles. · ደረጃ 1፦ ዋልታዎች ጥንድ ናቸው። ደረጃ 2፦ መቁረጥ አዲስ ዋልታዎችን ይፈጥራል። መልስ፦ ሁለቱም ዋልታዎች።' },
+    { q:'Which pair of poles attracts each other?',
+      options:['N and N','S and S','N and S','Both N and N and S and S'], correct:2,
+      explanation:'Step 1: Like poles (N-N or S-S) repel. Step 2: Unlike poles (N-S) attract. Step 3: Answer: N-S. · ደረጃ 1፦ ተመሳሳይ ይጣላሉ። ደረጃ 2፦ ተቃራኒ ይሳባሉ። መልስ፦ N-S።' },
+    { q:'Which is NOT a way to demagnetize a magnet?',
+      options:['Heating it strongly','Hammering it','Striking it against another magnet','Cooling it slowly'], correct:3,
+      explanation:'Step 1: Heat, hammering, and striking break the atomic alignment. Step 2: Cooling slowly does not demagnetize — extreme cold can actually help. Step 3: Answer: cooling slowly. · ደረጃ 1፦ ሙቀት፣ መምታት፣ መውጋት ያጠፋሉ። ደረጃ 2፦ ማቀዝቀዝ አያጠፋም። መልስ፦ ማቀዝቀዝ።' }
+  ],
+  '5.2': [
+    { q:'Magnetic field lines from a bar magnet:',
+      options:['Start at S and end at N','Start at N and end at S outside the magnet','Cross each other','Do not exist'], correct:1,
+      explanation:'Step 1: By convention, field lines flow from N to S outside the magnet. Step 2: Inside the magnet, they flow S to N. Step 3: They never cross. Step 4: Answer: N to S outside. · ደረጃ 1፦ ከማግኔቱ ውጭ ከ N ወደ S። ደረጃ 2፦ በውስጥ S ወደ N። መልስ፦ N → S።' },
+    { q:'Where is the magnetic field strongest around a bar magnet?',
+      options:['At the center','At the poles','Equally everywhere','10 cm away'], correct:1,
+      explanation:'Step 1: Field line density = field strength. Step 2: Lines are densest at the poles. Step 3: So field is strongest there. Step 4: Answer: at the poles. · ደረጃ 1፦ መስመሮች በዋልታ ብዙ ናቸው። መልስ፦ በዋልታዎች።' },
+    { q:'Two field lines:',
+      options:['Can cross at right angles','Never cross','Merge','Are parallel everywhere'], correct:1,
+      explanation:'Step 1: Each point has one field direction. Step 2: If lines crossed, two directions at that point — impossible. Step 3: Answer: never cross. · ደረጃ 1፦ አንድ ነጥብ አንድ አቅጣጫ ብቻ አለው። መልስ፦ አይገናኙም።' },
+    { q:'When two unlike magnetic poles are brought together, their field lines:',
+      options:['Diverge (bend apart)','Converge (bend toward each other)','Remain parallel','Disappear'], correct:1,
+      explanation:'Step 1: Unlike poles attract. Step 2: Lines from N bend toward the S pole — they converge. Step 3: Answer: converge. · ደረጃ 1፦ ተቃራኒ ይሳባሉ። ደረጃ 2፦ መስመሮቹ ይገናኛሉ። መልስ፦ converge።' }
+  ],
+  '5.3': [
+    { q:'Earth\'s magnetic field is generated by:',
+      options:['The Moon','Motion of molten iron in the outer core','Sunlight','The atmosphere'], correct:1,
+      explanation:'Step 1: Earth\'s core has a liquid outer layer (mostly iron). Step 2: Motion of this conducting fluid generates the field by a dynamo effect. Step 3: Answer: motion of molten iron in the outer core. · ደረጃ 1፦ የውጪ ኮር ፈሳሽ ብረት አለው። ደረጃ 2፦ እንቅስቃሴው መስክ ይፈጥራል። መልስ፦ በውጪ ኮር ውስጥ የፈሳሽ ብረት እንቅስቃሴ።' },
+    { q:'The magnetic pole near Earth\'s geographic North is:',
+      options:['A magnetic North pole','A magnetic South pole','Neutral','Absent'], correct:1,
+      explanation:'Step 1: The N pole of a compass (a magnet) is attracted toward geographic North. Step 2: Attraction = unlike poles. Step 3: So Earth\'s magnetic pole near geographic North must be a SOUTH pole. Step 4: Answer: magnetic South pole. · ደረጃ 1፦ የኮምፓስ N ወደ ጂዮግራፊያዊ ሰሜን ይሳባል። ደረጃ 2፦ ትስብ = ተቃራኒ ዋልታ። መልስ፦ መግነጢሳዊ ደቡብ ዋልታ።' },
+    { q:'A compass needle uses:',
+      options:['A magnet that aligns with Earth\'s field','Electric current','Gravity','Sound waves'], correct:0,
+      explanation:'Step 1: A compass needle is a small permanent magnet. Step 2: It aligns with the local magnetic field. Step 3: Answer: a magnet aligning with Earth\'s field. · ደረጃ 1፦ የኮምፓስ መርፌ ትንሽ ማግኔት ነው። ደረጃ 2፦ ከምድር መስክ ጋር ይስማማል። መልስ፦ ማግኔት።' },
+    { q:'Which animal is known to navigate using Earth\'s magnetic field?',
+      options:['Penguins','Pigeons','Crocodiles','Lions'], correct:1,
+      explanation:'Step 1: Many birds (including pigeons), sea turtles, bees, monarch butterflies, and some fish detect magnetic fields. Step 2: Pigeons are well-known for magnetic navigation. Step 3: Answer: pigeons. · ደረጃ 1፦ ወሬዎች፣ ኤሊዎች፣ ንቦች፣ ቢራቢሮዎች መስክን ይለያሉ። ደረጃ 2፦ ርግቦች ታዋቂ ናቸው። መልስ፦ ርግቦች።' }
+  ],
+  '5.4': [
+    { q:'The magnetic field around a long straight current-carrying wire:',
+      options:['Points radially outward','Forms concentric circles','Is a straight line','Is zero'], correct:1,
+      explanation:'Step 1: Right-hand rule: field wraps around the wire. Step 2: Shape is concentric circles perpendicular to wire. Step 3: Answer: concentric circles. · ደረጃ 1፦ የቀኝ እጅ ደንብ፦ መስኩ ይታጠፋል። ደረጃ 2፦ ክብ ቅርጽ። መልስ፦ ክቦች።' },
+    { q:'If the current in a wire is doubled, the magnetic field at a fixed distance becomes:',
+      options:['Half','Double','Same','Zero'], correct:1,
+      explanation:'Step 1: B = μ₀I/(2πd). Step 2: B ∝ I. Step 3: Doubling I → doubling B. Step 4: Answer: double. · ደረጃ 1፦ B ∝ I። መልስ፦ ይጨምራል (በእጥፍ)።' },
+    { q:'If distance from the wire is doubled, B becomes:',
+      options:['Double','Half','Quarter','Same'], correct:1,
+      explanation:'Step 1: B = μ₀I/(2πd). Step 2: B ∝ 1/d. Step 3: Doubling d → halving B. Step 4: Answer: half. · ደረጃ 1፦ B ∝ 1/d። መልስ፦ ግማሽ።' },
+    { q:'The right-hand grip rule determines:',
+      options:['Magnitude of B','Direction of B','Direction of current','Direction of force'], correct:1,
+      explanation:'Step 1: Grip rule: thumb = current direction, fingers curl = field direction. Step 2: So the rule finds direction, not magnitude. Step 3: Magnitude comes from B = μ₀I/(2πd). Step 4: Answer: direction of B. · ደረጃ 1፦ አውራ ጣት = አሁንታ፣ ጣቶች = መስክ። መልስ፦ የ B አቅጣጫ።' }
+  ],
+  '5.5': [
+    { q:'A charged particle moving parallel to a magnetic field feels:',
+      options:['Maximum force','Zero force','Half force','Force perpendicular to field'], correct:1,
+      explanation:'Step 1: F = qvB sin θ. Step 2: If v ∥ B, θ = 0° → sin 0° = 0 → F = 0. Step 3: Answer: zero force. · ደረጃ 1፦ F = qvBsinθ። ደረጃ 2፦ θ = 0 → F = 0። መልስ፦ ዜሮ።' },
+    { q:'The magnetic force on a moving charge is maximum when:',
+      options:['v is parallel to B','v is at 45°','v is perpendicular to B','v = 0'], correct:2,
+      explanation:'Step 1: F = qvB sin θ. Step 2: sin θ max = 1 when θ = 90°. Step 3: Answer: v ⊥ B. · ደረጃ 1፦ F = qvBsinθ። ደረጃ 2፦ sin 90° = 1። መልስ፦ v ቀጥታ ወደ B።' },
+    { q:'If v is perpendicular to B and both magnitudes are fixed, doubling the charge will:',
+      options:['Halve the force','Double the force','Not change the force','Zero the force'], correct:1,
+      explanation:'Step 1: F = qvB. Step 2: F ∝ q. Step 3: Doubling q → doubling F. Step 4: Answer: double. · ደረጃ 1፦ F ∝ q። መልስ፦ ይጨምራል (×2)።' },
+    { q:'A charged particle at rest in a magnetic field experiences:',
+      options:['Maximum force','No magnetic force','A force toward N pole','An electric force'], correct:1,
+      explanation:'Step 1: F = qvB. Step 2: If v = 0, then F = 0. Step 3: Magnetic force only acts on moving charges. Step 4: Answer: no magnetic force. · ደረጃ 1፦ v = 0 → F = 0። መልስ፦ መግነጢሳዊ ኃይል የለም።' }
+  ],
+  '5.6': [
+    { q:'The magnetic force on a current-carrying wire is given by:',
+      options:['F = ILB sin θ','F = qvB','F = ma','F = kq₁q₂/r²'], correct:0,
+      explanation:'Step 1: Force on the wire = sum of forces on charges. Step 2: Result is F = ILB sin θ. Step 3: Option B is for single charge, C is Newton\'s second law, D is Coulomb. Step 4: Answer: F = ILB sin θ. · ደረጃ 1፦ በሽቦው ላይ ኃይል = ILBsinθ። መልስ፦ F = ILBsinθ።' },
+    { q:'The force is zero when the wire is:',
+      options:['Perpendicular to B','Parallel to B','At 45°','At 30°'], correct:1,
+      explanation:'Step 1: F = ILB sin θ. Step 2: If wire ∥ B → θ = 0° → sin 0° = 0 → F = 0. Step 3: Answer: parallel to B. · ደረጃ 1፦ θ = 0 → F = 0። መልስ፦ ትይዩ ሲሆን።' },
+    { q:'A wire of length 0.20 m carries 5 A perpendicular to 0.40 T field. F?',
+      options:['0.04 N','0.20 N','0.40 N','4 N'], correct:2,
+      explanation:'Step 1: F = I L B (perpendicular). Step 2: = 5 × 0.20 × 0.40. Step 3: = 0.40 N. Step 4: Answer: 0.40 N. · ደረጃ 1፦ F = ILB = 5×0.2×0.4 = 0.4 N። መልስ፦ 0.40 N።' },
+    { q:'The direction of force on a current-carrying wire is found by:',
+      options:['Right-hand rule (thumb = I, fingers = B)','Left-hand rule only','Coulomb\'s law','Newton\'s law'], correct:0,
+      explanation:'Step 1: The right-hand rule for the wire: fingers → B, thumb → I, palm → F. Step 2: Left-hand rule is used differently (in motors context). Step 3: Answer: right-hand rule. · ደረጃ 1፦ የቀኝ እጅ ደንብ። መልስ፦ የቀኝ እጅ ደንብ።' }
+  ],
+  '5.7': [
+    { q:'Two parallel wires carrying currents in the SAME direction:',
+      options:['Attract','Repel','Do nothing','Become neutral'], correct:0,
+      explanation:'Step 1: Wire A\'s field at B\'s location. Step 2: Right-hand rule shows F on B points toward A. Step 3: So they attract. Step 4: Answer: attract. · ደረጃ 1፦ የA መስክ በ B ላይ ኃይል ያሳድራል። ደረጃ 2፦ ኃይሉ ወደ A ይመራል። መልስ፦ ይሳባሉ።' },
+    { q:'Two parallel wires with currents in OPPOSITE directions:',
+      options:['Attract','Repel','Do nothing','Neutralize'], correct:1,
+      explanation:'Step 1: Wire A\'s field at B\'s location. Step 2: Right-hand rule shows F on B points AWAY from A. Step 3: So they repel. Step 4: Answer: repel. · ደረጃ 1፦ ኃይሉ ወደ ውጭ ይመራል። መልስ፦ ይጣላሉ።' },
+    { q:'Two parallel wires carry currents in the same direction. The force:',
+      options:['Is greater on the wire with the larger current','Is equal in magnitude and opposite in direction','Is zero','Depends only on length'], correct:1,
+      explanation:'Step 1: By Newton\'s third law, forces are equal and opposite. Step 2: True even if currents differ. Step 3: Answer: equal magnitude, opposite direction. · ደረጃ 1፦ በኒውተን ሶስተኛ ህግ እኩልና ተቃራኒ ናቸው። መልስ፦ እኩል።' },
+    { q:'Phase and neutral wires in an AC circuit carry currents:',
+      options:['In same direction','In opposite direction','Both zero','Both positive'], correct:1,
+      explanation:'Step 1: Phase carries current out to load; neutral returns it. Step 2: Currents are opposite at each instant. Step 3: So the wires repel (but are usually bundled). Step 4: Answer: opposite directions. · ደረጃ 1፦ Phase ወደ ጭነት፣ neutral ይመልሳል። መልስ፦ ተቃራኒ።' }
+  ],
+  '5.8': [
+    { q:'An MRI machine uses strong magnetic fields to:',
+      options:['Generate electricity','Produce detailed images of internal body tissues','Heat food','Store data'], correct:1,
+      explanation:'Step 1: MRI = Magnetic Resonance Imaging. Step 2: Strong field aligns atomic nuclei; RF pulses are detected to produce cross-sectional images. Step 3: Answer: detailed medical images. · ደረጃ 1፦ MRI በመግነጢሳዊ መስክ ምስል ያመነጫል። መልስ፦ የሰውነት ውስጥ ምስል።' },
+    { q:'Hard disk drives store data by:',
+      options:['Magnetizing surface regions in two directions','Burning pits with lasers','Using ink','Using sound'], correct:0,
+      explanation:'Step 1: The disk surface has magnetic material. Step 2: Write head magnetizes each region one way or the other. Step 3: The two directions represent 0 and 1. Step 4: Answer: two magnetization directions. · ደረጃ 1፦ ዲስኩ መግነጢሳዊ ቁስ አለው። ደረጃ 2፦ ሁለት አቅጣጫዎች = 0/1። መልስ፦ በማግኔት አቅጣጫ።' },
+    { q:'Electric generators convert:',
+      options:['Electricity to mechanical energy','Mechanical energy to electricity','Magnetism to sound','Heat to light'], correct:1,
+      explanation:'Step 1: Generator = moving coil in magnetic field. Step 2: Motion induces current (Faraday\'s law). Step 3: Mechanical → electrical. Step 4: Answer: mechanical to electricity. · ደረጃ 1፦ ጄኔሬተር ተንቀሳቃሽ ጠመጠም በመስክ ውስጥ። ደረጃ 2፦ ኤሌክትሪክ ይፈጠራል። መልስ፦ ሜካኒካል → ኤሌክትሪክ።' },
+    { q:'Electromagnets differ from permanent magnets because:',
+      options:['They are only magnetic when current flows','They have no poles','They cannot be controlled','They use no iron core'], correct:0,
+      explanation:'Step 1: Electromagnet = coil + iron core. Step 2: Only magnetic when current flows. Step 3: Strength can be varied with current. Step 4: Answer: only magnetic when current flows. · ደረጃ 1፦ ኤሌክትሮማግኔት = ጠመጠም + ብረት ኮር። ደረጃ 2፦ በአሁንታ ብቻ ይሠራል። መልስ፦ በአሁንታ ብቻ።' }
+  ]
+};
+
+function renderLessonQuiz(lessonId){
+  const c = document.getElementById('lesson-quiz-'+lessonId);
+  if(!c) return;
+  const items = lessonQuizzes[lessonId];
+  let h = '';
+  items.forEach(function(item, idx){
+    const qid = 'L-'+lessonId+'-'+idx;
+    h += '<div class="question-block" data-qid="'+qid+'">';
+    h += '<div class="question-text">Q'+(idx+1)+'. '+item.q+'</div>';
+    h += '<div class="option-list">';
+    item.options.forEach(function(opt, oi){
+      h += '<button class="option-btn" data-correct="'+(oi===item.correct)+'" data-index="'+oi+'">'+opt+'</button>';
+    });
+    h += '</div>';
+    h += '<div class="feedback" id="fb-'+qid+'"></div>';
+    h += '<div class="solution-details" id="sol-'+qid+'"></div>';
+    h += '</div>';
+  });
+  c.innerHTML = h;
+}
+['5.1','5.2','5.3','5.4','5.5','5.6','5.7','5.8'].forEach(renderLessonQuiz);
+
+// ============ 100 ASSESSMENT QUESTIONS ============
+const conceptualData = [
+  // 5.1
+  {t:'5.1',d:'challenging',q:'A permanent magnet differs from an electromagnet because:',
+   o:['It works without current flow','It has more poles','It needs electricity','It cannot attract iron'],c:0,
+   e:'Step 1: Permanent magnet = magnetized material that stays magnetic permanently. Step 2: Electromagnet = magnetic only when current flows. Step 3: So permanent works without current. Step 4: Answer: works without current flow. · ደረጃ 1፦ ቋሚ ሁልጊዜ መግነጢሳዊ ነው። ደረጃ 2፦ ኤሌክትሮማግኔት በአሁንታ ብቻ። መልስ፦ ያለ አሁንታ ይሠራል።'},
+  {t:'5.1',d:'challenging',q:'If you cut a magnet into 4 pieces, each piece:',
+   o:['Loses its magnetism','Has only a N pole','Has both N and S poles','Becomes a monopole'],c:2,
+   e:'Step 1: Magnetic poles always exist in pairs. Step 2: Each cut creates new poles to ensure every piece has both N and S. Step 3: Answer: has both N and S poles. · ደረጃ 1፦ ዋልታዎች ጥንድ ናቸው። ደረጃ 2፦ እያንዳንዱ ቁራጭ N እና S አለው። መልስ፦ ሁለቱም።'},
+  {t:'5.1',d:'challenging',q:'A magnetic monopole is:',
+   o:['A single pole magnet','A magnet with N and S separated','A natural bar magnet','A type of electromagnet'],c:0,
+   e:'Step 1: Magnetic monopole = a hypothetical magnet with only one pole (just N or just S). Step 2: Never observed. Step 3: Answer: a single-pole magnet (hypothetical). · ደረጃ 1፦ monopole = አንድ ዋልታ ብቻ ያለው (ምናባዊ)። ደረጃ 2፦ ተመልክቶ አይታወቅም። መልስ፦ አንድ ዋልታ ብቻ።'},
+  {t:'5.1',d:'challenging',q:'Which action demagnetizes a permanent magnet?',
+   o:['Cooling it in liquid nitrogen','Hammering it repeatedly','Keeping it near iron','Wrapping it in paper'],c:1,
+   e:'Step 1: Magnetism comes from aligned atomic dipoles. Step 2: Hammering disrupts this alignment. Step 3: Extreme cold generally preserves or enhances alignment, doesn\'t demagnetize. Step 4: Answer: hammering. · ደረጃ 1፦ መግነጢሳዊነት ከአቶሚክ አሰላለፍ ይመጣል። ደረጃ 2፦ መምታት ያዛባል። መልስ፦ መምታት።'},
+  {t:'5.1',d:'challenging',q:'If a magnet is cut in half, the total number of poles:',
+   o:['Stays the same','Doubles','Halves','Becomes zero'],c:1,
+   e:'Step 1: Originally 2 poles (N + S). Step 2: After cutting, each half has 2 poles → total = 4. Step 3: Total doubles. Step 4: Answer: doubles. · ደረጃ 1፦ መጀመሪያ 2 ዋልታዎች። ደረጃ 2፦ ከተቆረጠ እያንዳንዱ 2 → ጠቅላላ 4። መልስ፦ ይጨምራል (×2)።'},
+  {t:'5.1',d:'challenging',q:'The point on a magnet with the strongest attraction is:',
+   o:['The center','The poles','Anywhere on the surface','Above the magnet'],c:1,
+   e:'Step 1: Magnetic force is concentrated at the poles. Step 2: This is why iron filings cluster at the ends. Step 3: Answer: the poles. · ደረጃ 1፦ ኃይል በዋልታዎች ይሰበሰባል። መልስ፦ ዋልታዎች።'},
+  {t:'5.1',d:'challenging',q:'A freely suspended bar magnet aligns with:',
+   o:['Earth\'s rotation axis','Earth\'s magnetic field (N-S)','The nearest iron','Sunlight'],c:1,
+   e:'Step 1: The magnet acts like a compass needle. Step 2: It aligns with Earth\'s magnetic field → N-S. Step 3: Answer: Earth\'s magnetic field. · ደረጃ 1፦ ማግኔቱ እንደ ኮምፓስ ይሠራል። ደረጃ 2፦ N-S ይሆናል። መልስ፦ የምድር መስክ።'},
+  {t:'5.1',d:'challenging',q:'Like poles of two magnets placed close together will:',
+   o:['Attract','Repel','Have no effect','Merge'],c:1,
+   e:'Step 1: N-N or S-S = like poles. Step 2: They repel each other. Step 3: Answer: repel. · ደረጃ 1፦ ተመሳሳይ። ደረጃ 2፦ ይጣላሉ። መልስ፦ ይጣላሉ።'},
+  {t:'5.1',d:'challenging',q:'An iron nail near a bar magnet becomes:',
+   o:['A permanent magnet','A temporary magnet','An electromagnet','Demagnetized'],c:1,
+   e:'Step 1: Iron near a magnet becomes magnetized by induction. Step 2: When removed from the field, it loses its magnetism. Step 3: So it acts as a temporary magnet. Step 4: Answer: temporary magnet. · ደረጃ 1፦ ብረት በመስክ አጠገብ ይሞላል። ደረጃ 2፦ ሲወገድ ያጣል። መልስ፦ ጊዜያዊ ማግኔት።'},
+
+  // 5.2
+  {t:'5.2',d:'challenging',q:'Magnetic field lines:',
+   o:['Start at S and end at N','Start at N and end at S outside the magnet','Cross each other','Are straight lines everywhere'],c:1,
+   e:'Step 1: By convention, field lines flow N → S outside the magnet. Step 2: Inside, they flow S → N. Step 3: Answer: N → S outside. · ደረጃ 1፦ ከማግኔቱ ውጭ N→S። መልስ፦ N→S።'},
+  {t:'5.2',d:'challenging',q:'Two magnetic field lines:',
+   o:['Can cross at corners','Never cross','Are always parallel','Merge at poles'],c:1,
+   e:'Step 1: If lines crossed, that point would have two field directions. Step 2: Impossible — a field has one direction at each point. Step 3: Answer: never cross. · ደረጃ 1፦ ሁለት አቅጣጫ የማይቻል ስለሆነ አይገናኙም። መልስ፦ አይገናኙም።'},
+  {t:'5.2',d:'challenging',q:'Field line density indicates:',
+   o:['Direction of force','Strength of field','Type of magnet','Temperature'],c:1,
+   e:'Step 1: Closer lines = stronger field. Step 2: Density = strength. Step 3: Answer: strength of field. · ደረጃ 1፦ ጥግግታ = ጥንካሬ። መልስ፦ ጥንካሬ።'},
+  {t:'5.2',d:'challenging',q:'Where is the magnetic field strongest around a bar magnet?',
+   o:['At the center','At the poles','Equidistant around','Infinite distance'],c:1,
+   e:'Step 1: Field lines are densest at the poles. Step 2: Density = strength. Step 3: Answer: at the poles. · ደረጃ 1፦ በዋልታዎች ብዙ መስመሮች። መልስ፦ በዋልታዎች።'},
+  {t:'5.2',d:'challenging',q:'Which is NOT a property of magnetic field lines?',
+   o:['Form closed loops','Density indicates strength','Can cross each other','Start at N and end at S outside'],c:2,
+   e:'Step 1: Field lines form closed loops (outside: N→S; inside: S→N). Step 2: Density indicates strength. Step 3: They NEVER cross. Step 4: Answer: "can cross" is FALSE. · ደረጃ 1፦ የተዘጉ ዑደቶች። ደረጃ 2፦ ጥግግታ = ጥንካሬ። ደረጃ 3፦ አይገናኙም። መልስ፦ መገናኘት ስህተት ነው።'},
+  {t:'5.2',d:'challenging',q:'Similarity between electric and magnetic fields:',
+   o:['Both have monopoles','Both are produced by stationary charges','Like poles/charges repel, unlike attract','Both point toward N pole'],c:2,
+   e:'Step 1: Electric: like charges repel, unlike attract. Step 2: Magnetic: like poles repel, unlike attract. Step 3: This is a similarity. Step 4: Answer: like/unlike attraction-repulsion rule. · ደረጃ 1፦ ቻርጆች፦ ተመሳሳይ ይጣላሉ። ደረጃ 2፦ ዋልታዎች፦ ተመሳሳይ ይጣላሉ። መልስ፦ ተመሳሳይ ደንብ።'},
+  {t:'5.2',d:'challenging',q:'Difference between electric and magnetic fields:',
+   o:['Electric can have monopoles; magnetic cannot','Electric cannot be shielded','Magnetic has no direction','Electric has no field lines'],c:0,
+   e:'Step 1: Electric charges (+ or −) exist separately — electric monopoles exist. Step 2: Magnetic poles (N, S) always come in pairs — no magnetic monopoles. Step 3: Answer: electric can have monopoles; magnetic cannot. · ደረጃ 1፦ ቻርጆች ለብቻቸው ይኖራሉ። ደረጃ 2፦ ዋልታዎች ጥንድ ናቸው። መልስ፦ የኤሌክትሪክ monopole አለ፤ መግነጢሳዊ የለም።'},
+  {t:'5.2',d:'challenging',q:'When two UNLIKE poles are brought together, their field lines:',
+   o:['Diverge','Converge','Remain parallel','Are destroyed'],c:1,
+   e:'Step 1: Unlike poles attract. Step 2: Field lines bend toward each other to connect. Step 3: So they converge. Step 4: Answer: converge. · ደረጃ 1፦ ተቃራኒ ይሳባሉ። ደረጃ 2፦ መስመሮች ይገናኛሉ። መልስ፦ converge።'},
+  {t:'5.2',d:'challenging',q:'When two LIKE poles are brought together, their field lines:',
+   o:['Diverge','Converge','Remain parallel','Disappear'],c:0,
+   e:'Step 1: Like poles repel. Step 2: Field lines bend away from each other to avoid crossing. Step 3: So they diverge. Step 4: Answer: diverge. · ደረጃ 1፦ ተመሳሳይ ይጣላሉ። ደረጃ 2፦ መስመሮቹ ይለያያሉ። መልስ፦ diverge።'},
+
+  // 5.3
+  {t:'5.3',d:'challenging',q:'Earth\'s magnetic field is generated by:',
+   o:['The Moon','Molten iron in the outer core','Solar wind','The atmosphere'],c:1,
+   e:'Step 1: Earth has a liquid iron-rich outer core. Step 2: Convection + rotation generates field via dynamo. Step 3: Answer: molten iron in outer core. · ደረጃ 1፦ የውጪ ኮር ፈሳሽ ብረት። ደረጃ 2፦ እንቅስቃሴው መስክ ይፈጥራል። መልስ፦ በውጪ ኮር።'},
+  {t:'5.3',d:'challenging',q:'The magnetic pole near Earth\'s geographic North is:',
+   o:['A magnetic N pole','A magnetic S pole','Absent','Neutral'],c:1,
+   e:'Step 1: Compass N pole (a magnetic N) points toward geographic North. Step 2: N pole is attracted to S pole. Step 3: So Earth\'s magnetic pole near geographic North is a magnetic S pole. Step 4: Answer: magnetic S pole. · ደረጃ 1፦ ኮምፓስ N ወደ ጂ. ሰሜን ይሳባል። ደረጃ 2፦ ትስብ = ተቃራኒ። መልስ፦ መግነጢሳዊ S።'},
+  {t:'5.3',d:'challenging',q:'The angle between Earth\'s geographic and magnetic axes is about:',
+   o:['0°','11°','45°','90°'],c:1,
+   e:'Step 1: Earth\'s magnetic axis is tilted relative to its rotation axis. Step 2: The tilt is about 11°. Step 3: Answer: 11°. · ደረጃ 1፦ መግነጢሳዊው ዘንግ በ~11° ያዘነበለ። መልስ፦ 11°።'},
+  {t:'5.3',d:'challenging',q:'A compass needle responds to:',
+   o:['Gravity','Local magnetic field','Static electricity','Air pressure'],c:1,
+   e:'Step 1: A compass is a small magnet. Step 2: It aligns with the local magnetic field. Step 3: Answer: local magnetic field. · ደረጃ 1፦ ኮምፓስ ትንሽ ማግኔት። ደረጃ 2፦ ከመስኩ ጋር ይስማማል። መልስ፦ የአካባቢ መግነጢሳዊ መስክ።'},
+  {t:'5.3',d:'challenging',q:'Earth\'s magnetic field protects life primarily by:',
+   o:['Blocking sunlight','Deflecting solar wind and cosmic rays','Preventing earthquakes','Cooling the planet'],c:1,
+   e:'Step 1: Solar wind = charged particles from the Sun. Step 2: Earth\'s magnetic field deflects most of them, forming the magnetosphere. Step 3: Without it, life would be exposed to harmful radiation. Step 4: Answer: deflecting solar wind. · ደረጃ 1፦ የፀሐይ ንፋስ = ቻርጅ ቅንጣቶች። ደረጃ 2፦ የምድር መስክ ይከላከላል። መልስ፦ የፀሐይ ንፋስን መከላከል።'},
+  {t:'5.3',d:'challenging',q:'Auroras (Northern/Southern Lights) are caused by:',
+   o:['Reflected sunlight','Charged solar particles spiraling along Earth\'s field lines','Volcanic eruptions','Ocean currents'],c:1,
+   e:'Step 1: Charged particles from the Sun enter the magnetosphere. Step 2: They spiral along field lines toward the poles. Step 3: They excite atmospheric gases → emission of light. Step 4: Answer: charged particles along field lines. · ደረጃ 1፦ ቻርጅ ቅንጣቶች ወደ ዋልታዎች ይጓዛሉ። ደረጃ 2፦ ብርሃን ይፈጥራሉ። መልስ፦ ቻርጅ ቅንጣቶች።'},
+  {t:'5.3',d:'challenging',q:'Which animal is NOT known for magnetic navigation?',
+   o:['Pigeons','Sea turtles','Bees','Domestic cats'],c:3,
+   e:'Step 1: Pigeons, sea turtles, bees, monarch butterflies, some fish detect magnetic fields. Step 2: Domestic cats are not known for this. Step 3: Answer: domestic cats. · ደረጃ 1፦ ርግቦች፣ ኤሊዎች፣ ንቦች ይለያሉ። ደረጃ 2፦ የቤት ድመቶች አይታወቁም። መልስ፦ ድመቶች።'},
+  {t:'5.3',d:'challenging',q:'If the outer core stopped moving, Earth\'s magnetic field would:',
+   o:['Intensify','Collapse','Reverse','Stay the same'],c:1,
+   e:'Step 1: The field is generated by motion of molten iron. Step 2: No motion → no dynamo → no field. Step 3: Field collapses. Step 4: Answer: collapse. · ደረጃ 1፦ እንቅስቃሴ ከሌለ መስክ የለም። መልስ፦ ይጠፋል።'},
+  {t:'5.3',d:'challenging',q:'The magnetic field at Earth\'s surface is approximately:',
+   o:['5 × 10⁻⁵ T','5 × 10⁻⁵ G','5 T','1 G'],c:0,
+   e:'Step 1: Surface field ≈ 5 × 10⁻⁵ T. Step 2: Equivalent to 0.5 G (since 1 G = 10⁻⁴ T). Step 3: Answer: 5 × 10⁻⁵ T. · ደረጃ 1፦ 5×10⁻⁵ T። መልስ፦ 5×10⁻⁵ T።'},
+
+  // 5.4
+  {t:'5.4',d:'challenging',q:'The magnetic field around a long straight current-carrying wire:',
+   o:['Is zero','Forms concentric circles','Points parallel to the wire','Points radially outward'],c:1,
+   e:'Step 1: By the right-hand grip rule, the field wraps around the wire. Step 2: Shape = concentric circles perpendicular to the wire. Step 3: Answer: concentric circles. · ደረጃ 1፦ የቀኝ እጅ ደንብ። ደረጃ 2፦ ክብ ቅርጽ። መልስ፦ ክቦች።'},
+  {t:'5.4',d:'challenging',q:'B at distance d from a wire carrying I is:',
+   o:['B = μ₀I/(2πd)','B = μ₀I·d','B = μ₀/d','B = 2πd/(μ₀I)'],c:0,
+   e:'Step 1: Standard formula for long straight wire. Step 2: B = μ₀I/(2πd). Step 3: Answer: B = μ₀I/(2πd). · ደረጃ 1፦ B = μ₀I/(2πd)። መልስ፦ B = μ₀I/(2πd)።'},
+  {t:'5.4',d:'challenging',q:'If current doubles, B at fixed d becomes:',
+   o:['Half','Double','Quarter','Zero'],c:1,
+   e:'Step 1: B ∝ I. Step 2: Doubling I → doubling B. Step 3: Answer: double. · ደረጃ 1፦ B ∝ I። መልስ፦ ይጨምራል (×2)።'},
+  {t:'5.4',d:'challenging',q:'If distance doubles, B becomes:',
+   o:['Double','Half','Quarter','Same'],c:1,
+   e:'Step 1: B ∝ 1/d. Step 2: Doubling d → halving B. Step 3: Answer: half. · ደረጃ 1፦ B ∝ 1/d። መልስ፦ ግማሽ።'},
+  {t:'5.4',d:'challenging',q:'The value of μ₀ is:',
+   o:['4π × 10⁻⁷ T·m/A','9 × 10⁹ N·m²/C²','8.85 × 10⁻¹² C²/(N·m²)','1.6 × 10⁻¹⁹ C'],c:0,
+   e:'Step 1: μ₀ = permeability of free space. Step 2: = 4π × 10⁻⁷ T·m/A. Step 3: Option B is k (Coulomb), C is ε₀, D is e. Step 4: Answer: 4π × 10⁻⁷. · ደረጃ 1፦ μ₀ = 4π×10⁻⁷። መልስ፦ 4π×10⁻⁷።'},
+  {t:'5.4',d:'challenging',q:'Right-hand grip rule relates:',
+   o:['Current to field direction','Force to velocity','Charge to potential','Field to distance'],c:0,
+   e:'Step 1: Thumb = current; fingers = field direction. Step 2: The rule finds the direction of B given the direction of I. Step 3: Answer: current to field direction. · ደረጃ 1፦ አውራ ጣት = I፣ ጣቶች = B። መልስ፦ አሁንታ → አቅጣጫ።'},
+  {t:'5.4',d:'challenging',q:'If the current direction reverses, the field direction:',
+   o:['Stays the same','Reverses','Doubles','Becomes zero'],c:1,
+   e:'Step 1: The field direction follows from the right-hand rule, which depends on current direction. Step 2: Reverse I → reverse B. Step 3: Answer: reverses. · ደረጃ 1፦ የ B አቅጣጫ በ I ላይ የተመሠረተ ነው። መልስ፦ ይቀየራል።'},
+  {t:'5.4',d:'challenging',q:'1 Tesla equals:',
+   o:['10⁴ gauss','10⁻⁴ gauss','10² gauss','1 gauss'],c:0,
+   e:'Step 1: 1 G = 10⁻⁴ T. Step 2: So 1 T = 10⁴ G. Step 3: Answer: 10⁴ gauss. · ደረጃ 1፦ 1 G = 10⁻⁴ T። መልስ፦ 1 T = 10⁴ G።'},
+  {t:'5.4',d:'challenging',q:'The strength of Earth\'s surface magnetic field is about:',
+   o:['5 T','5 mT','5 × 10⁻⁵ T','5 × 10⁵ T'],c:2,
+   e:'Step 1: Surface field ≈ 0.5 G = 5 × 10⁻⁵ T. Step 2: Answer: 5 × 10⁻⁵ T. · ደረጃ 1፦ 5×10⁻⁵ T። መልስ፦ 5×10⁻⁵ T።'},
+  {t:'5.4',d:'challenging',q:'The magnetic field lines around a current-carrying wire are in a plane:',
+   o:['Parallel to the wire','Perpendicular to the wire','Random','Along the wire'],c:1,
+   e:'Step 1: Field lines form circles around the wire. Step 2: These circles lie in planes perpendicular to the wire. Step 3: Answer: perpendicular. · ደረጃ 1፦ ክቦቹ ወደ ሽቦው ቀጥታ ናቸው። መልስ፦ perpendicular።'},
+
+  // 5.5
+  {t:'5.5',d:'challenging',q:'Magnetic force on a moving charge is:',
+   o:['F = qvB cos θ','F = qvB sin θ','F = qB/v','F = q²vB'],c:1,
+   e:'Step 1: Force depends on perpendicular component of v. Step 2: Perp component = v sin θ. Step 3: F = qvB sin θ. Step 4: Answer: F = qvB sin θ. · ደረጃ 1፦ F = qvB sin θ። መልስ፦ F = qvB sin θ።'},
+  {t:'5.5',d:'challenging',q:'Magnetic force is zero when:',
+   o:['v is perpendicular to B','v is parallel to B','q is large','B is large'],c:1,
+   e:'Step 1: F = qvB sin θ. Step 2: When θ = 0° or 180°, sin θ = 0 → F = 0. Step 3: v parallel or anti-parallel to B → F = 0. Step 4: Answer: v parallel to B. · ደረጃ 1፦ θ = 0 → F = 0። መልስ፦ ትይዩ።'},
+  {t:'5.5',d:'challenging',q:'Magnetic force is maximum when:',
+   o:['v is parallel to B','v is anti-parallel to B','v is perpendicular to B','v = 0'],c:2,
+   e:'Step 1: F = qvB sin θ. Step 2: sin θ is max at θ = 90°. Step 3: v perpendicular to B. Step 4: Answer: v perpendicular to B. · ደረጃ 1፦ θ = 90° → F max። መልስ፦ v ⊥ B።'},
+  {t:'5.5',d:'challenging',q:'The magnetic force on a moving charge is always:',
+   o:['Parallel to v','Parallel to B','Perpendicular to both v and B','Parallel to the wire'],c:2,
+   e:'Step 1: F = qv × B (cross product). Step 2: Cross product is perpendicular to both v and B. Step 3: Answer: perpendicular to both. · ደረጃ 1፦ F = qv × B። ደረጃ 2፦ ቀጥታ ወደ ሁለቱም። መልስ፦ perpendicular።'},
+  {t:'5.5',d:'challenging',q:'A stationary charge in a magnetic field:',
+   o:['Experiences maximum force','Experiences no magnetic force','Moves in a circle','Speeds up'],c:1,
+   e:'Step 1: F = qvB sin θ. Step 2: If v = 0, F = 0. Step 3: Magnetic force acts only on moving charges. Step 4: Answer: no magnetic force. · ደረጃ 1፦ v = 0 → F = 0። መልስ፦ ኃይል የለም።'},
+  {t:'5.5',d:'challenging',q:'If a positive charge moves in the +x direction and the field is in +y, the force is in:',
+   o:['+x','+y','+z','−z'],c:2,
+   e:'Step 1: F = q v × B. Step 2: v = (1,0,0), B = (0,1,0). Step 3: v × B = (0,0,1) = +z. Step 4: Answer: +z. · ደረጃ 1፦ v×B = z። መልስ፦ +z።'},
+  {t:'5.5',d:'challenging',q:'Doubling velocity when perpendicular to field:',
+   o:['Force stays same','Force doubles','Force halves','Force quadruples'],c:1,
+   e:'Step 1: F = qvB. Step 2: F ∝ v. Step 3: Doubling v → doubling F. Step 4: Answer: doubles. · ደረጃ 1፦ F ∝ v። መልስ፦ ይጨምራል (×2)።'},
+  {t:'5.5',d:'challenging',q:'Force on an electron moving through a magnetic field is opposite to the force on a proton because:',
+   o:['Electrons have more mass','Electrons have opposite charge sign','Electrons move slower','Electrons are bigger'],c:1,
+   e:'Step 1: F = q v × B. Step 2: Proton has +e; electron has −e. Step 3: Same v, same B → force directions are opposite. Step 4: Answer: opposite charge sign. · ደረጃ 1፦ F = qv×B። ደረጃ 2፦ q ምልክት ተቃራኒ ነው። መልስ፦ ተቃራኒ ቻርጅ።'},
+  {t:'5.5',d:'challenging',q:'A proton and an electron with the same velocity enter perpendicular to B. The force magnitudes:',
+   o:['Proton feels more force','Electron feels more force','Same magnitude','Zero for both'],c:2,
+   e:'Step 1: F = qvB. Step 2: |q| is same (e) for both. Step 3: Same v, B → same force magnitude. Step 4: Only directions differ. Answer: same magnitude. · ደረጃ 1፦ |q| ተመሳሳይ። መልስ፦ ተመሳሳይ መጠን።'},
+  {t:'5.5',d:'challenging',q:'The unit of magnetic force is:',
+   o:['Tesla','Newton','Coulomb','Weber'],c:1,
+   e:'Step 1: Force is always in newtons (N). Step 2: Tesla is unit of B. Step 3: Answer: Newton. · ደረጃ 1፦ ኃይል → ኒውተን። መልስ፦ Newton።'},
+
+  // 5.6
+  {t:'5.6',d:'challenging',q:'Force on a current-carrying wire:',
+   o:['F = qvB','F = ILB sin θ','F = ma','F = kq₁q₂/r²'],c:1,
+   e:'Step 1: Wire = collection of moving charges. Step 2: Sum of forces gives F = ILB sin θ. Step 3: Answer: F = ILB sin θ. · ደረጃ 1፦ F = ILBsinθ። መልስ፦ F = ILBsinθ።'},
+  {t:'5.6',d:'challenging',q:'If wire is parallel to B, force is:',
+   o:['Maximum','Zero','Half','Undefined'],c:1,
+   e:'Step 1: F = ILB sin θ. Step 2: If wire ∥ B → θ = 0° → sin θ = 0 → F = 0. Step 3: Answer: zero. · ደረጃ 1፦ θ = 0 → F = 0። መልስ፦ ዜሮ።'},
+  {t:'5.6',d:'challenging',q:'If wire is perpendicular to B, force is:',
+   o:['Zero','Half','Maximum (ILB)','Infinite'],c:2,
+   e:'Step 1: F = ILB sin θ. Step 2: θ = 90° → sin 90° = 1. Step 3: F = ILB (maximum). Step 4: Answer: maximum. · ደረጃ 1፦ θ = 90° → F = ILB። መልስ፦ maximum።'},
+  {t:'5.6',d:'challenging',q:'Doubling current (perpendicular wire) causes force to:',
+   o:['Stay the same','Double','Halve','Quadruple'],c:1,
+   e:'Step 1: F = ILB. Step 2: F ∝ I. Step 3: Doubling I → doubling F. Step 4: Answer: double. · ደረጃ 1፦ F ∝ I። መልስ፦ ይጨምራል (×2)።'},
+  {t:'5.6',d:'challenging',q:'Right-hand rule for the force on a wire:',
+   o:['Thumb = I, fingers = B, palm = F','Thumb = B, fingers = F, palm = I','Thumb = F, fingers = I, palm = B','None'],c:0,
+   e:'Step 1: Standard right-hand rule: fingers → B, thumb → I, palm → F. Step 2: Answer: thumb = I, fingers = B, palm = F. · ደረጃ 1፦ ጣቶች → B, አውራ ጣት → I, መዳፍ → F። መልስ፦ A.'},
+  {t:'5.6',d:'challenging',q:'A wire 0.4 m long with 2 A perpendicular to 0.5 T field. Force?',
+   o:['0.1 N','0.2 N','0.4 N','0.8 N'],c:2,
+   e:'Step 1: F = ILB (perpendicular). Step 2: = 2 × 0.4 × 0.5. Step 3: = 0.4 N. Answer: 0.4 N. · ደረጃ 1፦ F = 2×0.4×0.5 = 0.4 N። መልስ፦ 0.4 N።'},
+  {t:'5.6',d:'challenging',q:'If a wire carries no current in a magnetic field, force is:',
+   o:['Infinite','Zero','Half','Depends on length'],c:1,
+   e:'Step 1: F = ILB sin θ. Step 2: If I = 0 → F = 0. Step 3: Answer: zero. · ደረጃ 1፦ I = 0 → F = 0። መልስ፦ ዜሮ።'},
+  {t:'5.6',d:'challenging',q:'A motor relies on:',
+   o:['Heating of wire','Force on current-carrying wire in magnetic field','Chemical reactions','Light'],c:1,
+   e:'Step 1: Motors use the force on a current-carrying coil in a magnetic field to produce rotation. Step 2: Answer: force on current-carrying wire. · ደረጃ 1፦ ሞተር በሽቦ ላይ የሚሠራ ኃይልን ይጠቀማል። መልስ፦ በኃይሉ።'},
+  {t:'5.6',d:'challenging',q:'Doubling the length of wire in uniform field (same current, perpendicular):',
+   o:['Force halved','Force unchanged','Force doubles','Force quadruples'],c:2,
+   e:'Step 1: F = ILB. Step 2: F ∝ L. Step 3: Doubling L → doubling F. Step 4: Answer: doubles. · ደረጃ 1፦ F ∝ L። መልስ፦ ይጨምራል (×2)።'},
+  {t:'5.6',d:'challenging',q:'The force direction is always:',
+   o:['Parallel to the wire','Parallel to the field','Perpendicular to both','Along the wire'],c:2,
+   e:'Step 1: F = IL × B. Step 2: Cross product perpendicular to both. Step 3: Answer: perpendicular to both. · ደረጃ 1፦ ቀጥታ ወደ ሁለቱም። መልስ፦ perpendicular።'},
+
+  // 5.7
+  {t:'5.7',d:'challenging',q:'Parallel wires with currents in the SAME direction:',
+   o:['Attract','Repel','Do nothing','Neutralize'],c:0,
+   e:'Step 1: Each wire\'s field acts on the other. Step 2: Right-hand rule twice → forces point toward each other. Step 3: Attract. Step 4: Answer: attract. · ደረጃ 1፦ መስኮች እርስ በርስ ይጎዳዳሉ። መልስ፦ ይሳባሉ።'},
+  {t:'5.7',d:'challenging',q:'Parallel wires with currents in OPPOSITE directions:',
+   o:['Attract','Repel','Do nothing','Neutralize'],c:1,
+   e:'Step 1: Right-hand rule twice → forces point away from each other. Step 2: Repel. Step 3: Answer: repel. · ደረጃ 1፦ ኃይሎቹ ወደ ውጭ ይመራሉ። መልስ፦ ይጣላሉ።'},
+  {t:'5.7',d:'challenging',q:'Force magnitudes between two parallel wires:',
+   o:['Larger on the wire with more current','Equal and opposite','Zero','Only on one wire'],c:1,
+   e:'Step 1: Newton\'s third law: forces come in equal-opposite pairs. Step 2: True even for unequal currents. Step 3: Answer: equal and opposite. · ደረጃ 1፦ በኒውተን ሶስተኛ ህግ። መልስ፦ እኩል።'},
+  {t:'5.7',d:'challenging',q:'The force between parallel wires depends on:',
+   o:['Currents only','Distance between wires','Both currents and distance','Only length'],c:2,
+   e:'Step 1: Force = μ₀ I₁ I₂ L / (2π d). Step 2: Depends on both currents AND distance. Step 3: Answer: both currents and distance. · ደረጃ 1፦ F = μ₀I₁I₂L/(2πd)። መልስ፦ በሁለቱም።'},
+  {t:'5.7',d:'challenging',q:'If current in one wire reverses, the force:',
+   o:['Stays same','Reverses direction (attract → repel)','Doubles','Becomes zero'],c:1,
+   e:'Step 1: Same-direction → attract. Step 2: Reverse one → opposite directions → repel. Step 3: So force direction flips. Step 4: Answer: reverses. · ደረጃ 1፦ ተቃራኒ → ይጣላሉ። መልስ፦ ይቀየራል።'},
+  {t:'5.7',d:'challenging',q:'Phase and neutral wires in AC:',
+   o:['Same direction current','Opposite direction current','Zero current','Infinitely strong current'],c:1,
+   e:'Step 1: Current flows out on phase, returns on neutral. Step 2: Directions are opposite at every instant. Step 3: So they repel. Step 4: Answer: opposite direction. · ደረጃ 1፦ Phase ወደ ጭነት፣ neutral ተመላሽ። መልስ፦ ተቃራኒ።'},
+  {t:'5.7',d:'challenging',q:'Two equal currents in same direction:',
+   o:['Force is zero','Force is attractive','Force is repulsive','Force infinite'],c:1,
+   e:'Step 1: Same direction → attract. Step 2: Magnitude = μ₀I²L/(2πd). Step 3: Answer: attractive. · ደረጃ 1፦ ተመሳሳይ → ይሳባሉ። መልስ፦ attractive።'},
+  {t:'5.7',d:'challenging',q:'If both currents are doubled:',
+   o:['Force stays same','Force doubles','Force quadruples','Force becomes zero'],c:2,
+   e:'Step 1: F ∝ I₁I₂. Step 2: Both doubled → F × 4. Step 3: Answer: quadruples. · ደረጃ 1፦ F ∝ I₁I₂። መልስ፦ 4×።'},
+  {t:'5.7',d:'challenging',q:'If distance doubles, force:',
+   o:['Doubles','Halves','Quarters','Quadruples'],c:1,
+   e:'Step 1: F ∝ 1/d. Step 2: Doubling d → halving F. Step 3: Answer: halves. · ደረጃ 1፦ F ∝ 1/d። መልስ፦ ግማሽ።'},
+  {t:'5.7',d:'challenging',q:'Which physics principle governs equal-opposite forces between parallel wires?',
+   o:['Newton\'s first law','Newton\'s third law','Ohm\'s law','Coulomb\'s law'],c:1,
+   e:'Step 1: Equal-opposite forces on two interacting bodies = action-reaction pair. Step 2: This is Newton\'s third law. Step 3: Answer: Newton\'s third law. · ደረጃ 1፦ እኩል ተቃራኒ = action-reaction። መልስ፦ Newton\'s third law።'},
+
+  // 5.8
+  {t:'5.8',d:'challenging',q:'MRI uses:',
+   o:['Electric field','Strong magnetic field','Gravitational field','Radioactive decay'],c:1,
+   e:'Step 1: MRI = Magnetic Resonance Imaging. Step 2: Uses strong (~1.5-3 T) magnetic field. Step 3: Answer: strong magnetic field. · ደረጃ 1፦ MRI ጠንካራ መግነጢሳዊ መስክ ይጠቀማል። መልስ፦ strong magnetic field።'},
+  {t:'5.8',d:'challenging',q:'A hard disk stores information by:',
+   o:['Burning pits','Magnetizing surface regions','Writing ink','Sound waves'],c:1,
+   e:'Step 1: The disk is coated with magnetic material. Step 2: Each region is magnetized one of two ways = bit 0 or 1. Step 3: Answer: magnetizing regions. · ደረጃ 1፦ ዲስኩ መግነጢሳዊ ቁስ። ደረጃ 2፦ ሁለት አቅጣጫዎች = 0/1። መልስ፦ magnetization።'},
+  {t:'5.8',d:'challenging',q:'An electromagnet consists of:',
+   o:['A permanent magnet','A coil of wire and iron core','A battery only','A resistor'],c:1,
+   e:'Step 1: Coil of wire wrapped around iron core. Step 2: Magnetic only when current flows. Step 3: Answer: coil + iron core. · ደረጃ 1፦ ጠመጠም + ብረት ኮር። መልስ፦ coil + iron core።'},
+  {t:'5.8',d:'challenging',q:'Electric motors convert:',
+   o:['Mechanical energy to electrical','Electrical energy to mechanical','Heat to light','Sound to electricity'],c:1,
+   e:'Step 1: Motor: current in magnetic field → rotation. Step 2: Electrical → mechanical. Step 3: Answer: electrical to mechanical. · ደረጃ 1፦ ሞተር ኤሌክትሪክ ወደ ሜካኒካል። መልስ፦ electrical → mechanical።'},
+  {t:'5.8',d:'challenging',q:'Generators convert:',
+   o:['Mechanical energy to electrical','Electrical to mechanical','Heat to light','Light to sound'],c:0,
+   e:'Step 1: Generator: coil rotates in magnetic field → current induced. Step 2: Mechanical → electrical. Step 3: Answer: mechanical to electrical. · ደረጃ 1፦ ጄኔሬተር ሜካኒካል → ኤሌክትሪክ። መልስ፦ mechanical → electrical።'},
+  {t:'5.8',d:'challenging',q:'A compass is used mainly for:',
+   o:['Measuring temperature','Navigation','Detecting current','Storing data'],c:1,
+   e:'Step 1: Compass aligns with Earth\'s magnetic field. Step 2: Used to find directions → navigation. Step 3: Answer: navigation. · ደረጃ 1፦ ኮምፓስ አቅጣጫ ያሳያል። መልስ፦ navigation።'},
+  {t:'5.8',d:'challenging',q:'A magnetically sensitive fluid can be used in medicine to:',
+   o:['Clean blood','Treat cancer by heating','Provide vitamins','Replace bones'],c:1,
+   e:'Step 1: Fluid injected near cancer cells. Step 2: External magnetic field generates heat in the fluid. Step 3: Heat kills cancer cells without harming healthy tissue. Step 4: Answer: treat cancer by heating. · ደረጃ 1፦ ፈሳሽ በካንሰር አካባቢ። ደረጃ 2፦ ሙቀት ይፈጥራል። ደረጃ 3፦ ህዋሶቹን ይገድላል። መልስ፦ cancer treatment።'},
+  {t:'5.8',d:'challenging',q:'In recycling, electromagnets on cranes are used to:',
+   o:['Heat metal','Lift and move scrap metal','Cool metal','Break rocks'],c:1,
+   e:'Step 1: Electromagnets attract iron/steel. Step 2: Used to lift scrap metal. Step 3: Current turned off → metal dropped. Step 4: Answer: lift and move metal. · ደረጃ 1፦ ኤሌክትሮማግኔት ብረትን ይስባል። መልስ፦ metal lifting።'},
+  {t:'5.8',d:'challenging',q:'Loudspeakers use magnets to:',
+   o:['Store data','Convert electrical signals to sound','Block sound','Amplify signal without power'],c:1,
+   e:'Step 1: Voice coil sits in a magnetic field. Step 2: AC signal through coil → force varies → cone vibrates. Step 3: Sound waves produced. Step 4: Answer: convert electrical to sound. · ደረጃ 1፦ ጠመጠም በመስክ ውስጥ። ደረጃ 2፦ ኃይል ይለዋወጣል → ኮን ይንቀጠቀጣል። መልስ፦ electrical → sound።'},
+  {t:'5.8',d:'challenging',q:'Maglev trains use:',
+   o:['Mechanical wheels only','Magnetic repulsion/attraction to levitate and propel','Steam','Wind'],c:1,
+   e:'Step 1: Magnets levitate the train (repulsive). Step 2: Alternating fields propel it (attractive/repulsive forces). Step 3: No physical contact → less friction. Step 4: Answer: magnetic levitation. · ደረጃ 1፦ ማግኔቶች ያንሳሉ። ደረጃ 2፦ ያንቀሳቅሳሉ። መልስ፦ magnetic levitation።'}
+];
+
+// 50 numerical
+const numericalData = [
+  {t:'5.4',d:'challenging',q:'B at 2 cm from 3 A wire (μ₀ = 4π×10⁻⁷)?',
+   a:3e-5,u:'T',tol:3e-7,
+   steps:['B = μ₀I/(2πd).','= (4π×10⁻⁷)(3)/(2π × 0.02).','π cancels: = (4×3×10⁻⁷)/(2×0.02).','= (12×10⁻⁷)/0.04 = 300×10⁻⁷.','= 3 × 10⁻⁵ T.','መልስ፦ 3×10⁻⁵ T።']},
+  {t:'5.4',d:'challenging',q:'B at 5 cm from 10 A wire?',
+   a:4e-5,u:'T',tol:4e-7,
+   steps:['B = μ₀I/(2πd).','= (4π×10⁻⁷)(10)/(2π × 0.05).','π cancels: = (4×10×10⁻⁷)/(2×0.05).','= (40×10⁻⁷)/0.1 = 4 × 10⁻⁵ T.','መልስ፦ 4×10⁻⁵ T።']},
+  {t:'5.4',d:'challenging',q:'Current needed for B=2×10⁻⁵ T at 4 cm?',
+   a:4,u:'A',tol:0.04,
+   steps:['B = μ₀I/(2πd) → I = B(2πd)/μ₀.','= (2×10⁻⁵)(2π)(0.04)/(4π×10⁻⁷).','2π×0.04 = 0.08π.','= (2×10⁻⁵)(0.08π)/(4π×10⁻⁷).','= (1.6×10⁻⁶π)/(4π×10⁻⁷) = 4 A.','መልስ፦ 4 A።']},
+  {t:'5.4',d:'challenging',q:'Distance where B = 1×10⁻⁵ T from 10 A wire?',
+   a:0.2,u:'m',tol:0.002,
+   steps:['d = μ₀I/(2πB).','= (4π×10⁻⁷)(10)/(2π × 1×10⁻⁵).','π cancels: = (4×10⁻⁶)/(2×10⁻⁵).','= 0.2 m.','መልስ፦ 0.20 m።']},
+  {t:'5.4',d:'challenging',q:'B at 1 cm from 5 A wire?',
+   a:1e-4,u:'T',tol:1e-6,
+   steps:['B = (4π×10⁻⁷)(5)/(2π × 0.01).','π cancels: = (4×5×10⁻⁷)/(2×0.01).','= (20×10⁻⁷)/0.02 = 1000×10⁻⁷.','= 1 × 10⁻⁴ T.','መልስ፦ 1×10⁻⁴ T።']},
+
+  {t:'5.5',d:'challenging',q:'Force on electron moving 7.5×10⁶ m/s perpendicular to 1.0×10⁻⁵ T field?',
+   a:1.2e-18,u:'N',tol:1.2e-20,
+   steps:['F = qvB (perpendicular).','= (1.6×10⁻¹⁹)(7.5×10⁶)(1.0×10⁻⁵).','= 1.6×7.5×1.0 = 12.','Exponents: −19+6−5 = −18.','= 1.2 × 10⁻¹⁸ N.','መልስ፦ 1.2×10⁻¹⁸ N።']},
+  {t:'5.5',d:'challenging',q:'Force on proton moving 2×10⁶ m/s perpendicular to 0.5 T?',
+   a:1.6e-13,u:'N',tol:1.6e-15,
+   steps:['F = qvB.','= (1.6×10⁻¹⁹)(2×10⁶)(0.5).','= 1.6×2×0.5 = 1.6.','Exponents: −19+6 = −13.','= 1.6 × 10⁻¹³ N.','መልስ፦ 1.6×10⁻¹³ N።']},
+  {t:'5.5',d:'challenging',q:'Charge 50 C moves 3 m/s parallel to 1 T field. Force?',
+   a:0,u:'N',tol:0.01,
+   steps:['F = qvB sin θ.','θ = 0° → sin 0° = 0.','F = 50 × 3 × 1 × 0.','= 0 N.','መልስ፦ 0 N።']},
+  {t:'5.5',d:'challenging',q:'Force on charge 2 µC moving 5×10⁴ m/s perpendicular to 0.3 T field?',
+   a:0.03,u:'N',tol:0.0003,
+   steps:['F = qvB.','= (2×10⁻⁶)(5×10⁴)(0.3).','= 2×5×0.3 = 3.','Exponents: −6+4 = −2.','= 3 × 10⁻² N = 0.03 N.','መልስ፦ 0.03 N።']},
+  {t:'5.5',d:'challenging',q:'Proton 10⁶ m/s at 30° to 0.1 T field. Force?',
+   a:8e-15,u:'N',tol:8e-17,
+   steps:['F = qvB sin 30°.','= (1.6×10⁻¹⁹)(10⁶)(0.1)(0.5).','= 1.6×1×0.1×0.5 = 0.08.','Exponents: −19+6 = −13.','= 8 × 10⁻¹⁵ N.','መልስ፦ 8×10⁻¹⁵ N።']},
+
+  {t:'5.6',d:'challenging',q:'Force on 0.25 m wire, 6 A, perpendicular to 0.30 T field?',
+   a:0.45,u:'N',tol:0.005,
+   steps:['F = ILB (perpendicular).','= 6 × 0.25 × 0.30.','= 0.45 N.','መልስ፦ 0.45 N።']},
+  {t:'5.6',d:'challenging',q:'B if 0.50 m wire, 8 A, perpendicular, F=0.40 N?',
+   a:0.1,u:'T',tol:0.001,
+   steps:['B = F/(IL).','= 0.40/(8×0.50).','= 0.40/4 = 0.10 T.','መልስ፦ 0.10 T።']},
+  {t:'5.6',d:'challenging',q:'Force on 0.80 m wire, 5 A, perpendicular to 0.60 T field?',
+   a:2.4,u:'N',tol:0.024,
+   steps:['F = ILB.','= 5 × 0.80 × 0.60.','= 2.4 N.','መልስ፦ 2.4 N።']},
+  {t:'5.6',d:'challenging',q:'Wire 400 m, B=0.20 T, F=2.5 N. Current?',
+   a:0.031,u:'A',tol:0.0005,
+   steps:['F = ILB → I = F/(LB).','= 2.5/(400 × 0.20).','= 2.5/80 = 0.031 A.','መልስ፦ 0.031 A (31 mA)።']},
+  {t:'5.6',d:'challenging',q:'Wire 0.20 m, 5 A at 30° to 0.40 T field. F?',
+   a:0.2,u:'N',tol:0.002,
+   steps:['F = ILB sin 30°.','= 5 × 0.20 × 0.40 × 0.5.','= 0.20 N.','መልስ፦ 0.20 N።']},
+  {t:'5.6',d:'challenging',q:'Current if 1 m wire in 0.5 T field experiences 3 N?',
+   a:6,u:'A',tol:0.06,
+   steps:['F = ILB → I = F/(LB).','= 3/(1 × 0.5).','= 6 A.','መልስ፦ 6 A።']},
+  {t:'5.6',d:'challenging',q:'Force on 0.5 m wire, 4 A, 45° to 0.2 T field?',
+   a:0.283,u:'N',tol:0.003,
+   steps:['F = ILB sin 45°.','= 4 × 0.5 × 0.2 × (0.707).','= 0.4 × 0.707 = 0.283 N.','መልስ፦ 0.283 N።']},
+  {t:'5.6',d:'challenging',q:'Length of wire if 2 A current, 0.4 T, perpendicular, F = 0.16 N?',
+   a:0.2,u:'m',tol:0.002,
+   steps:['L = F/(IB).','= 0.16/(2 × 0.4).','= 0.16/0.8 = 0.20 m.','መልስ፦ 0.20 m።']},
+  {t:'5.6',d:'challenging',q:'Force on 3 m wire in 0.25 T field carrying 2 A (perpendicular)?',
+   a:1.5,u:'N',tol:0.015,
+   steps:['F = ILB.','= 2 × 3 × 0.25.','= 1.5 N.','መልስ፦ 1.5 N።']},
+  {t:'5.6',d:'challenging',q:'If a 0.1 m wire has force 0.5 N in 2 T field (perp), current?',
+   a:2.5,u:'A',tol:0.025,
+   steps:['I = F/(LB).','= 0.5/(0.1 × 2).','= 2.5 A.','መልስ፦ 2.5 A።']},
+
+  {t:'5.5',d:'challenging',q:'Force on alpha particle (q=3.2×10⁻¹⁹ C) at 4×10⁵ m/s perpendicular to 1.2 T?',
+   a:1.54e-13,u:'N',tol:1.5e-15,
+   steps:['F = qvB.','= (3.2×10⁻¹⁹)(4×10⁵)(1.2).','= 3.2×4×1.2 = 15.36.','Exponents: −19+5 = −14.','= 1.536 × 10⁻¹³ N.','መልስ፦ 1.54×10⁻¹³ N።']},
+  {t:'5.5',d:'challenging',q:'Velocity of electron (perpendicular) experiencing 2×10⁻¹⁵ N in 5×10⁻³ T field?',
+   a:2.5e6,u:'m/s',tol:2.5e4,
+   steps:['F = qvB → v = F/(qB).','= (2×10⁻¹⁵)/((1.6×10⁻¹⁹)(5×10⁻³)).','= 2×10⁻¹⁵/(8×10⁻²²).','= 0.25 × 10⁷ = 2.5 × 10⁶ m/s.','መልስ፦ 2.5×10⁶ m/s።']},
+
+  {t:'5.7',d:'challenging',q:'Ratio of force if both currents are doubled (parallel wires)?',
+   a:4,u:'',tol:0.05,
+   steps:['F ∝ I₁I₂.','If both double → F×4.','መልስ፦ 4።']},
+  {t:'5.7',d:'challenging',q:'If distance between parallel wires is halved, force becomes:',
+   a:2,u:'',tol:0.05,
+   steps:['F ∝ 1/d.','d halved → F × 2.','መልስ፦ 2።']},
+
+  {t:'5.5',d:'challenging',q:'Charge moves at 60° to 0.4 T field. F for q=1 µC, v=3×10⁵ m/s?',
+   a:0.104,u:'N',tol:0.001,
+   steps:['F = qvB sin 60°.','= (1×10⁻⁶)(3×10⁵)(0.4)(0.866).','= 1.0392 × 10⁻¹ N.','= 0.104 N.','መልስ፦ 0.104 N።']},
+  {t:'5.5',d:'challenging',q:'Ratio of force when velocity is doubled (perpendicular)?',
+   a:2,u:'',tol:0.05,
+   steps:['F ∝ v.','Doubling v → 2F.','መልስ፦ 2።']},
+
+  {t:'5.4',d:'challenging',q:'B at 10 cm from 20 A wire?',
+   a:4e-5,u:'T',tol:4e-7,
+   steps:['B = μ₀I/(2πd).','= (4π×10⁻⁷)(20)/(2π × 0.1).','π cancels: = (4×20×10⁻⁷)/(2×0.1).','= (80×10⁻⁷)/0.2 = 400×10⁻⁷.','= 4 × 10⁻⁵ T.','መልስ፦ 4×10⁻⁵ T።']},
+  {t:'5.4',d:'challenging',q:'B at 50 cm from 100 A wire?',
+   a:4e-5,u:'T',tol:4e-7,
+   steps:['= (4×100×10⁻⁷)/(2×0.5).','= (400×10⁻⁷)/1 = 400×10⁻⁷.','= 4 × 10⁻⁵ T.','መልስ፦ 4×10⁻⁵ T።']},
+  {t:'5.4',d:'challenging',q:'B at 25 cm from 5 A wire?',
+   a:4e-6,u:'T',tol:4e-8,
+   steps:['= (4×5×10⁻⁷)/(2×0.25).','= (20×10⁻⁷)/0.5.','= 40 × 10⁻⁷ = 4 × 10⁻⁶ T.','መልስ፦ 4×10⁻⁶ T።']},
+
+  {t:'5.5',d:'challenging',q:'Force on charge 5 µC at 2×10⁵ m/s perpendicular to 0.5 T?',
+   a:0.5,u:'N',tol:0.005,
+   steps:['F = qvB.','= (5×10⁻⁶)(2×10⁵)(0.5).','= 5×2×0.5 = 5.','Exponents: −6+5 = −1.','= 5 × 10⁻¹ = 0.5 N.','መልስ፦ 0.5 N።']},
+
+  {t:'5.6',d:'challenging',q:'F on 1 m wire at 60° to 0.5 T carrying 4 A?',
+   a:1.73,u:'N',tol:0.02,
+   steps:['F = ILB sin 60°.','= 4 × 1 × 0.5 × 0.866.','= 1.732 N.','መልስ፦ 1.73 N።']},
+
+  {t:'5.4',d:'challenging',q:'B at 0.5 m from 2 A wire?',
+   a:8e-7,u:'T',tol:8e-9,
+   steps:['= (4×2×10⁻⁷)/(2×0.5).','= (8×10⁻⁷)/1.','= 8 × 10⁻⁷ T.','መልስ፦ 8×10⁻⁷ T።']},
+  {t:'5.5',d:'challenging',q:'Proton at 5×10⁶ m/s perpendicular to 2 T. Force?',
+   a:1.6e-12,u:'N',tol:1.6e-14,
+   steps:['F = qvB.','= (1.6×10⁻¹⁹)(5×10⁶)(2).','= 1.6×5×2 = 16.','Exponents: −19+6 = −13.','= 1.6 × 10⁻¹² N.','መልስ፦ 1.6×10⁻¹² N።']},
+  {t:'5.6',d:'challenging',q:'F on 2 m wire, 8 A, 0.1 T perpendicular?',
+   a:1.6,u:'N',tol:0.016,
+   steps:['F = ILB.','= 8 × 2 × 0.1.','= 1.6 N.','መልስ፦ 1.6 N።']},
+
+  {t:'5.5',d:'challenging',q:'Electron at 3×10⁶ m/s perpendicular to 0.01 T. Force?',
+   a:4.8e-15,u:'N',tol:4.8e-17,
+   steps:['F = qvB.','= (1.6×10⁻¹⁹)(3×10⁶)(0.01).','= 1.6×3×0.01 = 0.048.','Exponents: −19+6 = −13.','= 4.8 × 10⁻¹⁵ N.','መልስ፦ 4.8×10⁻¹⁵ N።']},
+
+  {t:'5.4',d:'challenging',q:'B at 5 cm from 0.5 A wire?',
+   a:2e-6,u:'T',tol:2e-8,
+   steps:['= (4×0.5×10⁻⁷)/(2×0.05).','= (2×10⁻⁷)/0.1.','= 20 × 10⁻⁷ = 2 × 10⁻⁶ T.','መልስ፦ 2×10⁻⁶ T።']},
+
+  {t:'5.6',d:'challenging',q:'If B=0.2 T, I=3 A, F=0.6 N (perpendicular), find L?',
+   a:1,u:'m',tol:0.01,
+   steps:['L = F/(IB).','= 0.6/(3×0.2).','= 0.6/0.6 = 1 m.','መልስ፦ 1 m።']},
+
+  {t:'5.5',d:'challenging',q:'Force on charge 1 µC at 1 m/s perpendicular to 1 T?',
+   a:1e-6,u:'N',tol:1e-8,
+   steps:['F = qvB.','= (1×10⁻⁶)(1)(1).','= 1 × 10⁻⁶ N.','መልስ፦ 1×10⁻⁶ N።']},
+
+  {t:'5.6',d:'challenging',q:'Force on 5 m wire, 0.5 A, in 0.4 T field perpendicular?',
+   a:1,u:'N',tol:0.01,
+   steps:['F = ILB.','= 0.5 × 5 × 0.4.','= 1.0 N.','መልስ፦ 1.0 N።']},
+
+  {t:'5.5',d:'challenging',q:'If electron moves at 30° to B field of 0.5 T with v=10⁶ m/s, F?',
+   a:4e-14,u:'N',tol:4e-16,
+   steps:['F = qvB sin 30°.','= (1.6×10⁻¹⁹)(10⁶)(0.5)(0.5).','= 1.6×1×0.5×0.5 = 0.4.','Exponents: −19+6 = −13.','= 4 × 10⁻¹⁴ N.','መልስ፦ 4×10⁻¹⁴ N።']},
+
+  {t:'5.4',d:'challenging',q:'If B=1×10⁻⁴ T at 2 cm from a wire, what is current?',
+   a:10,u:'A',tol:0.1,
+   steps:['I = B(2πd)/μ₀.','= (1×10⁻⁴)(2π)(0.02)/(4π×10⁻⁷).','π cancels: = (1×10⁻⁴ × 0.04)/(2×10⁻⁷).','= (4×10⁻⁶)/(2×10⁻⁷).','= 20 A? Wait: 4×10⁻⁶ / 2×10⁻⁷ = 20.','Let me recheck: (2π)(0.02) = 0.04π; divided by 4π = 0.01.','I = (1×10⁻⁴)/(0.01 × 10⁻⁷) = 10⁻⁴/(10⁻⁹) = 10⁵. That\'s wrong.','Correct: I = B·2πd/μ₀ = (1×10⁻⁴)(0.04π)/(4π×10⁻⁷).','= (4π×10⁻⁶)/(4π×10⁻⁷) = 10 A.','መልስ፦ 10 A።']}
+];
+
+// Build questions
+const questions = [];
+conceptualData.forEach(function(item, i){
+  questions.push({id:'C'+String(i+1).padStart(3,'0'),type:'conceptual',topic:item.t,difficulty:item.d,question:item.q,options:item.o,correctIndex:item.c,explanation:item.e,answered:false});
+});
+numericalData.forEach(function(item, i){
+  questions.push({id:'N'+String(i+1).padStart(3,'0'),type:'numerical',topic:item.t,difficulty:item.d,question:item.q,answer:item.a,unit:item.u,tolerance:item.tol,direction:item.dir||'',steps:item.steps,answered:false,userAnswer:null});
+});
+
+// ============ RENDER ============
+const container = document.getElementById('assessment-questions-container');
+const progressFill = document.getElementById('overall-progress-fill');
+const progressText = document.getElementById('progress-text');
+
+function renderQuestions(filterType, filterTopic){
+  let html = '';
+  const filtered = questions.filter(function(q){
+    return (filterType==='all'||q.type===filterType) && (filterTopic==='all'||q.topic===filterTopic);
+  });
+  filtered.forEach(function(q){
+    const typeLabel = q.type === 'conceptual' ? 'Conceptual' : 'Numerical';
+    const typeClass = q.type === 'conceptual' ? 'tag-conceptual' : 'tag-numerical';
+    html += '<div class="question-block" id="q-'+q.id+'" data-qid="'+q.id+'">';
+    html += '<div class="q-meta">';
+    html += '<span class="badge">'+q.topic+'</span>';
+    html += '<span class="badge badge-'+q.difficulty+'">'+q.difficulty+'</span>';
+    html += '<span class="badge '+typeClass+'">'+typeLabel+'</span>';
+    html += '<span style="margin-left:auto;font-weight:600">#'+q.id+'</span>';
+    html += '</div>';
+    html += '<div class="question-text">'+q.question+'</div>';
+
+    if(q.type === 'conceptual'){
+      html += '<div class="option-list" role="group">';
+      q.options.forEach(function(opt, oi){
+        html += '<button class="option-btn" data-qid="'+q.id+'" data-index="'+oi+'" data-correct="'+(oi===q.correctIndex)+'">'+opt+'</button>';
+      });
+      html += '</div>';
+    } else {
+      html += '<div class="numeric-answer-area">';
+      html += '<label class="sr-only" for="input-'+q.id+'">Answer</label>';
+      html += '<input type="number" step="any" id="input-'+q.id+'" placeholder="Enter value">';
+      html += '<span class="unit-label">'+q.unit+'</span>';
+      html += '<button class="btn btn-primary" id="check-'+q.id+'" data-qid="'+q.id+'">Check</button>';
+      html += '</div>';
+    }
+    html += '<div class="feedback" id="fb-'+q.id+'"></div>';
+    html += '<div class="solution-details" id="sol-'+q.id+'"></div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+  updateProgress();
+}
+
+// Conceptual click
+container.addEventListener('click', function(e){
+  const btn = e.target.closest('.option-btn');
+  if(!btn || !btn.dataset.qid) return;
+  const qid = btn.dataset.qid;
+  const parent = document.getElementById('q-'+qid);
+  if(!parent || parent.dataset.answered === 'true') return;
+  const q = questions.find(function(x){ return x.id === qid; });
+  if(!q) return;
+  const sel = parseInt(btn.dataset.index, 10);
+  const ok = sel === q.correctIndex;
+  parent.dataset.answered = 'true';
+  q.answered = true;
+
+  parent.querySelectorAll('.option-btn').forEach(function(b){
+    b.disabled = true;
+    if(parseInt(b.dataset.index,10) === q.correctIndex) b.classList.add('correct');
+    else if(b === btn) b.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('fb-'+qid);
+  fb.classList.add('show', ok ? 'correct-fb' : 'wrong-fb');
+  fb.innerHTML = (ok ? '✅ <strong>Correct!</strong>' : '❌ <strong>Incorrect.</strong>') + ' Read the full solution below.';
+
+  const sol = document.getElementById('sol-'+qid);
+  sol.classList.add('show');
+  const parts = q.explanation.split(/(?=Step \d+:)/);
+  let solHtml = '<span class="solution-title">Full step-by-step solution · ሙሉ ደረጃ በደረጃ መፍትሔ</span>';
+  parts.forEach(function(p){
+    if(p.trim()) solHtml += '<span class="step">'+p.trim()+'</span>';
+  });
+  sol.innerHTML = solHtml;
+
+  parent.classList.add(ok ? 'correct-highlight' : 'wrong-highlight');
+  updateProgress();
+});
+
+// Numerical check
+container.addEventListener('click', function(e){
+  const btn = e.target.closest('.btn-primary');
+  if(!btn || !btn.id.startsWith('check-')) return;
+  const qid = btn.dataset.qid;
+  const parent = document.getElementById('q-'+qid);
+  if(!parent || parent.dataset.answered === 'true') return;
+  const q = questions.find(function(x){ return x.id === qid; });
+  if(!q) return;
+  const inp = document.getElementById('input-'+qid);
+  const val = parseFloat(inp.value);
+  if(isNaN(val)){ inp.focus(); inp.style.borderColor = 'var(--wrong)'; return; }
+  inp.style.borderColor = '';
+
+  const ok = Math.abs(val - q.answer) <= q.tolerance;
+  parent.dataset.answered = 'true';
+  q.answered = true;
+
+  const fb = document.getElementById('fb-'+qid);
+  fb.classList.add('show', ok ? 'correct-fb' : 'wrong-fb');
+  const dirNote = q.direction ? ' ('+q.direction+')' : '';
+  if(ok){
+    fb.innerHTML = '✅ <strong>Correct!</strong> Answer = '+q.answer+' '+q.unit+dirNote;
+  } else {
+    fb.innerHTML = '❌ <strong>Incorrect.</strong> Your answer: '+val+' '+q.unit+'. Correct: <strong>'+q.answer+' '+q.unit+'</strong>'+dirNote;
+  }
+
+  const sol = document.getElementById('sol-'+qid);
+  sol.classList.add('show');
+  let solHtml = '<span class="solution-title">Full step-by-step solution · ሙሉ ደረጃ በደረጃ መፍትሔ</span>';
+  q.steps.forEach(function(s, i){
+    solHtml += '<span class="step"><strong>Step '+(i+1)+':</strong> '+s+'</span>';
+  });
+  solHtml += '<span class="step"><strong>Final answer · የመጨረሻ መልስ:</strong> '+q.answer+' '+q.unit+dirNote+'</span>';
+  sol.innerHTML = solHtml;
+
+  parent.classList.add(ok ? 'correct-highlight' : 'wrong-highlight');
+  updateProgress();
+});
+
+function updateProgress(){
+  const n = questions.filter(function(q){ return q.answered; }).length;
+  progressFill.style.width = (n/questions.length*100)+'%';
+  progressText.textContent = n+' of '+questions.length+' answered · ከ'+questions.length+' ውስጥ '+n+' ተመልሷል';
+}
+
+document.getElementById('filter-type').addEventListener('change', function(){
+  renderQuestions(this.value, document.getElementById('filter-topic').value);
+});
+document.getElementById('filter-topic').addEventListener('change', function(){
+  renderQuestions(document.getElementById('filter-type').value, this.value);
+});
+document.getElementById('reset-progress-btn').addEventListener('click', function(){
+  if(!confirm('Reset all answers?')) return;
+  questions.forEach(function(q){ q.answered = false; q.userAnswer = null; });
+  renderQuestions(document.getElementById('filter-type').value, document.getElementById('filter-topic').value);
+});
+
+// Tab nav
+const navBtns = document.querySelectorAll('.unit-nav button');
+const panels = document.querySelectorAll('.section-panel');
+navBtns.forEach(function(btn){
+  btn.addEventListener('click', function(){
+    navBtns.forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+    panels.forEach(function(p){ p.classList.remove('active'); });
+    this.classList.add('active'); this.setAttribute('aria-selected','true');
+    const sec = this.dataset.section;
+    const target = document.getElementById('section-'+sec);
+    if(target) target.classList.add('active');
+    if(sec === 'assessment'){
+      renderQuestions(document.getElementById('filter-type').value, document.getElementById('filter-topic').value);
+    }
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+// Lesson quiz click
+document.addEventListener('click', function(e){
+  const btn = e.target.closest('.option-btn');
+  if(!btn || !btn.dataset.correct || !btn.closest('[id^="lesson-quiz-"]')) return;
+  const parent = btn.closest('.question-block');
+  if(!parent || parent.dataset.answered === 'true') return;
+  parent.dataset.answered = 'true';
+  const ok = btn.dataset.correct === 'true';
+  parent.querySelectorAll('.option-btn').forEach(function(b){
+    b.disabled = true;
+    if(b.dataset.correct === 'true') b.classList.add('correct');
+    else if(b === btn) b.classList.add('wrong');
+  });
+
+  const qid = parent.dataset.qid;
+  const parts = qid.split('-');
+  const lessonId = parts[1];
+  const idx = parseInt(parts[2], 10);
+  const item = lessonQuizzes[lessonId][idx];
+
+  const fb = parent.querySelector('.feedback');
+  if(fb){
+    fb.classList.add('show', ok ? 'correct-fb' : 'wrong-fb');
+    fb.innerHTML = (ok ? '✅ <strong>Correct!</strong>' : '❌ <strong>Incorrect.</strong>') + ' Full reasoning below.';
+  }
+
+  const sol = parent.querySelector('.solution-details');
+  if(sol && item && item.explanation){
+    sol.classList.add('show');
+    const expParts = item.explanation.split(/(?=Step \d+:)/);
+    let solHtml = '<span class="solution-title">Full step-by-step solution · ሙሉ ደረጃ በደረጃ መፍትሔ</span>';
+    expParts.forEach(function(p){
+      if(p.trim()) solHtml += '<span class="step">'+p.trim()+'</span>';
+    });
+    sol.innerHTML = solHtml;
+  }
+
+  parent.classList.add(ok ? 'correct-highlight' : 'wrong-highlight');
+});
+
+renderQuestions('all','all');
+updateProgress();
+})();
+</script>
+</body>
+</html>

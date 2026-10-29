@@ -11,6 +11,8 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.util.Log;
+import com.chaquo.python.PyObject;
+import com.chaquo.python.Python;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -296,6 +298,13 @@ public class NoteDetailActivity extends BaseActivity implements VoiceStudyManage
                           .replaceAll("&gt;", " greater than ")
                           .replaceAll("\\s+", " ")
                           .trim();
+        try {
+            if (Python.isStarted()) {
+                Python py = Python.getInstance();
+                PyObject brain = py.getModule("voice_brain");
+                return brain.callAttr("clean_textbook", text).toString();
+            }
+        } catch (Exception ignored) {}
         return text;
     }
 
@@ -527,9 +536,45 @@ public class NoteDetailActivity extends BaseActivity implements VoiceStudyManage
         return clean;
     }
 
-    @Override public void onCommandRecognized(String text) { Toast.makeText(this, "Voice heard: " + text, Toast.LENGTH_SHORT).show(); }
-    @Override public void onActionRequired(String action, String page, String extra) {}
-    @Override public void onSpeechFinished() { isSpeaking = false; }
+    @Override
+    public void onCommandRecognized(String text) {
+        runOnUiThread(() -> Toast.makeText(this, "Voice heard: " + text, Toast.LENGTH_SHORT).show());
+    }
+
+    @Override
+    public void onActionRequired(String action, String page, String extra) {
+        runOnUiThread(() -> {
+            if ("read_aloud".equals(action) || "resume".equals(action) || "repeat".equals(action)) {
+                triggerReadAloud();
+            } else if ("stop_voice".equals(action) || "pause".equals(action)) {
+                if (getAccessibilitySpeaker() != null) {
+                    getAccessibilitySpeaker().stop();
+                }
+            } else if ("next".equals(action)) {
+                navigateToLesson(currentTopicIndex + 1);
+            } else if ("previous".equals(action)) {
+                navigateToLesson(currentTopicIndex - 1);
+            } else if ("navigate".equals(action) && page != null) {
+                try {
+                    Class<?> targetClass = Class.forName("com.million.learnify." + page);
+                    Intent intent = new Intent(this, targetClass);
+                    if (extra != null) intent.putExtra("SUBJECT_NAME", extra);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    Log.e(TAG, "Voice navigation failed", e);
+                }
+            } else if ("answer".equals(action) && extra != null) {
+                Toast.makeText(this, extra, Toast.LENGTH_LONG).show();
+            } else if ("chat".equals(action) && extra != null) {
+                Toast.makeText(this, extra, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onSpeechFinished() {
+        isSpeaking = false;
+    }
 
     @Override
     protected void onDestroy() {

@@ -36,8 +36,20 @@ public class DataRepository {
         return dbHelper.checkUser(user, pass, type);
     }
 
-    public boolean register(String name, String uid, String role, String user, String email, String pass, String img, String type) {
-        return dbHelper.registerUser(name, uid, role, user, email, pass, img, type);
+    public boolean isEmailRegistered(String email) {
+        return dbHelper.isEmailRegistered(email);
+    }
+
+    public boolean isEmailTaken(String email) {
+        return dbHelper.isEmailRegistered(email);
+    }
+
+    boolean register(String name, String uid, String role, String user, String email, String pass, String img, String type) {
+        return dbHelper.registerUser(name, uid, role, user, email, pass, img, type, null);
+    }
+
+    boolean register(String name, String uid, String role, String user, String email, String pass, String img, String type, String phone) {
+        return dbHelper.registerUser(name, uid, role, user, email, pass, img, type, phone);
     }
 
     public boolean isUsernameTaken(String username) {

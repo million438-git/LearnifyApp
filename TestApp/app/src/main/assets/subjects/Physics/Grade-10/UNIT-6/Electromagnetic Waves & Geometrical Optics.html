@@ -1,0 +1,1762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 10 Physics · Unit 6: Electromagnetic Waves and Geometrical Optics</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#f4f6fb;--surface:#ffffff;--surface2:#eef2f9;--fg:#111827;--muted:#5b6472;
+    --line:#dbe2ef;--accent:#3b5bdb;--accent2:#7048e8;--accent-soft:#e8edff;
+    --correct:#0b7a5e;--correct-bg:#dcfce7;--wrong:#b91c1c;--wrong-bg:#fee2e2;
+    --gold:#f59f00;--gold-soft:#fff4d6;
+    --radius:16px;--shadow:0 6px 20px rgba(17,24,39,.07);
+    --font:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+    --am:'Noto Sans Ethiopic','Abyssinica SIL',system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{--bg:#0b1220;--surface:#131c2e;--surface2:#1b2740;--fg:#e6edf7;--muted:#9aa8bf;
+      --line:#27344f;--accent:#7c9cff;--accent2:#b197fc;--accent-soft:#1e2a4a;
+      --correct:#34d399;--correct-bg:#0c3a2e;--wrong:#f87171;--wrong-bg:#3f1414;
+      --gold:#fbbf24;--gold-soft:#3a2e0a;--shadow:0 6px 20px rgba(0,0,0,.4)}
+  }
+  body{font-family:var(--font);background:var(--bg);color:var(--fg);line-height:1.8;padding:14px;max-width:1000px;margin:0 auto}
+  h1{font-size:1.55rem;margin-bottom:4px;letter-spacing:-.02em}
+  h2{font-size:1.25rem;margin:1.2em 0 .5em;padding-bottom:8px;border-bottom:2px solid var(--line);color:var(--accent)}
+  h3{font-size:1.05rem;margin:1em 0 .4em;color:var(--accent2);font-weight:700}
+  p{margin-bottom:.8em}
+  ul,ol{padding-left:1.4em;margin-bottom:.8em}
+  li{margin-bottom:.35em}
+  .am{font-family:var(--am);color:var(--muted);font-size:.9rem;display:block;margin-top:3px;border-left:3px solid var(--accent-soft);padding-left:10px;font-style:normal}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-bottom:22px;box-shadow:var(--shadow)}
+  .card-accent{border-left:6px solid var(--accent)}
+  .badge{display:inline-block;background:var(--accent-soft);color:var(--accent);font-weight:800;font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:20px;margin-right:5px}
+  .badge-easy{background:#d3f9d8;color:#2b8a3e}
+  .badge-medium{background:#fff3bf;color:#e67700}
+  .badge-challenging{background:#ffe3e3;color:#c92a2a}
+  @media (prefers-color-scheme: dark){
+    .badge-easy{background:#0c3a2e;color:#6ee7b7}
+    .badge-medium{background:#3a2e0a;color:#fcd34d}
+    .badge-challenging{background:#3f1414;color:#fca5a5}
+  }
+  .unit-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px;background:var(--surface);padding:8px;border-radius:var(--radius);position:sticky;top:6px;z-index:20;border:1px solid var(--line);box-shadow:var(--shadow)}
+  .unit-nav button{flex:1 1 auto;padding:10px 12px;border:1px solid transparent;border-radius:12px;background:transparent;color:var(--muted);font-weight:700;font-size:.8rem;cursor:pointer;font-family:var(--font);white-space:nowrap;transition:.2s}
+  .unit-nav button:hover{background:var(--surface2);color:var(--fg)}
+  .unit-nav button.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 14px rgba(59,91,219,.35)}
+  .section-panel{display:none}
+  .section-panel.active{display:block}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9rem;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  th,td{border:1px solid var(--line);padding:9px 12px;text-align:left}
+  th{background:var(--surface2);font-weight:800;color:var(--accent)}
+  td{background:var(--surface)}
+  .formula{background:linear-gradient(135deg,var(--accent-soft),var(--surface2));border-left:5px solid var(--accent);padding:12px 16px;margin:12px 0;border-radius:0 12px 12px 0;font-family:'Courier New',monospace;font-size:1rem;overflow-x:auto;font-weight:600}
+  .diagram-box{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin:16px 0}
+  .diagram-box figure{flex:0 1 230px;text-align:center;background:var(--surface);padding:12px;border-radius:12px;border:1px solid var(--line);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+  .diagram-box svg{width:100%;height:auto;max-height:180px;display:block}
+  .diagram-box figcaption{font-size:.78rem;color:var(--muted);margin-top:7px;line-height:1.5}
+  .question-block{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.04);transition:.2s}
+  .question-block.correct-highlight{border-color:var(--correct);border-left:5px solid var(--correct)}
+  .question-block.wrong-highlight{border-color:var(--wrong);border-left:5px solid var(--wrong)}
+  .question-text{font-weight:700;margin-bottom:10px;font-size:.96rem;line-height:1.65}
+  .q-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:9px;font-size:.74rem;color:var(--muted)}
+  .option-list{display:flex;flex-direction:column;gap:7px;margin:8px 0}
+  .option-btn{text-align:left;padding:11px 14px;border:2px solid var(--line);border-radius:11px;background:var(--surface);color:var(--fg);font-size:.91rem;cursor:pointer;font-family:var(--font);line-height:1.5;transition:.15s;font-weight:500}
+  .option-btn:hover{border-color:var(--accent);background:var(--accent-soft);transform:translateX(2px)}
+  .option-btn.correct{border-color:var(--correct);background:var(--correct-bg);font-weight:700}
+  .option-btn.wrong{border-color:var(--wrong);background:var(--wrong-bg);font-weight:700}
+  .option-btn:disabled{cursor:default;opacity:.95;transform:none}
+  .feedback{margin-top:12px;padding:14px 16px;border-radius:12px;font-size:.9rem;line-height:1.75;display:none}
+  .feedback.show{display:block}
+  .feedback.correct-fb{background:var(--correct-bg);border-left:5px solid var(--correct)}
+  .feedback.wrong-fb{background:var(--wrong-bg);border-left:5px solid var(--wrong)}
+  .numeric-answer-area{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}
+  .numeric-answer-area input{padding:11px 14px;border:2px solid var(--line);border-radius:11px;font-size:.96rem;width:140px;background:var(--surface);color:var(--fg);font-family:var(--font);font-weight:600}
+  .numeric-answer-area input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+  .unit-label{font-weight:800;color:var(--accent);font-size:.95rem}
+  .btn{padding:10px 18px;border-radius:11px;border:none;font-weight:700;font-size:.9rem;cursor:pointer;font-family:var(--font);transition:.15s}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 3px 10px rgba(59,91,219,.3)}
+  .btn-primary:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .btn-secondary{background:var(--surface2);color:var(--fg);border:1px solid var(--line)}
+  .btn-secondary:hover{background:var(--line)}
+  .solution-details{margin-top:12px;padding:16px 18px;background:var(--surface2);border-radius:12px;font-size:.89rem;line-height:1.8;display:none;border-left:4px solid var(--gold)}
+  .solution-details.show{display:block}
+  .solution-details .step{display:block;margin-bottom:8px;padding:10px 14px;border-left:3px solid var(--accent);background:var(--surface);border-radius:0 8px 8px 0;line-height:1.7}
+  .solution-details .step:last-child{margin-bottom:0}
+  .solution-details strong{color:var(--accent)}
+  .solution-title{font-weight:800;color:var(--gold);font-size:.95rem;margin-bottom:8px;display:block}
+  .progress-bar-container{background:var(--line);border-radius:12px;height:14px;overflow:hidden;margin:8px 0}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--correct));width:0;transition:width .4s;border-radius:12px}
+  .filter-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;align-items:center}
+  .filter-bar select{padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font-family:var(--font);font-size:.86rem;font-weight:600}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .worked-example{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0;font-size:.91rem;border-left:4px solid var(--accent2)}
+  .worked-example h4{margin-top:0;color:var(--accent2);font-size:.95rem;margin-bottom:10px}
+  .worked-example ol li{margin-bottom:.5em;line-height:1.75}
+  .tag-conceptual{background:#dbeafe;color:#1e40af}
+  .tag-numerical{background:#fce7f3;color:#9d174d}
+  @media (prefers-color-scheme: dark){
+    .tag-conceptual{background:#1e3a5f;color:#93c5fd}
+    .tag-numerical{background:#5f1e3a;color:#f9a8d4}
+  }
+  .highlight-box{background:linear-gradient(135deg,var(--gold-soft),var(--accent-soft));border-radius:12px;padding:14px 18px;margin:14px 0;font-size:.91rem;border-left:4px solid var(--gold);line-height:1.75}
+  .verify-box{background:var(--correct-bg);border-radius:10px;padding:10px 14px;margin-top:8px;font-size:.86rem;border-left:3px solid var(--correct);line-height:1.65}
+  .textbook-exercise{background:linear-gradient(135deg,#fff8e1,#fef3c7);border:1px solid #fbbf24;border-radius:12px;padding:16px 18px;margin:14px 0;font-size:.9rem}
+  .textbook-exercise h4{margin-top:0;color:#92400e;font-size:.95rem;margin-bottom:10px}
+  .textbook-exercise .sol{background:var(--surface);border-radius:8px;padding:10px 14px;margin-top:8px;border-left:3px solid var(--correct);line-height:1.7}
+  @media (prefers-color-scheme: dark){
+    .textbook-exercise{background:linear-gradient(135deg,#3a2e0a,#422006);border-color:#fbbf24}
+    .textbook-exercise h4{color:#fcd34d}
+  }
+  @media (max-width:600px){
+    body{padding:8px}
+    .card{padding:14px 16px}
+    h1{font-size:1.2rem}
+    h2{font-size:1.05rem}
+    .unit-nav button{font-size:.68rem;padding:7px 9px}
+    .diagram-box figure{flex:1 1 145px}
+    .option-btn{font-size:.86rem;padding:10px 12px}
+  }
+</style>
+</head>
+<body>
+
+<header style="margin-bottom:18px">
+  <h1>📘 Grade 10 Physics · Unit 6: Electromagnetic Waves &amp; Geometrical Optics</h1>
+  <p style="color:var(--muted);font-size:.9rem">Matric &amp; entrance-exam ready · 100 advanced questions with full step-by-step bilingual solutions</p>
+</header>
+
+<nav class="unit-nav" role="tablist" aria-label="Unit sections">
+  <button role="tab" class="active" data-section="6.1" aria-selected="true">6.1 EM Waves</button>
+  <button role="tab" data-section="6.2" aria-selected="false">6.2 EM Spectrum</button>
+  <button role="tab" data-section="6.3" aria-selected="false">6.3 Light as a Wave</button>
+  <button role="tab" data-section="6.4" aria-selected="false">6.4 Reflection &amp; Refraction</button>
+  <button role="tab" data-section="6.5" aria-selected="false">6.5 Mirrors &amp; Lenses</button>
+  <button role="tab" data-section="6.6" aria-selected="false">6.6 Eye &amp; Instruments</button>
+  <button role="tab" data-section="6.7" aria-selected="false">6.7 Primary Colors</button>
+  <button role="tab" data-section="6.9" aria-selected="false">6.9 Color Subtraction</button>
+  <button role="tab" data-section="assessment" aria-selected="false">📝 100 Qs Assessment</button>
+</nav>
+
+<!-- ==================== SECTION 6.1 ==================== -->
+<section id="section-6.1" class="section-panel active" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 6.1</span>
+  <h2>Electromagnetic (EM) Waves</h2>
+
+  <p><strong>An electromagnetic wave</strong> is a wave made of oscillating electric and magnetic fields that travel together through space at the speed of light. Unlike mechanical waves (sound, water), EM waves need no medium — they can travel through a vacuum.</p>
+  <p class="am">ኤሌክትሮማግኔቲክ ሞገድ በተቀናጁ የኤሌክትሪክና መግነጢሳዊ መስኮች የተሰራ እና በብርሃን ፍጥነት በጠፈር የሚጓዝ ሞገድ ነው። ሜካኒካል ሞገዶች ከሚለው በተቃራኒ ኤሌክትሮማግኔቲክ ሞገዶች መካከለኛ አያስፈልጋቸውም — በባዶ ጠፈር ውስጥ ማለፍ ይችላሉ።</p>
+
+  <div class="highlight-box">
+    <strong>Key facts:</strong><br>
+    • EM waves are <strong>transverse</strong> — E and B oscillate perpendicular to the direction of propagation.<br>
+    • E and B fields are perpendicular to <em>each other</em> and to the direction of travel.<br>
+    • Speed in vacuum: <strong>c = 3.00 × 10⁸ m/s</strong>.<br>
+    • Produced by <strong>accelerating charges</strong> (vibrating electrons).<br>
+    • Carry <strong>radiant energy</strong> from the Sun — 92% reaches us as IR + visible.
+    <span class="am"><strong>ቁልፍ እውነታዎች፦</strong> ተጨማሪ ሞገዶች ናቸው። የ E እና B መስኮች እርስ በርስ ቀጥታ ናቸው። በባዶ ጠፈር ውስጥ ፍጥነቱ c = 3×10⁸ m/s። በተጣደፉ ቻርጆች ይፈጠራሉ።</span>
+  </div>
+
+  <h3>Formulas</h3>
+  <div class="formula">c = λ × f &nbsp; (speed = wavelength × frequency)</div>
+  <div class="formula">c = 3.00 × 10⁸ m/s (vacuum)</div>
+  <div class="formula">Higher frequency → shorter wavelength</div>
+
+  <h3>Diagram: EM Wave</h3>
+  <div class="diagram-box">
+    <figure>
+      <svg viewBox="0 0 260 140" role="img" aria-label="EM wave with E and B fields">
+        <line x1="20" y1="70" x2="240" y2="70" stroke="#5b6472" stroke-width="1" stroke-dasharray="3,3"/>
+        <path d="M 20,70 Q 40,20 60,70 Q 80,120 100,70 Q 120,20 140,70 Q 160,120 180,70 Q 200,20 220,70" fill="none" stroke="#c92a2a" stroke-width="2"/>
+        <path d="M 20,70 Q 40,70 50,40 Q 60,70 70,100 Q 80,70 90,40 Q 100,70 110,100 Q 120,70 130,40 Q 140,70 150,100 Q 160,70 170,40" fill="none" stroke="#1e40af" stroke-width="1.5" opacity="0.6"/>
+        <text x="120" y="15" fill="#c92a2a" font-size="11" text-anchor="middle">E field</text>
+        <text x="220" y="90" fill="#1e40af" font-size="11">B field</text>
+        <text x="130" y="135" fill="#5b6472" font-size="10" text-anchor="middle">→ direction of propagation</text>
+      </svg>
+      <figcaption>E and B oscillate perpendicular to each other and to travel.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 6.1.1 — Frequency from wavelength (red light)</h4>
+    <p>Red light has wavelength 700 nm. Find its frequency.</p>
+    <p class="am">ቀይ ብርሃን የሞገድ ርዝመት 700 nm ነው። ድግግሞሹን ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> λ = 700 nm = 700 × 10⁻⁹ m; c = 3.00 × 10⁸ m/s.</li>
+      <li><strong>Formula:</strong> c = λf → f = c/λ.</li>
+      <li><strong>Substitute:</strong> f = (3.00 × 10⁸) / (700 × 10⁻⁹).</li>
+      <li><strong>Compute:</strong> f = 4.29 × 10¹⁴ Hz.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> f = 4.29 × 10¹⁴ Hz. · <span class="am" style="display:inline">መልስ፦ 4.29×10¹⁴ Hz።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 6.1.2 — Wavelength from frequency (FM radio)</h4>
+    <p>An FM radio station broadcasts at 103.4 MHz. Find its wavelength.</p>
+    <p class="am">ኤፍ ኤም ሬዲዮ 103.4 MHz ያስተላልፋል። የሞገድ ርዝመቱን ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> f = 103.4 MHz = 103.4 × 10⁶ Hz; c = 3.00 × 10⁸ m/s.</li>
+      <li><strong>Formula:</strong> λ = c/f.</li>
+      <li><strong>Substitute:</strong> λ = (3.00 × 10⁸) / (103.4 × 10⁶).</li>
+      <li><strong>Compute:</strong> λ = 2.9 m.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> λ = 2.9 m. · <span class="am" style="display:inline">መልስ፦ 2.9 ሜትር።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 6.1.1 — Explain how an EM wave propagates</h4>
+    <p>An accelerating electric charge produces a changing electric field, which induces a changing magnetic field, which in turn induces a changing electric field. These coupled oscillations propagate outward as an electromagnetic wave.</p>
+    <p class="am">ተጣድፎ የሚንቀሳቀስ ቻርጅ ተለዋዋጭ የኤሌክትሪክ መስክ ይፈጥራል፤ ይህም ተለዋዋጭ መግነጢሳዊ መስክ ይፈጥራል፤ በዚህም ሞገዱ ወደ ውጭ ይጓዛል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.1.2 — Do EM waves need a medium to travel?</h4>
+    <p><strong>No.</strong> EM waves can travel through a vacuum — this is how sunlight reaches Earth through empty space.</p>
+    <p class="am">አይፈልጉም። ኤሌክትሮማግኔቲክ ሞገዶች በባዶ ጠፈር ውስጥ ማለፍ ይችላሉ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.1.3 — Describe the properties of EM waves</h4>
+    <p>1) Transverse — E and B perpendicular to direction of travel. 2) E ⊥ B. 3) Travel at c = 3×10⁸ m/s in vacuum. 4) Carry energy (radiant energy). 5) Can travel through vacuum. 6) Produced by accelerating charges. 7) Obey c = λf.</p>
+    <p class="am">1) ተጨማሪ 2) E ⊥ B 3) በባዶ ጠፈር c = 3×10⁸ m/s 4) ጉልበት ያጓጉዛሉ 5) መካከለኛ አያስፈልጋቸውም 6) በተጣደፉ ቻርጆች ይፈጠራሉ 7) c = λf።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-6.1"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 6.2 ==================== -->
+<section id="section-6.2" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 6.2</span>
+  <h2>The EM Spectrum</h2>
+
+  <p><strong>The electromagnetic spectrum</strong> is the complete range of all EM wave frequencies and wavelengths. All EM waves are the same type of wave — they differ only in frequency, wavelength, and energy.</p>
+  <p class="am">ኤሌክትሮማግኔቲክ ስፔክትረም ሁሉንም የኤሌክትሮማግኔቲክ ሞገዶች ድግግሞሾችና ሞገድ ርዝመቶች የሚያካትት ነው። ሁሉም ተመሳሳይ ዓይነት ሞገዶች ናቸው — የሚለያዩት በድግግሞሽ፣ በሞገድ ርዝመትና በጉልበት ብቻ ነው።</p>
+
+  <h3>The spectrum (order of decreasing wavelength)</h3>
+  <table>
+    <thead><tr><th>Type</th><th>Wavelength</th><th>Key uses</th><th>Dangers</th></tr></thead>
+    <tbody>
+      <tr><td>Radio</td><td>1 m – thousands m</td><td>Communication, TV, radar</td><td>Large doses → cancer, leukemia</td></tr>
+      <tr><td>Microwave</td><td>cm scale</td><td>Cooking, phones, radar</td><td>Cataracts (eyes); brain effects</td></tr>
+      <tr><td>Infrared</td><td>700 nm – 1 mm</td><td>Remote controls, night vision, heat lamps</td><td>Burns, overheating</td></tr>
+      <tr><td>Visible</td><td>400 – 700 nm</td><td>Seeing, photography</td><td>Retinal damage from bright light</td></tr>
+      <tr><td>Ultraviolet (UV)</td><td>10 – 400 nm</td><td>Vitamin D, sterilization, forgery detection</td><td>Sunburn, skin cancer, retinal damage</td></tr>
+      <tr><td>X-ray</td><td>0.01 – 10 nm</td><td>Medical imaging, airport security</td><td>Cell damage, cancer</td></tr>
+      <tr><td>Gamma ray</td><td>&lt; 0.01 nm</td><td>Cancer treatment, sterilization</td><td>Mutations, cancer (esp. unborn babies)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Diagram: EM Spectrum</h3>
+  <div class="diagram-box">
+    <figure>
+      <svg viewBox="0 0 280 100" role="img" aria-label="EM spectrum">
+        <rect x="10" y="30" width="40" height="30" fill="#fce7f3" stroke="#9d174d"/>
+        <text x="30" y="50" fill="#9d174d" font-size="8" text-anchor="middle" font-weight="bold">Radio</text>
+        <rect x="50" y="30" width="40" height="30" fill="#fee2e2" stroke="#b91c1c"/>
+        <text x="70" y="50" fill="#b91c1c" font-size="7" text-anchor="middle" font-weight="bold">Micro</text>
+        <rect x="90" y="30" width="40" height="30" fill="#fed7aa" stroke="#c2410c"/>
+        <text x="110" y="50" fill="#c2410c" font-size="7" text-anchor="middle" font-weight="bold">IR</text>
+        <rect x="130" y="30" width="40" height="30" fill="#fef3c7" stroke="#a16207"/>
+        <text x="150" y="48" fill="#a16207" font-size="6" text-anchor="middle" font-weight="bold">Visible</text>
+        <rect x="170" y="30" width="40" height="30" fill="#e0e7ff" stroke="#4338ca"/>
+        <text x="190" y="50" fill="#4338ca" font-size="7" text-anchor="middle" font-weight="bold">UV</text>
+        <rect x="210" y="30" width="30" height="30" fill="#dbeafe" stroke="#1e40af"/>
+        <text x="225" y="50" fill="#1e40af" font-size="7" text-anchor="middle" font-weight="bold">X</text>
+        <rect x="240" y="30" width="30" height="30" fill="#e9d5ff" stroke="#6b21a8"/>
+        <text x="255" y="50" fill="#6b21a8" font-size="6" text-anchor="middle" font-weight="bold">γ</text>
+        <text x="20" y="80" fill="#5b6472" font-size="9">Long λ, low f, low E</text>
+        <text x="270" y="80" fill="#5b6472" font-size="9" text-anchor="end">Short λ, high f, high E</text>
+        <text x="140" y="95" fill="#5b6472" font-size="9" text-anchor="middle">← increasing frequency →</text>
+      </svg>
+      <figcaption>Radio → Gamma: increasing f, decreasing λ.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 6.2.1 — Order by frequency</h4>
+    <p>Arrange in order of increasing frequency: X-rays, infrared, visible, gamma, radio.</p>
+    <p class="am">በድግግሞሽ እየጨመረ አዘጋጅ፦ X-ray, infrared, visible, gamma, radio።</p>
+    <ol>
+      <li>Radio waves have the lowest frequency of all.</li>
+      <li>Infrared is next (just below visible).</li>
+      <li>Visible (400–700 nm) comes next.</li>
+      <li>X-rays are above UV.</li>
+      <li>Gamma rays have the highest frequency of all.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> radio &lt; infrared &lt; visible &lt; X-rays &lt; gamma. · <span class="am" style="display:inline">መልስ፦ radio < infrared < visible < X-ray < gamma።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 6.2.2 — Uses and dangers</h4>
+    <p>Why are X-rays used in hospitals but with strict precautions?</p>
+    <p class="am">X-ray በሆስፒታል ለምን ጥቅም ላይ ይውላል ግን በጥንቃቄ?</p>
+    <ol>
+      <li><strong>Use:</strong> X-rays pass through soft tissue but are blocked by dense bone/metal — creating clear images of bones and luggage.</li>
+      <li><strong>Danger:</strong> X-rays are ionizing radiation — they can damage DNA and cause cancer.</li>
+      <li><strong>Safety:</strong> Radiographers stand behind lead shields; patients are shielded; exposure is limited.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Useful but dangerous — needs shielding &amp; dose limits. · <span class="am" style="display:inline">መልስ፦ ጠቃሚ ግን አደገኛ — ጥበቃና የመጠን ገደብ ያስፈልጋል።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 6.2.1 — Mention one source of EM waves</h4>
+    <p>Any of: the Sun (all types), radio transmitters (radio waves), light bulbs (visible + infrared), X-ray tubes (X-rays), radioactive materials (gamma).</p>
+    <p class="am">ምንጮች፦ ፀሐይ፣ ሬዲዮ አስተላላፊ፣ አምፖል፣ X-ray ቱቦ፣ ሬዲዮአክቲቭ ቁሶች።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.2.2 — Arrange in order of increasing frequency: infrared, X-rays, UV, visible, gamma</h4>
+    <p><strong>Order:</strong> infrared &lt; visible &lt; UV &lt; X-rays &lt; gamma.</p>
+    <p class="am">መልስ፦ infrared < visible < UV < X-ray < gamma።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.2.3 — Discuss uses of each type of EM spectrum</h4>
+    <p>Radio → communication, TV, radar. Microwave → cooking, phones, satellite. Infrared → remote controls, night vision, heat therapy. Visible → seeing, photography. UV → sterilization, vitamin D, forgery detection. X-ray → medical imaging, security. Gamma → cancer treatment, sterilization.</p>
+    <p class="am">ራዲዮ → ግንኙነት፤ ማይክሮዌቭ → ምግብ ማብሰያ፤ IR → ሪሞት፤ ቪዚብል → ማየት፤ UV → ማምከን፤ X-ray → ምስል፤ Gamma → ካንሰር ህክምና።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.2.4 — Dangers of each type</h4>
+    <p>Radio → cancer with high doses. Microwave → eye cataracts, brain effects. Infrared → burns. Visible → retinal damage. UV → sunburn, skin cancer, eye damage. X-ray → cell damage, cancer. Gamma → mutations, cancer (especially unborn).</p>
+    <p class="am">ራዲዮ → ካንሰር፤ ማይክሮ → ዓይን ጉዳት፤ IR → ማቃጠል፤ ቪዚብል → ሬቲና ጉዳት፤ UV → የቆዳ ካንሰር፤ X-ray → ካንሰር፤ Gamma → ሚውቴሽን።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-6.2"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 6.3 ==================== -->
+<section id="section-6.3" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 6.3</span>
+  <h2>Light as a Wave</h2>
+
+  <p><strong>Light</strong> is an EM wave that our eyes can detect. Visible light occupies a tiny slice of the EM spectrum. It travels at <strong>c = 3.00 × 10⁸ m/s</strong> in a vacuum, slower in matter, and always in straight lines (in a uniform medium).</p>
+  <p class="am">ብርሃን ዓይኖቻችን ሊያዩት የሚችሉት የኤሌክትሮማግኔቲክ ሞገድ ነው። በባዶ ጠፈር ውስጥ በ c = 3×10⁸ m/s ይጓዛል፤ በቁስ ውስጥ ይቀንሳል፤ በተመሳሳይ ሁኔታ ውስጥ በቀጥታ መስመር ይጓዛል።</p>
+
+  <div class="highlight-box">
+    <strong>Speed of light:</strong><br>
+    • Vacuum: c = <strong>3.00 × 10⁸ m/s</strong> (nothing travels faster).<br>
+    • Water: ≈ 2.25 × 10⁸ m/s<br>
+    • Glass: ≈ 1.97 × 10⁸ m/s<br>
+    • Slower in denser media (due to interactions with atoms).<br>
+    • Light from the Sun reaches Earth in ~8.5 minutes (150 million km).
+    <span class="am"><strong>የብርሃን ፍጥነት፦</strong> በባዶ ጠፈር 3×10⁸ m/s፤ በውሃ ~2.25×10⁸፤ በመስታወት ~1.97×10⁸። በጨለማ ቁስ ውስጥ ይቀንሳል።</span>
+  </div>
+
+  <h3>Formulas</h3>
+  <div class="formula">c = λ × f &nbsp; (all EM waves, any medium)</div>
+  <div class="formula">v = c / n &nbsp; (speed in a medium; n = refractive index)</div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 6.3.1 — Frequency of 400 nm light</h4>
+    <p>Violet light has λ = 400 nm. Find its frequency.</p>
+    <p class="am">ቫዮሌት ብርሃን λ = 400 nm። ድግግሞሹን ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> λ = 400 × 10⁻⁹ m; c = 3.00 × 10⁸ m/s.</li>
+      <li><strong>Formula:</strong> f = c/λ.</li>
+      <li><strong>Substitute:</strong> f = (3.00 × 10⁸) / (400 × 10⁻⁹).</li>
+      <li><strong>Compute:</strong> f = 7.5 × 10¹⁴ Hz.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> f = 7.5 × 10¹⁴ Hz. · <span class="am" style="display:inline">መልስ፦ 7.5×10¹⁴ Hz።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 6.3.2 — Speed in glass</h4>
+    <p>Light enters glass with refractive index n = 1.52. Find its speed in the glass.</p>
+    <p class="am">ብርሃን ወደ n = 1.52 ያለው መስታወት ሲገባ ፍጥነቱን ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> n = 1.52; c = 3.00 × 10⁸ m/s.</li>
+      <li><strong>Formula:</strong> n = c/v → v = c/n.</li>
+      <li><strong>Substitute:</strong> v = (3.00 × 10⁸) / 1.52.</li>
+      <li><strong>Compute:</strong> v = 1.97 × 10⁸ m/s.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> v = 1.97 × 10⁸ m/s. · <span class="am" style="display:inline">መልስ፦ 1.97×10⁸ m/s።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 6.3.1 — Are light rays real?</h4>
+    <p><strong>No.</strong> Light rays are imaginary straight lines used to show the path light travels. Only the light itself is real.</p>
+    <p class="am">አይደሉም። ብርሃን ጨረሮች ምናባዊ መስመሮች ናቸው።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.3.2 — Evidence that light travels in straight lines</h4>
+    <p>Dust particles illuminated by a light beam (e.g., through a window) show light going straight. Shadows have sharp edges (if the source is small). A laser beam is straight.</p>
+    <p class="am">በብርሃን ጨረር ውስጥ የሚታዩ የአቧራ ቅንጣቶች ቀጥተኛ መሆኑን ያሳያሉ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.3.3 — How does light wave propagate?</h4>
+    <p>Light travels in straight lines (rays) in a uniform medium. In a new medium, its speed changes, causing bending (refraction). Direction is indicated by arrows on rays.</p>
+    <p class="am">በተመሳሳይ ሁኔታ ውስጥ በቀጥታ ይጓዛል። አዲስ ሁኔታ ሲገባ ፍጥነቱ ይቀየራል — refraction።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.3.4 — Do EM waves need a medium?</h4>
+    <p>No — they travel through vacuum. This is why we can see the Sun, stars, and galaxies.</p>
+    <p class="am">አይፈልጉም። ስለዚህ ፀሐይን፣ ከዋክብትን ማየት እንችላለን።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.3.5 — Speed of light and symbol</h4>
+    <p>c ≈ 3.00 × 10⁸ m/s in vacuum. It changes (decreases) in matter, but c itself is the vacuum value.</p>
+    <p class="am">c ≈ 3×10⁸ m/s በባዶ ጠፈር። በቁስ ውስጥ ይቀንሳል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.3.6 — Frequency of 400 nm wave</h4>
+    <p>f = c/λ = (3×10⁸)/(400×10⁻⁹) = <strong>7.5 × 10¹⁴ Hz</strong>.</p>
+    <p class="am">መልስ፦ 7.5×10¹⁴ Hz።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-6.3"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 6.4 ==================== -->
+<section id="section-6.4" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 6.4</span>
+  <h2>Laws of Reflection &amp; Refraction</h2>
+
+  <p><strong>Reflection:</strong> Light bounces off a surface. <strong>Refraction:</strong> Light bends when moving between media of different optical densities.</p>
+  <p class="am">ማንጸባረቅ ብርሃን ከወለል ላይ መመለስ ነው። ሪፍራክሽን ብርሃን ከአንድ ሁኔታ ወደ ሌላ ሲገባ መታጠፍ ነው።</p>
+
+  <h3>Formulas</h3>
+  <div class="formula">Law of reflection: θᵢ = θᵣ (angles from normal)</div>
+  <div class="formula">Snell's law: n₁ sin θ₁ = n₂ sin θ₂</div>
+  <div class="formula">Refractive index: n = c / v</div>
+  <div class="formula">Critical angle: sin θ_c = n₂ / n₁ &nbsp; (n₁ > n₂)</div>
+  <div class="formula">n₁ = 1.00 (air), 1.33 (water), 1.52 (glass), 2.42 (diamond)</div>
+
+  <div class="highlight-box">
+    <strong>Bending rules:</strong><br>
+    • Slower medium (higher n) → ray bends <strong>toward</strong> the normal.<br>
+    • Faster medium (lower n) → ray bends <strong>away</strong> from the normal.<br>
+    • Total internal reflection occurs when going from high-n to low-n medium with θᵢ > θ_c.
+    <span class="am"><strong>የመታጠፍ ደንብ፦</strong> ወደ ጨለማ ሁኔታ → ወደ ኖርማል ይታጠፋል። ወደ ብርሃን ሁኔታ → ከኖርማል ይርቃል። ሙሉ ውስጣዊ ማንጸባረቅ — ከ n ከፍተኛ ወደ n ዝቅተኛ እና θ > θ_c።</span>
+  </div>
+
+  <h3>Diagram: Reflection &amp; Refraction</h3>
+  <div class="diagram-box">
+    <figure>
+      <svg viewBox="0 0 220 130" role="img" aria-label="Reflection">
+        <line x1="20" y1="80" x2="200" y2="80" stroke="#5b6472" stroke-width="2"/>
+        <line x1="110" y1="10" x2="110" y2="80" stroke="#5b6472" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="60" y1="30" x2="110" y2="80" stroke="#c92a2a" stroke-width="2" marker-end="url(#ar)"/>
+        <line x1="110" y1="80" x2="160" y2="30" stroke="#1e40af" stroke-width="2" marker-end="url(#ab)"/>
+        <text x="80" y="45" fill="#c92a2a" font-size="10">incident</text>
+        <text x="130" y="45" fill="#1e40af" font-size="10">reflected</text>
+        <text x="115" y="105" fill="#5b6472" font-size="9">θᵢ = θᵣ</text>
+        <defs>
+          <marker id="ar" markerWidth="8" markerHeight="5" refX="8" refY="2.5" orient="auto"><polygon points="0 0, 8 2.5, 0 5" fill="#c92a2a"/></marker>
+          <marker id="ab" markerWidth="8" markerHeight="5" refX="8" refY="2.5" orient="auto"><polygon points="0 0, 8 2.5, 0 5" fill="#1e40af"/></marker>
+        </defs>
+      </svg>
+      <figcaption>Reflection: θᵢ = θᵣ.</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 220 130" role="img" aria-label="Refraction">
+        <rect x="10" y="80" width="200" height="50" fill="#dbeafe" opacity="0.5"/>
+        <line x1="10" y1="80" x2="210" y2="80" stroke="#1e40af" stroke-width="2"/>
+        <line x1="110" y1="10" x2="110" y2="130" stroke="#5b6472" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="60" y1="30" x2="110" y2="80" stroke="#c92a2a" stroke-width="2" marker-end="url(#ar2)"/>
+        <line x1="110" y1="80" x2="150" y2="120" stroke="#0b7a5e" stroke-width="2" marker-end="url(#ag)"/>
+        <text x="80" y="40" fill="#c92a2a" font-size="10">incident</text>
+        <text x="130" y="110" fill="#0b7a5e" font-size="10">refracted</text>
+        <text x="20" y="100" fill="#5b6472" font-size="9">slower medium</text>
+        <defs>
+          <marker id="ar2" markerWidth="8" markerHeight="5" refX="8" refY="2.5" orient="auto"><polygon points="0 0, 8 2.5, 0 5" fill="#c92a2a"/></marker>
+          <marker id="ag" markerWidth="8" markerHeight="5" refX="8" refY="2.5" orient="auto"><polygon points="0 0, 8 2.5, 0 5" fill="#0b7a5e"/></marker>
+        </defs>
+      </svg>
+      <figcaption>Refraction: bends toward normal when entering a denser medium.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 6.4.1 — Snell's law (water → air)</h4>
+    <p>Light in water (n=1.33) hits the surface at 35° from normal. Find the angle in air (n=1.00).</p>
+    <p class="am">በውሃ ውስጥ ያለ ብርሃን (n=1.33) 35° አንግል ሲነካ በአየር ውስጥ ያለው አንግል ስንት ነው?</p>
+    <ol>
+      <li><strong>Given:</strong> n₁ = 1.33 (water), θ₁ = 35°, n₂ = 1.00 (air).</li>
+      <li><strong>Snell:</strong> n₁ sin θ₁ = n₂ sin θ₂.</li>
+      <li><strong>Substitute:</strong> 1.33 × sin 35° = 1.00 × sin θ₂.</li>
+      <li><strong>Compute:</strong> 1.33 × 0.574 = 0.763 → θ₂ = sin⁻¹(0.763) = 49.7°.</li>
+      <li><strong>Check:</strong> θ₂ &gt; θ₁ → ray bent away from normal (into less dense medium) ✓</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> θ₂ ≈ 49.7°. · <span class="am" style="display:inline">መልስ፦ 49.7°።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 6.4.2 — Critical angle of glass</h4>
+    <p>Find the critical angle for glass (n=1.52) → air.</p>
+    <p class="am">የመስታወት (n=1.52) → አየር ወሳኝ አንግል ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> n₁ = 1.52, n₂ = 1.00.</li>
+      <li><strong>Formula:</strong> sin θ_c = n₂/n₁.</li>
+      <li><strong>Substitute:</strong> sin θ_c = 1/1.52 = 0.658.</li>
+      <li><strong>Compute:</strong> θ_c = sin⁻¹(0.658) = 41.1°.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> θ_c ≈ 41°. · <span class="am" style="display:inline">መልስ፦ 41°።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 6.4.3 — Refractive index from speeds</h4>
+    <p>Light travels at 2.0 × 10⁸ m/s in a medium. Find the refractive index.</p>
+    <p class="am">ብርሃን በ2.0×10⁸ m/s በሚጓዝበት ሁኔታ ውስጥ የማጣቀሻ ኢንዴክስ ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> v = 2.0 × 10⁸ m/s; c = 3.00 × 10⁸ m/s.</li>
+      <li><strong>Formula:</strong> n = c/v.</li>
+      <li><strong>Compute:</strong> n = 3.00/2.0 = 1.5.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> n = 1.5. · <span class="am" style="display:inline">መልስ፦ n = 1.5።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 6.4.1 — Ray strikes a surface at 25° to surface, find angle of reflection</h4>
+    <p><strong>Angles are from the normal.</strong> If angle with surface = 25°, then angle with normal = 90° − 25° = 65°. So θᵢ = θᵣ = <strong>65°</strong>.</p>
+    <p class="am">ከወለል 25° → ከኖርማል 65°። θᵣ = 65°።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.4.2 — State the law of reflection</h4>
+    <p>1) θᵢ = θᵣ (both measured from the normal). 2) Incident ray, reflected ray, and normal all lie in the same plane.</p>
+    <p class="am">1) θᵢ = θᵣ 2) ሁሉም በአንድ አውሮፕላን ውስጥ ናቸው።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.4.3 — Reflection from rough vs smooth surfaces</h4>
+    <p><strong>Smooth (specular):</strong> parallel rays stay parallel after reflection → clear image. <strong>Rough (diffuse):</strong> parallel rays scatter in different directions → no clear image (how we see non-shiny objects).</p>
+    <p class="am">ለስላሳ (specular) — ትይዩ ጨረሮች ትይዩ ሆነው ይመለሳሉ። ሸካራ (diffuse) — ጨረሮች ይበትናሉ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.4.4 — State Snell's Law</h4>
+    <p>n₁ sin θ₁ = n₂ sin θ₂ (ratio of sin θ₁ to sin θ₂ equals the ratio of refractive indices).</p>
+    <p class="am">n₁ sin θ₁ = n₂ sin θ₂.</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.4.5 — Refractive index meaning</h4>
+    <p>n = c/v — the ratio of light's speed in vacuum to its speed in the medium. Higher n → slower light → more bending.</p>
+    <p class="am">n = c/v — በባዶ ጠፈር ፍጥነት በሁኔታው ፍጥነት ሲካፈል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.4.6 — Air → diamond at 30° from interface</h4>
+    <p>θᵢ (from normal) = 90° − 30° = 60°. n₁ = 1.00, n₂ = 2.42.</p>
+    <p>sin θ₂ = (1.00/2.42) sin 60° = 0.413 × 0.866 = 0.358.</p>
+    <p>θ₂ = sin⁻¹(0.358) ≈ 21°. From interface: 90° − 21° = <strong>69°</strong>.</p>
+    <p class="am">መልስ፦ ከወለል ~69°።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.4.7 — Air → water, bend toward or away from normal?</h4>
+    <p>Toward the normal. Water is denser (n=1.33 &gt; 1.00), so light slows and bends toward the normal.</p>
+    <p class="am">ወደ ኖርማል ይታጠፋል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.4.8 — Where is light fastest: kerosene, turpentine, water?</h4>
+    <p>Speed is highest in the lowest-n material. From Table 6.1: water (n=1.33) &lt; kerosene (1.44) &lt; turpentine (1.47). Light is fastest in <strong>water</strong>.</p>
+    <p class="am">በውሃ ውስጥ በጣም ፈጣን ነው (n=1.33)።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.4.9 — Silicon → water, ray at 69° in water</h4>
+    <p>n_water ≈ 1.33, n_silicon ≈ 3.5 (typical). From Snell: n_si sin θ_si = n_w sin θ_w. sin θ_si = (1.33/3.5) sin 69° = 0.38 × 0.934 = 0.355. θ_si ≈ 20.8°.</p>
+    <p class="am">መልስ፦ θ ≈ 21°።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.4.10 — Conditions for total internal reflection</h4>
+    <p>1) Light travels from denser to rarer medium (n₁ &gt; n₂). 2) Angle of incidence &gt; critical angle.</p>
+    <p class="am">1) ከጨለማ ወደ ቀላል ሁኔታ 2) θᵢ > θ_c።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.4.11 — Critical angle explanation</h4>
+    <p>The angle of incidence in the denser medium for which the refracted ray travels along the interface (θ₂ = 90°). Beyond it, total internal reflection occurs.</p>
+    <p class="am">የመግቢያው አንግል ለእሱ θ₂ = 90° የሚሆንበት ነጥብ ነው።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.4.12 — Why does a diamond sparkle?</h4>
+    <p>Diamond has a very high refractive index (n = 2.42) and small critical angle (~24°). Light entering a diamond undergoes <em>multiple</em> total internal reflections before exiting, spreading in different directions — creating the sparkle.</p>
+    <p class="am">አልማዝ n=2.42 ስላለው ብዙ ጊዜ ሙሉ ውስጣዊ ማንጸባረቅ ያደርጋል — ብልጭታ ይፈጥራል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.4.13 — Diamond → silicon TIR?</h4>
+    <p>Diamond n=2.42, silicon n≈3.5. Since silicon has <em>higher</em> n, light travels from lower to higher — no TIR (TIR requires going from higher to lower n).</p>
+    <p class="am">አይደለም። TIR ከፍተኛ n ወደ ዝቅተኛ n ብቻ ነው።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.4.14 — Which color refracts most/least in prism?</h4>
+    <p><strong>Violet</strong> refracts the most (shortest wavelength, highest n in glass). <strong>Red</strong> refracts the least (longest wavelength, lowest n).</p>
+    <p class="am">ቫዮሌት በጣም ይታጠፋል፤ ቀይ በትንሹ።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-6.4"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 6.5 ==================== -->
+<section id="section-6.5" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 6.5</span>
+  <h2>Mirrors and Lenses</h2>
+
+  <p><strong>Mirrors</strong> reflect light to form images. <strong>Lenses</strong> refract light to form images. Both can create real (on-screen) or virtual (apparent) images depending on the geometry.</p>
+  <p class="am">መስተዋቶች ብርሃንን በማንጸባረቅ ምስል ይፈጥራሉ። ሌንሶች በማጣመም ምስል ይፈጥራሉ።</p>
+
+  <h3>Formulas</h3>
+  <div class="formula">Mirror equation: 1/v + 1/u = 1/f</div>
+  <div class="formula">Lens equation: 1/v − 1/u = 1/f &nbsp; (v, u, f all signed)</div>
+  <div class="formula">Magnification: m = h'/h = −v/u</div>
+  <div class="formula">f = R/2 (spherical mirror)</div>
+
+  <h3>Sign conventions</h3>
+  <table>
+    <thead><tr><th>Quantity</th><th>Positive</th><th>Negative</th></tr></thead>
+    <tbody>
+      <tr><td>Object distance u</td><td>In front of mirror/lens</td><td>Behind (virtual object)</td></tr>
+      <tr><td>Image distance v</td><td>Real image (in front for mirror; behind for lens)</td><td>Virtual image</td></tr>
+      <tr><td>Focal length f</td><td>Concave mirror / convex lens</td><td>Convex mirror / concave lens</td></tr>
+      <tr><td>Image height h'</td><td>Erect</td><td>Inverted</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Diagram: Mirror Types</h3>
+  <div class="diagram-box">
+    <figure>
+      <svg viewBox="0 0 220 110" role="img" aria-label="Concave mirror">
+        <path d="M 150,15 Q 120,55 150,95" fill="none" stroke="#3b5bdb" stroke-width="3"/>
+        <line x1="30" y1="55" x2="200" y2="55" stroke="#5b6472" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="160" y="60" fill="#5b6472" font-size="9">C  F</text>
+        <text x="40" y="100" fill="#5b6472" font-size="10">Concave — converging</text>
+      </svg>
+      <figcaption>Concave: converging mirror.</figcaption>
+    </figure>
+    <figure>
+      <svg viewBox="0 0 220 110" role="img" aria-label="Convex mirror">
+        <path d="M 70,15 Q 100,55 70,95" fill="none" stroke="#3b5bdb" stroke-width="3"/>
+        <line x1="20" y1="55" x2="200" y2="55" stroke="#5b6472" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="60" y="60" fill="#5b6472" font-size="9">F  C</text>
+        <text x="20" y="100" fill="#5b6472" font-size="10">Convex — diverging</text>
+      </svg>
+      <figcaption>Convex: diverging mirror.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 6.5.1 — Concave mirror (matric exam)</h4>
+    <p>Object 6 cm tall at 25 cm from a concave mirror with f = 15 cm. Find image distance, size, and nature.</p>
+    <p class="am">ነገር 6 ሴ.ሜ ርዝመት፣ 25 ሴ.ሜ ከተዘበራረቀ መስተዋት (f=15 ሴ.ሜ)። ምስሉን ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> h = +6 cm; u = +25 cm; f = +15 cm (concave).</li>
+      <li><strong>Mirror equation:</strong> 1/v + 1/u = 1/f → 1/v = 1/f − 1/u = 1/15 − 1/25.</li>
+      <li><strong>Compute:</strong> = (5 − 3)/75 = 2/75 → v = +37.5 cm. Real image in front.</li>
+      <li><strong>Magnification:</strong> m = −v/u = −37.5/25 = −1.5.</li>
+      <li><strong>Image height:</strong> h' = m·h = −1.5 × 6 = −9 cm. Inverted, enlarged.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Real, inverted, magnified (1.5×), at 37.5 cm in front. · <span class="am" style="display:inline">መልስ፦ እውነተኛ፣ ተገልብጦ፣ የተስፋፋ (1.5×)፣ 37.5 ሴ.ሜ ፊት።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 6.5.2 — Convex mirror (matric exam)</h4>
+    <p>Convex mirror R = 3 m; object at 5 m. Find image distance and nature.</p>
+    <p class="am">Convex መስተዋት R=3 ሜትር፤ ነገር 5 ሜትር። ምስሉን ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> R = −3 m → f = −1.5 m; u = +5 m.</li>
+      <li><strong>Mirror:</strong> 1/v = 1/f − 1/u = 1/(−1.5) − 1/5.</li>
+      <li><strong>Compute:</strong> = −0.667 − 0.2 = −0.867 → v = −1.15 m. Behind mirror (virtual).</li>
+      <li><strong>Magnification:</strong> m = −v/u = −(−1.15)/5 = +0.23. Upright, smaller.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Virtual, upright, 0.23× size, at 1.15 m behind. · <span class="am" style="display:inline">መልስ፦ ምናባዊ፣ ቀጥታ፣ 0.23×፣ 1.15 ሜትር ጀርባ።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 6.5.3 — Concave lens (matric exam)</h4>
+    <p>Concave lens f = −15 cm; image at −10 cm. Find object distance and magnification.</p>
+    <p class="am">Concave ሌንስ f=−15 ሴ.ሜ; ምስል −10 ሴ.ሜ። የነገር ርቀትንና ማጉላትን ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> v = −10 cm; f = −15 cm.</li>
+      <li><strong>Lens:</strong> 1/v − 1/u = 1/f → 1/u = 1/v − 1/f.</li>
+      <li><strong>Compute:</strong> 1/u = 1/(−10) − 1/(−15) = −0.1 + 0.067 = −0.033.</li>
+      <li><strong>u = −30 cm</strong> (virtual object — or by absolute value, object at 30 cm in front if interpreting conventionally: u = +30 cm).</li>
+      <li><strong>Magnification:</strong> m = −v/u = −(−10)/(30) = +0.33.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> u = 30 cm; m = +0.33 (virtual, erect, smaller). · <span class="am" style="display:inline">መልስ፦ u = 30 ሴ.ሜ፤ m = +0.33።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 6.5.4 — Convex lens (matric exam)</h4>
+    <p>Object 2 cm tall at 15 cm from convex lens f=10 cm. Find v, h', m.</p>
+    <p class="am">ነገር 2 ሴ.ሜ፣ 15 ሴ.ሜ ከ convex ሌንስ (f=10)። ፈልግ።</p>
+    <ol>
+      <li><strong>Given:</strong> h = +2 cm; u = +15 cm; f = +10 cm.</li>
+      <li><strong>Lens:</strong> 1/v = 1/f − 1/u = 1/10 − 1/15 = (3−2)/30 = 1/30.</li>
+      <li><strong>v = +30 cm</strong> — real image behind lens.</li>
+      <li><strong>Magnification:</strong> m = −v/u = −30/15 = −2.</li>
+      <li><strong>Image height:</strong> h' = m·h = −2 × 2 = −4 cm. Inverted, enlarged 2×.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Real, inverted, 2× enlarged, at 30 cm behind lens. · <span class="am" style="display:inline">መልስ፦ እውነተኛ፣ ተገልብጦ፣ 2×፣ 30 ሴ.ሜ።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 6.5.1 — Five properties of an image in a plane mirror</h4>
+    <p>1) Virtual. 2) Upright. 3) Same size as object. 4) Same distance behind mirror as object in front. 5) Laterally inverted (left-right reversed).</p>
+    <p class="am">1) ምናባዊ 2) ቀጥታ 3) ተመሳሳይ መጠን 4) ተመሳሳይ ርቀት 5) በግራ-ቀኝ የተገለበጠ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.5.2 — Stool 0.5 m high at 2 m from plane mirror</h4>
+    <p>Image is 2 m <strong>behind</strong> mirror; height stays 0.5 m.</p>
+    <p class="am">ምስሉ 2 ሜትር ጀርባ፤ ቁመቱ 0.5 ሜትር።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.5.3 — Number of images: mirrors at 30°</h4>
+    <p>360/30 = 12 (even integer) → n = 12 − 1 = <strong>11 images</strong>.</p>
+    <p class="am">n = 360/30 − 1 = 11።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.5.4 — Define principal focus of a concave mirror</h4>
+    <p>The point on the principal axis where parallel rays (parallel to axis) converge after reflecting from the mirror.</p>
+    <p class="am">ትይዩ ጨረሮች ከተንጸባረቁ በኋላ የሚሰበሰቡበት ነጥብ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.5.5 — Mirror R = 20 cm, f = ?</h4>
+    <p>f = R/2 = 20/2 = <strong>10 cm</strong>.</p>
+    <p class="am">መልስ፦ 10 ሴ.ሜ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.5.6 — Mirror that gives erect, enlarged image</h4>
+    <p><strong>Concave mirror</strong> when object is between focus and pole (virtual, erect, enlarged).</p>
+    <p class="am">Concave መስተዋት (ነገሩ በ F እና በፖል መካከል ሲሆን)።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.5.7 — Why convex mirror as rear-view?</h4>
+    <p>1) Always upright, 2) gives wider field of view (curved outwards), 3) smaller image (diminished) so more traffic is visible.</p>
+    <p class="am">ቀጥታ ምስል፣ ሰፊ እይታ፣ ያነሰ ምስል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.5.8 — Which mirror gives full image of large object?</h4>
+    <p><strong>Convex mirror</strong> — curved outward, so it can show a large region of space in a small image.</p>
+    <p class="am">Convex መስተዋት።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.5.9 — Object 1 cm at 4 cm, concave mirror f=2 cm</h4>
+    <p>1/v + 1/4 = 1/2 → 1/v = 1/2 − 1/4 = 1/4 → v = 4 cm. m = −v/u = −1. Image is 1 cm, real, inverted, same size.</p>
+    <p class="am">v = 4 ሴ.ሜ፤ m = −1፤ እውነተኛ፣ ተገልብጦ፣ ተመሳሳይ መጠን።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.5.10 — Object 2 cm at 4 cm, convex mirror f=4 cm</h4>
+    <p>1/v + 1/4 = 1/(−4) → 1/v = −1/4 − 1/4 = −1/2 → v = −2 cm. m = −(−2)/4 = +0.5. Image is virtual, upright, half-size.</p>
+    <p class="am">v = −2 ሴ.ሜ፤ m = +0.5፤ ምናባዊ፣ ቀጥታ፣ 0.5×።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.5.11 — Concave mirror, 3× enlarged real image, object 10 cm</h4>
+    <p>m = −3 = −v/u → v = 3u = 30 cm. 1/30 + 1/10 = 1/f → 1/f = 1/30 + 3/30 = 4/30 → f = 7.5 cm. Image at 30 cm from mirror.</p>
+    <p class="am">ምስሉ 30 ሴ.ሜ ርቀት ላይ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.5.12 — Real or virtual image by convex lens at various positions</h4>
+    <p>(a) Beyond 2F₁ → real, inverted, diminished. (b) Just beyond 2F₁ → real, inverted, diminished (near same size). (c) At 2F₁ → real, inverted, same size. (d) Between 2F₁ and F₁ → real, inverted, enlarged. (e) At F₁ → no image (at infinity). (f) Between F₁ and O → virtual, upright, enlarged.</p>
+    <p class="am">(a-d) እውነተኛ፣ ተገልብጦ። (e) ምስል የለም። (f) ምናባዊ፣ ቀጥታ፣ የተስፋፋ።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-6.5"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 6.6 ==================== -->
+<section id="section-6.6" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 6.6</span>
+  <h2>Human Eye &amp; Optical Instruments</h2>
+
+  <p><strong>The human eye</strong> is like a camera: it uses a lens system to focus images onto a light-sensitive screen called the <strong>retina</strong>. Optical instruments extend the eye's capabilities.</p>
+  <p class="am">የሰው ዓይን እንደ ካሜራ ነው፦ ሌንስ ተጠቅሞ ምስልን በሬቲና ላይ ያተኩራል። የኦፕቲካል መሣሪያዎች የዓይንን አቅም ያራዝማሉ።</p>
+
+  <h3>Eye structure and function</h3>
+  <ul>
+    <li><strong>Cornea:</strong> transparent front bulge; provides most refraction.</li>
+    <li><strong>Iris:</strong> colored muscular diaphragm; controls pupil size.</li>
+    <li><strong>Pupil:</strong> opening that lets light in.</li>
+    <li><strong>Lens:</strong> fine-tunes focus by changing shape (accommodation).</li>
+    <li><strong>Retina:</strong> contains rods (light intensity) and cones (color).</li>
+    <li><strong>Optic nerve:</strong> carries signals to the brain.</li>
+  </ul>
+  <p class="am"><strong>ኮርኒያ</strong> — የፊት ግልጽ ክፍል። <strong>አይሪስ</strong> — የቀለም ጡንቻ። <strong>ተማሪ (pupil)</strong> — ብርሃን የሚገባበት ክፍተት። <strong>ሌንስ</strong> — ትኩረትን የሚያስተካክል። <strong>ሬቲና</strong> — rods እና cones ያሉበት። <strong>ኦፕቲክ ነርቭ</strong> — ወደ አንጎል የሚወስድ።</p>
+
+  <h3>Power of accommodation</h3>
+  <p>The eye's lens can change its focal length by the action of ciliary muscles. When relaxed → lens thin → long f (sees far). When contracted → lens thick → short f (sees near). Near point = 25 cm; far point = infinity.</p>
+  <p class="am">ሲሊየሪ ጡንቻዎች በመለዋወጥ ሌንሱ ትኩረቱን ያስተካክላል። ሲዝናና → ቀጭን → � USር ርቀት ያያል። ሲወጠር → ወፍራም → ቅርብ ያያል። Near point = 25 ሴ.ሜ፤ Far point = ወሰን የለውም።</p>
+
+  <h3>Vision defects and corrections</h3>
+  <table>
+    <thead><tr><th>Defect</th><th>Symptom</th><th>Cause</th><th>Correction</th></tr></thead>
+    <tbody>
+      <tr><td>Myopia (near-sighted)</td><td>Cannot see far</td><td>Eyeball too long / lens too curved</td><td>Concave (diverging) lens</td></tr>
+      <tr><td>Hypermetropia (far-sighted)</td><td>Cannot see near</td><td>Eyeball too short / lens too flat</td><td>Convex (converging) lens</td></tr>
+      <tr><td>Presbyopia</td><td>Difficulty with near vision (age)</td><td>Weak ciliary muscles / stiff lens</td><td>Convex lens or bifocals</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Optical instruments</h3>
+  <ul>
+    <li><strong>Simple microscope (magnifier):</strong> single convex lens; virtual, erect, enlarged image.</li>
+    <li><strong>Compound microscope:</strong> two convex lenses (objective + eyepiece); high magnification.</li>
+    <li><strong>Refracting telescope:</strong> large objective lens + eyepiece; gathers light from distant objects.</li>
+    <li><strong>Reflecting telescope:</strong> large concave mirror + eyepiece; can be made much larger than refractors.</li>
+  </ul>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 6.6.1 — Myopia correction</h4>
+    <p>A myopic person cannot see beyond 1.2 m. What lens power is needed?</p>
+    <p class="am">ማዮፒክ ሰው ከ1.2 ሜ በላይ ማየት አይችልም። ምን ዓይነት ሌንስ ያስፈልጋል?</p>
+    <ol>
+      <li>The far point is 1.2 m. To see an object at infinity, the lens must form a virtual image at 1.2 m.</li>
+      <li>Lens equation with u = −∞ (object at infinity), v = −1.2 m (virtual image):</li>
+      <li>1/f = 1/v − 1/u = 1/(−1.2) − 0 = −0.833 m⁻¹.</li>
+      <li>P = 1/f = −0.833 D. So a <strong>concave lens of power −0.83 D</strong> (or f = −1.2 m).</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Concave lens, f = −1.2 m, P = −0.83 D. · <span class="am" style="display:inline">መልስ፦ Concave ሌንስ፣ f=−1.2 ሜ።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 6.6.2 — Compound microscope magnification</h4>
+    <p>A compound microscope's objective gives 10× magnification, eyepiece 5×. Total magnification?</p>
+    <p class="am">Objective 10×፣ eyepiece 5×። ጠቅላላ ማጉላት?</p>
+    <ol>
+      <li>Total magnification = M_objective × M_eyepiece.</li>
+      <li>= 10 × 5 = <strong>50×</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> M = 50×. · <span class="am" style="display:inline">መልስ፦ 50×።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 6.6.1 — Power of accommodation</h4>
+    <p>The ability of the eye's lens to change its focal length (by changing curvature) to focus objects at different distances on the retina.</p>
+    <p class="am">የዓይን ሌንስ ትኩረቱን በመለዋወጥ የተለያዩ ርቀቶችን የማተኮር ችሎታ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.6.2 — Myopic eye cannot see beyond 1.2 m. What lens?</h4>
+    <p><strong>Concave (diverging) lens</strong> of focal length −1.2 m (power ≈ −0.83 D).</p>
+    <p class="am">Concave ሌንስ f = −1.2 ሜ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.6.3 — Far and near points of normal eye</h4>
+    <p><strong>Far point:</strong> infinity. <strong>Near point:</strong> 25 cm.</p>
+    <p class="am">የሩቅ ነጥብ — ወሰን የለውም። የቅርብ ነጥብ — 25 ሴ.ሜ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.6.4 — Student can't see blackboard from last row</h4>
+    <p><strong>Defect:</strong> myopia (near-sightedness). <strong>Correction:</strong> concave lens of appropriate power.</p>
+    <p class="am">Defect፦ myopia። ማስተካከያ፦ concave ሌንስ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.6.5 — Other optical instruments</h4>
+    <p>Periscope, kaleidoscope, binoculars, camera, telescope, microscope, sextant, projector, magnifying glass, endoscope.</p>
+    <p class="am">Periscope, kaleidoscope, binoculars, camera, telescope, microscope።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.6.6 — Why can't normal eye see closer than 25 cm?</h4>
+    <p>Below 25 cm, the lens cannot become thick enough (curvature too large) to focus the divergent rays on the retina. The image blurs.</p>
+    <p class="am">ከ25 ሴ.ሜ በታች ሌንሱ በቂ ውፍረት ማግኘት አይችልም — ምስሉ ይደበዝዛል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.6.7 — Difference simple vs compound microscope</h4>
+    <p><strong>Simple:</strong> one lens. <strong>Compound:</strong> two lenses (objective + eyepiece) for higher magnification.</p>
+    <p class="am">Simple — አንድ ሌንስ። Compound — ሁለት ሌንሶች።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.6.8 — Difference refracting vs reflecting telescope</h4>
+    <p><strong>Refracting:</strong> uses lenses (objective + eyepiece). <strong>Reflecting:</strong> uses concave mirror + eyepiece; can be much larger (mirrors can be supported from behind).</p>
+    <p class="am">Refracting — ሌንሶች። Reflecting — መስተዋት (mirror)።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.6.9 — Distant vision P=−5.5 D, near vision P=+1.5 D</h4>
+    <p><strong>Distant:</strong> f = 1/P = 1/(−5.5) = −0.182 m = −18.2 cm (concave lens).</p>
+    <p><strong>Near:</strong> f = 1/P = 1/1.5 = +0.667 m = +66.7 cm (convex lens).</p>
+    <p class="am">ሩቅ — f = −18.2 ሴ.ሜ። ቅርብ — f = 66.7 ሴ.ሜ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.6.10 — Entoto Observatory telescope type</h4>
+    <p>The Entoto Observatory (Addis Ababa) uses <strong>reflecting telescopes</strong> for astronomical observations — they can be made much larger than refractors, gathering more light from distant stars.</p>
+    <p class="am">Entoto Observatory — reflecting telescope።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-6.6"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 6.7 ==================== -->
+<section id="section-6.7" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 6.7</span>
+  <h2>Primary Colors of Light &amp; Human Vision</h2>
+
+  <p><strong>The retina</strong> contains two kinds of photoreceptor cells: <strong>rods</strong> (sensitive to light intensity, not color) and <strong>cones</strong> (sensitive to color). There are three types of cones, each most sensitive to <strong>red, green, or blue</strong> light.</p>
+  <p class="am">ሬቲና ሁለት ዓይነት ፎቶሪሴፕተሮች አሉት፦ rods (ለብርሃን መጠን) እና cones (ለቀለም)። ሶስት ዓይነት cones አሉ — ለቀይ፣ ለአረንጓዴ፣ ለሰማያዊ ስሜታዊ።</p>
+
+  <div class="highlight-box">
+    <strong>Additive primary colors:</strong> Red (R), Green (G), Blue (B).<br>
+    • Mixing all three equally → white light.<br>
+    • Mixing two primaries gives a secondary color:<br>
+    &nbsp;&nbsp;R + G = Yellow<br>
+    &nbsp;&nbsp;R + B = Magenta<br>
+    &nbsp;&nbsp;G + B = Cyan
+    <span class="am"><strong>ዋና ተጨማሪ ቀለሞች፦</strong> ቀይ (R)፣ አረንጓዴ (G)፣ ሰማያዊ (B)። ሶስቱም ሲደመሩ ነጭ። R+G=ቢጫ፣ R+B=ማጄንታ፣ G+B=ሳያን።</span>
+  </div>
+
+  <h3>Diagram: Additive Color Mixing</h3>
+  <div class="diagram-box">
+    <figure>
+      <svg viewBox="0 0 220 200" role="img" aria-label="RGB additive mixing">
+        <circle cx="80" cy="80" r="45" fill="#ef4444" opacity="0.85"/>
+        <circle cx="140" cy="80" r="45" fill="#22c55e" opacity="0.85"/>
+        <circle cx="110" cy="130" r="45" fill="#3b82f6" opacity="0.85"/>
+        <text x="60" y="70" fill="#fff" font-size="11" font-weight="bold">R</text>
+        <text x="140" y="70" fill="#fff" font-size="11" font-weight="bold">G</text>
+        <text x="105" y="155" fill="#fff" font-size="11" font-weight="bold">B</text>
+        <text x="110" y="60" fill="#fde047" font-size="9" text-anchor="middle" font-weight="bold">Y</text>
+        <text x="70" y="120" fill="#e879f9" font-size="9" text-anchor="middle" font-weight="bold">M</text>
+        <text x="150" y="120" fill="#67e8f9" font-size="9" text-anchor="middle" font-weight="bold">C</text>
+        <text x="110" y="190" fill="#5b6472" font-size="9" text-anchor="middle">R+G+B (center) = White</text>
+      </svg>
+      <figcaption>RGB additive mixing.</figcaption>
+    </figure>
+  </div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 6.7.1 — Predicting secondary colors</h4>
+    <p>What color does red + green light produce? What about all three?</p>
+    <p class="am">ቀይ + አረንጓዴ ምን ቀለም ይሆናል? ሶስቱስ?</p>
+    <ol>
+      <li>Red + green → <strong>yellow</strong> (a secondary color).</li>
+      <li>Red + blue → <strong>magenta</strong>.</li>
+      <li>Green + blue → <strong>cyan</strong>.</li>
+      <li>Red + green + blue (equal intensities) → <strong>white</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> R+G = Yellow; R+G+B = White. · <span class="am" style="display:inline">መልስ፦ R+G=ቢጫ፤ R+G+B=ነጭ።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 6.7.2 — Color of an object</h4>
+    <p>Why does a red apple look red in white light?</p>
+    <p class="am">ቀይ ፖም በነጭ ብርሃን ለምን ቀይ ይመስላል?</p>
+    <ol>
+      <li>White light contains all visible colors.</li>
+      <li>The apple's pigment absorbs all colors <em>except red</em>.</li>
+      <li>Red light is reflected into our eyes.</li>
+      <li>Our brain interprets this as "red".</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Reflects red; absorbs other colors. · <span class="am" style="display:inline">መልስ፦ ቀዩን ያንጸባርቃል፤ ሌሎቹን ይስባል።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 6.7.1 — List three primary colors of light</h4>
+    <p><strong>Red, Green, Blue.</strong></p>
+    <p class="am">ቀይ፣ አረንጓዴ፣ ሰማያዊ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.7.2 — Two types of photoreceptors</h4>
+    <p><strong>Rods</strong> (sensitive to intensity, not color) and <strong>cones</strong> (sensitive to color).</p>
+    <p class="am">Rods (ለጨለማ/ብርሃን)፣ cones (ለቀለም)።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-6.7"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 6.9 ==================== -->
+<section id="section-6.9" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 6.9</span>
+  <h2>Color Subtraction Using Filters</h2>
+
+  <p><strong>Subtractive color</strong> works the opposite way of additive: pigments/filters <em>absorb</em> some wavelengths and reflect/transmit others. The subtractive primary colors are <strong>cyan, magenta, yellow</strong>.</p>
+  <p class="am">Subtractive color ማጣመር በተቃራኒ አቅጣጫ ይሠራል፦ ቀለሞች/ፊልተሮች አንዳንድ ሞገዶችን ይስባሉ፣ ሌሎችን ያንጸባርቃሉ። ዋና የመቀነሻ ቀለሞች፦ ሳያን፣ ማጄንታ፣ ቢጫ።</p>
+
+  <div class="highlight-box">
+    <strong>Subtractive primaries:</strong> Cyan (C), Magenta (M), Yellow (Y).<br>
+    • Cyan filter → absorbs red; transmits blue + green (= cyan).<br>
+    • Magenta filter → absorbs green; transmits red + blue (= magenta).<br>
+    • Yellow filter → absorbs blue; transmits red + green (= yellow).<br>
+    <strong>Complements:</strong> Cyan↔Red, Magenta↔Green, Yellow↔Blue.
+    <span class="am"><strong>ዋና የመቀነሻ ቀለሞች፦</strong> ሳያን፣ ማጄንታ፣ ቢጫ። ሳያን → ቀዩን ይስባል። ማጄንታ → አረንጓዴውን ይስባል። ቢጫ → ሰማያዊውን ይስባል።</span>
+  </div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 6.9.1 — Cyan filter</h4>
+    <p>White light shines on a cyan filter. What color emerges?</p>
+    <p class="am">ነጭ ብርሃን በሳያን ፊልተር ላይ ሲወድቅ ምን ቀለም ይወጣል?</p>
+    <ol>
+      <li>Cyan = Blue + Green (in additive terms).</li>
+      <li>Cyan filter <em>absorbs red</em> (the complementary color).</li>
+      <li>It transmits blue and green.</li>
+      <li>Our eyes see blue + green = cyan.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Cyan. · <span class="am" style="display:inline">መልስ፦ ሳያን።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 6.9.2 — Yellow light on blue pigment</h4>
+    <p>Yellow light falls on a blue pigment. What color appears?</p>
+    <p class="am">ቢጫ ብርሃን በሰማያዊ ቀለም ላይ ሲወድቅ ምን ይታያል?</p>
+    <ol>
+      <li>Yellow light = Red + Green.</li>
+      <li>Blue pigment absorbs R and G (and reflects only B).</li>
+      <li>But the incoming light has no blue (only R+G).</li>
+      <li>So all incoming light is absorbed → the object appears <strong>black</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Black (all absorbed). · <span class="am" style="display:inline">መልስ፦ ጥቁር።</span></div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 6.9.3 — Cyan + Yellow filters</h4>
+    <p>White light passes through a cyan filter, then through a yellow filter. What emerges?</p>
+    <p class="am">ነጭ ብርሃን በሳያን ፊልተር ከዚያም በቢጫ ፊልተር ላይ ሲያልፍ ምን ይወጣል?</p>
+    <ol>
+      <li>Cyan filter transmits B + G (absorbs R).</li>
+      <li>Yellow filter transmits R + G (absorbs B).</li>
+      <li>Only the overlap passes both: <strong>G (green)</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Green. · <span class="am" style="display:inline">መልስ፦ አረንጓዴ።</span></div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 6.9.1 — What colors are absorbed by a green pigment?</h4>
+    <p>Green pigment reflects green, absorbs red and blue (the other primaries).</p>
+    <p class="am">ቀይ እና ሰማያዊ ይስባል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.9.2 — What combination gives magenta?</h4>
+    <p>Red + Blue (additive) OR magenta pigment (subtractive).</p>
+    <p class="am">ቀይ + ሰማያዊ (additive)።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.9.3 — What combination gives cyan?</h4>
+    <p>Green + Blue (additive) OR cyan pigment (subtractive).</p>
+    <p class="am">አረንጓዴ + ሰማያዊ።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.9.4 — Yellow light on green-absorbing pigment</h4>
+    <p>Yellow light = R + G. Pigment absorbs G. Only R is left → object appears <strong>red</strong>.</p>
+    <p class="am">ቀይ ይታያል።</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 6.9.5 — Yellow light on blue pigment</h4>
+    <p>Yellow light = R + G; blue pigment absorbs R + G. No light reflects → appears <strong>black</strong>.</p>
+    <p class="am">ጥቁር ይታያል።</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-6.9"></div>
+</div>
+</section>
+
+<!-- ==================== ASSESSMENT ==================== -->
+<section id="section-assessment" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Assessment</span>
+  <h2>100 Advanced Questions · 50 Conceptual + 50 Numerical</h2>
+  <p style="color:var(--muted);font-size:.88rem">Matric &amp; entrance-exam level. Every question shows full step-by-step bilingual solutions.</p>
+
+  <div class="progress-bar-container" aria-label="Progress">
+    <div class="progress-bar-fill" id="overall-progress-fill"></div>
+  </div>
+  <p id="progress-text" style="font-size:.85rem;color:var(--muted)">0 of 100 answered</p>
+
+  <div class="filter-bar">
+    <label for="filter-type" class="sr-only">Filter by type</label>
+    <select id="filter-type">
+      <option value="all">All types</option>
+      <option value="conceptual">Conceptual only</option>
+      <option value="numerical">Numerical only</option>
+    </select>
+    <label for="filter-topic" class="sr-only">Filter by topic</label>
+    <select id="filter-topic">
+      <option value="all">All topics</option>
+      <option value="6.1">6.1 EM Waves</option>
+      <option value="6.2">6.2 EM Spectrum</option>
+      <option value="6.3">6.3 Light as Wave</option>
+      <option value="6.4">6.4 Reflection/Refraction</option>
+      <option value="6.5">6.5 Mirrors &amp; Lenses</option>
+      <option value="6.6">6.6 Eye &amp; Instruments</option>
+      <option value="6.7">6.7 Primary Colors</option>
+      <option value="6.9">6.9 Color Subtraction</option>
+    </select>
+    <button class="btn btn-secondary" id="reset-progress-btn" style="margin-left:auto">Reset progress</button>
+  </div>
+
+  <div id="assessment-questions-container"></div>
+</div>
+</section>
+
+<script>
+(function(){
+'use strict';
+
+// ============ LESSON QUIZZES ============
+const lessonQuizzes = {
+  '6.1': [
+    { q:'An EM wave is made of:',
+      options:['Only an electric field','Only a magnetic field','Oscillating electric and magnetic fields','Sound waves'],
+      correct:2,
+      explanation:'Step 1: EM waves are produced by accelerating charges. Step 2: The charge produces both a changing E field and a changing B field. Step 3: These fields oscillate perpendicular to each other and propagate as the wave. Step 4: Answer: oscillating electric and magnetic fields. · ደረጃ 1፦ EM በተጣደፉ ቻርጆች ይፈጠራል። ደረጃ 2፦ E እና B መስኮች ይንቀጠቀጣሉ። መልስ፦ የ E እና B ሞገዶች።' },
+    { q:'Do EM waves need a medium to travel?',
+      options:['Yes, always','No, they can travel through vacuum','Only in air','Only in water'],
+      correct:1,
+      explanation:'Step 1: Mechanical waves (sound, water) need a medium. Step 2: EM waves can travel through vacuum — that is how sunlight reaches us through empty space. Step 3: Answer: no medium needed. · ደረጃ 1፦ ሜካኒካል ሞገዶች መካከለኛ ይፈልጋሉ። ደረጃ 2፦ EM በባዶ ጠፈር ማለፍ ይችላል። መልስ፦ መካከለኛ አያስፈልግም።' },
+    { q:'EM waves are:',
+      options:['Longitudinal','Transverse','Both','Neither'],
+      correct:1,
+      explanation:'Step 1: In transverse waves, oscillation is perpendicular to propagation. Step 2: In EM waves, E and B oscillate perpendicular to the direction of travel. Step 3: Answer: transverse. · ደረጃ 1፦ E እና B ወደ ጉዞ አቅጣጫ ቀጥታ ይንቀጠቀጣሉ። መልስ፦ ተጨማሪ (transverse)።' },
+    { q:'The speed of all EM waves in vacuum is:',
+      options:['Different for each type','Equal to 3×10⁸ m/s','Zero','Infinite'],
+      correct:1,
+      explanation:'Step 1: All EM waves travel at the same speed in vacuum: c. Step 2: c = 3.00 × 10⁸ m/s. Step 3: They differ in frequency and wavelength, not speed. Step 4: Answer: 3×10⁸ m/s. · ደረጃ 1፦ በባዶ ጠፈር ሁሉም ተመሳሳይ ፍጥነት አላቸው። ደረጃ 2፦ c = 3×10⁸ m/s። መልስ፦ 3×10⁸ m/s።' }
+  ],
+  '6.2': [
+    { q:'The EM spectrum is ordered by:',
+      options:['Alphabetical order','Frequency or wavelength','Color only','Weight'],
+      correct:1,
+      explanation:'Step 1: The spectrum lists EM waves from lowest to highest frequency. Step 2: Equivalent to longest to shortest wavelength. Step 3: Answer: frequency or wavelength. · ደረጃ 1፦ ከዝቅተኛ ወደ ከፍተኛ ድግግሞሽ። መልስ፦ በድግግሞሽ/ሞገድ ርዝመት።' },
+    { q:'Which type has the highest frequency?',
+      options:['Radio','Visible','X-ray','Gamma'],
+      correct:3,
+      explanation:'Step 1: Order: Radio → Microwave → IR → Visible → UV → X-ray → Gamma. Step 2: Gamma is at the highest-frequency end. Step 3: Answer: Gamma. · ደረጃ 1፦ ቅደም ተከተል፦ Radio → Microwave → IR → Visible → UV → X-ray → Gamma። መልስ፦ Gamma።' },
+    { q:'Which type has the longest wavelength?',
+      options:['Radio','Visible','UV','Gamma'],
+      correct:0,
+      explanation:'Step 1: Long wavelength = low frequency. Step 2: Radio waves are at the low-frequency end. Step 3: Answer: radio. · ደረጃ 1፦ ረዥም ሞገድ = ዝቅተኛ ድግግሞሽ። መልስ፦ Radio።' },
+    { q:'Which are used in medical imaging?',
+      options:['Radio','Microwave','X-rays','Infrared'],
+      correct:2,
+      explanation:'Step 1: X-rays pass through soft tissue but are stopped by bone. Step 2: They create images of bones and internal organs. Step 3: Answer: X-rays. · ደረጃ 1፦ X-ray በለስላሳ ክፍል ያልፋል፣ በአጥንት ይቆማል። መልስ፦ X-rays።' }
+  ],
+  '6.3': [
+    { q:'Light travels fastest in:',
+      options:['Vacuum','Water','Glass','Diamond'],
+      correct:0,
+      explanation:'Step 1: Vacuum has no atoms to slow light. Step 2: In matter, light interacts with atoms → slows down. Step 3: Speed: vacuum > water > glass > diamond. Step 4: Answer: vacuum. · ደረጃ 1፦ ባዶ ጠፈር አቶሞች የሉትም። ደረጃ 2፦ በቁስ ውስጥ ይቀንሳል። መልስ፦ ባዶ ጠፈር።' },
+    { q:'Light with wavelength 500 nm has frequency (c=3×10⁸):',
+      options:['6 × 10¹⁴ Hz','3 × 10¹⁴ Hz','1.5 × 10¹⁴ Hz','1.5 × 10¹⁵ Hz'],
+      correct:0,
+      explanation:'Step 1: f = c/λ. Step 2: = (3×10⁸)/(500×10⁻⁹). Step 3: = 6 × 10¹⁴ Hz. Step 4: Answer: 6 × 10¹⁴ Hz. · ደረጃ 1፦ f = c/λ። ደረጃ 2፦ = (3×10⁸)/(500×10⁻⁹) = 6×10¹⁴። መልስ፦ 6×10¹⁴ Hz።' },
+    { q:'Light rays are:',
+      options:['Real physical objects','Imaginary lines showing light direction','Sound waves','Charged particles'],
+      correct:1,
+      explanation:'Step 1: Rays are geometric tools used to draw light paths. Step 2: They are not physical things — only the light beam is real. Step 3: Answer: imaginary lines. · ደረጃ 1፦ ጨረሮች ጂኦሜትሪያዊ መሳሪያዎች ናቸው። መልስ፦ ምናባዊ መስመሮች።' },
+    { q:'Which statement about light is TRUE?',
+      options:['Light needs a medium','Light always travels at c regardless of medium','Light travels in straight lines in a uniform medium','Light is a mechanical wave'],
+      correct:2,
+      explanation:'Step 1: Light can travel through vacuum — no medium required. Step 2: Its speed changes in different media. Step 3: In a uniform medium, light travels in straight lines. Step 4: Answer: straight lines in uniform medium. · ደረጃ 1፦ በተመሳሳይ ሁኔታ ቀጥተኛ ይጓዛል። መልስ፦ ቀጥተኛ መስመር።' }
+  ],
+  '6.4': [
+    { q:'Law of reflection states:',
+      options:['θᵢ &gt; θᵣ','θᵢ = θᵣ','θᵢ &lt; θᵣ','θᵢ + θᵣ = 90°'],
+      correct:1,
+      explanation:'Step 1: The angle of incidence equals the angle of reflection. Step 2: Both measured from the normal. Step 3: Answer: θᵢ = θᵣ. · ደረጃ 1፦ θᵢ = θᵣ። መልስ፦ θᵢ = θᵣ።' },
+    { q:'When light enters a denser medium, it bends:',
+      options:['Away from the normal','Toward the normal','Does not bend','Reflects back'],
+      correct:1,
+      explanation:'Step 1: Light slows in a denser medium. Step 2: This causes it to bend toward the normal. Step 3: Answer: toward the normal. · ደረጃ 1፦ በጨለማ ሁኔታ ፍጥነት ይቀንሳል። ደረጃ 2፦ ወደ ኖርማል ይታጠፋል። መልስ፦ ወደ ኖርማል።' },
+    { q:'Refractive index n = ?',
+      options:['c × v','c / v','v / c','v × f'],
+      correct:1,
+      explanation:'Step 1: n = speed of light in vacuum ÷ speed of light in medium. Step 2: n = c / v. Step 3: Answer: c / v. · ደረጃ 1፦ n = c / v። መልስ፦ c / v።' },
+    { q:'Total internal reflection occurs when:',
+      options:['Light goes from low n to high n','Light goes from high n to low n, with θᵢ &gt; θ_c','θᵢ = 0','Both media have same n'],
+      correct:1,
+      explanation:'Step 1: TIR requires light to go from denser (high n) to rarer (low n). Step 2: And angle of incidence must exceed the critical angle. Step 3: Answer: high→low n, θᵢ &gt; θ_c. · ደረጃ 1፦ ከፍተኛ n ወደ ዝቅተኛ። ደረጃ 2፦ θᵢ > θ_c። መልስ፦ high→low n, θᵢ > θ_c።' }
+  ],
+  '6.5': [
+    { q:'Image formed by a plane mirror is:',
+      options:['Real, inverted','Virtual, upright, same size','Real, same size','Virtual, inverted'],
+      correct:1,
+      explanation:'Step 1: Reflected rays diverge; image is behind mirror (virtual). Step 2: Same size, upright, left-right reversed. Step 3: Answer: virtual, upright, same size. · ደረጃ 1፦ ምናባዊ፣ ቀጥታ፣ ተመሳሳይ መጠን። መልስ፦ ምናባዊ።' },
+    { q:'Concave mirror with object between F and C forms:',
+      options:['Virtual, upright','Real, inverted, enlarged','Real, same size','No image'],
+      correct:1,
+      explanation:'Step 1: For object between F and C, reflected rays converge beyond C. Step 2: Image is real, inverted, enlarged. Step 3: Answer: real, inverted, enlarged. · ደረጃ 1፦ ነገር በ F እና C መካከል → ምስል ከ C በላይ። መልስ፦ እውነተኛ፣ ተገልብጦ፣ የተስፋፋ።' },
+    { q:'A convex lens is also called:',
+      options:['Diverging lens','Converging lens','Plane lens','Reflecting lens'],
+      correct:1,
+      explanation:'Step 1: Convex lens bulges outward, thicker in middle. Step 2: Parallel rays converge to focus. Step 3: Answer: converging lens. · ደረጃ 1፦ Convex መሃል ላይ ወፍራም ነው። Step 2: ትይዩ ጨረሮች ይሰበሰባሉ። መልስ፦ converging።' },
+    { q:'Concave lens always forms:',
+      options:['Real image','Virtual, upright, diminished image','Inverted image','No image'],
+      correct:1,
+      explanation:'Step 1: Concave (diverging) lens spreads rays. Step 2: The image is always virtual, upright, and smaller than the object. Step 3: Answer: virtual, upright, diminished. · ደረጃ 1፦ Concave ሌንስ ጨረሮችን ይበትናል። መልስ፦ ምናባዊ፣ ቀጥታ፣ ትንሽ።' }
+  ],
+  '6.6': [
+    { q:'Power of accommodation refers to:',
+      options:['Eye size','Ability of lens to change focal length','Pupil size','Retina sensitivity'],
+      correct:1,
+      explanation:'Step 1: The ciliary muscles change the eye lens curvature. Step 2: This changes focal length so images focus on the retina. Step 3: Answer: change focal length. · ደረጃ 1፦ ሲሊየሪ ጡንቻዎች ሌንሱን ይለውጣሉ። ደረጃ 2፦ ትኩረቱ ይቀየራል። መልስ፦ focal length መቀየር።' },
+    { q:'Myopia (near-sightedness) is corrected by:',
+      options:['Convex lens','Concave lens','Bifocal only','Surgery only'],
+      correct:1,
+      explanation:'Step 1: Myopia — image forms in front of retina. Step 2: A concave (diverging) lens pushes image back to retina. Step 3: Answer: concave lens. · ደረጃ 1፦ ምስል ከሬቲና ፊት ይፈጠራል። ደረጃ 2፦ Concave ሌንስ ወደ ኋላ ይገፋል። መልስ፦ concave።' },
+    { q:'The near point of a normal human eye is about:',
+      options:['5 cm','25 cm','1 m','Infinity'],
+      correct:1,
+      explanation:'Step 1: The nearest distance at which the eye can focus clearly. Step 2: For a young adult with normal vision, this is about 25 cm. Step 3: Answer: 25 cm. · ደረጃ 1፦ ዓይን በግልጽ ማተኮር የሚችልበት ዝቅተኛ ርቀት። መልስ፦ 25 ሴ.ሜ።' },
+    { q:'A compound microscope uses:',
+      options:['One lens','Two lenses (objective + eyepiece)','A concave mirror','Prism only'],
+      correct:1,
+      explanation:'Step 1: Objective lens forms an enlarged intermediate image. Step 2: Eyepiece further magnifies it. Step 3: Answer: two lenses. · ደረጃ 1፦ Objective ምስል ይሠራል። ደረጃ 2፦ Eyepiece ያጎላዋል። መልስ፦ ሁለት ሌንሶች።' }
+  ],
+  '6.7': [
+    { q:'The three primary colors of light are:',
+      options:['Red, Yellow, Blue','Red, Green, Blue','Cyan, Magenta, Yellow','Red, Green, Yellow'],
+      correct:1,
+      explanation:'Step 1: The three additive primaries match the three types of cone cells. Step 2: They are Red, Green, Blue. Step 3: Answer: R, G, B. · ደረጃ 1፦ ሶስቱ ዓይነት cones ለ R, G, B ስሜታዊ ናቸው። መልስ፦ ቀይ፣ አረንጓዴ፣ ሰማያዊ።' },
+    { q:'Mixing red and green light produces:',
+      options:['Yellow','Cyan','Magenta','White'],
+      correct:0,
+      explanation:'Step 1: Additive mixing: R + G = Yellow. Step 2: This is a secondary color. Step 3: Answer: yellow. · ደረጃ 1፦ R + G = ቢጫ። መልስ፦ Yellow።' },
+    { q:'The retina has two types of photoreceptors:',
+      options:['Rods and lenses','Rods and cones','Cones and irises','Lenses and pupils'],
+      correct:1,
+      explanation:'Step 1: Rods detect light intensity (work in dim light). Step 2: Cones detect color (work in bright light). Step 3: Answer: rods and cones. · ደረጃ 1፦ Rods ለብርሃን መጠን። ደረጃ 2፦ Cones ለቀለም። መልስ፦ rods እና cones።' },
+    { q:'Mixing all three primary colors equally produces:',
+      options:['Black','White','Yellow','Gray'],
+      correct:1,
+      explanation:'Step 1: All three primaries together = full spectrum. Step 2: That is white light. Step 3: Answer: white. · ደረጃ 1፦ ሶስቱ አንድ ላይ = ሙሉ ስፔክትረም። መልስ፦ ነጭ።' }
+  ],
+  '6.9': [
+    { q:'The subtractive primary colors are:',
+      options:['Red, Green, Blue','Cyan, Magenta, Yellow','Red, Yellow, Blue','Black, White, Gray'],
+      correct:1,
+      explanation:'Step 1: Subtractive colors are the complements of the additive primaries. Step 2: Cyan (absorbs red), Magenta (absorbs green), Yellow (absorbs blue). Step 3: Answer: C, M, Y. · ደረጃ 1፦ የመቀነሻ ቀለሞች = የተጨማሪዎቹ ተቃራኒዎች። መልስ፦ ሳያን፣ ማጄንታ፣ ቢጫ።' },
+    { q:'A cyan filter absorbs:',
+      options:['Blue light','Red light','Green light','All colors'],
+      correct:1,
+      explanation:'Step 1: Cyan = G + B (additive). Step 2: Cyan filter transmits G + B and absorbs the complementary color: Red. Step 3: Answer: red. · ደረጃ 1፦ Cyan = G + B። ደረጃ 2፦ ቀዩን ይስባል። መልስ፦ red።' },
+    { q:'Yellow light falls on a blue pigment. What color appears?',
+      options:['Yellow','Blue','Red','Black'],
+      correct:3,
+      explanation:'Step 1: Yellow light = Red + Green. Step 2: Blue pigment absorbs R and G (reflects only B). Step 3: Incoming light has no blue → all absorbed. Step 4: Appears black. · ደረጃ 1፦ ቢጫ = ቀይ + አረንጓዴ። ደረጃ 2፦ ሰማያዊ ቀለም R እና G ይስባል። ደረጃ 3፦ ሁሉም ተስቦ → ጥቁር። መልስ፦ black።' },
+    { q:'A yellow filter transmits:',
+      options:['Blue only','Red + Green (appears yellow)','All colors','No colors'],
+      correct:1,
+      explanation:'Step 1: Yellow = R + G (additive). Step 2: Yellow filter absorbs blue, transmits R and G. Step 3: R + G appears yellow. Step 4: Answer: R + G (yellow). · ደረጃ 1፦ ቢጫ = R + G። ደረጃ 2፦ ቀዩን እና አረንጓዴውን ያስተላልፋል። መልስ፦ ቀይ + አረንጓዴ።' }
+  ]
+};
+
+function renderLessonQuiz(lessonId){
+  const c = document.getElementById('lesson-quiz-'+lessonId);
+  if(!c) return;
+  const items = lessonQuizzes[lessonId];
+  let h = '';
+  items.forEach(function(item, idx){
+    const qid = 'L-'+lessonId+'-'+idx;
+    h += '<div class="question-block" data-qid="'+qid+'">';
+    h += '<div class="question-text">Q'+(idx+1)+'. '+item.q+'</div>';
+    h += '<div class="option-list">';
+    item.options.forEach(function(opt, oi){
+      h += '<button class="option-btn" data-correct="'+(oi===item.correct)+'" data-index="'+oi+'">'+opt+'</button>';
+    });
+    h += '</div>';
+    h += '<div class="feedback" id="fb-'+qid+'"></div>';
+    h += '<div class="solution-details" id="sol-'+qid+'"></div>';
+    h += '</div>';
+  });
+  c.innerHTML = h;
+}
+['6.1','6.2','6.3','6.4','6.5','6.6','6.7','6.9'].forEach(renderLessonQuiz);
+
+// ============ 100 ASSESSMENT QUESTIONS ============
+const conceptualData = [
+  // 6.1 EM waves (8)
+  {t:'6.1',d:'challenging',q:'EM waves are produced by:',
+   o:['Stationary charges','Accelerating charges','Neutral atoms','Magnetic monopoles'],c:1,
+   e:'Step 1: Static charges produce only electric fields. Step 2: Accelerating (vibrating) charges produce changing E and B fields. Step 3: These propagate as EM waves. Step 4: Answer: accelerating charges. · ደረጃ 1፦ ቋሚ ቻርጆች የኤሌክትሪክ መስክ ብቻ ይፈጥራሉ። ደረጃ 2፦ ተጣድፎ የሚንቀሳቀሱ ቻርጆች EM ሞገድ ይፈጥራሉ። መልስ፦ accelerating charges።'},
+  {t:'6.1',d:'challenging',q:'An EM wave is:',
+   o:['Longitudinal','Transverse','Neither','Sound wave'],c:1,
+   e:'Step 1: In transverse waves, oscillation is perpendicular to propagation. Step 2: E and B oscillate at right angles to direction. Step 3: So EM waves are transverse. Step 4: Answer: transverse. · ደረጃ 1፦ E እና B ወደ ጉዞ ቀጥታ ናቸው። መልስ፦ transverse።'},
+  {t:'6.1',d:'challenging',q:'The speed of all EM waves in vacuum is:',
+   o:['Different for each','3 × 10⁸ m/s','Zero','Infinite'],c:1,
+   e:'Step 1: All EM waves travel at the same speed in vacuum. Step 2: c = 3 × 10⁸ m/s. Step 3: They only differ in f and λ. Step 4: Answer: 3 × 10⁸ m/s. · ደረጃ 1፦ በባዶ ጠፈር ተመሳሳይ ፍጥነት። መልስ፦ 3×10⁸ m/s።'},
+  {t:'6.1',d:'challenging',q:'c = λ × f means:',
+   o:['Wavelength and frequency are independent','Higher frequency → shorter wavelength','Higher frequency → longer wavelength','Speed changes with frequency'],c:1,
+   e:'Step 1: c is constant in vacuum. Step 2: c = λ × f → λ = c/f. Step 3: Larger f → smaller λ. Step 4: Answer: higher f → shorter λ. · ደረጃ 1፦ c ቋሚ ነው። ደረጃ 2፦ f ሲጨምር λ ይቀንሳል። መልስ፦ higher f → shorter λ።'},
+  {t:'6.1',d:'challenging',q:'Radiant energy from the Sun reaching Earth is mostly carried by:',
+   o:['UV and X-rays','IR and visible light','Gamma and radio','Only UV'],c:1,
+   e:'Step 1: About 92% of radiant energy at Earth is IR + visible. Step 2: IR makes you feel warm; visible lets you see. Step 3: UV is a small fraction. Step 4: Answer: IR and visible. · ደረጃ 1፦ ~92% በ IR + visible። መልስ፦ IR + visible።'},
+  {t:'6.1',d:'challenging',q:'An EM wave propagates:',
+   o:['Only in air','Only in vacuum','Through vacuum and matter','Only in water'],c:2,
+   e:'Step 1: EM waves need no medium. Step 2: They can travel through vacuum AND matter. Step 3: Answer: through vacuum and matter. · ደረጃ 1፦ መካከለኛ አያስፈልግም። መልስ፦ በባዶ ጠፈርም በቁስም።'},
+  {t:'6.1',d:'challenging',q:'The E and B fields in an EM wave:',
+   o:['Are parallel','Are perpendicular to each other','Are the same field','Cancel each other'],c:1,
+   e:'Step 1: E and B oscillate along perpendicular directions. Step 2: Both are perpendicular to the direction of propagation. Step 3: Answer: perpendicular to each other. · ደረጃ 1፦ E ⊥ B። መልስ፦ perpendicular።'},
+  {t:'6.1',d:'challenging',q:'EM waves are similar to sound waves in that both:',
+   o:['Travel in vacuum','Are transverse','Carry energy','Have the same speed'],c:2,
+   e:'Step 1: Sound needs a medium; EM does not. Step 2: Sound is longitudinal; EM is transverse. Step 3: But both transfer energy. Step 4: Answer: carry energy. · ደረጃ 1፦ ሁለቱም ጉልበት ያጓጉዛሉ። መልስ፦ carry energy።'},
+
+  // 6.2 EM spectrum (8)
+  {t:'6.2',d:'challenging',q:'Order of EM spectrum by increasing frequency:',
+   o:['Radio → IR → visible → UV → X-ray → gamma','Gamma → X-ray → UV → visible → IR → radio','Visible → IR → radio → UV → X-ray → gamma','Radio → visible → IR → UV → gamma → X-ray'],c:0,
+   e:'Step 1: Radio has the lowest frequency. Step 2: Gamma has the highest. Step 3: Order: radio < IR < visible < UV < X-ray < gamma. Step 4: Answer: A. · ደረጃ 1፦ ራዲዮ ዝቅተኛ፤ gamma ከፍተኛ። መልስ፦ A።'},
+  {t:'6.2',d:'challenging',q:'Which has the shortest wavelength?',
+   o:['Radio','Visible','X-ray','Gamma'],c:3,
+   e:'Step 1: Shortest wavelength = highest frequency. Step 2: Gamma has highest f. Step 3: Answer: gamma. · ደረጃ 1፦ አጭር ሞገድ = ከፍተኛ ድግግሞሽ። መልስ፦ gamma።'},
+  {t:'6.2',d:'challenging',q:'Which is used to kill cancer cells?',
+   o:['Radio','IR','UV','Gamma rays'],c:3,
+   e:'Step 1: Gamma rays are ionizing and high energy. Step 2: They can kill living cells — used in radiotherapy for cancer. Step 3: Cancer cells cannot repair as well as healthy ones. Step 4: Answer: gamma rays. · ደረጃ 1፦ Gamma ሴሎችን ይገድላል። መልስ፦ gamma rays።'},
+  {t:'6.2',d:'challenging',q:'Which causes sunburn?',
+   o:['Radio','Microwave','IR','UV'],c:3,
+   e:'Step 1: Sunburn is caused by UV radiation. Step 2: UV damages skin cells and DNA. Step 3: Ozone layer blocks most UV. Step 4: Answer: UV. · ደረጃ 1፦ UV የቆዳ ጉዳት ያመጣል። መልስ፦ UV።'},
+  {t:'6.2',d:'challenging',q:'X-rays are useful because they:',
+   o:['Are cheap','Pass through soft tissue but not bone','Are visible','Kill all cells'],c:1,
+   e:'Step 1: X-rays penetrate soft tissue. Step 2: Dense bone and metal absorb them. Step 3: This creates contrast in medical images. Step 4: Answer: penetrate soft tissue but not bone. · ደረጃ 1፦ X-ray ለስላሳ ቲሹ ያልፋል፣ በአጥንት ይቆማል። መልስ፦ soft tissue ያልፋል።'},
+  {t:'6.2',d:'challenging',q:'Microwaves are used in:',
+   o:['X-ray imaging','Microwave ovens','MRI scanners','Dental fillings'],c:1,
+   e:'Step 1: Microwaves make water/fat molecules vibrate. Step 2: This heating cooks food. Step 3: Also used in phones, radar, speed cameras. Step 4: Answer: microwave ovens. · ደረጃ 1፦ ማይክሮዌቭ የውሃ ሞለኪውሎችን ያንቀጠቀጣል። መልስ፦ microwave ovens።'},
+  {t:'6.2',d:'challenging',q:'Infrared radiation is primarily felt as:',
+   o:['Light','Heat','Sound','Cold'],c:1,
+   e:'Step 1: IR is emitted by warm objects. Step 2: Absorbed by skin, it raises temperature → felt as heat. Step 3: Answer: heat. · ደረጃ 1፦ IR ሙቀት ነው። መልስ፦ heat።'},
+  {t:'6.2',d:'challenging',q:'Which EM type is used in remote controls?',
+   o:['Radio','Microwave','Infrared','X-ray'],c:2,
+   e:'Step 1: TV/AC remote controls use IR LEDs. Step 2: IR is invisible but the receiver detects it. Step 3: Answer: infrared. · ደረጃ 1፦ Remote controls IR ይጠቀማሉ። መልስ፦ infrared።'},
+
+  // 6.3 Light (6)
+  {t:'6.3',d:'challenging',q:'Light is an:',
+   o:['EM wave','Sound wave','Mechanical wave','Water wave'],c:0,
+   e:'Step 1: Light is a specific range of EM waves. Step 2: It can travel through vacuum. Step 3: Answer: EM wave. · ደረጃ 1፦ ብርሃን EM ሞገድ ነው። መልስ፦ EM wave።'},
+  {t:'6.3',d:'challenging',q:'Light travels fastest in:',
+   o:['Vacuum','Water','Glass','Diamond'],c:0,
+   e:'Step 1: In matter, light interacts with atoms and slows. Step 2: Vacuum has no atoms → maximum speed. Step 3: Answer: vacuum. · ደረጃ 1፦ በቁስ ውስጥ ይቀንሳል። መልስ፦ vacuum።'},
+  {t:'6.3',d:'challenging',q:'Light rays are:',
+   o:['Physical lines','Imaginary lines showing path','Sound waves','Atoms'],c:1,
+   e:'Step 1: Rays are geometric constructs. Step 2: They represent direction of light. Step 3: Answer: imaginary lines. · ደረጃ 1፦ ጨረሮች ምናባዊ ናቸው። መልስ፦ imaginary lines።'},
+  {t:'6.3',d:'challenging',q:'Light from the Sun reaches Earth in about:',
+   o:['8 seconds','8 minutes','8 hours','8 days'],c:1,
+   e:'Step 1: Distance Sun→Earth ≈ 150 million km. Step 2: Time = distance/c = 1.5×10¹¹ / 3×10⁸ ≈ 500 s ≈ 8.3 min. Step 3: Answer: ~8 minutes. · ደረጃ 1፦ ርቀት 1.5×10¹¹ ሜ። ደረጃ 2፦ t = 500 s ≈ 8 ደቂቃ። መልስ፦ 8 minutes።'},
+  {t:'6.3',d:'challenging',q:'The symbol for speed of light is:',
+   o:['v','c','λ','f'],c:1,
+   e:'Step 1: c denotes speed of light in vacuum. Step 2: c = 3×10⁸ m/s. Step 3: Answer: c. · ደረጃ 1፦ c = speed of light። መልስ፦ c።'},
+  {t:'6.3',d:'challenging',q:'Visible light wavelength range:',
+   o:['400–700 nm','0.4–0.7 m','4–7 mm','4–7 km'],c:0,
+   e:'Step 1: Visible light occupies 400 nm (violet) to 700 nm (red). Step 2: This is a tiny fraction of the EM spectrum. Step 3: Answer: 400–700 nm. · ደረጃ 1፦ ቪዚብል 400-700 nm። መልስ፦ 400-700 nm።'},
+
+  // 6.4 Reflection/Refraction (8)
+  {t:'6.4',d:'challenging',q:'Law of reflection states:',
+   o:['θᵢ &gt; θᵣ','θᵢ = θᵣ','θᵢ &lt; θᵣ','θᵢ + θᵣ = 180°'],c:1,
+   e:'Step 1: The angle of incidence equals the angle of reflection. Step 2: Both measured from normal. Step 3: Answer: θᵢ = θᵣ. · ደረጃ 1፦ θᵢ = θᵣ። መልስ፦ θᵢ = θᵣ።'},
+  {t:'6.4',d:'challenging',q:'When light enters a denser medium, it bends:',
+   o:['Away from normal','Toward normal','No bending','Straight back'],c:1,
+   e:'Step 1: Denser medium → higher n → slower light. Step 2: Slower light bends toward the normal. Step 3: Answer: toward normal. · ደረጃ 1፦ ጨለማ ሁኔታ → ፍጥነት ይቀንሳል። ደረጃ 2፦ ወደ ኖርማል ይታጠፋል። መልስ፦ toward normal።'},
+  {t:'6.4',d:'challenging',q:'Refractive index n is:',
+   o:['Speed in medium / speed in vacuum','Speed in vacuum / speed in medium','Wavelength × frequency','Angle of refraction'],c:1,
+   e:'Step 1: n = c/v. Step 2: c is vacuum speed, v is speed in medium. Step 3: Answer: c/v. · ደረጃ 1፦ n = c/v። መልስ፦ c/v።'},
+  {t:'6.4',d:'challenging',q:'Total internal reflection requires:',
+   o:['Light from low-n to high-n medium','Light from high-n to low-n with θᵢ &gt; θ_c','θᵢ = 0','Same medium on both sides'],c:1,
+   e:'Step 1: TIR only occurs when going from denser to rarer medium. Step 2: Angle must exceed critical angle. Step 3: Answer: high→low n, θᵢ &gt; θ_c. · ደረጃ 1፦ high→low n። ደረጃ 2፦ θᵢ > θ_c። መልስ፦ B።'},
+  {t:'6.4',d:'challenging',q:'A diamond sparkles because:',
+   o:['It is very hard','Light undergoes multiple total internal reflections inside it','It is very dense','It is transparent'],c:1,
+   e:'Step 1: Diamond has a very high refractive index (2.42). Step 2: Its critical angle is small (~24°). Step 3: Light gets trapped and bounces multiple times before exiting. Step 4: Answer: multiple TIR. · ደረጃ 1፦ Diamond n=2.42። ደረጃ 2፦ θ_c ~24°። ደረጃ 3፦ ብዙ TIR። መልስ፦ multiple TIR።'},
+  {t:'6.4',d:'challenging',q:'Dispersion of light through a prism occurs because:',
+   o:['Prism is colored','Different wavelengths refract at different angles','Light speeds up','Light reflects'],c:1,
+   e:'Step 1: n depends slightly on wavelength. Step 2: Violet has higher n than red in glass. Step 3: Violet bends more, red bends less. Step 4: This separates colors = dispersion. Answer: different wavelengths bend differently. · ደረጃ 1፦ n በሞገድ ርዝመት ይለያያል። ደረጃ 2፦ ቫዮሌት ይበልጥ ይታጠፋል። መልስ፦ different bending።'},
+  {t:'6.4',d:'challenging',q:'In dispersion through a prism, which color bends most?',
+   o:['Red','Orange','Green','Violet'],c:3,
+   e:'Step 1: Violet has the shortest wavelength in visible. Step 2: In glass, violet has the highest n. Step 3: Higher n → more bending. Step 4: Answer: violet. · ደረጃ 1፦ ቫዮሌት አጭር ሞገድ። ደረጃ 2፦ ከፍተኛ n። መልስ፦ violet።'},
+  {t:'6.4',d:'challenging',q:'Rainbow is caused by:',
+   o:['Reflection only','Refraction + reflection + dispersion in water droplets','Only scattering','Only diffraction'],c:1,
+   e:'Step 1: Sunlight enters water droplets. Step 2: Refraction bends and disperses colors. Step 3: Internal reflection bounces light back. Step 4: Refraction again on exit → rainbow. Answer: refraction + reflection + dispersion. · ደረጃ 1፦ ብርሃን ወደ ውሃ ጠብታ ይገባል። ደረጃ 2፦ ሪፍራክሽን + ሪፍሌክሽን + ዲስፐርሽን። መልስ፦ B።'},
+
+  // 6.5 Mirrors/Lenses (8)
+  {t:'6.5',d:'challenging',q:'A plane mirror produces an image that is:',
+   o:['Real, inverted, larger','Virtual, upright, same size','Real, upright, smaller','Virtual, inverted'],c:1,
+   e:'Step 1: Plane mirror image is behind the mirror (virtual). Step 2: Same distance and same size as object. Step 3: Upright but left-right reversed. Step 4: Answer: virtual, upright, same size. · ደረጃ 1፦ ምናባዊ፣ ቀጥታ፣ ተመሳሳይ መጠን። መልስ፦ virtual, upright, same size።'},
+  {t:'6.5',d:'challenging',q:'A concave mirror with object between F and C forms:',
+   o:['Virtual, upright','Real, inverted, enlarged','Real, same size','No image'],c:1,
+   e:'Step 1: Object between F and C. Step 2: Reflected rays converge beyond C. Step 3: Image is real, inverted, enlarged. Step 4: Answer: real, inverted, enlarged. · ደረጃ 1፦ ነገር በ F-C መካከል። ደረጃ 2፦ ምስል ከ C በላይ። መልስ፦ real, inverted, enlarged።'},
+  {t:'6.5',d:'challenging',q:'A convex lens is called:',
+   o:['Diverging','Converging','Plane','Reflecting'],c:1,
+   e:'Step 1: Convex lens bulges outward (thicker middle). Step 2: Parallel rays converge to a focus. Step 3: Answer: converging. · ደረጃ 1፦ Convex ትይዩ ጨረሮችን ያሰባስባል። መልስ፦ converging።'},
+  {t:'6.5',d:'challenging',q:'A concave lens always forms:',
+   o:['Real image','Virtual, upright, diminished','Real, inverted','No image'],c:1,
+   e:'Step 1: Concave lens spreads rays. Step 2: Diverging rays appear to come from a virtual point behind the lens. Step 3: Answer: virtual, upright, diminished. · ደረጃ 1፦ Concave ሌንስ ጨረሮችን ይበትናል። መልስ፦ virtual, upright, diminished።'},
+  {t:'6.5',d:'challenging',q:'Mirror with object at C (center of curvature):',
+   o:['Real, inverted, same size','Virtual, same size','Real, inverted, enlarged','No image'],c:0,
+   e:'Step 1: Object at C (r = 2f). Step 2: Image forms at C. Step 3: Real, inverted, same size. Step 4: Answer: real, inverted, same size. · ደረጃ 1፦ ነገር በ C። ደረጃ 2፦ ምስል በ C። መልስ፦ real, inverted, same size።'},
+  {t:'6.5',d:'challenging',q:'Convex mirror is preferred as a rear-view mirror because:',
+   o:['It magnifies','It gives wider field of view','It gives real image','It is cheap'],c:1,
+   e:'Step 1: Convex mirror curves outward. Step 2: It shows a wider region of space in a small image. Step 3: Always upright, virtual, diminished. Step 4: Answer: wider field of view. · ደረጃ 1፦ Convex ሰፊ እይታ ይሰጣል። መልስ፦ wider field።'},
+  {t:'6.5',d:'challenging',q:'A real image is formed when:',
+   o:['Rays converge','Rays diverge','Rays appear to come from behind','No light reaches the eye'],c:0,
+   e:'Step 1: Real images form where reflected/refracted rays actually converge. Step 2: They can be projected on a screen. Step 3: Virtual images form where rays appear to diverge from. Step 4: Answer: rays converge. · ደረጃ 1፦ ጨረሮች በእውነት ይሰበሰባሉ። መልስ፦ rays converge።'},
+  {t:'6.5',d:'challenging',q:'Number of images formed by two mirrors at 60°:',
+   o:['3','5','6','10'],c:1,
+   e:'Step 1: 360/60 = 6 (even integer). Step 2: n = 6 − 1 = 5 images. Step 3: Answer: 5. · ደረጃ 1፦ 360/60 = 6። ደረጃ 2፦ n = 6−1 = 5። መልስ፦ 5።'},
+
+  // 6.6 Eye & Instruments (6)
+  {t:'6.6',d:'challenging',q:'Power of accommodation refers to:',
+   o:['Eye size','Lens ability to change focal length','Pupil size','Retina thickness'],c:1,
+   e:'Step 1: Ciliary muscles change lens curvature. Step 2: This varies focal length. Step 3: Allows clear vision at different distances. Step 4: Answer: lens changing focal length. · ደረጃ 1፦ ሲሊየሪ ጡንቻዎች ሌንሱን ይለውጣሉ። መልስ፦ focal length መቀየር።'},
+  {t:'6.6',d:'challenging',q:'Myopia is corrected by:',
+   o:['Convex lens','Concave lens','Bifocals','Surgery only'],c:1,
+   e:'Step 1: Myopia — image forms in front of retina. Step 2: Concave lens diverges light, pushing image back to retina. Step 3: Answer: concave lens. · ደረጃ 1፦ ምስል ከሬቲና ፊት። ደረጃ 2፦ Concave ሌንስ ወደ ኋላ ይገፋል። መልስ፦ concave።'},
+  {t:'6.6',d:'challenging',q:'Hypermetropia is corrected by:',
+   o:['Convex lens','Concave lens','Bifocals','Prisms'],c:0,
+   e:'Step 1: Hypermetropia — image forms behind retina. Step 2: Convex lens converges light, bringing focus forward. Step 3: Answer: convex lens. · ደረጃ 1፦ ምስል ከሬቲና በላይ። ደረጃ 2፦ Convex ሌንስ ወደ ፊት ያመጣል። መልስ፦ convex።'},
+  {t:'6.6',d:'challenging',q:'Near point of a normal young eye:',
+   o:['5 cm','25 cm','1 m','Infinity'],c:1,
+   e:'Step 1: Closest distance for clear vision without strain. Step 2: ~25 cm for young adult. Step 3: Answer: 25 cm. · ደረጃ 1፦ ~25 ሴ.ሜ። መልስ፦ 25 cm።'},
+  {t:'6.6',d:'challenging',q:'A compound microscope uses:',
+   o:['One convex lens','Two convex lenses (objective + eyepiece)','A concave mirror','A prism'],c:1,
+   e:'Step 1: Objective forms enlarged intermediate image. Step 2: Eyepiece magnifies that image. Step 3: Answer: two convex lenses. · ደረጃ 1፦ Objective + eyepiece። መልስ፦ two lenses።'},
+  {t:'6.6',d:'challenging',q:'A reflecting telescope uses:',
+   o:['Two lenses','A concave mirror + eyepiece','A prism','A convex mirror'],c:1,
+   e:'Step 1: Large concave mirror gathers light. Step 2: Secondary mirror directs it to the eyepiece. Step 3: Can be made much larger than refracting types. Step 4: Answer: concave mirror + eyepiece. · ደረጃ 1፦ Concave mirror + eyepiece። መልስ፦ concave mirror።'},
+
+  // 6.7 Primary colors (4)
+  {t:'6.7',d:'challenging',q:'The primary colors of light are:',
+   o:['Red, Yellow, Blue','Red, Green, Blue','Cyan, Magenta, Yellow','Red, Green, Yellow'],c:1,
+   e:'Step 1: Additive primaries are R, G, B. Step 2: They match the three types of cones. Step 3: Answer: R, G, B. · ደረጃ 1፦ R, G, B። መልስ፦ R, G, B።'},
+  {t:'6.7',d:'challenging',q:'R + G light produces:',
+   o:['Yellow','Cyan','Magenta','White'],c:0,
+   e:'Step 1: Red + Green = Yellow (secondary color). Step 2: This is additive mixing. Step 3: Answer: yellow. · ደረጃ 1፦ R+G=ቢጫ። መልስ፦ yellow።'},
+  {t:'6.7',d:'challenging',q:'Rods in the retina are sensitive to:',
+   o:['Color','Light intensity','Sharp images','UV only'],c:1,
+   e:'Step 1: Rods work in dim light. Step 2: They detect light intensity but not color. Step 3: Answer: intensity. · ደረጃ 1፦ Rods ለብርሃን መጠን ብቻ። መልስ፦ intensity።'},
+  {t:'6.7',d:'challenging',q:'R + G + B (equal) produces:',
+   o:['Black','White','Yellow','Gray'],c:1,
+   e:'Step 1: All three additive primaries together = white. Step 2: Their absence = black. Step 3: Answer: white. · ደረጃ 1፦ ሶስቱ = ነጭ። መልስ፦ white።'},
+
+  // 6.9 Color subtraction (2)
+  {t:'6.9',d:'challenging',q:'A cyan filter absorbs:',
+   o:['Blue','Green','Red','All'],c:2,
+   e:'Step 1: Cyan = G + B (additive). Step 2: Cyan filter absorbs complementary red. Step 3: Answer: red. · ደረጃ 1፦ Cyan ቀዩን ይስባል። መልስ፦ red።'},
+  {t:'6.9',d:'challenging',q:'Yellow light on blue pigment appears:',
+   o:['Yellow','Blue','Red','Black'],c:3,
+   e:'Step 1: Yellow light = R + G. Step 2: Blue pigment absorbs R + G. Step 3: No light remains → black. Step 4: Answer: black. · ደረጃ 1፦ Yellow = R+G። ደረጃ 2፦ Blue R+G ይስባል። Step 3: ጥቁር። መልስ፦ black።'}
+];
+
+// 50 numerical (using correct answers)
+const numericalData = [
+  {t:'6.1',d:'challenging',q:'Frequency of 700 nm red light (c = 3×10⁸)?',a:4.29e14,u:'Hz',tol:4e12,
+   steps:['f = c/λ.','= (3×10⁸)/(700×10⁻⁹).','= 4.29 × 10¹⁴ Hz.','መልስ፦ 4.29×10¹⁴ Hz።']},
+  {t:'6.1',d:'challenging',q:'Wavelength of 103.4 MHz FM (c = 3×10⁸)?',a:2.9,u:'m',tol:0.03,
+   steps:['λ = c/f.','= (3×10⁸)/(103.4×10⁶).','= 2.9 m.','መልስ፦ 2.9 ሜትር።']},
+  {t:'6.1',d:'challenging',q:'Frequency of 400 nm violet light?',a:7.5e14,u:'Hz',tol:7e12,
+   steps:['f = c/λ.','= (3×10⁸)/(400×10⁻⁹).','= 7.5 × 10¹⁴ Hz.','መልስ፦ 7.5×10¹⁴ Hz።']},
+  {t:'6.1',d:'challenging',q:'Wavelength of 100 MHz radio wave?',a:3,u:'m',tol:0.03,
+   steps:['λ = c/f.','= (3×10⁸)/(100×10⁶).','= 3 m.','መልስ፦ 3 ሜትር።']},
+  {t:'6.1',d:'challenging',q:'Frequency of 0.03 m microwave?',a:1e10,u:'Hz',tol:1e8,
+   steps:['f = c/λ.','= (3×10⁸)/(0.03).','= 1 × 10¹⁰ Hz = 10 GHz.','መልስ፦ 10 GHz።']},
+  {t:'6.1',d:'challenging',q:'Wavelength of 6×10¹⁴ Hz green light?',a:5e-7,u:'m',tol:5e-9,
+   steps:['λ = c/f.','= (3×10⁸)/(6×10¹⁴).','= 5 × 10⁻⁷ m = 500 nm.','መልስ፦ 500 nm።']},
+
+  {t:'6.3',d:'challenging',q:'Speed of light in glass (n=1.52)?',a:1.97e8,u:'m/s',tol:2e6,
+   steps:['v = c/n.','= (3×10⁸)/1.52.','= 1.97 × 10⁸ m/s.','መልስ፦ 1.97×10⁸ m/s።']},
+  {t:'6.3',d:'challenging',q:'Speed of light in water (n=1.33)?',a:2.26e8,u:'m/s',tol:2e6,
+   steps:['v = c/n.','= (3×10⁸)/1.33.','= 2.26 × 10⁸ m/s.','መልስ፦ 2.26×10⁸ m/s።']},
+  {t:'6.3',d:'challenging',q:'Refractive index if v = 2×10⁸ m/s?',a:1.5,u:'',tol:0.02,
+   steps:['n = c/v.','= 3×10⁸ / 2×10⁸.','= 1.5.','መልስ፦ n = 1.5።']},
+  {t:'6.3',d:'challenging',q:'Time for light to travel 1.5×10¹¹ m (Sun→Earth)?',a:500,u:'s',tol:5,
+   steps:['t = distance/c.','= 1.5×10¹¹ / 3×10⁸.','= 500 s ≈ 8.3 minutes.','መልስ፦ 500 ሰከንድ (8 ደቂቃ)።']},
+
+  {t:'6.4',d:'challenging',q:'Snell: n₁=1.00, θ₁=30°, n₂=1.33 (water). θ₂?',a:22.1,u:'°',tol:0.3,
+   steps:['n₁ sin θ₁ = n₂ sin θ₂.','1.00 × sin 30° = 1.33 × sin θ₂.','0.5 = 1.33 sin θ₂.','sin θ₂ = 0.376.','θ₂ = 22.1°.','መልስ፦ 22.1°።']},
+  {t:'6.4',d:'challenging',q:'Snell: n₁=1.33, θ₁=35°, n₂=1.00. θ₂?',a:49.7,u:'°',tol:0.5,
+   steps:['1.33 sin 35° = 1.00 sin θ₂.','1.33 × 0.574 = sin θ₂.','sin θ₂ = 0.763.','θ₂ = 49.7°.','መልስ፦ 49.7°።']},
+  {t:'6.4',d:'challenging',q:'Critical angle for glass (n=1.52) → air?',a:41.1,u:'°',tol:0.5,
+   steps:['sin θ_c = n₂/n₁ = 1/1.52.','= 0.658.','θ_c = 41.1°.','መልስ፦ 41°።']},
+  {t:'6.4',d:'challenging',q:'Critical angle for water (n=1.33) → air?',a:48.8,u:'°',tol:0.5,
+   steps:['sin θ_c = 1/1.33.','= 0.752.','θ_c = 48.8°.','መልስ፦ 48.8°።']},
+  {t:'6.4',d:'challenging',q:'Critical angle for diamond (n=2.42) → air?',a:24.4,u:'°',tol:0.3,
+   steps:['sin θ_c = 1/2.42.','= 0.413.','θ_c = 24.4°.','መልስ፦ 24.4°።']},
+  {t:'6.4',d:'challenging',q:'Refractive index from angle data: θ₁=30°, θ₂=19.2°, n₁=1.0. n₂?',a:1.52,u:'',tol:0.02,
+   steps:['n₁ sin θ₁ = n₂ sin θ₂.','1.00 × sin 30° = n₂ × sin 19.2°.','0.5 = n₂ × 0.329.','n₂ = 1.52.','መልስ፦ 1.52።']},
+  {t:'6.4',d:'challenging',q:'Light enters water (n=1.33) at θ₁=45°. θ₂?',a:32.1,u:'°',tol:0.3,
+   steps:['1.00 × sin 45° = 1.33 sin θ₂.','0.707 = 1.33 sin θ₂.','sin θ₂ = 0.532.','θ₂ = 32.1°.','መልስ፦ 32.1°።']},
+  {t:'6.4',d:'challenging',q:'Angle of refraction in air if light exits glass (n=1.52) at θᵢ = 20°?',a:31.3,u:'°',tol:0.3,
+   steps:['1.52 sin 20° = 1.00 sin θ₂.','1.52 × 0.342 = sin θ₂.','sin θ₂ = 0.52.','θ₂ = 31.3°.','መልስ፦ 31.3°።']},
+  {t:'6.4',d:'challenging',q:'Speed of light in diamond (n=2.42)?',a:1.24e8,u:'m/s',tol:1.2e6,
+   steps:['v = c/n = 3×10⁸ / 2.42.','= 1.24 × 10⁸ m/s.','መልስ፦ 1.24×10⁸ m/s።']},
+  {t:'6.4',d:'challenging',q:'Refractive index if critical angle is 45°?',a:1.414,u:'',tol:0.02,
+   steps:['sin θ_c = 1/n.','sin 45° = 1/n.','0.707 = 1/n.','n = 1.414.','መልስ፦ n ≈ √2።']},
+
+  {t:'6.5',d:'challenging',q:'Concave mirror f=10 cm, object at 30 cm. Image distance?',a:15,u:'cm',tol:0.15,
+   steps:['1/v + 1/u = 1/f.','1/v = 1/10 − 1/30.','= 3/30 − 1/30 = 2/30.','v = 15 cm.','መልስ፦ 15 ሴ.ሜ።']},
+  {t:'6.5',d:'challenging',q:'Magnification for concave mirror (u=30, v=15)?',a:-0.5,u:'',tol:0.01,
+   steps:['m = −v/u.','= −15/30.','= −0.5.','Image is inverted & half-size.','መልስ፦ m = −0.5።']},
+  {t:'6.5',d:'challenging',q:'Concave mirror f=15 cm, object at 25 cm. Image distance?',a:37.5,u:'cm',tol:0.4,
+   steps:['1/v = 1/f − 1/u.','= 1/15 − 1/25.','= 2/75.','v = 37.5 cm.','መልስ፦ 37.5 ሴ.ሜ።']},
+  {t:'6.5',d:'challenging',q:'Concave mirror f=15 cm, u=25 cm. Magnification?',a:-1.5,u:'',tol:0.02,
+   steps:['m = −v/u.','= −37.5/25.','= −1.5.','Inverted, 1.5× magnified.','መልስ፦ m = −1.5።']},
+  {t:'6.5',d:'challenging',q:'Convex mirror R=3m (f=−1.5m), u=5m. Image distance?',a:-1.15,u:'m',tol:0.02,
+   steps:['1/v = 1/f − 1/u.','= 1/(−1.5) − 1/5.','= −0.667 − 0.2 = −0.867.','v = −1.15 m.','መልስ፦ −1.15 ሜትር።']},
+  {t:'6.5',d:'challenging',q:'Convex mirror u=5, v=−1.15. Magnification?',a:0.23,u:'',tol:0.01,
+   steps:['m = −v/u = −(−1.15)/5.','= +0.23.','Virtual, upright, smaller.','መልስ፦ m = +0.23።']},
+  {t:'6.5',d:'challenging',q:'Convex lens f=10 cm, u=15 cm. Image distance?',a:30,u:'cm',tol:0.3,
+   steps:['1/v = 1/f − 1/u.','= 1/10 − 1/15.','= 1/30.','v = 30 cm.','መልስ፦ 30 ሴ.ሜ።']},
+  {t:'6.5',d:'challenging',q:'Convex lens f=10 cm, u=15 cm. Magnification?',a:-2,u:'',tol:0.02,
+   steps:['m = −v/u.','= −30/15.','= −2.','Inverted, 2× enlarged.','መልስ፦ m = −2።']},
+  {t:'6.5',d:'challenging',q:'Concave lens f=−15 cm, v=−10 cm. Object distance?',a:30,u:'cm',tol:0.3,
+   steps:['1/u = 1/v − 1/f = 1/(−10) − 1/(−15).','= −0.1 + 0.067 = −0.033.','u = −30 cm (interpreted as 30 cm in front).','መልስ፦ u = 30 ሴ.ሜ።']},
+  {t:'6.5',d:'challenging',q:'Convex lens f=20 cm, u=30 cm. v?',a:60,u:'cm',tol:0.6,
+   steps:['1/v = 1/20 − 1/30.','= 3/60 − 2/60 = 1/60.','v = 60 cm.','መልስ፦ 60 ሴ.ሜ።']},
+  {t:'6.5',d:'challenging',q:'Mirror f = R/2 if R=40 cm. f?',a:20,u:'cm',tol:0.2,
+   steps:['f = R/2 = 40/2.','f = 20 cm.','መልስ፦ 20 ሴ.ሜ።']},
+  {t:'6.5',d:'challenging',q:'Concave mirror u=10 cm, f=15 cm. v?',a:-30,u:'cm',tol:0.3,
+   steps:['1/v = 1/15 − 1/10 = 2/30 − 3/30 = −1/30.','v = −30 cm.','Virtual image (behind mirror).','መልስ፦ −30 ሴ.ሜ።']},
+  {t:'6.5',d:'challenging',q:'Magnification of convex mirror: u=10, v=−4. m?',a:0.4,u:'',tol:0.01,
+   steps:['m = −v/u = −(−4)/10.','= +0.4.','Virtual, upright, 0.4× size.','መልስ፦ 0.4።']},
+  {t:'6.5',d:'challenging',q:'Concave mirror, object 10 cm, f=5 cm. v?',a:10,u:'cm',tol:0.1,
+   steps:['1/v = 1/5 − 1/10.','= 2/10 − 1/10 = 1/10.','v = 10 cm.','መልስ፦ 10 ሴ.ሜ።']},
+  {t:'6.5',d:'challenging',q:'Convex lens, object at 2F. Image position?',a:2,u:'F',tol:0.1,
+   steps:['For convex lens at u=2F.','Image forms at v=2F.','Same size, real, inverted.','መልስ፦ at 2F።']},
+
+  {t:'6.4',d:'challenging',q:'Snell: n₁=1.5, θ₁=20°, n₂=1.0. θ₂?',a:30.9,u:'°',tol:0.3,
+   steps:['1.5 sin 20° = 1.0 sin θ₂.','1.5 × 0.342 = 0.513.','θ₂ = sin⁻¹(0.513) = 30.9°.','መልስ፦ 30.9°።']},
+  {t:'6.4',d:'challenging',q:'Speed of light in medium if n = 1.6?',a:1.875e8,u:'m/s',tol:2e6,
+   steps:['v = c/n = 3×10⁸/1.6.','= 1.875 × 10⁸ m/s.','መልስ፦ 1.875×10⁸ m/s።']},
+  {t:'6.4',d:'challenging',q:'Refractive index if v = 2.5×10⁸ m/s?',a:1.2,u:'',tol:0.01,
+   steps:['n = c/v = 3×10⁸/2.5×10⁸.','= 1.2.','መልስ፦ 1.2።']},
+
+  {t:'6.6',d:'challenging',q:'Focal length for P = −5.5 D lens?',a:-0.182,u:'m',tol:0.002,
+   steps:['f = 1/P.','= 1/(−5.5).','= −0.182 m = −18.2 cm.','መልስ፦ −18.2 ሴ.ሜ።']},
+  {t:'6.6',d:'challenging',q:'Focal length for P = +1.5 D lens?',a:0.667,u:'m',tol:0.01,
+   steps:['f = 1/P.','= 1/1.5.','= 0.667 m = 66.7 cm.','መልስ፦ 66.7 ሴ.ሜ።']},
+  {t:'6.6',d:'challenging',q:'Power of +4 D lens in diopters?',a:4,u:'D',tol:0.05,
+   steps:['Already given as +4 D.','f = 1/4 = 0.25 m = 25 cm.','መልስ፦ P = +4 D።']},
+  {t:'6.6',d:'challenging',q:'Object at infinity through convex lens f=10 cm. v?',a:10,u:'cm',tol:0.1,
+   steps:['1/v = 1/f − 1/u = 1/10 − 0.','v = 10 cm.','Image at focus.','መልስ፦ 10 ሴ.ሜ።']},
+
+  {t:'6.2',d:'challenging',q:'Wavelength of UV light with f = 10¹⁵ Hz?',a:3e-7,u:'m',tol:3e-9,
+   steps:['λ = c/f = 3×10⁸/10¹⁵.','= 3 × 10⁻⁷ m = 300 nm.','መልስ፦ 300 nm።']},
+  {t:'6.2',d:'challenging',q:'Frequency of X-ray with λ = 1 nm?',a:3e17,u:'Hz',tol:3e15,
+   steps:['f = c/λ = 3×10⁸ / (1×10⁻⁹).','= 3 × 10¹⁷ Hz.','መልስ፦ 3×10¹⁷ Hz።']},
+  {t:'6.2',d:'challenging',q:'Energy of 500 nm photon? (h=6.63×10⁻³⁴, c=3×10⁸)',a:3.98e-19,u:'J',tol:4e-21,
+   steps:['E = hf = hc/λ.','= (6.63×10⁻³⁴)(3×10⁸)/(500×10⁻⁹).','= 3.98 × 10⁻¹⁹ J.','መልስ፦ 3.98×10⁻¹⁹ J።']},
+  {t:'6.2',d:'challenging',q:'Wavelength of X-ray with 10¹⁸ Hz?',a:3e-10,u:'m',tol:3e-12,
+   steps:['λ = c/f = 3×10⁸ / 10¹⁸.','= 3 × 10⁻¹⁰ m = 0.3 nm.','መልስ፦ 0.3 nm።']},
+  {t:'6.2',d:'challenging',q:'Ratio of radio frequency (10⁶ Hz) to visible (5×10¹⁴ Hz)?',a:2e-9,u:'',tol:2e-11,
+   steps:['Ratio = 10⁶ / (5×10¹⁴).','= 2 × 10⁻⁹.','መልስ፦ 2×10⁻⁹።']}
+];
+
+// Build questions
+const questions = [];
+conceptualData.forEach(function(item, i){
+  questions.push({id:'C'+String(i+1).padStart(3,'0'),type:'conceptual',topic:item.t,difficulty:item.d,question:item.q,options:item.o,correctIndex:item.c,explanation:item.e,answered:false});
+});
+numericalData.forEach(function(item, i){
+  questions.push({id:'N'+String(i+1).padStart(3,'0'),type:'numerical',topic:item.t,difficulty:item.d,question:item.q,answer:item.a,unit:item.u,tolerance:item.tol,direction:item.dir||'',steps:item.steps,answered:false,userAnswer:null});
+});
+
+// ============ RENDER ============
+const container = document.getElementById('assessment-questions-container');
+const progressFill = document.getElementById('overall-progress-fill');
+const progressText = document.getElementById('progress-text');
+
+function renderQuestions(filterType, filterTopic){
+  let html = '';
+  const filtered = questions.filter(function(q){
+    return (filterType==='all'||q.type===filterType) && (filterTopic==='all'||q.topic===filterTopic);
+  });
+  filtered.forEach(function(q){
+    const typeLabel = q.type === 'conceptual' ? 'Conceptual' : 'Numerical';
+    const typeClass = q.type === 'conceptual' ? 'tag-conceptual' : 'tag-numerical';
+    html += '<div class="question-block" id="q-'+q.id+'" data-qid="'+q.id+'">';
+    html += '<div class="q-meta">';
+    html += '<span class="badge">'+q.topic+'</span>';
+    html += '<span class="badge badge-'+q.difficulty+'">'+q.difficulty+'</span>';
+    html += '<span class="badge '+typeClass+'">'+typeLabel+'</span>';
+    html += '<span style="margin-left:auto;font-weight:600">#'+q.id+'</span>';
+    html += '</div>';
+    html += '<div class="question-text">'+q.question+'</div>';
+
+    if(q.type === 'conceptual'){
+      html += '<div class="option-list" role="group">';
+      q.options.forEach(function(opt, oi){
+        html += '<button class="option-btn" data-qid="'+q.id+'" data-index="'+oi+'" data-correct="'+(oi===q.correctIndex)+'">'+opt+'</button>';
+      });
+      html += '</div>';
+    } else {
+      html += '<div class="numeric-answer-area">';
+      html += '<label class="sr-only" for="input-'+q.id+'">Answer</label>';
+      html += '<input type="number" step="any" id="input-'+q.id+'" placeholder="Enter value">';
+      html += '<span class="unit-label">'+q.unit+'</span>';
+      html += '<button class="btn btn-primary" id="check-'+q.id+'" data-qid="'+q.id+'">Check</button>';
+      html += '</div>';
+    }
+    html += '<div class="feedback" id="fb-'+q.id+'"></div>';
+    html += '<div class="solution-details" id="sol-'+q.id+'"></div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+  updateProgress();
+}
+
+// Conceptual click
+container.addEventListener('click', function(e){
+  const btn = e.target.closest('.option-btn');
+  if(!btn || !btn.dataset.qid) return;
+  const qid = btn.dataset.qid;
+  const parent = document.getElementById('q-'+qid);
+  if(!parent || parent.dataset.answered === 'true') return;
+  const q = questions.find(function(x){ return x.id === qid; });
+  if(!q) return;
+  const sel = parseInt(btn.dataset.index, 10);
+  const ok = sel === q.correctIndex;
+  parent.dataset.answered = 'true';
+  q.answered = true;
+
+  parent.querySelectorAll('.option-btn').forEach(function(b){
+    b.disabled = true;
+    if(parseInt(b.dataset.index,10) === q.correctIndex) b.classList.add('correct');
+    else if(b === btn) b.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('fb-'+qid);
+  fb.classList.add('show', ok ? 'correct-fb' : 'wrong-fb');
+  fb.innerHTML = (ok ? '✅ <strong>Correct!</strong>' : '❌ <strong>Incorrect.</strong>') + ' Read the full solution below.';
+
+  const sol = document.getElementById('sol-'+qid);
+  sol.classList.add('show');
+  const parts = q.explanation.split(/(?=Step \d+:)/);
+  let solHtml = '<span class="solution-title">Full step-by-step solution · ሙሉ ደረጃ በደረጃ መፍትሔ</span>';
+  parts.forEach(function(p){
+    if(p.trim()) solHtml += '<span class="step">'+p.trim()+'</span>';
+  });
+  sol.innerHTML = solHtml;
+
+  parent.classList.add(ok ? 'correct-highlight' : 'wrong-highlight');
+  updateProgress();
+});
+
+// Numerical check
+container.addEventListener('click', function(e){
+  const btn = e.target.closest('.btn-primary');
+  if(!btn || !btn.id.startsWith('check-')) return;
+  const qid = btn.dataset.qid;
+  const parent = document.getElementById('q-'+qid);
+  if(!parent || parent.dataset.answered === 'true') return;
+  const q = questions.find(function(x){ return x.id === qid; });
+  if(!q) return;
+  const inp = document.getElementById('input-'+qid);
+  const val = parseFloat(inp.value);
+  if(isNaN(val)){ inp.focus(); inp.style.borderColor = 'var(--wrong)'; return; }
+  inp.style.borderColor = '';
+
+  const ok = Math.abs(val - q.answer) <= q.tolerance;
+  parent.dataset.answered = 'true';
+  q.answered = true;
+
+  const fb = document.getElementById('fb-'+qid);
+  fb.classList.add('show', ok ? 'correct-fb' : 'wrong-fb');
+  const dirNote = q.direction ? ' ('+q.direction+')' : '';
+  if(ok){
+    fb.innerHTML = '✅ <strong>Correct!</strong> Answer = '+q.answer+' '+q.unit+dirNote;
+  } else {
+    fb.innerHTML = '❌ <strong>Incorrect.</strong> Your answer: '+val+' '+q.unit+'. Correct: <strong>'+q.answer+' '+q.unit+'</strong>'+dirNote;
+  }
+
+  const sol = document.getElementById('sol-'+qid);
+  sol.classList.add('show');
+  let solHtml = '<span class="solution-title">Full step-by-step solution · ሙሉ ደረጃ በደረጃ መፍትሔ</span>';
+  q.steps.forEach(function(s, i){
+    solHtml += '<span class="step"><strong>Step '+(i+1)+':</strong> '+s+'</span>';
+  });
+  solHtml += '<span class="step"><strong>Final answer · የመጨረሻ መልስ:</strong> '+q.answer+' '+q.unit+dirNote+'</span>';
+  sol.innerHTML = solHtml;
+
+  parent.classList.add(ok ? 'correct-highlight' : 'wrong-highlight');
+  updateProgress();
+});
+
+function updateProgress(){
+  const n = questions.filter(function(q){ return q.answered; }).length;
+  progressFill.style.width = (n/questions.length*100)+'%';
+  progressText.textContent = n+' of '+questions.length+' answered · ከ'+questions.length+' ውስጥ '+n+' ተመልሷል';
+}
+
+document.getElementById('filter-type').addEventListener('change', function(){
+  renderQuestions(this.value, document.getElementById('filter-topic').value);
+});
+document.getElementById('filter-topic').addEventListener('change', function(){
+  renderQuestions(document.getElementById('filter-type').value, this.value);
+});
+document.getElementById('reset-progress-btn').addEventListener('click', function(){
+  if(!confirm('Reset all answers?')) return;
+  questions.forEach(function(q){ q.answered = false; q.userAnswer = null; });
+  renderQuestions(document.getElementById('filter-type').value, document.getElementById('filter-topic').value);
+});
+
+// Tab nav
+const navBtns = document.querySelectorAll('.unit-nav button');
+const panels = document.querySelectorAll('.section-panel');
+navBtns.forEach(function(btn){
+  btn.addEventListener('click', function(){
+    navBtns.forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+    panels.forEach(function(p){ p.classList.remove('active'); });
+    this.classList.add('active'); this.setAttribute('aria-selected','true');
+    const sec = this.dataset.section;
+    const target = document.getElementById('section-'+sec);
+    if(target) target.classList.add('active');
+    if(sec === 'assessment'){
+      renderQuestions(document.getElementById('filter-type').value, document.getElementById('filter-topic').value);
+    }
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+// Lesson quiz click
+document.addEventListener('click', function(e){
+  const btn = e.target.closest('.option-btn');
+  if(!btn || !btn.dataset.correct || !btn.closest('[id^="lesson-quiz-"]')) return;
+  const parent = btn.closest('.question-block');
+  if(!parent || parent.dataset.answered === 'true') return;
+  parent.dataset.answered = 'true';
+  const ok = btn.dataset.correct === 'true';
+  parent.querySelectorAll('.option-btn').forEach(function(b){
+    b.disabled = true;
+    if(b.dataset.correct === 'true') b.classList.add('correct');
+    else if(b === btn) b.classList.add('wrong');
+  });
+
+  const qid = parent.dataset.qid;
+  const parts = qid.split('-');
+  const lessonId = parts[1];
+  const idx = parseInt(parts[2], 10);
+  const item = lessonQuizzes[lessonId][idx];
+
+  const fb = parent.querySelector('.feedback');
+  if(fb){
+    fb.classList.add('show', ok ? 'correct-fb' : 'wrong-fb');
+    fb.innerHTML = (ok ? '✅ <strong>Correct!</strong>' : '❌ <strong>Incorrect.</strong>') + ' Full reasoning below.';
+  }
+
+  const sol = parent.querySelector('.solution-details');
+  if(sol && item && item.explanation){
+    sol.classList.add('show');
+    const expParts = item.explanation.split(/(?=Step \d+:)/);
+    let solHtml = '<span class="solution-title">Full step-by-step solution · ሙሉ ደረጃ በደረጃ መፍትሔ</span>';
+    expParts.forEach(function(p){
+      if(p.trim()) solHtml += '<span class="step">'+p.trim()+'</span>';
+    });
+    sol.innerHTML = solHtml;
+  }
+
+  parent.classList.add(ok ? 'correct-highlight' : 'wrong-highlight');
+});
+
+renderQuestions('all','all');
+updateProgress();
+})();
+</script>
+</body>
+</html>

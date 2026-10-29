@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 10 Physics · Unit 3: Elasticity and Static Equilibrium of Rigid Body</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#f4f6fb;--surface:#ffffff;--surface2:#eef2f9;--fg:#111827;--muted:#5b6472;
+    --line:#dbe2ef;--accent:#3b5bdb;--accent2:#7048e8;--accent-soft:#e8edff;
+    --correct:#0b7a5e;--correct-bg:#dcfce7;--wrong:#b91c1c;--wrong-bg:#fee2e2;
+    --gold:#f59f00;--gold-soft:#fff4d6;
+    --radius:16px;--shadow:0 6px 20px rgba(17,24,39,.07);
+    --font:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+    --am:'Noto Sans Ethiopic','Abyssinica SIL',system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{--bg:#0b1220;--surface:#131c2e;--surface2:#1b2740;--fg:#e6edf7;--muted:#9aa8bf;
+      --line:#27344f;--accent:#7c9cff;--accent2:#b197fc;--accent-soft:#1e2a4a;
+      --correct:#34d399;--correct-bg:#0c3a2e;--wrong:#f87171;--wrong-bg:#3f1414;
+      --gold:#fbbf24;--gold-soft:#3a2e0a;--shadow:0 6px 20px rgba(0,0,0,.4)}
+  }
+  body{font-family:var(--font);background:var(--bg);color:var(--fg);line-height:1.8;padding:14px;max-width:1000px;margin:0 auto}
+  h1{font-size:1.55rem;margin-bottom:4px;letter-spacing:-.02em}
+  h2{font-size:1.25rem;margin:1.2em 0 .5em;padding-bottom:8px;border-bottom:2px solid var(--line);color:var(--accent)}
+  h3{font-size:1.05rem;margin:1em 0 .4em;color:var(--accent2);font-weight:700}
+  p{margin-bottom:.8em}
+  ul,ol{padding-left:1.4em;margin-bottom:.8em}
+  li{margin-bottom:.35em}
+  .am{font-family:var(--am);color:var(--muted);font-size:.9rem;display:block;margin-top:3px;border-left:3px solid var(--accent-soft);padding-left:10px;font-style:normal}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-bottom:22px;box-shadow:var(--shadow)}
+  .card-accent{border-left:6px solid var(--accent)}
+  .badge{display:inline-block;background:var(--accent-soft);color:var(--accent);font-weight:800;font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:20px;margin-right:5px}
+  .badge-easy{background:#d3f9d8;color:#2b8a3e}
+  .badge-medium{background:#fff3bf;color:#e67700}
+  .badge-challenging{background:#ffe3e3;color:#c92a2a}
+  @media (prefers-color-scheme: dark){
+    .badge-easy{background:#0c3a2e;color:#6ee7b7}
+    .badge-medium{background:#3a2e0a;color:#fcd34d}
+    .badge-challenging{background:#3f1414;color:#fca5a5}
+  }
+  .unit-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px;background:var(--surface);padding:8px;border-radius:var(--radius);position:sticky;top:6px;z-index:20;border:1px solid var(--line);box-shadow:var(--shadow)}
+  .unit-nav button{flex:1 1 auto;padding:10px 12px;border:1px solid transparent;border-radius:12px;background:transparent;color:var(--muted);font-weight:700;font-size:.8rem;cursor:pointer;font-family:var(--font);white-space:nowrap;transition:.2s}
+  .unit-nav button:hover{background:var(--surface2);color:var(--fg)}
+  .unit-nav button.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 14px rgba(59,91,219,.35)}
+  .section-panel{display:none}
+  .section-panel.active{display:block}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9rem;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  th,td{border:1px solid var(--line);padding:9px 12px;text-align:left}
+  th{background:var(--surface2);font-weight:800;color:var(--accent)}
+  td{background:var(--surface)}
+  .formula{background:linear-gradient(135deg,var(--accent-soft),var(--surface2));border-left:5px solid var(--accent);padding:12px 16px;margin:12px 0;border-radius:0 12px 12px 0;font-family:'Courier New',monospace;font-size:1rem;overflow-x:auto;font-weight:600}
+  .diagram-box{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin:16px 0}
+  .diagram-box figure{flex:0 1 230px;text-align:center;background:var(--surface);padding:12px;border-radius:12px;border:1px solid var(--line);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+  .diagram-box svg{width:100%;height:auto;max-height:180px;display:block}
+  .diagram-box figcaption{font-size:.78rem;color:var(--muted);margin-top:7px;line-height:1.5}
+  .question-block{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.04);transition:.2s}
+  .question-block.correct-highlight{border-color:var(--correct);border-left:5px solid var(--correct)}
+  .question-block.wrong-highlight{border-color:var(--wrong);border-left:5px solid var(--wrong)}
+  .question-text{font-weight:700;margin-bottom:10px;font-size:.96rem;line-height:1.65}
+  .q-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:9px;font-size:.74rem;color:var(--muted)}
+  .option-list{display:flex;flex-direction:column;gap:7px;margin:8px 0}
+  .option-btn{text-align:left;padding:11px 14px;border:2px solid var(--line);border-radius:11px;background:var(--surface);color:var(--fg);font-size:.91rem;cursor:pointer;font-family:var(--font);line-height:1.5;transition:.15s;font-weight:500}
+  .option-btn:hover{border-color:var(--accent);background:var(--accent-soft);transform:translateX(2px)}
+  .option-btn.correct{border-color:var(--correct);background:var(--correct-bg);font-weight:700}
+  .option-btn.wrong{border-color:var(--wrong);background:var(--wrong-bg);font-weight:700}
+  .option-btn:disabled{cursor:default;opacity:.95;transform:none}
+  .feedback{margin-top:12px;padding:14px 16px;border-radius:12px;font-size:.9rem;line-height:1.75;display:none}
+  .feedback.show{display:block}
+  .feedback.correct-fb{background:var(--correct-bg);border-left:5px solid var(--correct)}
+  .feedback.wrong-fb{background:var(--wrong-bg);border-left:5px solid var(--wrong)}
+  .numeric-answer-area{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}
+  .numeric-answer-area input{padding:11px 14px;border:2px solid var(--line);border-radius:11px;font-size:.96rem;width:140px;background:var(--surface);color:var(--fg);font-family:var(--font);font-weight:600}
+  .numeric-answer-area input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+  .unit-label{font-weight:800;color:var(--accent);font-size:.95rem}
+  .btn{padding:10px 18px;border-radius:11px;border:none;font-weight:700;font-size:.9rem;cursor:pointer;font-family:var(--font);transition:.15s}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 3px 10px rgba(59,91,219,.3)}
+  .btn-primary:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .btn-secondary{background:var(--surface2);color:var(--fg);border:1px solid var(--line)}
+  .btn-secondary:hover{background:var(--line)}
+  .solution-details{margin-top:12px;padding:16px 18px;background:var(--surface2);border-radius:12px;font-size:.89rem;line-height:1.8;display:none;border-left:4px solid var(--gold)}
+  .solution-details.show{display:block}
+  .solution-details .step{display:block;margin-bottom:8px;padding:10px 14px;border-left:3px solid var(--accent);background:var(--surface);border-radius:0 8px 8px 0;line-height:1.7}
+  .solution-details .step:last-child{margin-bottom:0}
+  .solution-details strong{color:var(--accent)}
+  .solution-title{font-weight:800;color:var(--gold);font-size:.95rem;margin-bottom:8px;display:block}
+  .progress-bar-container{background:var(--line);border-radius:12px;height:14px;overflow:hidden;margin:8px 0}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--correct));width:0;transition:width .4s;border-radius:12px}
+  .filter-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;align-items:center}
+  .filter-bar select{padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font-family:var(--font);font-size:.86rem;font-weight:600}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .worked-example{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0;font-size:.91rem;border-left:4px solid var(--accent2)}
+  .worked-example h4{margin-top:0;color:var(--accent2);font-size:.95rem;margin-bottom:10px}
+  .worked-example ol li{margin-bottom:.5em;line-height:1.75}
+  .tag-conceptual{background:#dbeafe;color:#1e40af}
+  .tag-numerical{background:#fce7f3;color:#9d174d}
+  @media (prefers-color-scheme: dark){
+    .tag-conceptual{background:#1e3a5f;color:#93c5fd}
+    .tag-numerical{background:#5f1e3a;color:#f9a8d4}
+  }
+  .highlight-box{background:linear-gradient(135deg,var(--gold-soft),var(--accent-soft));border-radius:12px;padding:14px 18px;margin:14px 0;font-size:.91rem;border-left:4px solid var(--gold);line-height:1.75}
+  .verify-box{background:var(--correct-bg);border-radius:10px;padding:10px 14px;margin-top:8px;font-size:.86rem;border-left:3px solid var(--correct);line-height:1.65}
+  .textbook-exercise{background:linear-gradient(135deg,#fff8e1,#fef3c7);border:1px solid #fbbf24;border-radius:12px;padding:16px 18px;margin:14px 0;font-size:.9rem}
+  .textbook-exercise h4{margin-top:0;color:#92400e;font-size:.95rem;margin-bottom:10px}
+  .textbook-exercise .sol{background:var(--surface);border-radius:8px;padding:10px 14px;margin-top:8px;border-left:3px solid var(--correct);line-height:1.7}
+  @media (prefers-color-scheme: dark){
+    .textbook-exercise{background:linear-gradient(135deg,#3a2e0a,#422006);border-color:#fbbf24}
+    .textbook-exercise h4{color:#fcd34d}
+  }
+  @media (max-width:600px){
+    body{padding:8px}
+    .card{padding:14px 16px}
+    h1{font-size:1.2rem}
+    h2{font-size:1.05rem}
+    .unit-nav button{font-size:.68rem;padding:7px 9px}
+    .diagram-box figure{flex:1 1 145px}
+    .option-btn{font-size:.86rem;padding:10px 12px}
+  }
+</style>
+</head>
+<body>
+
+<header style="margin-bottom:18px">
+  <h1>📘 Grade 10 Physics · Unit 3: Elasticity and Static Equilibrium of Rigid Body</h1>
+  <p style="color:var(--muted);font-size:.9rem">Matric &amp; entrance-exam ready · 100 advanced questions with full step-by-step solutions</p>
+</header>
+
+<nav class="unit-nav" role="tablist" aria-label="Unit sections">
+  <button role="tab" class="active" data-section="3.1" aria-selected="true">3.1 Elasticity &amp; Plasticity</button>
+  <button role="tab" data-section="3.2" aria-selected="false">3.2 Density &amp; Specific Gravity</button>
+  <button role="tab" data-section="3.3" aria-selected="false">3.3 Stress &amp; Strain</button>
+  <button role="tab" data-section="3.4" aria-selected="false">3.4 Young Modulus</button>
+  <button role="tab" data-section="3.5" aria-selected="false">3.5 Static Equilibrium</button>
+  <button role="tab" data-section="assessment" aria-selected="false">📝 100 Qs Assessment</button>
+</nav>
+
+<!-- ==================== SECTION 3.1 ==================== -->
+<section id="section-3.1" class="section-panel active" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 3.1</span>
+  <h2>Elasticity and Plasticity</h2>
+
+  <p><strong>All solid bodies deform</strong> when a sufficiently large external force is applied — even steel bars. The force that causes deformation is called a <strong>deforming force</strong>. Whether the object recovers its shape after the force is removed depends on the material's elastic or plastic behavior.</p>
+  <p class="am">ሁሉም ጠጣር አካላት በበቂ መጠን ያለው የውጭ ኃይል ሲደርስባቸው ይቀየራሉ። መልክና መጠንን የሚቀይር ኃይል ተቀያያሪ ኃይል ይባላል።</p>
+
+  <div class="highlight-box">
+    <strong>Elasticity</strong> — the property of a body to regain its original shape and size after the deforming force is removed. Examples: rubber, steel, springs.<br>
+    <strong>Plasticity</strong> — the property of a body to remain permanently deformed after the deforming force is removed. Examples: putty, clay, dough.<br>
+    <strong>Elastic limit</strong> — the maximum deforming force up to which a material returns to its original shape. Beyond this, permanent (plastic) deformation occurs.
+    <span class="am"><strong>ላስቲክነት</strong> — ኃይሉ ከተወገደ በኋላ ወደ ቀድሞ ቅርጹ የመመለስ ባህሪ። <strong>ፕላስቲክነት</strong> — በቋሚነት የተቀየረ ቅርጽ የመያዝ ባህሪ።</span>
+  </div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 3.1.1 — Classify materials as elastic or plastic</h4>
+    <p>A rubber band is stretched to 3× its length but only recovers to 1.1× when released. Is it elastic or plastic beyond a certain point?</p>
+    <ol>
+      <li><strong>Within elastic limit:</strong> The rubber band behaves elastically — it returns exactly.</li>
+      <li><strong>Beyond elastic limit:</strong> Stretching to 3× exceeds the elastic limit; the band shows residual (permanent) deformation.</li>
+      <li><strong>Residual = 1.1× − 1× = 0.1×</strong> permanent strain → plastic deformation occurred.</li>
+      <li><strong>Conclusion:</strong> Up to a modest stretch, elastic; beyond that, plastic.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Elastic up to limit; plastic beyond it.</div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 3.1.2 — Elastic limit and design (matric level)</h4>
+    <p>A crane cable is designed to lift 5000 N. If the elastic limit stress of the cable is 4 × 10⁸ Pa and the safety factor is 5, what minimum cross-sectional area is needed?</p>
+    <ol>
+      <li><strong>Maximum allowed stress</strong> = elastic limit ÷ safety factor = 4×10⁸ / 5 = 8×10⁷ Pa.</li>
+      <li><strong>Required area:</strong> A = F / σ = 5000 / (8×10⁷).</li>
+      <li><strong>Compute:</strong> A = 6.25 × 10⁻⁵ m².</li>
+      <li><strong>Radius</strong> if circular: r = √(A/π) = √(6.25×10⁻⁵ / π) ≈ 4.46 × 10⁻³ m ≈ 4.5 mm. So the cable's radius must be at least 4.5 mm.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> A_min ≈ 6.25 × 10⁻⁵ m².</div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review Question 3.1(a) — Define elasticity and plasticity</h4>
+    <p><strong>Elasticity:</strong> The property of a body to regain its original shape and size after the deforming force is removed. Example: rubber band, steel wire.</p>
+    <p><strong>Plasticity:</strong> The property of a body to remain permanently deformed after the deforming force is removed. Example: clay, putty.</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review Question 3.1(b) — List some plastic materials in your locality</h4>
+    <p>Clay (for pottery), dough (for bread), candle wax, chewing gum, asphalt/bitumen, plastic containers (thermoplastics under heat).</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review Question 3.1(c) — What is the elastic limit?</h4>
+    <p>The maximum deforming force (or stress) up to which a body retains its elasticity — i.e., returns to its original shape after the force is removed. Beyond this limit, permanent deformation occurs.</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-3.1"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 3.2 ==================== -->
+<section id="section-3.2" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 3.2</span>
+  <h2>Density and Specific Gravity</h2>
+
+  <p><strong>Density</strong> tells how much mass is packed into a unit volume. <strong>Specific gravity</strong> compares that density to water's density (at 4 °C).</p>
+  <p class="am">ጥግግት በአንድ የመጠን አሃድ ውስጥ ያለውን ክብደት ይገልጻል። ልዩ ክብደት (SG) ደግሞ ከውሃ ጥግግት (4°C) አንጻር ያለውን ያሳያል።</p>
+
+  <h3>Formulas</h3>
+  <div class="formula">Density: ρ = m / V &nbsp; [kg/m³]</div>
+  <div class="formula">Specific gravity: SG = ρ_substance / ρ_water &nbsp; (unitless)</div>
+  <div class="formula">ρ_water (at 4 °C) = 1000 kg/m³ = 1 g/cm³</div>
+  <div class="formula">1 kg/m³ = 10⁻³ g/cm³</div>
+
+  <h3>Reference table (at 0 °C, 1 atm)</h3>
+  <table>
+    <thead><tr><th>Material</th><th>Density (kg/m³)</th><th>SG</th></tr></thead>
+    <tbody>
+      <tr><td>Helium</td><td>0.179</td><td>1.79 × 10⁻⁴</td></tr>
+      <tr><td>Air</td><td>1.29</td><td>1.29 × 10⁻³</td></tr>
+      <tr><td>Alcohol</td><td>790</td><td>0.79</td></tr>
+      <tr><td>Water (4 °C)</td><td>1000</td><td>1.00</td></tr>
+      <tr><td>Aluminum</td><td>2700</td><td>2.70</td></tr>
+      <tr><td>Iron</td><td>7860</td><td>7.86</td></tr>
+      <tr><td>Copper</td><td>8920</td><td>8.92</td></tr>
+      <tr><td>Silver</td><td>10500</td><td>10.5</td></tr>
+      <tr><td>Gold</td><td>19300</td><td>19.3</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 3.2.1 — Identify an unknown mineral</h4>
+    <p>An unknown mineral has volume 20 cm³ and mass 54 g. Find density and SG. Identify the mineral.</p>
+    <ol>
+      <li><strong>Convert:</strong> m = 54 g = 0.054 kg; V = 20 cm³ = 2×10⁻⁵ m³.</li>
+      <li><strong>Density:</strong> ρ = m/V = 0.054 / (2×10⁻⁵) = <strong>2700 kg/m³</strong>.</li>
+      <li><strong>SG:</strong> 2700 / 1000 = <strong>2.70</strong>.</li>
+      <li><strong>Identify:</strong> From the table, SG = 2.70 matches aluminum.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> ρ = 2700 kg/m³; SG = 2.70; mineral is aluminum.</div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 3.2.2 — Mass of a solid iron ball</h4>
+    <p>Find the mass of a solid iron ball with radius 18 cm. (ρ_iron = 7860 kg/m³.)</p>
+    <ol>
+      <li><strong>Convert:</strong> r = 18 cm = 0.18 m.</li>
+      <li><strong>Volume:</strong> V = (4/3)πr³ = (4/3)(3.14)(0.18)³ ≈ 0.0244 m³.</li>
+      <li><strong>Mass:</strong> m = ρV = 7860 × 0.0244 = <strong>191.8 kg</strong>.</li>
+      <li><strong>Check unit:</strong> kg/m³ × m³ = kg ✓</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> m ≈ 192 kg.</div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 3.2.3 — Mass of air in a room (matric exam)</h4>
+    <p>Find the approximate mass of air in a room 5.6 m × 3.6 m × 2.4 m. (ρ_air = 1.29 kg/m³.)</p>
+    <ol>
+      <li><strong>Volume:</strong> V = 5.6 × 3.6 × 2.4 = 48.384 m³.</li>
+      <li><strong>Mass:</strong> m = ρV = 1.29 × 48.384 = <strong>62.4 kg</strong>.</li>
+      <li><strong>Interpretation:</strong> That's more than most people — surprising, but true.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> m ≈ 62.4 kg.</div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 3.2.4 — Gold or fake? (matric exam)</h4>
+    <p>A cube 2 cm on each side weighs 40 g. Is it gold? (ρ_gold = 19.3 g/cm³.)</p>
+    <ol>
+      <li><strong>Volume:</strong> V = 2³ = 8 cm³.</li>
+      <li><strong>Density:</strong> ρ = 40 / 8 = <strong>5.0 g/cm³</strong>.</li>
+      <li><strong>Compare:</strong> Gold is 19.3 g/cm³. This cube is only 5.0 g/cm³ — much less dense.</li>
+      <li><strong>Verdict:</strong> NOT gold — likely a light alloy or hollow object.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> ρ = 5.0 g/cm³ → not gold.</div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review Question 3.2(a) — Approximate mass of air in a living room 5.6 × 3.6 × 2.4 m</h4>
+    <p><strong>Solution:</strong> V = 5.6 × 3.6 × 2.4 = 48.384 m³. ρ_air = 1.29 kg/m³. m = 1.29 × 48.384 = <strong>62.4 kg</strong>.</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review Question 3.2(b) — Specific gravity of granite (ρ = 2.8 g/cm³)</h4>
+    <p><strong>Solution:</strong> SG = ρ_granite / ρ_water = 2.8 / 1.0 = <strong>2.8</strong> (dimensionless).</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review Question 3.2(c) — Average density of Earth</h4>
+    <p>Given m_E = 5.98×10²⁴ kg, R_E = 6.37×10⁶ m.</p>
+    <p><strong>Step 1:</strong> V = (4/3)πR³ = (4/3)(3.14)(6.37×10⁶)³ ≈ 1.083×10²¹ m³.</p>
+    <p><strong>Step 2:</strong> ρ = m/V = 5.98×10²⁴ / 1.083×10²¹ ≈ <strong>5520 kg/m³</strong>.</p>
+    <p><strong>Step 3:</strong> SG = 5520 / 1000 = <strong>5.52</strong>.</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q2 — Rock with volume 15 cm³ and mass 45 g. Density?</h4>
+    <p><strong>Solution:</strong> ρ = 45 / 15 = <strong>3 g/cm³ = 3000 kg/m³</strong>. SG = 3.0.</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q3 — Bar 12 mm × 20 mm × 1 m, SG = 2.78. Mass?</h4>
+    <p><strong>Step 1:</strong> V = 0.012 × 0.020 × 1 = 2.4×10⁻⁴ m³.</p>
+    <p><strong>Step 2:</strong> ρ = SG × 1000 = 2780 kg/m³.</p>
+    <p><strong>Step 3:</strong> m = ρV = 2780 × 2.4×10⁻⁴ = <strong>0.667 kg = 667 g</strong>.</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q4 — Cube 2 cm each side, 40 g. Is it gold?</h4>
+    <p><strong>Step 1:</strong> V = 8 cm³. <strong>Step 2:</strong> ρ = 40/8 = 5 g/cm³ = 5000 kg/m³.</p>
+    <p><strong>Step 3:</strong> ρ_gold = 19300 kg/m³. 5000 ≪ 19300 → <strong>NOT gold</strong>. Don't buy it for 5000 birr!</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-3.2"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 3.3 ==================== -->
+<section id="section-3.3" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 3.3</span>
+  <h2>Stress and Strain</h2>
+
+  <p><strong>Stress</strong> is the deforming force per unit cross-sectional area. <strong>Strain</strong> is the fractional change in shape/length/volume. Both are linked by Hooke's law: within the elastic limit, stress ∝ strain.</p>
+  <p class="am">ውጥረት (stress) በአንድ የመስቀለኛ መስፋፋት አሃድ ላይ የሚወርስ ኃይል ነው። ቅርጽ መለወጥ (strain) ደግሞ የቅርጽ/ርዝመት/መጠን ክፍልፋይ ለውጥ ነው።</p>
+
+  <h3>Formulas</h3>
+  <div class="formula">Stress: σ = F / A &nbsp; [N/m² = Pa]</div>
+  <div class="formula">Tensile strain: ε = ΔL / L₀ &nbsp; (dimensionless)</div>
+  <div class="formula">Volumetric strain: ε_v = ΔV / V₀</div>
+  <div class="formula">Shear strain: ε_s = Δx / L₀</div>
+  <div class="formula">Hooke's law: σ = k · ε &nbsp; (within elastic limit)</div>
+
+  <h3>Three types of stress and strain</h3>
+  <table>
+    <thead><tr><th>Type</th><th>Force direction</th><th>Effect</th><th>Strain</th></tr></thead>
+    <tbody>
+      <tr><td>Tensile</td><td>Pull along axis</td><td>Elongation</td><td>ΔL / L₀</td></tr>
+      <tr><td>Compressive</td><td>Push along axis</td><td>Shortening</td><td>−ΔL / L₀</td></tr>
+      <tr><td>Volumetric (bulk)</td><td>Inward from all sides</td><td>Volume decrease</td><td>−ΔV / V₀</td></tr>
+      <tr><td>Shear</td><td>Tangential to surface</td><td>Shape twist</td><td>Δx / L₀</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 3.3.1 — Tensile stress from force and area</h4>
+    <p>A force of 9.8 N acts on a cross-sectional area of 2×10⁻³ m². Find tensile stress.</p>
+    <ol>
+      <li><strong>Given:</strong> F = 9.8 N, A = 2×10⁻³ m².</li>
+      <li><strong>Formula:</strong> σ = F / A.</li>
+      <li><strong>Compute:</strong> σ = 9.8 / (2×10⁻³) = 4.9 × 10³ N/m².</li>
+      <li><strong>Units:</strong> N/m² = Pa ✓</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> σ = 4.9 × 10³ Pa.</div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 3.3.2 — Wire under a weight (matric exam)</h4>
+    <p>A 98 N weight hangs from a 3 m wire of diameter 0.4 mm. Length increases by 2.4 cm. Find tensile stress and strain.</p>
+    <ol>
+      <li><strong>Radius:</strong> r = D/2 = 0.2 mm = 0.2×10⁻³ m.</li>
+      <li><strong>Area:</strong> A = πr² = 3.14 × (0.2×10⁻³)² = 1.256 × 10⁻⁷ m².</li>
+      <li><strong>Stress:</strong> σ = F / A = 98 / (1.256×10⁻⁷) = <strong>7.8 × 10⁸ Pa</strong>.</li>
+      <li><strong>Strain:</strong> ε = ΔL / L₀ = 2.4×10⁻² / 3 = <strong>8.0 × 10⁻³</strong>.</li>
+      <li><strong>Note:</strong> The textbook uses 1.56 × 10⁸ Pa (perhaps using different rounding). Both are within the same order.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> σ ≈ 7.8 × 10⁸ Pa (or 1.56 × 10⁸ Pa); strain = 8 × 10⁻³.</div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 3.3.3 — Nylon string (matric exam)</h4>
+    <p>A nylon string 2 mm in diameter is pulled by 100 N. Find tensile stress.</p>
+    <ol>
+      <li><strong>Radius:</strong> r = 1 mm = 1×10⁻³ m.</li>
+      <li><strong>Area:</strong> A = πr² = 3.14 × 10⁻⁶ m².</li>
+      <li><strong>Stress:</strong> σ = 100 / (3.14×10⁻⁶) = <strong>3.18 × 10⁷ Pa</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> σ ≈ 3.18 × 10⁷ Pa.</div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 3.3.4 — Wire with a 2 kg load (matric exam)</h4>
+    <p>A 2.0 kg load hangs on a 4 m wire of diameter 2 mm. Extension is 0.24 mm. Find stress and strain.</p>
+    <ol>
+      <li><strong>Force:</strong> F = mg = 2.0 × 9.8 = 19.6 N.</li>
+      <li><strong>Radius:</strong> r = 1 mm = 1×10⁻³ m; A = π(10⁻³)² = 3.14×10⁻⁶ m².</li>
+      <li><strong>Stress:</strong> σ = 19.6 / (3.14×10⁻⁶) = <strong>6.24 × 10⁶ Pa</strong>.</li>
+      <li><strong>Strain:</strong> ε = ΔL / L₀ = 0.24×10⁻³ / 4.0 = <strong>6.0 × 10⁻⁵</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> σ ≈ 6.24 × 10⁶ Pa; ε = 6.0 × 10⁻⁵.</div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 3.3(a) — Review the relationship between stress and strain</h4>
+    <p>Within the elastic limit, stress is directly proportional to strain (Hooke's law): σ = k·ε. The proportionality constant k is the modulus of elasticity (Young modulus for tensile case). Both describe deformation: stress is the cause (force per unit area, in Pa), strain is the response (fractional change, dimensionless).</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 3.3(b) — Can compressive stress be applied to a rubber band?</h4>
+    <p>No. A rubber band is a flexible material that only resists being pulled (tensile stress). If you push on it, it buckles — it cannot sustain compressive stress in the way a rod does. Compressive stress requires a material with sufficient rigidity (like steel, concrete).</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 3.3(c) — Nylon string 2 mm diameter, 100 N. Tensile stress?</h4>
+    <p><strong>Solution:</strong> r = 1 mm = 1×10⁻³ m; A = πr² = 3.14×10⁻⁶ m². σ = 100 / 3.14×10⁻⁶ = <strong>3.18 × 10⁷ Pa</strong>.</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 3.3(d) — 2.0 kg load on 4.0 m wire (diameter 2 mm), extension 0.24 mm. Find stress and strain.</h4>
+    <p><strong>Step 1:</strong> F = mg = 2.0 × 9.8 = 19.6 N.</p>
+    <p><strong>Step 2:</strong> A = π(1×10⁻³)² = 3.14×10⁻⁶ m².</p>
+    <p><strong>Step 3:</strong> Stress = 19.6 / 3.14×10⁻⁶ = <strong>6.24 × 10⁶ Pa</strong>.</p>
+    <p><strong>Step 4:</strong> Strain = 0.24×10⁻³ / 4.0 = <strong>6.0 × 10⁻⁵</strong>.</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q5 — Explain stress, strain, Hooke's Law</h4>
+    <p><strong>Stress:</strong> Force per unit cross-sectional area (Pa). <strong>Strain:</strong> Fractional deformation (dimensionless). <strong>Hooke's law:</strong> Within the elastic limit, stress ∝ strain (σ = k·ε).</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q7 — Circular rod 100 mm², 100 kN. Stress?</h4>
+    <p><strong>Step 1:</strong> A = 100 mm² = 100×10⁻⁶ = 1×10⁻⁴ m².</p>
+    <p><strong>Step 2:</strong> F = 100 kN = 1×10⁵ N.</p>
+    <p><strong>Step 3:</strong> σ = 1×10⁵ / 1×10⁻⁴ = <strong>1×10⁹ Pa = 1 GPa</strong>.</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-3.3"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 3.4 ==================== -->
+<section id="section-3.4" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 3.4</span>
+  <h2>The Young Modulus</h2>
+
+  <p><strong>Young modulus Y</strong> measures a solid's resistance to stretching. It is the ratio of tensile stress to tensile strain — a material property independent of the object's dimensions.</p>
+  <p class="am">የያንግ ሞዱለስ Y የጠጣር አካል ለመለጠጥ ያለውን ተቃውሞ ይለካል።</p>
+
+  <h3>Formulas</h3>
+  <div class="formula">Y = (F/A) / (ΔL/L₀) = (F · L₀) / (A · ΔL) &nbsp; [Pa = N/m²]</div>
+  <div class="formula">Solving for F: F = Y · A · ΔL / L₀</div>
+  <div class="formula">Solving for ΔL: ΔL = F · L₀ / (Y · A)</div>
+  <div class="formula">Solving for A (circular wire): A = πr² = π(D/2)²</div>
+
+  <h3>Reference Young moduli</h3>
+  <table>
+    <thead><tr><th>Material</th><th>Y (N/m²)</th></tr></thead>
+    <tbody>
+      <tr><td>Steel</td><td>2.0 × 10¹¹</td></tr>
+      <tr><td>Iron</td><td>~1.9 × 10¹¹</td></tr>
+      <tr><td>Copper</td><td>1.1 × 10¹¹</td></tr>
+      <tr><td>Brass</td><td>0.91 × 10¹¹</td></tr>
+      <tr><td>Aluminum</td><td>0.70 × 10¹¹</td></tr>
+      <tr><td>Glass</td><td>0.65–0.78 × 10¹¹</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 3.4.1 — Piano wire tension (matric exam)</h4>
+    <p>A 1.60 m steel piano wire with diameter 0.20 cm stretches 0.25 cm when tightened. Find the tension. (Y_steel = 2×10¹¹ Pa.)</p>
+    <ol>
+      <li><strong>Given:</strong> L₀ = 1.60 m, D = 0.20 cm = 2×10⁻³ m, r = 1×10⁻³ m, ΔL = 0.25 cm = 2.5×10⁻³ m.</li>
+      <li><strong>Area:</strong> A = πr² = π(1×10⁻³)² = 3.14 × 10⁻⁶ m².</li>
+      <li><strong>Rearrange:</strong> F = Y · A · ΔL / L₀.</li>
+      <li><strong>Substitute:</strong> F = (2×10¹¹)(3.14×10⁻⁶)(2.5×10⁻³) / 1.60.</li>
+      <li><strong>Compute:</strong> F = (2×10¹¹)(7.85×10⁻⁹) / 1.60 = (1570) / 1.60 ≈ <strong>981 N</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> F ≈ 980 N.</div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 3.4.2 — Pendulum wire extension (matric exam)</h4>
+    <p>A 30 kg sphere hangs from a steel wire 15 m long, A = 9×10⁻⁶ m², Y = 200×10⁹ Pa. Find stress and ΔL.</p>
+    <ol>
+      <li><strong>Force:</strong> F = mg = 30 × 9.8 = 294 N.</li>
+      <li><strong>Stress:</strong> σ = F / A = 294 / (9×10⁻⁶) = <strong>3.27 × 10⁷ Pa</strong>.</li>
+      <li><strong>Strain:</strong> ε = σ / Y = 3.27×10⁷ / 200×10⁹ = 1.63 × 10⁻⁴.</li>
+      <li><strong>Extension:</strong> ΔL = ε · L₀ = (1.63×10⁻⁴)(15) = <strong>2.45 × 10⁻³ m = 2.45 mm</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> σ = 3.27 × 10⁷ Pa; ΔL = 2.45 mm.</div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 3.4.3 — Finding Young modulus (matric exam)</h4>
+    <p>A wire increases by 10⁻³ of its length under a stress of 1×10⁸ N/m². Find Young modulus.</p>
+    <ol>
+      <li><strong>Given:</strong> ε = 10⁻³, σ = 1×10⁸ Pa.</li>
+      <li><strong>Formula:</strong> Y = σ / ε.</li>
+      <li><strong>Compute:</strong> Y = (1×10⁸) / (10⁻³) = <strong>1×10¹¹ Pa</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> Y = 1×10¹¹ Pa.</div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 3.4(a) — If length and radius both doubled, what happens to Y?</h4>
+    <p><strong>Solution:</strong> Young modulus is a MATERIAL property — it doesn't depend on the object's dimensions. So Y is <strong>unchanged</strong>. (Note: ΔL DOES change — it becomes half: ΔL ∝ L₀/A; doubling L doubles ΔL, doubling r quadruples A, so ΔL is multiplied by 2/4 = 1/2.)</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 3.4(b) — Strain 10⁻³ under stress 1×10⁸ Pa. Y?</h4>
+    <p><strong>Solution:</strong> Y = 1×10⁸ / 10⁻³ = <strong>1×10¹¹ Pa</strong>.</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 3.4(c) — Wire extends 0.01 m under force F. Second wire (double diameter, double length) extends by?</h4>
+    <p><strong>Step 1:</strong> ΔL = F·L₀/(Y·A). <strong>Step 2:</strong> L₂ = 2L₁; D₂ = 2D₁ → r₂ = 2r₁ → A₂ = 4A₁.</p>
+    <p><strong>Step 3:</strong> ΔL₂/ΔL₁ = (L₂/L₁)(A₁/A₂) = (2)(1/4) = 1/2.</p>
+    <p><strong>Step 4:</strong> ΔL₂ = 0.01 / 2 = <strong>0.005 m = 5 mm</strong>.</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 3.4(d) — 200 kg load on wire (L₀ = 4 m, A = 2×10⁻⁶ m², Y = 8×10¹⁰ Pa). ΔL?</h4>
+    <p><strong>Step 1:</strong> F = mg = 200 × 9.8 = 1960 N.</p>
+    <p><strong>Step 2:</strong> ΔL = F·L₀/(Y·A) = (1960)(4)/(8×10¹⁰ × 2×10⁻⁶).</p>
+    <p><strong>Step 3:</strong> = 7840 / 1.6×10⁵ = <strong>0.049 m = 49 mm</strong>.</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q6 — Wire stretched 3 mm by 150 N. Force for 5 mm?</h4>
+    <p><strong>Solution:</strong> Within elastic limit, ΔL ∝ F. F₂ = 150 × (5/3) = <strong>250 N</strong>.</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q8 — Steel wire L₀ = 6 m, D = 0.6 mm, force 60 N, ΔL = 3 mm. Find (a) stress, (b) strain, (c) Y.</h4>
+    <p><strong>(a) Stress:</strong> r = 0.3 mm = 3×10⁻⁴ m; A = π(3×10⁻⁴)² = 2.83×10⁻⁷ m². σ = 60 / 2.83×10⁻⁷ = <strong>2.12 × 10⁸ Pa</strong>.</p>
+    <p><strong>(b) Strain:</strong> ε = 3×10⁻³ / 6 = <strong>5 × 10⁻⁴</strong>.</p>
+    <p><strong>(c) Y:</strong> Y = σ/ε = 2.12×10⁸ / 5×10⁻⁴ = <strong>4.24 × 10¹¹ Pa</strong>.</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q9 — Wire extends 10⁻³ of length under stress 1×10⁸ Pa. Y?</h4>
+    <p><strong>Solution:</strong> Y = σ/ε = 1×10⁸ / 10⁻³ = <strong>1×10¹¹ Pa</strong>.</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q10 — Two wires same metal. Wire 1: length L/2, diameter 2D. Wire 2: length L, diameter D. Same load. Ratio of extensions?</h4>
+    <p><strong>Step 1:</strong> ΔL = F·L₀/(Y·A). <strong>Step 2:</strong> L₁ = L/2; A₁ = π(2D/2)² = 4A₂ (since r₁ = 2r₂).</p>
+    <p><strong>Step 3:</strong> ΔL₁/ΔL₂ = (L₁/L₂)(A₂/A₁) = (1/2)(1/4) = 1/8.</p>
+    <p><strong>Answer:</strong> ΔL₁ : ΔL₂ = <strong>1 : 8</strong>.</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-3.4"></div>
+</div>
+</section>
+
+<!-- ==================== SECTION 3.5 ==================== -->
+<section id="section-3.5" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Section 3.5</span>
+  <h2>Static Equilibrium</h2>
+
+  <p><strong>Static equilibrium</strong> means an object is at rest AND has no tendency to translate or rotate. Two conditions must both be satisfied:</p>
+  <p class="am">ስታቲክ ሚዛን ማለት አካል በእረፍት ላይ ሆኖ ወደ መንቀሳቀስም ሆነ ወደ መዞር ዝንባሌ የሌለው መሆን ነው።</p>
+
+  <h3>The two conditions</h3>
+  <div class="formula">First condition: ΣF = 0 &nbsp; ⇒ &nbsp; ΣFₓ = 0 and ΣFᵧ = 0</div>
+  <div class="formula">Second condition: Στ = 0 &nbsp; (torque about any axis)</div>
+  <div class="formula">Torque: τ = r · F · sin θ &nbsp; [N·m]</div>
+  <div class="formula">If force is perpendicular to the lever arm: τ = r · F</div>
+
+  <div class="highlight-box">
+    <strong>Torque sign convention:</strong> Counter-clockwise (CCW) torque is positive; clockwise (CW) is negative.<br>
+    <strong>Pivot choice:</strong> Choose the pivot at a point where an unknown force acts — then that force produces zero torque and drops out of the equation.
+    <span class="am"><strong>የቶርክ ምልክት፦</strong> ተቃራኒ ሰዓት (CCW) አዎንታዊ፤ ሰዓት አቅጣጫ (CW) አሉታዊ።</span>
+  </div>
+
+  <h3>Worked Examples</h3>
+  <div class="worked-example">
+    <h4>Example 3.5.1 — Seesaw balance (matric exam)</h4>
+    <p>Child A (30 kg) sits 2.5 m from the pivot. Where must child B (25 kg) sit to balance the seesaw (negligible board mass)?</p>
+    <ol>
+      <li><strong>Condition 1 (ΣF = 0):</strong> Normal from pivot balances total weight — not needed for finding x.</li>
+      <li><strong>Condition 2 (Στ = 0):</strong> Take torque about pivot. CCW (child A) = CW (child B).</li>
+      <li><strong>Equation:</strong> m_A · g · (2.5) = m_B · g · x.</li>
+      <li><strong>Cancel g:</strong> 30 × 2.5 = 25x → x = 75 / 25 = <strong>3.0 m</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> x = 3.0 m from the pivot.</div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 3.5.2 — Hanging mass with angled cord (matric exam)</h4>
+    <p>An object hangs with a horizontal cord of 30 N and another cord at 30° above horizontal. Find the tension F in the angled cord and the weight FW.</p>
+    <ol>
+      <li><strong>Free body diagram:</strong> three forces — horizontal cord (30 N left), angled cord (F at 30° up-right), weight (FW down).</li>
+      <li><strong>Resolve F:</strong> Fₓ = F cos 30° = 0.866F; Fᵧ = F sin 30° = 0.5F.</li>
+      <li><strong>ΣFₓ = 0:</strong> 0.866F − 30 = 0 → F = 30/0.866 = <strong>34.6 N</strong>.</li>
+      <li><strong>ΣFᵧ = 0:</strong> 0.5F − FW = 0 → FW = 0.5(34.6) = <strong>17.3 N</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> F ≈ 34.6 N; FW ≈ 17.3 N.</div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 3.5.3 — Two cords holding a 190 kg mass (matric challenge)</h4>
+    <p>A 190 kg mass hangs from two cords, each making 33° with the vertical. Find the tension in each cord.</p>
+    <ol>
+      <li><strong>Weight:</strong> W = mg = 190 × 9.8 = 1862 N.</li>
+      <li><strong>Symmetry:</strong> Each cord has tension T and makes 33° with vertical.</li>
+      <li><strong>ΣFᵧ = 0:</strong> 2T cos 33° = W → T = W / (2 cos 33°).</li>
+      <li><strong>Compute:</strong> cos 33° ≈ 0.839; T = 1862 / 1.677 ≈ <strong>1110 N per cord</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> T ≈ 1110 N in each cord.</div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 3.5.4 — Beam with pivot and force (matric exam)</h4>
+    <p>A beam pivoted at one end has a 5.0 N force applied vertically upward 3 m from the pivot. Find the beam weight if it's in equilibrium (its center of mass is 1.5 m from the pivot).</p>
+    <ol>
+      <li><strong>Forces:</strong> Upward 5.0 N at r = 3 m; weight W downward at center (r = 1.5 m); pivot reaction at pivot (zero torque about pivot).</li>
+      <li><strong>Στ = 0</strong> about pivot: 5.0 × 3 (CCW) − W × 1.5 (CW) = 0.</li>
+      <li><strong>Solve:</strong> 15 = 1.5W → W = <strong>10 N</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> W = 10 N.</div>
+  </div>
+
+  <div class="worked-example">
+    <h4>Example 3.5.5 — Force at 30° and equilibrium (matric challenge)</h4>
+    <p>A 20 N force at 30° above horizontal and a force F₂ at 60° above horizontal act on an object in equilibrium. Find F₂ and the weight.</p>
+    <ol>
+      <li><strong>ΣFₓ = 0:</strong> 20 cos 30° − F₂ cos 60° = 0 → F₂ = 20 cos 30° / cos 60° = (17.32) / 0.5 = <strong>34.6 N</strong>.</li>
+      <li><strong>ΣFᵧ = 0:</strong> 20 sin 30° + F₂ sin 60° − W = 0.</li>
+      <li><strong>Substitute:</strong> 10 + 34.6 × 0.866 − W = 0 → 10 + 29.96 = W → <strong>W ≈ 40 N</strong>.</li>
+    </ol>
+    <div class="verify-box"><strong>Final:</strong> F₂ ≈ 34.6 N; W ≈ 40 N.</div>
+  </div>
+
+  <h3>Textbook Exercises</h3>
+  <div class="textbook-exercise">
+    <h4>Review 3.5(a) — What does static equilibrium mean?</h4>
+    <p>Static equilibrium occurs when an object is at rest and has no net force or net torque acting on it. The object neither translates nor rotates.</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 3.5(b) — What conditions are necessary for static equilibrium?</h4>
+    <p><strong>First condition:</strong> ΣF = 0 (ΣFₓ = 0 and ΣFᵧ = 0) — no net force, no translation.</p>
+    <p><strong>Second condition:</strong> Στ = 0 — no net torque, no rotation.</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 3.5(c) — Examples of rigid body in static equilibrium</h4>
+    <p>A book on a table; a bridge at rest; a picture frame hanging on a wall; a ladder leaning against a wall; a chandelier hanging from a ceiling.</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>Review 3.5(e) — Seesaw with 26 kg child at 1.6 m from pivot. 32 kg child sits on the other side.</h4>
+    <p><strong>(a) Distance x:</strong> 26 × 1.6 = 32 × x → 41.6 = 32x → x = <strong>1.3 m</strong>.</p>
+    <p><strong>(b) Support force Fp:</strong> Fp = (26 + 32)g = 58 × 9.8 = <strong>568 N</strong>.</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q11 — Two cords holding 190 kg, each at 33° from vertical</h4>
+    <p><strong>Solution:</strong> W = 190 × 9.8 = 1862 N. 2T cos 33° = W → T = 1862 / (2 × 0.839) = <strong>1110 N</strong> per cord.</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q12 — Beam pivoted at one end, 5.0 N vertical force at 3 m. Beam weight?</h4>
+    <p><strong>Solution:</strong> If the beam is uniform with center at L/2 and we assume length L = 6 m (so center at 1.5 m from pivot):</p>
+    <p>τ: 5 × 3 = W × 1.5 → 15 = 1.5W → W = <strong>10 N</strong>.</p>
+  </div>
+  <div class="textbook-exercise">
+    <h4>End-of-unit Q13 — 20 N at 30° and F₂ at 60°, object in equilibrium</h4>
+    <p><strong>(a) F₂:</strong> 20 cos 30° = F₂ cos 60° → F₂ = 17.32/0.5 = <strong>34.6 N</strong>.</p>
+    <p><strong>(b) Weight W:</strong> 20 sin 30° + 34.6 sin 60° = W → 10 + 30 = <strong>40 N</strong>.</p>
+  </div>
+
+  <h3>Revision Quiz</h3>
+  <div id="lesson-quiz-3.5"></div>
+</div>
+</section>
+
+<!-- ==================== ASSESSMENT ==================== -->
+<section id="section-assessment" class="section-panel" role="tabpanel">
+<div class="card card-accent">
+  <span class="badge">Assessment</span>
+  <h2>100 Advanced Questions · 50 Conceptual + 50 Numerical</h2>
+  <p style="color:var(--muted);font-size:.88rem">Matric &amp; entrance-exam level. Every question shows full step-by-step solutions after you answer.</p>
+
+  <div class="progress-bar-container" aria-label="Progress">
+    <div class="progress-bar-fill" id="overall-progress-fill"></div>
+  </div>
+  <p id="progress-text" style="font-size:.85rem;color:var(--muted)">0 of 100 answered</p>
+
+  <div class="filter-bar">
+    <label for="filter-type" class="sr-only">Filter by type</label>
+    <select id="filter-type">
+      <option value="all">All types</option>
+      <option value="conceptual">Conceptual only</option>
+      <option value="numerical">Numerical only</option>
+    </select>
+    <label for="filter-topic" class="sr-only">Filter by topic</label>
+    <select id="filter-topic">
+      <option value="all">All topics</option>
+      <option value="3.1">3.1 Elasticity &amp; Plasticity</option>
+      <option value="3.2">3.2 Density &amp; SG</option>
+      <option value="3.3">3.3 Stress &amp; Strain</option>
+      <option value="3.4">3.4 Young Modulus</option>
+      <option value="3.5">3.5 Static Equilibrium</option>
+    </select>
+    <button class="btn btn-secondary" id="reset-progress-btn" style="margin-left:auto">Reset progress</button>
+  </div>
+
+  <div id="assessment-questions-container"></div>
+</div>
+</section>
+
+<script>
+(function(){
+'use strict';
+
+// ============ LESSON QUIZZES — 4 questions per lesson with step-by-step ============
+const lessonQuizzes = {
+  '3.1': [
+    { q:'A body regains its original shape and size after the deforming force is removed. This property is called:',
+      options:['Plasticity','Elasticity','Ductility','Rigidity'], correct:1,
+      explanation:'Step 1: The definition asks for the property of RETURNING to original shape after the force is removed. Step 2: "Elasticity" is exactly that — the material springs back. Step 3: "Plasticity" means the opposite (permanent deformation). "Ductility" is being drawn into wires; "rigidity" is resistance to bending. Step 4: Only elasticity matches. Answer: Elasticity.' },
+    { q:'Which of the following materials shows plasticity most clearly?',
+      options:['Rubber band','Steel spring','Potter\'s clay','Glass fiber'], correct:2,
+      explanation:'Step 1: Plasticity means STAYING permanently deformed after the force is removed. Step 2: Potter\'s clay is molded permanently — you can\'t recover the original shape. Step 3: Rubber, steel spring, and glass fiber are elastic (they recover their shapes). Step 4: Answer: potter\'s clay.' },
+    { q:'Beyond the elastic limit, a material:',
+      options:['Returns perfectly to its original shape','Undergoes permanent (plastic) deformation','Becomes perfectly rigid','Becomes a superconductor'], correct:1,
+      explanation:'Step 1: The elastic limit is the maximum stress up to which the material returns fully. Step 2: Beyond it, the material cannot fully recover — some deformation remains permanently. Step 3: This is plastic deformation. Step 4: Answer: permanent deformation.' },
+    { q:'Machinery parts are designed to operate BELOW the elastic limit because:',
+      options:['To increase weight','To allow permanent bending','To avoid permanent deformation under normal loads','To make them brittle'], correct:2,
+      explanation:'Step 1: If stress exceeds the elastic limit, parts deform permanently and malfunction. Step 2: Designing below the limit ensures the parts spring back under transient loads. Step 3: A safety factor further reduces working stress. Step 4: Answer: avoid permanent deformation.' }
+  ],
+  '3.2': [
+    { q:'A mineral has mass 54 g and volume 20 cm³. Its density in kg/m³ is:',
+      options:['270','2700','27000','2.7'], correct:1,
+      explanation:'Step 1: Convert to SI: m = 0.054 kg; V = 20×10⁻⁶ m³. Step 2: ρ = m/V = 0.054 / (20×10⁻⁶). Step 3: = 0.054 / 2×10⁻⁵ = 2700 kg/m³. Step 4: (Same as 2.7 g/cm³ × 1000.) Answer: 2700 kg/m³.' },
+    { q:'Specific gravity of a material is:',
+      options:['Same as density','Density ratio: ρ_substance / ρ_water','Mass divided by volume','Weight divided by area'], correct:1,
+      explanation:'Step 1: SG = ρ_sub / ρ_water. Step 2: Reference is water at 4 °C (ρ = 1000 kg/m³). Step 3: SG has no units (ratio). Step 4: Answer: density ratio.' },
+    { q:'A cube of side 2 cm weighs 40 g. Is it gold? (ρ_gold = 19.3 g/cm³)',
+      options:['Yes, matches gold','No — it is less dense','Yes, SG = 19.3','Cannot be determined'], correct:1,
+      explanation:'Step 1: Volume = 2³ = 8 cm³. Step 2: ρ = 40/8 = 5.0 g/cm³. Step 3: SG = 5.0, far from 19.3. Step 4: Not gold — less dense. Answer: no, less dense.' },
+    { q:'An object floats in water. Its specific gravity is:',
+      options:['Greater than 1','Equal to 1','Less than 1','Zero'], correct:2,
+      explanation:'Step 1: Floating means the object\'s density < water\'s density. Step 2: SG = ρ_object / ρ_water. Step 3: If ρ_object < ρ_water → SG < 1. Step 4: Answer: SG < 1.' }
+  ],
+  '3.3': [
+    { q:'A 9.8 N force acts on an area of 2×10⁻³ m². Tensile stress is:',
+      options:['4.9 Pa','4.9 × 10³ Pa','4.9 × 10⁻³ Pa','19.6 Pa'], correct:1,
+      explanation:'Step 1: σ = F/A = 9.8 / (2×10⁻³). Step 2: = 4900 Pa = 4.9 × 10³ Pa. Step 3: Unit check: N / m² = Pa ✓ Step 4: Answer: 4.9 × 10³ Pa.' },
+    { q:'Strain is:',
+      options:['Measured in newtons','Measured in pascals','Dimensionless','Measured in joules'], correct:2,
+      explanation:'Step 1: Strain = ΔL/L₀ (or ΔV/V₀, Δx/L₀). Step 2: Length/length cancels. Step 3: It is a pure ratio with no units. Step 4: Answer: dimensionless.' },
+    { q:'A wire 4 m long extends by 0.24 mm. Tensile strain is:',
+      options:['6 × 10⁻²','6 × 10⁻³','6 × 10⁻⁵','6 × 10⁻⁶'], correct:2,
+      explanation:'Step 1: ΔL = 0.24 mm = 2.4×10⁻⁴ m. Step 2: ε = ΔL/L₀ = 2.4×10⁻⁴ / 4. Step 3: = 6.0 × 10⁻⁵. Step 4: Answer: 6 × 10⁻⁵.' },
+    { q:'A compressive stress causes:',
+      options:['Elongation','Shortening of the object','Increase in volume','Shear deformation'], correct:1,
+      explanation:'Step 1: Compressive stress = pushing forces along the axis. Step 2: The object shortens. Step 3: Compressive strain is negative (ΔL < 0). Step 4: Answer: shortening.' }
+  ],
+  '3.4': [
+    { q:'Young modulus Y is defined as:',
+      options:['Stress × strain','Stress ÷ strain','Strain ÷ stress','Force × area'], correct:1,
+      explanation:'Step 1: Y = (F/A) / (ΔL/L₀). Step 2: = tensile stress / tensile strain. Step 3: Because strain is dimensionless, Y has units of Pa. Step 4: Answer: stress ÷ strain.' },
+    { q:'A wire\'s length is doubled (same radius and force). The extension:',
+      options:['Halves','Doubles','Stays the same','Quadruples'], correct:1,
+      explanation:'Step 1: ΔL = F·L₀/(Y·A). Step 2: For fixed F, Y, A — ΔL ∝ L₀. Step 3: Doubling L₀ doubles ΔL. Step 4: Answer: doubles.' },
+    { q:'A wire\'s diameter is doubled (same length and force). The extension becomes:',
+      options:['Double','Half','One quarter','Four times'], correct:2,
+      explanation:'Step 1: ΔL ∝ 1/A. Step 2: A = πr²; doubling diameter → r doubles → A quadruples. Step 3: ΔL becomes 1/4 of original. Step 4: Answer: one quarter.' },
+    { q:'Steel is preferred for heavy structures because:',
+      options:['It has the smallest Young modulus','It has the largest Young modulus among common metals','It is the cheapest','It is lightest'], correct:1,
+      explanation:'Step 1: Higher Y means greater stiffness — less extension under the same load. Step 2: Steel\'s Y (2×10¹¹ Pa) is larger than copper, brass, aluminum. Step 3: So it deforms less under load. Step 4: Answer: largest Y.' }
+  ],
+  '3.5': [
+    { q:'Two conditions for static equilibrium are:',
+      options:['ΣF = 0 only','Στ = 0 only','ΣF = 0 and Στ = 0','Velocity = constant'], correct:2,
+      explanation:'Step 1: Static equilibrium means no translation and no rotation. Step 2: No translation → ΣF = 0 (first condition). Step 3: No rotation → Στ = 0 (second condition). Step 4: Both are required. Answer: both conditions.' },
+    { q:'A 30 kg child sits 2 m from pivot. A 20 kg child must sit how far to balance?',
+      options:['3 m','2 m','1 m','1.5 m'], correct:0,
+      explanation:'Step 1: Torque balance: m₁·g·r₁ = m₂·g·r₂. Step 2: 30×g×2 = 20×g×r₂. Step 3: 60 = 20 r₂ → r₂ = 3 m. Step 4: Check: 30×2 = 60 = 20×3 ✓ Answer: 3 m.' },
+    { q:'Torque depends on:',
+      options:['Only the force','Only the distance','Force × perpendicular distance from pivot','Force ÷ distance'], correct:2,
+      explanation:'Step 1: τ = r · F · sin θ. Step 2: r = distance to point of application. Step 3: The lever arm (perpendicular distance) = r sin θ. Step 4: τ = F × lever arm. Answer: force × perpendicular distance.' },
+    { q:'For a balanced seesaw with negligible board mass, the pivot reaction force equals:',
+      options:['The larger child\'s weight','The smaller child\'s weight','Sum of the two children\'s weights','Zero'], correct:2,
+      explanation:'Step 1: ΣF = 0 → upward forces = downward forces. Step 2: Pivot reaction is upward; both children push down. Step 3: N = W_A + W_B. Step 4: Answer: sum of the two weights.' }
+  ]
+};
+
+function renderLessonQuiz(lessonId){
+  const c = document.getElementById('lesson-quiz-'+lessonId);
+  if(!c) return;
+  const items = lessonQuizzes[lessonId];
+  let h = '';
+  items.forEach(function(item, idx){
+    const qid = 'L-'+lessonId+'-'+idx;
+    h += '<div class="question-block" data-qid="'+qid+'">';
+    h += '<div class="question-text">Q'+(idx+1)+'. '+item.q+'</div>';
+    h += '<div class="option-list">';
+    item.options.forEach(function(opt, oi){
+      h += '<button class="option-btn" data-correct="'+(oi===item.correct)+'" data-index="'+oi+'">'+opt+'</button>';
+    });
+    h += '</div>';
+    h += '<div class="feedback" id="fb-'+qid+'"></div>';
+    h += '<div class="solution-details" id="sol-'+qid+'"></div>';
+    h += '</div>';
+  });
+  c.innerHTML = h;
+}
+['3.1','3.2','3.3','3.4','3.5'].forEach(renderLessonQuiz);
+
+// ============ 100 ASSESSMENT QUESTIONS ============
+const conceptualData = [
+  // 3.1 (10)
+  {t:'3.1',d:'challenging',q:'A material that regains its original shape after the deforming force is removed is said to be:',
+   o:['Plastic','Elastic','Ductile','Malleable'],c:1,
+   e:'Step 1: Elasticity = ability to recover shape and size after deforming force removed. Step 2: Plasticity = permanent deformation. Ductility = drawable into wire; malleability = hammerable into sheet. Step 3: The definition matches elasticity. Step 4: Answer: elastic.'},
+  {t:'3.1',d:'challenging',q:'The maximum deforming force up to which a material behaves elastically is called:',
+   o:['Yield strength','Elastic limit','Ultimate strength','Breaking point'],c:1,
+   e:'Step 1: Yield strength is where plastic deformation begins. Step 2: Elastic limit is the threshold — beyond it, permanent deformation. Step 3: Ultimate strength is the maximum stress before fracture; breaking point is where it fractures. Step 4: Answer: elastic limit.'},
+  {t:'3.1',d:'challenging',q:'A crane cable should be designed such that:',
+   o:['Stress exceeds ultimate strength','Stress is well below elastic limit','Stress is between elastic and ultimate limit','Stress equals breaking stress'],c:1,
+   e:'Step 1: If stress exceeds elastic limit, permanent deformation occurs (unsafe). Step 2: If stress exceeds ultimate strength, cable snaps. Step 3: Designers keep stress well below elastic limit using a safety factor (typically 3–6). Step 4: Answer: well below elastic limit.'},
+  {t:'3.1',d:'challenging',q:'Which observation indicates plastic deformation?',
+   o:['The object returns to original shape','The object is temporarily bent','The object stays permanently bent','The object vibrates'],c:2,
+   e:'Step 1: Elastic deformation is temporary/recoverable. Step 2: Plastic deformation is permanent. Step 3: Staying bent = permanent → plastic. Step 4: Answer: stays permanently bent.'},
+  {t:'3.1',d:'challenging',q:'Bridges are declared unsafe after long use. The main reason is:',
+   o:['Rusting of all metal','Repeated alternating strains reduce elastic strength (fatigue)','Cars overload the road','Gravity increases with time'],c:1,
+   e:'Step 1: Each passing vehicle causes a stress-strain cycle. Step 2: Repeated cycles cause metal fatigue — microcracks grow, reducing elastic strength. Step 3: Eventually the bridge may fail below its original elastic limit. Step 4: Answer: fatigue from repeated strain cycles.'},
+  {t:'3.1',d:'challenging',q:'The elastic limit of a solid:',
+   o:['Is the same for all materials','Depends on the material only, not on the object','Depends on the object\'s shape and size','Is always equal to the breaking stress'],c:1,
+   e:'Step 1: Elastic limit is a material property (depends on microstructure). Step 2: It does NOT depend on shape/size — steel wire and steel bar have the same elastic limit stress. Step 3: This limit stress is a fixed number (e.g., 250 MPa for mild steel). Step 4: Answer: material-dependent only.'},
+  {t:'3.1',d:'challenging',q:'A rubber band stretched within the elastic limit regains its length. This is an example of:',
+   o:['Plastic deformation','Elastic deformation','Fracture','Shear strain'],c:1,
+   e:'Step 1: The band recovers shape once the force is removed. Step 2: That is elastic deformation. Step 3: Fracture and shear strain describe different phenomena. Step 4: Answer: elastic deformation.'},
+  {t:'3.1',d:'challenging',q:'Putty when squeezed:',
+   o:['Springs back exactly','Stays deformed — plastic','Becomes elastic','Shatters'],c:1,
+   e:'Step 1: Putty is a classic plastic material. Step 2: It stays in whatever shape you mold it into — no spring-back. Step 3: Plastic deformation = permanent change. Step 4: Answer: stays deformed (plastic).'},
+  {t:'3.1',d:'challenging',q:'The maximum mountain height on Earth is limited by:',
+   o:['Air pressure','The elastic strength of rock before it flows or fractures','Solar radiation','Ocean level'],c:1,
+   e:'Step 1: A mountain\'s weight creates stress in the rock below. Step 2: Rock has an elastic limit; beyond it, it flows or fractures. Step 3: This caps how tall a mountain can get (roughly 10 km on Earth). Step 4: Answer: elastic strength of rock.'},
+  {t:'3.1',d:'challenging',q:'A material has an elastic limit of 2×10⁸ Pa. A stress of 3×10⁸ Pa is applied. The material:',
+   o:['Remains elastic','Undergoes plastic (permanent) deformation','Becomes superconducting','Deforms elastically but stiffer'],c:1,
+   e:'Step 1: Applied stress (3×10⁸) > elastic limit (2×10⁸). Step 2: Beyond the limit, the material cannot fully recover. Step 3: It undergoes plastic (permanent) deformation. Step 4: Answer: plastic deformation.'},
+
+  // 3.2 (10)
+  {t:'3.2',d:'challenging',q:'Density of a substance is defined as:',
+   o:['Mass × volume','Mass / volume','Volume / mass','Weight / volume'],c:1,
+   e:'Step 1: ρ = m/V. Step 2: Mass per unit volume. Step 3: SI unit: kg/m³. Step 4: Answer: mass/volume.'},
+  {t:'3.2',d:'challenging',q:'SI unit of density is:',
+   o:['kg','m³','kg/m³','g/cm³'],c:2,
+   e:'Step 1: ρ = m/V → kg ÷ m³ = kg/m³. Step 2: g/cm³ is a CGS unit. Step 3: kg/m³ is the SI unit. Step 4: Answer: kg/m³.'},
+  {t:'3.2',d:'challenging',q:'A 250 cm³ sample has mass 500 g. Its density is:',
+   o:['0.5 g/cm³','2 g/cm³','125 g/cm³','500 g/cm³'],c:1,
+   e:'Step 1: ρ = m/V. Step 2: = 500 / 250. Step 3: = 2 g/cm³ = 2000 kg/m³. Step 4: Answer: 2 g/cm³.'},
+  {t:'3.2',d:'challenging',q:'Specific gravity is measured in:',
+   o:['kg/m³','g/cm³','N/m²','None — it is dimensionless'],c:3,
+   e:'Step 1: SG = ρ_sub / ρ_water. Step 2: Density ÷ density = no units. Step 3: It is a pure ratio. Step 4: Answer: dimensionless (none of the listed units).'},
+  {t:'3.2',d:'challenging',q:'The density of water is maximum at:',
+   o:['0 °C','4 °C','100 °C','25 °C'],c:1,
+   e:'Step 1: Water expands when cooled below 4 °C and when heated above 4 °C. Step 2: Maximum density at exactly 4 °C (1000 kg/m³). Step 3: That\'s why 4 °C is the reference for SG. Step 4: Answer: 4 °C.'},
+  {t:'3.2',d:'challenging',q:'A metal cube 10 cm on each side weighs 8.9 kg. Identify the metal.',
+   o:['Aluminum (2.7 g/cm³)','Iron (7.86 g/cm³)','Copper (8.92 g/cm³)','Gold (19.3 g/cm³)'],c:2,
+   e:'Step 1: V = 10³ = 1000 cm³. Step 2: ρ = 8900/1000 = 8.9 g/cm³. Step 3: Matches copper (8.92). Step 4: Answer: copper.'},
+  {t:'3.2',d:'challenging',q:'Two objects have the same mass but different volumes. The one with the smaller volume:',
+   o:['Has lower density','Has higher density','Has equal density','Cannot be determined'],c:1,
+   e:'Step 1: ρ = m/V. Step 2: For equal mass, smaller volume → larger ρ. Step 3: More mass packed into less space. Step 4: Answer: higher density.'},
+  {t:'3.2',d:'challenging',q:'An object of SG = 0.8 is placed in water. It will:',
+   o:['Sink','Float with 80% submerged','Float with 20% submerged','Dissolve'],c:1,
+   e:'Step 1: SG < 1 means less dense than water → floats. Step 2: Fraction submerged = SG = 0.8 = 80%. Step 3: So 80% of its volume is under water. Step 4: Answer: floats with 80% submerged.'},
+  {t:'3.2',d:'challenging',q:'Ice (SG = 0.92) floats in water because:',
+   o:['Ice is colder','Ice has lower density than liquid water','Of surface tension','Ice is solid'],c:1,
+   e:'Step 1: Ice density ≈ 917 kg/m³; water = 1000 kg/m³. Step 2: ρ_ice < ρ_water → floats. Step 3: About 92% of ice is submerged. Step 4: Answer: ice\'s density < water\'s density.'},
+  {t:'3.2',d:'challenging',q:'A gold-colored ring is 24 g and displaces 2 cm³ water. Its density and SG are:',
+   o:['12 g/cm³, SG=12 — not pure gold','19.3 g/cm³, SG=19.3 — likely fake','24 g/cm³, SG=24','2 g/cm³, SG=2'],c:0,
+   e:'Step 1: ρ = 24/2 = 12 g/cm³. Step 2: SG = 12. Step 3: Gold is 19.3 g/cm³ — this is only 12, not pure gold. Step 4: Answer: density 12 g/cm³ — not pure gold.'},
+
+  // 3.3 (10)
+  {t:'3.3',d:'challenging',q:'Stress is defined as:',
+   o:['Strain × Young modulus','Force per unit area','Area per unit force','Extension per unit length'],c:1,
+   e:'Step 1: σ = F / A. Step 2: Force divided by cross-sectional area. Step 3: SI unit: N/m² = Pa. Step 4: Answer: force per unit area.'},
+  {t:'3.3',d:'challenging',q:'Strain is:',
+   o:['Change in length ÷ original length','Original length ÷ change in length','Force ÷ area','Area ÷ force'],c:0,
+   e:'Step 1: Tensile strain = ΔL / L₀. Step 2: Dimensionless ratio. Step 3: Volumetric and shear strains have analogous forms. Step 4: Answer: ΔL/L₀.'},
+  {t:'3.3',d:'challenging',q:'A wire 2 m long is stretched to 2.008 m. Strain = ?',
+   o:['0.004','0.008','0.002','2.004'],c:0,
+   e:'Step 1: ΔL = 2.008 − 2 = 0.008 m. Step 2: ε = ΔL/L₀ = 0.008/2. Step 3: = 0.004. Step 4: Answer: 0.004.'},
+  {t:'3.3',d:'challenging',q:'A 200 N force acts on 5 cm². Stress in Pa = ?',
+   o:['4×10⁴ Pa','4×10⁵ Pa','4×10⁶ Pa','4×10³ Pa'],c:1,
+   e:'Step 1: A = 5 cm² = 5×10⁻⁴ m². Step 2: σ = 200 / (5×10⁻⁴). Step 3: = 4×10⁵ Pa. Step 4: Answer: 4×10⁵ Pa.'},
+  {t:'3.3',d:'challenging',q:'Hooke\'s law applies when:',
+   o:['Stress is below elastic limit','Stress is in the plastic region','Strain is large','Object breaks'],c:0,
+   e:'Step 1: Hooke\'s law: σ ∝ ε within the elastic limit. Step 2: Beyond the limit, the relationship becomes nonlinear (plastic). Step 3: So Hooke\'s law applies only in the elastic region. Step 4: Answer: stress below elastic limit.'},
+  {t:'3.3',d:'challenging',q:'Compressive strain is:',
+   o:['Positive','Negative (shortening)','Zero','Imaginary'],c:1,
+   e:'Step 1: Compressive stress shortens the object → ΔL < 0. Step 2: Strain = ΔL/L₀ < 0. Step 3: Magnitude is positive; sign is negative relative to tensile. Step 4: Answer: negative (shortening).'},
+  {t:'3.3',d:'challenging',q:'A wire 3 m long extends 3 mm. Strain = ?',
+   o:['1','0.001','0.01','0.1'],c:1,
+   e:'Step 1: ΔL = 3 mm = 3×10⁻³ m. Step 2: ε = 3×10⁻³ / 3. Step 3: = 1×10⁻³ = 0.001. Step 4: Answer: 0.001.'},
+  {t:'3.3',d:'challenging',q:'Which type of stress is involved in squeezing a submarine from all sides?',
+   o:['Tensile','Compressive','Bulk','Shear'],c:2,
+   e:'Step 1: Tensile stretches; compressive shortens axially. Step 2: Shearing acts tangentially; bulk applies from all sides. Step 3: Squeezing from all sides is bulk stress. Step 4: Answer: bulk.'},
+  {t:'3.3',d:'challenging',q:'A rubber band is pulled with 50 N; its cross-sectional area is 5 mm². Stress = ?',
+   o:['1×10⁷ Pa','1×10⁶ Pa','5×10⁵ Pa','1×10⁸ Pa'],c:0,
+   e:'Step 1: A = 5 mm² = 5×10⁻⁶ m². Step 2: σ = 50 / (5×10⁻⁶). Step 3: = 1×10⁷ Pa. Step 4: Answer: 1×10⁷ Pa.'},
+  {t:'3.3',d:'challenging',q:'Strain has no units because:',
+   o:['It is length/length (cancels)','It is a vector','It uses special units','It is measured in Pa'],c:0,
+   e:'Step 1: Strain = ΔL/L₀. Step 2: Both numerator and denominator are lengths. Step 3: Units cancel → dimensionless. Step 4: Answer: length/length cancels.'},
+
+  // 3.4 (10)
+  {t:'3.4',d:'challenging',q:'Young modulus Y = ?',
+   o:['Stress × strain','Stress / strain','Strain / stress','Force / area'],c:1,
+   e:'Step 1: Y = (F/A)/(ΔL/L₀). Step 2: = tensile stress / tensile strain. Step 3: Units match stress (Pa). Step 4: Answer: stress / strain.'},
+  {t:'3.4',d:'challenging',q:'A wire has strain 0.001 when stress is 2×10⁸ Pa. Y = ?',
+   o:['2×10⁵ Pa','2×10¹¹ Pa','2×10⁸ Pa','2×10¹⁰ Pa'],c:1,
+   e:'Step 1: Y = σ / ε = 2×10⁸ / 0.001. Step 2: = 2×10⁸ / 10⁻³ = 2×10¹¹ Pa. Step 3: Matches steel. Step 4: Answer: 2×10¹¹ Pa.'},
+  {t:'3.4',d:'challenging',q:'Doubling the length of a wire (same radius, force) produces:',
+   o:['Double the extension','Half the extension','Same extension','Four times the extension'],c:0,
+   e:'Step 1: ΔL = F·L₀/(Y·A). Step 2: For fixed F, Y, A — doubling L₀ doubles ΔL. Step 3: Linear dependence. Step 4: Answer: double.'},
+  {t:'3.4',d:'challenging',q:'Doubling the radius of a wire (same length, force) produces:',
+   o:['Double extension','Half extension','One-quarter extension','Four times extension'],c:2,
+   e:'Step 1: A = πr²; doubling r → 4× A. Step 2: ΔL ∝ 1/A → ΔL becomes 1/4. Step 3: Inversely proportional to r². Step 4: Answer: one-quarter.'},
+  {t:'3.4',d:'challenging',q:'Steel is preferred for heavy structures because:',
+   o:['It has the smallest Young modulus','It has the largest Young modulus among common metals','It is cheapest','It is lightest'],c:1,
+   e:'Step 1: Higher Y means greater stiffness — less extension under load. Step 2: Steel\'s Y (2×10¹¹ Pa) is larger than copper, brass, aluminum. Step 3: So it deforms less. Step 4: Answer: largest Y.'},
+  {t:'3.4',d:'challenging',q:'The Young modulus is valid only for:',
+   o:['Gases','Liquids','Solids','Plasmas'],c:2,
+   e:'Step 1: Y describes stretch resistance based on length and cross-section. Step 2: Gases and liquids don\'t have fixed length → Y is undefined for them. Step 3: Only solids have well-defined length under stress. Step 4: Answer: solids.'},
+  {t:'3.4',d:'challenging',q:'Two wires identical material. Wire A has 2× length and half the radius of B. Same force. Extension of A vs B?',
+   o:['Same','2×','8×','4×'],c:2,
+   e:'Step 1: ΔL = F·L₀/(Y·A) = F·L₀/(Y·πr²). Step 2: ΔL_A/ΔL_B = (L_A/L_B) × (r_B/r_A)². Step 3: L_A = 2L_B; r_A = 0.5 r_B → (r_B/r_A)² = 4. Step 4: Ratio = 2 × 4 = 8. Answer: 8×.'},
+  {t:'3.4',d:'challenging',q:'A 2 m wire with Y = 1×10¹¹ Pa, A = 1×10⁻⁶ m², supports 200 N. Extension?',
+   o:['4 mm','2 mm','1 mm','0.5 mm'],c:0,
+   e:'Step 1: ΔL = F·L₀/(Y·A). Step 2: = (200 × 2) / (1×10¹¹ × 1×10⁻⁶). Step 3: = 400 / 1×10⁵ = 4×10⁻³ m = 4 mm. Step 4: Answer: 4 mm.'},
+  {t:'3.4',d:'challenging',q:'If both length and radius of a wire are doubled, the Young modulus:',
+   o:['Doubles','Halves','Quadruples','Unchanged'],c:3,
+   e:'Step 1: Y depends only on material, not geometry. Step 2: So changing L or r does NOT alter Y. Step 3: Only ΔL changes. Step 4: Answer: unchanged.'},
+  {t:'3.4',d:'challenging',q:'A wire stretches 1 mm under 100 N. The same wire under 300 N stretches:',
+   o:['1 mm','2 mm','3 mm','9 mm'],c:2,
+   e:'Step 1: Within elastic limit, ΔL ∝ F. Step 2: Tripling force triples extension. Step 3: ΔL = 3 × 1 mm = 3 mm. Step 4: Answer: 3 mm.'},
+
+  // 3.5 (10)
+  {t:'3.5',d:'challenging',q:'First condition of equilibrium is:',
+   o:['Στ = 0','ΣF = 0','Velocity = 0','Mass = 0'],c:1,
+   e:'Step 1: First condition (translational) — sum of forces = 0. Step 2: Second condition (rotational) — sum of torques = 0. Step 3: Both are needed for full static equilibrium. Step 4: Answer: ΣF = 0.'},
+  {t:'3.5',d:'challenging',q:'Second condition of equilibrium is:',
+   o:['ΣF = 0','Στ = 0','Velocity = 0','Force × distance = 0'],c:1,
+   e:'Step 1: Torque (τ = F·r·sinθ) must sum to zero for no rotation. Step 2: This prevents spinning. Step 3: Combined with ΣF = 0 gives static equilibrium. Step 4: Answer: Στ = 0.'},
+  {t:'3.5',d:'challenging',q:'A 20 N force applied at 2 m from pivot (perpendicular). Torque = ?',
+   o:['10 N·m','20 N·m','40 N·m','0.1 N·m'],c:2,
+   e:'Step 1: τ = r × F (perpendicular, sin 90° = 1). Step 2: = 2 × 20. Step 3: = 40 N·m. Step 4: Answer: 40 N·m.'},
+  {t:'3.5',d:'challenging',q:'Torque is a:',
+   o:['Scalar','Vector','Dimensionless quantity','Force'],c:1,
+   e:'Step 1: τ = r × F (cross product). Step 2: Cross products yield vectors. Step 3: Direction is perpendicular to the plane, following right-hand rule. Step 4: Answer: vector.'},
+  {t:'3.5',d:'challenging',q:'A 5 m seesaw pivoted at center. A 60 kg child sits 2 m from pivot. Where must a 40 kg child sit to balance?',
+   o:['2 m','3 m','4 m','2.5 m'],c:1,
+   e:'Step 1: Torque balance: 60 × 2 = 40 × x. Step 2: 120 = 40x → x = 3 m. Step 3: Check: 60 × 2 = 120 = 40 × 3 ✓ Step 4: Answer: 3 m.'},
+  {t:'3.5',d:'challenging',q:'For static equilibrium, the number of independent equations in 2D is:',
+   o:['1','2','3','4'],c:2,
+   e:'Step 1: ΣFₓ = 0 (one equation). Step 2: ΣFᵧ = 0 (second). Step 3: Στ = 0 (third). Step 4: 3 equations allow solving up to 3 unknowns. Answer: 3.'},
+  {t:'3.5',d:'challenging',q:'A uniform 4 m beam of mass 20 kg is supported at both ends. A 60 kg mass hangs 1 m from the left end. Reaction at left support (approximately):',
+   o:['~400 N','~500 N','~600 N','~800 N'],c:1,
+   e:'Step 1: R_L + R_R = (20+60)g = 784 N. Step 2: Torque about left support: R_R × 4 = 60g × 1 + 20g × 2. Step 3: R_R × 4 = 588 + 392 = 980 → R_R = 245 N. Step 4: R_L = 784 − 245 = 539 N ≈ 500 N. Answer: ~500 N.'},
+  {t:'3.5',d:'challenging',q:'The lever arm for a force is:',
+   o:['Distance from pivot to point of application','Perpendicular distance from pivot to line of action of the force','Length of the force vector','Mass times g'],c:1,
+   e:'Step 1: τ = r · F · sin θ. Step 2: Lever arm = r sin θ = perpendicular distance from pivot to line of action. Step 3: Maximized when force is perpendicular to r. Step 4: Answer: perpendicular distance.'},
+  {t:'3.5',d:'challenging',q:'A door requires less force to open when pushed at the handle (far edge) than near the hinge because:',
+   o:['The handle is lighter','The lever arm is larger','The force becomes scalar','The torque decreases'],c:1,
+   e:'Step 1: τ = F × lever arm. Step 2: Larger lever arm (handle far from hinge) → same torque with smaller F. Step 3: So less force needed. Step 4: Answer: larger lever arm.'},
+  {t:'3.5',d:'challenging',q:'A body is in translational equilibrium but not rotational equilibrium. This means:',
+   o:['ΣF = 0 and Στ = 0','ΣF = 0 but Στ ≠ 0 — it rotates','ΣF ≠ 0 but Στ = 0','Both are nonzero'],c:1,
+   e:'Step 1: Translational equilibrium → ΣF = 0. Step 2: Not rotational → Στ ≠ 0 → it will rotate. Step 3: Physical example: pivoted rod pushed off-center. Step 4: Answer: ΣF = 0, Στ ≠ 0.'}
+];
+
+// 50 numerical — advanced with step-by-step
+const numericalData = [
+  // 3.1
+  {t:'3.1',d:'challenging',q:'A material has elastic limit stress 3×10⁸ Pa. A force of 600 N is applied to 1 mm². Is the stress within elastic limit? (Answer 1=yes, 0=no)',
+   a:0,u:'',tol:0.01,
+   steps:['A = 1 mm² = 1×10⁻⁶ m².','σ = 600 / 1×10⁻⁶ = 6×10⁸ Pa.','Compare: 6×10⁸ > elastic limit 3×10⁸.','Not within elastic limit → plastic deformation. Answer: 0 (no).']},
+  {t:'3.1',d:'challenging',q:'Crane cable (elastic limit 5×10⁸ Pa) with area 2×10⁻⁴ m² lifts a load. Max safe force (safety factor 4) in N?',
+   a:25000,u:'N',tol:250,
+   steps:['Max allowed stress = 5×10⁸ / 4 = 1.25×10⁸ Pa.','F_max = σ × A = 1.25×10⁸ × 2×10⁻⁴.','= 2.5×10⁴ N = 25,000 N.']},
+  {t:'3.1',d:'challenging',q:'A rubber band stretched from 20 cm to 30 cm. If elastic limit strain is 0.15, is the strain within the limit? (1=yes, 0=no)',
+   a:0,u:'',tol:0.01,
+   steps:['ΔL = 30 − 20 = 10 cm.','ε = 10/20 = 0.5.','Compare to 0.15: 0.5 > 0.15.','Beyond elastic limit → answer: 0 (no).']},
+  {t:'3.1',d:'challenging',q:'Two materials (elastic limits 2.5×10⁸ Pa and 4×10⁸ Pa). Same wire (A = 5×10⁻⁵ m²). Difference in max loads (N)?',
+   a:7500,u:'N',tol:75,
+   steps:['F_max1 = 2.5×10⁸ × 5×10⁻⁵ = 12,500 N.','F_max2 = 4×10⁸ × 5×10⁻⁵ = 20,000 N.','Difference = 20,000 − 12,500 = 7,500 N.']},
+  {t:'3.1',d:'challenging',q:'A spring stretches elastically up to 15 cm extension. If stretched by 25 cm, permanent deformation (cm)?',
+   a:10,u:'cm',tol:0.1,
+   steps:['Extension beyond limit = 25 − 15 = 10 cm.','Assuming all excess becomes permanent: 10 cm residual.']},
+
+  // 3.2
+  {t:'3.2',d:'challenging',q:'A mineral sample has mass 108 g and volume 40 cm³. Density in g/cm³?',
+   a:2.7,u:'g/cm³',tol:0.03,
+   steps:['ρ = 108 / 40.','= 2.7 g/cm³.','= 2700 kg/m³.']},
+  {t:'3.2',d:'challenging',q:'Specific gravity of a material with density 8400 kg/m³?',
+   a:8.4,u:'',tol:0.08,
+   steps:['SG = ρ_sub / ρ_water = 8400 / 1000.','= 8.4.']},
+  {t:'3.2',d:'challenging',q:'A block of mass 450 g has volume 50 cm³. Density in kg/m³?',
+   a:9000,u:'kg/m³',tol:90,
+   steps:['m = 0.450 kg; V = 50×10⁻⁶ m³.','ρ = 0.450 / (50×10⁻⁶).','= 9000 kg/m³.']},
+  {t:'3.2',d:'challenging',q:'A 3 cm × 4 cm × 5 cm brick has mass 180 g. Density in g/cm³?',
+   a:3,u:'g/cm³',tol:0.03,
+   steps:['V = 3 × 4 × 5 = 60 cm³.','ρ = 180 / 60 = 3 g/cm³.','= 3000 kg/m³.']},
+  {t:'3.2',d:'challenging',q:'A granite sample has density 2.8 g/cm³. Its SG?',
+   a:2.8,u:'',tol:0.03,
+   steps:['SG = 2.8 / 1.0.','= 2.8.']},
+  {t:'3.2',d:'challenging',q:'Mass of air in a room 5.6 × 3.6 × 2.4 m (ρ_air = 1.29 kg/m³)?',
+   a:62.4,u:'kg',tol:0.6,
+   steps:['V = 5.6 × 3.6 × 2.4 = 48.384 m³.','m = ρV = 1.29 × 48.384.','= 62.4 kg.']},
+  {t:'3.2',d:'challenging',q:'A golden-colored cube 2 cm on each side weighs 40 g. Density in g/cm³?',
+   a:5,u:'g/cm³',tol:0.05,
+   steps:['V = 2³ = 8 cm³.','ρ = 40/8.','= 5 g/cm³ (not gold).']},
+  {t:'3.2',d:'challenging',q:'A 250 g cup of liquid has volume 200 cm³. Density in g/cm³?',
+   a:1.25,u:'g/cm³',tol:0.02,
+   steps:['ρ = 250/200 = 1.25 g/cm³.','Denser than water.']},
+  {t:'3.2',d:'challenging',q:'A body has SG = 0.75. What fraction of its volume floats above water?',
+   a:0.25,u:'',tol:0.02,
+   steps:['Fraction submerged = SG = 0.75.','Fraction above = 1 − 0.75 = 0.25.']},
+  {t:'3.2',d:'challenging',q:'Earth mass = 5.98×10²⁴ kg, radius = 6.37×10⁶ m. Find average density (kg/m³).',
+   a:5520,u:'kg/m³',tol:55,
+   steps:['V = (4/3)πR³ = (4/3)π(6.37×10⁶)³.','R³ ≈ 2.585×10²⁰; V ≈ 1.083×10²¹ m³.','ρ = 5.98×10²⁴ / 1.083×10²¹ ≈ 5520 kg/m³.']},
+
+  // 3.3
+  {t:'3.3',d:'challenging',q:'A force of 500 N acts on area 25 cm². Stress in Pa?',
+   a:200000,u:'Pa',tol:2000,
+   steps:['A = 25 cm² = 2.5×10⁻³ m².','σ = 500 / 2.5×10⁻³.','= 200,000 Pa = 2×10⁵ Pa.']},
+  {t:'3.3',d:'challenging',q:'A wire of diameter 0.4 mm and load 98 N. Tensile stress in Pa?',
+   a:7.8e8,u:'Pa',tol:7.8e6,
+   steps:['r = 0.2 mm = 2×10⁻⁴ m.','A = πr² = 3.14 × 4×10⁻⁸ = 1.256×10⁻⁷ m².','σ = 98 / 1.256×10⁻⁷ ≈ 7.8×10⁸ Pa.']},
+  {t:'3.3',d:'challenging',q:'A 2 m wire extends by 2 mm. Strain?',
+   a:0.001,u:'',tol:0.0001,
+   steps:['ΔL = 2 mm = 2×10⁻³ m.','ε = ΔL/L₀ = 2×10⁻³ / 2.','= 1×10⁻³ = 0.001.']},
+  {t:'3.3',d:'challenging',q:'A 3 m wire extends 4 mm under load. Strain?',
+   a:0.00133,u:'',tol:0.0001,
+   steps:['ΔL = 4 mm = 4×10⁻³ m.','ε = 4×10⁻³ / 3.','≈ 1.33×10⁻³ = 0.00133.']},
+  {t:'3.3',d:'challenging',q:'A wire 2 mm diameter pulled by 200 N. Tensile stress in Pa?',
+   a:6.37e7,u:'Pa',tol:6.37e5,
+   steps:['r = 1 mm = 1×10⁻³ m.','A = πr² = 3.14×10⁻⁶ m².','σ = 200 / 3.14×10⁻⁶ ≈ 6.37×10⁷ Pa.']},
+  {t:'3.3',d:'challenging',q:'A 2 kg load on 2 mm diameter wire produces extension 0.24 mm (L₀ = 4 m). Strain?',
+   a:0.00006,u:'',tol:0.00001,
+   steps:['ΔL = 0.24 mm = 2.4×10⁻⁴ m.','ε = 2.4×10⁻⁴ / 4.','= 6×10⁻⁵ = 0.00006.']},
+  {t:'3.3',d:'challenging',q:'A steel rod (area 5 cm²) supports 50 kN. Stress in MPa?',
+   a:100,u:'MPa',tol:1,
+   steps:['A = 5 cm² = 5×10⁻⁴ m².','F = 50 kN = 5×10⁴ N.','σ = 5×10⁴ / 5×10⁻⁴ = 1×10⁸ Pa = 100 MPa.']},
+  {t:'3.3',d:'challenging',q:'500 cm³ block decreases by 0.5 cm³ under pressure. Volumetric strain?',
+   a:0.001,u:'',tol:0.0001,
+   steps:['ΔV = 0.5 cm³; V₀ = 500 cm³.','ε_v = 0.5/500.','= 1×10⁻³ = 0.001.']},
+  {t:'3.3',d:'challenging',q:'A wire is compressed by 0.5 mm from original 500 mm. Compressive strain magnitude?',
+   a:0.001,u:'',tol:0.0001,
+   steps:['ΔL = 5×10⁻⁴ m; L₀ = 0.5 m.','ε = 5×10⁻⁴ / 0.5.','= 1×10⁻³ = 0.001.']},
+  {t:'3.3',d:'challenging',q:'100 N force on circular cross-section of 2 mm diameter. Stress in Pa?',
+   a:3.18e7,u:'Pa',tol:3.18e5,
+   steps:['r = 1×10⁻³ m.','A = πr² = 3.14×10⁻⁶ m².','σ = 100 / 3.14×10⁻⁶ ≈ 3.18×10⁷ Pa.']},
+
+  // 3.4
+  {t:'3.4',d:'challenging',q:'A wire with stress 4×10⁸ Pa has strain 2×10⁻³. Y in Pa?',
+   a:2e11,u:'Pa',tol:2e9,
+   steps:['Y = σ / ε = 4×10⁸ / 2×10⁻³.','= 2×10¹¹ Pa.']},
+  {t:'3.4',d:'challenging',q:'Steel piano wire: L₀ = 1.6 m, D = 0.2 cm, ΔL = 0.25 cm, Y = 2×10¹¹ Pa. Tension in N?',
+   a:981,u:'N',tol:10,
+   steps:['r = 1×10⁻³ m; A = πr² ≈ 3.14×10⁻⁶ m².','ΔL = 2.5×10⁻³ m.','F = Y·A·ΔL/L₀ = (2×10¹¹)(3.14×10⁻⁶)(2.5×10⁻³)/1.6.','≈ 981 N.']},
+  {t:'3.4',d:'challenging',q:'Pendulum: 30 kg sphere, steel wire 15 m, A = 9×10⁻⁶ m², Y = 2×10¹¹ Pa. Extension ΔL in mm?',
+   a:2.45,u:'mm',tol:0.03,
+   steps:['F = 30 × 9.8 = 294 N.','ΔL = F·L₀/(Y·A) = (294 × 15)/(2×10¹¹ × 9×10⁻⁶).','= 4410 / 1.8×10⁶ = 2.45×10⁻³ m = 2.45 mm.']},
+  {t:'3.4',d:'challenging',q:'If length of wire doubles (same force, radius), the extension changes by factor:',
+   a:2,u:'',tol:0.05,
+   steps:['ΔL ∝ L₀.','Doubling L₀ doubles ΔL.','Factor = 2.']},
+  {t:'3.4',d:'challenging',q:'Y = 1×10¹¹ Pa, A = 1×10⁻⁶ m², L₀ = 2 m. Force for 1 mm extension (N)?',
+   a:50,u:'N',tol:0.5,
+   steps:['ΔL = 1×10⁻³ m.','F = Y·A·ΔL/L₀ = (1×10¹¹)(1×10⁻⁶)(1×10⁻³)/2.','= 1×10²/2 = 50 N.']},
+  {t:'3.4',d:'challenging',q:'200 kg load on 4 m wire (A = 2×10⁻⁶ m², Y = 8×10¹⁰ Pa). Extension in mm?',
+   a:49,u:'mm',tol:0.5,
+   steps:['F = 200 × 9.8 = 1960 N.','ΔL = 1960 × 4 / (8×10¹⁰ × 2×10⁻⁶) = 7840 / 1.6×10⁵.','= 0.049 m = 49 mm.']},
+  {t:'3.4',d:'challenging',q:'Stress 1×10⁸ Pa causes 10⁻³ strain. Y in Pa?',
+   a:1e11,u:'Pa',tol:1e9,
+   steps:['Y = 1×10⁸ / 10⁻³.','= 1×10¹¹ Pa.']},
+  {t:'3.4',d:'challenging',q:'A wire stretches 3 mm under 150 N. Force for 5 mm (within elastic limit, in N)?',
+   a:250,u:'N',tol:2.5,
+   steps:['ΔL ∝ F within elastic limit.','F₂ = 150 × (5/3).','= 250 N.']},
+  {t:'3.4',d:'challenging',q:'Steel Y = 2×10¹¹ Pa. Stress for 0.1% strain in Pa?',
+   a:2e8,u:'Pa',tol:2e7,
+   steps:['ε = 0.001.','σ = Y × ε = 2×10¹¹ × 10⁻³.','= 2×10⁸ Pa.']},
+  {t:'3.4',d:'challenging',q:'Copper wire stretches 2 mm under load. If its length is halved (same load, radius), extension in mm?',
+   a:1,u:'mm',tol:0.05,
+   steps:['ΔL ∝ L₀.','Halving length halves extension.','ΔL_new = 2/2 = 1 mm.']},
+
+  // 3.5
+  {t:'3.5',d:'challenging',q:'A 30 kg child sits 2.5 m from pivot. 25 kg child balances on other side. Distance x in m?',
+   a:3,u:'m',tol:0.05,
+   steps:['Torque balance: 30 × 2.5 = 25 × x.','75 = 25x.','x = 3.0 m.']},
+  {t:'3.5',d:'challenging',q:'A force of 40 N at 3 m from pivot (perpendicular). Torque in N·m?',
+   a:120,u:'N·m',tol:1,
+   steps:['τ = r × F = 3 × 40.','= 120 N·m.']},
+  {t:'3.5',d:'challenging',q:'Beam 6 m long, pivot at center. 60 N at one end, 100 N at other. Net torque (N·m)?',
+   a:120,u:'N·m',tol:1.2,
+   steps:['60 N at 3 m → 180 N·m (one way).','100 N at 3 m → 300 N·m (opposite).','Net = 300 − 180 = 120 N·m (toward 100 N side).']},
+  {t:'3.5',d:'challenging',q:'Rod pivot at one end, 200 N at 2 m. Reaction at pivot (N)?',
+   a:200,u:'N',tol:2,
+   steps:['ΣF = 0: R = 200 N upward.','Reaction balances the load.']},
+  {t:'3.5',d:'challenging',q:'190 kg mass hangs from two cords each at 33° from vertical. Tension in each cord (N)?',
+   a:1110,u:'N',tol:11,
+   steps:['W = 190 × 9.8 = 1862 N.','2T cos 33° = 1862.','T = 1862 / (2 × 0.839) ≈ 1110 N.']},
+  {t:'3.5',d:'challenging',q:'20 N at 30° above horizontal + F₂ at 60° above horizontal. If horizontal forces balance, F₂ in N?',
+   a:34.6,u:'N',tol:0.35,
+   steps:['20 cos 30° = F₂ cos 60°.','17.32 = F₂ × 0.5.','F₂ = 34.64 N.']},
+  {t:'3.5',d:'challenging',q:'From previous: vertical balance → weight W (N)?',
+   a:40,u:'N',tol:0.4,
+   steps:['20 sin 30° + F₂ sin 60° = W.','10 + 34.6 × 0.866 = W.','10 + 29.96 ≈ 40 N.']},
+  {t:'3.5',d:'challenging',q:'Uniform 4 m beam (20 kg) supported at ends. 60 kg load 1 m from left end. Reaction at LEFT support (N)?',
+   a:539,u:'N',tol:5.4,
+   steps:['R_L + R_R = (20+60)g = 784 N.','Torque about left end: R_R × 4 = 60g × 1 + 20g × 2 = 980.','R_R = 245 N.','R_L = 784 − 245 = 539 N.']},
+  {t:'3.5',d:'challenging',q:'5 m beam pivot at left end. 100 N at 2 m, 150 N at 4 m. Torque about pivot (N·m)?',
+   a:800,u:'N·m',tol:8,
+   steps:['τ₁ = 100 × 2 = 200.','τ₂ = 150 × 4 = 600.','Total = 800 N·m.']},
+  {t:'3.5',d:'challenging',q:'26 kg child at 1.6 m from pivot. 32 kg child on opposite side. Distance x (m)?',
+   a:1.3,u:'m',tol:0.02,
+   steps:['26 × 1.6 = 32 × x.','41.6 = 32x.','x = 1.3 m.']},
+  {t:'3.5',d:'challenging',q:'From previous: pivot support force (N)?',
+   a:568,u:'N',tol:5.7,
+   steps:['F = (26 + 32) × 9.8 = 58 × 9.8.','= 568 N.']}
+];
+
+// Build questions
+const questions = [];
+conceptualData.forEach(function(item, i){
+  questions.push({id:'C'+String(i+1).padStart(3,'0'),type:'conceptual',topic:item.t,difficulty:item.d,question:item.q,options:item.o,correctIndex:item.c,explanation:item.e,answered:false});
+});
+numericalData.forEach(function(item, i){
+  questions.push({id:'N'+String(i+1).padStart(3,'0'),type:'numerical',topic:item.t,difficulty:item.d,question:item.q,answer:item.a,unit:item.u,tolerance:item.tol,direction:item.dir||'',steps:item.steps,answered:false,userAnswer:null});
+});
+
+// ============ RENDER ============
+const container = document.getElementById('assessment-questions-container');
+const progressFill = document.getElementById('overall-progress-fill');
+const progressText = document.getElementById('progress-text');
+
+function renderQuestions(filterType, filterTopic){
+  let html = '';
+  const filtered = questions.filter(function(q){
+    return (filterType==='all'||q.type===filterType) && (filterTopic==='all'||q.topic===filterTopic);
+  });
+  filtered.forEach(function(q){
+    const typeLabel = q.type === 'conceptual' ? 'Conceptual' : 'Numerical';
+    const typeClass = q.type === 'conceptual' ? 'tag-conceptual' : 'tag-numerical';
+    html += '<div class="question-block" id="q-'+q.id+'" data-qid="'+q.id+'">';
+    html += '<div class="q-meta">';
+    html += '<span class="badge">'+q.topic+'</span>';
+    html += '<span class="badge badge-'+q.difficulty+'">'+q.difficulty+'</span>';
+    html += '<span class="badge '+typeClass+'">'+typeLabel+'</span>';
+    html += '<span style="margin-left:auto;font-weight:600">#'+q.id+'</span>';
+    html += '</div>';
+    html += '<div class="question-text">'+q.question+'</div>';
+
+    if(q.type === 'conceptual'){
+      html += '<div class="option-list" role="group">';
+      q.options.forEach(function(opt, oi){
+        html += '<button class="option-btn" data-qid="'+q.id+'" data-index="'+oi+'" data-correct="'+(oi===q.correctIndex)+'">'+opt+'</button>';
+      });
+      html += '</div>';
+    } else {
+      html += '<div class="numeric-answer-area">';
+      html += '<label class="sr-only" for="input-'+q.id+'">Answer</label>';
+      html += '<input type="number" step="any" id="input-'+q.id+'" placeholder="Enter value">';
+      html += '<span class="unit-label">'+q.unit+'</span>';
+      html += '<button class="btn btn-primary" id="check-'+q.id+'" data-qid="'+q.id+'">Check</button>';
+      html += '</div>';
+    }
+    html += '<div class="feedback" id="fb-'+q.id+'"></div>';
+    html += '<div class="solution-details" id="sol-'+q.id+'"></div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+  updateProgress();
+}
+
+// Conceptual click
+container.addEventListener('click', function(e){
+  const btn = e.target.closest('.option-btn');
+  if(!btn || !btn.dataset.qid) return;
+  const qid = btn.dataset.qid;
+  const parent = document.getElementById('q-'+qid);
+  if(!parent || parent.dataset.answered === 'true') return;
+  const q = questions.find(function(x){ return x.id === qid; });
+  if(!q) return;
+  const sel = parseInt(btn.dataset.index, 10);
+  const ok = sel === q.correctIndex;
+  parent.dataset.answered = 'true';
+  q.answered = true;
+
+  parent.querySelectorAll('.option-btn').forEach(function(b){
+    b.disabled = true;
+    if(parseInt(b.dataset.index,10) === q.correctIndex) b.classList.add('correct');
+    else if(b === btn) b.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('fb-'+qid);
+  fb.classList.add('show', ok ? 'correct-fb' : 'wrong-fb');
+  fb.innerHTML = (ok ? '✅ <strong>Correct!</strong>' : '❌ <strong>Incorrect.</strong>') + ' Read the full solution below to see exactly why.';
+
+  const sol = document.getElementById('sol-'+qid);
+  sol.classList.add('show');
+  const parts = q.explanation.split(/(?=Step \d+:)/);
+  let solHtml = '<span class="solution-title">Full step-by-step solution</span>';
+  parts.forEach(function(p){
+    if(p.trim()) solHtml += '<span class="step">'+p.trim()+'</span>';
+  });
+  sol.innerHTML = solHtml;
+
+  parent.classList.add(ok ? 'correct-highlight' : 'wrong-highlight');
+  updateProgress();
+});
+
+// Numerical check
+container.addEventListener('click', function(e){
+  const btn = e.target.closest('.btn-primary');
+  if(!btn || !btn.id.startsWith('check-')) return;
+  const qid = btn.dataset.qid;
+  const parent = document.getElementById('q-'+qid);
+  if(!parent || parent.dataset.answered === 'true') return;
+  const q = questions.find(function(x){ return x.id === qid; });
+  if(!q) return;
+  const inp = document.getElementById('input-'+qid);
+  const val = parseFloat(inp.value);
+  if(isNaN(val)){ inp.focus(); inp.style.borderColor = 'var(--wrong)'; return; }
+  inp.style.borderColor = '';
+
+  const ok = Math.abs(val - q.answer) <= q.tolerance;
+  parent.dataset.answered = 'true';
+  q.answered = true;
+
+  const fb = document.getElementById('fb-'+qid);
+  fb.classList.add('show', ok ? 'correct-fb' : 'wrong-fb');
+  const dirNote = q.direction ? ' ('+q.direction+')' : '';
+  if(ok){
+    fb.innerHTML = '✅ <strong>Correct!</strong> Answer = '+q.answer+' '+q.unit+dirNote;
+  } else {
+    fb.innerHTML = '❌ <strong>Incorrect.</strong> Your answer: '+val+' '+q.unit+'. Correct: <strong>'+q.answer+' '+q.unit+'</strong>'+dirNote;
+  }
+
+  const sol = document.getElementById('sol-'+qid);
+  sol.classList.add('show');
+  let solHtml = '<span class="solution-title">Full step-by-step solution</span>';
+  q.steps.forEach(function(s, i){
+    solHtml += '<span class="step"><strong>Step '+(i+1)+':</strong> '+s+'</span>';
+  });
+  solHtml += '<span class="step"><strong>Final answer:</strong> '+q.answer+' '+q.unit+dirNote+'</span>';
+  sol.innerHTML = solHtml;
+
+  parent.classList.add(ok ? 'correct-highlight' : 'wrong-highlight');
+  updateProgress();
+});
+
+function updateProgress(){
+  const n = questions.filter(function(q){ return q.answered; }).length;
+  progressFill.style.width = (n/questions.length*100)+'%';
+  progressText.textContent = n+' of '+questions.length+' answered';
+}
+
+document.getElementById('filter-type').addEventListener('change', function(){
+  renderQuestions(this.value, document.getElementById('filter-topic').value);
+});
+document.getElementById('filter-topic').addEventListener('change', function(){
+  renderQuestions(document.getElementById('filter-type').value, this.value);
+});
+document.getElementById('reset-progress-btn').addEventListener('click', function(){
+  if(!confirm('Reset all answers?')) return;
+  questions.forEach(function(q){ q.answered = false; q.userAnswer = null; });
+  renderQuestions(document.getElementById('filter-type').value, document.getElementById('filter-topic').value);
+});
+
+// Tab nav
+const navBtns = document.querySelectorAll('.unit-nav button');
+const panels = document.querySelectorAll('.section-panel');
+navBtns.forEach(function(btn){
+  btn.addEventListener('click', function(){
+    navBtns.forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+    panels.forEach(function(p){ p.classList.remove('active'); });
+    this.classList.add('active'); this.setAttribute('aria-selected','true');
+    const sec = this.dataset.section;
+    const target = document.getElementById('section-'+sec);
+    if(target) target.classList.add('active');
+    if(sec === 'assessment'){
+      renderQuestions(document.getElementById('filter-type').value, document.getElementById('filter-topic').value);
+    }
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+// Lesson quiz click — full step-by-step
+document.addEventListener('click', function(e){
+  const btn = e.target.closest('.option-btn');
+  if(!btn || !btn.dataset.correct || !btn.closest('[id^="lesson-quiz-"]')) return;
+  const parent = btn.closest('.question-block');
+  if(!parent || parent.dataset.answered === 'true') return;
+  parent.dataset.answered = 'true';
+  const ok = btn.dataset.correct === 'true';
+  parent.querySelectorAll('.option-btn').forEach(function(b){
+    b.disabled = true;
+    if(b.dataset.correct === 'true') b.classList.add('correct');
+    else if(b === btn) b.classList.add('wrong');
+  });
+
+  const qid = parent.dataset.qid;
+  const parts = qid.split('-');
+  const lessonId = parts[1];
+  const idx = parseInt(parts[2], 10);
+  const item = lessonQuizzes[lessonId][idx];
+
+  const fb = parent.querySelector('.feedback');
+  if(fb){
+    fb.classList.add('show', ok ? 'correct-fb' : 'wrong-fb');
+    fb.innerHTML = (ok ? '✅ <strong>Correct!</strong>' : '❌ <strong>Incorrect.</strong>') + ' Full reasoning below.';
+  }
+
+  const sol = parent.querySelector('.solution-details');
+  if(sol && item && item.explanation){
+    sol.classList.add('show');
+    const expParts = item.explanation.split(/(?=Step \d+:)/);
+    let solHtml = '<span class="solution-title">Full step-by-step solution</span>';
+    expParts.forEach(function(p){
+      if(p.trim()) solHtml += '<span class="step">'+p.trim()+'</span>';
+    });
+    sol.innerHTML = solHtml;
+  }
+
+  parent.classList.add(ok ? 'correct-highlight' : 'wrong-highlight');
+});
+
+renderQuestions('all','all');
+updateProgress();
+})();
+</script>
+</body>
+</html>
