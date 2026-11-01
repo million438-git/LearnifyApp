@@ -24,7 +24,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CameraHistoryActivity extends AppCompatActivity {
+public class CameraHistoryActivity extends BaseActivity {
 
     private DatabaseHelper dbHelper;
     private String currentUsername;

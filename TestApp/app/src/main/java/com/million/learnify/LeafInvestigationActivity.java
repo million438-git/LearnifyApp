@@ -27,7 +27,7 @@ import com.google.android.material.slider.Slider;
 
 import java.util.Locale;
 
-public class LeafInvestigationActivity extends AppCompatActivity {
+public class LeafInvestigationActivity extends BaseActivity {
 
     private DatabaseHelper dbHelper;
     private String currentUsername;

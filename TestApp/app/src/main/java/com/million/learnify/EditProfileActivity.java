@@ -6,26 +6,32 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
+import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
  * EditProfileActivity - Modern, interactive profile management.
- * Fully active with database integration for all sections.
+ * Fully active with database integration, dynamic curriculum subjects, and haptic feedback.
  */
-public class EditProfileActivity extends AppCompatActivity {
+public class EditProfileActivity extends BaseActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private TextInputEditText etFullName, etUsername, etEmail, etPhone, etUniversity, etYear, etMajor;
@@ -34,6 +40,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private ImageView ivEditProfilePic;
     private Slider sliderXP;
     private ChipGroup chipGroupSubjects;
+    private View btnAddSubject;
     private DatabaseHelper dbHelper;
     private SettingsService settingsService;
     private StudentSettings currentSettings;
@@ -46,7 +53,7 @@ public class EditProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_profile);
 
         dbHelper = new DatabaseHelper(this);
-        settingsService = new SettingsService(this);
+        settingsService = SettingsService.getInstance(this);
         currentSettings = settingsService.loadSettings();
 
         SharedPreferences pref = getSharedPreferences("UserSession", MODE_PRIVATE);
@@ -60,12 +67,14 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private void setupToolbar() {
         Toolbar toolbar = findViewById(R.id.editProfileToolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("");
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setTitle("");
+            }
+            toolbar.setNavigationOnClickListener(v -> finish());
         }
-        toolbar.setNavigationOnClickListener(v -> finish());
     }
 
     private void initViews() {
@@ -90,6 +99,7 @@ public class EditProfileActivity extends AppCompatActivity {
         ivEditProfilePic = findViewById(R.id.ivEditProfilePic);
         sliderXP = findViewById(R.id.sliderXP);
         chipGroupSubjects = findViewById(R.id.chipGroupSubjects);
+        btnAddSubject = findViewById(R.id.btnAddSubject);
     }
 
     private void loadCurrentData() {
@@ -114,7 +124,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 }
             }
 
-            // Load new fields
+            // Load extended fields
             etPhone.setText(cursor.getString(cursor.getColumnIndexOrThrow("phone")));
             etUniversity.setText(cursor.getString(cursor.getColumnIndexOrThrow("university")));
             etYear.setText(cursor.getString(cursor.getColumnIndexOrThrow("year")));
@@ -122,20 +132,128 @@ public class EditProfileActivity extends AppCompatActivity {
             
             int xpGoal = cursor.getInt(cursor.getColumnIndexOrThrow("xp_goal"));
             sliderXP.setValue(xpGoal > 0 ? xpGoal : 500);
-            tvXPValue.setText(sliderXP.getValue() + " XP");
+            tvXPValue.setText(((int) sliderXP.getValue()) + " XP");
 
             tvVisibility.setText(cursor.getString(cursor.getColumnIndexOrThrow("visibility")) + " ▼");
             tvLeaderboard.setText((cursor.getInt(cursor.getColumnIndexOrThrow("show_leaderboard")) == 1 ? "Yes" : "No") + " ▼");
             tvNotifications.setText((cursor.getInt(cursor.getColumnIndexOrThrow("email_notifications")) == 1 ? "On" : "Off") + " ▼");
-            
+
+            String subjectsCsv = cursor.getString(cursor.getColumnIndexOrThrow("subjects"));
+            populateSubjectChips(subjectsCsv);
+
             cursor.close();
+        } else {
+            populateSubjectChips("Mathematics,Physics");
         }
 
         tvReminderTime.setText("⏰ " + formatTo12Hour(currentSettings.getReminderTime()));
         tvCurrentLanguage.setText(getLanguageName(currentSettings.getLanguage()));
     }
 
+    private void populateSubjectChips(String subjectsCsv) {
+        if (chipGroupSubjects == null) return;
+
+        // Clear dynamic chips, keeping btnAddSubject
+        for (int i = chipGroupSubjects.getChildCount() - 1; i >= 0; i--) {
+            View child = chipGroupSubjects.getChildAt(i);
+            if (child != btnAddSubject) {
+                chipGroupSubjects.removeViewAt(i);
+            }
+        }
+
+        if (subjectsCsv == null || subjectsCsv.trim().isEmpty()) {
+            subjectsCsv = "Mathematics,Physics";
+        }
+
+        String[] parts = subjectsCsv.split(",");
+        for (String subject : parts) {
+            String trimmed = subject.trim();
+            if (!trimmed.isEmpty()) {
+                addSubjectChip(trimmed);
+            }
+        }
+    }
+
+    private void addSubjectChip(String subjectName) {
+        if (chipGroupSubjects == null || subjectName == null || subjectName.trim().isEmpty()) return;
+
+        Chip chip = new Chip(this);
+        chip.setText(subjectName.trim());
+        chip.setCloseIconVisible(true);
+        chip.setCheckable(false);
+        chip.setClickable(false);
+        chip.setChipBackgroundColorResource(R.color.sapphire_subtle);
+        chip.setChipStrokeColorResource(R.color.sapphire_primary_light);
+        chip.setChipStrokeWidth(getResources().getDisplayMetrics().density);
+        chip.setTextColor(ContextCompat.getColor(this, R.color.text_primary_slate));
+        chip.setCloseIconTintResource(R.color.text_secondary_slate);
+
+        chip.setOnCloseIconClickListener(v -> {
+            chipGroupSubjects.removeView(chip);
+            AppFeedbackManager.getInstance(this).performTap(chip);
+        });
+
+        int addIndex = -1;
+        if (btnAddSubject != null) {
+            addIndex = chipGroupSubjects.indexOfChild(btnAddSubject);
+        }
+
+        if (addIndex >= 0) {
+            chipGroupSubjects.addView(chip, addIndex);
+        } else {
+            chipGroupSubjects.addView(chip);
+        }
+    }
+
+    private List<String> getSelectedSubjectsList() {
+        List<String> list = new ArrayList<>();
+        if (chipGroupSubjects == null) return list;
+        for (int i = 0; i < chipGroupSubjects.getChildCount(); i++) {
+            View child = chipGroupSubjects.getChildAt(i);
+            if (child instanceof Chip && child != btnAddSubject) {
+                CharSequence text = ((Chip) child).getText();
+                if (text != null && !text.toString().trim().isEmpty()) {
+                    list.add(text.toString().trim());
+                }
+            }
+        }
+        return list;
+    }
+
+    private void showAddSubjectDialog() {
+        String[] standardSubjects = {
+            "Mathematics", "Physics", "Chemistry", "Biology", 
+            "History", "Geography", "English", "Civics", 
+            "Economics", "Computer Science", "Information Technology"
+        };
+
+        List<String> existing = getSelectedSubjectsList();
+        List<String> available = new ArrayList<>();
+        for (String s : standardSubjects) {
+            if (!existing.contains(s)) {
+                available.add(s);
+            }
+        }
+
+        if (available.isEmpty()) {
+            Toast.makeText(this, "All available curriculum subjects are already selected.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String[] availableArray = available.toArray(new String[0]);
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Add Curriculum Subject")
+                .setItems(availableArray, (dialog, which) -> {
+                    String chosen = availableArray[which];
+                    addSubjectChip(chosen);
+                    AppFeedbackManager.getInstance(this).performTap(chipGroupSubjects);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
     private String getLanguageName(String code) {
+        if (code == null) return "English";
         switch (code) {
             case "am": return "Amharic (አማርኛ)";
             case "om": return "Afaan Oromoo";
@@ -159,37 +277,72 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void setupInteractions() {
-        findViewById(R.id.btnSaveTop).setOnClickListener(v -> handleSave());
-        findViewById(R.id.btnChangePic).setOnClickListener(v -> openGallery());
-        
-        sliderXP.addOnChangeListener((slider, value, fromUser) -> {
-            tvXPValue.setText((int)value + " XP");
-        });
+        View btnSaveTop = findViewById(R.id.btnSaveTop);
+        if (btnSaveTop != null) {
+            btnSaveTop.setOnClickListener(v -> handleSave());
+        }
 
-        findViewById(R.id.llReminderTime).setOnClickListener(v -> showTimePicker());
-        findViewById(R.id.llChangeLanguage).setOnClickListener(v -> showLanguagePicker());
-        findViewById(R.id.btnLanguageTop).setOnClickListener(v -> showLanguagePicker());
+        View btnChangePic = findViewById(R.id.btnChangePic);
+        if (btnChangePic != null) {
+            btnChangePic.setOnClickListener(v -> openGallery());
+        }
         
-        findViewById(R.id.llChangePassword).setOnClickListener(v -> {
-            startActivity(new Intent(this, PrivacySecurityActivity.class));
-        });
+        if (sliderXP != null) {
+            sliderXP.addOnChangeListener((slider, value, fromUser) -> {
+                tvXPValue.setText(((int) value) + " XP");
+            });
+        }
 
-        tvVisibility.setOnClickListener(v -> showOptionPicker("Profile Visibility", new String[]{"Public", "Private", "Friends Only"}, tvVisibility));
-        tvLeaderboard.setOnClickListener(v -> showOptionPicker("Show on Leaderboard", new String[]{"Yes", "No"}, tvLeaderboard));
-        tvNotifications.setOnClickListener(v -> showOptionPicker("Email Notifications", new String[]{"On", "Off"}, tvNotifications));
+        View llReminder = findViewById(R.id.llReminderTime);
+        if (llReminder != null) {
+            llReminder.setOnClickListener(v -> showTimePicker());
+        }
 
-        findViewById(R.id.btnDeactivate).setOnClickListener(v -> showDeactivationWarning());
+        View llChangeLang = findViewById(R.id.llChangeLanguage);
+        if (llChangeLang != null) {
+            llChangeLang.setOnClickListener(v -> showLanguagePicker());
+        }
+
+        View btnLangTop = findViewById(R.id.btnLanguageTop);
+        if (btnLangTop != null) {
+            btnLangTop.setOnClickListener(v -> showLanguagePicker());
+        }
         
-        findViewById(R.id.btnAddSubject).setOnClickListener(v -> {
-            Toast.makeText(this, "Add Subject list coming soon!", Toast.LENGTH_SHORT).show();
-        });
+        View llChangePass = findViewById(R.id.llChangePassword);
+        if (llChangePass != null) {
+            llChangePass.setOnClickListener(v -> {
+                startActivity(new Intent(this, PrivacySecurityActivity.class));
+            });
+        }
+
+        if (tvVisibility != null) {
+            tvVisibility.setOnClickListener(v -> showOptionPicker("Profile Visibility", new String[]{"Public", "Private", "Friends Only"}, tvVisibility));
+        }
+
+        if (tvLeaderboard != null) {
+            tvLeaderboard.setOnClickListener(v -> showOptionPicker("Show on Leaderboard", new String[]{"Yes", "No"}, tvLeaderboard));
+        }
+
+        if (tvNotifications != null) {
+            tvNotifications.setOnClickListener(v -> showOptionPicker("Email Notifications", new String[]{"On", "Off"}, tvNotifications));
+        }
+
+        View btnDeactivate = findViewById(R.id.btnDeactivate);
+        if (btnDeactivate != null) {
+            btnDeactivate.setOnClickListener(v -> showDeactivationWarning());
+        }
+        
+        if (btnAddSubject != null) {
+            btnAddSubject.setOnClickListener(v -> showAddSubjectDialog());
+        }
     }
 
     private void showOptionPicker(String title, String[] options, TextView target) {
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setTitle(title)
                 .setItems(options, (dialog, which) -> {
                     target.setText(options[which] + " ▼");
+                    AppFeedbackManager.getInstance(this).performTap(target);
                 }).show();
     }
 
@@ -205,6 +358,7 @@ public class EditProfileActivity extends AppCompatActivity {
             tvReminderTime.setText("⏰ " + formatTo12Hour(selectedTime24));
             currentSettings.setReminderTime(selectedTime24);
             settingsService.saveSettings(currentSettings);
+            AppFeedbackManager.getInstance(this).performSuccess(tvReminderTime);
         }, hour, minute, false).show();
     }
 
@@ -212,18 +366,22 @@ public class EditProfileActivity extends AppCompatActivity {
         String[] languages = {"English", "Español", "Français", "العربية", "አማርኛ", "Afaan Oromoo", "ትግርኛ"};
         String[] codes = {"en", "es", "fr", "ar", "am", "om", "ti"};
         
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setTitle("Select App Language")
                 .setItems(languages, (dialog, which) -> {
-                    currentSettings.setLanguage(codes[which]);
+                    String chosen = codes[which];
+                    currentSettings.setLanguage(chosen);
                     settingsService.saveSettings(currentSettings);
-                    tvCurrentLanguage.setText(getLanguageName(codes[which]));
+                    LocaleHelper.setLocale(this, chosen);
+                    tvCurrentLanguage.setText(getLanguageName(chosen));
+                    AppFeedbackManager.getInstance(this).performSuccess(tvCurrentLanguage);
                     Toast.makeText(this, "Language changed to " + languages[which], Toast.LENGTH_SHORT).show();
+                    recreate();
                 }).show();
     }
 
     private void showDeactivationWarning() {
-        new AlertDialog.Builder(this)
+        new MaterialAlertDialogBuilder(this)
                 .setTitle("Danger Zone")
                 .setMessage("Are you sure you want to deactivate your account? This action can be reversed by logging in again within 30 days.")
                 .setPositiveButton("Deactivate", (d, w) -> {
@@ -253,36 +411,46 @@ public class EditProfileActivity extends AppCompatActivity {
             try {
                 getContentResolver().takePersistableUriPermission(selectedImageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 ivEditProfilePic.setImageURI(selectedImageUri);
+                AppFeedbackManager.getInstance(this).performSuccess(ivEditProfilePic);
             } catch (Exception e) { e.printStackTrace(); }
         }
     }
 
     private void handleSave() {
-        String name = etFullName.getText().toString().trim();
-        String email = etEmail.getText().toString().trim();
-        String phone = etPhone.getText().toString().trim();
-        String university = etUniversity.getText().toString().trim();
-        String year = etYear.getText().toString().trim();
-        String major = etMajor.getText().toString().trim();
+        View btnSave = findViewById(R.id.btnSaveTop);
+        String name = etFullName.getText() != null ? etFullName.getText().toString().trim() : "";
+        String email = etEmail.getText() != null ? etEmail.getText().toString().trim() : "";
+        String phone = etPhone.getText() != null ? etPhone.getText().toString().trim() : "";
+        String university = etUniversity.getText() != null ? etUniversity.getText().toString().trim() : "";
+        String year = etYear.getText() != null ? etYear.getText().toString().trim() : "";
+        String major = etMajor.getText() != null ? etMajor.getText().toString().trim() : "";
         int xpGoal = (int) sliderXP.getValue();
         
-        String visibility = tvVisibility.getText().toString().replace(" ▼", "");
+        String visibility = tvVisibility.getText().toString().replace(" ▼", "").trim();
         int showLeaderboard = tvLeaderboard.getText().toString().contains("Yes") ? 1 : 0;
         int emailNotifications = tvNotifications.getText().toString().contains("On") ? 1 : 0;
         
         String imageUriStr = selectedImageUri != null ? selectedImageUri.toString() : "";
 
         if (name.isEmpty()) {
+            if (btnSave != null) AppFeedbackManager.getInstance(this).performError(btnSave);
+            etFullName.setError("Name is required");
+            etFullName.requestFocus();
             Toast.makeText(this, "Name is required", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        boolean success = dbHelper.updateUserProfileFull(currentUsername, name, email, phone, university, year, major, xpGoal, "Math,Physics", visibility, showLeaderboard, emailNotifications, imageUriStr);
+        List<String> subjectList = getSelectedSubjectsList();
+        String subjectsCsv = subjectList.isEmpty() ? "Mathematics,Physics" : TextUtils.join(",", subjectList);
+
+        boolean success = dbHelper.updateUserProfileFull(currentUsername, name, email, phone, university, year, major, xpGoal, subjectsCsv, visibility, showLeaderboard, emailNotifications, imageUriStr);
         
         if (success) {
+            if (btnSave != null) AppFeedbackManager.getInstance(this).performSuccess(btnSave);
             Toast.makeText(this, "Profile updated successfully.", Toast.LENGTH_SHORT).show();
             finish();
         } else {
+            if (btnSave != null) AppFeedbackManager.getInstance(this).performError(btnSave);
             Toast.makeText(this, "Update failed", Toast.LENGTH_SHORT).show();
         }
     }

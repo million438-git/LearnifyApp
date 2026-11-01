@@ -8,7 +8,7 @@ import android.webkit.WebViewClient;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-public class PhysicsSimulationActivity extends AppCompatActivity {
+public class PhysicsSimulationActivity extends BaseActivity {
 
     private int experimentId;
     private WebView webViewSim;
@@ -49,7 +49,13 @@ public class PhysicsSimulationActivity extends AppCompatActivity {
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setSupportZoom(true);
-        webViewSim.setWebViewClient(new WebViewClient());
+        webViewSim.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                LabPreferencesManager.getInstance(PhysicsSimulationActivity.this).applyToWebView(view);
+            }
+        });
         webViewSim.setBackgroundColor(0x00000000);
     }
 

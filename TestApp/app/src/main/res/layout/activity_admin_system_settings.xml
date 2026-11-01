@@ -7,7 +7,7 @@
     android:background="@color/admin_bg"
     tools:context=".AdminSystemSettingsActivity">
 
-    <!-- EXECUTIVE APP BAR WITH SAPPHIRE HERO BANNER -->
+    <!-- EXECUTIVE APP BAR WITH NAVY HERO BANNER -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,8 +18,9 @@
             android:id="@+id/settingsToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="?attr/homeAsUpIndicator"
             app:navigationIconTint="@color/white"
-            app:title="Infrastructure Control"
+            app:title="Platform Governance"
             app:titleTextColor="@color/white">
 
             <RelativeLayout
@@ -31,9 +32,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:text="System Infrastructure"
+                    android:text="Administrator Console"
                     android:textColor="@color/white"
-                    android:textSize="18sp"
+                    android:textSize="17sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -48,7 +49,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="SYSTEM ACTIVE"
+                        android:text="GOVERNANCE ACTIVE"
                         android:textColor="@color/emerald_accent"
                         android:textSize="10sp"
                         android:textStyle="bold"
@@ -69,17 +70,17 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="CENTRAL RUNTIME ARCHITECTURE"
+                android:text="ENTERPRISE INFRASTRUCTURE &amp; GOVERNANCE"
                 android:textColor="@color/sky_400"
                 android:textSize="11sp"
                 android:textStyle="bold"
-                android:letterSpacing="0.1" />
+                android:letterSpacing="0.08" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Platform Policies &amp; Governance"
+                android:text="System Architecture Policies"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -88,7 +89,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Configure institutional identity, academic parameters, security gates, and maintenance rules."
+                android:text="Manage 14 core institutional domains: security gates, AI engines, academic standards, backups, and live telemetry."
                 android:textColor="#BFDBFE"
                 android:textSize="13sp" />
         </LinearLayout>
@@ -104,30 +105,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:paddingBottom="80dp">
 
-            <!-- 1. GENERAL SETTINGS & IDENTITY (8.1 & 8.7) -->
+            <!-- 1. GENERAL CONFIGURATION -->
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginBottom="8dp"
-                android:text="8.1 PLATFORM IDENTITY &amp; BRANDING"
-                android:textColor="@color/text_secondary_slate"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.08" />
+                style="@style/SettingsSectionHeader"
+                android:text="1. GENERAL CONFIGURATION"
+                android:textColor="@color/admin_text_primary" />
 
             <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@color/surface_card"
+                style="@style/SettingsCard"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/card_stroke"
-                app:strokeWidth="1dp">
-
+                app:strokeColor="@color/admin_border">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -138,20 +128,13 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Platform Name"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxStrokeColor="@color/sapphire_primary"
+                        android:hint="Platform Display Name"
                         app:startIconDrawable="@drawable/ic_globe"
-                        app:startIconTint="@color/sapphire_primary">
-
+                        app:startIconTint="@color/learnify_brand_blue">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etAppName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/text_primary_slate"
                             android:textSize="15sp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -160,18 +143,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:hint="Tagline / Motto"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxStrokeColor="@color/sapphire_primary">
-
+                        android:hint="Platform Tagline / Motto">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etTagline"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/text_primary_slate"
                             android:textSize="15sp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -180,19 +156,118 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:hint="Official Contact Email"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxStrokeColor="@color/sapphire_primary">
+                        android:hint="Institution / Academy Name"
+                        app:startIconDrawable="@drawable/ic_school"
+                        app:startIconTint="@color/learnify_brand_blue">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etInstitutionName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="15sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
+                    <!-- Default Language Selector -->
+                    <LinearLayout
+                        android:id="@+id/llDefaultLanguage"
+                        style="@style/SettingsItem"
+                        android:layout_marginTop="12dp"
+                        android:paddingHorizontal="0dp"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Default Platform Language" />
+                            <TextView style="@style/SettingsItemDescription" android:text="System fallback for newly registered students" />
+                        </LinearLayout>
+                        <TextView android:id="@+id/tvDefaultLanguage" style="@style/SettingsItemValue" android:text="English (US) ▼" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="0dp" />
+
+                    <!-- Default Regional Curriculum -->
+                    <LinearLayout
+                        android:id="@+id/llDefaultRegion"
+                        style="@style/SettingsItem"
+                        android:paddingHorizontal="0dp"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Default Regional Curriculum" />
+                            <TextView style="@style/SettingsItemDescription" android:text="National examination and grade scale alignment" />
+                        </LinearLayout>
+                        <TextView android:id="@+id/tvDefaultRegion" style="@style/SettingsItemValue" android:text="United States ▼" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="0dp" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="Default Currency Code (e.g. USD, ETB)">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etCurrency"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="15sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <LinearLayout
+                        style="@style/SettingsItem"
+                        android:layout_marginTop="12dp"
+                        android:paddingHorizontal="0dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Enable Right-to-Left (RTL) Layout" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Optimize interface for Arabic, Hebrew, and RTL languages" />
+                        </LinearLayout>
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switchRTL"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 2. INSTITUTION AND BRANDING -->
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="2. INSTITUTION &amp; BRANDING"
+                android:textColor="@color/admin_text_primary" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/SettingsCard"
+                app:cardCornerRadius="16dp"
+                app:strokeColor="@color/admin_border">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Official Institutional Contact Email"
+                        app:startIconDrawable="@drawable/ic_email_mail"
+                        app:startIconTint="@color/learnify_brand_blue">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etContactEmail"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="textEmailAddress"
-                            android:textColor="@color/text_primary_slate"
                             android:textSize="15sp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -201,19 +276,30 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:hint="Support &amp; Helpdesk Email"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxStrokeColor="@color/sapphire_primary">
+                        android:hint="Official Contact Phone Number"
+                        app:startIconDrawable="@drawable/ic_user_person"
+                        app:startIconTint="@color/learnify_brand_blue">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etContactPhone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="phone"
+                            android:textSize="15sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="Dedicated Technical Support Email"
+                        app:startIconDrawable="@drawable/ic_email_mail"
+                        app:startIconTint="@color/learnify_brand_blue">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etSupportEmail"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="textEmailAddress"
-                            android:textColor="@color/text_primary_slate"
                             android:textSize="15sp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -222,45 +308,161 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:hint="Theme Accent Color (e.g. #1E3A8A)"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxStrokeColor="@color/sapphire_primary">
-
+                        android:hint="Brand Primary Color Hex (e.g. #102A56)"
+                        app:startIconDrawable="@drawable/ic_palette"
+                        app:startIconTint="@color/learnify_brand_blue">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etPrimaryColor"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/text_primary_slate"
                             android:textSize="15sp" />
                     </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="Cloud Asset S3 Bucket"
+                        app:startIconDrawable="@drawable/ic_cloud_sync"
+                        app:startIconTint="@color/learnify_brand_blue">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etS3Bucket"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="15sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- Branding Preview Card -->
+                    <LinearLayout
+                        android:id="@+id/llBrandingPreview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:background="@drawable/bg_badge_active"
+                        android:orientation="horizontal"
+                        android:padding="12dp"
+                        android:gravity="center_vertical">
+                        <View
+                            android:id="@+id/viewPrimaryColorSwatch"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:background="@color/learnify_brand_navy" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="12dp"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tvBrandPreviewTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Learnify Pro • Branding Preview"
+                                android:textColor="@color/text_primary_slate"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+                            <TextView
+                                android:id="@+id/tvBrandPreviewSubtitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Primary theme color swatch &amp; assets"
+                                android:textColor="@color/text_secondary_slate"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- 2. ACADEMIC ENGINE SETTINGS (8.10) -->
+            <!-- 3. USER AND REGISTRATION MANAGEMENT -->
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginBottom="8dp"
-                android:text="8.10 ACADEMIC ENGINE GOVERNANCE"
-                android:textColor="@color/text_secondary_slate"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.08" />
+                style="@style/SettingsSectionHeader"
+                android:text="3. USER &amp; REGISTRATION MANAGEMENT"
+                android:textColor="@color/admin_text_primary" />
 
             <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@color/surface_card"
+                style="@style/SettingsCard"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/card_stroke"
-                app:strokeWidth="1dp">
+                app:strokeColor="@color/admin_border">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
+                    <LinearLayout style="@style/SettingsItem" android:paddingHorizontal="0dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Allow Student Self-Registration" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Allow new students to create accounts without admin invitation" />
+                        </LinearLayout>
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switchRegistration"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="0dp" />
+
+                    <LinearLayout style="@style/SettingsItem" android:paddingHorizontal="0dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Enforce Email Verification" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Require OTP code confirmation before student dashboard access" />
+                        </LinearLayout>
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switchRequireVerification"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="0dp" />
+
+                    <LinearLayout style="@style/SettingsItem" android:paddingHorizontal="0dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Require Admin Approval For Students" />
+                            <TextView style="@style/SettingsItemDescription" android:text="New registrations require administrator approval before login" />
+                        </LinearLayout>
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switchRequireApproval"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnManageUserAccounts"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:text="User Directory &amp; Account Suspension"
+                        android:textColor="@color/learnify_brand_blue"
+                        app:icon="@drawable/ic_user_person"
+                        app:iconTint="@color/learnify_brand_blue"
+                        app:strokeColor="@color/learnify_brand_blue" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 4. ACADEMIC CONFIGURATION -->
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="4. ACADEMIC CONFIGURATION"
+                android:textColor="@color/admin_text_primary" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/SettingsCard"
+                app:cardCornerRadius="16dp"
+                app:strokeColor="@color/admin_border">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -272,20 +474,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Default Exam Duration (Minutes)"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxStrokeColor="@color/sapphire_primary"
                         app:startIconDrawable="@drawable/ic_timer"
-                        app:startIconTint="@color/sapphire_primary">
-
+                        app:startIconTint="@color/learnify_brand_blue">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etExamTime"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="number"
-                            android:textColor="@color/text_primary_slate"
                             android:textSize="15sp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -294,879 +489,867 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:hint="Passing Score Requirement (%)"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxStrokeColor="@color/sapphire_primary"
-                        app:startIconDrawable="@drawable/ic_trophy"
-                        app:startIconTint="@color/amber_accent">
-
+                        android:hint="Minimum Passing Score Percentage (%)"
+                        app:startIconDrawable="@drawable/ic_school"
+                        app:startIconTint="@color/learnify_brand_blue">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etPassingScore"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="number"
-                            android:textColor="@color/text_primary_slate"
                             android:textSize="15sp" />
                     </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- 3. SECURITY & POLICY (8.4 & 8.5) -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginBottom="8dp"
-                android:text="8.4 SECURITY &amp; COMPLIANCE POLICIES"
-                android:textColor="@color/text_secondary_slate"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.08" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@color/surface_card"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/card_stroke"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingVertical="4dp">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_toStartOf="@id/switch2FA"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Two-Factor Authentication (Admin)"
-                                android:textColor="@color/text_primary_slate"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Mandate secondary token for administrative console"
-                                android:textColor="@color/text_secondary_slate"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <androidx.appcompat.widget.SwitchCompat
-                            android:id="@+id/switch2FA"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true" />
-                    </RelativeLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="10dp"
-                        android:background="@color/card_stroke" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingVertical="4dp">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_toStartOf="@id/switchLockout"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Brute-Force Login Lockout"
-                                android:textColor="@color/text_primary_slate"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Temporarily lock accounts after consecutive failed attempts"
-                                android:textColor="@color/text_secondary_slate"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <androidx.appcompat.widget.SwitchCompat
-                            android:id="@+id/switchLockout"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true" />
-                    </RelativeLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="10dp"
-                        android:background="@color/card_stroke" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingVertical="4dp">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_toStartOf="@id/switchCookie"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Cookie &amp; Privacy Consent (GDPR)"
-                                android:textColor="@color/text_primary_slate"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Display privacy banner to comply with international regulations"
-                                android:textColor="@color/text_secondary_slate"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <androidx.appcompat.widget.SwitchCompat
-                            android:id="@+id/switchCookie"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true" />
-                    </RelativeLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- 4. LOCALIZATION & NOTIFICATIONS (8.2 & 8.3) -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginBottom="8dp"
-                android:text="8.2 LOCALIZATION &amp; NOTIFICATIONS"
-                android:textColor="@color/text_secondary_slate"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.08" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@color/surface_card"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/card_stroke"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Default Currency Code (USD / ETB / EUR)"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxStrokeColor="@color/sapphire_primary"
-                        app:startIconDrawable="@drawable/ic_credit_card"
-                        app:startIconTint="@color/sapphire_primary">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etCurrency"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/text_primary_slate"
-                            android:textSize="15sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:paddingVertical="4dp">
+                        android:hint="Maximum Examination Retake Attempts"
+                        app:startIconDrawable="@drawable/ic_target"
+                        app:startIconTint="@color/learnify_brand_blue">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etExamAttempts"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:textSize="15sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
+                    <LinearLayout style="@style/SettingsItem" android:layout_marginTop="12dp" android:paddingHorizontal="0dp">
                         <LinearLayout
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_toStartOf="@id/switchRTL"
+                            android:layout_weight="1"
                             android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Enable Right-to-Left (RTL) Layout"
-                                android:textColor="@color/text_primary_slate"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Adapt interface direction for Arabic and RTL languages"
-                                android:textColor="@color/text_secondary_slate"
-                                android:textSize="12sp" />
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Enforce Curriculum Prerequisites" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Students must complete lessons before entering exams" />
                         </LinearLayout>
-
                         <androidx.appcompat.widget.SwitchCompat
-                            android:id="@+id/switchRTL"
+                            android:id="@+id/switchCurriculumIntegrity"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true" />
-                    </RelativeLayout>
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
 
-                    <View
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnViewAcademicCurriculum"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="12dp"
-                        android:background="@color/card_stroke" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Inspect Educational Curriculum (Grades 9-12)"
+                        android:textColor="@color/learnify_brand_blue" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 5. AI AND LEARNING SERVICES -->
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="5. AI &amp; LEARNING SERVICES"
+                android:textColor="@color/admin_text_primary" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/SettingsCard"
+                app:cardCornerRadius="16dp"
+                app:strokeColor="@color/admin_border">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout style="@style/SettingsItem" android:paddingHorizontal="0dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="EduAI Academic Tutor Engine" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Enable AI tutor assistants across all grades and topics" />
+                        </LinearLayout>
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switchAiTutorEnabled"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="0dp" />
+
+                    <LinearLayout style="@style/SettingsItem" android:paddingHorizontal="0dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Voice Study &amp; Audio Engine" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Enable text-to-speech audio rendering and oral exams" />
+                        </LinearLayout>
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switchVoiceFeature"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="0dp" />
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="SMTP Mail Server Relay Host"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxStrokeColor="@color/sapphire_primary"
-                        app:startIconDrawable="@drawable/ic_send"
-                        app:startIconTint="@color/sapphire_primary">
+                        android:layout_marginTop="12dp"
+                        android:hint="Backend AI Model Identifier"
+                        app:startIconDrawable="@drawable/ic_bolt"
+                        app:startIconTint="@color/learnify_brand_blue">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etAiModel"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="15sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="Daily AI Request Limit Per Student"
+                        app:startIconDrawable="@drawable/ic_tasks"
+                        app:startIconTint="@color/learnify_brand_blue">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etAiRequestLimit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:textSize="15sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+                        <TextView
+                            style="@style/SettingsItemText"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="AI Gateway Service Health" />
+                        <TextView
+                            android:id="@+id/tvAiHealthStatus"
+                            style="@style/SettingsItemValue"
+                            android:text="Operational • Ready"
+                            android:textColor="@color/emerald_primary" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 6. NOTIFICATION AND COMMUNICATION SERVICES -->
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="6. NOTIFICATION &amp; COMMUNICATION"
+                android:textColor="@color/admin_text_primary" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/SettingsCard"
+                app:cardCornerRadius="16dp"
+                app:strokeColor="@color/admin_border">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="SMTP Mail Gateway Host"
+                        app:startIconDrawable="@drawable/ic_email_mail"
+                        app:startIconTint="@color/learnify_brand_blue">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etSmtpHost"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/text_primary_slate"
                             android:textSize="15sp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:hint="Firebase Cloud Messaging (FCM) Key"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxStrokeColor="@color/sapphire_primary"
-                        app:startIconDrawable="@drawable/ic_bell"
-                        app:startIconTint="@color/amber_accent">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etFcmKey"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/text_primary_slate"
-                            android:textSize="15sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- 5. INTEGRATIONS & PERFORMANCE (8.6 & 8.8) -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginBottom="8dp"
-                android:text="8.6 INTEGRATIONS &amp; CACHE PERFORMANCE"
-                android:textColor="@color/text_secondary_slate"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.08" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@color/surface_card"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/card_stroke"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Zoom Virtual Classroom API Key"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxStrokeColor="@color/sapphire_primary">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etZoomKey"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/text_primary_slate"
-                            android:textSize="15sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:hint="AWS S3 Cloud Storage Bucket"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxStrokeColor="@color/sapphire_primary">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etS3Bucket"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/text_primary_slate"
-                            android:textSize="15sp" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="12dp"
-                        android:background="@color/card_stroke" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingVertical="4dp">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_toStartOf="@id/switchCache"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Enable In-Memory Response Caching"
-                                android:textColor="@color/text_primary_slate"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Accelerates screen loading and reduces database queries"
-                                android:textColor="@color/text_secondary_slate"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <androidx.appcompat.widget.SwitchCompat
-                            android:id="@+id/switchCache"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true" />
-                    </RelativeLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- 6. MAINTENANCE, POLICIES & BACKUPS (8.9) -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginBottom="8dp"
-                android:text="8.9 MAINTENANCE &amp; DISASTER RECOVERY"
-                android:textColor="@color/text_secondary_slate"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.08" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="@color/surface_card"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/card_stroke"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingVertical="4dp">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_toStartOf="@id/switchMaintenance"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="System Maintenance Lockdown"
-                                android:textColor="@color/rose_accent"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Restricts all student sessions; displays maintenance alert"
-                                android:textColor="@color/text_secondary_slate"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <androidx.appcompat.widget.SwitchCompat
-                            android:id="@+id/switchMaintenance"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true" />
-                    </RelativeLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="10dp"
-                        android:background="@color/card_stroke" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingVertical="4dp">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_toStartOf="@id/switchRegistration"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Allow New Student Registration"
-                                android:textColor="@color/text_primary_slate"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Permit new user account creation across the portal"
-                                android:textColor="@color/text_secondary_slate"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <androidx.appcompat.widget.SwitchCompat
-                            android:id="@+id/switchRegistration"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true" />
-                    </RelativeLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="10dp"
-                        android:background="@color/card_stroke" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingVertical="4dp">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_toStartOf="@id/switchVoiceFeature"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Voice Study &amp; Audio Lab"
-                                android:textColor="@color/text_primary_slate"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Enable text-to-speech synthesis and voice navigation"
-                                android:textColor="@color/text_secondary_slate"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <androidx.appcompat.widget.SwitchCompat
-                            android:id="@+id/switchVoiceFeature"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true" />
-                    </RelativeLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="12dp"
-                        android:background="@color/card_stroke" />
-
-                    <!-- Backup Action Item -->
-                    <LinearLayout
-                        android:id="@+id/btnBackupRestore"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingVertical="12dp">
-
-                        <FrameLayout
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:background="@drawable/bg_icon_container_sapphire">
-
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_download"
-                                app:tint="@color/sapphire_primary" />
-                        </FrameLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="14dp"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Initiate Full System Backup"
-                                android:textColor="@color/text_primary_slate"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Create encrypted database snapshot and synchronize"
-                                android:textColor="@color/text_secondary_slate"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="@color/text_secondary_slate" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="4dp"
-                        android:background="@color/card_stroke" />
-
-                    <!-- Logs Action Item -->
-                    <LinearLayout
-                        android:id="@+id/btnSystemLogs"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingVertical="12dp">
-
-                        <FrameLayout
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:background="@drawable/bg_icon_container_amber">
-
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_history"
-                                app:tint="@color/amber_accent" />
-                        </FrameLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="14dp"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Inspect Administrative Audit Trail"
-                                android:textColor="@color/text_primary_slate"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Review recent administrative operations and security logs"
-                                android:textColor="@color/text_secondary_slate"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="@color/text_secondary_slate" />
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- 7. PRESERVED CAMERA LAB GOVERNANCE (11.0) -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginBottom="8dp"
-                android:text="11. CAMERA LAB SOLVER GOVERNANCE"
-                android:textColor="@color/text_secondary_slate"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:letterSpacing="0.08" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                app:cardBackgroundColor="@color/surface_card"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/card_stroke"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingVertical="4dp">
-
+                        android:orientation="horizontal">
                         <TextView
-                            android:layout_width="wrap_content"
+                            style="@style/SettingsItemText"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_centerVertical="true"
-                            android:text="Global Camera Lab Enabled"
-                            android:textColor="@color/text_primary_slate"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
+                            android:layout_weight="1"
+                            android:text="FCM Push Notification Service" />
+                        <TextView
+                            android:id="@+id/tvPushServiceStatus"
+                            style="@style/SettingsItemValue"
+                            android:text="FCM Gateway Active"
+                            android:textColor="@color/emerald_primary" />
+                    </LinearLayout>
 
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnBroadcastAnnouncement"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:text="Broadcast Platform Announcement"
+                        android:textColor="@color/learnify_brand_blue"
+                        app:icon="@drawable/ic_announcement"
+                        app:iconTint="@color/learnify_brand_blue"
+                        app:strokeColor="@color/learnify_brand_blue" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 7. SECURITY AND ACCESS CONTROL -->
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="7. SECURITY &amp; ACCESS CONTROL"
+                android:textColor="@color/admin_text_primary" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/SettingsCard"
+                app:cardCornerRadius="16dp"
+                app:strokeColor="@color/admin_border">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout style="@style/SettingsItem" android:paddingHorizontal="0dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Mandatory Administrator 2FA" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Require 2FA verification for administrator accounts" />
+                        </LinearLayout>
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switch2FA"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="0dp" />
+
+                    <LinearLayout style="@style/SettingsItem" android:paddingHorizontal="0dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Brute-Force Login Lockout" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Temporarily lock accounts after failed attempts" />
+                        </LinearLayout>
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switchLockout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="Max Login Attempts Before Lockout">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etMaxLoginAttempts"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:textSize="15sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="Session Inactivity Timeout (Minutes)">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etSessionTimeout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:textSize="15sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 8. DATABASE AND BACKUP -->
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="8. DATABASE &amp; BACKUP"
+                android:textColor="@color/admin_text_primary" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/SettingsCard"
+                app:cardCornerRadius="16dp"
+                app:strokeColor="@color/admin_border">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Physical Database Snapshot &amp; Recovery"
+                        android:textColor="@color/text_primary_slate"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvBackupStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Status: Active • Verified local SQLite replica ready"
+                        android:textColor="@color/text_secondary_slate"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvBackupPath"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Storage: /files/backups/"
+                        android:textColor="@color/text_secondary_slate"
+                        android:textSize="12sp"
+                        android:fontFamily="monospace" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnBackupRestore"
+                            style="@style/Widget.MaterialComponents.Button"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:backgroundTint="@color/learnify_brand_navy"
+                            android:text="Create Snapshot"
+                            app:icon="@drawable/ic_database"
+                            app:iconTint="@color/white" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnRestoreDatabase"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:text="Restore Snapshot"
+                            android:textColor="@color/learnify_brand_navy"
+                            app:strokeColor="@color/learnify_brand_navy" />
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnCheckDbIntegrity"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Run SQLite Integrity Verification (PRAGMA)"
+                        android:textColor="@color/emerald_primary" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 9. SYSTEM MONITORING -->
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="9. SYSTEM MONITORING"
+                android:textColor="@color/admin_text_primary" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/SettingsCard"
+                app:cardCornerRadius="16dp"
+                app:strokeColor="@color/admin_border">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="DATABASE SIZE"
+                                android:textColor="@color/text_secondary_slate"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+                            <TextView
+                                android:id="@+id/tvDbSizeMetric"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Calculating..."
+                                android:textColor="@color/learnify_brand_blue"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="REGISTERED USERS"
+                                android:textColor="@color/text_secondary_slate"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+                            <TextView
+                                android:id="@+id/tvTotalUsersMetric"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Loading..."
+                                android:textColor="@color/emerald_primary"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="SCHEMA VERSION"
+                                android:textColor="@color/text_secondary_slate"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+                            <TextView
+                                android:id="@+id/tvDbVersionMetric"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="SQLite v58"
+                                android:textColor="@color/text_primary_slate"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="STORAGE CAPACITY"
+                                android:textColor="@color/text_secondary_slate"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+                            <TextView
+                                android:id="@+id/tvStorageCapacityMetric"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Loading..."
+                                android:textColor="@color/text_primary_slate"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnRefreshMetrics"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Refresh Real-time Infrastructure Metrics"
+                        app:icon="@drawable/ic_refresh"
+                        app:iconTint="@color/learnify_brand_blue" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 10. FEATURE MANAGEMENT -->
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="10. FEATURE MANAGEMENT"
+                android:textColor="@color/admin_text_primary" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/SettingsCard"
+                app:cardCornerRadius="16dp"
+                app:strokeColor="@color/admin_border">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout style="@style/SettingsItem" android:paddingHorizontal="0dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Virtual Science Labs" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Interactive physics, chemistry, and biology virtual experiments" />
+                        </LinearLayout>
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switchVirtualLabs"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="0dp" />
+
+                    <LinearLayout style="@style/SettingsItem" android:paddingHorizontal="0dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Course Catalog &amp; Materials" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Global access to courses, lessons, and syllabi" />
+                        </LinearLayout>
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switchFeatureCourses"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="0dp" />
+
+                    <LinearLayout style="@style/SettingsItem" android:paddingHorizontal="0dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Offline Learning Mode" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Allow local caching and offline lesson completion" />
+                        </LinearLayout>
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switchFeatureOffline"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 11. CAMERA AND LABORATORY GOVERNANCE -->
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="11. CAMERA &amp; LABORATORY GOVERNANCE"
+                android:textColor="@color/admin_text_primary" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/SettingsCard"
+                app:cardCornerRadius="16dp"
+                app:strokeColor="@color/admin_border">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout style="@style/SettingsItem" android:paddingHorizontal="0dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Master Camera Lab Solver" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Global switch for camera equation recognition &amp; solvers" />
+                        </LinearLayout>
                         <androidx.appcompat.widget.SwitchCompat
                             android:id="@+id/switchCameraLab"
                             android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="0dp" />
+
+                    <LinearLayout style="@style/SettingsItem" android:paddingHorizontal="0dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true" />
-                    </RelativeLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="10dp"
-                        android:background="@color/card_stroke" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingVertical="4dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_centerVertical="true"
-                            android:text="Mathematics Solver Enabled"
-                            android:textColor="@color/text_primary_slate" />
-
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Mathematics OCR Solver" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Step-by-step algebra, calculus, and matrix solutions" />
+                        </LinearLayout>
                         <androidx.appcompat.widget.SwitchCompat
                             android:id="@+id/switchLabMath"
                             android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="0dp" />
+
+                    <LinearLayout style="@style/SettingsItem" android:paddingHorizontal="0dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true" />
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:paddingVertical="4dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_centerVertical="true"
-                            android:text="Physics Solver Enabled"
-                            android:textColor="@color/text_primary_slate" />
-
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Physics Kinematics &amp; Mechanics Engine" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Formulas, free-body diagrams, and circuit solving" />
+                        </LinearLayout>
                         <androidx.appcompat.widget.SwitchCompat
                             android:id="@+id/switchLabPhysics"
                             android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="0dp" />
+
+                    <LinearLayout style="@style/SettingsItem" android:paddingHorizontal="0dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true" />
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:paddingVertical="4dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_centerVertical="true"
-                            android:text="Chemistry Solver Enabled"
-                            android:textColor="@color/text_primary_slate" />
-
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Chemistry Reaction &amp; Stoichiometry Engine" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Chemical balancing and molar mass computations" />
+                        </LinearLayout>
                         <androidx.appcompat.widget.SwitchCompat
                             android:id="@+id/switchLabChem"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true" />
-                    </RelativeLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="10dp"
-                        android:background="@color/card_stroke" />
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Maximum Solver Step Limit"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxStrokeColor="@color/sapphire_primary">
-
+                        android:layout_marginTop="14dp"
+                        android:hint="Maximum Step-by-Step Breakdown Depth"
+                        app:startIconDrawable="@drawable/ic_tasks"
+                        app:startIconTint="@color/learnify_brand_blue">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etLabMaxSteps"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="number"
-                            android:textColor="@color/text_primary_slate"
                             android:textSize="15sp" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- SAVE BUTTON -->
+            <!-- 12. MAINTENANCE AND OPERATIONS -->
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="12. MAINTENANCE &amp; OPERATIONS"
+                android:textColor="@color/admin_text_primary" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/SettingsCard"
+                app:cardCornerRadius="16dp"
+                app:strokeColor="@color/admin_border">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout style="@style/SettingsItem" android:paddingHorizontal="0dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="System Maintenance Lockdown" android:textColor="@color/danger_red" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Restrict student login access during upgrades (Admins retain access)" />
+                        </LinearLayout>
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switchMaintenance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="Maintenance Notice Message To Students">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etMaintenanceMessage"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="15sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="0dp" />
+
+                    <LinearLayout style="@style/SettingsItem" android:paddingHorizontal="0dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Cookie &amp; Regulatory Compliance Notice" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Display mandatory GDPR and student privacy banner" />
+                        </LinearLayout>
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switchCookie"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 13. AUDIT LOGS -->
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="13. AUDIT LOGS"
+                android:textColor="@color/admin_text_primary" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/SettingsCard"
+                app:cardCornerRadius="16dp"
+                app:strokeColor="@color/admin_border">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Administrative Action Audit Trail"
+                        android:textColor="@color/text_primary_slate"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvLastAuditPreview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Latest recorded actions are secured in the immutable audit table."
+                        android:textColor="@color/text_secondary_slate"
+                        android:textSize="13sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSystemLogs"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Inspect Audit Trail"
+                            android:textColor="@color/learnify_brand_navy"
+                            app:icon="@drawable/ic_tasks"
+                            app:iconTint="@color/learnify_brand_navy"
+                            app:strokeColor="@color/learnify_brand_navy" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnExportAuditLogs"
+                            style="@style/Widget.MaterialComponents.Button.TextButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:text="Export Logs"
+                            android:textColor="@color/learnify_brand_blue" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 14. HELP AND SYSTEM INFORMATION -->
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="14. HELP &amp; SYSTEM INFORMATION"
+                android:textColor="@color/admin_text_primary" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/SettingsCard"
+                app:cardCornerRadius="16dp"
+                app:strokeColor="@color/admin_border">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout style="@style/SettingsItem" android:paddingHorizontal="0dp">
+                        <TextView style="@style/SettingsItemText" android:text="Platform Engine Version" />
+                        <TextView android:id="@+id/tvAdminVersion" style="@style/SettingsItemValue" android:text="3.0 Global Release" android:textColor="@color/learnify_brand_blue" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="0dp" />
+
+                    <LinearLayout style="@style/SettingsItem" android:paddingHorizontal="0dp">
+                        <TextView style="@style/SettingsItemText" android:text="Target Android SDK" />
+                        <TextView style="@style/SettingsItemValue" android:text="Android 14 (API 34)" android:textColor="@color/text_secondary_slate" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" android:layout_marginStart="0dp" />
+
+                    <LinearLayout style="@style/SettingsItem" android:paddingHorizontal="0dp">
+                        <TextView style="@style/SettingsItemText" android:text="Backend API Service" />
+                        <TextView android:id="@+id/tvBackendStatus" style="@style/SettingsItemValue" android:text="Online • TLS 1.3 Pinning" android:textColor="@color/emerald_primary" />
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAdminDocumentation"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Administrator Documentation &amp; SOPs"
+                        android:textColor="@color/learnify_brand_blue" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Bottom Master Save Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSaveSettings"
+                style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:text="SAVE GLOBAL CONFIGURATION"
-                android:textColor="@color/white"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@color/learnify_brand_navy"
+                android:text="Synchronize Global Infrastructure"
                 android:textSize="15sp"
                 android:textStyle="bold"
-                android:letterSpacing="0.04"
-                app:backgroundTint="@color/sapphire_primary"
-                app:cornerRadius="16dp"
-                app:elevation="3dp"
+                app:cornerRadius="14dp"
                 app:icon="@drawable/ic_verified_check"
-                app:iconGravity="textStart"
-                app:iconPadding="10dp"
-                app:iconSize="20dp"
                 app:iconTint="@color/white" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="40dp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

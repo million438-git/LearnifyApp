@@ -27,7 +27,7 @@ import retrofit2.Response;
  * GpaCalculatorActivity - Unified Academic Analysis.
  * GPA advice is requested through the Learnify backend, which owns provider credentials.
  */
-public class GpaCalculatorActivity extends AppCompatActivity {
+public class GpaCalculatorActivity extends BaseActivity {
 
     private LinearLayout llSubjectsList;
     private TextView tvGpaResult, tvGpaStatusLabel, tvGpaMessage, tvGpaSummaryText, tvAiResponse;

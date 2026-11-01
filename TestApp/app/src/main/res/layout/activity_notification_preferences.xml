@@ -64,10 +64,56 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- NOTIFICATION TYPES -->
+            <!-- QUIET HOURS -->
+            <TextView style="@style/SettingsSectionHeader" android:text="QUIET HOURS" />
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+                    <LinearLayout style="@style/SettingsItem">
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_shield" />
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Enable Quiet Hours" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Mute non-essential alerts during rest time" />
+                        </LinearLayout>
+                        <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switchQuietHours" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="false" />
+                    </LinearLayout>
+                    <View style="@style/SettingsDivider" />
+                    <LinearLayout android:id="@+id/llQuietHoursRange" style="@style/SettingsItem" android:clickable="true" android:focusable="true">
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_timer" />
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Quiet Period" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Daily mute window" />
+                        </LinearLayout>
+                        <TextView android:id="@+id/tvQuietHoursRange" style="@style/SettingsItemValue" android:text="10:00 PM - 07:00 AM ▼" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ACADEMIC & NOTIFICATION TYPES -->
             <TextView style="@style/SettingsSectionHeader" android:text="@string/section_notification_types" />
             <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+
+                    <LinearLayout style="@style/SettingsItem">
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_school" />
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Homework &amp; Assignments" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Due date reminders and submissions" />
+                        </LinearLayout>
+                        <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switchHomeworkAlerts" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
+                    <LinearLayout style="@style/SettingsItem">
+                        <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_target" />
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                            <TextView style="@style/SettingsItemText" android:layout_width="match_parent" android:layout_weight="0" android:text="Exam &amp; Test Notifications" />
+                            <TextView style="@style/SettingsItemDescription" android:text="Upcoming exam dates and revision alerts" />
+                        </LinearLayout>
+                        <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switchExamAlerts" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
 
                     <LinearLayout style="@style/SettingsItem">
                         <ImageView style="@style/SettingsItemIcon" android:src="@drawable/ic_bolt" />

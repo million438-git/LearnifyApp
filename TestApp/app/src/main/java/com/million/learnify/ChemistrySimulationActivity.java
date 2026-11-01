@@ -7,7 +7,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class ChemistrySimulationActivity extends AppCompatActivity {
+public class ChemistrySimulationActivity extends BaseActivity {
 
     private int experimentId;
     private WebView webViewSim;
@@ -37,7 +37,13 @@ public class ChemistrySimulationActivity extends AppCompatActivity {
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setSupportZoom(true);
         
-        webViewSim.setWebViewClient(new WebViewClient());
+        webViewSim.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                LabPreferencesManager.getInstance(ChemistrySimulationActivity.this).applyToWebView(view);
+            }
+        });
         webViewSim.setBackgroundColor(0x00000000);
     }
 

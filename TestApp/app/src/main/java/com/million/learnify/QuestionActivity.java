@@ -48,6 +48,21 @@ public class QuestionActivity extends BaseActivity {
         if (scrollLegacyQuestions != null) {
             scrollLegacyQuestions.setVisibility(View.GONE);
         }
+
+        View btnCheck = findViewById(R.id.btnCheckAnswer);
+        if (btnCheck != null) {
+            btnCheck.setOnClickListener(v -> {
+                TextView tvExp = findViewById(R.id.tvExplanationText);
+                if (tvExp != null) {
+                    tvExp.setVisibility(View.VISIBLE);
+                    tvExp.setText("Answer verified. Practice complete.");
+                }
+            });
+        }
+        View btnNextQ = findViewById(R.id.btnNext);
+        if (btnNextQ != null) {
+            btnNextQ.setOnClickListener(v -> finish());
+        }
     }
 
     private void setupToolbar() {

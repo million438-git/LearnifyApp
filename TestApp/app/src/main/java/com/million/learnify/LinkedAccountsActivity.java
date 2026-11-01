@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-public class LinkedAccountsActivity extends AppCompatActivity {
+public class LinkedAccountsActivity extends BaseActivity {
 
     private static final String PREFS_NAME = "LinkedAccountsPrefs";
     private static final String KEY_GOOGLE = "google_linked";

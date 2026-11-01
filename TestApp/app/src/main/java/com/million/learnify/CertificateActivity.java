@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class CertificateActivity extends AppCompatActivity {
+public class CertificateActivity extends BaseActivity {
 
     private TextView tvStudentName, tvSubjectMastered, tvCertificateDate, tvStudentID, tvCertificateID;
     private TextView tvCertTitle, tvPresentationText, tvBodyText, tvDirectorName, tvDirectorRole;

@@ -142,7 +142,7 @@ import java.util.stream.Collectors;
 
  */
 
-public class CameraLabActivity extends AppCompatActivity {
+public class CameraLabActivity extends BaseActivity {
 
 
 
@@ -950,7 +950,12 @@ public class CameraLabActivity extends AppCompatActivity {
 
                 preview.setSurfaceProvider(viewFinder.getSurfaceProvider());
 
-                imageCapture = new ImageCapture.Builder().setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY).build();
+                SharedPreferences camPrefs = getSharedPreferences(CameraSettingsActivity.PREFS_NAME, MODE_PRIVATE);
+                String quality = camPrefs.getString(CameraSettingsActivity.KEY_IMAGE_QUALITY, "balanced");
+                int captureMode = "high".equalsIgnoreCase(quality)
+                        ? ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY
+                        : ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY;
+                imageCapture = new ImageCapture.Builder().setCaptureMode(captureMode).build();
 
                 provider.unbindAll();
 
@@ -1175,9 +1180,9 @@ public class CameraLabActivity extends AppCompatActivity {
                 final String finalPlot = plotPng;
                 final String finalShortAnswer = shortAnswer;
 
-                SharedPreferences camPrefs = getSharedPreferences("CameraSettings", MODE_PRIVATE);
+                SharedPreferences camPrefs = getSharedPreferences(CameraSettingsActivity.PREFS_NAME, MODE_PRIVATE);
 
-                if (camPrefs.getBoolean("save_history", true)) {
+                if (camPrefs.getBoolean(CameraSettingsActivity.KEY_SAVE_HISTORY, true) && camPrefs.getBoolean(CameraSettingsActivity.KEY_AUTO_SAVE, true)) {
 
                     dbHelper.saveLabResult(currentUsername, currentMode.name(), text, finalDisplay, false, currentCourseContext);
 

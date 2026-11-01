@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class VisualizerActivity extends AppCompatActivity {
+public class VisualizerActivity extends BaseActivity {
 
     private WebView webView;
     private TextView tvSimTitle, tvLabInstructions;

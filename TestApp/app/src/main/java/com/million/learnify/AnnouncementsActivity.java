@@ -17,7 +17,7 @@ import java.util.List;
  * AnnouncementsActivity - Displays system-wide broadcasts and alerts to students.
  * Professional implementation with specialized item layout.
  */
-public class AnnouncementsActivity extends AppCompatActivity {
+public class AnnouncementsActivity extends BaseActivity {
 
     private RecyclerView rvAnnouncements;
     private DatabaseHelper dbHelper;

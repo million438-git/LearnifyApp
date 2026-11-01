@@ -22,7 +22,7 @@ import com.google.android.material.button.MaterialButton;
 
 import java.util.Random;
 
-public class InviteFriendsActivity extends AppCompatActivity {
+public class InviteFriendsActivity extends BaseActivity {
 
     private String referralLink;
     private static final String BASE_URL = "learnify.com/invite/";

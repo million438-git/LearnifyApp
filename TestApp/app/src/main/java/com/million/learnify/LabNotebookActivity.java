@@ -20,7 +20,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.List;
 import java.util.Locale;
 
-public class LabNotebookActivity extends AppCompatActivity {
+public class LabNotebookActivity extends BaseActivity {
 
     private DatabaseHelper dbHelper;
     private String currentUsername;

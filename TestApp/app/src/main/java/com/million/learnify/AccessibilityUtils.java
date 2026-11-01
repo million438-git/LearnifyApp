@@ -255,6 +255,19 @@ public final class AccessibilityUtils {
                        .replaceAll("\\^3\\b|³", " cubed")
                        .replaceAll("\\^([0-9]+)", " to the power of $1");
 
+        // Classical physical laws and equations
+        speech = speech.replaceAll("(?i)\\bE\\s*=\\s*mc\\^?2\\b", "E equals m c squared, energy mass equivalence")
+                       .replaceAll("(?i)\\bF\\s*=\\s*ma\\b", "force equals mass times acceleration")
+                       .replaceAll("(?i)\\bV\\s*=\\s*IR\\b", "voltage equals current times resistance, Ohm's law")
+                       .replaceAll("(?i)\\bPV\\s*=\\s*nRT\\b", "P V equals n R T, ideal gas law");
+
+        // Mathematical functions
+        speech = speech.replaceAll("\\\\sin\\b|\\bsin\\b", "sine of ")
+                       .replaceAll("\\\\cos\\b|\\bcos\\b", "cosine of ")
+                       .replaceAll("\\\\tan\\b|\\btan\\b", "tangent of ")
+                       .replaceAll("\\\\log\\b|\\blog\\b", "logarithm of ")
+                       .replaceAll("\\\\ln\\b|\\bln\\b", "natural log of ");
+
         // Strip remaining LaTeX backslashes
         speech = speech.replaceAll("\\\\[a-zA-Z]+", " ");
 
@@ -285,5 +298,40 @@ public final class AccessibilityUtils {
                           .replace("&quot;", "\"");
 
         return cleanMathForSpeech(text);
+    }
+
+    /**
+     * Translates science diagrams and visual lab figures into structured,
+     * highly descriptive phonetic text for blind/low-vision students.
+     */
+    public static String describeDiagramForAccessibility(
+            @Nullable String diagramType,
+            @Nullable String title,
+            @Nullable String description,
+            @Nullable java.util.List<String> keyComponents) {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Scientific Diagram: ");
+        if (title != null && !title.trim().isEmpty()) {
+            sb.append(title.trim()).append(". ");
+        }
+        if (diagramType != null && !diagramType.trim().isEmpty()) {
+            sb.append("Type: ").append(diagramType.trim()).append(". ");
+        }
+        if (description != null && !description.trim().isEmpty()) {
+            sb.append(cleanMathForSpeech(description)).append(". ");
+        }
+        if (keyComponents != null && !keyComponents.isEmpty()) {
+            sb.append("Key elements shown: ");
+            for (int i = 0; i < keyComponents.size(); i++) {
+                sb.append(keyComponents.get(i));
+                if (i < keyComponents.size() - 1) {
+                    sb.append(", ");
+                } else {
+                    sb.append(".");
+                }
+            }
+        }
+        return sb.toString().trim();
     }
 }

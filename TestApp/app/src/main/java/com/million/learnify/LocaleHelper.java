@@ -20,6 +20,9 @@ public class LocaleHelper {
         Resources res = context.getResources();
         Configuration config = new Configuration(res.getConfiguration());
         config.setLocale(locale);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            config.setLayoutDirection(locale);
+        }
         
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return context.createConfigurationContext(config);

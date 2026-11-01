@@ -253,8 +253,14 @@ public class RegisterActivity extends BaseActivity {
             passwordEditText.requestFocus();
             return;
         }
-        if (pass.length() < 6) {
-            passwordEditText.setError("Password must be at least 6 characters long");
+        int minLength = 8;
+        if (repository != null) {
+            try {
+                minLength = Integer.parseInt(repository.getSystemSetting("min_password_length", "8"));
+            } catch (Exception ignored) {}
+        }
+        if (pass.length() < minLength) {
+            passwordEditText.setError("Password must be at least " + minLength + " characters long");
             passwordEditText.requestFocus();
             return;
         }
@@ -264,6 +270,7 @@ public class RegisterActivity extends BaseActivity {
 
         setSubmitting(true);
 
+        // 5. Firebase Availability
         firebaseAuth = FirebaseAuthSupport.getConfiguredAuth(this);
         if (firebaseAuth == null) {
             Log.i(TAG, "Firebase unavailable; proceeding with secure local student registration");

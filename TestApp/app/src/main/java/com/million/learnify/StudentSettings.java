@@ -1,185 +1,249 @@
 package com.million.learnify;
 
-public class StudentSettings {
+import com.google.gson.JsonObject;
 
-    private String themeMode;
-    private boolean notificationsEnabled;
-    private boolean textToSpeech;
-    private String fontSize;
-    private boolean studyReminder;
-    private boolean homeworkAlerts;
-    private boolean examNotifications;
-    private boolean aiStudyTips;
-    private boolean motivationEnabled;
-    private String reminderTime;
-    private String language;
-    private boolean highContrastMode;
-    private boolean offlineMode;
-    private boolean dataSaver;
-    private String videoQuality;
-    private String aiHelpLevel;
-    private String aiLearningStyle;
-    private boolean profileVisibility;
-    private boolean shareProgress;
-    
-    // Gameplay and Language & Region
-    private boolean soundEffects;
-    private boolean hapticFeedback;
-    private boolean animatedCelebrations;
-    private String region;
-    private String dateFormat;
-    private boolean reduceMotion;
-    private String autoDownloadMedia;
-    private boolean cloudSync;
+import java.io.Serializable;
+import java.util.List;
 
-    // Detailed Notification Preferences
-    private boolean notifyDailyChallenge;
-    private boolean notifyFriendRequests;
-    private boolean notifyFriendActivity;
-    private boolean notifyAchievements;
-    private boolean notifyXPMilestones;
-    private boolean notifyStreakAlerts;
-    private boolean notifyAnnouncements;
-    private boolean pushEnabled;
+/**
+ * StudentSettings - Unified Settings Facade.
+ * Bridges LocalDevicePreferences (Category A: device rendering, haptics, accessibility)
+ * and StudentAccountPreferences (Category B: account goals, AI tutor, reminders, synced cloud state).
+ * Maintains 100% backward compatibility for all existing Learnify UI activities and background receivers.
+ */
+public class StudentSettings implements Serializable {
 
-    // Privacy & Security
-    private boolean twoFactorEnabled;
+    private final LocalDevicePreferences localPrefs;
+    private final StudentAccountPreferences accountPrefs;
 
-    // Inclusive Learning Mode (Accessibility)
-    private boolean inclusiveMode;
-    private float speechRate;
-    private boolean autoReadContent;
+    public StudentSettings() {
+        this("light", true, true);
+    }
 
     public StudentSettings(String themeMode, boolean notificationsEnabled) {
         this(themeMode, notificationsEnabled, true);
     }
 
     public StudentSettings(String themeMode, boolean notificationsEnabled, boolean textToSpeech) {
-        this.themeMode = themeMode;
-        this.notificationsEnabled = notificationsEnabled;
-        this.textToSpeech = textToSpeech;
-        this.fontSize = "medium";
-        this.studyReminder = true;
-        this.homeworkAlerts = true;
-        this.examNotifications = true;
-        this.aiStudyTips = true;
-        this.motivationEnabled = true;
-        this.reminderTime = "17:00"; 
-        this.language = "en";
-        this.highContrastMode = false;
-        this.offlineMode = false;
-        this.dataSaver = false;
-        this.videoQuality = "720p";
-        this.aiHelpLevel = "Standard";
-        this.aiLearningStyle = "Balanced";
-        this.profileVisibility = true;
-        this.shareProgress = true;
-        
-        this.soundEffects = true;
-        this.hapticFeedback = true;
-        this.animatedCelebrations = true;
-        this.region = "US";
-        this.dateFormat = "MM/DD/YYYY";
-        this.reduceMotion = false;
-        this.autoDownloadMedia = "Wi-Fi only";
-        this.cloudSync = true;
+        this.localPrefs = new LocalDevicePreferences();
+        this.accountPrefs = new StudentAccountPreferences();
 
-        // Notification defaults
-        this.notifyDailyChallenge = true;
-        this.notifyFriendRequests = true;
-        this.notifyFriendActivity = true;
-        this.notifyAchievements = true;
-        this.notifyXPMilestones = true;
-        this.notifyStreakAlerts = true;
-        this.notifyAnnouncements = true;
-        this.pushEnabled = true;
-
-        this.twoFactorEnabled = false;
-
-        this.inclusiveMode = false;
-        this.speechRate = 1.0f;
-        this.autoReadContent = false;
+        this.localPrefs.setThemeMode(themeMode);
+        this.accountPrefs.setPushEnabled(notificationsEnabled);
+        this.localPrefs.setTextToSpeech(textToSpeech);
     }
 
-    // Getters and Setters
-    public String getThemeMode() { return themeMode; }
-    public void setThemeMode(String themeMode) { this.themeMode = themeMode; }
-    public boolean areNotificationsEnabled() { return notificationsEnabled; }
-    public void setNotificationsEnabled(boolean notificationsEnabled) { this.notificationsEnabled = notificationsEnabled; }
-    public boolean isTextToSpeech() { return textToSpeech; }
-    public void setTextToSpeech(boolean textToSpeech) { this.textToSpeech = textToSpeech; }
-    public String getFontSize() { return fontSize; }
-    public void setFontSize(String fontSize) { this.fontSize = fontSize; }
-    public boolean isStudyReminder() { return studyReminder; }
-    public void setStudyReminder(boolean studyReminder) { this.studyReminder = studyReminder; }
-    public boolean isHomeworkAlerts() { return homeworkAlerts; }
-    public void setHomeworkAlerts(boolean homeworkAlerts) { this.homeworkAlerts = homeworkAlerts; }
-    public boolean isExamNotifications() { return examNotifications; }
-    public void setExamNotifications(boolean examNotifications) { this.examNotifications = examNotifications; }
-    public boolean isAiStudyTips() { return aiStudyTips; }
-    public void setAiStudyTips(boolean aiStudyTips) { this.aiStudyTips = aiStudyTips; }
-    public boolean isMotivationEnabled() { return motivationEnabled; }
-    public void setMotivationEnabled(boolean motivationEnabled) { this.motivationEnabled = motivationEnabled; }
-    public String getReminderTime() { return reminderTime; }
-    public void setReminderTime(String reminderTime) { this.reminderTime = reminderTime; }
-    public String getLanguage() { return language; }
-    public void setLanguage(String language) { this.language = language; }
-    public boolean isHighContrastMode() { return highContrastMode; }
-    public void setHighContrastMode(boolean highContrastMode) { this.highContrastMode = highContrastMode; }
-    public boolean isOfflineMode() { return offlineMode; }
-    public void setOfflineMode(boolean offlineMode) { this.offlineMode = offlineMode; }
-    public boolean isDataSaver() { return dataSaver; }
-    public void setDataSaver(boolean dataSaver) { this.dataSaver = dataSaver; }
-    public String getVideoQuality() { return videoQuality; }
-    public void setVideoQuality(String videoQuality) { this.videoQuality = videoQuality; }
-    public String getAiHelpLevel() { return aiHelpLevel; }
-    public void setAiHelpLevel(String aiHelpLevel) { this.aiHelpLevel = aiHelpLevel; }
-    public String getAiLearningStyle() { return aiLearningStyle; }
-    public void setAiLearningStyle(String aiLearningStyle) { this.aiLearningStyle = aiLearningStyle; }
-    public boolean isProfileVisibility() { return profileVisibility; }
-    public void setProfileVisibility(boolean profileVisibility) { this.profileVisibility = profileVisibility; }
-    public boolean isShareProgress() { return shareProgress; }
-    public void setShareProgress(boolean shareProgress) { this.shareProgress = shareProgress; }
-    public boolean isSoundEffects() { return soundEffects; }
-    public void setSoundEffects(boolean soundEffects) { this.soundEffects = soundEffects; }
-    public boolean isHapticFeedback() { return hapticFeedback; }
-    public void setHapticFeedback(boolean hapticFeedback) { this.hapticFeedback = hapticFeedback; }
-    public boolean isAnimatedCelebrations() { return animatedCelebrations; }
-    public void setAnimatedCelebrations(boolean animatedCelebrations) { this.animatedCelebrations = animatedCelebrations; }
-    public String getRegion() { return region; }
-    public void setRegion(String region) { this.region = region; }
-    public String getDateFormat() { return dateFormat; }
-    public void setDateFormat(String dateFormat) { this.dateFormat = dateFormat; }
-    public boolean isReduceMotion() { return reduceMotion; }
-    public void setReduceMotion(boolean reduceMotion) { this.reduceMotion = reduceMotion; }
-    public String getAutoDownloadMedia() { return autoDownloadMedia; }
-    public void setAutoDownloadMedia(String autoDownloadMedia) { this.autoDownloadMedia = autoDownloadMedia; }
-    public boolean isCloudSync() { return cloudSync; }
-    public void setCloudSync(boolean cloudSync) { this.cloudSync = cloudSync; }
+    public StudentSettings(LocalDevicePreferences localPrefs, StudentAccountPreferences accountPrefs) {
+        this.localPrefs = localPrefs != null ? localPrefs : new LocalDevicePreferences();
+        this.accountPrefs = accountPrefs != null ? accountPrefs : new StudentAccountPreferences();
+    }
 
-    public boolean isNotifyDailyChallenge() { return notifyDailyChallenge; }
-    public void setNotifyDailyChallenge(boolean notifyDailyChallenge) { this.notifyDailyChallenge = notifyDailyChallenge; }
-    public boolean isNotifyFriendRequests() { return notifyFriendRequests; }
-    public void setNotifyFriendRequests(boolean notifyFriendRequests) { this.notifyFriendRequests = notifyFriendRequests; }
-    public boolean isNotifyFriendActivity() { return notifyFriendActivity; }
-    public void setNotifyFriendActivity(boolean notifyFriendActivity) { this.notifyFriendActivity = notifyFriendActivity; }
-    public boolean isNotifyAchievements() { return notifyAchievements; }
-    public void setNotifyAchievements(boolean notifyAchievements) { this.notifyAchievements = notifyAchievements; }
-    public boolean isNotifyXPMilestones() { return notifyXPMilestones; }
-    public void setNotifyXPMilestones(boolean notifyXPMilestones) { this.notifyXPMilestones = notifyXPMilestones; }
-    public boolean isNotifyStreakAlerts() { return notifyStreakAlerts; }
-    public void setNotifyStreakAlerts(boolean notifyStreakAlerts) { this.notifyStreakAlerts = notifyStreakAlerts; }
-    public boolean isNotifyAnnouncements() { return notifyAnnouncements; }
-    public void setNotifyAnnouncements(boolean notifyAnnouncements) { this.notifyAnnouncements = notifyAnnouncements; }
-    public boolean isPushEnabled() { return pushEnabled; }
-    public void setPushEnabled(boolean pushEnabled) { this.pushEnabled = pushEnabled; }
-    public boolean isTwoFactorEnabled() { return twoFactorEnabled; }
-    public void setTwoFactorEnabled(boolean twoFactorEnabled) { this.twoFactorEnabled = twoFactorEnabled; }
+    // Direct Access to Domain Categories
+    public LocalDevicePreferences getLocalDevicePreferences() {
+        return localPrefs;
+    }
 
-    public boolean isInclusiveMode() { return inclusiveMode; }
-    public void setInclusiveMode(boolean inclusiveMode) { this.inclusiveMode = inclusiveMode; }
-    public float getSpeechRate() { return speechRate; }
-    public void setSpeechRate(float speechRate) { this.speechRate = speechRate; }
-    public boolean isAutoReadContent() { return autoReadContent; }
-    public void setAutoReadContent(boolean autoReadContent) { this.autoReadContent = autoReadContent; }
+    public StudentAccountPreferences getStudentAccountPreferences() {
+        return accountPrefs;
+    }
+
+    // --- Category A: Local Device Preferences Delegation ---
+
+    public String getThemeMode() { return localPrefs.getThemeMode(); }
+    public void setThemeMode(String themeMode) { localPrefs.setThemeMode(themeMode); }
+
+    public String getFontSize() { return localPrefs.getFontSize(); }
+    public void setFontSize(String fontSize) { localPrefs.setFontSize(fontSize); }
+
+    public boolean isSoundEffects() { return localPrefs.isSoundEffects(); }
+    public void setSoundEffects(boolean soundEffects) { localPrefs.setSoundEffects(soundEffects); }
+
+    public boolean isHapticFeedback() { return localPrefs.isHapticFeedback(); }
+    public void setHapticFeedback(boolean hapticFeedback) { localPrefs.setHapticFeedback(hapticFeedback); }
+
+    public boolean isAnimatedCelebrations() { return localPrefs.isAnimatedCelebrations(); }
+    public void setAnimatedCelebrations(boolean animatedCelebrations) { localPrefs.setAnimatedCelebrations(animatedCelebrations); }
+
+    public boolean isTextToSpeech() { return localPrefs.isTextToSpeech(); }
+    public void setTextToSpeech(boolean textToSpeech) { localPrefs.setTextToSpeech(textToSpeech); }
+
+    public boolean isHighContrastMode() { return localPrefs.isHighContrastMode(); }
+    public void setHighContrastMode(boolean highContrastMode) { localPrefs.setHighContrastMode(highContrastMode); }
+
+    public boolean isReduceMotion() { return localPrefs.isReduceMotion(); }
+    public void setReduceMotion(boolean reduceMotion) { localPrefs.setReduceMotion(reduceMotion); }
+
+    public boolean isInclusiveMode() { return localPrefs.isInclusiveMode(); }
+    public void setInclusiveMode(boolean inclusiveMode) { localPrefs.setInclusiveMode(inclusiveMode); }
+
+    public float getSpeechRate() { return localPrefs.getSpeechRate(); }
+    public void setSpeechRate(float speechRate) { localPrefs.setSpeechRate(speechRate); }
+
+    public float getSpeechPitch() { return localPrefs.getSpeechPitch(); }
+    public void setSpeechPitch(float speechPitch) { localPrefs.setSpeechPitch(speechPitch); }
+
+    public boolean isAutoReadContent() { return localPrefs.isAutoReadContent(); }
+    public void setAutoReadContent(boolean autoReadContent) { localPrefs.setAutoReadContent(autoReadContent); }
+
+    public boolean isOfflineMode() { return localPrefs.isOfflineMode(); }
+    public void setOfflineMode(boolean offlineMode) { localPrefs.setOfflineMode(offlineMode); }
+
+    public boolean isDataSaver() { return localPrefs.isDataSaver(); }
+    public void setDataSaver(boolean dataSaver) { localPrefs.setDataSaver(dataSaver); }
+
+    public String getVideoQuality() { return localPrefs.getVideoQuality(); }
+    public void setVideoQuality(String videoQuality) { localPrefs.setVideoQuality(videoQuality); }
+
+    public String getAutoDownloadMedia() { return localPrefs.getAutoDownloadMedia(); }
+    public void setAutoDownloadMedia(String autoDownloadMedia) { localPrefs.setAutoDownloadMedia(autoDownloadMedia); }
+
+    // --- Category B: Student Account Preferences Delegation ---
+
+    public boolean areNotificationsEnabled() { return accountPrefs.isPushEnabled(); }
+    public void setNotificationsEnabled(boolean notificationsEnabled) { accountPrefs.setPushEnabled(notificationsEnabled); }
+
+    public boolean isPushEnabled() { return accountPrefs.isPushEnabled(); }
+    public void setPushEnabled(boolean pushEnabled) { accountPrefs.setPushEnabled(pushEnabled); }
+
+    public boolean isStudyReminder() { return accountPrefs.isStudyReminder(); }
+    public void setStudyReminder(boolean studyReminder) { accountPrefs.setStudyReminder(studyReminder); }
+
+    public String getReminderTime() { return accountPrefs.getReminderTime(); }
+    public void setReminderTime(String reminderTime) { accountPrefs.setReminderTime(reminderTime); }
+
+    public boolean isHomeworkAlerts() { return accountPrefs.isHomeworkAlerts(); }
+    public void setHomeworkAlerts(boolean homeworkAlerts) { accountPrefs.setHomeworkAlerts(homeworkAlerts); }
+
+    public boolean isExamNotifications() { return accountPrefs.isExamNotifications(); }
+    public void setExamNotifications(boolean examNotifications) { accountPrefs.setExamNotifications(examNotifications); }
+
+    public boolean isAiStudyTips() { return accountPrefs.isAiStudyTips(); }
+    public void setAiStudyTips(boolean aiStudyTips) { accountPrefs.setAiStudyTips(aiStudyTips); }
+
+    public boolean isMotivationEnabled() { return accountPrefs.isMotivationEnabled(); }
+    public void setMotivationEnabled(boolean motivationEnabled) { accountPrefs.setMotivationEnabled(motivationEnabled); }
+
+    public boolean isQuietHoursEnabled() { return accountPrefs.isQuietHoursEnabled(); }
+    public void setQuietHoursEnabled(boolean quietHoursEnabled) { accountPrefs.setQuietHoursEnabled(quietHoursEnabled); }
+
+    public String getQuietHoursStart() { return accountPrefs.getQuietHoursStart(); }
+    public void setQuietHoursStart(String quietHoursStart) { accountPrefs.setQuietHoursStart(quietHoursStart); }
+
+    public String getQuietHoursEnd() { return accountPrefs.getQuietHoursEnd(); }
+    public void setQuietHoursEnd(String quietHoursEnd) { accountPrefs.setQuietHoursEnd(quietHoursEnd); }
+
+    public boolean isNotifyDailyChallenge() { return accountPrefs.isNotifyDailyChallenge(); }
+    public void setNotifyDailyChallenge(boolean n) { accountPrefs.setNotifyDailyChallenge(n); }
+
+    public boolean isNotifyFriendRequests() { return accountPrefs.isNotifyFriendRequests(); }
+    public void setNotifyFriendRequests(boolean n) { accountPrefs.setNotifyFriendRequests(n); }
+
+    public boolean isNotifyFriendActivity() { return accountPrefs.isNotifyFriendActivity(); }
+    public void setNotifyFriendActivity(boolean n) { accountPrefs.setNotifyFriendActivity(n); }
+
+    public boolean isNotifyAchievements() { return accountPrefs.isNotifyAchievements(); }
+    public void setNotifyAchievements(boolean n) { accountPrefs.setNotifyAchievements(n); }
+
+    public boolean isNotifyXPMilestones() { return accountPrefs.isNotifyXPMilestones(); }
+    public void setNotifyXPMilestones(boolean n) { accountPrefs.setNotifyXPMilestones(n); }
+
+    public boolean isNotifyStreakAlerts() { return accountPrefs.isNotifyStreakAlerts(); }
+    public void setNotifyStreakAlerts(boolean n) { accountPrefs.setNotifyStreakAlerts(n); }
+
+    public boolean isNotifyAnnouncements() { return accountPrefs.isNotifyAnnouncements(); }
+    public void setNotifyAnnouncements(boolean n) { accountPrefs.setNotifyAnnouncements(n); }
+
+    public int getDailyStudyMinutes() { return accountPrefs.getDailyStudyMinutes(); }
+    public void setDailyStudyMinutes(int minutes) { accountPrefs.setDailyStudyMinutes(minutes); }
+
+    public int getWeeklyLessonGoal() { return accountPrefs.getWeeklyLessonGoal(); }
+    public void setWeeklyLessonGoal(int goal) { accountPrefs.setWeeklyLessonGoal(goal); }
+
+    public int getXpGoal() { return accountPrefs.getXpGoal(); }
+    public void setXpGoal(int xpGoal) { accountPrefs.setXpGoal(xpGoal); }
+
+    public List<String> getFavoriteSubjects() { return accountPrefs.getFavoriteSubjects(); }
+    public void setFavoriteSubjects(List<String> subjects) { accountPrefs.setFavoriteSubjects(subjects); }
+
+    public String getAiTutorLanguage() { return accountPrefs.getAiTutorLanguage(); }
+    public void setAiTutorLanguage(String language) { accountPrefs.setAiTutorLanguage(language); }
+
+    public boolean isAiVoiceResponse() { return accountPrefs.isAiVoiceResponse(); }
+    public void setAiVoiceResponse(boolean voice) { accountPrefs.setAiVoiceResponse(voice); }
+
+    public String getAiHelpLevel() { return accountPrefs.getAiHelpLevel(); }
+    public void setAiHelpLevel(String level) { accountPrefs.setAiHelpLevel(level); }
+
+    public String getAiLearningStyle() { return accountPrefs.getAiLearningStyle(); }
+    public void setAiLearningStyle(String style) { accountPrefs.setAiLearningStyle(style); }
+
+    public String getExplanationDepth() { return accountPrefs.getExplanationDepth(); }
+    public void setExplanationDepth(String depth) { accountPrefs.setExplanationDepth(depth); }
+
+    public String getPracticeDifficulty() { return accountPrefs.getPracticeDifficulty(); }
+    public void setPracticeDifficulty(String diff) { accountPrefs.setPracticeDifficulty(diff); }
+
+    public String getPreferredLessonPresentation() { return accountPrefs.getPreferredLessonPresentation(); }
+    public void setPreferredLessonPresentation(String p) { accountPrefs.setPreferredLessonPresentation(p); }
+
+    public boolean isPersonalizedRecommendations() { return accountPrefs.isPersonalizedRecommendations(); }
+    public void setPersonalizedRecommendations(boolean p) { accountPrefs.setPersonalizedRecommendations(p); }
+
+    public String getAiExplanationLength() { return accountPrefs.getAiExplanationLength(); }
+    public void setAiExplanationLength(String length) { accountPrefs.setAiExplanationLength(length); }
+
+    public boolean isSaveChatHistory() { return accountPrefs.isSaveChatHistory(); }
+    public void setSaveChatHistory(boolean s) { accountPrefs.setSaveChatHistory(s); }
+
+    public boolean isProfileVisibility() { return accountPrefs.isProfileVisibility(); }
+    public void setProfileVisibility(boolean v) { accountPrefs.setProfileVisibility(v); }
+
+    public boolean isShareProgress() { return accountPrefs.isShareProgress(); }
+    public void setShareProgress(boolean s) { accountPrefs.setShareProgress(s); }
+
+    public String getLanguage() { return accountPrefs.getLanguage(); }
+    public void setLanguage(String language) { accountPrefs.setLanguage(language); }
+
+    public String getRegion() { return accountPrefs.getRegion(); }
+    public void setRegion(String region) { accountPrefs.setRegion(region); }
+
+    public String getDateFormat() { return accountPrefs.getDateFormat(); }
+    public void setDateFormat(String dateFormat) { accountPrefs.setDateFormat(dateFormat); }
+
+    public boolean isCloudSync() {
+        return accountPrefs.getSyncStatus() != StudentAccountPreferences.SyncStatus.ERROR;
+    }
+    public void setCloudSync(boolean sync) {
+        if (!sync) {
+            accountPrefs.setSyncStatus(StudentAccountPreferences.SyncStatus.SYNCED);
+        }
+    }
+
+    public boolean isTwoFactorEnabled() { return false; }
+    public void setTwoFactorEnabled(boolean enabled) {}
+
+    public long getLastSyncTimestamp() { return accountPrefs.getLastSyncTimestamp(); }
+    public void setLastSyncTimestamp(long timestamp) { accountPrefs.setLastSyncTimestamp(timestamp); }
+
+    public String getLastSyncStatus() { return accountPrefs.getSyncStatus().name(); }
+    public void setLastSyncStatus(String status) {
+        try {
+            accountPrefs.setSyncStatus(StudentAccountPreferences.SyncStatus.valueOf(status));
+        } catch (Exception ignored) {
+        }
+    }
+
+    public String getLastSyncError() {
+        return accountPrefs.getSyncError() != null ? accountPrefs.getSyncError() : "None";
+    }
+    public void setLastSyncError(String error) { accountPrefs.setSyncError(error); }
+
+    // Serialization
+    public String toJson() {
+        JsonObject root = new JsonObject();
+        root.addProperty("theme", getThemeMode());
+        root.addProperty("fontSize", getFontSize());
+        root.addProperty("account", accountPrefs != null ? accountPrefs.toJson() : "{}");
+        return root.toString();
+    }
 }

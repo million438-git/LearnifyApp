@@ -92,5 +92,20 @@ public final class ThemeManager {
             return AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
         }
     }
+
+    /**
+     * Translates font-size preference into typography scale factor.
+     */
+    public static float getFontScaleFactor(String fontSize) {
+        if ("small".equalsIgnoreCase(fontSize)) {
+            return 0.85f;
+        } else if ("large".equalsIgnoreCase(fontSize)) {
+            return 1.15f;
+        } else if ("extra_large".equalsIgnoreCase(fontSize)) {
+            return 1.30f;
+        } else {
+            return 1.00f;
+        }
+    }
 }
 

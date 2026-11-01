@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * AttendanceActivity - Professional student attendance tracking system.
  */
-public class AttendanceActivity extends AppCompatActivity {
+public class AttendanceActivity extends BaseActivity {
 
     private RecyclerView rvAttendance;
     private CircularProgressIndicator progressOverall;

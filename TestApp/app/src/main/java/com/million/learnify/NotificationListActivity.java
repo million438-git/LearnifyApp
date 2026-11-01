@@ -19,7 +19,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotificationListActivity extends AppCompatActivity {
+public class NotificationListActivity extends BaseActivity {
 
     private DatabaseHelper dbHelper;
     private RecyclerView rvNotifications;

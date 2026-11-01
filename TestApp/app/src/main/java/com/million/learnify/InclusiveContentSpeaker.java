@@ -105,7 +105,7 @@ public class InclusiveContentSpeaker implements TextToSpeech.OnInitListener {
 
             float speechRate = modeManager.getSpeechRate();
             tts.setSpeechRate(speechRate);
-            tts.setPitch(1.0f);
+            tts.setPitch(modeManager.getSpeechPitch());
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 AudioAttributes attrs = new AudioAttributes.Builder()
@@ -192,6 +192,22 @@ public class InclusiveContentSpeaker implements TextToSpeech.OnInitListener {
         }
     }
 
+    /**
+     * Reads aloud user-selected text immediately with current speech rate and pitch preferences.
+     */
+    public void speakSelectedText(@Nullable String selectedText) {
+        if (selectedText == null || selectedText.trim().isEmpty()) return;
+        speakAnnouncement("Selected text: " + selectedText);
+    }
+
+    /**
+     * Reads aloud structured descriptions of science diagrams, circuits, and formulas.
+     */
+    public void speakDiagram(@Nullable String diagramType, @Nullable String title, @Nullable String description) {
+        String spoken = AccessibilityUtils.describeDiagramForAccessibility(diagramType, title, description, null);
+        speakAnnouncement(spoken);
+    }
+
     public void pause() {
         if (currentState == State.PLAYING) {
             if (tts != null) {
@@ -248,6 +264,13 @@ public class InclusiveContentSpeaker implements TextToSpeech.OnInitListener {
         modeManager.setSpeechRate(rate);
     }
 
+    public void setSpeechPitch(float pitch) {
+        if (tts != null && isInitialized) {
+            tts.setPitch(pitch);
+        }
+        modeManager.setSpeechPitch(pitch);
+    }
+
     public State getCurrentState() {
         return currentState;
     }
@@ -298,6 +321,10 @@ public class InclusiveContentSpeaker implements TextToSpeech.OnInitListener {
         }
 
         requestAudioFocus();
+        try {
+            tts.setSpeechRate(modeManager.getSpeechRate());
+            tts.setPitch(modeManager.getSpeechPitch());
+        } catch (Exception ignored) {}
         String text = currentSections.get(index);
         String utteranceId = UTTERANCE_PREFIX + index;
 

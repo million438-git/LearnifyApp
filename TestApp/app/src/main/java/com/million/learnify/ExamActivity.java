@@ -31,6 +31,7 @@ public class ExamActivity extends BaseActivity {
     private RadioButton rbA, rbB, rbC, rbD;
     private View cvExplanation;
     private Button btnNext, btnPrev, btnMark;
+    private final java.util.Set<Integer> markedQuestions = new java.util.HashSet<>();
 
     private List<Question> examQuestions;
     private int currentIdx = 0;
@@ -85,6 +86,9 @@ public class ExamActivity extends BaseActivity {
         btnNext = findViewById(R.id.btnNext);
         btnPrev = findViewById(R.id.btnPrev);
         btnMark = findViewById(R.id.btnMark);
+        if (btnMark != null) {
+            btnMark.setOnClickListener(v -> toggleMarkQuestion());
+        }
 
         // Accessibility heading roles
         if (tvQuestionNumber != null) {
@@ -252,6 +256,7 @@ public class ExamActivity extends BaseActivity {
         boolean isLast = currentIdx == examQuestions.size() - 1;
         btnNext.setText(isLast ? "FINISH" : "Next");
         btnNext.setContentDescription(isLast ? getString(R.string.acc_finish_exam) : getString(R.string.acc_next_question));
+        updateMarkButtonUI();
 
         // Accessible announcement of the new question
         String fullAnnouncement = qNumSpoken + ". " + spokenQuestion;
@@ -292,10 +297,36 @@ public class ExamActivity extends BaseActivity {
         }
     }
 
+    private void toggleMarkQuestion() {
+        if (markedQuestions.contains(currentIdx)) {
+            markedQuestions.remove(currentIdx);
+            Toast.makeText(this, "Question " + (currentIdx + 1) + " un-marked", Toast.LENGTH_SHORT).show();
+        } else {
+            markedQuestions.add(currentIdx);
+            Toast.makeText(this, "Question " + (currentIdx + 1) + " marked for review", Toast.LENGTH_SHORT).show();
+        }
+        updateMarkButtonUI();
+    }
+
+    private void updateMarkButtonUI() {
+        if (btnMark == null) return;
+        boolean isMarked = markedQuestions.contains(currentIdx);
+        if (isMarked) {
+            btnMark.setText("★ MARKED");
+            btnMark.setTextColor(Color.parseColor("#F59E0B"));
+        } else {
+            btnMark.setText("Mark for Review");
+            btnMark.setTextColor(Color.parseColor("#64748B"));
+        }
+    }
+
     private void confirmSubmit() {
+        String message = markedQuestions.isEmpty()
+                ? "Are you sure you want to finish the exam?"
+                : "You have " + markedQuestions.size() + " question(s) marked for review. Are you sure you want to finish now?";
         new AlertDialog.Builder(this)
                 .setTitle("Submit Exam?")
-                .setMessage("Are you sure you want to finish the exam?")
+                .setMessage(message)
                 .setPositiveButton("Submit", (dialog, which) -> autoSubmit())
                 .setNegativeButton("Keep Working", null)
                 .show();

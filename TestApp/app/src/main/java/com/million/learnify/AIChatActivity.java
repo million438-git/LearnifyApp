@@ -46,6 +46,7 @@ public class AIChatActivity extends BaseActivity implements ChatAdapter.OnSpeech
     private String subjectContext;
     private String gradeContext;
     private String topicContext;
+    private int lastSpokenMessageIndex = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,6 +162,16 @@ public class AIChatActivity extends BaseActivity implements ChatAdapter.OnSpeech
                 chatAdapter = new ChatAdapter(messages, this);
                 rvChat.setAdapter(chatAdapter);
                 rvChat.scrollToPosition(messages.size() - 1);
+
+                int lastIndex = messages.size() - 1;
+                ChatMessage lastMsg = messages.get(lastIndex);
+                if (!lastMsg.isUser() && !lastMsg.isThinking() && lastIndex > lastSpokenMessageIndex) {
+                    lastSpokenMessageIndex = lastIndex;
+                    StudentSettings settings = SettingsService.getInstance(this).loadSettings();
+                    if (settings.isAiVoiceResponse()) {
+                        getAccessibilitySpeaker().speakContent(lastMsg.getMessage());
+                    }
+                }
             } else {
                 emptyStateView.setVisibility(View.VISIBLE);
                 rvChat.setVisibility(View.GONE);

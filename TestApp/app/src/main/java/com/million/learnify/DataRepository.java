@@ -228,4 +228,22 @@ public class DataRepository {
     public DatabaseHelper getLocalDb() {
         return dbHelper;
     }
+
+    // --- 5. PHASE 5: PREFERENCES & SYSTEM GOVERNANCE ---
+
+    public boolean saveStudentAccountPreferences(StudentAccountPreferences prefs) {
+        return dbHelper.saveStudentAccountPreferences(prefs);
+    }
+
+    public StudentAccountPreferences getStudentAccountPreferences(String username) {
+        return dbHelper.getStudentAccountPreferences(username);
+    }
+
+    public boolean saveAdminSystemConfig(AdminSystemConfig config) {
+        return dbHelper.saveAdminSystemConfig(config);
+    }
+
+    public AdminSystemConfig getAdminSystemConfig(String configId) {
+        return dbHelper.getAdminSystemConfig(configId);
+    }
 }

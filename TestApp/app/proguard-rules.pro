@@ -1,21 +1,44 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Learnify Production ProGuard / R8 Rules
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Preserve line numbers and annotations for production crash reporting
+-keepattributes SourceFile,LineNumberTable
+-keepattributes *Annotation*
+-keepattributes Signature
+-keepattributes InnerClasses,EnclosingMethod
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Keep Gson serialization engine and data DTOs
+-dontwarn sun.misc.**
+-keep class com.google.gson.** { *; }
+-keep class * implements com.google.gson.TypeAdapterFactory
+-keep class * implements com.google.gson.JsonSerializer
+-keep class * implements com.google.gson.JsonDeserializer
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Keep all Learnify DTOs, entity classes, and JSON structures
+-keep class com.million.learnify.StudentAccountPreferences** { *; }
+-keep class com.million.learnify.OfflineStorageManager$SubjectPackInfo { *; }
+-keep class com.million.learnify.AdminConfigManager$AdminSystemConfig { *; }
+-keep class com.million.learnify.ChatMessage { *; }
+-keep class com.million.learnify.AIChatActivity$** { *; }
+-keep class com.million.learnify.DataRepository$** { *; }
+
+# Chaquopy Python Runtime Reflection Rules
+-keep class com.chaquo.python.** { *; }
+-dontwarn com.chaquo.python.**
+
+# Retrofit 2 & OkHttp 3 Network Serialization Rules
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
+
+# AndroidX Security Crypto & Android Keystore
+-keep class androidx.security.crypto.** { *; }
+-dontwarn androidx.security.crypto.**
+
+# JavaScript Interface for Virtual Laboratory WebViews
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}

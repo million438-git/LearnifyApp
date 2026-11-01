@@ -16,8 +16,11 @@ import retrofit2.Response;
 /**
  * ChatViewModel - The Central Controller for EduAI.
  * Features:
- * - SQLite persistent conversation history
+ * - SQLite persistent conversation history with privacy toggle respect
  * - Student & curriculum context propagation (Grade, Subject, Topic)
+ * - Language personalization (English & Amharic instruction prefixes)
+ * - Explanation length tuning (Concise, Step-by-Step, Deep Conceptual)
+ * - Data-saver bandwidth optimization
  * - Offline study engine fallback (OfflineAiEngine)
  * - Live service readiness observation
  */
@@ -38,12 +41,14 @@ public class ChatViewModel extends AndroidViewModel {
     private final AIChatActivity.AssistantService assistantService;
     private final OfflineAiEngine offlineAiEngine;
     private final DatabaseHelper dbHelper;
+    private final SettingsService settingsService;
     private final String assistantConfigurationError;
 
     public ChatViewModel(@NonNull Application application) {
         super(application);
         this.offlineAiEngine = new OfflineAiEngine(application);
         this.dbHelper = new DatabaseHelper(application);
+        this.settingsService = SettingsService.getInstance(application);
 
         AIChatActivity.AssistantService configuredService = null;
         String configurationError = null;
@@ -61,6 +66,11 @@ public class ChatViewModel extends AndroidViewModel {
 
     public void loadHistory(String username) {
         if (username == null) return;
+        StudentSettings settings = settingsService != null ? settingsService.loadSettings() : null;
+        if (settings != null && !settings.isSaveChatHistory()) {
+            _messages.setValue(new ArrayList<>());
+            return;
+        }
         List<ChatMessage> saved = dbHelper.getChatHistory(username);
         _messages.setValue(saved != null ? saved : new ArrayList<>());
     }
@@ -80,14 +90,18 @@ public class ChatViewModel extends AndroidViewModel {
         if (query == null || query.trim().isEmpty()) return false;
 
         String safeUser = (username != null && !username.isBlank()) ? username : "Student";
+        StudentSettings settings = settingsService != null ? settingsService.loadSettings() : null;
+        boolean canSaveHistory = settings == null || settings.isSaveChatHistory();
 
         List<ChatMessage> currentMessages = new ArrayList<>(_messages.getValue() != null ? _messages.getValue() : new ArrayList<>());
         ChatMessage userMsg = new ChatMessage(query, true);
         currentMessages.add(userMsg);
         _messages.setValue(currentMessages);
 
-        // Persist student message in SQLite
-        dbHelper.saveChatMessage(safeUser, query, true);
+        // Persist student message in SQLite if history tracking is allowed
+        if (canSaveHistory) {
+            dbHelper.saveChatMessage(safeUser, query, true);
+        }
 
         _isLoading.setValue(true);
         _error.setValue(null);
@@ -97,12 +111,39 @@ public class ChatViewModel extends AndroidViewModel {
         currentMessages.add(new ChatMessage("EduAI is analyzing your question...", false, true));
         _messages.setValue(currentMessages);
 
-        if (assistantService == null) {
-            fallbackToOffline(query, safeUser, assistantConfigurationError != null ? assistantConfigurationError : "Cloud AI service unconfigured.");
+        if (settings != null && settings.isOfflineMode()) {
+            fallbackToOffline(query, safeUser, "Offline study mode enabled in student settings.", canSaveHistory);
             return true;
         }
 
-        AIChatActivity.AssistantRequest request = new AIChatActivity.AssistantRequest(query.trim(), grade, subject, topic);
+        if (assistantService == null) {
+            fallbackToOffline(query, safeUser, assistantConfigurationError != null ? assistantConfigurationError : "Cloud AI service unconfigured.", canSaveHistory);
+            return true;
+        }
+
+        String promptQuery = query.trim();
+        if (settings != null) {
+            StringBuilder prefix = new StringBuilder();
+            if ("am".equalsIgnoreCase(settings.getAiTutorLanguage())) {
+                prefix.append("[Respond in Amharic / በአማርኛ መልሱ] ");
+            }
+            if ("Concise".equalsIgnoreCase(settings.getAiExplanationLength())) {
+                prefix.append("[Provide a concise, direct explanation with key summary points] ");
+            } else if ("Step-by-Step".equalsIgnoreCase(settings.getExplanationDepth())
+                    || "Comprehensive".equalsIgnoreCase(settings.getAiExplanationLength())) {
+                prefix.append("[Provide a clear, detailed step-by-step breakdown] ");
+            } else if ("Deep Conceptual".equalsIgnoreCase(settings.getExplanationDepth())) {
+                prefix.append("[Provide a deep conceptual foundation with intuitive scientific reasoning and examples] ");
+            }
+            if (settings.isDataSaver()) {
+                prefix.append("[Data Saver: Keep response compact and concise to minimize mobile bandwidth] ");
+            }
+            if (prefix.length() > 0) {
+                promptQuery = prefix.toString() + promptQuery;
+            }
+        }
+
+        AIChatActivity.AssistantRequest request = new AIChatActivity.AssistantRequest(promptQuery, grade, subject, topic);
 
         assistantService.ask(request).enqueue(new Callback<AIChatActivity.AssistantResponse>() {
             @Override
@@ -123,11 +164,15 @@ public class ChatViewModel extends AndroidViewModel {
                         String offlineAnswer = AIResponseNormalizer.normalize(offlineAiEngine.searchLocalKnowledge(query));
                         ChatMessage aiMsg = new ChatMessage(offlineAnswer + "\n\n(Note: Cloud AI reported: " + answer + ". Showing offline lesson notes.)", false);
                         updatedMessages.add(aiMsg);
-                        dbHelper.saveChatMessage(safeUser, aiMsg.getMessage(), false);
+                        if (canSaveHistory) {
+                            dbHelper.saveChatMessage(safeUser, aiMsg.getMessage(), false);
+                        }
                     } else {
                         ChatMessage aiMsg = new ChatMessage(answer, false);
                         updatedMessages.add(aiMsg);
-                        dbHelper.saveChatMessage(safeUser, answer, false);
+                        if (canSaveHistory) {
+                            dbHelper.saveChatMessage(safeUser, answer, false);
+                        }
                     }
                 } else {
                     String reason;
@@ -140,7 +185,7 @@ public class ChatViewModel extends AndroidViewModel {
                     } else {
                         reason = "Server response was empty or invalid.";
                     }
-                    fallbackToOffline(query, safeUser, reason);
+                    fallbackToOffline(query, safeUser, reason, canSaveHistory);
                     return;
                 }
                 _messages.postValue(updatedMessages);
@@ -158,13 +203,13 @@ public class ChatViewModel extends AndroidViewModel {
                 if (cause instanceof SessionAuthenticationException) {
                     _error.postValue(reason);
                 }
-                fallbackToOffline(query, safeUser, reason);
+                fallbackToOffline(query, safeUser, reason, canSaveHistory);
             }
         });
         return true;
     }
 
-    private void fallbackToOffline(String query, String safeUser, String reason) {
+    private void fallbackToOffline(String query, String safeUser, String reason, boolean canSaveHistory) {
         _isLoading.postValue(false);
         _serviceStatus.postValue("Offline Study Mode");
 
@@ -177,7 +222,9 @@ public class ChatViewModel extends AndroidViewModel {
         String fullMessage = offlineAnswer + "\n\n(Note: Offline Study Mode active — " + reason + ")";
         ChatMessage offlineMsg = new ChatMessage(fullMessage, false);
         updatedMessages.add(offlineMsg);
-        dbHelper.saveChatMessage(safeUser, fullMessage, false);
+        if (canSaveHistory) {
+            dbHelper.saveChatMessage(safeUser, fullMessage, false);
+        }
 
         _messages.postValue(updatedMessages);
     }

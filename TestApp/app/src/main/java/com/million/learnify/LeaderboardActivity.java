@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LeaderboardActivity extends AppCompatActivity {
+public class LeaderboardActivity extends BaseActivity {
 
     private RecyclerView rvLeaderboard;
     private DatabaseHelper dbHelper;

@@ -20,6 +20,7 @@ public class InclusiveModeManager {
     public static final String KEY_INCLUSIVE_MODE = "inclusive_mode_enabled";
     public static final String KEY_TTS_ENABLED = "inclusive_tts_enabled";
     public static final String KEY_SPEECH_RATE = "inclusive_speech_rate";
+    public static final String KEY_SPEECH_PITCH = "inclusive_speech_pitch";
     public static final String KEY_HIGH_CONTRAST = "inclusive_high_contrast";
     public static final String KEY_LARGE_TEXT = "inclusive_large_text";
     public static final String KEY_FONT_SCALE = "inclusive_font_scale";
@@ -31,6 +32,10 @@ public class InclusiveModeManager {
     public static final float RATE_NORMAL = 1.0f;
     public static final float RATE_FAST = 1.25f;
     public static final float RATE_VERY_FAST = 1.5f;
+
+    public static final float PITCH_LOW = 0.8f;
+    public static final float PITCH_NORMAL = 1.0f;
+    public static final float PITCH_HIGH = 1.25f;
 
     public static final float FONT_SCALE_NORMAL = 1.0f;
     public static final float FONT_SCALE_LARGE = 1.25f;
@@ -92,6 +97,14 @@ public class InclusiveModeManager {
 
     public void setSpeechRate(float rate) {
         prefs.edit().putFloat(KEY_SPEECH_RATE, rate).apply();
+    }
+
+    public float getSpeechPitch() {
+        return prefs.getFloat(KEY_SPEECH_PITCH, PITCH_NORMAL);
+    }
+
+    public void setSpeechPitch(float pitch) {
+        prefs.edit().putFloat(KEY_SPEECH_PITCH, pitch).apply();
     }
 
     public boolean isHighContrastEnabled() {

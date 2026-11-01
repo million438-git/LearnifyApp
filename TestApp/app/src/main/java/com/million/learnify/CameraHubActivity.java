@@ -27,7 +27,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.List;
 import java.util.Locale;
 
-public class CameraHubActivity extends AppCompatActivity {
+public class CameraHubActivity extends BaseActivity {
 
     private DatabaseHelper dbHelper;
     private String currentUsername;

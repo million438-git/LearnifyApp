@@ -105,6 +105,10 @@ public class DailyChallengeActivity extends BaseActivity {
         tvTimerText = findViewById(R.id.tvTimerText);
         timerProgress = findViewById(R.id.timerProgress);
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        View btnAvatar = findViewById(R.id.btnAvatar);
+        if (btnAvatar != null) {
+            btnAvatar.setOnClickListener(v -> startActivity(new android.content.Intent(this, ProfileActivity.class)));
+        }
         
         stepMapContainer = findViewById(R.id.stepMapContainer);
         tvQuestionNum = findViewById(R.id.tvQuestionNum);

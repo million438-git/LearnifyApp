@@ -2,157 +2,232 @@ package com.million.learnify;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+/**
+ * SettingsService - Central Architecture Service for Learnify Preferences.
+ * Enforces strict ownership separation between LocalDevicePreferences (Category A: SharedPreferences)
+ * and StudentAccountPreferences (Category B: SQLite + Cloud Sync).
+ * Provides thread-safe asynchronous and synchronous access with error reporting callbacks.
+ */
 public class SettingsService {
 
+    public interface SettingsCallback<T> {
+        void onSuccess(T result);
+        void onError(Throwable throwable);
+    }
+
     private static final String PREFS_NAME = "StudentSettings";
-    private static final String KEY_THEME = "theme_mode";
-    private static final String KEY_NOTIFICATIONS = "notifications_enabled";
-    private static final String KEY_FONT_SIZE = "font_size";
-    private static final String KEY_REMINDER_TIME = "reminder_time";
-    private static final String KEY_LANGUAGE = "language";
-    private static final String KEY_TTS = "text_to_speech";
-    private static final String KEY_HIGH_CONTRAST = "high_contrast";
-    private static final String KEY_OFFLINE = "offline_mode";
-    private static final String KEY_DATA_SAVER = "data_saver";
-    private static final String KEY_VIDEO_QUALITY = "video_quality";
-    private static final String KEY_AI_HELP = "ai_help_level";
-    private static final String KEY_AI_LEARNING = "ai_learning_style";
-    private static final String KEY_PROFILE_VISIBILITY = "profile_visibility";
-    private static final String KEY_SHARE_PROGRESS = "share_progress";
-    private static final String KEY_REDUCE_MOTION = "reduce_motion";
-    
-    // Gameplay
-    private static final String KEY_SOUND_EFFECTS = "sound_effects";
-    private static final String KEY_HAPTIC = "haptic_feedback";
-    private static final String KEY_ANIMATIONS = "animated_celebrations";
-    private static final String KEY_REGION = "region";
-    private static final String KEY_DATE_FORMAT = "date_format";
-    private static final String KEY_AUTO_DOWNLOAD = "auto_download";
-    private static final String KEY_CLOUD_SYNC = "cloud_sync";
+    private static final String KEY_ACTIVE_STUDENT = "active_student_username";
 
-    // Detailed Notifications
-    private static final String KEY_NOTIFY_CHALLENGE = "notify_challenge";
-    private static final String KEY_NOTIFY_FRIEND_REQ = "notify_friend_req";
-    private static final String KEY_NOTIFY_FRIEND_ACT = "notify_friend_act";
-    private static final String KEY_NOTIFY_ACHIEVEMENTS = "notify_achievements";
-    private static final String KEY_NOTIFY_XP = "notify_xp";
-    private static final String KEY_NOTIFY_STREAK = "notify_streak";
-    private static final String KEY_NOTIFY_ANNOUNCEMENTS = "notify_announcements";
-    private static final String KEY_PUSH_ENABLED = "push_enabled";
+    private static volatile SettingsService instance;
 
-    // Privacy
-    private static final String KEY_2FA = "two_factor_enabled";
+    public static SettingsService getInstance(Context context) {
+        if (instance == null) {
+            synchronized (SettingsService.class) {
+                if (instance == null && context != null) {
+                    instance = new SettingsService(context.getApplicationContext());
+                }
+            }
+        }
+        return instance;
+    }
 
-    // Inclusive Learning Mode
-    public static final String KEY_INCLUSIVE_MODE = "inclusive_mode";
-    public static final String KEY_SPEECH_RATE = "speech_rate";
-    public static final String KEY_AUTO_READ = "auto_read_content";
-
-    private final SharedPreferences sharedPreferences;
     private final Context context;
+    private final SharedPreferences sharedPreferences;
+    private final DatabaseHelper dbHelper;
+    private final ExecutorService backgroundExecutor;
+    private final Handler mainHandler;
 
     public SettingsService(Context context) {
         this.context = context.getApplicationContext();
-        this.sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        this.sharedPreferences = this.context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        this.dbHelper = new DatabaseHelper(this.context);
+        this.backgroundExecutor = Executors.newFixedThreadPool(2);
+        this.mainHandler = new Handler(Looper.getMainLooper());
     }
 
-    public void saveSettings(StudentSettings settings) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(KEY_THEME, settings.getThemeMode());
-        editor.putBoolean(KEY_NOTIFICATIONS, settings.areNotificationsEnabled());
-        editor.putString(KEY_FONT_SIZE, settings.getFontSize());
-        editor.putString(KEY_REMINDER_TIME, settings.getReminderTime());
-        editor.putString(KEY_LANGUAGE, settings.getLanguage());
-        editor.putBoolean(KEY_TTS, settings.isTextToSpeech());
-        editor.putBoolean(KEY_HIGH_CONTRAST, settings.isHighContrastMode());
-        editor.putBoolean(KEY_OFFLINE, settings.isOfflineMode());
-        editor.putBoolean(KEY_DATA_SAVER, settings.isDataSaver());
-        editor.putString(KEY_VIDEO_QUALITY, settings.getVideoQuality());
-        editor.putString(KEY_AI_HELP, settings.getAiHelpLevel());
-        editor.putString(KEY_AI_LEARNING, settings.getAiLearningStyle());
-        editor.putBoolean(KEY_PROFILE_VISIBILITY, settings.isProfileVisibility());
-        editor.putBoolean(KEY_SHARE_PROGRESS, settings.isShareProgress());
-        editor.putBoolean(KEY_REDUCE_MOTION, settings.isReduceMotion());
-        
-        editor.putBoolean(KEY_SOUND_EFFECTS, settings.isSoundEffects());
-        editor.putBoolean(KEY_HAPTIC, settings.isHapticFeedback());
-        editor.putBoolean(KEY_ANIMATIONS, settings.isAnimatedCelebrations());
-        editor.putString(KEY_REGION, settings.getRegion());
-        editor.putString(KEY_DATE_FORMAT, settings.getDateFormat());
-        editor.putString(KEY_AUTO_DOWNLOAD, settings.getAutoDownloadMedia());
-        editor.putBoolean(KEY_CLOUD_SYNC, settings.isCloudSync());
+    public String getActiveUsername() {
+        return sharedPreferences.getString(KEY_ACTIVE_STUDENT, "student");
+    }
 
-        editor.putBoolean(KEY_NOTIFY_CHALLENGE, settings.isNotifyDailyChallenge());
-        editor.putBoolean(KEY_NOTIFY_FRIEND_REQ, settings.isNotifyFriendRequests());
-        editor.putBoolean(KEY_NOTIFY_FRIEND_ACT, settings.isNotifyFriendActivity());
-        editor.putBoolean(KEY_NOTIFY_ACHIEVEMENTS, settings.isNotifyAchievements());
-        editor.putBoolean(KEY_NOTIFY_XP, settings.isNotifyXPMilestones());
-        editor.putBoolean(KEY_NOTIFY_STREAK, settings.isNotifyStreakAlerts());
-        editor.putBoolean(KEY_NOTIFY_ANNOUNCEMENTS, settings.isNotifyAnnouncements());
-        editor.putBoolean(KEY_PUSH_ENABLED, settings.isPushEnabled());
-        editor.putBoolean(KEY_2FA, settings.isTwoFactorEnabled());
+    public void setActiveUsername(String username) {
+        if (username != null && !username.trim().isEmpty()) {
+            sharedPreferences.edit().putString(KEY_ACTIVE_STUDENT, username.trim()).apply();
+        }
+    }
 
-        editor.putBoolean(KEY_INCLUSIVE_MODE, settings.isInclusiveMode());
-        editor.putFloat(KEY_SPEECH_RATE, settings.getSpeechRate());
-        editor.putBoolean(KEY_AUTO_READ, settings.isAutoReadContent());
-        
-        editor.apply();
+    // ==========================================
+    // 1. LOCAL DEVICE PREFERENCES (Category A)
+    // ==========================================
 
-        // Synchronize with centralized InclusiveModeManager
+    public LocalDevicePreferences getLocalDevicePreferences() {
+        return LocalDevicePreferences.fromPreferences(sharedPreferences);
+    }
+
+    public void saveLocalDevicePreferences(LocalDevicePreferences prefs) {
+        if (prefs == null) return;
+        prefs.saveToPreferences(sharedPreferences);
+
+        // Sync with centralized InclusiveModeManager
         try {
             InclusiveModeManager imm = InclusiveModeManager.getInstance(context);
-            imm.setInclusiveModeEnabled(settings.isInclusiveMode());
-            imm.setTextToSpeechEnabled(settings.isTextToSpeech());
-            imm.setSpeechRate(settings.getSpeechRate());
-            imm.setHighContrastEnabled(settings.isHighContrastMode());
-            imm.setReducedMotionEnabled(settings.isReduceMotion());
-            imm.setAutoReadContentEnabled(settings.isAutoReadContent());
+            imm.setInclusiveModeEnabled(prefs.isInclusiveMode());
+            imm.setTextToSpeechEnabled(prefs.isTextToSpeech());
+            imm.setSpeechRate(prefs.getSpeechRate());
+            imm.setSpeechPitch(prefs.getSpeechPitch());
+            imm.setHighContrastEnabled(prefs.isHighContrastMode());
+            imm.setReducedMotionEnabled(prefs.isReduceMotion());
+            imm.setAutoReadContentEnabled(prefs.isAutoReadContent());
         } catch (Exception ignored) {
         }
     }
 
+    // ==========================================
+    // 2. STUDENT ACCOUNT PREFERENCES (Category B)
+    // ==========================================
+
+    public StudentAccountPreferences getStudentAccountPreferences(String username) {
+        if (username == null || username.trim().isEmpty()) {
+            username = getActiveUsername();
+        }
+
+        StudentAccountPreferences prefs = dbHelper.getStudentAccountPreferences(username);
+        if (prefs == null) {
+            // Backward-compatible migration from legacy SharedPreferences on first load
+            prefs = migrateLegacyPreferences(username);
+            dbHelper.saveStudentAccountPreferences(prefs);
+        }
+        return prefs;
+    }
+
+    public boolean saveStudentAccountPreferences(StudentAccountPreferences prefs) {
+        if (prefs == null) return false;
+        if (prefs.getUsername() == null || prefs.getUsername().trim().isEmpty()) {
+            prefs.setUsername(getActiveUsername());
+        }
+
+        prefs.setUpdatedAt(System.currentTimeMillis());
+        if (prefs.getSyncStatus() != StudentAccountPreferences.SyncStatus.CONFLICT) {
+            prefs.setSyncStatus(StudentAccountPreferences.SyncStatus.PENDING_UPLOAD);
+        }
+
+        return dbHelper.saveStudentAccountPreferences(prefs);
+    }
+
+    private StudentAccountPreferences migrateLegacyPreferences(String username) {
+        StudentAccountPreferences p = new StudentAccountPreferences(username);
+        p.setDailyStudyMinutes(sharedPreferences.getInt("daily_study_minutes", 30));
+        p.setWeeklyLessonGoal(sharedPreferences.getInt("weekly_lesson_goal", 10));
+        p.setPracticeDifficulty(sharedPreferences.getString("practice_difficulty", "Intermediate"));
+        p.setExplanationDepth(sharedPreferences.getString("explanation_depth", "Step-by-Step"));
+        p.setPreferredLessonPresentation(sharedPreferences.getString("preferred_lesson_presentation", "Interactive & Visual"));
+        p.setPersonalizedRecommendations(sharedPreferences.getBoolean("personalized_recommendations", true));
+
+        p.setStudyReminder(sharedPreferences.getBoolean("notifications_enabled", true));
+        p.setReminderTime(sharedPreferences.getString("reminder_time", "17:00"));
+        p.setQuietHoursEnabled(sharedPreferences.getBoolean("quiet_hours_enabled", false));
+        p.setQuietHoursStart(sharedPreferences.getString("quiet_hours_start", "22:00"));
+        p.setQuietHoursEnd(sharedPreferences.getString("quiet_hours_end", "07:00"));
+
+        p.setPushEnabled(sharedPreferences.getBoolean("push_enabled", true));
+        p.setNotifyDailyChallenge(sharedPreferences.getBoolean("notify_challenge", true));
+        p.setNotifyFriendRequests(sharedPreferences.getBoolean("notify_friend_req", true));
+        p.setNotifyFriendActivity(sharedPreferences.getBoolean("notify_friend_act", true));
+        p.setNotifyAchievements(sharedPreferences.getBoolean("notify_achievements", true));
+        p.setNotifyXPMilestones(sharedPreferences.getBoolean("notify_xp", true));
+        p.setNotifyStreakAlerts(sharedPreferences.getBoolean("notify_streak", true));
+        p.setNotifyAnnouncements(sharedPreferences.getBoolean("notify_announcements", true));
+
+        p.setProfileVisibility(sharedPreferences.getBoolean("profile_visibility", true));
+        p.setShareProgress(sharedPreferences.getBoolean("share_progress", true));
+        p.setLanguage(sharedPreferences.getString("language", "en"));
+        p.setRegion(sharedPreferences.getString("region", "US"));
+        p.setDateFormat(sharedPreferences.getString("date_format", "MM/DD/YYYY"));
+        return p;
+    }
+
+    // ==========================================
+    // 3. UNIFIED FACADE API (Backward-Compatible)
+    // ==========================================
+
     public StudentSettings loadSettings() {
-        String themeMode = sharedPreferences.getString(KEY_THEME, "light");
-        boolean notificationsEnabled = sharedPreferences.getBoolean(KEY_NOTIFICATIONS, true);
-        StudentSettings settings = new StudentSettings(themeMode, notificationsEnabled);
-        
-        settings.setFontSize(sharedPreferences.getString(KEY_FONT_SIZE, "medium"));
-        settings.setReminderTime(sharedPreferences.getString(KEY_REMINDER_TIME, "17:00"));
-        settings.setLanguage(sharedPreferences.getString(KEY_LANGUAGE, "en"));
-        settings.setTextToSpeech(sharedPreferences.getBoolean(KEY_TTS, true));
-        settings.setHighContrastMode(sharedPreferences.getBoolean(KEY_HIGH_CONTRAST, false));
-        settings.setOfflineMode(sharedPreferences.getBoolean(KEY_OFFLINE, false));
-        settings.setDataSaver(sharedPreferences.getBoolean(KEY_DATA_SAVER, false));
-        settings.setVideoQuality(sharedPreferences.getString(KEY_VIDEO_QUALITY, "720p"));
-        settings.setAiHelpLevel(sharedPreferences.getString(KEY_AI_HELP, "Standard"));
-        settings.setAiLearningStyle(sharedPreferences.getString(KEY_AI_LEARNING, "Balanced"));
-        settings.setProfileVisibility(sharedPreferences.getBoolean(KEY_PROFILE_VISIBILITY, true));
-        settings.setShareProgress(sharedPreferences.getBoolean(KEY_SHARE_PROGRESS, true));
-        settings.setReduceMotion(sharedPreferences.getBoolean(KEY_REDUCE_MOTION, false));
-        
-        settings.setSoundEffects(sharedPreferences.getBoolean(KEY_SOUND_EFFECTS, true));
-        settings.setHapticFeedback(sharedPreferences.getBoolean(KEY_HAPTIC, true));
-        settings.setAnimatedCelebrations(sharedPreferences.getBoolean(KEY_ANIMATIONS, true));
-        settings.setRegion(sharedPreferences.getString(KEY_REGION, "US"));
-        settings.setDateFormat(sharedPreferences.getString(KEY_DATE_FORMAT, "MM/DD/YYYY"));
-        settings.setAutoDownloadMedia(sharedPreferences.getString(KEY_AUTO_DOWNLOAD, "Wi-Fi only"));
-        settings.setCloudSync(sharedPreferences.getBoolean(KEY_CLOUD_SYNC, true));
+        return loadSettings(getActiveUsername());
+    }
 
-        settings.setNotifyDailyChallenge(sharedPreferences.getBoolean(KEY_NOTIFY_CHALLENGE, true));
-        settings.setNotifyFriendRequests(sharedPreferences.getBoolean(KEY_NOTIFY_FRIEND_REQ, true));
-        settings.setNotifyFriendActivity(sharedPreferences.getBoolean(KEY_NOTIFY_FRIEND_ACT, true));
-        settings.setNotifyAchievements(sharedPreferences.getBoolean(KEY_NOTIFY_ACHIEVEMENTS, true));
-        settings.setNotifyXPMilestones(sharedPreferences.getBoolean(KEY_NOTIFY_XP, true));
-        settings.setNotifyStreakAlerts(sharedPreferences.getBoolean(KEY_NOTIFY_STREAK, true));
-        settings.setNotifyAnnouncements(sharedPreferences.getBoolean(KEY_NOTIFY_ANNOUNCEMENTS, true));
-        settings.setPushEnabled(sharedPreferences.getBoolean(KEY_PUSH_ENABLED, true));
-        settings.setTwoFactorEnabled(sharedPreferences.getBoolean(KEY_2FA, false));
+    public StudentSettings loadSettings(String username) {
+        LocalDevicePreferences local = getLocalDevicePreferences();
+        StudentAccountPreferences account = getStudentAccountPreferences(username);
+        return new StudentSettings(local, account);
+    }
 
-        settings.setInclusiveMode(sharedPreferences.getBoolean(KEY_INCLUSIVE_MODE, false));
-        settings.setSpeechRate(sharedPreferences.getFloat(KEY_SPEECH_RATE, 1.0f));
-        settings.setAutoReadContent(sharedPreferences.getBoolean(KEY_AUTO_READ, false));
-        
-        return settings;
+    public void saveSettings(StudentSettings settings) {
+        saveSettings(settings, getActiveUsername());
+    }
+
+    public void saveSettings(StudentSettings settings, String username) {
+        if (settings == null) return;
+        saveLocalDevicePreferences(settings.getLocalDevicePreferences());
+
+        StudentAccountPreferences account = settings.getStudentAccountPreferences();
+        if (username != null && !username.trim().isEmpty()) {
+            account.setUsername(username);
+        }
+        saveStudentAccountPreferences(account);
+    }
+
+    // ==========================================
+    // 4. ASYNCHRONOUS OPERATIONS & CALLBACKS
+    // ==========================================
+
+    public void saveSettingsAsync(final StudentSettings settings, final SettingsCallback<Void> callback) {
+        backgroundExecutor.execute(() -> {
+            try {
+                saveSettings(settings);
+                if (callback != null) {
+                    mainHandler.post(() -> callback.onSuccess(null));
+                }
+            } catch (final Exception e) {
+                if (callback != null) {
+                    mainHandler.post(() -> callback.onError(e));
+                }
+            }
+        });
+    }
+
+    public void loadSettingsAsync(final SettingsCallback<StudentSettings> callback) {
+        backgroundExecutor.execute(() -> {
+            try {
+                final StudentSettings settings = loadSettings();
+                if (callback != null) {
+                    mainHandler.post(() -> callback.onSuccess(settings));
+                }
+            } catch (final Exception e) {
+                if (callback != null) {
+                    mainHandler.post(() -> callback.onError(e));
+                }
+            }
+        });
+    }
+
+    public void saveAccountPreferencesAsync(
+            final StudentAccountPreferences prefs,
+            final SettingsCallback<Void> callback) {
+        backgroundExecutor.execute(() -> {
+            try {
+                boolean success = saveStudentAccountPreferences(prefs);
+                if (success) {
+                    if (callback != null) mainHandler.post(() -> callback.onSuccess(null));
+                } else {
+                    if (callback != null) mainHandler.post(() -> callback.onError(new IllegalStateException("Failed to persist account preferences to SQLite.")));
+                }
+            } catch (final Exception e) {
+                if (callback != null) mainHandler.post(() -> callback.onError(e));
+            }
+        });
     }
 }

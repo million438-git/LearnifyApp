@@ -18,7 +18,7 @@
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="?attr/homeAsUpIndicator"
             app:navigationIconTint="@color/text_primary_slate"
-            app:title="Camera Settings"
+            app:title="Camera &amp; Science Studio Settings"
             app:titleCentered="true"
             app:titleTextColor="@color/text_primary_slate" />
     </com.google.android.material.appbar.AppBarLayout>
@@ -35,9 +35,59 @@
             android:orientation="vertical"
             android:paddingBottom="32dp">
 
+            <!-- CAMERA PERMISSION STATUS CARD -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardCameraPermission"
+                style="@style/SettingsCard"
+                app:cardBackgroundColor="#F0FDF4"
+                app:strokeColor="#BBF7D0">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
+                    <ImageView
+                        android:id="@+id/ivCameraPermissionIcon"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/ic_verified_check"
+                        app:tint="#16A34A"
+                        android:layout_marginEnd="12dp" />
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tvCameraPermissionTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Camera Hardware Access"
+                            android:textColor="@color/text_primary_slate"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tvCameraPermissionStatus"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Camera permission granted for Science Studio."
+                            android:textColor="@color/text_secondary_slate"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnGrantCameraPermission"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Grant"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <TextView
                 style="@style/SettingsSectionHeader"
-                android:text="AI SCANNER PREFERENCES" />
+                android:text="AI RECOGNITION &amp; DETECTION" />
 
             <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
                 <LinearLayout
@@ -45,9 +95,64 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
+                    <!-- Formula Detection -->
+                    <LinearLayout style="@style/SettingsItem">
+                        <ImageView
+                            style="@style/SettingsItemIcon"
+                            android:src="@drawable/ic_subject_math" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                style="@style/SettingsItemText"
+                                android:layout_width="match_parent"
+                                android:layout_weight="0"
+                                android:text="Formula &amp; Math OCR" />
+                            <TextView
+                                style="@style/SettingsItemDescription"
+                                android:text="Solve complex equations with step-by-step derivations" />
+                        </LinearLayout>
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchFormulaDetection"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
+                    <!-- Diagram Detection -->
+                    <LinearLayout style="@style/SettingsItem">
+                        <ImageView
+                            style="@style/SettingsItemIcon"
+                            android:src="@drawable/ic_lab" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                style="@style/SettingsItemText"
+                                android:layout_width="match_parent"
+                                android:layout_weight="0"
+                                android:text="Diagram &amp; Circuit Recognition" />
+                            <TextView
+                                style="@style/SettingsItemDescription"
+                                android:text="Analyze ray diagrams, circuits, and biological figures" />
+                        </LinearLayout>
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchDiagramDetection"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
                     <!-- Auto Detect -->
-                    <LinearLayout
-                        style="@style/SettingsItem">
+                    <LinearLayout style="@style/SettingsItem">
                         <ImageView
                             style="@style/SettingsItemIcon"
                             android:src="@drawable/ic_real_camera" />
@@ -63,7 +168,7 @@
                                 android:text="Auto-detect problems" />
                             <TextView
                                 style="@style/SettingsItemDescription"
-                                android:text="Trigger OCR on steady text framing" />
+                                android:text="Trigger recognition when steady text is framed" />
                         </LinearLayout>
                         <com.google.android.material.materialswitch.MaterialSwitch
                             android:id="@+id/switchAutoDetect"
@@ -73,9 +178,47 @@
 
                     <View style="@style/SettingsDivider" />
 
+                    <!-- Subject-Specific Availability -->
+                    <LinearLayout style="@style/SettingsItem">
+                        <ImageView
+                            style="@style/SettingsItemIcon"
+                            android:src="@drawable/ic_courses" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                style="@style/SettingsItemText"
+                                android:layout_width="match_parent"
+                                android:layout_weight="0"
+                                android:text="Subject Context Filtering" />
+                            <TextView
+                                style="@style/SettingsItemDescription"
+                                android:text="Tailor OCR vocabulary to Physics, Chemistry, and Biology" />
+                        </LinearLayout>
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchSubjectSpecific"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="VIEWFINDER &amp; STORAGE" />
+
+            <com.google.android.material.card.MaterialCardView style="@style/SettingsCard">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
                     <!-- Grid Lines -->
-                    <LinearLayout
-                        style="@style/SettingsItem">
+                    <LinearLayout style="@style/SettingsItem">
                         <ImageView
                             style="@style/SettingsItemIcon"
                             android:src="@drawable/ic_grid" />
@@ -88,10 +231,10 @@
                                 style="@style/SettingsItemText"
                                 android:layout_width="match_parent"
                                 android:layout_weight="0"
-                                android:text="Show Grid Lines" />
+                                android:text="Show Viewfinder Grid" />
                             <TextView
                                 style="@style/SettingsItemDescription"
-                                android:text="Rule-of-thirds viewfinder alignment" />
+                                android:text="Rule-of-thirds grid alignment for crisp scans" />
                         </LinearLayout>
                         <com.google.android.material.materialswitch.MaterialSwitch
                             android:id="@+id/switchGrid"
@@ -101,9 +244,42 @@
 
                     <View style="@style/SettingsDivider" />
 
-                    <!-- Save History -->
+                    <!-- Scan Image Quality -->
                     <LinearLayout
-                        style="@style/SettingsItem">
+                        android:id="@+id/llImageQuality"
+                        style="@style/SettingsItem"
+                        android:background="?attr/selectableItemBackground">
+                        <ImageView
+                            style="@style/SettingsItemIcon"
+                            android:src="@drawable/ic_palette" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                style="@style/SettingsItemText"
+                                android:layout_width="match_parent"
+                                android:layout_weight="0"
+                                android:text="Capture Image Quality" />
+                            <TextView
+                                style="@style/SettingsItemDescription"
+                                android:text="CameraX capture resolution and compression" />
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/tvImageQuality"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Balanced (720p) ▼"
+                            android:textColor="@color/sapphire_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
+                    <!-- Save History -->
+                    <LinearLayout style="@style/SettingsItem">
                         <ImageView
                             style="@style/SettingsItemIcon"
                             android:src="@drawable/ic_history" />
@@ -119,10 +295,38 @@
                                 android:text="Save scans to history" />
                             <TextView
                                 style="@style/SettingsItemDescription"
-                                android:text="Automatically record solutions in Lab History" />
+                                android:text="Log scanned problems into your Lab History notebook" />
                         </LinearLayout>
                         <com.google.android.material.materialswitch.MaterialSwitch
                             android:id="@+id/switchSaveHistory"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
+                    <!-- Auto-Save -->
+                    <LinearLayout style="@style/SettingsItem">
+                        <ImageView
+                            style="@style/SettingsItemIcon"
+                            android:src="@drawable/ic_download" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                style="@style/SettingsItemText"
+                                android:layout_width="match_parent"
+                                android:layout_weight="0"
+                                android:text="Auto-save solutions" />
+                            <TextView
+                                style="@style/SettingsItemDescription"
+                                android:text="Instantly bookmark solved equations without prompting" />
+                        </LinearLayout>
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switchAutoSave"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:checked="true" />
@@ -152,7 +356,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Tip: Enable Grid Lines to frame math equations squarely for optimal OCR accuracy."
+                        android:text="Tip: Enable Viewfinder Grid and Balanced Quality for fast, reliable math and diagram recognition."
                         android:textColor="@color/sapphire_primary"
                         android:textSize="13sp" />
                 </LinearLayout>

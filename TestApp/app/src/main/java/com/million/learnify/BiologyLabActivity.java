@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class BiologyLabActivity extends AppCompatActivity {
+public class BiologyLabActivity extends BaseActivity {
 
     private RecyclerView rvExperiments;
     private ExperimentAdapter adapter;

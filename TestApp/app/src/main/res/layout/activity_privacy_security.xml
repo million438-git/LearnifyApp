@@ -7,21 +7,93 @@
     android:background="@color/surface_light"
     tools:context=".PrivacySecurityActivity">
 
+    <!-- EXECUTIVE APP BAR -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/surface_card"
-        app:elevation="1dp">
+        android:background="@drawable/bg_admin_hero_banner"
+        app:elevation="4dp">
 
-        <com.google.android.material.appbar.MaterialToolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/privacyToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="?attr/homeAsUpIndicator"
-            app:navigationIconTint="@color/text_primary_slate"
-            app:title="@string/settings_privacy_security"
-            app:titleCentered="true"
-            app:titleTextColor="@color/text_primary_slate" />
+            app:navigationIconTint="@color/white"
+            app:title="Security &amp; Privacy Center"
+            app:titleTextColor="@color/white">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="Security Center"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/bg_badge_active"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp">
+
+                    <TextView
+                        android:id="@+id/tvTopSecurityBadge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="PROTECTED"
+                        android:textColor="@color/emerald_accent"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.05" />
+                </LinearLayout>
+            </RelativeLayout>
+        </androidx.appcompat.widget.Toolbar>
+
+        <!-- Hero Sub-header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AUTHENTICATION &amp; DATA PRIVACY"
+                android:textColor="@color/sky_400"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Account Security &amp; Compliance"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Manage multi-factor authentication, active device sessions, recovery safeguards, and data governance."
+                android:textColor="#BFDBFE"
+                android:textSize="13sp" />
+        </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -34,12 +106,94 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="40dp">
+            android:padding="16dp"
+            android:paddingBottom="60dp">
 
-            <!-- SECURITY SECTION -->
+            <!-- SECURITY HEALTH POSTURE CARD -->
+            <com.google.android.material.card.MaterialCardView
+                style="@style/SettingsCard"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <FrameLayout
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:background="@drawable/bg_icon_container_emerald">
+                            <ImageView
+                                android:id="@+id/ivSecurityShield"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_shield"
+                                app:tint="@color/emerald_accent" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvSecurityScore"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Security Posture: Strong (90%)"
+                                android:textColor="@color/text_primary_slate"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvSecurityScoreSubtitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="Active authentication gates are protecting your portal"
+                                android:textColor="@color/text_secondary_slate"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:id="@+id/pbSecurityScore"
+                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="8dp"
+                        android:layout_marginTop="14dp"
+                        android:max="100"
+                        android:progress="90"
+                        android:progressTint="@color/emerald_primary" />
+
+                    <TextView
+                        android:id="@+id/tvSecurityRecommendation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="Tip: Keep your recovery email updated to ensure prompt account recovery."
+                        android:textColor="@color/text_secondary_slate"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 1. ACCOUNT SECURITY CENTER -->
             <TextView
                 style="@style/SettingsSectionHeader"
-                android:text="@string/section_security"
+                android:text="1. ACCOUNT SECURITY GATES"
                 android:textColor="@color/sapphire_primary" />
 
             <com.google.android.material.card.MaterialCardView
@@ -54,6 +208,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
+                    <!-- Change Password -->
                     <LinearLayout
                         android:id="@+id/llChangePassword"
                         style="@style/SettingsItem"
@@ -82,11 +237,11 @@
                             <TextView
                                 style="@style/SettingsItemText"
                                 android:layout_width="wrap_content"
-                                android:text="@string/action_change_password" />
+                                android:text="Change Password" />
 
                             <TextView
                                 style="@style/SettingsItemDescription"
-                                android:text="Update your account password with current verification" />
+                                android:text="Update password with live policy compliance verification" />
                         </LinearLayout>
 
                         <ImageView
@@ -98,6 +253,7 @@
 
                     <View style="@style/SettingsDivider" />
 
+                    <!-- Two-Factor Authentication -->
                     <LinearLayout
                         android:id="@+id/llTwoFactor"
                         style="@style/SettingsItem"
@@ -126,11 +282,64 @@
                             <TextView
                                 style="@style/SettingsItemText"
                                 android:layout_width="wrap_content"
-                                android:text="@string/action_two_factor" />
+                                android:text="Two-Factor Authentication (TOTP)" />
 
                             <TextView
                                 style="@style/SettingsItemDescription"
-                                android:text="Add secondary verification to secure your student portal" />
+                                android:text="Time-based authenticator (Google/Microsoft Auth) verification" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvTwoFactorStatusBadge"
+                            style="@style/SettingsItemValue"
+                            android:text="DISABLED"
+                            android:textColor="@color/danger_red" />
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_marginStart="8dp"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/text_secondary_slate" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
+                    <!-- Recovery Methods -->
+                    <LinearLayout
+                        android:id="@+id/llRecoveryMethods"
+                        style="@style/SettingsItem"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <FrameLayout
+                            android:layout_width="38dp"
+                            android:layout_height="38dp"
+                            android:background="@drawable/bg_icon_container_teal">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_email_mail"
+                                app:tint="@color/teal_accent" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/SettingsItemText"
+                                android:layout_width="wrap_content"
+                                android:text="Account Recovery Methods" />
+
+                            <TextView
+                                android:id="@+id/tvRecoveryEmailPreview"
+                                style="@style/SettingsItemDescription"
+                                android:text="Recovery email &amp; single-use backup recovery codes" />
                         </LinearLayout>
 
                         <ImageView
@@ -140,13 +349,153 @@
                             app:tint="@color/text_secondary_slate" />
                     </LinearLayout>
 
+                    <View style="@style/SettingsDivider" />
+
+                    <!-- Suspicious Login Alerts -->
+                    <LinearLayout
+                        android:id="@+id/llSuspiciousAlerts"
+                        style="@style/SettingsItem">
+
+                        <FrameLayout
+                            android:layout_width="38dp"
+                            android:layout_height="38dp"
+                            android:background="@drawable/bg_icon_container_sapphire">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_bell"
+                                app:tint="@color/sapphire_primary" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/SettingsItemText"
+                                android:layout_width="wrap_content"
+                                android:text="Suspicious Login Notifications" />
+
+                            <TextView
+                                style="@style/SettingsItemDescription"
+                                android:text="Alert on logins from unrecognized devices or IP addresses" />
+                        </LinearLayout>
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/switchSuspiciousAlerts"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true" />
+                    </LinearLayout>
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- DATA SECTION -->
+            <!-- 2. DEVICE AND SESSION MANAGEMENT -->
             <TextView
                 style="@style/SettingsSectionHeader"
-                android:text="@string/section_data"
+                android:text="2. ACTIVE SESSIONS &amp; DEVICES"
+                android:textColor="@color/sapphire_primary" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/SettingsCard"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Signed-In Devices"
+                        android:textColor="@color/text_primary_slate"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Review and revoke devices that currently maintain active session tokens."
+                        android:textColor="@color/text_secondary_slate"
+                        android:textSize="12sp" />
+
+                    <!-- Dynamically populated active sessions -->
+                    <LinearLayout
+                        android:id="@+id/llSessionsContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="vertical" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnRevokeOtherSessions"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Sign Out of All Other Devices"
+                        android:textColor="@color/danger_red"
+                        app:icon="@drawable/ic_logout"
+                        app:iconTint="@color/danger_red"
+                        app:strokeColor="@color/danger_red" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 3. SECURITY AUDIT TRAIL -->
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="3. SECURITY EVENT AUDIT TRAIL"
+                android:textColor="@color/sapphire_primary" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/SettingsCard"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/card_stroke"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tvLastSecurityEventPreview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Recent security activity: Session authorized on Android Device"
+                        android:textColor="@color/text_primary_slate"
+                        android:textSize="13sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnViewSecurityHistory"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Inspect Recent Security Events"
+                        android:textColor="@color/learnify_brand_blue"
+                        app:icon="@drawable/ic_history"
+                        app:iconTint="@color/learnify_brand_blue" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 4. DATA AND PRIVACY SECTION -->
+            <TextView
+                style="@style/SettingsSectionHeader"
+                android:text="4. PERSONAL DATA &amp; RETENTION"
                 android:textColor="@color/sapphire_primary" />
 
             <com.google.android.material.card.MaterialCardView
@@ -189,11 +538,55 @@
                             <TextView
                                 style="@style/SettingsItemText"
                                 android:layout_width="wrap_content"
-                                android:text="@string/action_export_data" />
+                                android:text="Export Personal Learning Archive" />
 
                             <TextView
                                 style="@style/SettingsItemDescription"
-                                android:text="Export learning stats, quiz scores, and profile records (JSON)" />
+                                android:text="Download learning stats, quiz scores, and academic records (JSON)" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/text_secondary_slate" />
+                    </LinearLayout>
+
+                    <View style="@style/SettingsDivider" />
+
+                    <LinearLayout
+                        android:id="@+id/llPrivacyPolicy"
+                        style="@style/SettingsItem"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <FrameLayout
+                            android:layout_width="38dp"
+                            android:layout_height="38dp"
+                            android:background="@drawable/bg_icon_container_sapphire">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_info"
+                                app:tint="@color/sapphire_primary" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/SettingsItemText"
+                                android:layout_width="wrap_content"
+                                android:text="Privacy Policy &amp; Data Governance" />
+
+                            <TextView
+                                style="@style/SettingsItemDescription"
+                                android:text="Review data minimization, retention periods, and student privacy" />
                         </LinearLayout>
 
                         <ImageView
@@ -206,10 +599,10 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- DANGER ZONE -->
+            <!-- 5. DANGER ZONE -->
             <TextView
                 style="@style/SettingsSectionHeader"
-                android:text="@string/section_danger_zone"
+                android:text="5. DANGER ZONE"
                 android:textColor="@color/rose_accent" />
 
             <com.google.android.material.card.MaterialCardView
@@ -252,7 +645,7 @@
                             <TextView
                                 style="@style/SettingsItemText"
                                 android:layout_width="wrap_content"
-                                android:text="@string/action_delete_account"
+                                android:text="Permanently Delete Account"
                                 android:textColor="@color/rose_accent" />
 
                             <TextView
