@@ -1039,23 +1039,32 @@ public class CameraLabActivity extends BaseActivity {
 
                 
 
-                String processedB64 = solverMod.callAttr("preprocess_image", base64).toString();
+                PyObject processedObj = solverMod.callAttr("preprocess_image", base64);
+                String processedB64 = (processedObj != null && !processedObj.toString().equals("None"))
+                        ? processedObj.toString()
+                        : null;
 
-                PyObject visualsObj = solverMod.callAttr("detect_visuals", processedB64);
+                Bitmap ocrBitmap = bitmap;
+                if (processedB64 != null) {
+                    PyObject visualsObj = solverMod.callAttr("detect_visuals", processedB64);
+                    if (visualsObj != null) {
+                        detectedVisuals = visualsObj.asList().stream().map(Object::toString).collect(Collectors.toList());
+                    }
+                    byte[] decoded = Base64.decode(processedB64, Base64.DEFAULT);
+                    Bitmap processedBitmap = BitmapFactory.decodeByteArray(decoded, 0, decoded.length);
+                    if (processedBitmap != null) {
+                        ocrBitmap = processedBitmap;
+                        runOnUiThread(() -> ivCapturedImage.setImageBitmap(processedBitmap));
+                    }
+                } else {
+                    PyObject visualsObj = solverMod.callAttr("detect_visuals", base64);
+                    if (visualsObj != null) {
+                        detectedVisuals = visualsObj.asList().stream().map(Object::toString).collect(Collectors.toList());
+                    }
+                }
 
-                detectedVisuals = visualsObj.asList().stream().map(Object::toString).collect(Collectors.toList());
-
-
-
-                byte[] decoded = Base64.decode(processedB64, Base64.DEFAULT);
-
-                Bitmap processedBitmap = BitmapFactory.decodeByteArray(decoded, 0, decoded.length);
-
-
-
+                final Bitmap finalOcrBitmap = ocrBitmap;
                 runOnUiThread(() -> {
-
-                    ivCapturedImage.setImageBitmap(processedBitmap);
 
                     
 
@@ -1069,7 +1078,7 @@ public class CameraLabActivity extends BaseActivity {
 
 
 
-                    recognizer.process(InputImage.fromBitmap(processedBitmap, 0))
+                    recognizer.process(InputImage.fromBitmap(finalOcrBitmap, 0))
 
                             .addOnSuccessListener(t -> {
 

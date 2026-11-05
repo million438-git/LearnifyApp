@@ -80,6 +80,7 @@ public class InclusiveModeManager {
 
     public void setInclusiveModeEnabled(boolean enabled) {
         prefs.edit().putBoolean(KEY_INCLUSIVE_MODE, enabled).apply();
+        syncToStudentSettings("inclusive_mode", enabled);
         notifyListeners(enabled);
     }
 
@@ -89,6 +90,7 @@ public class InclusiveModeManager {
 
     public void setTextToSpeechEnabled(boolean enabled) {
         prefs.edit().putBoolean(KEY_TTS_ENABLED, enabled).apply();
+        syncToStudentSettings("text_to_speech", enabled);
     }
 
     public float getSpeechRate() {
@@ -97,6 +99,7 @@ public class InclusiveModeManager {
 
     public void setSpeechRate(float rate) {
         prefs.edit().putFloat(KEY_SPEECH_RATE, rate).apply();
+        syncToStudentSettings("speech_rate", rate);
     }
 
     public float getSpeechPitch() {
@@ -105,6 +108,7 @@ public class InclusiveModeManager {
 
     public void setSpeechPitch(float pitch) {
         prefs.edit().putFloat(KEY_SPEECH_PITCH, pitch).apply();
+        syncToStudentSettings("speech_pitch", pitch);
     }
 
     public boolean isHighContrastEnabled() {
@@ -113,6 +117,7 @@ public class InclusiveModeManager {
 
     public void setHighContrastEnabled(boolean enabled) {
         prefs.edit().putBoolean(KEY_HIGH_CONTRAST, enabled).apply();
+        syncToStudentSettings("high_contrast", enabled);
     }
 
     public boolean isLargeTextEnabled() {
@@ -124,6 +129,7 @@ public class InclusiveModeManager {
              .putBoolean(KEY_LARGE_TEXT, enabled)
              .putFloat(KEY_FONT_SCALE, enabled ? FONT_SCALE_LARGE : FONT_SCALE_NORMAL)
              .apply();
+        syncToStudentSettings("font_size", enabled ? "large" : "medium");
     }
 
     public float getFontScale() {
@@ -136,6 +142,7 @@ public class InclusiveModeManager {
 
     public void setReducedMotionEnabled(boolean enabled) {
         prefs.edit().putBoolean(KEY_REDUCED_MOTION, enabled).apply();
+        syncToStudentSettings("reduce_motion", enabled);
     }
 
     public boolean isAutoReadContentEnabled() {
@@ -148,6 +155,23 @@ public class InclusiveModeManager {
 
     public void setAutoReadContentEnabled(boolean enabled) {
         prefs.edit().putBoolean(KEY_AUTO_READ, enabled).apply();
+        syncToStudentSettings("auto_read_content", enabled);
+    }
+
+    private void syncToStudentSettings(String key, Object value) {
+        try {
+            SharedPreferences studentPrefs = appContext.getSharedPreferences("StudentSettings", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = studentPrefs.edit();
+            if (value instanceof Boolean) {
+                editor.putBoolean(key, (Boolean) value);
+            } else if (value instanceof Float) {
+                editor.putFloat(key, (Float) value);
+            } else if (value instanceof String) {
+                editor.putString(key, (String) value);
+            }
+            editor.apply();
+        } catch (Exception ignored) {
+        }
     }
 
     public boolean isAudioHintsEnabled() {

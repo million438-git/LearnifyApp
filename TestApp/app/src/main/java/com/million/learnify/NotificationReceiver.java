@@ -138,14 +138,14 @@ public class NotificationReceiver extends BroadcastReceiver {
 
             case "motivation":
                 channelId = NotificationHelper.CHANNEL_STUDY_REMINDERS;
-                title = "Daily Study Motivation 🌟";
+                title = "Daily Study Motivation";
                 message = "Believe in yourself and all that you are. Today is a great day to master something new.";
                 notifyId = 5001;
                 break;
 
             case "login_reminder":
                 channelId = NotificationHelper.CHANNEL_STUDY_REMINDERS;
-                title = "Study Session Reminder 📚";
+                title = "Study Session Reminder";
                 message = "It's been 24 hours since your last session. Keep your streak alive and study now.";
                 notifyId = 6001;
                 break;
@@ -153,52 +153,52 @@ public class NotificationReceiver extends BroadcastReceiver {
             case "homework":
             case "assignment":
                 channelId = NotificationHelper.CHANNEL_EXAMS_ASSIGNMENTS;
-                title = "Study Task Reminder 📝";
+                title = "Study Task Reminder";
                 message = titleExtra != null ? "Upcoming Deadline: " + titleExtra : "You have pending academic tasks.";
                 targetIntent = new Intent(context, TasksActivity.class);
                 break;
 
             case "exam":
                 channelId = NotificationHelper.CHANNEL_EXAMS_ASSIGNMENTS;
-                title = "Upcoming Exam Alert ⏱️";
+                title = "Upcoming Exam Alert";
                 message = titleExtra != null ? titleExtra : (extraData != null ? extraData : "You have an exam scheduled soon. Review your lesson notes.");
                 break;
 
             case "achievement":
                 channelId = NotificationHelper.CHANNEL_ACHIEVEMENTS_XP;
-                title = "Achievement Unlocked! 🏆";
+                title = "Achievement Unlocked!";
                 message = titleExtra != null ? titleExtra : "You earned a new badge on Learnify!";
                 break;
 
             case "xp":
                 channelId = NotificationHelper.CHANNEL_ACHIEVEMENTS_XP;
-                title = "XP Milestone Reached! ⭐";
+                title = "XP Milestone Reached!";
                 message = titleExtra != null ? titleExtra : "Great progress! You just leveled up your study XP points.";
                 break;
 
             case "streak":
                 channelId = NotificationHelper.CHANNEL_ACHIEVEMENTS_XP;
-                title = titleExtra != null ? titleExtra : "Learning Streak at Risk! 🔥";
+                title = titleExtra != null ? titleExtra : "Learning Streak at Risk!";
                 message = extraData != null ? extraData : "Complete a quick lesson today to maintain your consecutive study streak.";
                 notifyId = 7001;
                 break;
 
             case "friend_req":
                 channelId = NotificationHelper.CHANNEL_SOCIAL_COMMUNITY;
-                title = "New Study Partner Request 👥";
+                title = "New Study Partner Request";
                 message = titleExtra != null ? titleExtra : "A classmate wants to connect with you on Learnify.";
                 break;
 
             case "friend_act":
                 channelId = NotificationHelper.CHANNEL_SOCIAL_COMMUNITY;
-                title = "Study Partner Update 📖";
+                title = "Study Partner Update";
                 message = titleExtra != null ? titleExtra : "Your study partner just achieved a new milestone.";
                 break;
 
             case "challenge":
             case "daily_challenge":
                 channelId = NotificationHelper.CHANNEL_STUDY_REMINDERS;
-                title = "Daily Challenge Ready 🎯";
+                title = "Daily Challenge Ready";
                 message = titleExtra != null ? titleExtra : "Today's quick challenge is ready. Test your knowledge now!";
                 break;
 
@@ -206,14 +206,14 @@ public class NotificationReceiver extends BroadcastReceiver {
             case "CONTENT":
             case "announcement":
                 channelId = NotificationHelper.CHANNEL_ANNOUNCEMENTS;
-                title = titleExtra != null ? titleExtra : "School Announcement 📢";
+                title = titleExtra != null ? titleExtra : "School Announcement";
                 message = extraData != null ? extraData : "Check the announcement board for important academic updates.";
                 targetIntent = new Intent(context, AnnouncementsActivity.class);
                 break;
 
             case "welcome":
                 channelId = NotificationHelper.CHANNEL_STUDY_REMINDERS;
-                title = "Welcome to Learnify 🎉";
+                title = "Welcome to Learnify";
                 message = "We're glad to have you! Explore your dashboard to start your personalized learning journey.";
                 notifyId = 8001;
                 break;

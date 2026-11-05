@@ -31,17 +31,16 @@ import java.util.Locale;
 
 /**
  * SettingsActivity - Production-Grade Student Settings & Personalization Platform.
- * Full Phase 2 Implementation with 10 structured, interactive settings modules:
+ * Consolidated 9-Section Architecture:
  * 1. Account and Profile
- * 2. Appearance and Personalization
- * 3. Learning Preferences
- * 4. Language and Region
- * 5. Accessibility and Voice
- * 6. Notifications and Reminders
- * 7. Offline Learning and Storage
- * 8. AI Tutor Preferences
- * 9. Privacy and Security
- * 10. Help and About Learnify
+ * 2. Appearance
+ * 3. Learning Preferences & Regional Alignment
+ * 4. Accessibility and Voice
+ * 5. Notifications and Reminders
+ * 6. Offline Learning and Storage
+ * 7. AI Tutor Preferences
+ * 8. Privacy and Security
+ * 9. Help and About Learnify
  */
 public class SettingsActivity extends BaseActivity {
 

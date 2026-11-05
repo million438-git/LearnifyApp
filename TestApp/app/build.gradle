@@ -27,17 +27,46 @@ def releaseApiBaseUrl = (
 def learnifyBuildDirectory = (
         project.findProperty("LEARNIFY_BUILD_DIR")
                 ?: System.getenv("LEARNIFY_BUILD_DIR")
-                ?: "C:/Android/build/LearnifyApp/app"
+                ?: "build"
 ).toString()
 layout.buildDirectory.set(file(learnifyBuildDirectory))
 
-def localPython310 = new File(
-        System.getenv("LOCALAPPDATA") ?: System.getProperty("user.home"),
-        "Programs/Python/Python310/python.exe")
+def findDefaultPython() {
+    def localPython310 = new File(
+            System.getenv("LOCALAPPDATA") ?: System.getProperty("user.home"),
+            "Programs/Python/Python310/python.exe")
+    if (localPython310.isFile()) {
+        return localPython310.absolutePath
+    }
+    def linuxPython310 = new File(System.getProperty("user.home"), ".local/python310/bin/python3")
+    if (linuxPython310.isFile()) {
+        return linuxPython310.absolutePath
+    }
+    try {
+        def proc310 = "which python3.10".execute()
+        proc310.waitFor()
+        if (proc310.exitValue() == 0) {
+            def path310 = proc310.text.trim()
+            if (path310) return path310
+        }
+    } catch (Exception ignored) {
+    }
+    try {
+        def proc = "which python3".execute()
+        proc.waitFor()
+        if (proc.exitValue() == 0) {
+            def path = proc.text.trim()
+            if (path) return path
+        }
+    } catch (Exception ignored) {
+    }
+    return "python3"
+}
+
 def chaquopyBuildPython = (
         project.findProperty("LEARNIFY_BUILD_PYTHON")
                 ?: System.getenv("LEARNIFY_BUILD_PYTHON")
-                ?: (localPython310.isFile() ? localPython310.absolutePath : "python")
+                ?: findDefaultPython()
 ).toString()
 
 android {
@@ -93,6 +122,7 @@ chaquopy {
         pip {
             install "sympy"
             install "numpy"
+            install "matplotlib"
             install "opencv-python"
             install "rank-bm25"
         }

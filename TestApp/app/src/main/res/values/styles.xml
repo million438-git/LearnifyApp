@@ -1,4 +1,4 @@
-﻿<resources xmlns:app="http://schemas.android.com/apk/res-auto">
+<resources xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <style name="CircleImageView">
         <item name="cornerFamily">rounded</item>
@@ -374,6 +374,121 @@
         <item name="android:textColor">#00B4D8</item>
         <item name="android:textSize">10sp</item>
         <item name="android:layout_marginEnd">4dp</item>
+    </style>
+
+    <!-- ======================================================== -->
+    <!-- LEARNIFY CENTRAL DESIGN SYSTEM (Academic Sapphire)       -->
+    <!-- ======================================================== -->
+
+    <!-- Card Styles -->
+    <style name="LearnifyCard" parent="Widget.Material3.CardView.Outlined">
+        <item name="cardCornerRadius">@dimen/corner_radius_md</item>
+        <item name="cardElevation">@dimen/card_elevation_default</item>
+        <item name="strokeColor">@color/card_stroke</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cardBackgroundColor">?attr/colorSurface</item>
+    </style>
+
+    <style name="LearnifyCardElevated" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">@dimen/corner_radius_md</item>
+        <item name="cardElevation">@dimen/card_elevation_elevated</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="cardBackgroundColor">?attr/colorSurface</item>
+    </style>
+
+    <!-- Button Styles -->
+    <style name="LearnifyButtonPrimary" parent="Widget.Material3.Button">
+        <item name="cornerRadius">@dimen/corner_radius_md</item>
+        <item name="android:minHeight">@dimen/button_height_md</item>
+        <item name="android:textSize">@dimen/text_size_body</item>
+        <item name="android:textStyle">bold</item>
+        <item name="backgroundTint">@color/sapphire_primary</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="LearnifyButtonOutlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="cornerRadius">@dimen/corner_radius_md</item>
+        <item name="android:minHeight">@dimen/button_height_md</item>
+        <item name="android:textSize">@dimen/text_size_body</item>
+        <item name="strokeColor">@color/card_stroke</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="android:textColor">@color/sapphire_primary</item>
+    </style>
+
+    <style name="LearnifyButtonText" parent="Widget.Material3.Button.TextButton">
+        <item name="cornerRadius">@dimen/corner_radius_md</item>
+        <item name="android:minHeight">@dimen/button_height_md</item>
+        <item name="android:textSize">@dimen/text_size_body</item>
+        <item name="android:textColor">@color/sapphire_primary</item>
+    </style>
+
+    <!-- Standard Text Input Style -->
+    <style name="LearnifyInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">@dimen/corner_radius_md</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/corner_radius_md</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/corner_radius_md</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/corner_radius_md</item>
+        <item name="boxStrokeColor">@color/card_stroke</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="hintTextColor">@color/slate_500</item>
+    </style>
+
+    <!-- Standard Toolbar Style -->
+    <style name="LearnifyToolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/toolbar_height</item>
+        <item name="android:background">@color/surface_card</item>
+        <item name="titleTextColor">@color/text_primary_slate</item>
+        <item name="subtitleTextColor">@color/text_secondary_slate</item>
+    </style>
+
+    <!-- Standard Material Dialog Style -->
+    <style name="LearnifyAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/surface_card</item>
+        <item name="colorOnSurface">@color/text_primary_slate</item>
+    </style>
+
+    <!-- Standard Settings Row & Header Styles -->
+    <style name="LearnifySettingsSectionHeader">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/text_size_caption</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/slate_500</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:paddingStart">@dimen/spacing_lg</item>
+        <item name="android:paddingEnd">@dimen/spacing_lg</item>
+        <item name="android:paddingTop">@dimen/spacing_xl</item>
+        <item name="android:paddingBottom">@dimen/spacing_sm</item>
+    </style>
+
+    <style name="LearnifySettingsRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingStart">@dimen/spacing_lg</item>
+        <item name="android:paddingEnd">@dimen/spacing_lg</item>
+        <item name="android:paddingTop">@dimen/spacing_md</item>
+        <item name="android:paddingBottom">@dimen/spacing_md</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="LearnifySettingsRowTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="LearnifySettingsRowSubtitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/text_size_body_sm</item>
+        <item name="android:textColor">@color/slate_500</item>
+        <item name="android:layout_marginTop">2dp</item>
     </style>
 
 </resources>

@@ -1094,18 +1094,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         boolean isValid = PasswordUtils.verifyPassword(cleanPass, storedPassword);
 
-        if (false) {
-
-            // CWE-798 Hardcoded credentials bypass removed
-
-                // no-op
-
-            }
-
-        }
-
-
-
         if (!isValid) {
 
 

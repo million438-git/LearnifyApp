@@ -36,8 +36,15 @@ import java.util.Locale;
 
 /**
  * AdminSystemSettingsActivity - Central Enterprise Governance & Infrastructure Console.
- * Manages 14 core administrative domains with real SQLite persistence, physical snapshots,
- * system monitoring metrics, live audit trail telemetry, and role-based access control.
+ * Organized into 8 Core Enterprise Domains:
+ * 1. General System (Platform Configuration, Institution & Branding, Operations Lockdown)
+ * 2. User Management (Registration, Verification, Account Directory)
+ * 3. Academic Config (Curriculum Standards, STEM Virtual Labs, Camera & Laboratory Solvers)
+ * 4. Security Policies (2FA, Brute-Force Lockout, Session Management)
+ * 5. System Performance (Infrastructure Telemetry, AI Health & Capacity)
+ * 6. Backup & Recovery (Physical Database Snapshots, PRAGMA Integrity)
+ * 7. Alerts & Notifications (Mail Gateways, FCM Push, Announcements)
+ * 8. Audit & Logs (Administrative Action Audit Trail, SOP Documentation)
  */
 public class AdminSystemSettingsActivity extends BaseActivity {
 
@@ -45,64 +52,52 @@ public class AdminSystemSettingsActivity extends BaseActivity {
     private DatabaseHelper dbHelper;
     private String adminUsername = "admin";
 
-    // 1. General Configuration
+    // 1. General System (Configuration, Branding, Operations)
     private TextInputEditText etAppName, etTagline, etInstitutionName, etCurrency;
     private LinearLayout llDefaultLanguage, llDefaultRegion;
     private TextView tvDefaultLanguage, tvDefaultRegion;
     private SwitchCompat switchRTL;
-
-    // 2. Institution and Branding
     private TextInputEditText etContactEmail, etContactPhone, etSupportEmail, etPrimaryColor, etS3Bucket;
     private View viewPrimaryColorSwatch;
     private TextView tvBrandPreviewTitle, tvBrandPreviewSubtitle;
+    private SwitchCompat switchMaintenance, switchCookie;
+    private TextInputEditText etMaintenanceMessage;
 
-    // 3. User and Registration Management
+    // 2. User Management
     private SwitchCompat switchRegistration, switchRequireVerification, switchRequireApproval;
     private MaterialButton btnManageUserAccounts;
 
-    // 4. Academic Configuration
+    // 3. Academic Config (Standards, Labs, Solvers)
     private TextInputEditText etExamTime, etPassingScore, etExamAttempts;
     private SwitchCompat switchCurriculumIntegrity;
     private MaterialButton btnViewAcademicCurriculum;
+    private SwitchCompat switchVirtualLabs, switchFeatureCourses, switchFeatureOffline;
+    private SwitchCompat switchCameraLab, switchLabMath, switchLabPhysics, switchLabChem;
+    private TextInputEditText etLabMaxSteps;
 
-    // 5. AI and Learning Services
+    // 4. Security Policies
+    private SwitchCompat switch2FA, switchLockout;
+    private TextInputEditText etMaxLoginAttempts, etSessionTimeout;
+
+    // 5. System Performance & Telemetry
+    private TextView tvDbSizeMetric, tvTotalUsersMetric, tvDbVersionMetric, tvStorageCapacityMetric;
+    private MaterialButton btnRefreshMetrics;
     private SwitchCompat switchAiTutorEnabled, switchVoiceFeature;
     private TextInputEditText etAiModel, etAiRequestLimit;
     private TextView tvAiHealthStatus;
 
-    // 6. Notification and Communication Services
+    // 6. Backup & Recovery
+    private TextView tvBackupStatus, tvBackupPath;
+    private MaterialButton btnBackupRestore, btnRestoreDatabase, btnCheckDbIntegrity;
+
+    // 7. Alerts & Notifications
     private TextInputEditText etSmtpHost;
     private TextView tvPushServiceStatus;
     private MaterialButton btnBroadcastAnnouncement;
 
-    // 7. Security and Access Control
-    private SwitchCompat switch2FA, switchLockout;
-    private TextInputEditText etMaxLoginAttempts, etSessionTimeout;
-
-    // 8. Database and Backup
-    private TextView tvBackupStatus, tvBackupPath;
-    private MaterialButton btnBackupRestore, btnRestoreDatabase, btnCheckDbIntegrity;
-
-    // 9. System Monitoring
-    private TextView tvDbSizeMetric, tvTotalUsersMetric, tvDbVersionMetric, tvStorageCapacityMetric;
-    private MaterialButton btnRefreshMetrics;
-
-    // 10. Feature Management
-    private SwitchCompat switchVirtualLabs, switchFeatureCourses, switchFeatureOffline;
-
-    // 11. Camera and Laboratory Governance
-    private SwitchCompat switchCameraLab, switchLabMath, switchLabPhysics, switchLabChem;
-    private TextInputEditText etLabMaxSteps;
-
-    // 12. Maintenance and Operations
-    private SwitchCompat switchMaintenance, switchCookie;
-    private TextInputEditText etMaintenanceMessage;
-
-    // 13. Audit Logs
+    // 8. Audit & Logs
     private TextView tvLastAuditPreview;
     private MaterialButton btnSystemLogs, btnExportAuditLogs;
-
-    // 14. Help and System Information
     private TextView tvAdminVersion, tvBackendStatus;
     private MaterialButton btnAdminDocumentation;
 

@@ -305,7 +305,7 @@ public class NotificationHelper {
         Intent intent = new Intent(context, NotificationReceiver.class);
         intent.setAction("com.million.learnify.STUDY_NOTIFICATION");
         intent.putExtra("type", "streak");
-        intent.putExtra("taskTitle", "🔥 Keep your " + currentStreak + "-day streak alive!");
+        intent.putExtra("taskTitle", "Keep your " + currentStreak + "-day streak alive!");
         intent.putExtra("extraData", "Complete one quick practice lesson today to maintain your momentum.");
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, REQ_STREAK_ALERT, intent,

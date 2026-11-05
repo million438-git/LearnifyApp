@@ -220,19 +220,19 @@ public class CourseDetailActivity extends BaseActivity {
         if (btnBookmark == null) return;
         boolean bookmarked = isCourseBookmarked();
         if (bookmarked) {
-            btnBookmark.setText("★ BOOKMARKED");
+            btnBookmark.setText("BOOKMARKED");
             btnBookmark.setTextColor(getResources().getColor(R.color.admin_green));
         } else {
-            btnBookmark.setText("⭐ BOOKMARK COURSE");
+            btnBookmark.setText("BOOKMARK COURSE");
             btnBookmark.setTextColor(getResources().getColor(R.color.colorPrimary));
         }
     }
 
     private void showContactDialog() {
         String[] options = {
-            "🤖 Ask AI Subject Tutor",
-            "📧 Email Department Instructor",
-            "💬 Community Study Group"
+            "Ask Subject AI Tutor",
+            "Email Department Instructor",
+            "Community Study Group"
         };
 
         new MaterialAlertDialogBuilder(this)
@@ -261,10 +261,10 @@ public class CourseDetailActivity extends BaseActivity {
 
     private void showStudyToolsDialog() {
         String[] tools = {
-            "🔬 Virtual Science Studio & Labs",
-            "🗂️ Flashcard Mastery Deck",
-            "📝 Unit Practice Quiz",
-            "🤖 24/7 AI Homework Tutor"
+            "Virtual Science Studio & Labs",
+            "Flashcard Mastery Deck",
+            "Unit Practice Quiz",
+            "AI Homework & Concept Tutor"
         };
 
         new MaterialAlertDialogBuilder(this)

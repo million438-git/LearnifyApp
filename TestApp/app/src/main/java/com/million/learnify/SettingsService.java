@@ -66,7 +66,19 @@ public class SettingsService {
     // ==========================================
 
     public LocalDevicePreferences getLocalDevicePreferences() {
-        return LocalDevicePreferences.fromPreferences(sharedPreferences);
+        LocalDevicePreferences p = LocalDevicePreferences.fromPreferences(sharedPreferences);
+        try {
+            InclusiveModeManager imm = InclusiveModeManager.getInstance(context);
+            p.setInclusiveMode(imm.isInclusiveModeEnabled());
+            p.setTextToSpeech(imm.isTextToSpeechEnabled());
+            p.setSpeechRate(imm.getSpeechRate());
+            p.setSpeechPitch(imm.getSpeechPitch());
+            p.setHighContrastMode(imm.isHighContrastEnabled());
+            p.setReduceMotion(imm.isReducedMotionEnabled());
+            p.setAutoReadContent(imm.isAutoReadContentEnabled());
+        } catch (Exception ignored) {
+        }
+        return p;
     }
 
     public void saveLocalDevicePreferences(LocalDevicePreferences prefs) {
